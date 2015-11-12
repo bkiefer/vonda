@@ -1,5 +1,7 @@
 package de.dfki.mlt.rudimant.dsl
 
+import de.dfki.mlt.rudimant.Proposal
+
 import scala.language.dynamics
 
 trait Env
@@ -103,4 +105,10 @@ object If {
 
   def apply(cond: => Boolean): Condition = Condition.Atom({ () => cond })
 
+}
+
+case class Propose(desc: Proposal.Descriptor) {
+  def apply(body: => Unit): Unit = {
+    // TODO
+  }
 }
