@@ -1,21 +1,41 @@
 package de.dfki.mlt.rudimant
 
-object FirstRunner extends App {
+import dsl._
 
-  import dsl._
+object FirstModule extends ObjModule {
+
+  If (true) Then {
+
+    Propose ("print-hello-world") {
+      println("hello world!")
+      activate(SecondModule)
+    }
+
+  }
+
+}
+
+object SecondModule extends ObjModule {
+
+  If (true) Then {
+
+    Propose ("print-hello-again") {
+      println("hello again!")
+      deactivate(this)
+    }
+  }
+
+}
+
+object FirstRunner extends App {
 
   val rules = RuleSet()
 
-  Module ("first") {
+  rules += FirstModule
 
-    If (true) Then {
-
-      Propose ("print-hello-world") {
-        println("hello world!")
-      }
-
-    }
-
+  // list all active rules
+  for (r <- rules.rules) {
+    println(r)
   }
 
 }

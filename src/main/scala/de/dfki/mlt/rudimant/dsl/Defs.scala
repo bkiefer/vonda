@@ -108,6 +108,9 @@ object If {
 }
 
 case class Propose(desc: Proposal.Descriptor) {
+
+  def toProposal = Proposal(desc, ???)
+
   def apply(body: => Unit): Unit = {
     // TODO
   }
