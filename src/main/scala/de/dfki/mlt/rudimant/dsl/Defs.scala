@@ -1,4 +1,4 @@
-package de.dfki.mlt.rudimant
+package de.dfki.mlt.rudimant.dsl
 
 import scala.language.dynamics
 
