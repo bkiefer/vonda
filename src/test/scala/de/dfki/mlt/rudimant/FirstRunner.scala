@@ -4,7 +4,7 @@ import dsl._
 
 object FirstModule extends ObjModule {
 
-  If (true) Then {
+  this += If (true) Then {
 
     Propose ("print-hello-world") {
       println("hello world!")
@@ -17,7 +17,7 @@ object FirstModule extends ObjModule {
 
 object SecondModule extends ObjModule {
 
-  If (true) Then {
+  this += If (true) Then {
 
     Propose ("print-hello-again") {
       println("hello again!")
