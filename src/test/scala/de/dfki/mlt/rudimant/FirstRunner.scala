@@ -29,12 +29,12 @@ object SecondModule extends ObjModule {
 
 object FirstRunner extends App {
 
-  val rules = RuleSet()
+  val engine = new RuleEngine()
 
-  rules += FirstModule
+  engine.add(FirstModule)
 
   // list all active rules
-  for (r <- rules.rules) {
+  for (r <- engine.rules) {
     println(r)
   }
 
