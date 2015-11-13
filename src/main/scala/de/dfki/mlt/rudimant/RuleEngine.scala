@@ -20,6 +20,16 @@ class RuleEngine {
     }
   }
 
+  def remove(rs: RuleSet): Unit = {
+    log.debug("Removing ruleset {}", rs)
+    if (_rules.contains(rs)) {
+      _rules -= rs
+    }
+    else {
+      log.warning("Ruleset {} not found in the engine", rs)
+    }
+  }
+
   def rules: Iterable[Rule[_]] = _rules flatMap { _.rules }
 
 }
