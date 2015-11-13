@@ -2,7 +2,7 @@ package de.dfki.mlt.rudimant
 
 import dsl._
 
-object FirstModule extends ObjModule {
+object FirstModule extends Module {
 
   this += If (true) Then {
 
@@ -15,7 +15,7 @@ object FirstModule extends ObjModule {
 
 }
 
-object SecondModule extends ObjModule {
+object SecondModule extends Module {
 
   this += If (true) Then {
 

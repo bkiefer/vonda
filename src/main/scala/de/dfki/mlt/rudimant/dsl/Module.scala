@@ -6,15 +6,7 @@ import scala.collection.mutable.ArrayBuffer
 
 trait Module extends RuleSet {
 
-  def name: String
-
-  def rules: Iterable[Rule[_]]
-
-}
-
-trait ObjModule extends Module {
-
-  override final def name = this.getClass.getCanonicalName
+  def name = this.getClass.getCanonicalName
 
   override val rules = ArrayBuffer.empty[Rule[_]]
 
