@@ -38,4 +38,8 @@ object FirstRunner extends App {
     println(r)
   }
 
+  val proposals = engine.evaluate()
+
+  println("Proposals: [\n" + (proposals map { p => s"\t$p\n" }).mkString + "]")
+
 }
