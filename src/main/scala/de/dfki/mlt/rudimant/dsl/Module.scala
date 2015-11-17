@@ -26,7 +26,7 @@ trait Module extends RuleSet {
 
   protected def Rule(name: String): RuleDef = ???
 
-  protected def $$[A](body: With[A] => Unit) = Re(body)
+//  protected def $$[A](body: With[A] => Unit) = Re(body)
 
   protected def $[A](body: => A) = With(body)
 

@@ -156,43 +156,6 @@ object With {
   def apply[A](cond: => A): With[A] = ???
 }
 
-trait Action[+A] {
-//  def Else(body: Action[A]): Action[A] = ???
-
-//  def ::(body: Action[A]): Action[A] = ???
-
-}
-
-object Action {
-
-  case class DoAction[A](body: A => Unit) extends Action[A] {
-
-    def Else(action: Action[A]): Action[A] = ???
-
-  }
-
-  case class ProposeAction[A](desc: Proposal.Descriptor, body: A => Unit) extends Action[A] {
-    def toProposal: Proposal = ???
-  }
-
-}
-
-//object Do {
-//  def apply[A](body: A => Unit) = Action.DoAction(body)
-//}
-
-object Re {
-  def apply[A](body: With[A] => Unit): Action[A] = ???
-}
-
-object Propose {
-  case class NamedProposalFactory[A](desc: Proposal.Descriptor) {
-    def apply(body: A => Unit) = Action.ProposeAction(desc, body)
-  }
-
-  def apply[A](desc: Proposal.Descriptor) = NamedProposalFactory(desc)
-}
-
 trait PlainWords {
   import Words._
 
