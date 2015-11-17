@@ -231,11 +231,11 @@ trait WithIf[A] {
 }
 
 trait With[A] {
-  def If(f: A => Boolean): IfTrueCondition[A] = ??? //IfDefined[A] { case a if f(a) => a }
-  def IfDefined[B](f: PartialFunction[A, B]): PartialCondition[B, A]
+  def Filter(predicate: A => Boolean): IfTrueCondition[A] = ??? //IfDefined[A] { case a if f(a) => a }
+  def Collect[B](func: PartialFunction[A, B]): PartialCondition[B, A]
 
-  def -?>(f: A => Boolean) = If(f)
-  def -:>[B](f: PartialFunction[A, B]) = IfDefined(f)
+  def -?>(f: A => Boolean) = Filter(f)
+  def -:>[B](f: PartialFunction[A, B]) = Collect(f)
 
   def Test(w: IfWord.type): WithIf[A] = ???
 
