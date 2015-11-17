@@ -9,35 +9,44 @@ object Words {
   object FailureWord
 }
 
-trait PartialCondition[A, B]  {
+trait ActionPhrase[In, Out] {
 
-  object _success {
-    object _propose {
-      def As(body: A => Unit): PartialRule[B] = ???
-    }
+  protected def newDo(body: In => Unit): Out
+  protected def newPropose(desc: Proposal.Descriptor, body: In => Unit): Out
+  protected def newCarry(cont: With[In] => Rule): Out
 
-    def Do(body: A => Unit): PartialRule[B] = ???
-    def Propose(name: Proposal.Descriptor) = _propose
-    def Carry(cont: With[A] => Rule): PartialRule[B] = ???
+  class _propose(desc: Proposal.Descriptor) {
+    def As(body: In => Unit): Out = newPropose(desc, body)
   }
 
-  def On(w: Words.SuccessWord.type) = _success
+  def Do(body: In => Unit): Out = newDo(body)
+  def Propose(name: Proposal.Descriptor) = new _propose(name)
+
+  def Carry(cont: With[In] => Rule): Out = newCarry(cont)
+
+}
+
+trait PartialCondition[A, B] extends ActionPhrase[A, PartialRule[B]] {
+
+  object _on_success extends ActionPhrase[A, PartialRule[B]] {
+    override protected def newDo(body: A => Unit) = ???
+    override protected def newCarry(cont: (With[A]) => Rule) = ???
+    override protected def newPropose(desc: Proposal.Descriptor, body: A => Unit) = ???
+  }
+
+  def On(w: Words.SuccessWord.type) = _on_success
 
 }
 
 trait IfTrueCondition[A] {
-  object _success {
 
-    object _propose {
-      def As(body: A => Unit): IfTrueRule[A] = ???
-    }
-
-    def Do(body: A => Unit): IfTrueRule[A] = ???
-    def Propose(name: Proposal.Descriptor) = _propose
-    def Carry(cont: With[A] => Rule): IfTrueRule[A] = ???
+  object _on_success extends ActionPhrase[A, IfTrueRule[A]] {
+    override protected def newDo(body: A => Unit) = ???
+    override protected def newCarry(cont: (With[A]) => Rule) = ???
+    override protected def newPropose(desc: Proposal.Descriptor, body: A => Unit) = ???
   }
 
-  def On(w: Words.SuccessWord.type) = _success
+  def On(w: Words.SuccessWord.type) = _on_success
 
 }
 
@@ -49,32 +58,24 @@ trait Rule {
 
 trait PartialRule[B] extends Rule {
 
-  object _failure {
-    object _propose {
-      def As(body: B => Unit): TotalRule = ???
-    }
-
-    def Do(b: B => Unit): TotalRule = ???
-    def Propose(name: Proposal.Descriptor) = _propose
-    def Carry(cont: With[B] => Rule): TotalRule = ???
+  object _on_failure extends ActionPhrase[B, TotalRule] {
+    override protected def newDo(body: B => Unit) = ???
+    override protected def newCarry(cont: (With[B]) => Rule) = ???
+    override protected def newPropose(desc: Proposal.Descriptor, body: B => Unit) = ???
   }
 
-  def On(w: Words.FailureWord.type) = _failure
+  def On(w: Words.FailureWord.type) = _on_failure
 
 }
 
 trait IfTrueRule[A] extends Rule {
-  object _failure {
-    object _propose {
-      def As(body: A => Unit): TotalRule = ???
-    }
-
-    def Do(b: A => Unit): TotalRule = ???
-    def Propose(name: Proposal.Descriptor) = _propose
-    def Carry(cont: With[A] => Rule): TotalRule = ???
+  object _on_failure extends ActionPhrase[A, TotalRule] {
+    override protected def newDo(body: A => Unit) = ???
+    override protected def newCarry(cont: (With[A]) => Rule) = ???
+    override protected def newPropose(desc: Proposal.Descriptor, body: A => Unit) = ???
   }
 
-  def On(w: Words.FailureWord.type) = _failure
+  def On(w: Words.FailureWord.type) = _on_failure
 
 }
 
@@ -82,17 +83,14 @@ trait TotalRule extends Rule {
 
 }
 
-trait With[A] {
+trait With[A] extends ActionPhrase[A, TotalRule] {
+
   def Filter(predicate: A => Boolean): IfTrueCondition[A] = ??? //IfDefined[A] { case a if f(a) => a }
   def Collect[B](func: PartialFunction[A, B]): PartialCondition[B, A]
 
-  def Do(body: A => Unit): TotalRule = ???
-
-  object _propose {
-    def As(body: A => Unit): TotalRule = ???
-  }
-
-  def Propose(desc: Proposal.Descriptor) = _propose
+  override protected def newDo(body: A => Unit) = ???
+  override protected def newCarry(cont: (With[A]) => Rule) = ???
+  override protected def newPropose(desc: Proposal.Descriptor, body: A => Unit) = ???
 
 }
 
