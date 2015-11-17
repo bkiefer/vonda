@@ -177,6 +177,43 @@ object FirstModule extends Module with PlainWords {
     }
   )
 
+  Rule ("boolean-nested") := (
+    With (sth.length) Test If True { _ != 0 }
+      On Success Carry ( _ Test If True { _ > 0 }
+        On Success Do { i => }
+        On Failure Do { j => }
+      )
+  )
+
+  Rule ("partial-nested-do") := (
+    With (sth.length) Test If Defined { case i if i > 0 => i.toDouble }
+      On Success Carry ( _ Test If True { _ > 0 }
+        On Success Do { d => }
+        On Failure Do { e => }
+      )
+      On Failure Do { j => }
+  )
+
+  Rule ("partial-nested-nested") := (
+    With (sth.length) Test If Defined { case i if i > 0 => i.toDouble }
+      On Success Carry ( _ Test If True { _ > 0 }
+        On Success Do { d => }
+        On Failure Do { e => }
+      )
+      On Failure Carry ( _ Test If True { _ != 0 }
+        On Success Do { j => }
+      )
+  )
+
+  Rule ("partial-nested-maps") := (
+    With (sth.length) Test If Defined { case i if i > 0 => i.toDouble }
+      On Success Carry ( _ Test If Defined { case i if !i.isInfinity => i.toString }
+        On Success Do { s => }  // string
+        On Failure Do { d => }  // double
+      )
+      On Failure Do { i => }  // int
+  )
+
   Rule("switch") := {
     With (true) Do { t =>
       deactivate(this)

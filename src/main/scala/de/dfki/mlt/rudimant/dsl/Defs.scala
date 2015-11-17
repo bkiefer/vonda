@@ -117,13 +117,13 @@ object IfWord
 trait PartialCondition[A, B]  {
 
   object _success {
-    def Do(body: A => Unit): PartialRule[B] = ???
-
     object _propose {
       def As(body: A => Unit): PartialRule[B] = ???
     }
 
+    def Do(body: A => Unit): PartialRule[B] = ???
     def Propose(name: Proposal.Descriptor) = _propose
+    def Carry(cont: With[A] => _Rule): PartialRule[B] = ???
   }
 
   def On(w: SuccessWord.type) = _success
@@ -145,6 +145,7 @@ trait IfTrueCondition[A] {
 
     def Do(body: A => Unit): IfTrueRule[A] = ???
     def Propose(name: Proposal.Descriptor) = _propose
+    def Carry(cont: With[A] => _Rule): IfTrueRule[A] = ???
   }
 
   def On(w: SuccessWord.type) = _success
@@ -179,6 +180,7 @@ trait PartialRule[B] extends _Rule {
 
     def Do(b: B => Unit): TotalRule = ???
     def Propose(name: Proposal.Descriptor) = _propose
+    def Carry(cont: With[B] => _Rule): TotalRule = ???
   }
 
   def On(w: FailureWord.type) = _failure
@@ -208,6 +210,7 @@ trait IfTrueRule[A] extends _Rule {
 
     def Do(b: A => Unit): TotalRule = ???
     def Propose(name: Proposal.Descriptor) = _propose
+    def Carry(cont: With[A] => _Rule): TotalRule = ???
   }
 
   def On(w: FailureWord.type) = _failure
