@@ -5,12 +5,8 @@ import de.dfki.mlt.rudimant.Proposal
 trait Env
 
 object Words {
-  object DoWord
-  object ThenWord
-  object ElseWord
   object SuccessWord
   object FailureWord
-  object IfWord
 }
 
 trait PartialCondition[A, B]  {
@@ -26,12 +22,6 @@ trait PartialCondition[A, B]  {
   }
 
   def On(w: Words.SuccessWord.type) = _success
-
-//  def Do(body: A => Unit): PartialRule[B] = ???
-
-//  def -+>(action: Action[A]) = Then(action)
-
-//  def ?(consumer: Cons[A, B]): TotalRule = ???
 
 }
 
@@ -49,20 +39,6 @@ trait IfTrueCondition[A] {
 
   def On(w: Words.SuccessWord.type) = _success
 
-  def Then(action: Action[A]): IfTrueRule[A] = ???
-
-  def Do(body: A => Unit): IfTrueRule[A] = ???
-
-  def -+>(action: Action[A]) = Then(action)
-  def +:(action: Action[A]) = Then(action)
-
-  def ?:(action: Action[A]) = Then(action)
-
-//  def THEN(consumer: Cons[A, A]): TotalRule = ???
-//  def ?(consumer: Cons[A, A]): TotalRule = ???
-  def ?>(action: Action[A]) = Then(action)
-
-//  def Then(cont: With[A] => _Rule): IfTrueRule[A] = ???
 }
 
 trait Rule {
@@ -72,7 +48,6 @@ trait Rule {
 }
 
 trait PartialRule[B] extends Rule {
-//  def Else(b: Action[B]): TotalRule = ???
 
   object _failure {
     object _propose {
@@ -86,21 +61,6 @@ trait PartialRule[B] extends Rule {
 
   def On(w: Words.FailureWord.type) = _failure
 
-  def Else(w: Words.DoWord.type) = _failure
-
-  def End = this
-
-//  lazy val Else = new _Else
-
-//  def Else() = elsie
-
-//  def Else(): PartialRuleElse[B] = ???
-
-//  val Else
-
-//  def ElseDo(b: B => Unit) = Else(Action.DoAction(b))
-//
-//  def -->(b: Action[B]) = Else(b)
 }
 
 trait IfTrueRule[A] extends Rule {
@@ -116,29 +76,15 @@ trait IfTrueRule[A] extends Rule {
 
   def On(w: Words.FailureWord.type) = _failure
 
-  def Else(b: Action[A]): TotalRule = ???
-  def -->(b: Action[A]) = Else(b)
-  def -:(b: Action[A]) = Else(b)
-  def :>(b: Action[A]) = Else(b)
 }
 
 trait TotalRule extends Rule {
 
 }
 
-trait WithIf[A] {
-  def True(f: A => Boolean): IfTrueCondition[A] = ???
-  def Defined[B](f: PartialFunction[A, B]): PartialCondition[B, A]
-}
-
 trait With[A] {
   def Filter(predicate: A => Boolean): IfTrueCondition[A] = ??? //IfDefined[A] { case a if f(a) => a }
   def Collect[B](func: PartialFunction[A, B]): PartialCondition[B, A]
-
-  def -?>(f: A => Boolean) = Filter(f)
-  def -:>[B](f: PartialFunction[A, B]) = Collect(f)
-
-  def Test(w: Words.IfWord.type): WithIf[A] = ???
 
   def Do(body: A => Unit): TotalRule = ???
 
@@ -147,8 +93,6 @@ trait With[A] {
   }
 
   def Propose(desc: Proposal.Descriptor) = _propose
-
-//  def Propose(name: Proposal.Descriptor)(body: A => Unit): TotalRule = ???
 
 }
 
@@ -159,10 +103,7 @@ object With {
 trait PlainWords {
   import Words._
 
-  protected val Do = DoWord
-  protected val Then = ThenWord
-  protected val Else = ElseWord
   protected val Success = SuccessWord
   protected val Failure = FailureWord
-  protected val If = IfWord
+
 }
