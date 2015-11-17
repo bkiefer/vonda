@@ -4,12 +4,14 @@ import de.dfki.mlt.rudimant.Proposal
 
 trait Env
 
-object DoWord
-object ThenWord
-object ElseWord
-object SuccessWord
-object FailureWord
-object IfWord
+object Words {
+  object DoWord
+  object ThenWord
+  object ElseWord
+  object SuccessWord
+  object FailureWord
+  object IfWord
+}
 
 trait PartialCondition[A, B]  {
 
@@ -23,7 +25,7 @@ trait PartialCondition[A, B]  {
     def Carry(cont: With[A] => Rule): PartialRule[B] = ???
   }
 
-  def On(w: SuccessWord.type) = _success
+  def On(w: Words.SuccessWord.type) = _success
 
 //  def Do(body: A => Unit): PartialRule[B] = ???
 
@@ -45,7 +47,7 @@ trait IfTrueCondition[A] {
     def Carry(cont: With[A] => Rule): IfTrueRule[A] = ???
   }
 
-  def On(w: SuccessWord.type) = _success
+  def On(w: Words.SuccessWord.type) = _success
 
   def Then(action: Action[A]): IfTrueRule[A] = ???
 
@@ -82,9 +84,9 @@ trait PartialRule[B] extends Rule {
     def Carry(cont: With[B] => Rule): TotalRule = ???
   }
 
-  def On(w: FailureWord.type) = _failure
+  def On(w: Words.FailureWord.type) = _failure
 
-  def Else(w: DoWord.type) = _failure
+  def Else(w: Words.DoWord.type) = _failure
 
   def End = this
 
@@ -112,7 +114,7 @@ trait IfTrueRule[A] extends Rule {
     def Carry(cont: With[A] => Rule): TotalRule = ???
   }
 
-  def On(w: FailureWord.type) = _failure
+  def On(w: Words.FailureWord.type) = _failure
 
   def Else(b: Action[A]): TotalRule = ???
   def -->(b: Action[A]) = Else(b)
@@ -136,7 +138,7 @@ trait With[A] {
   def -?>(f: A => Boolean) = Filter(f)
   def -:>[B](f: PartialFunction[A, B]) = Collect(f)
 
-  def Test(w: IfWord.type): WithIf[A] = ???
+  def Test(w: Words.IfWord.type): WithIf[A] = ???
 
   def Do(body: A => Unit): TotalRule = ???
 
@@ -192,6 +194,8 @@ object Propose {
 }
 
 trait PlainWords {
+  import Words._
+
   protected val Do = DoWord
   protected val Then = ThenWord
   protected val Else = ElseWord
