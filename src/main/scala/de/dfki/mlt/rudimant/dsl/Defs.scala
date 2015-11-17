@@ -26,9 +26,9 @@ trait ActionPhrase[In, Out] {
 
 }
 
-trait PartialCondition[A, B] extends ActionPhrase[A, PartialRule[B]] {
+trait PartialCondition[A, B] extends ActionPhrase[A, PartialRule[A, B]] {
 
-  object _on_success extends ActionPhrase[A, PartialRule[B]] {
+  object _on_success extends ActionPhrase[A, PartialRule[A, B]] {
     override protected def newDo(body: A => Unit) = ???
     override protected def newCarry(cont: (With[A]) => Rule) = ???
     override protected def newPropose(desc: Proposal.Descriptor, body: A => Unit) = ???
@@ -56,7 +56,7 @@ trait Rule {
 
 }
 
-trait PartialRule[B] extends Rule {
+trait PartialRule[A, B] extends Rule {
 
   object _on_failure extends ActionPhrase[B, TotalRule] {
     override protected def newDo(body: B => Unit) = ???
