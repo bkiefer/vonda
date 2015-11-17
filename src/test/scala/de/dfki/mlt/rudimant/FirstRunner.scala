@@ -2,6 +2,8 @@ package de.dfki.mlt.rudimant
 
 import dsl._
 
+import scala.language.postfixOps
+
 
 object sth {
 
@@ -97,12 +99,42 @@ object FirstModule extends Module {
 //    })
   }
 */
-  Rule ("has-sqrt") := {
-    With { sth.length } IfDefined { case i if i > 0 => math.sqrt(i) } Do { d => }
-  }
+
+  val Do = DoWord
+  val Then = ThenWord
+  val Else = ElseWord
+
+  Rule ("has-sqrt") := {(
+//    With { sth.length } IfDefined { case i if i > 0 => math.sqrt(i) } Then Do Defer { d => }
+
+//    With { sth.length } Try If Defined { case i if i > 0 => math.sqrt(i) }
+//      On Success Propose "hello" As { d => body }
+//      On Failure Do { i => }
+
+//    With { sth.length } Try If True { _ > 0 }
+//      On Success Propose "hi" As { i => body }
+//      On Failure Do { j => }
+
+//    With { sth.length } Propose "hello" as { d => body }
+
+//    With { sth.length } Do { i => body }
+
+    With { sth.length } IfDefined { case i if i > 0 => math.sqrt(i) } IfSo
+      Then Propose "hello" As { d =>
+
+      }
+      Or Else Do { i =>
+      }
+
+//    With { sth.length } IfDefined { case i if i > 0 => math.sqrt(i) } Then Do Defer { d => } EndDo Else Defer { i => }
+    )}
+
 
   Rule ("has-sqrt-2") := {
-    With { sth.length } IfDefined { case i if i > 0 => math.sqrt(i) } Do { d => } Else() Do { i => }
+//    With { sth.length } IfDefined { case i if i > 0 => math.sqrt(i) } Then Do Defer { d => } Else Do Defer { i => }
+
+    With { sth.length } IfDefined { case i if i > 0 => math.sqrt(i) } IfSo Then Propose "hello" As { d => } Or Else Do { i => }
+
   }
 
   Rule ("is-single-digit") := {

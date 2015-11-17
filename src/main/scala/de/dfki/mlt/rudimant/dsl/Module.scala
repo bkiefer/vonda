@@ -21,7 +21,7 @@ trait Module extends RuleSet {
   protected def log: Log = ???
 
   protected trait RuleDef {
-    def :=(r: _Rule): Unit = ???
+    def :=[A <: _Rule](r: A): A = ???
   }
 
   protected def Rule(name: String): RuleDef = ???
@@ -30,6 +30,6 @@ trait Module extends RuleSet {
 
   protected def $[A](body: => A) = With(body)
 
-  protected def Do[A](body: A => Unit) = Action.DoAction(body)
+//  protected def Do[A](body: A => Unit) = Action.DoAction(body)
 
 }

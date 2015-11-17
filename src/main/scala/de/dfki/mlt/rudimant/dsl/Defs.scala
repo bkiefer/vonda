@@ -107,12 +107,27 @@ object If {
 
 }
 
+object DoWord
+object ThenWord
+object ElseWord
+
 trait PartialCondition[A, B]  {
-  def Then(action: Action[A]): PartialRule[B] = ???
 
-  def Do(body: A => Unit): PartialRule[B] = ???
+  object thelma {
+    def Do(body: A => Unit): PartialRule[B] = ???
 
-  def -+>(action: Action[A]) = Then(action)
+    object propsie {
+      def As(body: A => Unit): PartialRule[B] = ???
+    }
+
+    def Propose(name: Proposal.Descriptor) = propsie
+  }
+
+  def IfSo(yo: ThenWord.type) = thelma
+
+//  def Do(body: A => Unit): PartialRule[B] = ???
+
+//  def -+>(action: Action[A]) = Then(action)
 
 //  def ?(consumer: Cons[A, B]): TotalRule = ???
 
@@ -147,7 +162,24 @@ trait PartialRuleElse[B] extends _Rule {
 
 trait PartialRule[B] extends _Rule {
 //  def Else(b: Action[B]): TotalRule = ???
-  def Else(): PartialRuleElse[B] = ???
+
+  object elsie {
+    def Do(b: B => Unit): TotalRule = ???
+  }
+
+  def Else(w: DoWord.type) = elsie
+
+  def Or(w: ElseWord.type) = elsie
+  def End = this
+
+//  lazy val Else = new _Else
+
+//  def Else() = elsie
+
+//  def Else(): PartialRuleElse[B] = ???
+
+//  val Else
+
 //  def ElseDo(b: B => Unit) = Else(Action.DoAction(b))
 //
 //  def -->(b: Action[B]) = Else(b)
