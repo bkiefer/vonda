@@ -30,7 +30,7 @@ class RuleEngine {
     }
   }
 
-  def rules: Iterable[Rule[_]] = _rules flatMap { _.rules }
+  def rules: Iterable[Rule] = _rules flatMap { _.rules }
 
   def evaluate(): Seq[Proposal] = {
     for (r <- rules) {

@@ -4,6 +4,6 @@ import de.dfki.mlt.rudimant.dsl.{Rule, Module}
 
 trait RuleSet {
 
-  def rules: Iterable[Rule[_]]
+  def rules: Iterable[Rule]
 
 }

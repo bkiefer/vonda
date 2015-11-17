@@ -8,9 +8,9 @@ trait Module extends RuleSet {
 
   def name = this.getClass.getCanonicalName
 
-  override val rules = ArrayBuffer.empty[Rule[_]]
+  override val rules = ArrayBuffer.empty[Rule]
 
-  protected def +=(rule: Rule[_]): Unit = {
+  protected def +=(rule: Rule): Unit = {
     rules += rule
   }
 
@@ -21,7 +21,7 @@ trait Module extends RuleSet {
   protected def log: Log = ???
 
   protected trait RuleDef {
-    def :=[A <: _Rule](r: A): A = ???
+    def :=[A <: Rule](r: A): A = ???
   }
 
   protected def Rule(name: String): RuleDef = ???
