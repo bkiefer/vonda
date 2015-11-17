@@ -1,6 +1,6 @@
 package de.dfki.mlt.rudimant
 
-import de.dfki.mlt.rudimant.dsl.Rule
+import dsl._
 
 import scala.collection.mutable.ArrayBuffer
 
