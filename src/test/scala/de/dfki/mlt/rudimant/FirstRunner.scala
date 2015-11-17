@@ -11,7 +11,7 @@ object sth {
 
 }
 
-object FirstModule extends Module {
+object FirstModule extends Module with PlainWords {
 
   /*
     Rule("hoho") := (
@@ -100,46 +100,82 @@ object FirstModule extends Module {
   }
 */
 
-  val Do = DoWord
-  val Then = ThenWord
-  val Else = ElseWord
+  Rule ("partial-do") := (
+    With { sth.length } Test If Defined { case i if i > 0 => math.sqrt(i) }
+      On Success Do { d => }
+  )
 
-  Rule ("has-sqrt") := {(
-//    With { sth.length } IfDefined { case i if i > 0 => math.sqrt(i) } Then Do Defer { d => }
+  Rule ("partial-propose") := (
+    With { sth.length } Test If Defined { case i if i > 0 => math.sqrt(i) }
+      On Success Propose "hello" As { d => }
+  )
 
-//    With { sth.length } Try If Defined { case i if i > 0 => math.sqrt(i) }
-//      On Success Propose "hello" As { d => body }
-//      On Failure Do { i => }
+  Rule ("partial-do-do") := (
+    With { sth.length } Test If Defined { case i if i > 0 => math.sqrt(i) }
+      On Success Do { d => }
+      On Failure Do { i => }
+  )
 
-//    With { sth.length } Try If True { _ > 0 }
-//      On Success Propose "hi" As { i => body }
-//      On Failure Do { j => }
+  Rule ("partial-do-propose") := (
+    With { sth.length } Test If Defined { case i if i > 0 => math.sqrt(i) }
+      On Success Do { d => }
+      On Failure Propose "yippieh" As { i => }
+  )
+  
+  Rule ("partial-propose-do") := (
+    With { sth.length } Test If Defined { case i if i > 0 => math.sqrt(i) }
+      On Success Propose "hello" As { d => }
+      On Failure Do { i => }
+  )
 
-//    With { sth.length } Propose "hello" as { d => body }
+  Rule ("partial-propose-propose") := (
+    With { sth.length } Test If Defined { case i if i > 0 => math.sqrt(i) }
+      On Success Propose "hello" As { d => }
+      On Failure Propose "hurray" As { i => }
+  )
 
-//    With { sth.length } Do { i => body }
+  Rule ("boolean-do") := (
+    With { sth.length } Test If True { _ > 0 }
+      On Success Do { i => }
+  )
 
-    With { sth.length } IfDefined { case i if i > 0 => math.sqrt(i) } IfSo
-      Then Propose "hello" As { d =>
+  Rule ("boolean-propose") := (
+    With { sth.length } Test If True { _ > 0 }
+      On Success Propose "hi" As { i => }
+  )
 
-      }
-      Or Else Do { i =>
-      }
+  Rule ("boolean-do-do") := (
+    With { sth.length } Test If True { _ > 0 }
+      On Success Do { i => }
+      On Failure Do { i => }
+  )
 
-//    With { sth.length } IfDefined { case i if i > 0 => math.sqrt(i) } Then Do Defer { d => } EndDo Else Defer { i => }
-    )}
+  Rule ("boolean-do-propose") := (
+    With { sth.length } Test If True { _ > 0 }
+      On Success Do { i => }
+      On Failure Propose "hi" As { i => }
+  )
+  
+  Rule ("boolean-propose-do") := (
+    With { sth.length } Test If True { _ > 0 }
+      On Success Propose "hi" As { i => }
+      On Failure Do { j => }
+  )
 
+  Rule ("boolean-propose-propose") := (
+    With { sth.length } Test If True { _ > 0 }
+      On Success Propose "hi" As { i => }
+      On Failure Propose "hint" As { j => }
+  )
 
-  Rule ("has-sqrt-2") := {
-//    With { sth.length } IfDefined { case i if i > 0 => math.sqrt(i) } Then Do Defer { d => } Else Do Defer { i => }
+  Rule ("with-do") := (
+    With (sth.length) Do { i => }
+  )
 
-    With { sth.length } IfDefined { case i if i > 0 => math.sqrt(i) } IfSo Then Propose "hello" As { d => } Or Else Do { i => }
-
-  }
-
-  Rule ("is-single-digit") := {
-    With { sth.length.toString } If { _.length == 1 } Do { s => ??? }
-  }
+  Rule ("with-propose") := (
+    With (sth.length) Propose "hello" As { i =>
+    }
+  )
 
   Rule("switch") := {
     With (true) Do { t =>

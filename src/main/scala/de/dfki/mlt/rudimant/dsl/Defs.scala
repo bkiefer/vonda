@@ -110,20 +110,23 @@ object If {
 object DoWord
 object ThenWord
 object ElseWord
+object SuccessWord
+object FailureWord
+object IfWord
 
 trait PartialCondition[A, B]  {
 
-  object thelma {
+  object _success {
     def Do(body: A => Unit): PartialRule[B] = ???
 
-    object propsie {
+    object _propose {
       def As(body: A => Unit): PartialRule[B] = ???
     }
 
-    def Propose(name: Proposal.Descriptor) = propsie
+    def Propose(name: Proposal.Descriptor) = _propose
   }
 
-  def IfSo(yo: ThenWord.type) = thelma
+  def On(w: SuccessWord.type) = _success
 
 //  def Do(body: A => Unit): PartialRule[B] = ???
 
@@ -134,6 +137,18 @@ trait PartialCondition[A, B]  {
 }
 
 trait IfTrueCondition[A] {
+  object _success {
+
+    object _propose {
+      def As(body: A => Unit): IfTrueRule[A] = ???
+    }
+
+    def Do(body: A => Unit): IfTrueRule[A] = ???
+    def Propose(name: Proposal.Descriptor) = _propose
+  }
+
+  def On(w: SuccessWord.type) = _success
+
   def Then(action: Action[A]): IfTrueRule[A] = ???
 
   def Do(body: A => Unit): IfTrueRule[A] = ???
@@ -154,22 +169,22 @@ trait _Rule {
 
 }
 
-trait PartialRuleElse[B] extends _Rule {
-
-  def Do(b: B => Unit): TotalRule = ???
-
-}
-
 trait PartialRule[B] extends _Rule {
 //  def Else(b: Action[B]): TotalRule = ???
 
-  object elsie {
+  object _failure {
+    object _propose {
+      def As(body: B => Unit): TotalRule = ???
+    }
+
     def Do(b: B => Unit): TotalRule = ???
+    def Propose(name: Proposal.Descriptor) = _propose
   }
 
-  def Else(w: DoWord.type) = elsie
+  def On(w: FailureWord.type) = _failure
 
-  def Or(w: ElseWord.type) = elsie
+  def Else(w: DoWord.type) = _failure
+
   def End = this
 
 //  lazy val Else = new _Else
@@ -186,6 +201,17 @@ trait PartialRule[B] extends _Rule {
 }
 
 trait IfTrueRule[A] extends _Rule {
+  object _failure {
+    object _propose {
+      def As(body: A => Unit): TotalRule = ???
+    }
+
+    def Do(b: A => Unit): TotalRule = ???
+    def Propose(name: Proposal.Descriptor) = _propose
+  }
+
+  def On(w: FailureWord.type) = _failure
+
   def Else(b: Action[A]): TotalRule = ???
   def -->(b: Action[A]) = Else(b)
   def -:(b: Action[A]) = Else(b)
@@ -196,6 +222,11 @@ trait TotalRule extends _Rule {
 
 }
 
+trait WithIf[A] {
+  def True(f: A => Boolean): IfTrueCondition[A] = ???
+  def Defined[B](f: PartialFunction[A, B]): PartialCondition[B, A]
+}
+
 trait With[A] {
   def If(f: A => Boolean): IfTrueCondition[A] = ??? //IfDefined[A] { case a if f(a) => a }
   def IfDefined[B](f: PartialFunction[A, B]): PartialCondition[B, A]
@@ -203,7 +234,15 @@ trait With[A] {
   def -?>(f: A => Boolean) = If(f)
   def -:>[B](f: PartialFunction[A, B]) = IfDefined(f)
 
+  def Test(w: IfWord.type): WithIf[A] = ???
+
   def Do(body: A => Unit): TotalRule = ???
+
+  object _propose {
+    def As(body: A => Unit): TotalRule = ???
+  }
+
+  def Propose(desc: Proposal.Descriptor) = _propose
 
 //  def Propose(name: Proposal.Descriptor)(body: A => Unit): TotalRule = ???
 
@@ -248,4 +287,13 @@ object Propose {
   }
 
   def apply[A](desc: Proposal.Descriptor) = NamedProposalFactory(desc)
+}
+
+trait PlainWords {
+  protected val Do = DoWord
+  protected val Then = ThenWord
+  protected val Else = ElseWord
+  protected val Success = SuccessWord
+  protected val Failure = FailureWord
+  protected val If = IfWord
 }
