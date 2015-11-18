@@ -85,13 +85,11 @@ trait Selector[A] extends ActionPhrase[A, Materialisable] {
 
 object Selector {
 
-  sealed trait ActionConsumer
-  
-  case class DeferConsumer[A](body: A => Unit) extends Consumer[A] with ActionConsumer {
+  case class DeferConsumer[A](body: A => Unit) extends Consumer[A] {
     override def eval(value: A) = Deferred({ () => body(value) })
   }
   
-  case class ProposeConsumer[A](desc: Proposal.Descriptor, body: A => Unit) extends Consumer[A] with ActionConsumer {
+  case class ProposeConsumer[A](desc: Proposal.Descriptor, body: A => Unit) extends Consumer[A] {
     override def eval(value: A) = Proposal(desc, { () => body(value) })
   }
 
@@ -146,9 +144,7 @@ object Selector {
       with HasThen[A, FilterNode[A]]
       with HasElse[A, FilterNode[A]] {
 
-    def parent = mkParent(this)
-
-    override def mat = parent.mat
+    override def mat = mkParent(this).mat
 
     override def eval(value: A) = (pred(value), thenBranch, elseBranch) match {
       case (true, Some(c), _) => c.eval(value)
@@ -194,9 +190,7 @@ object Selector {
       with HasThen[B, CollectNode[A, B]]
       with HasElse[A, CollectNode[A, B]] {
 
-    def parent = mkParent(this)
-
-    override def mat = parent.mat
+    override def mat = mkParent(this).mat
 
     override def eval(value: A) = (pf, thenBranch, elseBranch) match {
       case (_pf, Some(c), _) if _pf.isDefinedAt(value) => c.eval(_pf(value))
