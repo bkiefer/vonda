@@ -24,6 +24,7 @@ trait Module extends RuleSet { module =>
     def :=[A <: Materialisable](r: A): Rule = {
       val m = r.mat
       module += Module.NamedRule(name, m)
+      log.debug("Defined rule \"" + name + "\"")
       m
     }
   }
