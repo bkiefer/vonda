@@ -56,11 +56,25 @@ object FirstRunner extends App {
   println("Setting holder to 0")
   Holder.value = 0
 
-  println("Evaluation: [\n" + (engine.evaluate() map { case (r, a) => s"\t$r: $a\n" }).mkString + "]")
+  val e0 = engine.evaluate()
+
+  println("Evaluation: [\n" + (e0 map { case (r, a) => s"\t$r: $a\n" }).mkString + "]")
+
+  for ((r, Proposal(desc, body)) <- e0) {
+    println("Executing proposal \"" + desc + "\":")
+    body()
+  }
 
   println("Setting holder to 42")
   Holder.value = 42
 
-  println("Evaluation: [\n" + (engine.evaluate() map { case (r, a) => s"\t$r: $a\n" }).mkString + "]")
+  val e1 = engine.evaluate()
+
+  println("Evaluation: [\n" + (e1 map { case (r, a) => s"\t$r: $a\n" }).mkString + "]")
+
+  for ((r, Proposal(desc, body)) <- e1) {
+    println("Executing proposal \"" + desc + "\":")
+    body()
+  }
 
 }
