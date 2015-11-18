@@ -40,6 +40,13 @@ object FirstModule extends Module with PlainWords {
     }
   )
 
+  Rule("carry") := (
+    With (Holder.value) Carry ( _ Filter { _ == 0 }
+        On Success Do { i =>
+          log.info("carry ZERO")
+      })
+  )
+
 }
 
 object SecondModule extends Module {

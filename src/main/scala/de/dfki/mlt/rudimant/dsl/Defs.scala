@@ -14,7 +14,7 @@ trait ActionPhrase[In, +Out] {
 
   protected def newDo(body: In => Unit): Out
   protected def newPropose(desc: Proposal.Descriptor, body: In => Unit): Out
-  protected def newCarry(cont: Selector[In] => Materialisable): Out
+  protected def newCarry(cont: Selector[In] => Consumer[In]): Out
 
   class _propose(desc: Proposal.Descriptor) {
     def As(body: In => Unit): Out = newPropose(desc, body)
@@ -23,7 +23,7 @@ trait ActionPhrase[In, +Out] {
   def Do(body: In => Unit): Out = newDo(body)
   def Propose(name: Proposal.Descriptor) = new _propose(name)
 
-  def Carry(cont: Selector[In] => Materialisable): Out = newCarry(cont)
+  def Carry(cont: Selector[In] => Consumer[In]): Out = newCarry(cont)
 
 }
 
@@ -31,10 +31,11 @@ trait HasThen[In, +Out] {
 
   protected def _then_do(body: In => Unit): Out
   protected def _then_propose(desc: Proposal.Descriptor, body: In => Unit): Out
+  protected def _then_carry(cont: Selector[In] => Consumer[In]): Out
 
   object _on_success extends ActionPhrase[In, Out] {
     override protected def newDo(body: In => Unit) = _then_do(body)
-    override protected def newCarry(cont: (Selector[In]) => Materialisable) = ???
+    override protected def newCarry(cont: (Selector[In]) => Consumer[In]) = _then_carry(cont)
     override protected def newPropose(desc: Proposal.Descriptor, body: In => Unit) = _then_propose(desc, body)
   }
 
@@ -46,11 +47,11 @@ trait HasElse[In, +Out] {
 
   protected def _else_do(body: In => Unit): Out
   protected def _else_propose(desc: Proposal.Descriptor, body: In => Unit): Out
-  protected def _else_carry(cont: Selector[In] => Materialisable): Out
+  protected def _else_carry(cont: Selector[In] => Consumer[In]): Out
 
   object _on_failure extends ActionPhrase[In, Out] {
     override protected def newDo(body: In => Unit) = _else_do(body)
-    override protected def newCarry(cont: (Selector[In]) => Materialisable) = _else_carry(cont)
+    override protected def newCarry(cont: (Selector[In]) => Consumer[In]) = _else_carry(cont)
     override protected def newPropose(desc: Proposal.Descriptor, body: In => Unit) = _else_propose(desc, body)
   }
 
@@ -135,9 +136,9 @@ case class _Collect[A, B](pf: PartialFunction[A, B], succBranch: Consumer[B], fa
 
 trait Selector[A] extends ActionPhrase[A, Materialisable] {
 
-  def Filter(predicate: A => Boolean): Materialisable with HasThen[A, Materialisable with HasElse[A, Materialisable]]
+  def Filter(predicate: A => Boolean): Materialisable with Consumer[A] with HasThen[A, Materialisable with Consumer[A] with HasElse[A, Materialisable with Consumer[A]]]
 
-  def Collect[B](func: PartialFunction[A, B]): Materialisable with HasThen[B, Materialisable with HasElse[A, Materialisable]]
+  def Collect[B](func: PartialFunction[A, B]): Materialisable with Consumer[A] with HasThen[B, Materialisable with Consumer[A] with HasElse[A, Materialisable with Consumer[A]]]
 
 }
 
@@ -180,7 +181,9 @@ object Selector {
       Base[A](get, ProposeConsumer(desc, body))
     }
 
-    override protected def newCarry(cont: (Selector[A]) => Materialisable) = ???
+    override protected def newCarry(cont: Selector[A] => Consumer[A]) = {
+      Base[A](get, _Carry(cont(this)))
+    }
 
   }
 
@@ -212,6 +215,8 @@ object Selector {
       __Filter[A]({ child => mkParent(child) }, pred, ProposeConsumer(desc, body), elseBranch)
     }
 
+    override protected def _then_carry(cont: Selector[A] => Consumer[A]) = ???
+
     override protected def _else_do(body: (A) => Unit) = {
       __Filter[A]({ child => mkParent(child) }, pred, thenBranch, elseBranch)
     }
@@ -220,7 +225,7 @@ object Selector {
       __Filter[A]({ child => mkParent(child) }, pred, thenBranch, ProposeConsumer(desc, body))
     }
 
-    override protected def _else_carry(cont: (Selector[A]) => Materialisable) = ???
+    override protected def _else_carry(cont: Selector[A] => Consumer[A]) = ???
 
   }
 
@@ -250,6 +255,8 @@ object Selector {
       __Collect[A, B]({ child => mkParent(child) }, pf, ProposeConsumer(desc, body), elseBranch)
     }
 
+    override protected def _then_carry(cont: Selector[B] => Consumer[B]) = ???
+
     override protected def _else_do(body: (A) => Unit) = {
       __Collect[A, B]({ child => mkParent(child) }, pf, thenBranch, DeferConsumer(body))
     }
@@ -258,7 +265,7 @@ object Selector {
       __Collect[A, B]({ child => mkParent(child) }, pf, thenBranch, ProposeConsumer(desc, body))
     }
 
-    override protected def _else_carry(cont: (Selector[A]) => Materialisable) = ???
+    override protected def _else_carry(cont: Selector[A] => Consumer[A]) = ???
 
   }
 
