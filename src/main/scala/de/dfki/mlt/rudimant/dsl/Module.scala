@@ -18,7 +18,7 @@ trait Module extends RuleSet { module =>
 
   protected def deactivate(module: Module): Unit = ???
 
-  protected def log: Log = ???
+  protected lazy val log = Log(this.getClass)
 
   protected class RuleDef(name: String) {
     def :=[A <: Materialisable](r: A): Rule = {

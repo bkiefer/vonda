@@ -15,32 +15,32 @@ object FirstModule extends Module with PlainWords {
   Rule("check-zero") := (
     With (Holder.value) Filter { _ != 0 }
       On Success Propose "nonzero" As { i =>
-        println("nonzero: " + i + ", will now set to 0")
+        log.info("nonzero: " + i + ", will now set to 0")
         Holder.value = 0
       }
       On Failure Propose "zero" As { j =>
-        println("zero -> will set to 1")
+        log.info("zero -> will set to 1")
         Holder.value = 1
       }
   )
 
   Rule("switch") := (
     With (()) Propose "switch" As { _ =>
-      println("pretending to switch...")
+      log.info("pretending to switch...")
     }
   )
 
   Rule("nonzero") := (
     With (Holder.value) Filter { _ != 0 }
       On Success Do { i =>
-        println("telling ya, it's non-zero")
+        log.info("telling ya, it's non-zero")
     }
   )
 
   Rule("zero") := (
     With (Holder.value) Filter { _ == 0 }
       On Success Do { i =>
-        println("this is indeed a ZERO")
+        log.info("this is indeed a ZERO")
     }
   )
 
