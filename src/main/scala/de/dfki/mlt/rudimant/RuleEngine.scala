@@ -32,8 +32,14 @@ class RuleEngine {
 
   def rules: Iterable[Rule] = _rules flatMap { _.rules }
 
-  def evaluate(): Iterable[(Rule, Action)] = {
+  def evaluate(): Iterable[(Rule, Option[Action])] = {
     for (r <- rules) yield (r, r.eval(null))
   }
+
+}
+
+object RuleEngine {
+
+  trait Env
 
 }

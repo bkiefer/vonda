@@ -1,6 +1,6 @@
 package de.dfki.mlt.rudimant.dsl
 
-import de.dfki.mlt.rudimant.{RuleEngine, Log, RuleSet}
+import de.dfki.mlt.rudimant.{RuleEngine, Log, RuleSet, Rule}
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -53,7 +53,7 @@ object Module {
 
   case class NamedRule(name: String, rule: Rule) extends Rule {
     override def toString = "#" + name
-    override def eval(env: Env) = rule.eval(env)
+    override def eval(env: RuleEngine.Env) = rule.eval(env)
   }
 
 }

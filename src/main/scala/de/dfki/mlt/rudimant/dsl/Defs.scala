@@ -1,9 +1,8 @@
 package de.dfki.mlt.rudimant.dsl
 
 import de.dfki.mlt.rudimant.Proposal.Descriptor
-import de.dfki.mlt.rudimant.{Deferred, NoAction, Action, Proposal}
-
-trait Env
+import de.dfki.mlt.rudimant.Rule.ValueSink
+import de.dfki.mlt.rudimant._
 
 object Words {
   object SuccessWord
@@ -59,10 +58,6 @@ trait HasElse[In, +Out] {
 
 }
 
-trait Rule {
-  def eval(env: Env): Action
-}
-
 trait Materialisable {
   def mat: Rule
 }
@@ -72,7 +67,7 @@ trait Producer[A] {
 }
 
 trait Consumer[-A] {
-  def eval(value: A): Action
+  def toValueSink: ValueSink[A]
 }
 
 trait Selector[A] extends ActionPhrase[A, Materialisable] {
@@ -85,32 +80,22 @@ trait Selector[A] extends ActionPhrase[A, Materialisable] {
 
 object Selector {
 
-  case class DeferConsumer[A](body: A => Unit) extends Consumer[A] {
-    override def eval(value: A) = Deferred({ () => body(value) })
+  case class ActionNode[A](act: Rule.EmitAction[A]) extends Consumer[A] {
+    override def toValueSink = act
   }
   
-  case class ProposeConsumer[A](desc: Proposal.Descriptor, body: A => Unit) extends Consumer[A] {
-    override def eval(value: A) = Proposal(desc, { () => body(value) })
-  }
-
   case class CarryConsumer[A](consumer: Consumer[A]) extends Consumer[A] {
-    override def eval(value: A) = consumer.eval(value)
+    override def toValueSink = consumer.toValueSink
   }
   
   case class RootNode[A](
       get: () => A,
       follow: Option[Consumer[A]] = None)
     extends Materialisable
-      with Rule
       with Selector[A]
       with Producer[A] {
 
-    override def mat = this
-
-    override def eval(env: Env) = follow match {
-      case Some(c) => c.eval(get())
-      case _ => NoAction
-    }
+    override def mat = Rule.Root(get, follow map { _.toValueSink })
 
     override def Filter(predicate: (A) => Boolean) = {
       FilterNode[A]({ child => RootNode(get, Some(child)) }, predicate)
@@ -121,11 +106,11 @@ object Selector {
     }
 
     override protected def newDo(body: A => Unit) = {
-      RootNode[A](get, Some(DeferConsumer(body)))
+      RootNode[A](get, Some(ActionNode(Rule.Do(body))))
     }
 
     override protected def newPropose(desc: Proposal.Descriptor, body: A => Unit) = {
-      RootNode[A](get, Some(ProposeConsumer(desc, body)))
+      RootNode[A](get, Some(ActionNode(Rule.Propose(desc, body))))
     }
 
     override protected def newCarry(cont: Selector[A] => Consumer[A]) = {
@@ -146,20 +131,16 @@ object Selector {
 
     override def mat = mkParent(this).mat
 
-    override def eval(value: A) = (pred(value), thenBranch, elseBranch) match {
-      case (true, Some(c), _) => c.eval(value)
-      case (false, _, Some(c)) => c.eval(value)
-      case _ => NoAction
-    }
+    override def toValueSink = Rule.Filter(pred, thenBranch map { _.toValueSink }, elseBranch map { _.toValueSink })
 
     protected def toSelector: Selector[A] = ???
 
     override protected def _then_do(body: (A) => Unit) = {
-      FilterNode[A]({ child => mkParent(child) }, pred, Some(DeferConsumer(body)), elseBranch)
+      FilterNode[A]({ child => mkParent(child) }, pred, Some(ActionNode(Rule.Do(body))), elseBranch)
     }
 
     override protected def _then_propose(desc: Descriptor, body: (A) => Unit) = {
-      FilterNode[A]({ child => mkParent(child) }, pred, Some(ProposeConsumer(desc, body)), elseBranch)
+      FilterNode[A]({ child => mkParent(child) }, pred, Some(ActionNode(Rule.Propose(desc, body))), elseBranch)
     }
 
     override protected def _then_carry(cont: Selector[A] => Consumer[A]) = {
@@ -167,11 +148,11 @@ object Selector {
     }
 
     override protected def _else_do(body: (A) => Unit) = {
-      FilterNode[A]({ child => mkParent(child) }, pred, thenBranch, elseBranch)
+      FilterNode[A]({ child => mkParent(child) }, pred, thenBranch, Some(ActionNode(Rule.Do(body))))
     }
 
     override protected def _else_propose(desc: Descriptor, body: (A) => Unit) = {
-      FilterNode[A]({ child => mkParent(child) }, pred, thenBranch, Some(ProposeConsumer(desc, body)))
+      FilterNode[A]({ child => mkParent(child) }, pred, thenBranch, Some(ActionNode(Rule.Propose(desc, body))))
     }
 
     override protected def _else_carry(cont: Selector[A] => Consumer[A]) = {
@@ -192,21 +173,17 @@ object Selector {
 
     override def mat = mkParent(this).mat
 
-    override def eval(value: A) = (pf, thenBranch, elseBranch) match {
-      case (_pf, Some(c), _) if _pf.isDefinedAt(value) => c.eval(_pf(value))
-      case (_, _, Some(c)) => c.eval(value)
-      case _ => NoAction
-    }
+    override def toValueSink = Rule.Collect(pf, thenBranch map { _.toValueSink }, elseBranch map { _.toValueSink })
 
     protected def toThenSelector: Selector[B] = ???
     protected def toElseSelector: Selector[A] = ???
 
     override protected def _then_do(body: (B) => Unit) = {
-      CollectNode[A, B]({ child => mkParent(child) }, pf, Some(DeferConsumer(body)), elseBranch)
+      CollectNode[A, B]({ child => mkParent(child) }, pf, Some(ActionNode(Rule.Do(body))), elseBranch)
     }
 
     override protected def _then_propose(desc: Descriptor, body: (B) => Unit) = {
-      CollectNode[A, B]({ child => mkParent(child) }, pf, Some(ProposeConsumer(desc, body)), elseBranch)
+      CollectNode[A, B]({ child => mkParent(child) }, pf, Some(ActionNode(Rule.Propose(desc, body))), elseBranch)
     }
 
     override protected def _then_carry(cont: Selector[B] => Consumer[B]) = {
@@ -214,11 +191,11 @@ object Selector {
     }
 
     override protected def _else_do(body: (A) => Unit) = {
-      CollectNode[A, B]({ child => mkParent(child) }, pf, thenBranch, Some(DeferConsumer(body)))
+      CollectNode[A, B]({ child => mkParent(child) }, pf, thenBranch, Some(ActionNode(Rule.Do(body))))
     }
 
     override protected def _else_propose(desc: Descriptor, body: (A) => Unit) = {
-      CollectNode[A, B]({ child => mkParent(child) }, pf, thenBranch, Some(ProposeConsumer(desc, body)))
+      CollectNode[A, B]({ child => mkParent(child) }, pf, thenBranch, Some(ActionNode(Rule.Propose(desc, body))))
     }
 
     override protected def _else_carry(cont: Selector[A] => Consumer[A]) = {

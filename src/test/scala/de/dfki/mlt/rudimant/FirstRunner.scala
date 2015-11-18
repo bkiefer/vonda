@@ -71,14 +71,14 @@ object FirstRunner extends App {
     println("Results: [\n" + (results map { case (r, a) => s"\t$r: $a\n" }).mkString + "]")
 
     println("Executing deferred actions...")
-    for ((r, Deferred(body)) <- results) {
+    for ((r, Some(Deferred(body))) <- results) {
       println("Executing body of " + r)
       body()
     }
     println("Done executing deferred actions.")
 
     println("Executing proposals...")
-    for ((r, Proposal(desc, body)) <- results) {
+    for ((r, Some(Proposal(desc, body))) <- results) {
       println("Executing proposal \"" + desc + "\":")
       body()
     }
