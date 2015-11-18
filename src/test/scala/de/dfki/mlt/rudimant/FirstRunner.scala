@@ -24,12 +24,6 @@ object FirstModule extends Module with PlainWords {
       }
   )
 
-  Rule("switch") := (
-    With (()) Propose "switch" As { _ =>
-      log.info("pretending to switch...")
-    }
-  )
-
   Rule("nonzero") := (
     With (Holder.value) Filter { _ != 0 }
       On Success Do { i =>
@@ -44,12 +38,12 @@ object FirstModule extends Module with PlainWords {
     }
   )
 
-//  Rule("switch") := {
-//    With (true) Do { t =>
-//      deactivate(this)
-//      activate(SecondModule)
-//    }
-//  }
+  Rule("switch") := (
+    With (()) Propose "switch" As { _ =>
+      deactivate(this)
+      activate(SecondModule)
+    }
+  )
 
 }
 

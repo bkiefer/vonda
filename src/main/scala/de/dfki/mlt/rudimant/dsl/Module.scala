@@ -16,9 +16,13 @@ trait Module extends RuleSet { module =>
     rules += rule
   }
 
-  protected def activate(module: Module): Unit = ???
+  protected def activate(module: Module): Unit = {
+    log.warning("Not implemented: activate({}), ignoring!", module)
+  }
 
-  protected def deactivate(module: Module): Unit = ???
+  protected def deactivate(module: Module): Unit = {
+    log.warning("Not implemented: deactivate({}), ignoring!", module)
+  }
 
   protected lazy val log = Log(this.getClass)
 
