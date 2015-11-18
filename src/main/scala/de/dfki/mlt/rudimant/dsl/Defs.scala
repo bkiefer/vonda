@@ -84,10 +84,6 @@ object Selector {
     override def toValueSink = act
   }
   
-  case class CarryConsumer[A](consumer: Consumer[A]) extends Consumer[A] {
-    override def toValueSink = consumer.toValueSink
-  }
-  
   case class RootNode[A](
       get: () => A,
       follow: Option[Consumer[A]] = None)
@@ -114,7 +110,7 @@ object Selector {
     }
 
     override protected def newCarry(cont: Selector[A] => Consumer[A]) = {
-      RootNode[A](get, Some(CarryConsumer(cont(this))))
+      RootNode[A](get, Some(cont(this)))
     }
 
   }
@@ -144,7 +140,7 @@ object Selector {
     }
 
     override protected def _then_carry(cont: Selector[A] => Consumer[A]) = {
-      FilterNode[A]({ child => mkParent(child) }, pred, Some(CarryConsumer(cont(this.toSelector))), elseBranch)
+      FilterNode[A]({ child => mkParent(child) }, pred, Some(cont(this.toSelector)), elseBranch)
     }
 
     override protected def _else_do(body: (A) => Unit) = {
@@ -156,7 +152,7 @@ object Selector {
     }
 
     override protected def _else_carry(cont: Selector[A] => Consumer[A]) = {
-      FilterNode[A]({ child => mkParent(child) }, pred, thenBranch, Some(CarryConsumer(cont(this.toSelector))))
+      FilterNode[A]({ child => mkParent(child) }, pred, thenBranch, Some(cont(this.toSelector)))
     }
 
   }
@@ -187,7 +183,7 @@ object Selector {
     }
 
     override protected def _then_carry(cont: Selector[B] => Consumer[B]) = {
-      CollectNode[A, B]({ child => mkParent(child) }, pf, Some(CarryConsumer(cont(this.toThenSelector))), elseBranch)
+      CollectNode[A, B]({ child => mkParent(child) }, pf, Some(cont(this.toThenSelector)), elseBranch)
     }
 
     override protected def _else_do(body: (A) => Unit) = {
@@ -199,7 +195,7 @@ object Selector {
     }
 
     override protected def _else_carry(cont: Selector[A] => Consumer[A]) = {
-      CollectNode[A, B]({ child => mkParent(child) }, pf, thenBranch, Some(CarryConsumer(cont(this.toElseSelector))))
+      CollectNode[A, B]({ child => mkParent(child) }, pf, thenBranch, Some(cont(this.toElseSelector)))
     }
 
   }
