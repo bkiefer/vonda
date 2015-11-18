@@ -88,9 +88,20 @@ case class ProposeConsumer[A](desc: Proposal.Descriptor, body: A => Unit) extend
   override def eval(value: A) = Proposal(desc, { () => body(value) })
 }
 
-case class _Get[A](get: () => A, consumer: Consumer[A]) extends Rule with Materialisable {
+case class _Get[A](get: () => A, consumer: Consumer[A]) extends Rule with Materialisable with AcceptsFilter[_Get[A], A] {
   override def eval(env: Env) = consumer.eval(get())
   override def mat = this
+
+  override def withFilter(fil: _Filter[A]) = copy(consumer = fil)
+}
+
+trait AcceptsFilter[Self, A] {
+  def withFilter(fil: _Filter[A]): Self
+}
+
+trait AcceptsThenElse[Self, A, B] {
+  def withThen(c: Consumer[A]): Self
+  def withElse(c: Consumer[B]): Self
 }
 
 case class _Carry[A](consumer: Consumer[A]) extends Consumer[A] {
@@ -101,8 +112,13 @@ case class _Map[A, B](func: A => B, consumer: Consumer[B]) extends Consumer[A] {
   override def eval(value: A) = consumer.eval(func(value))
 }
 
-case class _Filter[A](pred: A => Boolean, thenBranch: Consumer[A], elseBranch: Consumer[A]) extends Consumer[A] {
+case class _Filter[A](pred: A => Boolean, thenBranch: Consumer[A], elseBranch: Consumer[A])
+    extends Consumer[A]
+    with AcceptsThenElse[_Filter[A], A, A] {
   override def eval(value: A) = if (pred(value)) thenBranch.eval(value) else elseBranch.eval(value)
+
+  override def withThen(c: Consumer[A]) = copy(thenBranch = c)
+  override def withElse(c: Consumer[A]) = copy(elseBranch = c)
 }
 
 case class _Collect[A, B](pf: PartialFunction[A, B], succBranch: Consumer[B], failBranch: Consumer[A]) extends Consumer[A] {
@@ -125,24 +141,39 @@ trait Selector[A] extends ActionPhrase[A, Materialisable] {
 
 object Selector {
 
-  case class Base[A](get: () => A) extends Selector[A] {
+  trait __Self[A] {
+    def self: Consumer[A]
+  }
 
-    override def Filter(predicate: (A) => Boolean) = new Materialisable with HasThen[A, Materialisable with HasElse[A, Materialisable]] {
-      override def mat = _Get(get, _Filter(predicate, NoConsumer, NoConsumer))
+  class __Defer[A](body: A => Unit) extends __Self[A] {
+    override def self = DeferConsumer(body)
+  }
 
-      override protected def _then_do(thenBody: (A) => Unit) = new Materialisable with HasElse[A, Materialisable] {
-        override def mat = _Get(get, _Filter(predicate, DeferConsumer(thenBody), NoConsumer))
+  class __Propose[A](desc: Descriptor, body: A => Unit) extends __Self[A] {
+    override def self = ProposeConsumer(desc, body)
+  }
 
-        override protected def _else_do(elseBody: (A) => Unit) = _Get(get, _Filter(predicate, DeferConsumer(thenBody), DeferConsumer(elseBody)))
-        override protected def _else_propose(desc: Descriptor, elseBody: (A) => Unit) = _Get(get, _Filter(predicate, DeferConsumer(thenBody), ProposeConsumer(desc, elseBody)))
+  case class Base[A](get: () => A) extends Selector[A] { out =>
+    protected def self = _Get(get, NoConsumer)
+
+    override def Filter(predicate: (A) => Boolean) = new Materialisable with HasThen[A, Materialisable with HasElse[A, Materialisable]] { far =>
+      protected def self = _Filter(predicate, NoConsumer, NoConsumer)
+      override def mat = out.self.withFilter(self)
+
+      override protected def _then_do(thenBody: (A) => Unit) = new __Defer[A](thenBody) with Materialisable with HasElse[A, Materialisable] { near =>
+//        override def mat = _Get(get, _Filter(predicate, self, NoConsumer))
+        override def mat = out.self.withFilter(far.self.withThen(self))
+
+        override protected def _else_do(elseBody: (A) => Unit) = _Get(get, _Filter(predicate, self, DeferConsumer(elseBody)))
+        override protected def _else_propose(desc: Descriptor, elseBody: (A) => Unit) = _Get(get, _Filter(predicate, self, ProposeConsumer(desc, elseBody)))
         override protected def _else_carry(cont: (Selector[A]) => Materialisable) = ???
       }
 
-      override protected def _then_propose(thenDesc: Descriptor, thenBody: (A) => Unit) = new Materialisable with HasElse[A, Materialisable] {
-        override def mat = _Get(get, _Filter(predicate, ProposeConsumer(thenDesc, thenBody), NoConsumer))
+      override protected def _then_propose(thenDesc: Descriptor, thenBody: (A) => Unit) = new __Propose[A](thenDesc, thenBody) with Materialisable with HasElse[A, Materialisable] {
+        override def mat = _Get(get, _Filter(predicate, self, NoConsumer))
 
-        override protected def _else_do(elseBody: (A) => Unit) = _Get(get, _Filter(predicate, ProposeConsumer(thenDesc, thenBody), DeferConsumer(elseBody)))
-        override protected def _else_propose(elseDesc: Descriptor, elseBody: (A) => Unit) = _Get(get, _Filter(predicate, ProposeConsumer(thenDesc, thenBody), ProposeConsumer(elseDesc, elseBody)))
+        override protected def _else_do(elseBody: (A) => Unit) = _Get(get, _Filter(predicate, self, DeferConsumer(elseBody)))
+        override protected def _else_propose(elseDesc: Descriptor, elseBody: (A) => Unit) = _Get(get, _Filter(predicate, self, ProposeConsumer(elseDesc, elseBody)))
         override protected def _else_carry(cont: (Selector[A]) => Materialisable) = ???
       }
 
