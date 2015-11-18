@@ -33,9 +33,7 @@ class RuleEngine {
   def rules: Iterable[Rule] = _rules flatMap { _.rules }
 
   def evaluate(): Seq[Proposal] = {
-    for (r <- rules) {
-      r.apply(null)
-    }
+    val as = for (r <- rules) yield (r, r.eval(null))
 
     // TODO
 
