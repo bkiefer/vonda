@@ -207,6 +207,8 @@ object Selector {
 
     override def eval(value: A) = if (pred(value)) thenBranch.eval(value) else elseBranch.eval(value)
 
+    protected def toSelector: Selector[A] = ???
+
     override protected def _then_do(body: (A) => Unit) = {
       __Filter[A]({ child => mkParent(child) }, pred, DeferConsumer(body), elseBranch)
     }
@@ -215,7 +217,9 @@ object Selector {
       __Filter[A]({ child => mkParent(child) }, pred, ProposeConsumer(desc, body), elseBranch)
     }
 
-    override protected def _then_carry(cont: Selector[A] => Consumer[A]) = ???
+    override protected def _then_carry(cont: Selector[A] => Consumer[A]) = {
+      __Filter[A]({ child => mkParent(child) }, pred, _Carry(cont(this.toSelector)), elseBranch)
+    }
 
     override protected def _else_do(body: (A) => Unit) = {
       __Filter[A]({ child => mkParent(child) }, pred, thenBranch, elseBranch)
@@ -225,7 +229,9 @@ object Selector {
       __Filter[A]({ child => mkParent(child) }, pred, thenBranch, ProposeConsumer(desc, body))
     }
 
-    override protected def _else_carry(cont: Selector[A] => Consumer[A]) = ???
+    override protected def _else_carry(cont: Selector[A] => Consumer[A]) = {
+      __Filter[A]({ child => mkParent(child) }, pred, thenBranch, _Carry(cont(this.toSelector)))
+    }
 
   }
 
@@ -247,6 +253,9 @@ object Selector {
       if (pf.isDefinedAt(value)) { thenBranch.eval(pf.apply(value)) } else { elseBranch.eval(value) }
     }
 
+    protected def toThenSelector: Selector[B] = ???
+    protected def toElseSelector: Selector[A] = ???
+
     override protected def _then_do(body: (B) => Unit) = {
       __Collect[A, B]({ child => mkParent(child) }, pf, DeferConsumer(body), elseBranch)
     }
@@ -255,7 +264,9 @@ object Selector {
       __Collect[A, B]({ child => mkParent(child) }, pf, ProposeConsumer(desc, body), elseBranch)
     }
 
-    override protected def _then_carry(cont: Selector[B] => Consumer[B]) = ???
+    override protected def _then_carry(cont: Selector[B] => Consumer[B]) = {
+      __Collect[A, B]({ child => mkParent(child) }, pf, _Carry(cont(this.toThenSelector)), elseBranch)
+    }
 
     override protected def _else_do(body: (A) => Unit) = {
       __Collect[A, B]({ child => mkParent(child) }, pf, thenBranch, DeferConsumer(body))
@@ -265,7 +276,9 @@ object Selector {
       __Collect[A, B]({ child => mkParent(child) }, pf, thenBranch, ProposeConsumer(desc, body))
     }
 
-    override protected def _else_carry(cont: Selector[A] => Consumer[A]) = ???
+    override protected def _else_carry(cont: Selector[A] => Consumer[A]) = {
+      __Collect[A, B]({ child => mkParent(child) }, pf, thenBranch, _Carry(cont(this.toElseSelector)))
+    }
 
   }
 
