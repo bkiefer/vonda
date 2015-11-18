@@ -1,6 +1,6 @@
 package de.dfki.mlt.rudimant.dsl
 
-import de.dfki.mlt.rudimant.{Log, RuleSet}
+import de.dfki.mlt.rudimant.{RuleEngine, Log, RuleSet}
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -15,6 +15,8 @@ trait Module extends RuleSet { module =>
   protected def +=(rule: Rule): Unit = {
     rules += rule
   }
+
+  protected def engine: RuleEngine = ???
 
   protected def activate(module: Module): Unit = {
     log.warning("Not implemented: activate({}), ignoring!", module)
