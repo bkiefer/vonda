@@ -87,10 +87,6 @@ object Selector {
 
   sealed trait ActionConsumer
   
-  case object NoConsumer extends Consumer[Any] with ActionConsumer {
-    override def eval(value: Any) = NoAction
-  }
-  
   case class DeferConsumer[A](body: A => Unit) extends Consumer[A] with ActionConsumer {
     override def eval(value: A) = Deferred({ () => body(value) })
   }
@@ -105,7 +101,7 @@ object Selector {
   
   case class RootNode[A](
       get: () => A,
-      follow: Consumer[A] = NoConsumer)
+      follow: Option[Consumer[A]] = None)
     extends Materialisable
       with Rule
       with Selector[A]
@@ -113,26 +109,29 @@ object Selector {
 
     override def mat = this
 
-    override def eval(env: Env) = follow.eval(get())
+    override def eval(env: Env) = follow match {
+      case Some(c) => c.eval(get())
+      case _ => NoAction
+    }
 
     override def Filter(predicate: (A) => Boolean) = {
-      FilterNode[A]({ child => RootNode(get, child) }, predicate)
+      FilterNode[A]({ child => RootNode(get, Some(child)) }, predicate)
     }
 
     override def Collect[B](pf: PartialFunction[A, B]) = {
-      CollectNode[A, B]({ child => RootNode(get, child) }, pf)
+      CollectNode[A, B]({ child => RootNode(get, Some(child)) }, pf)
     }
 
     override protected def newDo(body: A => Unit) = {
-      RootNode[A](get, DeferConsumer(body))
+      RootNode[A](get, Some(DeferConsumer(body)))
     }
 
     override protected def newPropose(desc: Proposal.Descriptor, body: A => Unit) = {
-      RootNode[A](get, ProposeConsumer(desc, body))
+      RootNode[A](get, Some(ProposeConsumer(desc, body)))
     }
 
     override protected def newCarry(cont: Selector[A] => Consumer[A]) = {
-      RootNode[A](get, CarryConsumer(cont(this)))
+      RootNode[A](get, Some(CarryConsumer(cont(this))))
     }
 
   }
@@ -140,8 +139,8 @@ object Selector {
   case class FilterNode[A](
       mkParent: FilterNode[A] => Materialisable,
       pred: A => Boolean,
-      thenBranch: Consumer[A] = NoConsumer,
-      elseBranch: Consumer[A] = NoConsumer)
+      thenBranch: Option[Consumer[A]] = None,
+      elseBranch: Option[Consumer[A]] = None)
     extends Materialisable
       with Consumer[A]
       with HasThen[A, FilterNode[A]]
@@ -151,20 +150,24 @@ object Selector {
 
     override def mat = parent.mat
 
-    override def eval(value: A) = if (pred(value)) thenBranch.eval(value) else elseBranch.eval(value)
+    override def eval(value: A) = (pred(value), thenBranch, elseBranch) match {
+      case (true, Some(c), _) => c.eval(value)
+      case (false, _, Some(c)) => c.eval(value)
+      case _ => NoAction
+    }
 
     protected def toSelector: Selector[A] = ???
 
     override protected def _then_do(body: (A) => Unit) = {
-      FilterNode[A]({ child => mkParent(child) }, pred, DeferConsumer(body), elseBranch)
+      FilterNode[A]({ child => mkParent(child) }, pred, Some(DeferConsumer(body)), elseBranch)
     }
 
     override protected def _then_propose(desc: Descriptor, body: (A) => Unit) = {
-      FilterNode[A]({ child => mkParent(child) }, pred, ProposeConsumer(desc, body), elseBranch)
+      FilterNode[A]({ child => mkParent(child) }, pred, Some(ProposeConsumer(desc, body)), elseBranch)
     }
 
     override protected def _then_carry(cont: Selector[A] => Consumer[A]) = {
-      FilterNode[A]({ child => mkParent(child) }, pred, CarryConsumer(cont(this.toSelector)), elseBranch)
+      FilterNode[A]({ child => mkParent(child) }, pred, Some(CarryConsumer(cont(this.toSelector))), elseBranch)
     }
 
     override protected def _else_do(body: (A) => Unit) = {
@@ -172,11 +175,11 @@ object Selector {
     }
 
     override protected def _else_propose(desc: Descriptor, body: (A) => Unit) = {
-      FilterNode[A]({ child => mkParent(child) }, pred, thenBranch, ProposeConsumer(desc, body))
+      FilterNode[A]({ child => mkParent(child) }, pred, thenBranch, Some(ProposeConsumer(desc, body)))
     }
 
     override protected def _else_carry(cont: Selector[A] => Consumer[A]) = {
-      FilterNode[A]({ child => mkParent(child) }, pred, thenBranch, CarryConsumer(cont(this.toSelector)))
+      FilterNode[A]({ child => mkParent(child) }, pred, thenBranch, Some(CarryConsumer(cont(this.toSelector))))
     }
 
   }
@@ -184,8 +187,8 @@ object Selector {
   case class CollectNode[A, B](
       mkParent: CollectNode[A, B] => Materialisable,
       pf: PartialFunction[A, B],
-      thenBranch: Consumer[B] = NoConsumer,
-      elseBranch: Consumer[A] = NoConsumer)
+      thenBranch: Option[Consumer[B]] = None,
+      elseBranch: Option[Consumer[A]] = None)
     extends Materialisable
       with Consumer[A]
       with HasThen[B, CollectNode[A, B]]
@@ -195,35 +198,37 @@ object Selector {
 
     override def mat = parent.mat
 
-    override def eval(value: A) = {
-      if (pf.isDefinedAt(value)) { thenBranch.eval(pf.apply(value)) } else { elseBranch.eval(value) }
+    override def eval(value: A) = (pf, thenBranch, elseBranch) match {
+      case (_pf, Some(c), _) if _pf.isDefinedAt(value) => c.eval(_pf(value))
+      case (_, _, Some(c)) => c.eval(value)
+      case _ => NoAction
     }
 
     protected def toThenSelector: Selector[B] = ???
     protected def toElseSelector: Selector[A] = ???
 
     override protected def _then_do(body: (B) => Unit) = {
-      CollectNode[A, B]({ child => mkParent(child) }, pf, DeferConsumer(body), elseBranch)
+      CollectNode[A, B]({ child => mkParent(child) }, pf, Some(DeferConsumer(body)), elseBranch)
     }
 
     override protected def _then_propose(desc: Descriptor, body: (B) => Unit) = {
-      CollectNode[A, B]({ child => mkParent(child) }, pf, ProposeConsumer(desc, body), elseBranch)
+      CollectNode[A, B]({ child => mkParent(child) }, pf, Some(ProposeConsumer(desc, body)), elseBranch)
     }
 
     override protected def _then_carry(cont: Selector[B] => Consumer[B]) = {
-      CollectNode[A, B]({ child => mkParent(child) }, pf, CarryConsumer(cont(this.toThenSelector)), elseBranch)
+      CollectNode[A, B]({ child => mkParent(child) }, pf, Some(CarryConsumer(cont(this.toThenSelector))), elseBranch)
     }
 
     override protected def _else_do(body: (A) => Unit) = {
-      CollectNode[A, B]({ child => mkParent(child) }, pf, thenBranch, DeferConsumer(body))
+      CollectNode[A, B]({ child => mkParent(child) }, pf, thenBranch, Some(DeferConsumer(body)))
     }
 
     override protected def _else_propose(desc: Descriptor, body: (A) => Unit) = {
-      CollectNode[A, B]({ child => mkParent(child) }, pf, thenBranch, ProposeConsumer(desc, body))
+      CollectNode[A, B]({ child => mkParent(child) }, pf, thenBranch, Some(ProposeConsumer(desc, body)))
     }
 
     override protected def _else_carry(cont: Selector[A] => Consumer[A]) = {
-      CollectNode[A, B]({ child => mkParent(child) }, pf, thenBranch, CarryConsumer(cont(this.toElseSelector)))
+      CollectNode[A, B]({ child => mkParent(child) }, pf, thenBranch, Some(CarryConsumer(cont(this.toElseSelector))))
     }
 
   }
