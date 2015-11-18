@@ -14,7 +14,7 @@ trait ActionPhrase[In, Out] {
 
   protected def newDo(body: In => Unit): Out
   protected def newPropose(desc: Proposal.Descriptor, body: In => Unit): Out
-  protected def newCarry(cont: Selector[In] => Rule): Out
+  protected def newCarry(cont: Selector[In] => Materialisable): Out
 
   class _propose(desc: Proposal.Descriptor) {
     def As(body: In => Unit): Out = newPropose(desc, body)
@@ -23,7 +23,7 @@ trait ActionPhrase[In, Out] {
   def Do(body: In => Unit): Out = newDo(body)
   def Propose(name: Proposal.Descriptor) = new _propose(name)
 
-  def Carry(cont: Selector[In] => Rule): Out = newCarry(cont)
+  def Carry(cont: Selector[In] => Materialisable): Out = newCarry(cont)
 
 }
 
@@ -34,7 +34,7 @@ trait HasThen[In, Out] {
 
   object _on_success extends ActionPhrase[In, Out] {
     override protected def newDo(body: In => Unit) = _then_do(body)
-    override protected def newCarry(cont: (Selector[In]) => Rule) = ???
+    override protected def newCarry(cont: (Selector[In]) => Materialisable) = ???
     override protected def newPropose(desc: Proposal.Descriptor, body: In => Unit) = _then_propose(desc, body)
   }
 
@@ -42,15 +42,15 @@ trait HasThen[In, Out] {
 
 }
 
-trait HasElse[In, Out] extends Rule {
+trait HasElse[In, Out] {
 
   protected def _else_do(body: In => Unit): Out
   protected def _else_propose(desc: Proposal.Descriptor, body: In => Unit): Out
-  protected def _else_carry(cont: Selector[In] => Rule): Out
+  protected def _else_carry(cont: Selector[In] => Materialisable): Out
 
   object _on_failure extends ActionPhrase[In, Out] {
     override protected def newDo(body: In => Unit) = _else_do(body)
-    override protected def newCarry(cont: (Selector[In]) => Rule) = _else_carry(cont)
+    override protected def newCarry(cont: (Selector[In]) => Materialisable) = _else_carry(cont)
     override protected def newPropose(desc: Proposal.Descriptor, body: In => Unit) = _else_propose(desc, body)
   }
 
@@ -59,7 +59,7 @@ trait HasElse[In, Out] extends Rule {
 }
 
 trait Materialisable {
-  def materialise: Rule
+  def mat: Rule
 }
 
 trait Rule {
@@ -90,7 +90,7 @@ case class ProposeConsumer[A](desc: Proposal.Descriptor, body: A => Unit) extend
 
 case class _Get[A](get: () => A, consumer: Consumer[A]) extends Rule with Materialisable {
   override def eval(env: Env) = consumer.eval(get())
-  override def materialise = this
+  override def mat = this
 }
 
 case class _Carry[A](consumer: Consumer[A]) extends Consumer[A] {
@@ -111,13 +111,14 @@ case class _Collect[A, B](pf: PartialFunction[A, B], succBranch: Consumer[B], fa
   }
 }
 
-trait Selector[A] extends ActionPhrase[A, TotalRule] {
+trait Selector[A] extends ActionPhrase[A, Materialisable] {
 
-  def Filter(predicate: A => Boolean): Rule with HasThen[A, Rule with HasElse[A, Rule]]
-  def Collect[B](func: PartialFunction[A, B]): Rule with HasThen[B, Rule with HasElse[A, Rule]] = ???
+  def Filter(predicate: A => Boolean): Materialisable with HasThen[A, Materialisable with HasElse[A, Materialisable]]
+
+  def Collect[B](func: PartialFunction[A, B]): Materialisable with HasThen[B, Materialisable with HasElse[A, Materialisable]] = ???
 
   override protected def newDo(body: A => Unit) = ???
-  override protected def newCarry(cont: (Selector[A]) => Rule) = ???
+  override protected def newCarry(cont: (Selector[A]) => Materialisable) = ???
   override protected def newPropose(desc: Proposal.Descriptor, body: A => Unit) = ???
 
 }
@@ -126,24 +127,23 @@ object Selector {
 
   case class Base[A](get: () => A) extends Selector[A] {
 
-    override def Filter(predicate: (A) => Boolean) = new Rule with HasThen[A, Rule with HasElse[A, Rule]] with Materialisable {
-      override def materialise = _Get(get, _Filter(predicate, NoConsumer, NoConsumer))
-      @deprecated override def eval(env: Env) = materialise.eval(env)
+    override def Filter(predicate: (A) => Boolean) = new Materialisable with HasThen[A, Materialisable with HasElse[A, Materialisable]] {
+      override def mat = _Get(get, _Filter(predicate, NoConsumer, NoConsumer))
 
-      override protected def _then_do(thenBody: (A) => Unit) = new Rule with HasElse[A, Rule] with Materialisable {
-        override def materialise = _Get(get, _Filter(predicate, DeferConsumer(thenBody), NoConsumer))
-        @deprecated override def eval(env: Env) = materialise.eval(env)
+      override protected def _then_do(thenBody: (A) => Unit) = new Materialisable with HasElse[A, Materialisable] {
+        override def mat = _Get(get, _Filter(predicate, DeferConsumer(thenBody), NoConsumer))
+
         override protected def _else_do(elseBody: (A) => Unit) = _Get(get, _Filter(predicate, DeferConsumer(thenBody), DeferConsumer(elseBody)))
         override protected def _else_propose(desc: Descriptor, elseBody: (A) => Unit) = _Get(get, _Filter(predicate, DeferConsumer(thenBody), ProposeConsumer(desc, elseBody)))
-        override protected def _else_carry(cont: (Selector[A]) => Rule) = ???
+        override protected def _else_carry(cont: (Selector[A]) => Materialisable) = ???
       }
 
-      override protected def _then_propose(thenDesc: Descriptor, thenBody: (A) => Unit) = new Rule with HasElse[A, Rule] with Materialisable {
-        override def materialise = _Get(get, _Filter(predicate, ProposeConsumer(thenDesc, thenBody), NoConsumer))
-        @deprecated override def eval(env: Env) = materialise.eval(env)
+      override protected def _then_propose(thenDesc: Descriptor, thenBody: (A) => Unit) = new Materialisable with HasElse[A, Materialisable] {
+        override def mat = _Get(get, _Filter(predicate, ProposeConsumer(thenDesc, thenBody), NoConsumer))
+
         override protected def _else_do(elseBody: (A) => Unit) = _Get(get, _Filter(predicate, ProposeConsumer(thenDesc, thenBody), DeferConsumer(elseBody)))
         override protected def _else_propose(elseDesc: Descriptor, elseBody: (A) => Unit) = _Get(get, _Filter(predicate, ProposeConsumer(thenDesc, thenBody), ProposeConsumer(elseDesc, elseBody)))
-        override protected def _else_carry(cont: (Selector[A]) => Rule) = ???
+        override protected def _else_carry(cont: (Selector[A]) => Materialisable) = ???
       }
 
     }

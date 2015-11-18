@@ -4,7 +4,7 @@ import de.dfki.mlt.rudimant.{Log, RuleSet}
 
 import scala.collection.mutable.ArrayBuffer
 
-trait Module extends RuleSet {
+trait Module extends RuleSet { module =>
 
   def name = this.getClass.getCanonicalName
 
@@ -21,7 +21,11 @@ trait Module extends RuleSet {
   protected def log: Log = ???
 
   protected trait RuleDef {
-    def :=[A <: Rule](r: A): A = ???
+    def :=[A <: Materialisable](r: A): Rule = {
+      val m = r.mat
+      module += m
+      m
+    }
   }
 
   protected def Rule(name: String): RuleDef = ???
