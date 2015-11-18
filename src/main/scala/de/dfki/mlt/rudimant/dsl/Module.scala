@@ -20,15 +20,15 @@ trait Module extends RuleSet { module =>
 
   protected def log: Log = ???
 
-  protected trait RuleDef {
+  protected class RuleDef(name: String) {
     def :=[A <: Materialisable](r: A): Rule = {
       val m = r.mat
-      module += m
+      module += Module.NamedRule(name, m)
       m
     }
   }
 
-  protected def Rule(name: String): RuleDef = ???
+  protected def Rule(name: String): RuleDef = new RuleDef(name)
 
 //  protected def $$[A](body: With[A] => Unit) = Re(body)
 
@@ -37,5 +37,14 @@ trait Module extends RuleSet { module =>
   protected def $[A](body: => A) = With(body)
 
 //  protected def Do[A](body: A => Unit) = Action.DoAction(body)
+
+}
+
+object Module {
+
+  case class NamedRule(name: String, rule: Rule) extends Rule {
+    override def toString = "#" + name
+    override def eval(env: Env) = rule.eval(env)
+  }
 
 }
