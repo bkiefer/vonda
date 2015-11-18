@@ -26,27 +26,27 @@ trait ActionPhrase[In, Out] {
 
 }
 
-trait PartialCondition[A, B] {
+trait HasThen[In, Out] {
 
-  object _on_success extends ActionPhrase[A, PartialRule[A, B]] {
-    override protected def newDo(body: A => Unit) = ???
-    override protected def newCarry(cont: (Selector[A]) => Rule) = ???
-    override protected def newPropose(desc: Proposal.Descriptor, body: A => Unit) = ???
+  object _on_success extends ActionPhrase[In, Out] {
+    override protected def newDo(body: In => Unit) = ???
+    override protected def newCarry(cont: (Selector[In]) => Rule) = ???
+    override protected def newPropose(desc: Proposal.Descriptor, body: In => Unit) = ???
   }
 
   def On(w: Words.SuccessWord.type) = _on_success
 
 }
 
-trait IfTrueCondition[A] {
+trait HasElse[In, Out] extends Rule {
 
-  object _on_success extends ActionPhrase[A, IfTrueRule[A]] {
-    override protected def newDo(body: A => Unit) = ???
-    override protected def newCarry(cont: (Selector[A]) => Rule) = ???
-    override protected def newPropose(desc: Proposal.Descriptor, body: A => Unit) = ???
+  object _on_failure extends ActionPhrase[In, Out] {
+    override protected def newDo(body: In => Unit) = ???
+    override protected def newCarry(cont: (Selector[In]) => Rule) = ???
+    override protected def newPropose(desc: Proposal.Descriptor, body: In => Unit) = ???
   }
 
-  def On(w: Words.SuccessWord.type) = _on_success
+  def On(w: Words.FailureWord.type) = _on_failure
 
 }
 
@@ -56,37 +56,14 @@ trait Rule {
 
 }
 
-trait PartialRule[A, B] extends Rule {
-
-  object _on_failure extends ActionPhrase[B, TotalRule] {
-    override protected def newDo(body: B => Unit) = ???
-    override protected def newCarry(cont: (Selector[B]) => Rule) = ???
-    override protected def newPropose(desc: Proposal.Descriptor, body: B => Unit) = ???
-  }
-
-  def On(w: Words.FailureWord.type) = _on_failure
-
-}
-
-trait IfTrueRule[A] extends Rule {
-  object _on_failure extends ActionPhrase[A, TotalRule] {
-    override protected def newDo(body: A => Unit) = ???
-    override protected def newCarry(cont: (Selector[A]) => Rule) = ???
-    override protected def newPropose(desc: Proposal.Descriptor, body: A => Unit) = ???
-  }
-
-  def On(w: Words.FailureWord.type) = _on_failure
-
-}
-
 trait TotalRule extends Rule {
 
 }
 
 case class Selector[A](get: () => A) extends ActionPhrase[A, TotalRule] {
 
-  def Filter(predicate: A => Boolean): IfTrueCondition[A] = ??? //IfDefined[A] { case a if f(a) => a }
-  def Collect[B](func: PartialFunction[A, B]): PartialCondition[B, A] = ???
+  def Filter(predicate: A => Boolean): Rule with HasThen[A, Rule with HasElse[A, Rule]] = ???
+  def Collect[B](func: PartialFunction[A, B]): Rule with HasThen[A, Rule with HasElse[B, Rule]] = ???
 
   override protected def newDo(body: A => Unit) = ???
   override protected def newCarry(cont: (Selector[A]) => Rule) = ???
