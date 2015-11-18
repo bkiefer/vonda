@@ -55,43 +55,35 @@ object SecondModule extends Module {
 
 object FirstRunner extends App {
 
-  val engine = new RuleEngine()
+  def doEvaluate(engine: RuleEngine): Unit = {
 
+    println("Evaluating rules in engine " + engine)
+
+    val results = engine.evaluate()
+
+    println("Results: [\n" + (results map { case (r, a) => s"\t$r: $a\n" }).mkString + "]")
+
+    println("Executing deferred actions...")
+    for ((r, Deferred(body)) <- results) {
+      println("Executing body of " + r)
+      body()
+    }
+    println("Done executing deferred actions.")
+
+    println("Executing proposals...")
+    for ((r, Proposal(desc, body)) <- results) {
+      println("Executing proposal \"" + desc + "\":")
+      body()
+    }
+    println("Done executing proposals.")
+
+  }
+
+
+  val engine = new RuleEngine()
   engine.add(FirstModule)
 
-  // list all active rules
-//  for (r <- engine.rules) {
-//    println(r)
-//  }
-
-  val e0 = engine.evaluate()
-
-  println("Evaluation: [\n" + (e0 map { case (r, a) => s"\t$r: $a\n" }).mkString + "]")
-
-  println("Executing deferred actions...")
-  for ((r, Deferred(body)) <- e0) {
-    println("Executing body of " + r)
-    body()
-  }
-
-  for ((r, Proposal(desc, body)) <- e0) {
-    println("Executing proposal \"" + desc + "\":")
-    body()
-  }
-
-  val e1 = engine.evaluate()
-
-  println("Evaluation: [\n" + (e1 map { case (r, a) => s"\t$r: $a\n" }).mkString + "]")
-
-  println("Executing deferred actions...")
-  for ((r, Deferred(body)) <- e1) {
-    println("Executing body of " + r)
-    body()
-  }
-
-  for ((r, Proposal(desc, body)) <- e1) {
-    println("Executing proposal \"" + desc + "\":")
-    body()
-  }
+  doEvaluate(engine)
+  doEvaluate(engine)
 
 }
