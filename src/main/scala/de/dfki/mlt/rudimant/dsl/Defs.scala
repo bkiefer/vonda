@@ -76,15 +76,17 @@ trait Consumer[-A] {
   def eval(value: A): Action
 }
 
-case object NoConsumer extends Consumer[Any] {
+trait ActionConsumer
+
+case object NoConsumer extends Consumer[Any] with ActionConsumer {
   override def eval(value: Any) = NoAction
 }
 
-case class DeferConsumer[A](body: A => Unit) extends Consumer[A] {
+case class DeferConsumer[A](body: A => Unit) extends Consumer[A] with ActionConsumer {
   override def eval(value: A) = Deferred({ () => body(value) })
 }
 
-case class ProposeConsumer[A](desc: Proposal.Descriptor, body: A => Unit) extends Consumer[A] {
+case class ProposeConsumer[A](desc: Proposal.Descriptor, body: A => Unit) extends Consumer[A] with ActionConsumer {
   override def eval(value: A) = Proposal(desc, { () => body(value) })
 }
 
