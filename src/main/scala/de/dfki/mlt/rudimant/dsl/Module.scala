@@ -32,7 +32,7 @@ trait Module extends RuleSet { module =>
     def :=[A <: Materialisable](r: A): Rule = {
       val m = r.mat
       module += Module.NamedRule(name, m)
-      log.debug("Defined rule \"{}\"", name)
+      log.debug("Defined rule \"{}\": {}", name, m)
       m
     }
   }
@@ -41,7 +41,7 @@ trait Module extends RuleSet { module =>
 
 //  protected def $$[A](body: With[A] => Unit) = Re(body)
 
-  protected def With[A](body: => A) = Selector.Base({ () => body })
+  protected def With[A](body: => A) = Selector.RootNode({ () => body })
 
   protected def $[A](body: => A) = With(body)
 
