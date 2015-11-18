@@ -8,6 +8,8 @@ trait Module extends RuleSet { module =>
 
   def name = this.getClass.getCanonicalName
 
+  log.debug("Initialising module \"{}\"", name)
+
   override val rules = ArrayBuffer.empty[Rule]
 
   protected def +=(rule: Rule): Unit = {
@@ -24,7 +26,7 @@ trait Module extends RuleSet { module =>
     def :=[A <: Materialisable](r: A): Rule = {
       val m = r.mat
       module += Module.NamedRule(name, m)
-      log.debug("Defined rule \"" + name + "\"")
+      log.debug("Defined rule \"{}\"", name)
       m
     }
   }

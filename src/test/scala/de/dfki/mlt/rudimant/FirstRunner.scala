@@ -15,7 +15,7 @@ object FirstModule extends Module with PlainWords {
   Rule("check-zero") := (
     With (Holder.value) Filter { _ != 0 }
       On Success Propose "nonzero" As { i =>
-        log.info("nonzero: " + i + ", will now set to 0")
+        log.info("nonzero: {}, will now set to 0", i)
         Holder.value = 0
       }
       On Failure Propose "zero" As { j =>
