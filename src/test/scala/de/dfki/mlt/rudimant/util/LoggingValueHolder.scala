@@ -14,7 +14,7 @@ class LoggingValueHolder[A](init: => A) {
   }
 
   def value_=(to: A) {
-    log.debug("setting value to {}", to)
+    log.debug("setting value to {} (was: {})", to, _value)
     _value = to
   }
 
