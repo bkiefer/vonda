@@ -10,7 +10,7 @@ object Holder extends LoggingValueHolder(0)
 object FirstModule extends Module with PlainWords {
 
   Rule("check-zero") := (
-    With (Holder.value) Filter { b => b != 0 && b == 20 }
+    With (Holder.value) Filter { _ != 0 }
       On Success Propose "nonzero" As { i =>
         log.info("nonzero: {}, will now set to 0", i)
         Holder.value = 0
@@ -22,7 +22,7 @@ object FirstModule extends Module with PlainWords {
   )
 
   Rule("nonzero") := (
-    With (Holder.value) Filter { b => b != 0 }
+    With (Holder.value) Filter { _ != 0 }
       On Success Do { i =>
         log.info("telling ya, it's non-zero")
     }
