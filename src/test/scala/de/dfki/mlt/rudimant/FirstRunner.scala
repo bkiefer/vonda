@@ -24,11 +24,25 @@ object FirstModule extends Module with PlainWords {
       }
   )
 
-  Rule("switch") := {
+  Rule("switch") := (
     With (()) Propose "switch" As { _ =>
       println("pretending to switch...")
     }
-  }
+  )
+
+  Rule("nonzero") := (
+    With (Holder.value) Filter { _ != 0 }
+      On Success Do { i =>
+        // is nonzero
+    }
+  )
+
+  Rule("zero") := (
+    With (Holder.value) Filter { _ == 0 }
+      On Success Do { i =>
+        // is zero
+    }
+  )
 
 //  Rule("switch") := {
 //    With (true) Do { t =>
