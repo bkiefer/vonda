@@ -33,14 +33,14 @@ object FirstModule extends Module with PlainWords {
   Rule("nonzero") := (
     With (Holder.value) Filter { _ != 0 }
       On Success Do { i =>
-        // is nonzero
+        println("telling ya, it's non-zero")
     }
   )
 
   Rule("zero") := (
     With (Holder.value) Filter { _ == 0 }
       On Success Do { i =>
-        // is zero
+        println("this is indeed a ZERO")
     }
   )
 
@@ -79,6 +79,12 @@ object FirstRunner extends App {
 
   println("Evaluation: [\n" + (e0 map { case (r, a) => s"\t$r: $a\n" }).mkString + "]")
 
+  println("Executing deferred actions...")
+  for ((r, Deferred(body)) <- e0) {
+    println("Executing body of " + r)
+    body()
+  }
+
   for ((r, Proposal(desc, body)) <- e0) {
     println("Executing proposal \"" + desc + "\":")
     body()
@@ -87,6 +93,12 @@ object FirstRunner extends App {
   val e1 = engine.evaluate()
 
   println("Evaluation: [\n" + (e1 map { case (r, a) => s"\t$r: $a\n" }).mkString + "]")
+
+  println("Executing deferred actions...")
+  for ((r, Deferred(body)) <- e1) {
+    println("Executing body of " + r)
+    body()
+  }
 
   for ((r, Proposal(desc, body)) <- e1) {
     println("Executing proposal \"" + desc + "\":")
