@@ -15,10 +15,12 @@ object FirstModule extends Module with PlainWords {
   Rule("check-zero") := (
     With (Holder.value) Filter { _ != 0 }
       On Success Propose "nonzero" As { i =>
-        println("nonzero: " + i)
+        println("nonzero: " + i + ", will now set to 0")
+        Holder.value = 0
       }
       On Failure Propose "zero" As { j =>
-        println("zero!")
+        println("zero -> will set to 1")
+        Holder.value = 1
       }
   )
 
@@ -53,9 +55,6 @@ object FirstRunner extends App {
 //    println(r)
 //  }
 
-  println("Setting holder to 0")
-  Holder.value = 0
-
   val e0 = engine.evaluate()
 
   println("Evaluation: [\n" + (e0 map { case (r, a) => s"\t$r: $a\n" }).mkString + "]")
@@ -64,9 +63,6 @@ object FirstRunner extends App {
     println("Executing proposal \"" + desc + "\":")
     body()
   }
-
-  println("Setting holder to 42")
-  Holder.value = 42
 
   val e1 = engine.evaluate()
 
