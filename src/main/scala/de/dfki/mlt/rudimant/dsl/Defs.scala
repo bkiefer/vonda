@@ -60,14 +60,20 @@ trait TotalRule extends Rule {
 
 }
 
-case class Selector[A](get: () => A) extends ActionPhrase[A, TotalRule] {
+trait Selector[A] extends ActionPhrase[A, TotalRule] {
 
   def Filter(predicate: A => Boolean): Rule with HasThen[A, Rule with HasElse[A, Rule]] = ???
-  def Collect[B](func: PartialFunction[A, B]): Rule with HasThen[A, Rule with HasElse[B, Rule]] = ???
+  def Collect[B](func: PartialFunction[A, B]): Rule with HasThen[B, Rule with HasElse[A, Rule]] = ???
 
   override protected def newDo(body: A => Unit) = ???
   override protected def newCarry(cont: (Selector[A]) => Rule) = ???
   override protected def newPropose(desc: Proposal.Descriptor, body: A => Unit) = ???
+
+}
+
+object Selector {
+
+  case class Base[A](get: () => A) extends Selector[A]
 
 }
 

@@ -28,7 +28,7 @@ trait Module extends RuleSet {
 
 //  protected def $$[A](body: With[A] => Unit) = Re(body)
 
-  protected def With[A](body: => A) = Selector({ () => body })
+  protected def With[A](body: => A) = Selector.Base({ () => body })
 
   protected def $[A](body: => A) = With(body)
 
