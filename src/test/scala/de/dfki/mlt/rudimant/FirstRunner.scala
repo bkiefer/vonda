@@ -3,8 +3,6 @@ package de.dfki.mlt.rudimant
 import de.dfki.mlt.rudimant.util.LoggingValueHolder
 import dsl._
 
-import scala.language.postfixOps
-
 object Holder extends LoggingValueHolder(0)
 
 object FirstModule extends Module with PlainWords {
