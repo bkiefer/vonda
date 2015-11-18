@@ -26,7 +26,7 @@ trait ActionPhrase[In, Out] {
 
 }
 
-trait PartialCondition[A, B] extends ActionPhrase[A, PartialRule[A, B]] {
+trait PartialCondition[A, B] {
 
   object _on_success extends ActionPhrase[A, PartialRule[A, B]] {
     override protected def newDo(body: A => Unit) = ???
