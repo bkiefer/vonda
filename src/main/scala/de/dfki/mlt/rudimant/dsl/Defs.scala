@@ -139,10 +139,6 @@ trait Selector[A] extends ActionPhrase[A, Materialisable] {
 
   def Collect[B](func: PartialFunction[A, B]): Materialisable with HasThen[B, Materialisable with HasElse[A, Materialisable]]
 
-  override protected def newDo(body: A => Unit) = ???
-  override protected def newCarry(cont: (Selector[A]) => Materialisable) = ???
-  override protected def newPropose(desc: Proposal.Descriptor, body: A => Unit) = ???
-
 }
 
 object Selector {
@@ -175,6 +171,16 @@ object Selector {
     override def Collect[B](pf: PartialFunction[A, B]) = {
       __Collect[A, B]({ child => Base(get, child) }, pf, NoConsumer, NoConsumer)
     }
+
+    override protected def newDo(body: A => Unit) = {
+      Base[A](get, DeferConsumer(body))
+    }
+
+    override protected def newPropose(desc: Proposal.Descriptor, body: A => Unit) = {
+      Base[A](get, ProposeConsumer(desc, body))
+    }
+
+    override protected def newCarry(cont: (Selector[A]) => Materialisable) = ???
 
   }
 

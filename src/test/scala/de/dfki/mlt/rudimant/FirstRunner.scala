@@ -24,6 +24,12 @@ object FirstModule extends Module with PlainWords {
       }
   )
 
+  Rule("switch") := {
+    With (()) Propose "switch" As { _ =>
+      println("pretending to switch...")
+    }
+  }
+
 //  Rule("switch") := {
 //    With (true) Do { t =>
 //      deactivate(this)
