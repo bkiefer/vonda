@@ -105,7 +105,7 @@ object Selector {
   
   case class RootNode[A](
       get: () => A,
-      follow: Consumer[A])
+      follow: Consumer[A] = NoConsumer)
     extends Materialisable
       with Rule
       with Selector[A]
@@ -116,11 +116,11 @@ object Selector {
     override def eval(env: Env) = follow.eval(get())
 
     override def Filter(predicate: (A) => Boolean) = {
-      FilterNode[A]({ child => RootNode(get, child) }, predicate, NoConsumer, NoConsumer)
+      FilterNode[A]({ child => RootNode(get, child) }, predicate)
     }
 
     override def Collect[B](pf: PartialFunction[A, B]) = {
-      CollectNode[A, B]({ child => RootNode(get, child) }, pf, NoConsumer, NoConsumer)
+      CollectNode[A, B]({ child => RootNode(get, child) }, pf)
     }
 
     override protected def newDo(body: A => Unit) = {
@@ -137,15 +137,11 @@ object Selector {
 
   }
 
-  object RootNode {
-    def apply[A](get: () => A): RootNode[A] = RootNode[A](get, NoConsumer)
-  }
-
   case class FilterNode[A](
       mkParent: FilterNode[A] => Materialisable,
       pred: A => Boolean,
-      thenBranch: Consumer[A],
-      elseBranch: Consumer[A])
+      thenBranch: Consumer[A] = NoConsumer,
+      elseBranch: Consumer[A] = NoConsumer)
     extends Materialisable
       with Consumer[A]
       with HasThen[A, FilterNode[A]]
@@ -188,8 +184,8 @@ object Selector {
   case class CollectNode[A, B](
       mkParent: CollectNode[A, B] => Materialisable,
       pf: PartialFunction[A, B],
-      thenBranch: Consumer[B],
-      elseBranch: Consumer[A])
+      thenBranch: Consumer[B] = NoConsumer,
+      elseBranch: Consumer[A] = NoConsumer)
     extends Materialisable
       with Consumer[A]
       with HasThen[B, CollectNode[A, B]]
