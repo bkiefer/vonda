@@ -2,9 +2,12 @@ package de.dfki.mlt.rudimant.dsl
 
 import de.dfki.mlt.rudimant.{RuleEngine, Log, RuleSet, Rule}
 
+import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-trait Module extends RuleSet { module =>
+import Module._
+
+trait Module extends RuleSet {
 
   def name = this.getClass.getCanonicalName
 
@@ -12,8 +15,15 @@ trait Module extends RuleSet { module =>
 
   override val rules = ArrayBuffer.empty[Rule]
 
-  protected def +=(rule: Rule): Unit = {
-    rules += rule
+  protected def addRule(path: List[String], name: String, rule: Rule): Unit = {
+    val ps = if (path.isEmpty) "" else currentPath.mkString("/") + "/"
+
+    // TODO: process disjoint rules!
+
+    val ruleName = Module.this.name + "#" + ps + name
+
+    log.debug("Adding rule \"{}\": {}", ruleName, rule)
+    rules += NamedRule(ruleName, rule)
   }
 
   protected def engine: RuleEngine = ???
@@ -26,14 +36,32 @@ trait Module extends RuleSet { module =>
     log.warning("Not implemented: deactivate({}), ignoring!", module)
   }
 
+  private val ctxStack = mutable.Stack[String]()
+
+  protected def currentPath: List[String] = ctxStack.toList.reverse
+
+  protected def Disjoint(name: String)(body: => Unit): Unit = {
+    log.debug("Creating disjoint context \"{}\"", name)
+
+    // now execute the body
+    ctxStack.push(name)
+    try {
+      body
+    }
+    finally {
+      ctxStack.pop()
+    }
+
+    log.debug("Done creating disjoint context {}", name)
+  }
+
   protected lazy val log = Log(this.getClass)
 
   protected class RuleDef(name: String) {
-    def :=[A <: Materialisable](r: A): Rule = {
-      val m = r.mat
-      module += Module.NamedRule(name, m)
-      log.debug("Defined rule \"{}\": {}", name, m)
-      m
+    def :=(r: Materialisable): Rule = {
+      val rule = r.mat
+      Module.this.addRule(currentPath, name, rule)
+      rule
     }
   }
 
@@ -52,7 +80,7 @@ trait Module extends RuleSet { module =>
 object Module {
 
   case class NamedRule(name: String, rule: Rule) extends Rule {
-    override def toString = "#" + name
+    override def toString = "rule:" + name
     override def eval(env: RuleEngine.Env) = rule.eval(env)
   }
 

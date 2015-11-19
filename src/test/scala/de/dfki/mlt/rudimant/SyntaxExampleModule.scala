@@ -130,4 +130,20 @@ object SyntaxExampleModule extends Module with PlainWords {
     }
   }
 
+  Disjoint ("disjoint-rules") {
+
+    Rule ("rule-A") := (
+      With { sth.length }
+      Filter { _ == 0 }
+      On Success Do { i => }
+    )
+
+    Rule ("rule-B") := (
+      With { sth.length }
+      Filter { _ != 0 }
+      On Success Do { i => }
+    )
+
+  }
+
 }

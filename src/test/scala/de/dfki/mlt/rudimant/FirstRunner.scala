@@ -19,19 +19,23 @@ object FirstModule extends Module with PlainWords {
       }
   )
 
-  Rule("nonzero") := (
-    With (Holder.value) Filter { _ != 0 }
-      On Success Do { i =>
-        log.info("telling ya, it's non-zero")
-    }
-  )
+  Disjoint ("zero-or-nonzero") {
 
-  Rule("zero") := (
-    With (Holder.value) Filter { _ == 0 }
-      On Success Do { i =>
-        log.info("this is indeed a ZERO")
-    }
-  )
+    Rule("nonzero") := (
+      With (Holder.value) Filter { _ != 0 }
+        On Success Do { i =>
+          log.info("telling ya, it's non-zero")
+      }
+    )
+
+    Rule("zero") := (
+      With (Holder.value) Filter { _ == 0 }
+        On Success Do { i =>
+          log.info("this is indeed a ZERO")
+      }
+    )
+
+  }
 
   Rule("switch") := (
     With (()) Propose "switch" As { _ =>
