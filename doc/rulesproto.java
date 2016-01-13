@@ -40,9 +40,9 @@ if (currentSA.hasTheme <= pronoun) {
   // the pronoun specification
 
   // assuming that they come sorted by time, latest first
-  val turn = 0;
+  var turn = 0;
   //for (sa <- collectionOfSAs.ofType(SpeechAct) if sa.type >= SpeechAct)
-  for (val sa : sa.type >= SpeechAct) { // OR: query(sa.type >= speechAct)
+  for (sa : sa.type >= SpeechAct) { // OR: query(sa.type >= speechAct)
     ++turn;
     if (sa.time - currentSA.time > MAX_TIME
         || turn > MAX_TURN)
@@ -73,7 +73,7 @@ if (currentSA.type == AcceptOffer) {
   if (offer = lastMatchingSA(@Offer(_, sender=currentSA.addressee))) {
     createAction(offer.Frame, offer.getArguments(), _something);
   } else {
-    propose(clarify) {
+    propose("clarify") {
       // maybe a misunderstanding?
       // TODO: this is maybe not covered by the current literal syntax:
       // splicing in the last argument
@@ -85,7 +85,7 @@ if (currentSA.type == AcceptOffer) {
 /** If something i proposed is disconfirmed, i'll ask for an alternative */
 ask_alternative:
 if (currentSA.type == Disconfirm) {
-  propose(ask-alternative) {
+  propose("ask-alternative") {
     emitSA(@WHQuestion(currentSA.Frame, refersTo=currentSA.id,
                        currentSA.getArguments()));
   }
@@ -122,7 +122,7 @@ if ((currentSA.type == Inform || currnetSA.type == Confirm)
 assign_task:
 if (currentSA <= @Inform(Activity, hasActivity=?activity, sender=?sender)) {
   tasknum = getTaskNum(taskName); // get task no from: task_\([0-9]+\)
-  emitBBTask(BBTask:TakeTask, tasknum, sender);
+  emitBBTask(BBTask.TakeTask, tasknum, sender);
 }
 
 
@@ -142,12 +142,12 @@ if (currentSA <= @Request(Bringing, hasTheme=_, sender=_)) {
     // getPrefBoxToTake() could be a SPARQL query
     prefBox = getPrefBoxToTake();
     if (prefBox == NULL || _lastIncomingSA <= @Decline(Removing ...)) {
-      propose(ask-box) {
+      propose("ask-box") {
         // which box should i take away?
         emitSA(@WHQuestion(Removing, hasTheme="box", refersTo=currentSA.id));
       }
     } else { // should i take away the glue?
-      propose(take-away) {
+      propose("take-away") {
         // getContentInBox() could be a SPARQL query
         var content = getContentInBox(prefBox);
         emitSA(@YNQuestion(Removing, hasTheme=content,
