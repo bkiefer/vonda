@@ -1,0 +1,104 @@
+* SYNTAX DEFINITION
+  - abbreviations
+    - assign proper rdf literals to labels:
+      def Frame = da:Frame // given the namespace abbrev da exists
+    - values that come from the tuple store
+      val currentSA =
+         getLast("select ?t ?s where ?s <rdf:type> SpeechAct ?t" , sinceWhen)
+         where getLast is predefined function accessing hfc, or the right
+         aggregate
+      val lastSAs = querySorted("?t", "select ?t ?s where ?s <rdf:type> SpeechAct ?t, ?s sender ?sender filter ?sender != I_MYSELF")
+      val mylastSAs = querySorted("?t", "select ?t ?s where ?s <rdf:type> SpeechAct ?t, ?s sender ?sender filter ?sender == I_MYSELF")
+      val currentSA = lastSAs.getLast()
+    - ???
+  + rule labels
+  + if ... then ... else
+  + loops (over internal variables, results of queries, ...)
+    + destructuring !
+  + propose
+  + local variables, introduced with 'var' ? or start with '_' ?
+  + statements
+    + function calls
+    + emit (just a function among others?)
+    + set and access values
+      + "local" variables (should we have that)
+      + in RDF: URIs and values under paths
+  - boolean expressions
+    + abbreviated rdf access: using something like currentSA.Frame means:
+      take the object value of
+      <currentSAUri> <Frame> <Object>
+
+    + String and number literals
+    - rdf literals? Maybe they have to be marked, so distinguish them
+      from variables and shortcuts
+    + SA "literals" and graphs, possibly like this:
+      @Request(Repeat, what=_)
+      @Offer(_, hasTheme="goal")
+      where _ is a don't care, for required slots or values of properties
+
+      How do we handle the next case (local variables or other information
+      put into the graph, how to
+      detect what's literal and what has to be interpreted?)
+      emitDA(@Inform(Explanation, what=game.lastMove.Question.explanation));
+    + polymorphic operators >=, <=, ==
+      + get the appropriate meaning for rdf types and properties:
+        subType, subProperty, ...
+      + <= for subsumption or == for exact match of everything that
+        isn't a don't care. Does >= make sense? possibly.
+      - we also want '!' to mean absence of a value or a property, or maybe test
+        for 'null' ??
+
+  + speech act syntax (SA literals) for matches and assignments and emits
+    (i.e. as arguments to function calls)
+  + calls to functions
+    hysoc example: emitBBTask, fullySpecified(Task), getPrefBoxToTake() (or is
+      that the next category?)
+    pal/quiz example: gameLogic.newRound(), ...
+  + function calls that are in reality calls to the data base:
+    hysoc: getLocationOf(sender), getEmptySlotAt(location), getLast(<query>)
+  - timeouts
+
+* WORK CHUNKS
+  - parsing of syntax
+  - checking and evaluation of shortcuts
+  - type / semantic validity checking
+    - Verification during compilation stage
+      Do the specified shortcuts, rdf accesses and SA graphs adhere to the
+      ontology? Do they make sense in a type inference way?
+
+  - code generation
+  - runtime system
+
+* THOUGHTS
+
+what's currentSA:
+currentSA = select last incoming speechact (URI) from the outside that has
+            occured between the last time we updated our variables and now.
+            Comes from interpretations, so may be underspecified and be
+            enriched by rules.
+
+lastSA = my last outgoing speech act
+lastSAs = all my outgoing speech acts, sorted by time
+
+These should be myLastSA(s), and lastSA(s) should be the incoming ones. If we
+think about multi-party, should that be divided? maybe not.
+
+- Firing of rules is extremely dependent on proper change tracking: Only rules
+  where one of the preconds has changed since the last "run" (which does not
+  mean the fixpoint to collect all the proposals, but the time since the last
+  proposal was executed) may be taken into consideration.
+
+- We have to find out what to do with the information that we generate during
+  the proposal generation phase. Is that new or not? Currently I think it is.
+
+- Another issue is that we should not add new information from the time when
+  we send the IntentionList until we get the result of the intention selection
+  back, so the state remains the same when the selected intention is executed
+
+* Possible extensions: (already in example files)
+
+- Subsumption/Matching + binding variables?
+  e.g. if (currentSA <= @Inform(Activity, hasActivity=?activity, sender=?sender))
+
+- SA literals: splicing in arguments:
+  emitSA(@Clarification(currentSA.Frame, currentSA.getArguments()));
