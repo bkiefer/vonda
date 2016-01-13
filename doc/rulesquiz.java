@@ -10,7 +10,7 @@
 // A new game is started
 initiated:
 if (game.status == initiated) {
-  propose(start-game) {
+  propose("start-game") {
     if (currentUser.gamePlayed(game.name) == 0) {
       emitDA(@Inform(Instructions, what=game.name, ... ));
     }
@@ -28,8 +28,9 @@ if (game.status == startSession && ! myLastSA <= @ChoiceQuestion(Role)) {
 }
 
 // A role has been chosen by the game partner
+role_chosen:
 if (currentSA <= @Inform(Role, hasActor=_) && (game.status == startSession)) {
-  propose(roleChosen-newRound) {
+  propose("roleChosen-newRound") {
     var actor = currentSA.hasActor;
 
     // this is a transaction of three actions!
@@ -91,6 +92,7 @@ if (game.status == questionAsked && game.lastMove.Question != null
 }
 
 // An answer was given
+answer_given1:
 if (currentSA <= @Answer(Quiz, what=_)) {
   /* Done by the game logic!
      game.lastMove.tries++;
