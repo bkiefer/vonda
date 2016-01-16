@@ -31,20 +31,37 @@ comment: MULTI_L_COMMENT | ONE_L_COMMENT;
 
 if_statement:	IF LPAR boolean_exp RPAR statement (ELSE statement)?;	// erlaubt die Schreibweise ohne {} bei einem einzigen Statement
 
-while_statement:	WHILE LPAR boolean_exp RPAR while_statement_block
-			| DO while_statement_block WHILE LPAR boolean_exp RPAR;
+while_statement:	WHILE LPAR boolean_exp RPAR loop_statement_block
+			| DO loop_statement_block WHILE LPAR boolean_exp RPAR;
 
-for_statement:	FOR LPAR assignment SEMICOLON exp SEMICOLON exp RPAR statement_block
-		| FOR LPAR VARIABLE COLON exp RPAR statement_block
-                | FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR statement_block;	// ist exp richtig?
+for_statement:	FOR LPAR assignment SEMICOLON exp SEMICOLON exp RPAR loop_statement_block
+		| FOR LPAR VARIABLE COLON exp RPAR loop_statement_block
+                | FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block;	// ist exp richtig?
                    // for ((arg, val) : exp)
                   // wir gehen provisorisch von exp aus, könnte aber auch boolean_exp (line 45???)
 
 statement_block:	LBRACE (statement)* RBRACE;
 
-while_statement_block:	LBRACE (w_statement)* RBRACE;
+loop_statement_block:	LBRACE (loop_statement)* RBRACE;
 
-w_statement:	statement | (CONTINUE | BREAK) SEMICOLON;
+// loop_statement = alle statements, nur dass in jedem Nachkömmling break oder continue aufgerufen werden können
+
+loop_statement:	(comment)*
+                (exp SEMICOLON
+                    | (CONTINUE | BREAK) SEMICOLON
+                    | loop_propose_statement        // macht es Sinn, im propose abbrechen zu können??
+                    | loop_if_statement
+                    | while_statement
+                    | for_statement
+                    | loop_statement_block
+                    | SEMICOLON
+                ) (comment)*;
+
+loop_propose_statement: PROPOSE LPAR propose_arg RPAR loop_propose_block;
+
+loop_propose_block: LBRACE loop_statement+ RBRACE;
+
+loop_if_statement: IF LPAR boolean_exp RPAR loop_statement (ELSE loop_statement)?;
 
 function_call: (VARIABLE | passender_name) LPAR (exp (COMMA exp)*)? RPAR;
 
@@ -109,7 +126,7 @@ literal_or_graph_exp:	LITERAL_OR_GRAPH LPAR (exp (COMMA exp)*)? RPAR;
 assignment:	((DEC_VAR)? VARIABLE | passender_name) ASSIGN exp;
 
 // dient dem Abfangen von Rechnungen
-number:         (INCREMENT | DECREMENT)? (INT | FLOAT);
+number:         (INCREMENT | DECREMENT)? ((INT | FLOAT | VARIABLE) | passender_name);
 arithmetic_operator:        MINUS | PLUS | DIV | MUL | MOD;
 arithmetic:     number (arithmetic_operator number)*;
 
