@@ -66,8 +66,6 @@ exp_braceless:	boolean_exp
                   | WILDCARD
                   | VARIABLE
                   | NULL
-                  | INT
-                  | FLOAT
                 )
               ;
 
@@ -87,12 +85,11 @@ simple_b_exp_braceless:	arithmetic
                           | FALSE
                           | TRUE
                           | NULL
-                          | INT
-                          | FLOAT
                         )
                   ;
 
-boolean_exp:	simple_b_exp (boolean_op exp)*
+boolean_exp:	LPAR boolean_exp RPAR (boolean_op exp)*
+                | simple_b_exp (boolean_op exp)*
                 | NOT boolean_exp
                 ;
 
@@ -112,9 +109,9 @@ literal_or_graph_exp:	LITERAL_OR_GRAPH LPAR (exp (COMMA exp)*)? RPAR;
 assignment:	((DEC_VAR)? VARIABLE | passender_name) ASSIGN exp;
 
 // dient dem Abfangen von Rechnungen
-number:         INT | FLOAT;
+number:         (INCREMENT | DECREMENT)? (INT | FLOAT);
 arithmetic_operator:        MINUS | PLUS | DIV | MUL | MOD;
-arithmetic:     number (arithmetic_operator number)+;
+arithmetic:     number (arithmetic_operator number)*;
 
 
 
@@ -168,7 +165,9 @@ arithmetic:     number (arithmetic_operator number)+;
 	
 // mathematical operators:
         PLUS: '+';
+        INCREMENT: '++';
 	MINUS: '-';
+        DECREMENT: '--';
 	DIV: '/';
 	MUL: '*';
         MOD: '%';
