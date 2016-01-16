@@ -19,12 +19,10 @@ label:          VARIABLE COLON;
 statement:	(comment)*
              (exp SEMICOLON
 		| propose_statement
-		| literal_or_graph_statement
 		| if_statement
 		| while_statement
 		| for_statement
 		| statement_block
-                //| arithmetic
 		| SEMICOLON
             ) (comment)*
          ;
@@ -106,17 +104,11 @@ propose_statement: 	PROPOSE LPAR propose_arg RPAR propose_block;
 
 propose_block:	LBRACE statement+ RBRACE; 
 
-propose_arg: passender_name  // string expression 
-            |
-            (
-                VARIABLE
-               | STRING
-            )
-            ;
+string_expression: ((STRING | VARIABLE) | passender_name) (PLUS ((STRING | VARIABLE) | passender_name))*;
+
+propose_arg: string_expression;
 
 literal_or_graph_exp:	LITERAL_OR_GRAPH LPAR (exp (COMMA exp)* (COMMA usw)?)? RPAR;
-
-literal_or_graph_statement:	literal_or_graph_exp SEMICOLON;  // beginnt immer mit @
 
 assignment:	((DEC_VAR)? VARIABLE | passender_name) ASSIGN exp;
 
