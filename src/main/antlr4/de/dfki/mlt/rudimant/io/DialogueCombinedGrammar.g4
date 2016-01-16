@@ -46,11 +46,9 @@ while_statement_block:	LBRACE (w_statement)* RBRACE;
 
 w_statement:	statement | (CONTINUE | BREAK) SEMICOLON;
 
-function_call: (VARIABLE | passender_name) LPAR (exp (COMMA exp)*)? (COMMA usw)? RPAR;
+function_call: (VARIABLE | passender_name) LPAR (exp (COMMA exp)*)? RPAR;
 
 passender_name: VARIABLE (DOT VARIABLE)+;
-
-usw: DOT DOT DOT;
 
 exp: LPAR exp RPAR
      | exp_braceless
@@ -61,39 +59,40 @@ exp_braceless:	boolean_exp
                 | assignment
                 | arithmetic
                 | function_call
-                | literal_or_graph_exp  // ist das hier valide oder erlaubt es zu viel?
+                | literal_or_graph_exp
                 | 
                 (
                     STRING
                   | WILDCARD
                   | VARIABLE
+                  | NULL
                   | INT
                   | FLOAT
                 )
               ;
 
-simple_exp: LPAR simple_exp RPAR
-            | simple_exp_braceless
+simple_b_exp: LPAR simple_b_exp RPAR
+            | simple_b_exp_braceless
           ;
 
-simple_exp_braceless:	assignment  // hack to avoid left recursion
-                        | arithmetic
+simple_b_exp_braceless:	arithmetic
                         | function_call
-                        | literal_or_graph_exp  // ist das hier valide oder erlaubt es zu viel?
                         | passender_name
+                        | literal_or_graph_exp
                         | 
                         (
                             STRING
                           | WILDCARD	
                           | VARIABLE
+                          | FALSE
+                          | TRUE
+                          | NULL
                           | INT
                           | FLOAT
                         )
                   ;
 
-boolean_exp:	simple_exp (boolean_op exp)+
-                | TRUE (boolean_op exp)*
-                | FALSE (boolean_op exp)*
+boolean_exp:	simple_b_exp (boolean_op exp)*
                 | NOT boolean_exp
                 ;
 
@@ -108,7 +107,7 @@ string_expression: ((STRING | VARIABLE) | passender_name) (PLUS ((STRING | VARIA
 
 propose_arg: string_expression;
 
-literal_or_graph_exp:	LITERAL_OR_GRAPH LPAR (exp (COMMA exp)* (COMMA usw)?)? RPAR;
+literal_or_graph_exp:	LITERAL_OR_GRAPH LPAR (exp (COMMA exp)*)? RPAR;
 
 assignment:	((DEC_VAR)? VARIABLE | passender_name) ASSIGN exp;
 
