@@ -67,7 +67,8 @@ loop_if_statement: IF LPAR boolean_exp RPAR loop_statement (ELSE loop_statement)
 
 function_call: (VARIABLE | passender_name) LPAR (exp (COMMA exp)*)? RPAR;
 
-passender_name: (VARIABLE | function_call) (DOT (VARIABLE | function_call))+;
+//passender_name: (VARIABLE | function_call) (DOT (VARIABLE | function_call))+;
+passender_name: (VARIABLE) (DOT (VARIABLE | function_call))+;
 
 exp: LPAR exp RPAR
      | exp_braceless
@@ -129,8 +130,18 @@ assignment:	((DEC_VAR)? VARIABLE | passender_name) ASSIGN exp;
 
 // dient dem Abfangen von Rechnungen
 number:         (INCREMENT | DECREMENT)? ((INT | FLOAT | VARIABLE) | passender_name);
-arithmetic_operator:        MINUS | PLUS | DIV | MUL | MOD;
-arithmetic:     number (arithmetic_operator number)*;
+arithmetic_operator:        arithmetic_dot_operator | arithmetic_lin_operator;
+arithmetic_dot_operator:        DIV | MUL | MOD;
+arithmetic_lin_operator:        MINUS | PLUS;
+           
+// entweder eine einfache Zahl oder Rechnung mit min 1 Operator
+arithmetic:   number | arithmetic_exp;  
+
+arithmetic_exp: number (arithmetic_operator arithmetic_exp)*;
+arithmetic_dot_operation: arithmetic_exp arithmetic_dot_operator arithmetic_exp;
+arithmetic_lin_operation: arithmetic_exp arithmetic_lin_operator arithmetic_exp;
+
+
 
 
 
