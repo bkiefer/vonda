@@ -9,6 +9,8 @@ grammar DialogueCombinedGrammar;
 // PARSER
 // -------------------------------
 
+grammar_file: grammar_rule*;    // to parse multiple rules in one (test purposes atm)
+
 grammar_rule:           (comment)*
                 label
                 if_statement
@@ -16,7 +18,7 @@ grammar_rule:           (comment)*
 
 label:          VARIABLE COLON;
 
-statement:	(comment)*
+statement:	//(comment)*    sind HIDDEN
              (exp SEMICOLON
 		| propose_statement
 		| if_statement
@@ -24,7 +26,7 @@ statement:	(comment)*
 		| for_statement
 		| statement_block
 		| SEMICOLON
-            ) (comment)*
+            ) //(comment)*
          ;
 
 comment: MULTI_L_COMMENT | ONE_L_COMMENT;
@@ -65,7 +67,7 @@ loop_if_statement: IF LPAR boolean_exp RPAR loop_statement (ELSE loop_statement)
 
 function_call: (VARIABLE | passender_name) LPAR (exp (COMMA exp)*)? RPAR;
 
-passender_name: VARIABLE (DOT VARIABLE)+;
+passender_name: (VARIABLE | function_call) (DOT (VARIABLE | function_call))+;
 
 exp: LPAR exp RPAR
      | exp_braceless
