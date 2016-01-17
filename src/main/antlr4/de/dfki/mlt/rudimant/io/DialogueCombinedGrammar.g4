@@ -135,12 +135,10 @@ arithmetic_dot_operator:        DIV | MUL | MOD;
 arithmetic_lin_operator:        MINUS | PLUS;
            
 // entweder eine einfache Zahl oder Rechnung mit min 1 Operator
-arithmetic:   number | arithmetic_exp;  
-
-arithmetic_exp: number (arithmetic_operator arithmetic_exp)*;
-arithmetic_dot_operation: arithmetic_exp arithmetic_dot_operator arithmetic_exp;
-arithmetic_lin_operation: arithmetic_exp arithmetic_lin_operator arithmetic_exp;
-
+arithmetic:         number | arithmetic_exp;  
+arithmetic_exp:     term (arithmetic_lin_operator term)*;
+term:               factor (arithmetic_dot_operator factor)*;
+factor:             number;
 
 
 
