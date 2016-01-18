@@ -68,7 +68,7 @@ loop_if_statement: IF LPAR boolean_exp RPAR loop_statement (ELSE loop_statement)
 function_call: (VARIABLE | passender_name) LPAR (exp (COMMA exp)*)? RPAR;
 
 //passender_name: (VARIABLE | function_call) (DOT (VARIABLE | function_call))+;
-passender_name: (VARIABLE) (DOT (VARIABLE | function_call))+;
+passender_name: (VARIABLE | LPAR function_call RPAR) (DOT (VARIABLE | LPAR function_call RPAR))+ function_call?;
 
 exp: LPAR exp RPAR
      | exp_braceless
