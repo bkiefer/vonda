@@ -37,8 +37,8 @@ while_statement:	WHILE LPAR boolean_exp RPAR loop_statement_block
 			| DO loop_statement_block WHILE LPAR boolean_exp RPAR;
 
 for_statement:	FOR LPAR assignment SEMICOLON exp SEMICOLON exp RPAR loop_statement_block
-		| FOR LPAR VARIABLE COLON exp RPAR loop_statement_block
-                | FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block;	// ist exp richtig?
+		| FOR LPAR (VARIABLE | LOCAL_VAR) COLON exp RPAR loop_statement_block
+                | FOR LPAR LPAR (VARIABLE | LOCAL_VAR) ( COMMA (VARIABLE | LOCAL_VAR))+ RPAR COLON exp RPAR loop_statement_block;	// ist exp richtig?
                    // for ((arg, val) : exp)
                   // wir gehen provisorisch von exp aus, könnte aber auch boolean_exp (line 45???)
 
@@ -65,12 +65,12 @@ loop_propose_block: LBRACE loop_statement+ RBRACE;
 
 loop_if_statement: IF LPAR boolean_exp RPAR loop_statement (ELSE loop_statement)?;
 
-function_call: (VARIABLE | passender_name_vfunc) LPAR (exp (COMMA exp)*)? RPAR;
+function_call: (VARIABLE | LOCAL_VAR | passender_name_vfunc) LPAR (exp (COMMA exp)*)? RPAR;
 
 // hack to allow things like func(x).time but also g.func(x).time or (g.func(x)).getY() (avoiding left recursion)
-passender_name_vfunc: (VARIABLE | LPAR function_call RPAR) (DOT (VARIABLE | LPAR? function_call RPAR?))+ function_call?;
+passender_name_vfunc: (VARIABLE | LOCAL_VAR | LPAR function_call RPAR) (DOT (VARIABLE | LOCAL_VAR | LPAR? function_call RPAR?))+ function_call?;
 
-passender_name: (VARIABLE | function_call) (DOT (VARIABLE | LPAR? function_call RPAR?))+ function_call?;
+passender_name: (VARIABLE | LOCAL_VAR | function_call) (DOT (VARIABLE | LOCAL_VAR | LPAR? function_call RPAR?))+ function_call?;
 
 exp: LPAR exp RPAR
      | exp_braceless
@@ -86,6 +86,7 @@ exp_braceless:	boolean_exp
                 (
                     STRING
                   | WILDCARD
+                  | LOCAL_VAR
                   | VARIABLE
                   | NULL
                 )
@@ -102,7 +103,8 @@ simple_b_exp_braceless:	arithmetic
                         | 
                         (
                             STRING
-                          | WILDCARD	
+                          | WILDCARD
+                          | LOCAL_VAR
                           | VARIABLE
                           | FALSE
                           | TRUE
@@ -122,16 +124,16 @@ propose_statement: 	PROPOSE LPAR propose_arg RPAR propose_block;
 
 propose_block:	LBRACE statement+ RBRACE; 
 
-string_expression: ((STRING | VARIABLE) | passender_name) (PLUS ((STRING | VARIABLE) | passender_name))*;
+string_expression: ((STRING | LOCAL_VAR | VARIABLE) | passender_name) (PLUS ((STRING | LOCAL_VAR | VARIABLE) | passender_name))*;
 
 propose_arg: string_expression;
 
 literal_or_graph_exp:	LITERAL_OR_GRAPH LPAR (exp (COMMA exp)*)? RPAR;
 
-assignment:	((DEC_VAR)? VARIABLE | passender_name) ASSIGN exp;
+assignment:	((DEC_VAR)? VARIABLE | LOCAL_VAR | passender_name) ASSIGN exp;
 
 // dient dem Abfangen von Rechnungen
-number:         (INCREMENT | DECREMENT)? ((INT | FLOAT | VARIABLE) | passender_name);
+number:         (INCREMENT | DECREMENT)? ((INT | FLOAT | VARIABLE | LOCAL_VAR ) | passender_name);
 arithmetic_operator:        arithmetic_dot_operator | arithmetic_lin_operator;
 arithmetic_dot_operator:        DIV | MUL | MOD;
 arithmetic_lin_operator:        MINUS | PLUS;
