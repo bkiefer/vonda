@@ -70,7 +70,7 @@ if (currentSA.type == DeclineOffer) {
  */
 execute_accepted_offer:
 if (currentSA.type == AcceptOffer) {
-  if (offer = lastMatchingSA(@Offer(_, sender=currentSA.addressee))) {
+  if (offer == lastMatchingSA(@Offer(_, sender=currentSA.addressee))) {
     createAction(offer.Frame, offer.getArguments(), _something);
   } else {
     propose("clarify") {
