@@ -141,7 +141,7 @@ if (currentSA <= @Request(Bringing, hasTheme=_, sender=_)) {
   if (toSlot == NULL) {
     // getPrefBoxToTake() could be a SPARQL query
     prefBox = getPrefBoxToTake();
-    if (prefBox == NULL || _lastIncomingSA <= @Decline(Removing ...)) {
+    if (prefBox == NULL || _lastIncomingSA <= @Decline(Removing)) { // removed three dots behind "Removing" (cannot be parsed)
       propose("ask-box") {
         // which box should i take away?
         emitSA(@WHQuestion(Removing, hasTheme="box", refersTo=currentSA.id));
@@ -161,8 +161,8 @@ if (currentSA <= @Request(Bringing, hasTheme=_, sender=_)) {
     newTask(Bringing, fromLoc, toSlot, fromLoc, theme);
   }
 }
-
-// ??
+/*
+// ?? commented out for it cannot be parsed (no label)
 if (! _pendingTask.isEmpty()) {
   createCompleteTasks();
-}
+}*/

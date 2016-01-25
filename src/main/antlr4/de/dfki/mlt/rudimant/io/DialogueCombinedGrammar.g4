@@ -65,12 +65,12 @@ loop_propose_block: LBRACE loop_statement+ RBRACE;
 
 loop_if_statement: IF LPAR boolean_exp RPAR loop_statement (ELSE loop_statement)?;
 
-function_call: (VARIABLE | LOCAL_VAR | passender_name_vfunc) LPAR (exp (COMMA exp)*)? RPAR;
+function_call: ((VARIABLE | LOCAL_VAR) | passender_name_vfunc) LPAR (exp (COMMA exp)*)? RPAR;
 
 // hack to allow things like func(x).time but also g.func(x).time or (g.func(x)).getY() (avoiding left recursion)
-passender_name_vfunc: (VARIABLE | LOCAL_VAR | LPAR function_call RPAR) (DOT (VARIABLE | LOCAL_VAR | LPAR? function_call RPAR?))+ function_call?;
+passender_name_vfunc: ((VARIABLE | LOCAL_VAR) | LPAR function_call RPAR) (DOT ((VARIABLE | LOCAL_VAR) | LPAR? function_call RPAR?))+ function_call?;
 
-passender_name: (VARIABLE | LOCAL_VAR | function_call) (DOT (VARIABLE | LOCAL_VAR | LPAR? function_call RPAR?))+ function_call?;
+passender_name: ((VARIABLE | LOCAL_VAR) | function_call) ((DOT (VARIABLE | LOCAL_VAR) | LPAR? function_call RPAR?))+ function_call?;
 
 exp: LPAR exp RPAR
      | exp_braceless
@@ -128,7 +128,8 @@ string_expression: ((STRING | LOCAL_VAR | VARIABLE) | passender_name) (PLUS ((ST
 
 propose_arg: string_expression;
 
-literal_or_graph_exp:	LITERAL_OR_GRAPH LPAR (exp (COMMA exp)*)? RPAR;
+// is the first one always a variable and should this be forced here?
+literal_or_graph_exp:	LITERAL_OR_GRAPH LPAR ((exp | mysterious_binding_exp)(COMMA (exp | mysterious_binding_exp))*)? RPAR;
 
 assignment:	((DEC_VAR)? VARIABLE | LOCAL_VAR | passender_name) ASSIGN exp;
 
@@ -145,8 +146,8 @@ term:               factor (arithmetic_dot_operator factor)*;
 factor:             number;
 
 
-
-
+// citing rulesproto: TODO: CURRENTLY NOT IN SYNTAX: SUBSUMPTION + BINDING VARIABLES
+mysterious_binding_exp: VARIABLE ASSIGN QUESTION VARIABLE;
 
 
 // LEXER
