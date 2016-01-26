@@ -1,0 +1,22 @@
+/* test rule to control grammar rules via parse tree */
+
+repeat_sth_requested:
+//                                   vvv should be implied by prev clause
+if (game.status == questionAsked && game.lastMove.Question != null
+    && game.activeParticipant == I_MYSELF
+    && currentSA <= @Request(Repeat, what=_)) {
+  var what = currentSA.what;
+  if (what == Question)
+    propose("repeat-question") {
+      emitDA(@Inform(what, what=lastQuestion.question));
+    }
+  else if (what == Answers)
+    propose("repeat-answers") {
+      emitDA(@Inform(what, what=lastQuestion.answers));
+    }
+  else if (what == Solution && game.status == turnFinished) {
+    propose("repeat-solution") {
+      emitDA(@Inform(Answer, what=game.lastMove.Question.solution));
+    }
+  }
+}
