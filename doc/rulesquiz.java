@@ -11,7 +11,8 @@
 initiated:
 if (game.status == initiated) {
   propose("start-game") {
-    if (currentUser.gamePlayed(game.name) == 0) {
+    // gameTypePlayed is a predefined custom query (ASK)
+    if (currentUser.gameTypePlayed(game)) {
       emitDA(@Inform(Instructions, what=game.name, ... ));
     }
     gameLogic.startSession();
@@ -46,11 +47,18 @@ if (currentSA <= @Inform(Role, hasActor=_) && (game.status == startSession)) {
 }
 
 ask_for_turntablet:
+/*
+ oneOf(game.tablet, tablet => (tablet.isAvailable &&
+    tablet.supposedOrientation != tablet.currentOrientation))
+ allOf(...)
+ */
 if (game.tablet.isAvailable
-    && game.tablet.supposedOrientation != game.tablet.currentOrientation
-    && ((lastMatchingSA(@Request(Turn, what=tablet, sender=I_MYSELF)).time - currentTime) > MAX_WAIT_FOR_TABLET)) {
-  propose("request_turntablet") {
-    emitDA(@Request(Turn, what=tablet, sender=I_MYSELF));
+    && game.tablet.supposedOrientation != game.tablet.currentOrientation) {
+  var last = lastSubsumedDA(@Request(Turn, what=tablet, sender=I_MYSELF));
+  if (last != null && last.time - currentTime > MAX_WAIT_FOR_TABLET) {
+    propose("request_turntablet") {
+      emitDA(@Request(Turn, what=tablet, sender=I_MYSELF));
+    }
   }
 }
 
@@ -60,12 +68,12 @@ if (game.status == inSession && game.activeParticipant == I_MYSELF
     // GAME LOGIC START
     && (! game.tablet.isAvailable
         || game.tablet.orientation == POINTS_TO_ME)) {
-  propose(ask-question) {
+  propose("ask-question") {
     var qa = gameLogic.getNewQuestionAndAnswers();
     // game.lastMove.Question = qa; // done by game logic
     emitDA(@ChoiceQuestion(Quiz, what=qa.question, answers=qa.answers));
     if (game.tablet.isAvailable)
-      emitMove(TurnTablet); // GAME LOGIC??
+      emitDA(@Inform(Turn, hasTheme=tablet)); // GAME LOGIC??
     // game.status = questionAsked; // done by game logic
   }
 }

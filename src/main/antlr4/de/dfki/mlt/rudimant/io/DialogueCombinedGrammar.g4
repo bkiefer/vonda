@@ -9,6 +9,8 @@ grammar DialogueCombinedGrammar;
 // PARSER
 // -------------------------------
 
+grammar_file: grammar_rule*;    // to parse multiple rules in one (test purposes atm)
+
 grammar_rule:           (comment)*
                 label
                 if_statement
@@ -16,43 +18,59 @@ grammar_rule:           (comment)*
 
 label:          VARIABLE COLON;
 
-statement:	(comment)*
+statement:	//(comment)*    sind HIDDEN
              (exp SEMICOLON
 		| propose_statement
-		| literal_or_graph_statement
 		| if_statement
 		| while_statement
 		| for_statement
 		| statement_block
-                //| arithmetic
 		| SEMICOLON
-            ) (comment)*
+            ) //(comment)*
          ;
 
 comment: MULTI_L_COMMENT | ONE_L_COMMENT;
 
 if_statement:	IF LPAR boolean_exp RPAR statement (ELSE statement)?;	// erlaubt die Schreibweise ohne {} bei einem einzigen Statement
 
-while_statement:	WHILE LPAR boolean_exp RPAR while_statement_block
-			| DO while_statement_block WHILE LPAR boolean_exp RPAR;
+while_statement:	WHILE LPAR boolean_exp RPAR loop_statement_block
+			| DO loop_statement_block WHILE LPAR boolean_exp RPAR;
 
-for_statement:	FOR LPAR assignment SEMICOLON exp SEMICOLON exp RPAR statement_block
-		| FOR LPAR VARIABLE COLON exp RPAR statement_block
-                | FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR statement_block;	// ist exp richtig?
+for_statement:	FOR LPAR assignment SEMICOLON exp SEMICOLON exp RPAR loop_statement_block
+		| FOR LPAR (VARIABLE | LOCAL_VAR) COLON exp RPAR loop_statement_block
+                | FOR LPAR LPAR (VARIABLE | LOCAL_VAR) ( COMMA (VARIABLE | LOCAL_VAR))+ RPAR COLON exp RPAR loop_statement_block;	// ist exp richtig?
                    // for ((arg, val) : exp)
                   // wir gehen provisorisch von exp aus, könnte aber auch boolean_exp (line 45???)
 
 statement_block:	LBRACE (statement)* RBRACE;
 
-while_statement_block:	LBRACE (w_statement)* RBRACE;
+loop_statement_block:	LBRACE (loop_statement)* RBRACE;
 
-w_statement:	statement | (CONTINUE | BREAK) SEMICOLON;
+// loop_statement = alle statements, nur dass in jedem Nachkömmling break oder continue aufgerufen werden können
 
-function_call: (VARIABLE | passender_name) LPAR (exp (COMMA exp)*)? (COMMA usw)? RPAR;
+loop_statement:	(comment)*
+                (exp SEMICOLON
+                    | (CONTINUE | BREAK) SEMICOLON
+                    | loop_propose_statement        // macht es Sinn, im propose abbrechen zu können??
+                    | loop_if_statement
+                    | while_statement
+                    | for_statement
+                    | loop_statement_block
+                    | SEMICOLON
+                ) (comment)*;
 
-passender_name: VARIABLE (DOT VARIABLE)+;
+loop_propose_statement: PROPOSE LPAR propose_arg RPAR loop_propose_block;
 
-usw: DOT DOT DOT;
+loop_propose_block: LBRACE loop_statement+ RBRACE;
+
+loop_if_statement: IF LPAR boolean_exp RPAR loop_statement (ELSE loop_statement)?;
+
+function_call: ((VARIABLE | LOCAL_VAR) | passender_name_vfunc) LPAR (exp (COMMA exp)*)? RPAR;
+
+// hack to allow things like func(x).time but also g.func(x).time or (g.func(x)).getY() (avoiding left recursion)
+passender_name_vfunc: ((VARIABLE | LOCAL_VAR) | LPAR function_call RPAR) (DOT ((VARIABLE | LOCAL_VAR) | LPAR? function_call RPAR?))+ function_call?;
+
+passender_name: ((VARIABLE | LOCAL_VAR) | function_call) ((DOT (VARIABLE | LOCAL_VAR) | LPAR? function_call RPAR?))+ function_call?;
 
 exp: LPAR exp RPAR
      | exp_braceless
@@ -63,39 +81,39 @@ exp_braceless:	boolean_exp
                 | assignment
                 | arithmetic
                 | function_call
-                | literal_or_graph_exp  // ist das hier valide oder erlaubt es zu viel?
+                | literal_or_graph_exp
                 | 
                 (
                     STRING
                   | WILDCARD
+                  | LOCAL_VAR
                   | VARIABLE
-                  | INT
-                  | FLOAT
+                  | NULL
                 )
               ;
 
-simple_exp: LPAR simple_exp RPAR
-            | simple_exp_braceless
+simple_b_exp: LPAR simple_b_exp RPAR
+            | simple_b_exp_braceless
           ;
 
-simple_exp_braceless:	assignment  // hack to avoid left recursion
-                        | arithmetic
+simple_b_exp_braceless:	arithmetic
                         | function_call
-                        | literal_or_graph_exp  // ist das hier valide oder erlaubt es zu viel?
                         | passender_name
+                        | literal_or_graph_exp
                         | 
                         (
                             STRING
-                          | WILDCARD	
+                          | WILDCARD
+                          | LOCAL_VAR
                           | VARIABLE
-                          | INT
-                          | FLOAT
+                          | FALSE
+                          | TRUE
+                          | NULL
                         )
                   ;
 
-boolean_exp:	simple_exp (boolean_op exp)+
-                | TRUE (boolean_op exp)*
-                | FALSE (boolean_op exp)*
+boolean_exp:	LPAR boolean_exp RPAR (boolean_op exp)*
+                | simple_b_exp (boolean_op exp)*
                 | NOT boolean_exp
                 ;
 
@@ -106,27 +124,30 @@ propose_statement: 	PROPOSE LPAR propose_arg RPAR propose_block;
 
 propose_block:	LBRACE statement+ RBRACE; 
 
-propose_arg: passender_name  // string expression 
-            |
-            (
-                VARIABLE
-               | STRING
-            )
-            ;
+string_expression: ((STRING | LOCAL_VAR | VARIABLE) | passender_name) (PLUS ((STRING | LOCAL_VAR | VARIABLE) | passender_name))*;
 
-literal_or_graph_exp:	LITERAL_OR_GRAPH LPAR (exp (COMMA exp)* (COMMA usw)?)? RPAR;
+propose_arg: string_expression;
 
-literal_or_graph_statement:	literal_or_graph_exp SEMICOLON;  // beginnt immer mit @
+// is the first one always a variable and should this be forced here?
+literal_or_graph_exp:	LITERAL_OR_GRAPH LPAR ((exp | mysterious_binding_exp)(COMMA (exp | mysterious_binding_exp))*)? RPAR;
 
-assignment:	((DEC_VAR)? VARIABLE | passender_name) ASSIGN exp;
+assignment:	((DEC_VAR)? VARIABLE | LOCAL_VAR | passender_name) ASSIGN exp;
 
 // dient dem Abfangen von Rechnungen
-number:         INT | FLOAT;
-arithmetic_operator:        MINUS | PLUS | DIV | MUL | MOD;
-arithmetic:     number (arithmetic_operator number)+;
+number:         (INCREMENT | DECREMENT)? ((INT | FLOAT | VARIABLE | LOCAL_VAR ) | passender_name);
+arithmetic_operator:        arithmetic_dot_operator | arithmetic_lin_operator;
+arithmetic_dot_operator:        DIV | MUL | MOD;
+arithmetic_lin_operator:        MINUS | PLUS;
+           
+// entweder eine einfache Zahl oder Rechnung mit min 1 Operator
+arithmetic:         number | arithmetic_exp;  
+arithmetic_exp:     term (arithmetic_lin_operator term)*;
+term:               factor (arithmetic_dot_operator factor)*;
+factor:             number;
 
 
-
+// citing rulesproto: TODO: CURRENTLY NOT IN SYNTAX: SUBSUMPTION + BINDING VARIABLES
+mysterious_binding_exp: VARIABLE ASSIGN QUESTION VARIABLE;
 
 
 // LEXER
@@ -177,7 +198,9 @@ arithmetic:     number (arithmetic_operator number)+;
 	
 // mathematical operators:
         PLUS: '+';
+        INCREMENT: '++';
 	MINUS: '-';
+        DECREMENT: '--';
 	DIV: '/';
 	MUL: '*';
         MOD: '%';
