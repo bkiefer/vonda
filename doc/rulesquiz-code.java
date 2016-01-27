@@ -1,4 +1,4 @@
-public class RulesQuiz {
+public class RulesQuiz extends RuleUnit {
 
   // GameData is an RDF class proxy in java code
   // TODO: The type of game must specified, can not be inferred, same for currentUser
@@ -25,7 +25,7 @@ public class RulesQuiz {
     computeProxies();
 
     execute("initiated");
-    if (game.status.equals("initiated")) {
+    if (game.get("status").equals("initiated")) {
       propose("start-game", new Proposal() {
           public void run() {
             if (executeQuery(currentUser, gameTypePlayed, game)) {

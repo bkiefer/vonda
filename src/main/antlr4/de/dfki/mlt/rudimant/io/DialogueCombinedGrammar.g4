@@ -37,8 +37,8 @@ while_statement:	WHILE LPAR boolean_exp RPAR loop_statement_block
 			| DO loop_statement_block WHILE LPAR boolean_exp RPAR;
 
 for_statement:	FOR LPAR assignment SEMICOLON exp SEMICOLON exp RPAR loop_statement_block
-		| FOR LPAR (VARIABLE | LOCAL_VAR) COLON exp RPAR loop_statement_block
-                | FOR LPAR LPAR (VARIABLE | LOCAL_VAR) ( COMMA (VARIABLE | LOCAL_VAR))+ RPAR COLON exp RPAR loop_statement_block;	// ist exp richtig?
+		| FOR LPAR VARIABLE COLON exp RPAR loop_statement_block
+                | FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block;	// ist exp richtig?
                    // for ((arg, val) : exp)
                   // wir gehen provisorisch von exp aus, könnte aber auch boolean_exp (line 45???)
 
@@ -65,46 +65,47 @@ loop_propose_block: LBRACE loop_statement+ RBRACE;
 
 loop_if_statement: IF LPAR boolean_exp RPAR loop_statement (ELSE loop_statement)?;
 
-function_call: ((VARIABLE | LOCAL_VAR) | passender_name_vfunc) LPAR (exp (COMMA exp)*)? RPAR;
+function_call: (VARIABLE | field_access_vfunc) LPAR (exp (COMMA exp)*)? RPAR;
 
 // hack to allow things like func(x).time but also g.func(x).time or (g.func(x)).getY() (avoiding left recursion)
-passender_name_vfunc: ((VARIABLE | LOCAL_VAR) | LPAR function_call RPAR) (DOT ((VARIABLE | LOCAL_VAR) | LPAR? function_call RPAR?))+ function_call?;
+field_access_vfunc: (VARIABLE | LPAR function_call RPAR) (DOT (VARIABLE | LPAR? function_call RPAR?))+ function_call?;
 
-passender_name: ((VARIABLE | LOCAL_VAR) | function_call) ((DOT (VARIABLE | LOCAL_VAR) | LPAR? function_call RPAR?))+ function_call?;
+field_access: (VARIABLE | function_call) ((DOT VARIABLE | LPAR? function_call RPAR?))+ function_call?;
 
 exp: LPAR exp RPAR
      | exp_braceless
    ;
 
 exp_braceless:	boolean_exp
-                | passender_name
+                | field_access
                 | assignment
                 | arithmetic
                 | function_call
                 | literal_or_graph_exp
-                | 
+                |
                 (
                     STRING
                   | WILDCARD
-                  | LOCAL_VAR
                   | VARIABLE
+                  | FALSE
+                  | TRUE
                   | NULL
                 )
               ;
 
-simple_b_exp: LPAR simple_b_exp RPAR
+simple_b_exp: LPAR boolean_exp RPAR
             | simple_b_exp_braceless
+            | NOT boolean_exp
           ;
 
 simple_b_exp_braceless:	arithmetic
                         | function_call
-                        | passender_name
-                        | literal_or_graph_exp
-                        | 
+                        | field_access
+                        | assignment
+                        |
                         (
                             STRING
                           | WILDCARD
-                          | LOCAL_VAR
                           | VARIABLE
                           | FALSE
                           | TRUE
@@ -112,9 +113,7 @@ simple_b_exp_braceless:	arithmetic
                         )
                   ;
 
-boolean_exp:	LPAR boolean_exp RPAR (boolean_op exp)*
-                | simple_b_exp (boolean_op exp)*
-                | NOT boolean_exp
+boolean_exp:	simple_b_exp (boolean_op exp)*
                 ;
 
 boolean_op:	NOT | EQUAL | AND | OR | NOT_EQUAL | SMALLER_EQUAL | SMALLER | GREATER_EQUAL | GREATER;
@@ -122,28 +121,27 @@ boolean_op:	NOT | EQUAL | AND | OR | NOT_EQUAL | SMALLER_EQUAL | SMALLER | GREAT
 // Vgl rulesproto Zeilen 145 und 150: propose ohne () erlauben??
 propose_statement: 	PROPOSE LPAR propose_arg RPAR propose_block;
 
-propose_block:	LBRACE statement+ RBRACE; 
+propose_block:	LBRACE statement+ RBRACE;
 
-string_expression: ((STRING | LOCAL_VAR | VARIABLE) | passender_name) (PLUS ((STRING | LOCAL_VAR | VARIABLE) | passender_name))*;
+string_expression: ((STRING | VARIABLE) | field_access) (PLUS ((STRING | VARIABLE) | field_access))*;
 
 propose_arg: string_expression;
 
 // is the first one always a variable and should this be forced here?
 literal_or_graph_exp:	LITERAL_OR_GRAPH LPAR ((exp | mysterious_binding_exp)(COMMA (exp | mysterious_binding_exp))*)? RPAR;
 
-assignment:	((DEC_VAR)? VARIABLE | LOCAL_VAR | passender_name) ASSIGN exp;
+assignment:	((DEC_VAR)? VARIABLE | field_access) ASSIGN exp;
 
 // dient dem Abfangen von Rechnungen
-number:         (INCREMENT | DECREMENT)? ((INT | FLOAT | VARIABLE | LOCAL_VAR ) | passender_name);
+number:         (INCREMENT | DECREMENT)? ((INT | FLOAT | VARIABLE ) | field_access | function_call );
 arithmetic_operator:        arithmetic_dot_operator | arithmetic_lin_operator;
 arithmetic_dot_operator:        DIV | MUL | MOD;
 arithmetic_lin_operator:        MINUS | PLUS;
-           
+
 // entweder eine einfache Zahl oder Rechnung mit min 1 Operator
-arithmetic:         number | arithmetic_exp;  
-arithmetic_exp:     term (arithmetic_lin_operator term)*;
+arithmetic:         term (arithmetic_lin_operator term)*;
 term:               factor (arithmetic_dot_operator factor)*;
-factor:             number;
+factor:             number | LPAR arithmetic RPAR | MINUS arithmetic;
 
 
 // citing rulesproto: TODO: CURRENTLY NOT IN SYNTAX: SUBSUMPTION + BINDING VARIABLES
@@ -155,20 +153,20 @@ mysterious_binding_exp: VARIABLE ASSIGN QUESTION VARIABLE;
 
 
 // keywords + true, false, null:
-	IF: 'if';			
+	IF: 'if';
 	ELSE: 'else';
 	WHILE: 'while';
 	DO: 'do';
 	CONTINUE: 'continue';
-	BREAK: 'break';		
-	FOR: 'for';		
-	NULL: 'null';		
-	TRUE: 'true';		
-	FALSE: 'false';		
+	BREAK: 'break';
+	FOR: 'for';
+	NULL: 'null';
+	TRUE: 'true';
+	FALSE: 'false';
 
 
 // character literal (starting with ' ):
-	CHARACTER: '\''.'\'';		
+	CHARACTER: '\''.'\'';
 
 // string (starting with " ):
 	STRING: '\"'.*?'\"';
@@ -192,10 +190,10 @@ mysterious_binding_exp: VARIABLE ASSIGN QUESTION VARIABLE;
 	OR: '|'('|')?;
 	NOT_EQUAL: '!=';
 	SMALLER_EQUAL: '<=';
-	SMALLER: '<';			
-	GREATER_EQUAL: '>=';		
-	GREATER: '>';			
-	
+	SMALLER: '<';
+	GREATER_EQUAL: '>=';
+	GREATER: '>';
+
 // mathematical operators:
         PLUS: '+';
         INCREMENT: '++';
@@ -204,30 +202,29 @@ mysterious_binding_exp: VARIABLE ASSIGN QUESTION VARIABLE;
 	DIV: '/';
 	MUL: '*';
         MOD: '%';
-    
+
 // additional operators:
         QUESTION: '?';
 	COLON: ':';
-        
+
 
 
 //	special for dialogue grammar:
-	LOCAL_VAR: '_'('0'..'9'|'A'..'z'|'_')+;
 	WILDCARD: '_';
 	LITERAL_OR_GRAPH: '@'('0'..'9'|'A'..'z'|'_')+;
 	PROPOSE: 'propose';
         DEC_VAR: 'var';
-	
-    
-// comments (starting with /* or //):
-	ONE_L_COMMENT: '//'.*?'\n' -> channel(HIDDEN);	// required so you can add comments at every time	
-	MULTI_L_COMMENT: '/*'.*?'*/' -> channel(HIDDEN);		
 
-// whitespace 
-        WS: ( ' ' | '\t' | '\r' | '\n' ) -> channel(HIDDEN);    
-    
+
+// comments (starting with /* or //):
+	ONE_L_COMMENT: '//'.*?'\n' -> channel(HIDDEN);	// required so you can add comments at every time
+	MULTI_L_COMMENT: '/*'.*?'*/' -> channel(HIDDEN);
+
+// whitespace
+        WS: ( ' ' | '\t' | '\r' | '\n' ) -> channel(HIDDEN);
+
 // identifiers (starting with "java letter"):
-	VARIABLE: ('A'..'z')('0'..'9'|'A'..'z'|'_'|'$')*;
+	VARIABLE: ('A'..'z'|'_')('0'..'9'|'A'..'z'|'_'|'$')*;
 
 // numeric literal (starting with number):
 	INT: ('-')?('1'..'9')?('0'..'9')+;
