@@ -13,7 +13,7 @@ if (game.status == initiated) {
   propose("start-game") {
     // gameTypePlayed is a predefined custom query (ASK)
     if (currentUser.gameTypePlayed(game)) {
-      emitDA(@Inform(Instructions, what=game.name, ... ));
+      emitDA(@Inform(Instructions, what=game.name, sender=I_ROBOT, addressee=currentUser.id ));
     }
     gameLogic.startSession();
   }
