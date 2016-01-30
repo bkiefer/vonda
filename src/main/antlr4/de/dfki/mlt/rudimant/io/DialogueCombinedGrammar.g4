@@ -97,10 +97,9 @@ field_access_vfunc
     | LPAR function_call RPAR
     )
     ( DOT ( VARIABLE
-          | LPAR? function_call RPAR?
+          | LPAR? field_access RPAR?
           )
     )+
-    function_call?
   ;
 
 field_access
@@ -111,16 +110,11 @@ field_access
       | LPAR? function_call RPAR?
       )
     )+
-    function_call?
   ;
 
 exp
   : LPAR exp RPAR
-  | exp_braceless
-  ;
-
-exp_braceless
-  : boolean_exp
+  | boolean_exp
   | field_access
   | assignment
   | arithmetic
@@ -136,13 +130,8 @@ exp_braceless
   ;
 
 simple_b_exp
-  : LPAR boolean_exp RPAR
-  | simple_b_exp_braceless
-  | NOT boolean_exp
-  ;
-
-simple_b_exp_braceless
-  : arithmetic
+  : LPAR exp RPAR
+  | arithmetic
   | function_call
   | field_access
   | assignment
@@ -153,6 +142,7 @@ simple_b_exp_braceless
     | TRUE
     | NULL
     )
+  | NOT boolean_exp
   ;
 
 boolean_exp
