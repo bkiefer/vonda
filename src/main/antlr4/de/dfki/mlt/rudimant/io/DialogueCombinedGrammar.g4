@@ -122,7 +122,7 @@ exp
   | literal_or_graph_exp
   | ( STRING
     | WILDCARD
-    | VARIABLE
+    //| VARIABLE
     | FALSE
     | TRUE
     | NULL
@@ -137,7 +137,7 @@ simple_b_exp
   | assignment
   | ( STRING
     | WILDCARD
-    | VARIABLE
+    //| VARIABLE
     | FALSE
     | TRUE
     | NULL
@@ -160,6 +160,8 @@ boolean_op
   | GREATER_EQUAL
   | GREATER
   ;
+
+lambda_exp: LPAR (DEC_VAR? VARIABLE (COMMA DEC_VAR? VARIABLE)*)? RPAR ARROW exp;
 
 propose_statement
   : PROPOSE LPAR propose_arg RPAR propose_block
@@ -270,6 +272,9 @@ STRING: '\"'.*?'\"';
 
 /// assignments
 ASSIGN: '=';
+
+// operator for lambda expressions
+ARROW: '->';
 
 /// separators:
 LPAR: '(';
