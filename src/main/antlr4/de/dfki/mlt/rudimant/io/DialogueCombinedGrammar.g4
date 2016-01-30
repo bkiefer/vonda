@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Grammar dedicated to create a parser and a lexer for dialogue rules in
+ * DFKI robot language
  */
 
 grammar DialogueCombinedGrammar;
@@ -10,7 +9,7 @@ grammar DialogueCombinedGrammar;
  * PARSER
  */
 
-/// to parse multiple rules in one (test purposes atm)
+/// start rule
 grammar_file
   : grammar_rule*
   ;
@@ -23,10 +22,8 @@ label
   : VARIABLE COLON
   ;
 
-/// comments sind hidden
 statement
-  : //( comment )*
-    ( exp SEMICOLON
+  : ( exp SEMICOLON
     | propose_statement
     | if_statement
     | while_statement
@@ -34,7 +31,6 @@ statement
     | statement_block
     | SEMICOLON
     )
-    //( comment )*
  ;
 
 comment
@@ -42,7 +38,6 @@ comment
   | ONE_L_COMMENT
   ;
 
-/// erlaubt die Schreibweise ohne {} bei einem einzigen Statement
 if_statement
   : IF LPAR boolean_exp RPAR statement (ELSE statement)?
   ;
@@ -52,12 +47,10 @@ while_statement
   | DO loop_statement_block WHILE LPAR boolean_exp RPAR
   ;
 
-/// for ((arg, val) : exp)
-/// wir gehen provisorisch von exp aus, könnte aber auch boolean_exp (line 45???)
 for_statement
   : FOR LPAR assignment SEMICOLON exp SEMICOLON exp RPAR loop_statement_block
   | FOR LPAR VARIABLE COLON exp RPAR loop_statement_block
-  | FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block  // ist exp richtig?
+  | FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block
   ;
 
 statement_block
@@ -68,13 +61,12 @@ loop_statement_block
   : LBRACE ( loop_statement )* RBRACE
   ;
 
-
-/// loop_statement = alle statements, nur dass in jedem Nachkömmling break oder continue aufgerufen werden können
+/// loop_statement = all statements, allowing continue or break inside them
 loop_statement
   : ( comment )*
     ( exp SEMICOLON
     | (CONTINUE | BREAK) SEMICOLON
-    | loop_propose_statement // macht es Sinn, im propose abbrechen zu können??
+    | loop_propose_statement // do we want to be able to call break or continue here?
     | loop_if_statement
     | while_statement
     | for_statement
@@ -100,7 +92,6 @@ function_call
   : ( VARIABLE | field_access_vfunc ) LPAR ( exp ( COMMA exp )* )? RPAR
   ;
 
-/// hack to allow things like func(x).time but also g.func(x).time or (g.func(x)).getY() (avoiding left recursion)
 field_access_vfunc
   : ( VARIABLE
     | LPAR function_call RPAR
@@ -180,7 +171,6 @@ boolean_op
   | GREATER
   ;
 
-/// Vgl rulesproto Zeilen 145 und 150: propose ohne () erlauben??
 propose_statement
   : PROPOSE LPAR propose_arg RPAR propose_block
   ;
@@ -204,11 +194,10 @@ propose_arg
   : string_expression
   ;
 
-/// is the first one always a variable and should this be forced here?
 literal_or_graph_exp
-  :  LITERAL_OR_GRAPH LPAR ( ( exp | mysterious_binding_exp )
+  :  LITERAL_OR_GRAPH LPAR ( ( exp /*| mysterious_binding_exp */)
                              ( COMMA
-                               ( exp | mysterious_binding_exp )
+                               ( exp /*| mysterious_binding_exp */)
                              )*
                            )?
      RPAR
@@ -221,7 +210,6 @@ assignment
     ASSIGN exp
   ;
 
-/// dient dem Abfangen von Rechnungen
 number
   : ( INCREMENT | DECREMENT )?
     ( ( INT | FLOAT | VARIABLE )
@@ -246,7 +234,7 @@ arithmetic_lin_operator
   | PLUS
   ;
 
-/// entweder eine einfache Zahl oder Rechnung mit min 1 Operator
+/// either a number or a term containing at least one operator
 arithmetic
   : term ( arithmetic_lin_operator term )*
   ;
@@ -263,9 +251,9 @@ factor
 
 
 /// citing rulesproto: TODO: CURRENTLY NOT IN SYNTAX: SUBSUMPTION + BINDING VARIABLES
-mysterious_binding_exp
+/*mysterious_binding_exp
   : VARIABLE ASSIGN QUESTION VARIABLE
-  ;
+  ;*/
 
 
 /*
@@ -333,7 +321,7 @@ PROPOSE: 'propose';
 DEC_VAR: 'var';
 
 /// comments (starting with /* or //):
-ONE_L_COMMENT: '//'.*?'\n' -> channel(HIDDEN);  // required so you can add comments at every time
+ONE_L_COMMENT: '//'.*?'\n' -> channel(HIDDEN);
 MULTI_L_COMMENT: '/*'.*?'*/' -> channel(HIDDEN);
 
 /// whitespace
@@ -345,5 +333,3 @@ VARIABLE: ('A'..'z'|'_')('0'..'9'|'A'..'z'|'_'|'$')*;
 /// numeric literal (starting with number):
 INT: ('-')?('1'..'9')?('0'..'9')+;
 FLOAT: ('-')?('0'('.'('0'..'9')+) | ('1'..'9')('0'..'9')*('.'('0'..'9')+));
-
-/// SPARQL queries: müssen wohl oder übel später iwann so formuliert werden, dass die Anfrage funktioniert -> gibt es ein besonderes Schema, das immer erfolgreich umschreibt, oder nicht? wenn nein, muss jede Art von Anfrage vorbereitet werden, d.h., der Benutzer der Grammatik kann ohne Weiteres keine nicht vorgesehenen Dinge abfragen
