@@ -5,8 +5,8 @@
  */
 package grammar;
 
-import de.dfki.mlt.rudimant.io.DialogueCombinedGrammarLexer;
-import de.dfki.mlt.rudimant.io.DialogueCombinedGrammarParser;
+import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
+import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -29,16 +29,16 @@ public class Main {
     System.out.println("parsing: " + args[0]);
 
     // initialise the lexer with given input file
-    DialogueCombinedGrammarLexer lexer = new DialogueCombinedGrammarLexer(new ANTLRFileStream(args[0]));
+    RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRFileStream(args[0]));
     
     // initialise the parser
-    DialogueCombinedGrammarParser parser = new DialogueCombinedGrammarParser(new CommonTokenStream(lexer));
+    RobotGrammarParser parser = new RobotGrammarParser(new CommonTokenStream(lexer));
     
     // create a parse tree; grammar_file is the start rule
     ParseTree tree = parser.grammar_file();
     
     // initialise the visitor that will do all the work
-    TestVisitor visitor = new TestVisitor();
+    RGVisitor visitor = new RGVisitor();
     
     // walk the parse tree, (create output file here?)
     visitor.visit(tree);

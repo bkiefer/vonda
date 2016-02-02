@@ -3,7 +3,7 @@
  * DFKI robot language
  */
 
-grammar DialogueCombinedGrammar;
+grammar RobotGrammar;
 
 /*
  * PARSER
