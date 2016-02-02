@@ -7,6 +7,9 @@ package grammar;
 
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
@@ -25,7 +28,42 @@ public class RGVisitor implements RobotGrammarVisitor{
 
     @Override
     public Object visitGrammar_file(RobotGrammarParser.Grammar_fileContext ctx) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Main.writer.write("public class RulesQuiz extends RuleUnit {\n\n" +
+                    "  // GameData is an RDF class proxy in java code\n" +
+                    "  // TODO: The type of game must specified, can not be inferred, same for currentUser\n" +
+                    "  // and speech act\n" +
+                    "  // TODO: what about relational properties aka multi-valued features\n" +
+                    "  // TODO: possibly gamePlayed must be a custom method / ASK query\n\n"
+                    + "  GameData game;"
+                    + "\n" +
+                    "  // User is an RDF class proxy in java code"
+                    + "\n" +
+                    "  User currentUser;"
+                    + "\n\n  // This must be a real class"
+                    + "\n" +
+                    "  GameLogic gameLogic;"
+                    + "\n\n  // SpeechActs, RDF proxies"
+                    + "\n" +
+                    "  DialogueAct myLastSA, currentSA;"
+                    + "\n\n"
+                    + "  private void computeProxies() "
+                    + "{\n" +
+                    "    // TODO: ... missing definition generating this code\n" +
+                    "  }\n\n" +
+                    "  public void mainLoop() {\n" +
+                    "    computeProxies();");
+        } catch (IOException ex) {
+            Logger.getLogger(RGVisitor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.visit(ctx);    // probably sth like for grammar_rule in ctx do this.visit(ctx)
+        try {
+            Main.writer.write("  }\n}");
+        } catch (IOException ex) {
+            Logger.getLogger(RGVisitor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        // TODO: sinnvolles return?
+        return true;
     }
 
     @Override

@@ -7,6 +7,12 @@ package grammar;
 
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -16,6 +22,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
  * @author anna
  */
 public class Main {
+    
+    protected static Writer writer;
     
     /**
      * 
@@ -27,6 +35,12 @@ public class Main {
     // TODO: do something if there are no input arguments
 
     System.out.println("parsing: " + args[0]);
+    
+    // name and location of output file; TODO: what location?
+    String outputFile = "loc" + args[0].split(".")[0] + ".java";
+    writer = new BufferedWriter(new OutputStreamWriter(
+              new FileOutputStream(outputFile)));
+    
 
     // initialise the lexer with given input file
     RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRFileStream(args[0]));
