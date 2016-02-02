@@ -88,9 +88,9 @@
         <artifactId>antlr4-maven-plugin</artifactId>
         <version>4.3</version>
         <configuration>
-            <arguments>
-                <argument>-visitor</argument>
-            </arguments>
+          <arguments>
+            <argument>-visitor</argument>
+          </arguments>
         </configuration>
         <executions>
           <execution>

@@ -5,13 +5,13 @@
  */
 package visitortests;
 
+import grammar.Main;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import sun.applet.Main;
 
 /**
  *
@@ -39,8 +39,9 @@ public class FirstPrintTests {
     }
 
     @Test
-    public void emptyFileTest(){
-        String[] strings = new String[]{"emptyFile.txt"};
+    public void emptyFileTest() throws Exception {
+        String[] strings = new String[]{"emptyFile"};
+        System.out.println(strings);
         Main.main(strings);
     }
 }

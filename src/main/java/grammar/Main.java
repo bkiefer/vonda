@@ -22,46 +22,46 @@ import org.antlr.v4.runtime.tree.ParseTree;
  * @author anna
  */
 public class Main {
-    
-    protected static Writer writer;
-    
-    /**
-     * 
-     * @param args: the file that should be parsed (in args[0])
-     * @throws Exception 
-     */
-    public static void main(String[] args) throws Exception {
-        
-    // TODO: do something if there are no input arguments
 
-    System.out.println("parsing: " + args[0]);
-    
-    // creating input file & make it readable
-    File in = new File("src/test/testfiles/" + args[0]);
-    in.setReadable(true);
-    
-    // creating output file from input filename; TODO: what location?
-    String outputFile = "" + args[0].split(".")[0] + ".java";
-    File out = new File(outputFile);
-    out.mkdir();
-    out.setWritable(true);
-    out.setReadable(true);
-    writer = new BufferedWriter(new OutputStreamWriter(
-              new FileOutputStream(out)));
+  protected static Writer writer;
 
-    // initialise the lexer with given input file
-    RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(in)));
-    
-    // initialise the parser
-    RobotGrammarParser parser = new RobotGrammarParser(new CommonTokenStream(lexer));
-    
-    // create a parse tree; grammar_file is the start rule
-    ParseTree tree = parser.grammar_file();
-    
-    // initialise the visitor that will do all the work
-    RGVisitor visitor = new RGVisitor();
-    
-    // walk the parse tree, (create output file here?)
-    visitor.visit(tree);
-    }
+  /**
+   * 
+   * @param args: the file that should be parsed (in args[0])
+   * @throws Exception 
+   */
+  public static void main(String[] args) throws Exception {
+
+  // TODO: do something if there are no input arguments
+
+  System.out.println("parsing: " + args[0]);
+
+  // creating input file & make it readable
+  File in = new File("src/test/testfiles/" + args[0]);
+  in.setReadable(true);
+
+  // creating output file from input filename; TODO: what location?
+  String[] testString = args[0].split(".");
+  String outputFile = "src/test/testfiles/" + (args)[0] + ".java";
+  File out = new File(outputFile);
+  out.setWritable(true);
+  out.setReadable(true);
+  writer = new BufferedWriter(new OutputStreamWriter(
+            new FileOutputStream(out)));
+
+  // initialise the lexer with given input file
+  RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(in)));
+
+  // initialise the parser
+  RobotGrammarParser parser = new RobotGrammarParser(new CommonTokenStream(lexer));
+
+  // create a parse tree; grammar_file is the start rule
+  ParseTree tree = parser.grammar_file();
+
+  // initialise the visitor that will do all the work
+  RGVisitor visitor = new RGVisitor();
+
+  // walk the parse tree, (create output file here?)
+  visitor.visit(tree);
+  }
 }
