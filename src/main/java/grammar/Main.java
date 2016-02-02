@@ -8,12 +8,12 @@ package grammar;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -36,14 +36,21 @@ public class Main {
 
     System.out.println("parsing: " + args[0]);
     
-    // name and location of output file; TODO: what location?
-    String outputFile = "loc" + args[0].split(".")[0] + ".java";
-    writer = new BufferedWriter(new OutputStreamWriter(
-              new FileOutputStream(outputFile)));
+    // creating input file & make it readable
+    File in = new File("src/test/testfiles/" + args[0]);
+    in.setReadable(true);
     
+    // creating output file from input filename; TODO: what location?
+    String outputFile = "" + args[0].split(".")[0] + ".java";
+    File out = new File(outputFile);
+    out.mkdir();
+    out.setWritable(true);
+    out.setReadable(true);
+    writer = new BufferedWriter(new OutputStreamWriter(
+              new FileOutputStream(out)));
 
     // initialise the lexer with given input file
-    RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRFileStream(args[0]));
+    RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(in)));
     
     // initialise the parser
     RobotGrammarParser parser = new RobotGrammarParser(new CommonTokenStream(lexer));
