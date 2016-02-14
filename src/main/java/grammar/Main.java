@@ -59,7 +59,7 @@ public class Main {
   ParseTree tree = parser.grammar_file();
 
   // initialise the visitor that will do all the work
-  RGVisitor visitor = new RGVisitor();
+  RGVisitor visitor = new RGVisitor(writer);
 
   // walk the parse tree, (create output file here?)
   visitor.visit(tree);

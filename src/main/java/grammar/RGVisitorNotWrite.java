@@ -7,59 +7,19 @@ package grammar;
 
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
- *
  * @author anna
  */
-public class RGVisitor implements RobotGrammarVisitor<String> {
-    
-  private String indent;
+public class RGVisitorNotWrite implements RobotGrammarVisitor<String>{
+  private RGVisitor parent;
   
-  // this memory will know the types of variables
-  private HashMap<String, String> memory;
-  
-  // the output stream to write to
-  private Writer writer;
-  
-  // a Visitor that only implements part of RobotGrammarVisitor (everything that
-  // could possibly be a child of exp) and will be used for typechecking
-  private RGVisitorNotWrite typefinder;
-    
-  private boolean writeToFile(String text){
-    try {
-      writer.write(indent + text);
-    } catch (IOException ex) {
-      Logger.getLogger(RGVisitor.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return true;
-  }
-  
-  public RGVisitor(Writer writer){
-    this.writer = writer;
-    this.indent = "";
-    this.memory = new HashMap<String, String>();
-    this.typefinder = new RGVisitorNotWrite(this);
-  }
-  
-  /**
-   * this method allows other classes to look into type memory for type checking
-   * @param toCheck
-   * @return type of toCheck or null if not in memory
-   */
-  public String checkMemory(String toCheck){
-    if(this.memory.containsKey(toCheck))
-      return memory.get(toCheck);
-    return null;
+  public RGVisitorNotWrite(RGVisitor parent){
+    this.parent = parent;
   }
 
   @Override
@@ -69,33 +29,7 @@ public class RGVisitor implements RobotGrammarVisitor<String> {
 
   @Override
   public String visitGrammar_file(RobotGrammarParser.Grammar_fileContext ctx) {
-    writeToFile("public class RulesQuiz extends RuleUnit {\n\n"
-              + "  // GameData is an RDF class proxy in java code\n"
-              + "  // TODO: The type of game must specified, can not be inferred, same for currentUser\n"
-              + "  // and speech act\n"
-              + "  // TODO: what about relational properties aka multi-valued features\n"
-              + "  // TODO: possibly gamePlayed must be a custom method / ASK query\n\n"
-              + "  GameData game;"
-              + "\n"
-              + "  // User is an RDF class proxy in java code"
-              + "\n"
-              + "  User currentUser;"
-              + "\n\n  // This must be a real class"
-              + "\n"
-              + "  GameLogic gameLogic;"
-              + "\n\n  // SpeechActs, RDF proxies"
-              + "\n"
-              + "  DialogueAct myLastSA, currentSA;"
-              + "\n\n"
-              + "  private void computeProxies() "
-              + "{\n"
-              + "    // TODO: ... missing definition generating this code\n"
-              + "  }\n\n"
-              + "  public void mainLoop() {\n"
-              + "    computeProxies();");
-    this.visitChildren(ctx);
-    writeToFile("  }\n}");
-    return null;
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
@@ -185,23 +119,6 @@ public class RGVisitor implements RobotGrammarVisitor<String> {
 
   @Override
   public String visitAssignment(RobotGrammarParser.AssignmentContext ctx) {
-    if(ctx.getChildCount() == 3){ // form is x = 5
-      String left = visit(ctx.getChild(1));
-      visit(ctx.getChild(2)); // necessary? should do nothing more than print "="
-      String right = visit(ctx.getChild(3));
-      assert(left.equals(right));
-    }
-    else{ // form is var x = 5
-      String type = typefinder.visit(ctx.getChild(4));
-      if(memory.containsKey(ctx.getChild(2).getText())){
-        if((memory.get(ctx.getChild(2).getText())).equals(type)){
-          // TODO: define a nice exception
-          throw new UnsupportedOperationException("Variable " + ctx.getChild(2).getText() + " is already defined");
-        }
-      }
-      writeToFile(type + " ");
-      this.visitChildren(ctx);
-    }
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
@@ -282,31 +199,19 @@ public class RGVisitor implements RobotGrammarVisitor<String> {
 
   @Override
   public String visit(ParseTree pt) {
-    return pt.accept(this);
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
-  /**
-   * Don't use this method in a rule where you want to do type checking! (you
-   * won't get back anything useful)
-   * @param rn
-   * @return nothing
-   */
   @Override
   public String visitChildren(RuleNode rn) {
-      // TODO: starting count at 0 or 1??
-    for(int n = 0; n < rn.getChildCount(); ++n){
-        this.visit(rn.getChild(n));
-    }
-    return null;
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
   public String visitTerminal(TerminalNode tn) {
-    if(tn.getSymbol().getType() == 46 || tn.getSymbol().getType() == 43){
-      // token is whitespace or DEC_VAR
+    if(tn.getSymbol().getType() == 46){ // token is whitespace
       return null;
     }
-    writeToFile(tn.getSymbol().getText() + " ");
     switch(tn.getSymbol().getType()){
       case 11:  // token is character
         return "char";
@@ -315,8 +220,8 @@ public class RGVisitor implements RobotGrammarVisitor<String> {
       case 41:  // token is literal_or_graph
         // ????????????????
       case 47:  // token is variable
-        if(memory.containsKey(tn.getText())){
-          return memory.get(tn.getText());
+        if(!parent.checkMemory(tn.getText()).isEmpty()){
+          return parent.checkMemory(tn.getText());
         }
         else{
           break;
@@ -329,10 +234,9 @@ public class RGVisitor implements RobotGrammarVisitor<String> {
     return null;
   }
 
-  // TODO: what to do?
   @Override
   public String visitErrorNode(ErrorNode en) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
-
+  
 }
