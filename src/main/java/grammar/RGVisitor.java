@@ -116,12 +116,36 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitArithmetic_operator(RobotGrammarParser.Arithmetic_operatorContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    visitChildren(ctx);
+    return null;
   }
 
   @Override
   public Type visitArithmetic(RobotGrammarParser.ArithmeticContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // Attention: concatenation of two Strings is parsed as arithmetic operation!
+    boolean minus = false;
+    boolean number = false;
+    boolean string = false;
+    for (int i = 0; i <= ctx.getChildCount(); ++i){
+      Type type = typefinder.visit(ctx.getChild(i));
+      if (ctx.getChild(i).getText().equals("-")){
+        minus = true;
+      }
+      else if (type.equals(Type.STRING)){
+        string = true;
+      }
+      else if (type.equals(Type.FLOAT)){
+        number = true;
+      }
+      else if (type.equals(Type.INT)){
+        number = true;
+      }
+    }
+    assert(!((minus && string) || (string && number)));
+    if(string){
+      return Type.STRING;
+    }
+    return Type.FLOAT;
   }
 
   @Override
@@ -133,13 +157,14 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
     else{
       type = typefinder.visit(ctx.getChild(1));
     }
-    assert(type.equals(Type.FLOAT) || type.equals(Type.INT));
+    //assert(type.equals(Type.FLOAT) || type.equals(Type.INT));
     return type;
   }
 
   @Override
   public Type visitStatement(RobotGrammarParser.StatementContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    visitChildren(ctx);
+    return null;
   }
 
   @Override
@@ -149,7 +174,13 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitTerm(RobotGrammarParser.TermContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    for (int i = 0; i < ctx.getChildCount(); ++i){
+      if(!(ctx.getChild(i).getText().equals("*") || ctx.getChild(i).getText().equals("/"))){
+        assert(typefinder.visit(ctx.getChild(i)).equals(Type.FLOAT)
+                || typefinder.visit(ctx.getChild(i)).equals(Type.INT));
+      }
+    }
+    return Type.FLOAT;
   }
 
   @Override
@@ -166,12 +197,17 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitExp(RobotGrammarParser.ExpContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    visitChildren(ctx);
+    if(ctx.getChildCount() > 1){
+      return typefinder.visit(ctx.getChild(2));
+    }
+    return typefinder.visit(ctx.getChild(1));
   }
 
   @Override
   public Type visitFactor(RobotGrammarParser.FactorContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    visitChildren(ctx);
+    return null;
   }
 
   @Override
@@ -181,7 +217,11 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitSimple_b_exp(RobotGrammarParser.Simple_b_expContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    visitChildren(ctx);
+    if(ctx.getChildCount() > 1){
+      return typefinder.visit(ctx.getChild(2));
+    }
+    return typefinder.visit(ctx.getChild(1));
   }
 
   @Override
@@ -296,7 +336,8 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitLoop_statement(RobotGrammarParser.Loop_statementContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    visitChildren(ctx);
+    return null;
   }
 
   @Override
@@ -333,6 +374,10 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
     }
     writeToFile(tn.getSymbol().getText() + " ");
     switch(tn.getSymbol().getType()){
+      case 9:   // token is TRUE
+        return Type.BOOL;
+      case 10:  // token is FALSE
+        return Type.BOOL;
       case 11:  // token is character
         return Type.CHAR;
       case 12:  // token is String
@@ -346,6 +391,8 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
       case 19:  // token is semicolon
         writeToFile("\n");
         break;
+      case 40:  //token is wildcard
+        // ?????????????????
       case 41:  // token is literal_or_graph
         // ????????????????
       case 47:  // token is variable

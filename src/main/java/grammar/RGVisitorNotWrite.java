@@ -13,6 +13,9 @@ import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
+ * this visitor should contain copies of all methods of RGVisitor that are modified
+ * so they do not write anything
+ * 
  * @author anna
  */
 public class RGVisitorNotWrite implements RobotGrammarVisitor<Type>{
@@ -194,17 +197,28 @@ public class RGVisitorNotWrite implements RobotGrammarVisitor<Type>{
 
   @Override
   public Type visitComment(RobotGrammarParser.CommentContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    visitChildren(ctx);
+    return null;
   }
 
   @Override
   public Type visit(ParseTree pt) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return pt.accept(this);
   }
-
+  
+  /**
+   * Don't use this method in a rule where you want to do type checking! (you
+   * won't get back anything useful)
+   * @param rn
+   * @return nothing
+   */
   @Override
   public Type visitChildren(RuleNode rn) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+      // TODO: starting count at 0 or 1??
+    for(int n = 0; n < rn.getChildCount(); ++n){
+        this.visit(rn.getChild(n));
+    }
+    return null;
   }
   
   @Override
@@ -213,6 +227,10 @@ public class RGVisitorNotWrite implements RobotGrammarVisitor<Type>{
       return null;
     }
     switch(tn.getSymbol().getType()){
+      case 9:   // token is TRUE
+        return Type.BOOL;
+      case 10:  // token is FALSE
+        return Type.BOOL;
       case 11:  // token is character
         return Type.CHAR;
       case 12:  // token is String
