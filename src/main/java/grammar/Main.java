@@ -37,13 +37,13 @@ public class Main {
   System.out.println("parsing: " + args[0]);
 
   // creating input file & make it readable
-  File in = new File("src/test/testfiles/" + args[0]);
+  File in = new File("src/test/testfiles/" + args[0], "UTF-8");
   in.setReadable(true);
 
   // creating output file from input filename; TODO: what location?
   String[] testString = args[0].split(".");
-  String outputFile = "src/test/testfiles/" + (args)[0] + ".java";
-  File out = new File(outputFile);
+  String outputFile = "src/test/testfiles/" + args[0] + ".java";
+  File out = new File(outputFile, "UTF-8");
   out.setWritable(true);
   out.setReadable(true);
   writer = new BufferedWriter(new OutputStreamWriter(
