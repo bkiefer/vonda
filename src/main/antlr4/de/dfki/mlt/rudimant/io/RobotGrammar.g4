@@ -48,7 +48,7 @@ while_statement
   ;
 
 for_statement
-  : FOR LPAR assignment SEMICOLON exp SEMICOLON exp RPAR loop_statement_block
+  : FOR LPAR assignment SEMICOLON exp SEMICOLON exp? RPAR loop_statement_block
   | FOR LPAR VARIABLE COLON exp RPAR loop_statement_block
   | FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block
   ;

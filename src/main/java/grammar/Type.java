@@ -11,4 +11,16 @@ package grammar;
  */
 public enum Type {
   STRING, FLOAT, INT, BOOL, CHAR;
+  
+  @Override
+  public String toString(){
+    switch(this.ordinal()){
+      case 0: return "String";
+      case 1: return "float";
+      case 2: return "int";
+      case 3: return "boolean";
+      case 4: return "char";
+    }
+    return null;
+  }
 }

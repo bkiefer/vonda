@@ -25,5 +25,19 @@ public interface RobotContext {
    * @param functionname
    * @return the return type of the function with name functionname
    */
-  public Type getFuctionReturn(String functionname);
+  public Type getFunctionReturn(String functionname);
+  
+  /**
+   * method that can say whether a field is existing or not
+   * @param access
+   * @return true if this access is valid
+   */
+  public boolean existsFieldAccess(String access);
+  
+  /**
+   * method that finds the type of a field
+   * @param access
+   * @return the type of this field
+   */
+  public Type getFieldType(String access);
 }

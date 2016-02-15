@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
@@ -106,7 +107,14 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitLoop_propose_statement(RobotGrammarParser.Loop_propose_statementContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // third child is the parameter, fifth child is propose_block
+    String altindent = indent;
+    indent += "      ";
+    writeToFile(altindent + "propose(" + ctx.getChild(3) + ", new Proposal() {\n" + indent + "public void run() {");
+    visit(ctx.getChild(5));
+    indent = indent.substring(0, indent.length() - 7);
+    writeToFile(indent + "});\n");
+    return null;
   }
 
   @Override
@@ -117,7 +125,8 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
       types.add(typefinder.visit(ctx.getChild(i)));
     }
     assert(context.testFunctionArguments(types));
-    return context.getFuctionReturn(ctx.getChild(1).getText());
+    visitChildren(ctx);
+    return context.getFunctionReturn(ctx.getChild(1).getText());
   }
 
   @Override
@@ -176,6 +185,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitStatement(RobotGrammarParser.StatementContext ctx) {
+    writeToFile(indent);
     visitChildren(ctx);
     return null;
   }
@@ -199,6 +209,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitWhile_statement(RobotGrammarParser.While_statementContext ctx) {
+    writeToFile(indent);
     visitChildren(ctx);
     return null;
   }
@@ -226,7 +237,29 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitLiteral_or_graph_exp(RobotGrammarParser.Literal_or_graph_expContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // form is LITERAL_OR_GRAPH LPAR ( exp (COMMA exp)*)? RPAR
+    writeToFile(indent + "new DialogueAct(");
+    // TODO: please specify all variables that should NOT be packed in the String we give
+    //      to DialogueAct (atm: every field access)
+    String da = ctx.getChild(1).getText();
+    da = da.substring(1, da.length());
+    String what_da_gets = "\"" + da;
+    for (int i = 2; i < ctx.getChildCount() - 1; ++i){
+      if(ctx.getChild(i).getText().equals(",")){
+        continue;
+      }
+      // Beobachtung: parser parst immer exp -> boolean_exp -> simple_b_exp -> andere
+      int l = 0;
+      ParseTree p = ctx.getChild(i);
+      while (l < 3){
+        p = p.getChild(l);
+      }
+      if (p.getClass().equals(RobotGrammarParser.AssignmentContext.class)){
+        // in this case the right part could be a field access
+        
+      }
+    }
+    return null;
   }
 
   @Override
@@ -294,7 +327,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   public Type visitLabel(RobotGrammarParser.LabelContext ctx) {
     // label looks like VARIABLE COLON
     String label = ctx.getChild(1).getText();
-    writeToFile("execute(\"" + label + "\");\n");
+    writeToFile(indent + "execute(\"" + label + "\");\n");
     visitChildren(ctx);
     return null;
   }
@@ -307,11 +340,19 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitPropose_statement(RobotGrammarParser.Propose_statementContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // third child is the parameter, fifth child is propose_block
+    String altindent = indent;
+    indent += "      ";
+    writeToFile(altindent + "propose(" + ctx.getChild(3) + ", new Proposal() {\n" + indent + "public void run() {");
+    visit(ctx.getChild(5));
+    indent = indent.substring(0, indent.length() - 7);
+    writeToFile(indent + "});\n");
+    return null;
   }
 
   @Override
   public Type visitLoop_if_statement(RobotGrammarParser.Loop_if_statementContext ctx) {
+    writeToFile(indent);
     visitChildren(ctx);
     return null;
   }
@@ -323,7 +364,29 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitFor_statement(RobotGrammarParser.For_statementContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    writeToFile(indent + "for(");
+    if (ctx.getChildCount() == 7){
+      // statement looks like "FOR LPAR VARIABLE COLON exp RPAR loop_statement_block"
+      Type vartype = typefinder.visit(ctx.getChild(5));
+      writeToFile(vartype.toString());
+      for (int i = 2; i < ctx.getChildCount(); ++i){
+        visit(ctx.getChild(i));
+      }
+      // TODO: or should we check here that the type of the variable in assignment
+      // is the type the iterable in exp returns? How?
+    }
+    else if(ctx.getChildCount() == 8 || ctx.getChildCount() == 9){
+      // statement looks like "FOR LPAR assignment SEMICOLON exp SEMICOLON exp? RPAR loop_statement_block"
+      visitChildren(ctx);
+      // TODO: or should we check here that the type of the variable in assignment
+      // is the type the iterable in exp returns? How?
+    }
+    else{
+      // statement looks like "FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block"
+      // TODO: we need sth that remembers what container exp uses to give back tuples
+      //      so we can create a nested loop
+    }
+    return null;
   }
 
   @Override
@@ -339,7 +402,9 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitField_access(RobotGrammarParser.Field_accessContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    assert(context.existsFieldAccess(ctx.getText()));
+    writeToFile(ctx.getText());     // visitChildren would be dangerous because children are lexed as VARIABLE
+    return context.getFieldType(ctx.getText());
   }
 
   @Override
@@ -350,24 +415,31 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitField_access_vfunc(RobotGrammarParser.Field_access_vfuncContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    assert(context.existsFieldAccess(ctx.getText()));
+    writeToFile(ctx.getText());     // visitChildren would be dangerous because children are lexed as VARIABLE
+    return context.getFieldType(ctx.getText());
   }
 
   @Override
   public Type visitIf_statement(RobotGrammarParser.If_statementContext ctx) {
+    writeToFile(indent);
     visitChildren(ctx);
     return null;
   }
 
   @Override
   public Type visitLoop_statement(RobotGrammarParser.Loop_statementContext ctx) {
+    writeToFile(indent);
     visitChildren(ctx);
     return null;
   }
 
   @Override
   public Type visitComment(RobotGrammarParser.CommentContext ctx) {
-    visitChildren(ctx);
+    for(int n = 0; n < ctx.getChildCount(); ++n){
+        writeToFile(indent);
+        this.visit(ctx.getChild(n));
+    }
     return null;
   }
 
@@ -418,6 +490,8 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
       case 19:  // token is semicolon
         writeToFile("\n");
         break;
+      case 27:  // token is <=
+        // TODO: how to determine whether this is normal boolean or magic?
       case 40:  //token is wildcard
         // ?????????????????
       case 41:  // token is literal_or_graph
