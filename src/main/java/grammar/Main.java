@@ -27,7 +27,7 @@ public class Main {
 
   /**
    * 
-   * @param args: the file that should be parsed (in args[0])
+   * @param args: the file that should be parsed without ending (in args[0])
    * @throws Exception 
    */
   public static void main(String[] args) throws Exception {
@@ -37,7 +37,7 @@ public class Main {
   System.out.println("parsing: " + args[0]);
 
   // creating input file & make it readable
-  File in = new File("src/test/testfiles/" + args[0], "UTF-8");
+  File in = new File("src/test/testfiles/" + args[0] + ".txt", "UTF-8");
   in.setReadable(true);
 
   // creating output file from input filename; TODO: what location?
@@ -52,7 +52,13 @@ public class Main {
             new FileOutputStream(out)));
 
   // initialise the context magic
-  RobotContext context = new RobotContext();
+  RobotContext context = new ExampleContext();
+  
+  // prepare the output file
+  writer.write(context.beforeClassName());
+  String classname = args[0].substring(0, 1).toUpperCase() + args[0].substring(1);
+  writer.write("public class " + classname + "extends RuleUnit {\n\n");
+  writer.write(context.afterClassName());
   
   // initialise the lexer with given input file
   RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(in)));
@@ -68,5 +74,10 @@ public class Main {
 
   // walk the parse tree, (create output file here?)
   visitor.visit(tree);
+  
+  writer.write(context.atEndOfFile() + "\n}");
+  
+  // close the writer
+  writer.close();
   }
 }
