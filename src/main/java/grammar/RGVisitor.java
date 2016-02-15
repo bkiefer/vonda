@@ -243,22 +243,36 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
     //      to DialogueAct (atm: every field access)
     String da = ctx.getChild(1).getText();
     da = da.substring(1, da.length());
-    String what_da_gets = "\"" + da;
+    String what_da_gets = "\"" + da + "(";
     for (int i = 2; i < ctx.getChildCount() - 1; ++i){
       if(ctx.getChild(i).getText().equals(",")){
+      what_da_gets += ", ";
         continue;
       }
       // Beobachtung: parser parst immer exp -> boolean_exp -> simple_b_exp -> andere
       int l = 0;
       ParseTree p = ctx.getChild(i);
       while (l < 3){
-        p = p.getChild(l);
+        p = p.getChild(l++);
       }
       if (p.getClass().equals(RobotGrammarParser.AssignmentContext.class)){
         // in this case the right part could be a field access
-        
+        // parsing goes exp -> boolean_exp -> simple_b_exp -> arithmetic -> term -> factor -> number -> field_access / other
+        l = 0;
+        ParseTree t = p.getChild(3);
+        while (l < 7){
+          t = t.getChild(l++);
+        }
+        if (t.getClass().equals(RobotGrammarParser.Field_accessContext.class)){
+          // then we have found a field access
+          what_da_gets += p.getChild(1).getText() + " =\" + " + t.getText() + " + \"";
+          continue;
+        }
       }
+      // if there is no field access, just add the parameter as string
+      what_da_gets += ctx.getChild(i).getText();
     }
+    writeToFile(what_da_gets + "))");
     return null;
   }
 
