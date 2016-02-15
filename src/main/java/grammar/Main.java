@@ -46,9 +46,14 @@ public class Main {
   File out = new File(outputFile, "UTF-8");
   out.setWritable(true);
   out.setReadable(true);
+  
+  // initiate writer
   writer = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream(out)));
 
+  // initialise the context magic
+  RobotContext context = new RobotContext();
+  
   // initialise the lexer with given input file
   RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(in)));
 
@@ -59,7 +64,7 @@ public class Main {
   ParseTree tree = parser.grammar_file();
 
   // initialise the visitor that will do all the work
-  RGVisitor visitor = new RGVisitor(writer);
+  RGVisitor visitor = new RGVisitor(writer, context);
 
   // walk the parse tree, (create output file here?)
   visitor.visit(tree);

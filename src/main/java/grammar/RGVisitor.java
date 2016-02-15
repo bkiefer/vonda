@@ -9,6 +9,7 @@ import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,6 +35,9 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   // a Visitor that only implements part of RobotGrammarVisitor (everything that
   // could possibly be a child of exp) and will be used for typechecking
   private RGVisitorNotWrite typefinder;
+  
+  // the object that nows about context that we cannot see
+  private RobotContext context;
     
   private boolean writeToFile(String text){
     try {
@@ -44,11 +48,12 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
     return true;
   }
   
-  public RGVisitor(Writer writer){
+  public RGVisitor(Writer writer, RobotContext context){
     this.writer = writer;
     this.indent = "";
     this.memory = new HashMap<String, Type>();
     this.typefinder = new RGVisitorNotWrite(this);
+    this.context = context;
   }
   
   /**
@@ -57,7 +62,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
    * @return type of toCheck or null if not in memory
    */
   public Type checkMemory(String toCheck){
-    if(this.memory.containsKey(toCheck))
+    if(memory.containsKey(toCheck))
       return memory.get(toCheck);
     return null;
   }
@@ -106,12 +111,20 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitFunction_call(RobotGrammarParser.Function_callContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    ArrayList<Type> types = new ArrayList<Type>();
+    // LPAR is second child
+    for(int i = 2; i < ctx.getChildCount(); ++i){
+      types.add(typefinder.visit(ctx.getChild(i)));
+    }
+    assert(context.testFunctionArguments(types));
+    return context.getFuctionReturn(ctx.getChild(1).getText());
   }
 
   @Override
   public Type visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    writeToFile("\n\n");
+    visitChildren(ctx);
+    return null;
   }
 
   @Override
@@ -169,7 +182,8 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitPropose_block(RobotGrammarParser.Propose_blockContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    visitChildren(ctx);
+    return null;
   }
 
   @Override
@@ -226,12 +240,19 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitBoolean_exp(RobotGrammarParser.Boolean_expContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    if(ctx.getChildCount() == 1){ // it could be anything
+      return typefinder.visit(ctx.getChild(1));
+    }
+    else{ // there is a boolean op -> it really is a boolean expression
+      // TODO: can we do "blabla" < 3? "blabla" < "haha"?
+      return Type.BOOL;
+    }
   }
 
   @Override
   public Type visitLoop_propose_block(RobotGrammarParser.Loop_propose_blockContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    visitChildren(ctx);
+    return null;
   }
 
   @Override
@@ -271,7 +292,11 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitLabel(RobotGrammarParser.LabelContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // label looks like VARIABLE COLON
+    String label = ctx.getChild(1).getText();
+    writeToFile("execute(\"" + label + "\");\n");
+    visitChildren(ctx);
+    return null;
   }
 
   @Override
@@ -383,9 +408,11 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
       case 12:  // token is String
         return Type.STRING;
       case 17:  //  token is LBRACE -> block indented
+        writeToFile("\n");
         indent += "  ";
         break;
       case 18:  //  token is RBRACE -> resize indentation
+        writeToFile("\n");
         indent = indent.substring(0, indent.length() - 3);
         break;
       case 19:  // token is semicolon
