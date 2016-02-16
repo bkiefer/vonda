@@ -5,6 +5,7 @@
  */
 package grammar;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ public class ExampleContext implements RobotContext{
 
   @Override
   public String beforeClassName() {
-    return "this is the license header";
+    return "/**this is the license header\n**/\n\n";
   }
 
   @Override
@@ -47,7 +48,7 @@ public class ExampleContext implements RobotContext{
 
   @Override
   public String atEndOfFile() {
-    return "  }\n";
+    return "\n  }\n";
   }
 
   @Override
@@ -60,14 +61,23 @@ public class ExampleContext implements RobotContext{
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
+  private static HashMap<String, Type> fieldMap = new HashMap<String, Type>();
+  {
+    fieldMap.put("game.status", Type.STRING);
+    fieldMap.put("initiated", Type.STRING);
+  }
+  
   @Override
   public boolean existsFieldAccess(String access) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return fieldMap.containsKey(access);
   }
 
   @Override
   public Type getFieldType(String access) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    if(existsFieldAccess(access)){
+      return fieldMap.get(access);
+    }
+    return null;
   }
   
 }

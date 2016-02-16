@@ -31,7 +31,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   private HashMap<String, Type> memory;
   
   // the output stream to write to
-  private Writer writer;
+  public Writer writer;
   
   // a Visitor that only implements part of RobotGrammarVisitor (everything that
   // could possibly be a child of exp) and will be used for typechecking
@@ -42,7 +42,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
     
   private boolean writeToFile(String text){
     try {
-      writer.write(indent + text);
+      writer.write(text);
     } catch (IOException ex) {
       Logger.getLogger(RGVisitor.class.getName()).log(Level.SEVERE, null, ex);
     }
@@ -51,9 +51,9 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   
   public RGVisitor(Writer writer, RobotContext context){
     this.writer = writer;
-    this.indent = "  ";
+    this.indent = "    ";
     this.memory = new HashMap<String, Type>();
-    this.typefinder = new RGVisitorNotWrite(this);
+    this.typefinder = new RGVisitorNotWrite(this, context);
     this.context = context;
   }
   
@@ -85,7 +85,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
     // third child is the parameter, fifth child is propose_block
     String altindent = indent;
     indent += "      ";
-    writeToFile(altindent + "propose(" + ctx.getChild(3) + ", new Proposal() {\n" + indent + "public void run() {");
+    writeToFile(altindent + "propose(" + ctx.getChild(2) + ", new Proposal() {\n" + indent + "public void run() {\n");
     visit(ctx.getChild(5));
     indent = indent.substring(0, indent.length() - 7);
     writeToFile(indent + "});\n");
@@ -96,7 +96,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   public Type visitFunction_call(RobotGrammarParser.Function_callContext ctx) {
     ArrayList<Type> types = new ArrayList<Type>();
     // LPAR is second child
-    for(int i = 2; i < ctx.getChildCount(); ++i){
+    for(int i = 2; i < ctx.getChildCount(); i++){
       types.add(typefinder.visit(ctx.getChild(i)));
     }
     assert(context.testFunctionArguments(types));
@@ -123,7 +123,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
     boolean minus = false;
     boolean number = false;
     boolean string = false;
-    for (int i = 0; i <= ctx.getChildCount(); ++i){
+    for (int i = 0; i < ctx.getChildCount(); i++){
       Type type = typefinder.visit(ctx.getChild(i));
       if (ctx.getChild(i).getText().equals("-")){
         minus = true;
@@ -149,10 +149,10 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   public Type visitNumber(RobotGrammarParser.NumberContext ctx) {
     Type type;
     if(ctx.getChildCount() == 2){ // there is a ++ or --
-      type = typefinder.visit(ctx.getChild(2));
+      type = typefinder.visit(ctx.getChild(1));
     }
     else{
-      type = typefinder.visit(ctx.getChild(1));
+      type = typefinder.visit(ctx.getChild(0));
     }
     //assert(type.equals(Type.FLOAT) || type.equals(Type.INT));
     return type;
@@ -173,10 +173,12 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitTerm(RobotGrammarParser.TermContext ctx) {
-    for (int i = 0; i < ctx.getChildCount(); ++i){
-      if(!(ctx.getChild(i).getText().equals("*") || ctx.getChild(i).getText().equals("/"))){
-        assert(typefinder.visit(ctx.getChild(i)).equals(Type.FLOAT)
-                || typefinder.visit(ctx.getChild(i)).equals(Type.INT));
+    for (int i = 0; i < ctx.getChildCount(); i++){
+      if(ctx.getChildCount() > 1){
+        if(!(ctx.getChild(i).getText().equals("*") || ctx.getChild(i).getText().equals("/"))){
+          assert(typefinder.visit(ctx.getChild(i)).equals(Type.FLOAT)
+                  || typefinder.visit(ctx.getChild(i)).equals(Type.INT));
+        }
       }
     }
     return Type.FLOAT;
@@ -184,7 +186,6 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitWhile_statement(RobotGrammarParser.While_statementContext ctx) {
-    writeToFile(indent);
     visitChildren(ctx);
     return null;
   }
@@ -199,9 +200,9 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   public Type visitExp(RobotGrammarParser.ExpContext ctx) {
     visitChildren(ctx);
     if(ctx.getChildCount() > 1){
-      return typefinder.visit(ctx.getChild(2));
+      return typefinder.visit(ctx.getChild(1));
     }
-    return typefinder.visit(ctx.getChild(1));
+    return typefinder.visit(ctx.getChild(0));
   }
 
   @Override
@@ -219,7 +220,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
     String da = ctx.getChild(1).getText();
     da = da.substring(1, da.length());
     String what_da_gets = "\"" + da + "(";
-    for (int i = 2; i < ctx.getChildCount() - 1; ++i){
+    for (int i = 2; i < ctx.getChildCount() - 1; i++){  // last child is RPAR
       if(ctx.getChild(i).getText().equals(",")){
       what_da_gets += ", ";
         continue;
@@ -234,13 +235,13 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
         // in this case the right part could be a field access
         // parsing goes exp -> boolean_exp -> simple_b_exp -> arithmetic -> term -> factor -> number -> field_access / other
         l = 0;
-        ParseTree t = p.getChild(3);
+        ParseTree t = p.getChild(2);
         while (l < 7){
           t = t.getChild(l++);
         }
         if (t.getClass().equals(RobotGrammarParser.Field_accessContext.class)){
           // then we have found a field access
-          what_da_gets += p.getChild(1).getText() + " =\" + " + t.getText() + " + \"";
+          what_da_gets += p.getChild(0).getText() + " =\" + " + t.getText() + " + \"";
           continue;
         }
       }
@@ -255,18 +256,20 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   public Type visitSimple_b_exp(RobotGrammarParser.Simple_b_expContext ctx) {
     visitChildren(ctx);
     if(ctx.getChildCount() > 1){
-      return typefinder.visit(ctx.getChild(2));
+      return typefinder.visit(ctx.getChild(1));
     }
-    return typefinder.visit(ctx.getChild(1));
+    return typefinder.visit(ctx.getChild(0));
   }
 
   @Override
   public Type visitBoolean_exp(RobotGrammarParser.Boolean_expContext ctx) {
     if(ctx.getChildCount() == 1){ // it could be anything
-      return typefinder.visit(ctx.getChild(1));
+      visitChildren(ctx);
+      return typefinder.visit(ctx.getChild(0));
     }
     else{ // there is a boolean op -> it really is a boolean expression
       // TODO: can we do "blabla" < 3? "blabla" < "haha"?
+      visitChildren(ctx);
       return Type.BOOL;
     }
   }
@@ -280,18 +283,18 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   @Override
   public Type visitAssignment(RobotGrammarParser.AssignmentContext ctx) {
     if(ctx.getChildCount() == 3){ // form is x = 5
-      Type left = visit(ctx.getChild(1));
-      visit(ctx.getChild(2)); // necessary? should do nothing more than print "="
-      Type right = visit(ctx.getChild(3));
+      Type left = visit(ctx.getChild(0));
+      visit(ctx.getChild(1)); // necessary? should do nothing more than print "="
+      Type right = visit(ctx.getChild(2));
       assert(left.equals(right));
       return right;
     }
     else{ // form is var x = 5
-      Type type = typefinder.visit(ctx.getChild(4));
-      if(memory.containsKey(ctx.getChild(2).getText())){
-        if((memory.get(ctx.getChild(2).getText())).equals(type)){
+      Type type = typefinder.visit(ctx.getChild(3));
+      if(memory.containsKey(ctx.getChild(1).getText())){
+        if((memory.get(ctx.getChild(1).getText())).equals(type)){
           // TODO: define a nice exception
-          throw new UnsupportedOperationException("Variable " + ctx.getChild(2).getText() + " is already defined");
+          throw new UnsupportedOperationException("Variable " + ctx.getChild(1).getText() + " is already defined");
         }
       }
       writeToFile(type + " ");
@@ -315,9 +318,8 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   @Override
   public Type visitLabel(RobotGrammarParser.LabelContext ctx) {
     // label looks like VARIABLE COLON
-    String label = ctx.getChild(1).getText();
+    String label = ctx.getChild(0).getText();
     writeToFile(indent + "execute(\"" + label + "\");\n");
-    visitChildren(ctx);
     return null;
   }
 
@@ -332,8 +334,8 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
     // third child is the parameter, fifth child is propose_block
     String altindent = indent;
     indent += "      ";
-    writeToFile(altindent + "propose(" + ctx.getChild(3) + ", new Proposal() {\n" + indent + "public void run() {");
-    visit(ctx.getChild(5));
+    writeToFile("propose(" + ctx.getChild(3) + ", new Proposal() {\n" + indent + "public void run() {");
+    visit(ctx.getChild(4));
     indent = indent.substring(0, indent.length() - 7);
     writeToFile(indent + "});\n");
     return null;
@@ -341,7 +343,6 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitLoop_if_statement(RobotGrammarParser.Loop_if_statementContext ctx) {
-    writeToFile(indent);
     visitChildren(ctx);
     return null;
   }
@@ -356,12 +357,12 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitFor_statement(RobotGrammarParser.For_statementContext ctx) {
-    writeToFile(indent + "for(");
+    writeToFile("for(");
     if (ctx.getChildCount() == 7){
       // statement looks like "FOR LPAR VARIABLE COLON exp RPAR loop_statement_block"
-      Type vartype = typefinder.visit(ctx.getChild(5));
+      Type vartype = typefinder.visit(ctx.getChild(4));
       writeToFile(vartype.toString());
-      for (int i = 2; i < ctx.getChildCount(); ++i){
+      for (int i = 2; i < ctx.getChildCount(); i++){
         visit(ctx.getChild(i));
       }
       // TODO: or should we check here that the type of the variable in assignment
@@ -383,7 +384,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitString_expression(RobotGrammarParser.String_expressionContext ctx) {
-    for(int i = 0; i < ctx.getChildCount(); ++i){
+    for(int i = 0; i < ctx.getChildCount(); i++){
       if(ctx.getChild(i).getText().equals("+")){
         continue;
       }
@@ -414,7 +415,6 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitIf_statement(RobotGrammarParser.If_statementContext ctx) {
-    writeToFile(indent);
     visitChildren(ctx);
     return null;
   }
@@ -428,7 +428,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitComment(RobotGrammarParser.CommentContext ctx) {
-    for(int n = 0; n < ctx.getChildCount(); ++n){
+    for(int n = 0; n < ctx.getChildCount(); n++){
         writeToFile(indent);
         this.visit(ctx.getChild(n));
     }
@@ -449,7 +449,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   @Override
   public Type visitChildren(RuleNode rn) {
       // TODO: starting count at 0 or 1??
-    for(int n = 0; n < rn.getChildCount(); ++n){
+    for(int n = 0; n < rn.getChildCount(); n++){
         this.visit(rn.getChild(n));
     }
     return null;
@@ -493,7 +493,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
           return memory.get(tn.getText());
         }
         else{
-          break;
+          return context.getFieldType(tn.getText());
         }
       case 48:  // token is int
         return Type.INT;

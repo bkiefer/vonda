@@ -55,7 +55,7 @@ public interface RobotContext {
   public boolean existsFieldAccess(String access);
   
   /**
-   * method that finds the type of a field
+   * method that finds the type of a field or returns null if there is no such field
    * @param access
    * @return the type of this field
    */
