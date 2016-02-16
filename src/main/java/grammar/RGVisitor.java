@@ -38,7 +38,28 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   
   // the object that nows about context that we cannot see
   private RobotContext context;
-    
+  
+  
+  /**
+   * method only for test purposes, to close writer at a breakpoint if there is no child i
+   * @param ctx
+   * @param i 
+   */
+  private void testClose(ParseTree ctx, int i){
+    if(this.visit(ctx.getChild(i)) == null){
+      try {
+        writer.close();
+      } catch (IOException ex) {
+        Logger.getLogger(RGVisitor.class.getName()).log(Level.SEVERE, null, ex);
+      }
+    }
+  }
+  
+  /**
+   * method that will print given text to the output file
+   * @param text
+   * @return true if successfull
+   */
   private boolean writeToFile(String text){
     try {
       writer.write(text);
@@ -265,7 +286,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
     indent += "      ";
     visit(ctx.getChild(4));
     indent = indent.substring(0, indent.length() - 7);
-    writeToFile(indent + "}\n" + indent + "});\n");
+    writeToFile(indent + "});\n");
     return null;
   }
 
@@ -318,14 +339,14 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
     writeToFile(indent + "new DialogueAct(");
     // TODO: please specify all variables that should NOT be packed in the String we give
     //      to DialogueAct (atm: every field access)
-    String da = ctx.getChild(1).getText();
+    String da = ctx.getChild(0).getText();
     da = da.substring(1, da.length());
     String what_da_gets = "\"" + da + "(";
     // now go through all arguments and look for things that we must not convert to string
-    for (int i = 3; i < ctx.getChildCount() - 1; i++){  // last child is RPAR
+    for (int i = 2; i < ctx.getChildCount() - 1; i++){  // last child is RPAR
       if(ctx.getChild(i).getText().equals(",")){
-      what_da_gets += ", ";
-        continue;
+        what_da_gets += ", ";
+          continue;
       }
       // Beobachtung: parser parst immer exp -> boolean_exp -> simple_b_exp -> andere
       int l = 0;
@@ -335,7 +356,12 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
         l++;
       }
       if (p.getClass().equals(RobotGrammarParser.AssignmentContext.class)){
-        // in this case the right part could be a field access
+        // in this case the right part could be a wildcard...
+        if(p.getChild(2).getText().equals("_")){
+          what_da_gets += "_";
+          continue;
+        }
+        // ... or a field access or sth else
         // parsing goes exp -> boolean_exp -> simple_b_exp -> arithmetic -> term -> factor -> number -> field_access / other
         l = 0;
         ParseTree t = p.getChild(2);
@@ -506,8 +532,6 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
         // TODO: how to determine whether this is normal boolean or magic?
       case 40:  //token is wildcard
         // ?????????????????
-      case 41:  // token is literal_or_graph
-        // ????????????????
       case 48:  // token is int
         return Type.INT;
       case 49:  // token is float

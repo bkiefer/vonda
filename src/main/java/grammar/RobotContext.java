@@ -71,4 +71,5 @@ public interface RobotContext {
    * @return i.e. an existing field access or error if there is no such variable defined
    */
   public String getFullVariableName(String variable);
+  
 }

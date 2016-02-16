@@ -49,7 +49,7 @@ public class ExampleContext implements RobotContext{
 
   @Override
   public String atEndOfFile() {
-    return "\n";
+    return "}\n";
   }
 
   @Override
@@ -66,6 +66,8 @@ public class ExampleContext implements RobotContext{
   {
     functionMap.put("currentUser.gameTypePlayed", Type.BOOL);
     functionMap.put("gameLogic.startSession", Type.BOOL);
+    functionMap.put("gameLogic.isTurnBased", Type.BOOL);
+    functionMap.put("gameLogic.newRound", Type.BOOL);
   }
   
   @Override
@@ -81,7 +83,13 @@ public class ExampleContext implements RobotContext{
     fieldMap.put("game.status", Type.STRING);
     fieldMap.put("initiated", Type.STRING);
     fieldMap.put("currentUser.gameTypePlayed", Type.BOOL);
+    fieldMap.put("currentUser.id", Type.STRING);
     fieldMap.put("gameLogic.startSession", Type.BOOL);
+    fieldMap.put("gameLogic.isTurnBased", Type.BOOL);
+    fieldMap.put("gameLogic.newRound", Type.BOOL);
+    fieldMap.put("game.name", Type.STRING);
+    fieldMap.put("game.activeParticipant", Type.BOOL);
+    fieldMap.put("currentSA.hasActor", Type.BOOL);
   }
   
   @Override

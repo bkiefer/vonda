@@ -39,9 +39,20 @@ public class FirstPrintTests {
     }
 
     @Test
-    public void emptyFileTest() throws Exception {
-        String[] strings = new String[]{"emptyFile"};
-        System.out.println(strings);
+    public void FirstRuleTest() throws Exception {
+        String[] strings = new String[]{"FirstRule"};
+        Main.main(strings);
+    }
+    
+    @Test
+    public void SecondRuleTest() throws Exception {
+        String[] strings = new String[]{"SecondRule"};
+        Main.main(strings);
+    }
+    
+    @Test
+    public void ThirdRuleTest() throws Exception {
+        String[] strings = new String[]{"ThirdRule"};
         Main.main(strings);
     }
 }
