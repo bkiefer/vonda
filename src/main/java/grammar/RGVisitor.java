@@ -464,6 +464,8 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitComment(RobotGrammarParser.CommentContext ctx) {
+    // working on making them visible, should be possible as showed here:
+    // http://meri-stuff.blogspot.de/2012/09/tackling-comments-in-antlr-compiler.html
     for(int n = 0; n < ctx.getChildCount(); n++){
         writeToFile(indent);
         this.visit(ctx.getChild(n));

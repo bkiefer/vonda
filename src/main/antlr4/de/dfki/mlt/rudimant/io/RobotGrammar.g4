@@ -15,7 +15,7 @@ grammar_file
   ;
 
 grammar_rule
-  : ( comment )* label if_statement
+  : ( comment )* label comment* if_statement comment*
   ;
 
 label
@@ -23,7 +23,8 @@ label
   ;
 
 statement
-  : ( exp SEMICOLON
+  : comment* 
+    ( exp SEMICOLON
     | propose_statement
     | if_statement
     | while_statement
@@ -31,6 +32,7 @@ statement
     | statement_block
     | SEMICOLON
     )
+    comment*
  ;
 
 comment
@@ -113,7 +115,8 @@ field_access
   ;
 
 exp
-  : LPAR exp RPAR
+  : comment*
+  (LPAR exp RPAR
   | boolean_exp
   | field_access
   | assignment
@@ -127,10 +130,13 @@ exp
     | TRUE
     | NULL
     )
+  )
+  comment*
   ;
 
 simple_b_exp
-  : LPAR exp RPAR
+  : comment*
+  (LPAR exp RPAR
   | arithmetic
   | function_call
   | field_access
@@ -143,6 +149,8 @@ simple_b_exp
     | NULL
     )
   | NOT boolean_exp
+  )
+  comment*
   ;
 
 boolean_exp

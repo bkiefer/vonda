@@ -55,4 +55,11 @@ public class FirstPrintTests {
         String[] strings = new String[]{"ThirdRule"};
         Main.main(strings);
     }
+    
+    /*
+    @Test
+    public void FourthAndFifthRuleTest() throws Exception {
+        String[] strings = new String[]{"TwoMoreRules"};
+        Main.main(strings);
+    }*/
 }
