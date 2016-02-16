@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
@@ -260,24 +259,26 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   @Override
   public Type visitPropose_statement(RobotGrammarParser.Propose_statementContext ctx) {
     // looks like PROPOSE LPAR propose_arg RPAR loop_propose_block
-    String altindent = indent;
+    writeToFile(indent + "propose(");
+    visit(ctx.getChild(2));
+    writeToFile(", new Proposal() {\n" + indent + "    public void run()\n");
     indent += "      ";
-    writeToFile("propose(" + ctx.getChild(2) + ", new Proposal() {\n" + indent + "public void run() ");
     visit(ctx.getChild(4));
     indent = indent.substring(0, indent.length() - 7);
-    writeToFile(indent + "});\n");
+    writeToFile(indent + "}\n" + indent + "});\n");
     return null;
   }
 
   @Override
   public Type visitLoop_propose_statement(RobotGrammarParser.Loop_propose_statementContext ctx) {
-    // third child is the parameter, fifth child is propose_block
-    String altindent = indent;
+    // looks like PROPOSE LPAR propose_arg RPAR loop_propose_block
+    writeToFile(indent + "propose(");
+    visit(ctx.getChild(2));
+    writeToFile(", new Proposal() {\n" + indent + "    public void run()\n");
     indent += "      ";
-    writeToFile(altindent + "propose(" + ctx.getChild(2) + ", new Proposal() {\n" + indent + "public void run() {\n");
-    visit(ctx.getChild(5));
+    visit(ctx.getChild(4));
     indent = indent.substring(0, indent.length() - 7);
-    writeToFile(indent + "});\n");
+    writeToFile(indent + "}\n" + indent + "});\n");
     return null;
   }
 
@@ -351,7 +352,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
       // if there is no field access, just add the parameter as string
       what_da_gets += ctx.getChild(i).getText();
     }
-    writeToFile(what_da_gets + "))");
+    writeToFile(what_da_gets + ")\")");
     return null;
   }
 

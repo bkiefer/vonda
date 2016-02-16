@@ -6,6 +6,7 @@
 package grammar;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -48,7 +49,7 @@ public class ExampleContext implements RobotContext{
 
   @Override
   public String atEndOfFile() {
-    return "\n  }\n";
+    return "\n";
   }
 
   @Override
@@ -95,11 +96,19 @@ public class ExampleContext implements RobotContext{
     }
     return null;
   }
+  
+  private HashSet<String> isString = new HashSet<String>();
+  {
+    isString.add("initiated");
+  }
 
   @Override
   public String getFullVariableName(String variable) {
     // TODO: is this what should happen??
-    return "\"" + variable + "\"";
+    if(isString.contains(variable)){
+      return "\"" + variable + "\"";
+    }
+    return variable;
     // imagine a set of variables that we want to convert to strings;
     // if variable is not in there, throw exception
   }
