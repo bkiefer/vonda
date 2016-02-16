@@ -95,5 +95,13 @@ public class ExampleContext implements RobotContext{
     }
     return null;
   }
+
+  @Override
+  public String getFullVariableName(String variable) {
+    // TODO: is this what should happen??
+    return "\"" + variable + "\"";
+    // imagine a set of variables that we want to convert to strings;
+    // if variable is not in there, throw exception
+  }
   
 }

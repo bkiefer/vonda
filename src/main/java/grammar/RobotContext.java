@@ -60,4 +60,13 @@ public interface RobotContext {
    * @return the type of this field
    */
   public Type getFieldType(String access);
+  
+  /**
+   * method that handles variables without field access not declared in the input file
+   * (but may be declared somewhere else)
+   * i.e. if you declared the variable in this.afterClassName(), just return its name
+   * @param variable
+   * @return i.e. an existing field access or error if there is no such variable defined
+   */
+  public String getFullVariableName(String variable);
 }

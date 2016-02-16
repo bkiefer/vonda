@@ -69,26 +69,38 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   }
 
   @Override
-  public Type visitStatement_block(RobotGrammarParser.Statement_blockContext ctx) {
-    visitChildren(ctx);
-    return null;
-  }
-
-  @Override
   public Type visitGrammar_file(RobotGrammarParser.Grammar_fileContext ctx) {
     this.visitChildren(ctx);
     return null;
   }
 
   @Override
-  public Type visitLoop_propose_statement(RobotGrammarParser.Loop_propose_statementContext ctx) {
-    // third child is the parameter, fifth child is propose_block
-    String altindent = indent;
-    indent += "      ";
-    writeToFile(altindent + "propose(" + ctx.getChild(2) + ", new Proposal() {\n" + indent + "public void run() {\n");
-    visit(ctx.getChild(5));
-    indent = indent.substring(0, indent.length() - 7);
-    writeToFile(indent + "});\n");
+  public Type visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
+    writeToFile("\n\n");
+    visit(ctx.getChild(0));  // this is the label
+    writeToFile(indent);
+    visit(ctx.getChild(1)); // this is the if
+    return null;
+  }
+
+  @Override
+  public Type visitLabel(RobotGrammarParser.LabelContext ctx) {
+    // label looks like VARIABLE COLON
+    String label = ctx.getChild(0).getText();
+    writeToFile(indent + "execute(\"" + label + "\");\n");
+    return null;
+  }
+
+  @Override
+  public Type visitStatement_block(RobotGrammarParser.Statement_blockContext ctx) {
+    visitChildren(ctx);
+    return null;
+  }
+
+  @Override
+  public Type visitStatement(RobotGrammarParser.StatementContext ctx) {
+    writeToFile(indent);
+    visitChildren(ctx);
     return null;
   }
 
@@ -102,21 +114,6 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
     assert(context.testFunctionArguments(types));
     visitChildren(ctx);
     return context.getFunctionReturn(ctx.getChild(1).getText());
-  }
-
-  @Override
-  public Type visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
-    writeToFile("\n\n");
-    visit(ctx.getChild(0));  // this is the label
-    writeToFile(indent);
-    visit(ctx.getChild(1)); // this is the if
-    return null;
-  }
-
-  @Override
-  public Type visitArithmetic_operator(RobotGrammarParser.Arithmetic_operatorContext ctx) {
-    visitChildren(ctx);
-    return null;
   }
 
   @Override
@@ -149,33 +146,6 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   }
 
   @Override
-  public Type visitNumber(RobotGrammarParser.NumberContext ctx) {
-    Type type;
-    if(ctx.getChildCount() == 2){ // there is a ++ or --
-      type = typefinder.visit(ctx.getChild(1));
-    }
-    else{
-      type = typefinder.visit(ctx.getChild(0));
-    }
-    //assert(type.equals(Type.FLOAT) || type.equals(Type.INT));
-    visitChildren(ctx);
-    return type;
-  }
-
-  @Override
-  public Type visitStatement(RobotGrammarParser.StatementContext ctx) {
-    writeToFile(indent);
-    visitChildren(ctx);
-    return null;
-  }
-
-  @Override
-  public Type visitPropose_block(RobotGrammarParser.Propose_blockContext ctx) {
-    visitChildren(ctx);
-    return null;
-  }
-
-  @Override
   public Type visitTerm(RobotGrammarParser.TermContext ctx) {
     for (int i = 0; i < ctx.getChildCount(); i++){
       if(ctx.getChildCount() > 1){
@@ -190,7 +160,13 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   }
 
   @Override
-  public Type visitWhile_statement(RobotGrammarParser.While_statementContext ctx) {
+  public Type visitFactor(RobotGrammarParser.FactorContext ctx) {
+    visitChildren(ctx);
+    return null;
+  }
+
+  @Override
+  public Type visitArithmetic_operator(RobotGrammarParser.Arithmetic_operatorContext ctx) {
     visitChildren(ctx);
     return null;
   }
@@ -199,6 +175,26 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   public Type visitArithmetic_lin_operator(RobotGrammarParser.Arithmetic_lin_operatorContext ctx) {
     visitChildren(ctx);
     return null;
+  }
+
+  @Override
+  public Type visitArithmetic_dot_operator(RobotGrammarParser.Arithmetic_dot_operatorContext ctx) {
+    visitChildren(ctx);
+    return null;
+  }
+
+  @Override
+  public Type visitNumber(RobotGrammarParser.NumberContext ctx) {
+    Type type;
+    if(ctx.getChildCount() == 2){ // there is a ++ or --
+      type = typefinder.visit(ctx.getChild(1));
+    }
+    else{
+      type = typefinder.visit(ctx.getChild(0));
+    }
+    //assert(type.equals(Type.FLOAT) || type.equals(Type.INT));
+    visitChildren(ctx);
+    return type;
   }
 
   @Override
@@ -211,9 +207,108 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   }
 
   @Override
-  public Type visitFactor(RobotGrammarParser.FactorContext ctx) {
+  public Type visitBoolean_exp(RobotGrammarParser.Boolean_expContext ctx) {
+    if(ctx.getChildCount() == 1){ // it could be anything
+      visitChildren(ctx);
+      return typefinder.visit(ctx.getChild(0));
+    }
+    else{ // there is a boolean op -> it really is a boolean expression
+      // TODO: can we do "blabla" < 3? "blabla" < "haha"?
+      visitChildren(ctx);
+      return Type.BOOL;
+    }
+  }
+
+  @Override
+  public Type visitSimple_b_exp(RobotGrammarParser.Simple_b_expContext ctx) {
+    visitChildren(ctx);
+    if(ctx.getChildCount() > 1){
+      return typefinder.visit(ctx.getChild(1));
+    }
+    return typefinder.visit(ctx.getChild(0));
+  }
+
+  @Override
+  public Type visitBoolean_op(RobotGrammarParser.Boolean_opContext ctx) {
     visitChildren(ctx);
     return null;
+  }
+
+  @Override
+  public Type visitAssignment(RobotGrammarParser.AssignmentContext ctx) {
+    if(ctx.getChildCount() == 3){ // form is x = 5
+      Type left = visit(ctx.getChild(0));
+      visit(ctx.getChild(1)); // necessary? should do nothing more than print "="
+      Type right = visit(ctx.getChild(2));
+      assert(left.equals(right));
+      return right;
+    }
+    else{ // form is var x = 5
+      Type type = typefinder.visit(ctx.getChild(3));
+      if(memory.containsKey(ctx.getChild(1).getText())){
+        if((memory.get(ctx.getChild(1).getText())).equals(type)){
+          // TODO: define a nice exception
+          throw new UnsupportedOperationException("Variable " + ctx.getChild(1).getText() + " is already defined");
+        }
+      }
+      writeToFile(type + " ");
+      this.visitChildren(ctx);
+      return type;
+    }
+  }
+
+  @Override
+  public Type visitPropose_statement(RobotGrammarParser.Propose_statementContext ctx) {
+    // looks like PROPOSE LPAR propose_arg RPAR loop_propose_block
+    String altindent = indent;
+    indent += "      ";
+    writeToFile("propose(" + ctx.getChild(2) + ", new Proposal() {\n" + indent + "public void run() ");
+    visit(ctx.getChild(4));
+    indent = indent.substring(0, indent.length() - 7);
+    writeToFile(indent + "});\n");
+    return null;
+  }
+
+  @Override
+  public Type visitLoop_propose_statement(RobotGrammarParser.Loop_propose_statementContext ctx) {
+    // third child is the parameter, fifth child is propose_block
+    String altindent = indent;
+    indent += "      ";
+    writeToFile(altindent + "propose(" + ctx.getChild(2) + ", new Proposal() {\n" + indent + "public void run() {\n");
+    visit(ctx.getChild(5));
+    indent = indent.substring(0, indent.length() - 7);
+    writeToFile(indent + "});\n");
+    return null;
+  }
+
+  @Override
+  public Type visitPropose_arg(RobotGrammarParser.Propose_argContext ctx) {
+    visitChildren(ctx);
+    return Type.STRING;
+  }
+
+  @Override
+  public Type visitPropose_block(RobotGrammarParser.Propose_blockContext ctx) {
+    visitChildren(ctx);
+    return null;
+  }
+
+  @Override
+  public Type visitLoop_propose_block(RobotGrammarParser.Loop_propose_blockContext ctx) {
+    visitChildren(ctx);
+    return null;
+  }
+
+  @Override
+  public Type visitString_expression(RobotGrammarParser.String_expressionContext ctx) {
+    for(int i = 0; i < ctx.getChildCount(); i++){
+      if(ctx.getChild(i).getText().equals("+")){
+        continue;
+      }
+      assert(typefinder.visit(ctx.getChild(i)).equals(Type.STRING));
+    }
+    visitChildren(ctx);
+    return Type.STRING;
   }
 
   @Override
@@ -261,91 +356,8 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   }
 
   @Override
-  public Type visitSimple_b_exp(RobotGrammarParser.Simple_b_expContext ctx) {
+  public Type visitIf_statement(RobotGrammarParser.If_statementContext ctx) {
     visitChildren(ctx);
-    if(ctx.getChildCount() > 1){
-      return typefinder.visit(ctx.getChild(1));
-    }
-    return typefinder.visit(ctx.getChild(0));
-  }
-
-  @Override
-  public Type visitBoolean_exp(RobotGrammarParser.Boolean_expContext ctx) {
-    if(ctx.getChildCount() == 1){ // it could be anything
-      visitChildren(ctx);
-      return typefinder.visit(ctx.getChild(0));
-    }
-    else{ // there is a boolean op -> it really is a boolean expression
-      // TODO: can we do "blabla" < 3? "blabla" < "haha"?
-      visitChildren(ctx);
-      return Type.BOOL;
-    }
-  }
-
-  @Override
-  public Type visitLoop_propose_block(RobotGrammarParser.Loop_propose_blockContext ctx) {
-    visitChildren(ctx);
-    return null;
-  }
-
-  @Override
-  public Type visitAssignment(RobotGrammarParser.AssignmentContext ctx) {
-    if(ctx.getChildCount() == 3){ // form is x = 5
-      Type left = visit(ctx.getChild(0));
-      visit(ctx.getChild(1)); // necessary? should do nothing more than print "="
-      Type right = visit(ctx.getChild(2));
-      assert(left.equals(right));
-      return right;
-    }
-    else{ // form is var x = 5
-      Type type = typefinder.visit(ctx.getChild(3));
-      if(memory.containsKey(ctx.getChild(1).getText())){
-        if((memory.get(ctx.getChild(1).getText())).equals(type)){
-          // TODO: define a nice exception
-          throw new UnsupportedOperationException("Variable " + ctx.getChild(1).getText() + " is already defined");
-        }
-      }
-      writeToFile(type + " ");
-      this.visitChildren(ctx);
-      return type;
-    }
-  }
-
-  @Override
-  public Type visitBoolean_op(RobotGrammarParser.Boolean_opContext ctx) {
-    visitChildren(ctx);
-    return null;
-  }
-
-  @Override
-  public Type visitPropose_arg(RobotGrammarParser.Propose_argContext ctx) {
-    visitChildren(ctx);
-    return null;
-  }
-
-  @Override
-  public Type visitLabel(RobotGrammarParser.LabelContext ctx) {
-    // label looks like VARIABLE COLON
-    String label = ctx.getChild(0).getText();
-    writeToFile(indent + "execute(\"" + label + "\");\n");
-    return null;
-  }
-
-  @Override
-  public Type visitArithmetic_dot_operator(RobotGrammarParser.Arithmetic_dot_operatorContext ctx) {
-    visitChildren(ctx);
-    return null;
-  }
-
-  @Override
-  public Type visitPropose_statement(RobotGrammarParser.Propose_statementContext ctx) {
-    // third child is the parameter, fifth child is propose_block
-    String altindent = indent;
-    indent += "      ";
-    writeToFile("propose(" + ctx.getChild(3) + ", new Proposal() {\n" + indent + "public void run() ");
-    visit(ctx.getChild(4));
-    indent = indent.substring(0, indent.length() - 7);
-    writeToFile(indent + "});\n");
     return null;
   }
 
@@ -356,10 +368,8 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   }
 
   @Override
-  public Type visitLambda_exp(RobotGrammarParser.Lambda_expContext ctx) {
+  public Type visitWhile_statement(RobotGrammarParser.While_statementContext ctx) {
     visitChildren(ctx);
-    // TODO: should we do anything else here? How?
-    // TODO: do we need to find out what type a lambda expression has? (do they have a type)
     return null;
   }
 
@@ -391,27 +401,23 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   }
 
   @Override
-  public Type visitString_expression(RobotGrammarParser.String_expressionContext ctx) {
-    for(int i = 0; i < ctx.getChildCount(); i++){
-      if(ctx.getChild(i).getText().equals("+")){
-        continue;
-      }
-      assert(typefinder.visit(ctx.getChild(i)).equals(Type.STRING));
-    }
-    return Type.STRING;
-  }
-
-  @Override
-  public Type visitField_access(RobotGrammarParser.Field_accessContext ctx) {
-    assert(context.existsFieldAccess(ctx.getText())): "I don't know this field: " + ctx.getText();
-    writeToFile(ctx.getText());     // visitChildren would be dangerous because children are lexed as VARIABLE
-    return context.getFieldType(ctx.getText());
+  public Type visitLoop_statement(RobotGrammarParser.Loop_statementContext ctx) {
+    writeToFile(indent);
+    visitChildren(ctx);
+    return null;
   }
 
   @Override
   public Type visitLoop_statement_block(RobotGrammarParser.Loop_statement_blockContext ctx) {
     visitChildren(ctx);
     return null;
+  }
+
+  @Override
+  public Type visitField_access(RobotGrammarParser.Field_accessContext ctx) {
+    assert(context.existsFieldAccess(ctx.getText())): "I don't know this field: " + ctx.getText();
+    writeToFile(ctx.getText() + " ");     // visitChildren would be dangerous because children are lexed as VARIABLE
+    return context.getFieldType(ctx.getText());
   }
 
   @Override
@@ -422,15 +428,10 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   }
 
   @Override
-  public Type visitIf_statement(RobotGrammarParser.If_statementContext ctx) {
+  public Type visitLambda_exp(RobotGrammarParser.Lambda_expContext ctx) {
     visitChildren(ctx);
-    return null;
-  }
-
-  @Override
-  public Type visitLoop_statement(RobotGrammarParser.Loop_statementContext ctx) {
-    writeToFile(indent);
-    visitChildren(ctx);
+    // TODO: should we do anything else here? How?
+    // TODO: do we need to find out what type a lambda expression has? (do they have a type)
     return null;
   }
 
@@ -469,6 +470,16 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
       // token is whitespace or DEC_VAR
       return null;
     }
+    if(tn.getSymbol().getType() == 47){ // token is variable
+      if(memory.containsKey(tn.getText())){
+        writeToFile(tn.getSymbol().getText() + " ");
+          return memory.get(tn.getText());
+      }
+      else{
+        writeToFile(context.getFullVariableName(tn.getText()));
+        return context.getFieldType(tn.getText());
+      }
+    }
     writeToFile(tn.getSymbol().getText() + " ");
     switch(tn.getSymbol().getType()){
       case 9:   // token is TRUE
@@ -496,13 +507,6 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
         // ?????????????????
       case 41:  // token is literal_or_graph
         // ????????????????
-      case 47:  // token is variable
-        if(memory.containsKey(tn.getText())){
-          return memory.get(tn.getText());
-        }
-        else{
-          return context.getFieldType(tn.getText());
-        }
       case 48:  // token is int
         return Type.INT;
       case 49:  // token is float
