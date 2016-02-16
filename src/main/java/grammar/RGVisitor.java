@@ -107,7 +107,9 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
   @Override
   public Type visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
     writeToFile("\n\n");
-    visitChildren(ctx);
+    visit(ctx.getChild(0));  // this is the label
+    writeToFile(indent);
+    visit(ctx.getChild(1)); // this is the if
     return null;
   }
 
@@ -139,6 +141,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
       }
     }
     assert(!((minus && string) || (string && number)));
+    visitChildren(ctx);
     if(string){
       return Type.STRING;
     }
@@ -155,6 +158,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
       type = typefinder.visit(ctx.getChild(0));
     }
     //assert(type.equals(Type.FLOAT) || type.equals(Type.INT));
+    visitChildren(ctx);
     return type;
   }
 
@@ -181,6 +185,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
         }
       }
     }
+    visitChildren(ctx);
     return Type.FLOAT;
   }
 
@@ -220,7 +225,8 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
     String da = ctx.getChild(1).getText();
     da = da.substring(1, da.length());
     String what_da_gets = "\"" + da + "(";
-    for (int i = 2; i < ctx.getChildCount() - 1; i++){  // last child is RPAR
+    // now go through all arguments and look for things that we must not convert to string
+    for (int i = 3; i < ctx.getChildCount() - 1; i++){  // last child is RPAR
       if(ctx.getChild(i).getText().equals(",")){
       what_da_gets += ", ";
         continue;
@@ -229,7 +235,8 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
       int l = 0;
       ParseTree p = ctx.getChild(i);
       while (l < 3){
-        p = p.getChild(l++);
+        p = p.getChild(0);
+        l++;
       }
       if (p.getClass().equals(RobotGrammarParser.AssignmentContext.class)){
         // in this case the right part could be a field access
@@ -237,7 +244,8 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
         l = 0;
         ParseTree t = p.getChild(2);
         while (l < 7){
-          t = t.getChild(l++);
+          t = t.getChild(0);
+          l++;
         }
         if (t.getClass().equals(RobotGrammarParser.Field_accessContext.class)){
           // then we have found a field access
@@ -334,7 +342,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
     // third child is the parameter, fifth child is propose_block
     String altindent = indent;
     indent += "      ";
-    writeToFile("propose(" + ctx.getChild(3) + ", new Proposal() {\n" + indent + "public void run() {");
+    writeToFile("propose(" + ctx.getChild(3) + ", new Proposal() {\n" + indent + "public void run() ");
     visit(ctx.getChild(4));
     indent = indent.substring(0, indent.length() - 7);
     writeToFile(indent + "});\n");
@@ -395,7 +403,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitField_access(RobotGrammarParser.Field_accessContext ctx) {
-    assert(context.existsFieldAccess(ctx.getText()));
+    assert(context.existsFieldAccess(ctx.getText())): "I don't know this field: " + ctx.getText();
     writeToFile(ctx.getText());     // visitChildren would be dangerous because children are lexed as VARIABLE
     return context.getFieldType(ctx.getText());
   }
@@ -408,7 +416,7 @@ public class RGVisitor implements RobotGrammarVisitor<Type> {
 
   @Override
   public Type visitField_access_vfunc(RobotGrammarParser.Field_access_vfuncContext ctx) {
-    assert(context.existsFieldAccess(ctx.getText()));
+    assert(context.existsFieldAccess(ctx.getText())): "I don't know this field: " + ctx.getText();
     writeToFile(ctx.getText());     // visitChildren would be dangerous because children are lexed as VARIABLE
     return context.getFieldType(ctx.getText());
   }

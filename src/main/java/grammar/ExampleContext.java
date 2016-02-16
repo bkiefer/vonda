@@ -53,18 +53,34 @@ public class ExampleContext implements RobotContext{
 
   @Override
   public boolean testFunctionArguments(List<Type> arguments) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return true;
   }
 
+  /**
+   * big propblem regarding fields and functions: currently every function will first be
+   * considered as field, then as function (-> has to be in both, function & field map)
+   */
+  
+  private static HashMap<String, Type> functionMap = new HashMap<String, Type>();
+  {
+    functionMap.put("currentUser.gameTypePlayed", Type.BOOL);
+    functionMap.put("gameLogic.startSession", Type.BOOL);
+  }
+  
   @Override
   public Type getFunctionReturn(String functionname) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    if(functionMap.containsKey(functionname)){
+      return functionMap.get(functionname);
+    }
+    return null;
   }
 
   private static HashMap<String, Type> fieldMap = new HashMap<String, Type>();
   {
     fieldMap.put("game.status", Type.STRING);
     fieldMap.put("initiated", Type.STRING);
+    fieldMap.put("currentUser.gameTypePlayed", Type.BOOL);
+    fieldMap.put("gameLogic.startSession", Type.BOOL);
   }
   
   @Override

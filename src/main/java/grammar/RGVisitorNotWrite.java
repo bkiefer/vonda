@@ -89,7 +89,8 @@ public class RGVisitorNotWrite implements RobotGrammarVisitor<Type>{
     boolean minus = false;
     boolean number = false;
     boolean string = false;
-    for (int i = 0; i <= ctx.getChildCount(); i++){
+    for (int i = 0; i < ctx.getChildCount(); i++){
+      this.testClose(ctx, i);
       Type type = this.visit(ctx.getChild(i));
       if (ctx.getChild(i).getText().equals("-")){
         minus = true;
@@ -280,7 +281,7 @@ public class RGVisitorNotWrite implements RobotGrammarVisitor<Type>{
 
   @Override
   public Type visitField_access(RobotGrammarParser.Field_accessContext ctx) {
-    assert(context.existsFieldAccess(ctx.getText()));
+    assert(context.existsFieldAccess(ctx.getText())): "I don't know this field: " + ctx.getText();
     return context.getFieldType(ctx.getText());
   }
 
@@ -291,7 +292,7 @@ public class RGVisitorNotWrite implements RobotGrammarVisitor<Type>{
 
   @Override
   public Type visitField_access_vfunc(RobotGrammarParser.Field_access_vfuncContext ctx) {
-    assert(context.existsFieldAccess(ctx.getText()));
+    assert(context.existsFieldAccess(ctx.getText())): "I don't know this field: " + ctx.getText();
     return context.getFieldType(ctx.getText());
   }
 
