@@ -15,4 +15,6 @@ public interface AbstractLeaf {
    * the leaf's type
    */
   AbstractType type = AbstractType.OBJECT;
+  
+  public AbstractType getType();
 }

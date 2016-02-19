@@ -3,17 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Versuch2.abstractTree.leafs;
+package Versuch2.abstractTree.statements;
 
-import Versuch2.abstractTree.AbstractLeaf;
+import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
-import Versuch2.abstractTree.AbstractType;
 
 /**
  *
  * @author anna
  */
-public class ALocalVar  implements AbstractTree, AbstractLeaf{
+public class AWhileStatement implements AbstractTree, AbstractStatement{
 
   @Override
   public void testType() {
@@ -24,10 +23,4 @@ public class ALocalVar  implements AbstractTree, AbstractLeaf{
   public String toString(){
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
-
-  @Override
-  public AbstractType getType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-  
 }

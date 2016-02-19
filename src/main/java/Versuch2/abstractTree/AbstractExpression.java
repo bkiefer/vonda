@@ -15,4 +15,6 @@ public interface AbstractExpression {
    * the expression's type
    */
   AbstractType type = AbstractType.OBJECT;
+  
+  public AbstractType getType();
 }
