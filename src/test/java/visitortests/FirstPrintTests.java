@@ -5,7 +5,7 @@
  */
 package visitortests;
 
-import grammar.Main;
+import Versuch1.Main;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
