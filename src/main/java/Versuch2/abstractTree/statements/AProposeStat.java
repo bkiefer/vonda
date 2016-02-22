@@ -12,11 +12,11 @@ import Versuch2.abstractTree.AbstractTree;
  *
  * @author anna
  */
-public class AProposeStat implements AbstractTree, AbstractStatement{
+public class AProposeStat extends AbstractStatement implements AbstractTree{
 
   @Override
   public void testType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // no types for statements
   }
   
   @Override

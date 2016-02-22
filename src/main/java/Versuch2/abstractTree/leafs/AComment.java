@@ -13,20 +13,21 @@ import Versuch2.abstractTree.AbstractType;
  *
  * @author anna
  */
-public class AComment implements AbstractTree, AbstractLeaf{
+public class AComment implements AbstractLeaf{
 
-  @Override
-  public void testType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  private String comment;
+
+  public AComment(String comment) {
+    this.comment = comment;
   }
   
   @Override
   public String toString(){
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return this.comment;
   }
 
   @Override
   public AbstractType getType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return AbstractType.NONE;
   }
 }

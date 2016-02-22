@@ -7,12 +7,21 @@ package Versuch2.abstractTree.statements;
 
 import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
+import Versuch2.abstractTree.expressions.ABooleanExp;
 
 /**
- * FOR LPAR VARIABLE COLON exp RPAR loop_statement_block
+ *
  * @author anna
  */
-public class AFor2Stat extends AbstractStatement implements AbstractTree{
+public class AWhileStat extends AbstractStatement implements AbstractTree{
+  
+  private ABooleanExp condition;
+  private AbstractStatement[] statblock;
+
+  public AWhileStat(ABooleanExp condition, AbstractStatement[] statblock) {
+    this.condition = condition;
+    this.statblock = statblock;
+  }
 
   @Override
   public void testType() {
@@ -21,6 +30,6 @@ public class AFor2Stat extends AbstractStatement implements AbstractTree{
   
   @Override
   public String toString(){
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return "while (" + this.condition + ") {\n" + this.printStatBlock(statblock) + "}\n";
   }
 }

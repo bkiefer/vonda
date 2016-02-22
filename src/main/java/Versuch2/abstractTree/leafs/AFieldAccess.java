@@ -14,19 +14,27 @@ import Versuch2.abstractTree.AbstractType;
  * @author anna
  */
 public class AFieldAccess  implements AbstractTree, AbstractLeaf{
+  
+  private AbstractType type;
+  private String representation;
+
+  public AFieldAccess(AbstractType type, String representation) {
+    this.type = type;
+    this.representation = representation;
+  }
 
   @Override
   public void testType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // nothing to do
   }
   
   @Override
   public String toString(){
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return this.representation;
   }
 
   @Override
   public AbstractType getType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return this.type;
   }
 }

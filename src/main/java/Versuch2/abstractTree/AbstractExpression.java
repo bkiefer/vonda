@@ -10,11 +10,10 @@ package Versuch2.abstractTree;
  * @author anna
  */
 public interface AbstractExpression {
-
-  /**
-   * the expression's type
-   */
-  AbstractType type = AbstractType.OBJECT;
   
+  /**
+   * 
+   * @return the expression's type
+   */
   public AbstractType getType();
 }

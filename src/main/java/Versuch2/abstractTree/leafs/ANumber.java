@@ -14,19 +14,26 @@ import Versuch2.abstractTree.AbstractType;
  * @author anna
  */
 public class ANumber  implements AbstractTree, AbstractLeaf{
+  
+  private String value;
+
+  public ANumber(String value) {
+    this.value = value;
+  }
 
   @Override
   public void testType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // everything okay
   }
   
   @Override
   public String toString(){
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return this.value;
   }
 
   @Override
   public AbstractType getType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // every int can be a float
+    return AbstractType.FLOAT;
   }
 }

@@ -7,20 +7,42 @@ package Versuch2.abstractTree.statements;
 
 import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
+import Versuch2.abstractTree.expressions.ABooleanExp;
 
 /**
  *
  * @author anna
  */
-public class AIfStatement implements AbstractTree, AbstractStatement{
+public class AIfStatement extends AbstractStatement implements AbstractTree{
+  
+  private ABooleanExp condition;
+  private AbstractStatement[] statblockIf;
+  private AbstractStatement[] statblockElse;
+
+  /**
+   * if there is no else case, set statblockElse to null
+   * @param condition
+   * @param statblockIf
+   * @param statblockElse 
+   */
+  public AIfStatement(ABooleanExp condition, AbstractStatement[] statblockIf, AbstractStatement[] statblockElse) {
+    this.condition = condition;
+    this.statblockIf = statblockIf;
+    this.statblockElse = statblockElse;
+  }
 
   @Override
   public void testType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // no types for statements
   }
   
   @Override
   public String toString(){
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    if (this.statblockElse != null){
+      return "if (" + condition + ") {\n" + printStatBlock(statblockIf)
+              + "} else {\n" + printStatBlock(statblockElse);
+    }
+    return "if (" + condition + ") {\n" + printStatBlock(statblockIf)
+              + "}\n";
   }
 }

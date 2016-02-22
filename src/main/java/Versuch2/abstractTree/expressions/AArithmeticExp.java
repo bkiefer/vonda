@@ -14,20 +14,41 @@ import Versuch2.abstractTree.AbstractType;
  * @author anna
  */
 public class AArithmeticExp  implements AbstractTree, AbstractExpression{
+  
+  private AbstractType type;
+  private AbstractExpression left;
+  private AbstractExpression right;
+
+  /**
+   * if the expression consists of only one part, set right and operator to null
+   * @param left
+   * @param right
+   * @param operator 
+   */
+  public AArithmeticExp(AbstractExpression left, AbstractExpression right, String operator) {
+    this.left = left;
+    this.right = right;
+    this.operator = operator;
+  }
+  private String operator;
 
   @Override
   public void testType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // TODO: test sth
+    this.type = AbstractType.OBJECT;
   }
   
   @Override
   public String toString(){
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    if(this.right != null){
+      return "(" + this.left + this.operator + this.right + ")";
+    }
+    return this.left.toString();
   }
 
   @Override
   public AbstractType getType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return this.type;
   }
   
 }

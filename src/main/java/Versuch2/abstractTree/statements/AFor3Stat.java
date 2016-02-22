@@ -9,14 +9,14 @@ import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
 
 /**
- *
+ * FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block
  * @author anna
  */
-public class AFor3Stat implements AbstractTree, AbstractStatement{
+public class AFor3Stat extends AbstractStatement implements AbstractTree{
 
   @Override
   public void testType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // no types for statements
   }
   
   @Override

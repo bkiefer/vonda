@@ -17,16 +17,16 @@ public class AWildcard  implements AbstractTree, AbstractLeaf{
 
   @Override
   public void testType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // do nothing
   }
   
   @Override
   public String toString(){
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return "this.wildcard";   // wildcard is a local variable in resulting class
   }
 
   @Override
   public AbstractType getType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return AbstractType.OBJECT; // ???
   }
 }
