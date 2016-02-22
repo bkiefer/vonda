@@ -5,6 +5,7 @@
  */
 package Versuch1;
 
+import Versuch2.abstractTree.AbstractType;
 import java.util.List;
 
 /**
@@ -32,6 +33,24 @@ public interface RobotContext {
    * @return a string to be printed after the parse tree has been walked
    */
   public String atEndOfFile();
+  
+  /**
+   * method to check whether a variable exists somewhere in the context
+   * @param variable
+   * @return true if variable is global
+   */
+  public boolean isGlobalVariable(String variable);
+  
+  /**
+   * method that finds the type of a variable or returns null if there is no such variable
+   * @param access
+   * @return the type of this variable
+   */
+  public AbstractType getVariableType(String variable);
+  
+  ////////////////////////////////////////////////////////////////////////////
+  /////////////////// following methods still needed? ////////////////////////
+  ////////////////////////////////////////////////////////////////////////////
   
   /**
    * method that will test whether the given arguments are of the correct type

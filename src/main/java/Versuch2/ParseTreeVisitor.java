@@ -5,9 +5,14 @@
  */
 package Versuch2;
 
-import Versuch2.abstractTree.AbstractTree;
+import Versuch1.RobotContext;
+import Versuch2.abstractTree.*;
+import Versuch2.abstractTree.expressions.*;
+import Versuch2.abstractTree.leafs.*;
+import Versuch2.abstractTree.statements.*;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
+import java.util.HashMap;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
@@ -18,6 +23,17 @@ import org.antlr.v4.runtime.tree.TerminalNode;
  * @author anna
  */
 public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
+  
+  // this memory will know the types of variables
+  private HashMap<String, AbstractType> memory;
+  
+  // the object that nows about context that we cannot see
+  private RobotContext context;
+  
+  public ParseTreeVisitor(RobotContext context){
+    this.memory = new HashMap<String, AbstractType>();
+    this.context = context;
+  }
 
   @Override
   public AbstractTree visitGrammar_file(RobotGrammarParser.Grammar_fileContext ctx) {
@@ -186,17 +202,17 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitLambda_exp(RobotGrammarParser.Lambda_expContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return new ALambdaExp(ctx.getText());
   }
 
   @Override
   public AbstractTree visitComment(RobotGrammarParser.CommentContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return new AComment(ctx.getText());
   }
 
   @Override
   public AbstractTree visit(ParseTree pt) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return pt.accept(this);
   }
 
   @Override
@@ -206,7 +222,37 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitTerminal(TerminalNode tn) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    switch(tn.getSymbol().getType()){
+      case 9:   // token is TRUE
+        return new AUnaryBoolean(tn.getText());
+      case 10:  // token is FALSE
+        return new AUnaryBoolean(tn.getText());
+      case 11:  // token is character
+        return new ACharacter(tn.getText());
+      case 12:  // token is String
+        return new AString(tn.getText());
+      case 27:  // token is <=
+        // TODO: how to determine whether this is normal boolean or magic?
+      case 40:  //token is wildcard
+        return new AWildcard();
+      case 47:  // token is variable
+        if (memory.containsKey(tn.getText())){
+          return new ALocalVar(memory.get(tn.getText()), tn.getText());
+        }
+        else if (context.isGlobalVariable(tn.getText())){
+          return new AGlobalVar(context.getVariableType(tn.getText()), tn.getText());
+        }
+        else{
+          // TODO: find a nice exception
+          throw new UnsupportedOperationException("This variable isn't declared "
+                  + "anywhere: " + tn.getText());
+        }
+      case 48:  // token is int
+        return new ANumber(tn.getText());
+      case 49:  // token is float
+        return new ANumber(tn.getText());
+    }
+    return null;
   }
 
   @Override

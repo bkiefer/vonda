@@ -15,6 +15,7 @@ import Versuch2.abstractTree.AbstractType;
  */
 public class ABooleanExp implements AbstractTree, AbstractExpression{
   
+  private boolean not;
   private AbstractExpression left;
   private AbstractExpression right;
   private String operator;
@@ -25,10 +26,11 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
    * @param right
    * @param operator 
    */
-  public ABooleanExp(AbstractExpression left, AbstractExpression right, String operator) {
+  public ABooleanExp(AbstractExpression left, AbstractExpression right, String operator, boolean not) {
     this.left = left;
     this.right = right;
     this.operator = operator;
+    this.not = not;
   }
 
   @Override
@@ -38,10 +40,14 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
   
   @Override
   public String toString(){
-    if(this.right != null){
-      return "(" + this.left + this.operator + this.right + ")";
+    String ret = "";
+    if(this.not){
+      ret += "!";
     }
-    return this.left.toString();
+    if(this.right != null){
+      return ret + "(" + this.left + this.operator + this.right + ")";
+    }
+    return ret + this.left.toString();
   }
 
   @Override

@@ -5,6 +5,7 @@
  */
 package Versuch1;
 
+import Versuch2.abstractTree.AbstractType;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -119,6 +120,16 @@ public class ExampleContext implements RobotContext{
     return variable;
     // imagine a set of variables that we want to convert to strings;
     // if variable is not in there, throw exception
+  }
+
+  @Override
+  public boolean isGlobalVariable(String variable) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public AbstractType getVariableType(String variable) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
   
 }

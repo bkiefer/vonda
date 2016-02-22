@@ -10,29 +10,31 @@ import Versuch2.abstractTree.AbstractTree;
 import Versuch2.abstractTree.AbstractType;
 
 /**
- * class that handles comments, please don't use this as one side in an expression!
+ *
  * @author anna
  */
-public class AComment implements AbstractTree, AbstractLeaf{
-
-  private String comment;
-
-  public AComment(String comment) {
-    this.comment = comment;
-  }
+public class AUnaryBoolean implements AbstractTree, AbstractLeaf{
   
-  @Override
-  public String toString(){
-    return this.comment;
-  }
+  // true or false
+  private String content;
 
-  @Override
-  public AbstractType getType() {
-    return AbstractType.NONE;
+  public AUnaryBoolean(String content) {
+    this.content = content;
   }
 
   @Override
   public void testType() {
-    // no type to be tested
+    // everything okay
   }
+  
+  @Override
+  public String toString(){
+    return this.content;
+  }
+
+  @Override
+  public AbstractType getType() {
+    return AbstractType.BOOL;
+  }
+  
 }
