@@ -5,6 +5,7 @@
  */
 package Versuch2.abstractTree.statements;
 
+import Versuch2.abstractTree.AbstractExpression;
 import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
 
@@ -13,14 +14,23 @@ import Versuch2.abstractTree.AbstractTree;
  * @author anna
  */
 public class AProposeStat extends AbstractStatement implements AbstractTree{
+  
+  private AbstractExpression arg;
+  private AbstractStatement[] block;
+
+  public AProposeStat(AbstractExpression arg, AbstractStatement[] block) {
+    this.arg = arg;
+    this.block = block;
+  }
 
   @Override
   public void testType() {
-    // no types for statements
+    // TODO: arg should be a string expression
   }
   
   @Override
   public String toString(){
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return "propose(" + arg + ", new Proposal() {\n public void run() {\n"
+            + printStatBlock(block) + "}\n" + "});\n";
   }
 }

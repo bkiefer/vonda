@@ -10,7 +10,7 @@ package Versuch2.abstractTree;
  * @author anna
  */
 public enum AbstractType {
-  STRING, FLOAT, INT, BOOL, CHAR, OBJECT, NONE;
+  STRING, FLOAT, INT, BOOL, CHAR, OBJECT, NONE, MAGIC;
   
   @Override
   public String toString(){

@@ -324,8 +324,8 @@ PROPOSE: 'propose';
 DEC_VAR: 'var';
 
 /// comments (starting with /* or //):
-ONE_L_COMMENT: '//'.*?'\n' -> channel(HIDDEN);
-MULTI_L_COMMENT: '/*'.*?'*/' -> channel(HIDDEN);
+ONE_L_COMMENT: '//'.*?'\n';// -> channel(HIDDEN);
+MULTI_L_COMMENT: '/*'.*?'*/';// -> channel(HIDDEN);
 
 /// whitespace
 WS: ( ' ' | '\t' | '\r' | '\n' ) -> channel(HIDDEN);

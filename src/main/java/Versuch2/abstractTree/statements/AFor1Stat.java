@@ -5,14 +5,22 @@
  */
 package Versuch2.abstractTree.statements;
 
+import Versuch2.abstractTree.AbstractExpression;
 import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
+import Versuch2.abstractTree.expressions.AAssignment;
+import Versuch2.abstractTree.expressions.ABooleanExp;
 
 /**
  * FOR LPAR assignment SEMICOLON exp SEMICOLON exp? RPAR loop_statement_block
  * @author anna
  */
 public class AFor1Stat extends AbstractStatement implements AbstractTree{
+  
+  private AAssignment assignment;
+  private ABooleanExp condition;
+  private AbstractExpression arithmetic;
+  private AbstractStatement[] statblock;
 
   @Override
   public void testType() {
@@ -21,7 +29,12 @@ public class AFor1Stat extends AbstractStatement implements AbstractTree{
   
   @Override
   public String toString(){
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    if (arithmetic != null){
+      return "for (" + assignment + "; " + condition + "; " + arithmetic
+              + ") {\n" + printStatBlock(statblock) + "}\n";
+    }
+    return "for ( "+ assignment + "; " + condition + ";"
+              + ") {\n" + printStatBlock(statblock) + "}\n";
   }
   
 }

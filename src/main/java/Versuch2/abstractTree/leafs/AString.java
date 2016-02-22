@@ -28,7 +28,7 @@ public class AString implements AbstractTree, AbstractLeaf{
   
   @Override
   public String toString(){
-    return this.content;
+    return "\"" + this.content + "\"";
   }
 
   @Override

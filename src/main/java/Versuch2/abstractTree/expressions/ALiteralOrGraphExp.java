@@ -15,19 +15,31 @@ import Versuch2.abstractTree.AbstractType;
  */
 public class ALiteralOrGraphExp  implements AbstractTree, AbstractExpression{
 
+  // LITERAL_OR_GRAPH LPAR ( exp (COMMA exp)*)? RPAR
+  
+  private String litGraph;
+  private AbstractExpression[] exps;
+
+  public ALiteralOrGraphExp(String litGraph, AbstractExpression[] exps) {
+    this.litGraph = litGraph.substring(1, litGraph.length());
+    this.exps = exps;
+  }
+  
   @Override
   public void testType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // no type testing here
   }
   
   @Override
   public String toString(){
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    String ret = "new DialogueAct(\"" + litGraph + "\"(";
+    // TODO: magically arrange exps
+    throw new UnsupportedOperationException("Magic not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
   public AbstractType getType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return AbstractType.MAGIC;
   }
   
 }

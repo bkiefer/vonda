@@ -5,22 +5,29 @@
  */
 package Versuch2.abstractTree.statements;
 
+import Versuch2.abstractTree.AbstractLeaf;
 import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
+import Versuch2.abstractTree.leafs.ALocalVar;
 
 /**
  * FOR LPAR VARIABLE COLON exp RPAR loop_statement_block
  * @author anna
  */
 public class AFor2Stat extends AbstractStatement implements AbstractTree{
+  
+  private ALocalVar var;
+  private AbstractLeaf exp;
+  private AbstractStatement[] statblock;
 
   @Override
   public void testType() {
-    // no types for statements
+    // somehow test return type of exp & variable?!
+    // currently we will always assume that type of var is object
   }
   
   @Override
   public String toString(){
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return "for (Object " + var + ": " + exp + ") {\n" + printStatBlock(statblock) + "}\n";
   }
 }
