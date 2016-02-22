@@ -13,11 +13,11 @@ import Versuch2.abstractTree.expressions.ABooleanExp;
  *
  * @author anna
  */
-public class AIfStatement extends AbstractStatement implements AbstractTree{
+public class AIfStatement implements AbstractStatement, AbstractTree{
   
   private ABooleanExp condition;
-  private AbstractStatement[] statblockIf;
-  private AbstractStatement[] statblockElse;
+  private AbstractBlock statblockIf;
+  private AbstractBlock statblockElse;
 
   /**
    * if there is no else case, set statblockElse to null
@@ -25,7 +25,7 @@ public class AIfStatement extends AbstractStatement implements AbstractTree{
    * @param statblockIf
    * @param statblockElse 
    */
-  public AIfStatement(ABooleanExp condition, AbstractStatement[] statblockIf, AbstractStatement[] statblockElse) {
+  public AIfStatement(ABooleanExp condition, AbstractBlock statblockIf, AbstractBlock statblockElse) {
     this.condition = condition;
     this.statblockIf = statblockIf;
     this.statblockElse = statblockElse;
@@ -39,10 +39,9 @@ public class AIfStatement extends AbstractStatement implements AbstractTree{
   @Override
   public String toString(){
     if (this.statblockElse != null){
-      return "if (" + condition + ") {\n" + printStatBlock(statblockIf)
-              + "} else {\n" + printStatBlock(statblockElse);
+      return "if (" + condition + ") {\n" + statblockIf
+              + "} else {\n" + statblockElse;
     }
-    return "if (" + condition + ") {\n" + printStatBlock(statblockIf)
-              + "}\n";
+    return "if (" + condition + ") {\n" + statblockIf + "}\n";
   }
 }

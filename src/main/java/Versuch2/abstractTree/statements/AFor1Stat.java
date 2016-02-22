@@ -15,12 +15,19 @@ import Versuch2.abstractTree.expressions.ABooleanExp;
  * FOR LPAR assignment SEMICOLON exp SEMICOLON exp? RPAR loop_statement_block
  * @author anna
  */
-public class AFor1Stat extends AbstractStatement implements AbstractTree{
+public class AFor1Stat implements AbstractStatement, AbstractTree{
   
   private AAssignment assignment;
   private ABooleanExp condition;
   private AbstractExpression arithmetic;
-  private AbstractStatement[] statblock;
+  private AbstractBlock statblock;
+
+  public AFor1Stat(AAssignment assignment, ABooleanExp condition, AbstractExpression arithmetic, AbstractBlock statblock) {
+    this.assignment = assignment;
+    this.condition = condition;
+    this.arithmetic = arithmetic;
+    this.statblock = statblock;
+  }
 
   @Override
   public void testType() {
@@ -31,10 +38,10 @@ public class AFor1Stat extends AbstractStatement implements AbstractTree{
   public String toString(){
     if (arithmetic != null){
       return "for (" + assignment + "; " + condition + "; " + arithmetic
-              + ") {\n" + printStatBlock(statblock) + "}\n";
+              + ") {\n" + statblock + "}\n";
     }
     return "for ( "+ assignment + "; " + condition + ";"
-              + ") {\n" + printStatBlock(statblock) + "}\n";
+              + ") {\n" + statblock + "}\n";
   }
   
 }

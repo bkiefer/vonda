@@ -13,12 +13,12 @@ import Versuch2.abstractTree.expressions.ABooleanExp;
  *
  * @author anna
  */
-public class ADoWhileStat extends AbstractStatement implements AbstractTree{
+public class ADoWhileStat implements AbstractStatement, AbstractTree{
   
   private ABooleanExp condition;
-  private AbstractStatement[] statblock;
+  private AbstractBlock statblock;
 
-  public ADoWhileStat(ABooleanExp condition, AbstractStatement[] statblock) {
+  public ADoWhileStat(ABooleanExp condition, AbstractBlock statblock) {
     this.condition = condition;
     this.statblock = statblock;
   }
@@ -30,7 +30,7 @@ public class ADoWhileStat extends AbstractStatement implements AbstractTree{
   
   @Override
   public String toString(){
-    return "do {\n" + printStatBlock(statblock) + "}\nwhile (" + condition + ");\n";
+    return "do {\n" + statblock + "}\nwhile (" + condition + ");\n";
   }
   
 }

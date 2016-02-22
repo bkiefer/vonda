@@ -13,12 +13,12 @@ import Versuch2.abstractTree.AbstractTree;
  *
  * @author anna
  */
-public class AProposeStat extends AbstractStatement implements AbstractTree{
+public class AProposeStat implements AbstractStatement, AbstractTree{
   
   private AbstractExpression arg;
-  private AbstractStatement[] block;
+  private AbstractBlock block;
 
-  public AProposeStat(AbstractExpression arg, AbstractStatement[] block) {
+  public AProposeStat(AbstractExpression arg, AbstractBlock block) {
     this.arg = arg;
     this.block = block;
   }
@@ -31,6 +31,6 @@ public class AProposeStat extends AbstractStatement implements AbstractTree{
   @Override
   public String toString(){
     return "propose(" + arg + ", new Proposal() {\n public void run() {\n"
-            + printStatBlock(block) + "}\n" + "});\n";
+            + block + "}\n" + "});\n";
   }
 }

@@ -14,11 +14,17 @@ import Versuch2.abstractTree.leafs.ALocalVar;
  * FOR LPAR VARIABLE COLON exp RPAR loop_statement_block
  * @author anna
  */
-public class AFor2Stat extends AbstractStatement implements AbstractTree{
+public class AFor2Stat implements AbstractStatement, AbstractTree{
   
   private ALocalVar var;
-  private AbstractLeaf exp;
-  private AbstractStatement[] statblock;
+  private AbstractTree exp;
+  private AbstractBlock statblock;
+
+  public AFor2Stat(ALocalVar var, AbstractTree exp, AbstractBlock statblock) {
+    this.var = var;
+    this.exp = exp;
+    this.statblock = statblock;
+  }
 
   @Override
   public void testType() {
@@ -28,6 +34,6 @@ public class AFor2Stat extends AbstractStatement implements AbstractTree{
   
   @Override
   public String toString(){
-    return "for (Object " + var + ": " + exp + ") {\n" + printStatBlock(statblock) + "}\n";
+    return "for (Object " + var + ": " + exp + ") {\n" + statblock + "}\n";
   }
 }

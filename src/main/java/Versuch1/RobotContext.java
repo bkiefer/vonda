@@ -48,6 +48,13 @@ public interface RobotContext {
    */
   public AbstractType getVariableType(String variable);
   
+  /**
+   * method that finds the type of a field or returns null if there is no such field
+   * @param access
+   * @return the type of this field
+   */
+  public AbstractType getFieldAccessType(String access);
+  
   ////////////////////////////////////////////////////////////////////////////
   /////////////////// following methods still needed? ////////////////////////
   ////////////////////////////////////////////////////////////////////////////

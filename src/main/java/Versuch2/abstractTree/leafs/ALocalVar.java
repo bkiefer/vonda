@@ -22,6 +22,11 @@ public class ALocalVar  implements AbstractTree, AbstractLeaf{
     this.type = type;
     this.representation = representation;
   }
+  
+  public ALocalVar(String representation) {
+    this.type = AbstractType.OBJECT;
+    this.representation = representation;
+  }
 
   @Override
   public void testType() {

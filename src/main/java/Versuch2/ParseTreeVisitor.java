@@ -177,27 +177,67 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitIf_statement(RobotGrammarParser.If_statementContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // IF LPAR boolean_exp RPAR statement (ELSE statement)?
+    if(ctx.getChildCount() == 5){   // no else
+      return new AIfStatement((ABooleanExp)this.visit(ctx.getChild(2)),
+              (AbstractBlock) this.visit(ctx.getChild(4)), null);
+    }
+    // if there is an else
+    return new AIfStatement((ABooleanExp)this.visit(ctx.getChild(2)),
+            (AbstractBlock) this.visit(ctx.getChild(4)),
+            (AbstractBlock) this.visit(ctx.getChild(6)));
   }
 
   @Override
   public AbstractTree visitLoop_if_statement(RobotGrammarParser.Loop_if_statementContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // IF LPAR boolean_exp RPAR statement (ELSE statement)?
+    if(ctx.getChildCount() == 5){   // no else
+      return new AIfStatement((ABooleanExp)this.visit(ctx.getChild(2)),
+              (AbstractBlock) this.visit(ctx.getChild(4)), null);
+    }
+    // if there is an else
+    return new AIfStatement((ABooleanExp)this.visit(ctx.getChild(2)),
+            (AbstractBlock) this.visit(ctx.getChild(4)),
+            (AbstractBlock) this.visit(ctx.getChild(6)));
   }
 
   @Override
   public AbstractTree visitFor_statement(RobotGrammarParser.For_statementContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    if (ctx.getChildCount() == 7){
+      // statement looks like "FOR LPAR VARIABLE COLON exp RPAR loop_statement_block"
+      // TODO: or should we check here that the type of the variable in assignment
+      // is the type the iterable in exp returns? How?
+      return new AFor2Stat(new ALocalVar(ctx.getChild(2).getText()), this.visit(ctx.getChild(4)),
+              (AbstractBlock)this.visit(ctx.getChild(6)));
+    }
+    else if(ctx.getChildCount() == 8){
+      // statement looks like "FOR LPAR assignment SEMICOLON exp SEMICOLON RPAR loop_statement_block"
+      return new AFor1Stat((AAssignment)this.visit(ctx.getChild(2)),
+              (ABooleanExp)this.visit(ctx.getChild(4)),
+              null, (AbstractBlock)this.visit(ctx.getChild(7)));
+    }
+    else if(ctx.getChildCount() == 9){
+      // statement looks like "FOR LPAR assignment SEMICOLON exp SEMICOLON exp RPAR loop_statement_block"
+      return new AFor1Stat((AAssignment)this.visit(ctx.getChild(2)),
+              (ABooleanExp)this.visit(ctx.getChild(4)),
+              (AbstractExpression)this.visit(ctx.getChild(6)),
+              (AbstractBlock)this.visit(ctx.getChild(8)));
+    }
+    else{
+      // statement looks like "FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block"
+      // TODO: implement For3Stat; exp will return some Object[]
+      return new AFor3Stat();
+    }
   }
 
   @Override
   public AbstractTree visitField_access(RobotGrammarParser.Field_accessContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return new AFieldAccess(context.getFieldAccessType(ctx.getText()), ctx.getText());
   }
 
   @Override
   public AbstractTree visitField_access_vfunc(RobotGrammarParser.Field_access_vfuncContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return new AFieldAccess(context.getFieldAccessType(ctx.getText()), ctx.getText());
   }
 
   @Override

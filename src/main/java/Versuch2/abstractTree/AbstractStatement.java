@@ -9,13 +9,6 @@ package Versuch2.abstractTree;
  *
  * @author anna
  */
-public abstract class AbstractStatement {
+public interface AbstractStatement {
   
-  protected String printStatBlock(AbstractStatement[] statementBlock){
-    String stats = "";
-    for (AbstractStatement stat : statementBlock){
-      stats += stat.toString() + "\n";
-    }
-    return stats;
-  }
 }

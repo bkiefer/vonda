@@ -11,11 +11,11 @@ grammar RobotGrammar;
 
 /// start rule
 grammar_file
-  : grammar_rule*
+  : (comment* grammar_rule comment*)*
   ;
 
 grammar_rule
-  : ( comment )* label comment* if_statement comment*
+  : label /*comment**/ if_statement
   ;
 
 label
