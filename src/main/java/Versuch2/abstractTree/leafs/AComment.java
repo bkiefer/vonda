@@ -5,7 +5,9 @@
  */
 package Versuch2.abstractTree.leafs;
 
+import Versuch2.abstractTree.AbstractExpression;
 import Versuch2.abstractTree.AbstractLeaf;
+import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
 import Versuch2.abstractTree.AbstractType;
 
@@ -13,7 +15,7 @@ import Versuch2.abstractTree.AbstractType;
  * class that handles comments, please don't use this as one side in an expression!
  * @author anna
  */
-public class AComment implements AbstractTree, AbstractLeaf{
+public class AComment implements AbstractTree, AbstractStatement, AbstractExpression, AbstractLeaf{
 
   private String comment;
 

@@ -5,12 +5,19 @@
  */
 package Versuch2.abstractTree;
 
+import java.util.List;
+
 /**
  *
  * @author anna
  */
 public class AGrammarFile implements AbstractTree{
-  private AbstractTree[] rules;
+  
+  private List<AbstractTree> rules;
+
+  public AGrammarFile(List<AbstractTree> rules) {
+    this.rules = rules;
+  }
 
   @Override
   public String toString(){

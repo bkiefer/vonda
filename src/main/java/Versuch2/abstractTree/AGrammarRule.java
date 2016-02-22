@@ -15,6 +15,11 @@ public class AGrammarRule implements AbstractTree{
   
   private String label;
   private AIfStatement ifstat;
+
+  public AGrammarRule(String label, AIfStatement ifstat) {
+    this.label = label;
+    this.ifstat = ifstat;
+  }
   
   @Override
   public String toString(){

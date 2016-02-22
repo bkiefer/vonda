@@ -12,7 +12,9 @@ import Versuch2.abstractTree.leafs.*;
 import Versuch2.abstractTree.statements.*;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
@@ -37,82 +39,148 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitGrammar_file(RobotGrammarParser.Grammar_fileContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    ArrayList<AbstractTree> rules = new ArrayList<AbstractTree>();
+    for (int i = 0; i < ctx.getChildCount(); i++){
+      rules.add(this.visit(ctx.getChild(i)));
+    }
+    return new AGrammarFile(rules);
   }
 
   @Override
   public AbstractTree visitLabel(RobotGrammarParser.LabelContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // this method should never be reached as label is a part of grammar rule and
+    // is not invoked there
+    return null;
   }
 
   @Override
   public AbstractTree visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return new AGrammarRule(ctx.getChild(0).getText(),
+            (AIfStatement)this.visit(ctx.getChild(1)));
   }
 
   @Override
   public AbstractTree visitStatement_block(RobotGrammarParser.Statement_blockContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // LBRACE ( statement )* RBRACE
+    List<AbstractStatement> statblock = new ArrayList<AbstractStatement> ();
+    for (int i = 1; i < ctx.getChildCount() -1; i++){
+      statblock.add((AbstractStatement)this.visit(ctx.getChild(i)));
+    }
+    return new AbstractBlock(statblock, true);
   }
 
   @Override
   public AbstractTree visitStatement(RobotGrammarParser.StatementContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // childcount can be one to infinity since we allow comments
+    // -> solution: use an abstract block without braces as return container
+    List<AbstractStatement> statblock = new ArrayList<AbstractStatement> ();
+    for (int i = 0; i < ctx.getChildCount(); i++){
+      statblock.add((AbstractStatement)this.visit(ctx.getChild(i)));
+    }
+    return new AbstractBlock(statblock, false);
   }
 
   @Override
   public AbstractTree visitLoop_statement_block(RobotGrammarParser.Loop_statement_blockContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // LBRACE ( statement )* RBRACE
+    List<AbstractStatement> statblock = new ArrayList<AbstractStatement> ();
+    for (int i = 1; i < ctx.getChildCount() -1; i++){
+      statblock.add((AbstractStatement)this.visit(ctx.getChild(i)));
+    }
+    return new AbstractBlock(statblock, true);
   }
 
   @Override
   public AbstractTree visitLoop_statement(RobotGrammarParser.Loop_statementContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // childcount can be one to infinity since we allow comments
+    // -> solution: use an abstract block without braces as return container
+    List<AbstractStatement> statblock = new ArrayList<AbstractStatement> ();
+    for (int i = 0; i < ctx.getChildCount(); i++){
+      statblock.add((AbstractStatement)this.visit(ctx.getChild(i)));
+    }
+    return new AbstractBlock(statblock, false);
   }
 
   @Override
   public AbstractTree visitFunction_call(RobotGrammarParser.Function_callContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // as we do not declare funccalls in grammar files, this must be a function access
+    return new AFunctAccess(context.getFunctionAccessType(ctx.getText()), ctx.getText());
   }
 
   @Override
   public AbstractTree visitArithmetic(RobotGrammarParser.ArithmeticContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    AArithmeticExp arit = new AArithmeticExp(
+            (AbstractExpression)this.visit(ctx.getChild(ctx.getChildCount() - 1)),
+            null, null, false);
+    for (int i = ctx.getChildCount() - 2; i >= 0; i--){
+      if(i % 2 == 1){
+        arit = new AArithmeticExp(
+                new AArithmeticExp(
+                        (AbstractExpression)this.visit(ctx.getChild(i--)),
+                              null, null, false),
+                        arit, ctx.getChild(i).getText(), false);
+      }
+    }
+    return arit;
   }
 
   @Override
   public AbstractTree visitTerm(RobotGrammarParser.TermContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // dasselbe in Grün
+    AArithmeticExp arit = new AArithmeticExp(
+            (AbstractExpression)this.visit(ctx.getChild(ctx.getChildCount() - 1)),
+            null, null, false);
+    for (int i = ctx.getChildCount() - 2; i >= 0; i--){
+      if(i % 2 == 1){
+        arit = new AArithmeticExp(
+                new AArithmeticExp(
+                        (AbstractExpression)this.visit(ctx.getChild(i--)),
+                              null, null, false),
+                        arit, ctx.getChild(i).getText(), false);
+      }
+    }
+    return arit;
   }
 
   @Override
   public AbstractTree visitFactor(RobotGrammarParser.FactorContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // number
+    if(ctx.getChildCount() == 1){
+      return new ANumber(ctx.getText());
+    }
+    // MINUS arithmetic
+    else if (ctx.getChildCount() == 2){
+      return new AArithmeticExp(
+              (AbstractExpression)this.visit(ctx.getChild(1)), null, null, true);
+    }
+    // LPAR arithmetic RPAR
+    else{
+      // we write a lot of nice parenthesis anyways
+      return this.visit(ctx.getChild(1));
+    }
   }
 
   @Override
   public AbstractTree visitArithmetic_operator(RobotGrammarParser.Arithmetic_operatorContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // we should never get here since operators are directly used as Strings in arithmetics
+    throw new UnsupportedOperationException("This method shouldn't be used");
   }
 
   @Override
   public AbstractTree visitArithmetic_lin_operator(RobotGrammarParser.Arithmetic_lin_operatorContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // we should never get here since operators are directly used as Strings in arithmetics
+    throw new UnsupportedOperationException("This method shouldn't be used");
   }
 
   @Override
   public AbstractTree visitArithmetic_dot_operator(RobotGrammarParser.Arithmetic_dot_operatorContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // we should never get here since operators are directly used as Strings in arithmetics
+    throw new UnsupportedOperationException("This method shouldn't be used");
   }
 
   @Override
   public AbstractTree visitNumber(RobotGrammarParser.NumberContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  public AbstractTree visitPropose_block(RobotGrammarParser.Propose_blockContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return new ANumber(ctx.getChild(0).getText());
   }
 
   @Override
@@ -166,13 +234,28 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   }
 
   @Override
-  public AbstractTree visitLoop_propose_block(RobotGrammarParser.Loop_propose_blockContext ctx) {
+  public AbstractTree visitLoop_propose_statement(RobotGrammarParser.Loop_propose_statementContext ctx) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public AbstractTree visitLoop_propose_statement(RobotGrammarParser.Loop_propose_statementContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  public AbstractTree visitPropose_block(RobotGrammarParser.Propose_blockContext ctx) {
+    // LBRACE ( statement )* RBRACE
+    List<AbstractStatement> statblock = new ArrayList<AbstractStatement> ();
+    for (int i = 1; i < ctx.getChildCount() -1; i++){
+      statblock.add((AbstractStatement)this.visit(ctx.getChild(i)));
+    }
+    return new AbstractBlock(statblock, true);
+  }
+
+  @Override
+  public AbstractTree visitLoop_propose_block(RobotGrammarParser.Loop_propose_blockContext ctx) {
+    // LBRACE ( statement )* RBRACE
+    List<AbstractStatement> statblock = new ArrayList<AbstractStatement> ();
+    for (int i = 1; i < ctx.getChildCount() -1; i++){
+      statblock.add((AbstractStatement)this.visit(ctx.getChild(i)));
+    }
+    return new AbstractBlock(statblock, true);
   }
 
   @Override

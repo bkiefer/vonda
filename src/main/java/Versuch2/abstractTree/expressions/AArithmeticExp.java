@@ -18,6 +18,8 @@ public class AArithmeticExp  implements AbstractTree, AbstractExpression{
   private AbstractType type;
   private AbstractExpression left;
   private AbstractExpression right;
+  private String operator;
+  private boolean minus;
 
   /**
    * if the expression consists of only one part, set right and operator to null
@@ -25,12 +27,12 @@ public class AArithmeticExp  implements AbstractTree, AbstractExpression{
    * @param right
    * @param operator 
    */
-  public AArithmeticExp(AbstractExpression left, AbstractExpression right, String operator) {
+  public AArithmeticExp(AbstractExpression left, AbstractExpression right, String operator, boolean minus) {
     this.left = left;
     this.right = right;
     this.operator = operator;
+    this.minus = minus;
   }
-  private String operator;
 
   @Override
   public void testType() {
@@ -40,10 +42,14 @@ public class AArithmeticExp  implements AbstractTree, AbstractExpression{
   
   @Override
   public String toString(){
-    if(this.right != null){
-      return "(" + this.left + this.operator + this.right + ")";
+    String ret = "";
+    if (this.minus){
+      ret += "-";
     }
-    return this.left.toString();
+    if(this.right != null){
+      return ret + "(" + this.left + this.operator + this.right + ")";
+    }
+    return ret + this.left;
   }
 
   @Override

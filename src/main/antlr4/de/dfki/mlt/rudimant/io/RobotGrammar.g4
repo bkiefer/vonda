@@ -115,7 +115,7 @@ field_access
   ;
 
 exp
-  : comment*
+  : //comment*
   (LPAR exp RPAR
   | boolean_exp
   | field_access
@@ -131,11 +131,11 @@ exp
     | NULL
     )
   )
-  comment*
+  //comment*
   ;
 
 simple_b_exp
-  : comment*
+  : //comment*
   (LPAR exp RPAR
   | arithmetic
   | function_call
@@ -150,7 +150,7 @@ simple_b_exp
     )
   | NOT boolean_exp
   )
-  comment*
+  //comment*
   ;
 
 boolean_exp

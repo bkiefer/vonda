@@ -55,6 +55,13 @@ public interface RobotContext {
    */
   public AbstractType getFieldAccessType(String access);
   
+  /**
+   * method that finds the type of a function or returns null if there is no such function
+   * @param access
+   * @return the type of this function
+   */
+  public AbstractType getFunctionAccessType(String access);
+  
   ////////////////////////////////////////////////////////////////////////////
   /////////////////// following methods still needed? ////////////////////////
   ////////////////////////////////////////////////////////////////////////////
