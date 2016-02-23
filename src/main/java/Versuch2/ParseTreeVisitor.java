@@ -8,8 +8,8 @@ package Versuch2;
 import Versuch1.RobotContext;
 import Versuch2.abstractTree.*;
 import Versuch2.abstractTree.expressions.*;
-import Versuch2.abstractTree.leafs.*;
 import Versuch2.abstractTree.statements.*;
+import Versuch2.abstractTree.leaves.*;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
 import java.util.ArrayList;
@@ -55,15 +55,18 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
+    // label comment if_statement
     return new AGrammarRule(ctx.getChild(0).getText(),
-            (AIfStatement)this.visit(ctx.getChild(1)));
+            (ACommentBlock)this.visit(ctx.getChild(1)),
+            (AIfStatement)this.visit(ctx.getChild(2)));
   }
 
   @Override
   public AbstractTree visitStatement_block(RobotGrammarParser.Statement_blockContext ctx) {
-    // LBRACE ( statement )* RBRACE
+    // comment LBRACE comment ( statement )* RBRACE
     List<AbstractStatement> statblock = new ArrayList<AbstractStatement> ();
-    for (int i = 1; i < ctx.getChildCount() -1; i++){
+      statblock.add((AbstractStatement)this.visit(ctx.getChild(0)));
+    for (int i = 2; i < ctx.getChildCount() -1; i++){
       statblock.add((AbstractStatement)this.visit(ctx.getChild(i)));
     }
     return new AbstractBlock(statblock, true);
@@ -82,9 +85,10 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitLoop_statement_block(RobotGrammarParser.Loop_statement_blockContext ctx) {
-    // LBRACE ( statement )* RBRACE
+    // comment LBRACE comment ( statement )* RBRACE
     List<AbstractStatement> statblock = new ArrayList<AbstractStatement> ();
-    for (int i = 1; i < ctx.getChildCount() -1; i++){
+      statblock.add((AbstractStatement)this.visit(ctx.getChild(0)));
+    for (int i = 2; i < ctx.getChildCount() -1; i++){
       statblock.add((AbstractStatement)this.visit(ctx.getChild(i)));
     }
     return new AbstractBlock(statblock, true);
@@ -199,8 +203,20 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitExp(RobotGrammarParser.ExpContext ctx) {
-    // !! for the moment, we don't allow sth like exp comment SEMICOLON
-    return this.visit(ctx.getChild(0));
+    // comment exp comment
+    if(ctx.getChildCount() == 4){ // exp of kind comment NOT boolean_exp comment
+      return new AnAbstractExp((ACommentBlock)this.visit(ctx.getChild(0)),
+              new ABooleanExp((AbstractExpression)this.visit(ctx.getChild(2)), null, null, true),
+              (ACommentBlock)this.visit(ctx.getChild(3)));
+    }
+    if(ctx.getChildCount() == 5){ // exp of kind comment LPAR exp RPAR comment
+    return new AnAbstractExp((ACommentBlock)this.visit(ctx.getChild(0)),
+            (AbstractTree)this.visit(ctx.getChild(2)),
+            (ACommentBlock)this.visit(ctx.getChild(4)));
+    }
+    return new AnAbstractExp((ACommentBlock)this.visit(ctx.getChild(0)),
+            (AbstractTree)this.visit(ctx.getChild(1)),
+            (ACommentBlock)this.visit(ctx.getChild(2)));
   }
 
   @Override
@@ -216,43 +232,83 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitSimple_b_exp(RobotGrammarParser.Simple_b_expContext ctx) {
-    // commentBlock exp commentBlock
-    return this.visit(ctx.getChild(1));
+    // comment exp comment
+    return new AnAbstractExp((ACommentBlock)this.visit(ctx.getChild(0)),
+            (AbstractTree)this.visit(ctx.getChild(1)),
+            (ACommentBlock)this.visit(ctx.getChild(2)));
   }
 
   @Override
   public AbstractTree visitBoolean_exp(RobotGrammarParser.Boolean_expContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    ABooleanExp arit = new ABooleanExp(
+            (AbstractExpression)this.visit(ctx.getChild(ctx.getChildCount() - 1)),
+            null, null, false);
+    for (int i = ctx.getChildCount() - 2; i >= 0; i--){
+      if(i % 2 == 1){
+        arit = new ABooleanExp(
+                new ABooleanExp(
+                        (AbstractExpression)this.visit(ctx.getChild(i--)),
+                              null, null, false),
+                        arit, ctx.getChild(i).getText(), false);
+      }
+    }
+    return arit;
   }
 
   @Override
   public AbstractTree visitBoolean_op(RobotGrammarParser.Boolean_opContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // opereators are directly passed in boolean_exp
+    throw new UnsupportedOperationException("This method shouldn't be used");
   }
 
   @Override
   public AbstractTree visitAssignment(RobotGrammarParser.AssignmentContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // TODO: save variable in memory!!!!!!!!!!!!
+    if(ctx.getChildCount() == 3){ // no declaration
+      return new AAssignment(this.visit(ctx.getChild(0)), 
+              (AbstractExpression)this.visit(ctx.getChild(2)), false);
+    }
+    else {  // declaration
+      return new AAssignment(this.visit(ctx.getChild(0)), 
+              (AbstractExpression)this.visit(ctx.getChild(2)), true);
+    }
   }
 
   @Override
   public AbstractTree visitPropose_arg(RobotGrammarParser.Propose_argContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return this.visit(ctx.getChild(0));
   }
 
   @Override
   public AbstractTree visitString_expression(RobotGrammarParser.String_expressionContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // TODO: stimmt das??
+    AArithmeticExp arit = new AArithmeticExp(
+            (AbstractExpression)this.visit(ctx.getChild(ctx.getChildCount() - 1)),
+            null, null, false);
+    for (int i = ctx.getChildCount() - 2; i >= 0; i--){
+      if(i % 2 == 1){
+        arit = new AArithmeticExp(
+                new AArithmeticExp(
+                        (AbstractExpression)this.visit(ctx.getChild(i--)),
+                              null, null, false),
+                        arit, ctx.getChild(i).getText(), false);
+      }
+    }
+    return arit;
   }
 
   @Override
   public AbstractTree visitPropose_statement(RobotGrammarParser.Propose_statementContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // PROPOSE LPAR propose_arg RPAR statement_block
+    return new AProposeStat((AbstractExpression)this.visit(ctx.getChild(2)),
+            (AbstractBlock)this.visit(ctx.getChild(4)));
   }
 
   @Override
   public AbstractTree visitLoop_propose_statement(RobotGrammarParser.Loop_propose_statementContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // PROPOSE LPAR propose_arg RPAR statement_block
+    return new AProposeStat((AbstractExpression)this.visit(ctx.getChild(2)),
+            (AbstractBlock)this.visit(ctx.getChild(4)));
   }
 
   @Override
@@ -327,7 +383,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitComment(RobotGrammarParser.CommentContext ctx) {
-    return new AComment(ctx.getText());
+    ArrayList<AComment> comments = new ArrayList<AComment>();
+    for(int i = 0; i < ctx.getChildCount(); i++){
+      comments.add(new AComment(ctx.getText()));
+    }
+    return new ACommentBlock(comments);
   }
 
   @Override

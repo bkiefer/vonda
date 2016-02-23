@@ -5,6 +5,7 @@
  */
 package Versuch2.abstractTree;
 
+import Versuch2.abstractTree.leaves.ACommentBlock;
 import Versuch2.abstractTree.statements.AIfStatement;
 
 /**
@@ -13,17 +14,21 @@ import Versuch2.abstractTree.statements.AIfStatement;
  */
 public class AGrammarRule implements AbstractTree{
   
+  // label comment if_statement
+  
   private String label;
+  private ACommentBlock comment;
   private AIfStatement ifstat;
 
-  public AGrammarRule(String label, AIfStatement ifstat) {
+  public AGrammarRule(String label, ACommentBlock comment,AIfStatement ifstat) {
     this.label = label;
     this.ifstat = ifstat;
+    this.comment = comment;
   }
   
   @Override
   public String toString(){
-    return "execute(\"" + label + "\");\n" + ifstat + "\n\n";
+    return "execute(\"" + label + "\");\n" + comment + "\n"+ ifstat + "\n\n";
   }
 
   @Override

@@ -14,29 +14,30 @@ import Versuch2.abstractTree.leaves.ACommentBlock;
  *
  * @author anna
  */
-public class ALambdaExp implements AbstractTree, AbstractExpression{
+public class AnAbstractExp implements AbstractTree, AbstractExpression{
   
-  private String exp;
+  private ACommentBlock commentbefore;
+  private AbstractTree exp;
+  private ACommentBlock commentafter;
 
-  public ALambdaExp(String exp) {
+  public AnAbstractExp(ACommentBlock commentbefore, AbstractTree exp, ACommentBlock commentafter) {
+    this.commentbefore = commentbefore;
     this.exp = exp;
+    this.commentafter = commentafter;
   }
-
+  
   @Override
   public String toString(){
-    return exp;
+    return commentbefore.toString() + exp + commentafter.toString();
   }
-  
+
   @Override
   public void testType() {
-    // nothing to do for now
   }
 
   @Override
   public AbstractType getType() {
-    // TODO: what's the type of a lambda expression?
-    return AbstractType.OBJECT;
+    return null;
   }
-  
   
 }

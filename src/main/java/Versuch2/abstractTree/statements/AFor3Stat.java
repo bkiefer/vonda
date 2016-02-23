@@ -7,6 +7,7 @@ package Versuch2.abstractTree.statements;
 
 import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
+import Versuch2.abstractTree.leaves.ACommentBlock;
 
 /**
  * FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block
@@ -14,6 +15,7 @@ import Versuch2.abstractTree.AbstractTree;
  */
 public class AFor3Stat implements AbstractStatement, AbstractTree{
 
+  
   @Override
   public void testType() {
     // no types for statements

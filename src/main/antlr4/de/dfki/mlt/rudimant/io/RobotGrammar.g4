@@ -115,6 +115,7 @@ exp
   : comment
   (LPAR exp RPAR
   | boolean_exp
+  | NOT boolean_exp
   | field_access
   | assignment
   | arithmetic

@@ -10,6 +10,7 @@ import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
 import Versuch2.abstractTree.expressions.AAssignment;
 import Versuch2.abstractTree.expressions.ABooleanExp;
+import Versuch2.abstractTree.leaves.ACommentBlock;
 
 /**
  * FOR LPAR assignment SEMICOLON exp SEMICOLON exp? RPAR loop_statement_block
@@ -22,7 +23,8 @@ public class AFor1Stat implements AbstractStatement, AbstractTree{
   private AbstractExpression arithmetic;
   private AbstractBlock statblock;
 
-  public AFor1Stat(AAssignment assignment, ABooleanExp condition, AbstractExpression arithmetic, AbstractBlock statblock) {
+  public AFor1Stat(AAssignment assignment, ABooleanExp condition, 
+          AbstractExpression arithmetic, AbstractBlock statblock) {
     this.assignment = assignment;
     this.condition = condition;
     this.arithmetic = arithmetic;

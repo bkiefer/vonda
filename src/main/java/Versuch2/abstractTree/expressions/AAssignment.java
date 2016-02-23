@@ -8,7 +8,6 @@ package Versuch2.abstractTree.expressions;
 import Versuch2.abstractTree.AbstractExpression;
 import Versuch2.abstractTree.AbstractTree;
 import Versuch2.abstractTree.AbstractType;
-import Versuch2.abstractTree.leafs.ALocalVar;
 
 /**
  *
@@ -17,11 +16,12 @@ import Versuch2.abstractTree.leafs.ALocalVar;
 public class AAssignment  implements AbstractTree, AbstractExpression{
   
   private AbstractType type;
-  private ALocalVar left;
+  private AbstractTree left;
   private AbstractExpression right;
   private boolean declaration;
 
-  public AAssignment(ALocalVar left, AbstractExpression right, boolean declaration) {
+  public AAssignment(AbstractTree left, AbstractExpression right, 
+          boolean declaration) {
     this.left = left;
     this.right = right;
     this.declaration = declaration;

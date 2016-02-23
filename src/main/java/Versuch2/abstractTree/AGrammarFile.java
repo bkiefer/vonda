@@ -13,6 +13,8 @@ import java.util.List;
  */
 public class AGrammarFile implements AbstractTree{
   
+  // (comment grammar_rule)* comment
+  
   private List<AbstractTree> rules;
 
   public AGrammarFile(List<AbstractTree> rules) {

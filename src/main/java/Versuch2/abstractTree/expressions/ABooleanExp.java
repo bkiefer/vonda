@@ -8,6 +8,7 @@ package Versuch2.abstractTree.expressions;
 import Versuch2.abstractTree.AbstractExpression;
 import Versuch2.abstractTree.AbstractTree;
 import Versuch2.abstractTree.AbstractType;
+import Versuch2.abstractTree.leaves.ACommentBlock;
 
 /**
  *
@@ -28,7 +29,8 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
    * @param operator  operator in between
    * @param not set true if there is a ! in front of the expression
    */
-  public ABooleanExp(AbstractExpression left, AbstractExpression right, String operator, boolean not) {
+  public ABooleanExp(AbstractExpression left, 
+          AbstractExpression right, String operator, boolean not) {
     this.left = left;
     this.right = right;
     this.operator = operator;

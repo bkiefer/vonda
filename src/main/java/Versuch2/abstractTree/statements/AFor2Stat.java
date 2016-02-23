@@ -8,7 +8,8 @@ package Versuch2.abstractTree.statements;
 import Versuch2.abstractTree.AbstractLeaf;
 import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
-import Versuch2.abstractTree.leafs.ALocalVar;
+import Versuch2.abstractTree.leaves.ACommentBlock;
+import Versuch2.abstractTree.leaves.ALocalVar;
 
 /**
  * FOR LPAR VARIABLE COLON exp RPAR loop_statement_block

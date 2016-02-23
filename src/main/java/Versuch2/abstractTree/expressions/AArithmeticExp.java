@@ -8,6 +8,7 @@ package Versuch2.abstractTree.expressions;
 import Versuch2.abstractTree.AbstractExpression;
 import Versuch2.abstractTree.AbstractTree;
 import Versuch2.abstractTree.AbstractType;
+import Versuch2.abstractTree.leaves.ACommentBlock;
 
 /**
  *
@@ -28,7 +29,8 @@ public class AArithmeticExp  implements AbstractTree, AbstractExpression{
    * @param operator the operator in between
    * @param minus set true if there is a minus in front of the arithmetic
    */
-  public AArithmeticExp(AbstractExpression left, AbstractExpression right, String operator, boolean minus) {
+  public AArithmeticExp(AbstractExpression left,
+          AbstractExpression right, String operator, boolean minus) {
     this.left = left;
     this.right = right;
     this.operator = operator;
@@ -48,7 +50,8 @@ public class AArithmeticExp  implements AbstractTree, AbstractExpression{
       ret += "-";
     }
     if(this.right != null){
-      return ret + "(" + this.left + this.operator + this.right + ")";
+      return ret + "(" + this.left + this.operator + this.right
+              + ")";
     }
     return ret + this.left;
   }
