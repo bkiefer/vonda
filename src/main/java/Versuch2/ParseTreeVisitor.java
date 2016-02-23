@@ -216,8 +216,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitSimple_b_exp(RobotGrammarParser.Simple_b_expContext ctx) {
-    // !! for the moment, we don't allow sth like exp comment SEMICOLON
-    return this.visit(ctx.getChild(0));
+    // commentBlock exp commentBlock
+    return this.visit(ctx.getChild(1));
   }
 
   @Override
@@ -253,26 +253,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   @Override
   public AbstractTree visitLoop_propose_statement(RobotGrammarParser.Loop_propose_statementContext ctx) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  public AbstractTree visitPropose_block(RobotGrammarParser.Propose_blockContext ctx) {
-    // LBRACE ( statement )* RBRACE
-    List<AbstractStatement> statblock = new ArrayList<AbstractStatement> ();
-    for (int i = 1; i < ctx.getChildCount() -1; i++){
-      statblock.add((AbstractStatement)this.visit(ctx.getChild(i)));
-    }
-    return new AbstractBlock(statblock, true);
-  }
-
-  @Override
-  public AbstractTree visitLoop_propose_block(RobotGrammarParser.Loop_propose_blockContext ctx) {
-    // LBRACE ( statement )* RBRACE
-    List<AbstractStatement> statblock = new ArrayList<AbstractStatement> ();
-    for (int i = 1; i < ctx.getChildCount() -1; i++){
-      statblock.add((AbstractStatement)this.visit(ctx.getChild(i)));
-    }
-    return new AbstractBlock(statblock, true);
   }
 
   @Override

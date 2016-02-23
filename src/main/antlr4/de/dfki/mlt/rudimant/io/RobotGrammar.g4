@@ -11,11 +11,11 @@ grammar RobotGrammar;
 
 /// start rule
 grammar_file
-  : (comment* grammar_rule comment*)*
+  : (comment grammar_rule)* comment
   ;
 
 grammar_rule
-  : label /*comment**/ if_statement
+  : label comment if_statement
   ;
 
 label
@@ -23,7 +23,7 @@ label
   ;
 
 statement
-  : comment* 
+  : 
     ( exp SEMICOLON
     | propose_statement
     | if_statement
@@ -31,13 +31,11 @@ statement
     | for_statement
     | statement_block
     | SEMICOLON
-    )
-    comment*
+    ) comment
  ;
 
 comment
-  : MULTI_L_COMMENT
-  | ONE_L_COMMENT
+  : (MULTI_L_COMMENT | ONE_L_COMMENT)*
   ;
 
 if_statement
@@ -56,16 +54,16 @@ for_statement
   ;
 
 statement_block
-  : LBRACE ( statement )* RBRACE
+  : comment LBRACE comment ( statement )* RBRACE
   ;
 
 loop_statement_block
-  : LBRACE ( loop_statement )* RBRACE
+  : comment LBRACE comment ( loop_statement )* RBRACE
   ;
 
 /// loop_statement = all statements, allowing continue or break inside them
 loop_statement
-  : ( comment )*
+  : 
     ( exp SEMICOLON
     | (CONTINUE | BREAK) SEMICOLON
     | loop_propose_statement // do we want to be able to call break or continue here?
@@ -74,17 +72,16 @@ loop_statement
     | for_statement
     | loop_statement_block
     | SEMICOLON
-    )
-    ( comment )*
+    ) comment
   ;
 
 loop_propose_statement
-  : PROPOSE LPAR propose_arg RPAR loop_propose_block
+  : PROPOSE LPAR propose_arg RPAR loop_statement_block/*loop_propose_block*/
   ;
 
-loop_propose_block
-  : LBRACE loop_statement+ RBRACE
-  ;
+/*loop_propose_block
+  : comment LBRACE loop_statement+ RBRACE
+  ;*/
 
 loop_if_statement
   : IF LPAR boolean_exp RPAR loop_statement ( ELSE loop_statement )?
@@ -115,7 +112,7 @@ field_access
   ;
 
 exp
-  : //comment*
+  : comment
   (LPAR exp RPAR
   | boolean_exp
   | field_access
@@ -131,11 +128,11 @@ exp
     | NULL
     )
   )
-  //comment*
+  comment
   ;
 
 simple_b_exp
-  : //comment*
+  : comment
   (LPAR exp RPAR
   | arithmetic
   | function_call
@@ -150,7 +147,7 @@ simple_b_exp
     )
   | NOT boolean_exp
   )
-  //comment*
+  comment
   ;
 
 boolean_exp
@@ -172,12 +169,13 @@ boolean_op
 lambda_exp: LPAR (DEC_VAR? VARIABLE (COMMA DEC_VAR? VARIABLE)*)? RPAR ARROW exp;
 
 propose_statement
-  : PROPOSE LPAR propose_arg RPAR propose_block
+  : PROPOSE LPAR propose_arg RPAR statement_block
   ;
 
+/*
 propose_block
-  : LBRACE statement+ RBRACE
-  ;
+  : comment LBRACE statement+ RBRACE
+  ;*/
 
 string_expression
   : ( ( STRING | VARIABLE )
@@ -324,8 +322,8 @@ PROPOSE: 'propose';
 DEC_VAR: 'var';
 
 /// comments (starting with /* or //):
-ONE_L_COMMENT: '//'.*?'\n';// -> channel(HIDDEN);
-MULTI_L_COMMENT: '/*'.*?'*/';// -> channel(HIDDEN);
+ONE_L_COMMENT: '//'.*?'\n' ;//-> channel(HIDDEN);
+MULTI_L_COMMENT: '/*'.*?'*/' ;//-> channel(HIDDEN);
 
 /// whitespace
 WS: ( ' ' | '\t' | '\r' | '\n' ) -> channel(HIDDEN);

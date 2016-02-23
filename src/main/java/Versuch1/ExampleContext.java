@@ -136,5 +136,10 @@ public class ExampleContext implements RobotContext{
   public AbstractType getFieldAccessType(String access) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
+
+  @Override
+  public AbstractType getFunctionAccessType(String access) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
   
 }

@@ -23,9 +23,10 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
 
   /**
    * if the expression consists of only one part, set right and operator to null
-   * @param left
-   * @param right
-   * @param operator 
+   * @param left left part
+   * @param right right part
+   * @param operator  operator in between
+   * @param not set true if there is a ! in front of the expression
    */
   public ABooleanExp(AbstractExpression left, AbstractExpression right, String operator, boolean not) {
     this.left = left;

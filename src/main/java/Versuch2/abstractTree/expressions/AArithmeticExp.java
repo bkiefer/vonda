@@ -23,9 +23,10 @@ public class AArithmeticExp  implements AbstractTree, AbstractExpression{
 
   /**
    * if the expression consists of only one part, set right and operator to null
-   * @param left
-   * @param right
-   * @param operator 
+   * @param left the left part
+   * @param right the right part
+   * @param operator the operator in between
+   * @param minus set true if there is a minus in front of the arithmetic
    */
   public AArithmeticExp(AbstractExpression left, AbstractExpression right, String operator, boolean minus) {
     this.left = left;

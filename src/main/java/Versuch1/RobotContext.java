@@ -36,28 +36,28 @@ public interface RobotContext {
   
   /**
    * method to check whether a variable exists somewhere in the context
-   * @param variable
+   * @param variable the variable
    * @return true if variable is global
    */
   public boolean isGlobalVariable(String variable);
   
   /**
    * method that finds the type of a variable or returns null if there is no such variable
-   * @param access
+   * @param variable the variable
    * @return the type of this variable
    */
   public AbstractType getVariableType(String variable);
   
   /**
    * method that finds the type of a field or returns null if there is no such field
-   * @param access
+   * @param access the access
    * @return the type of this field
    */
   public AbstractType getFieldAccessType(String access);
   
   /**
    * method that finds the type of a function or returns null if there is no such function
-   * @param access
+   * @param access the access
    * @return the type of this function
    */
   public AbstractType getFunctionAccessType(String access);
@@ -68,28 +68,28 @@ public interface RobotContext {
   
   /**
    * method that will test whether the given arguments are of the correct type
-   * @param arguments
+   * @param arguments all function arguments
    * @return true if types are right
    */
   public boolean testFunctionArguments(List<Type> arguments);
   
   /**
    * method that will give you the return type of a function
-   * @param functionname
+   * @param functionname the function's name
    * @return the return type of the function with name functionname
    */
   public Type getFunctionReturn(String functionname);
   
   /**
    * method that can say whether a field is existing or not
-   * @param access
+   * @param access the access
    * @return true if this access is valid
    */
   public boolean existsFieldAccess(String access);
   
   /**
    * method that finds the type of a field or returns null if there is no such field
-   * @param access
+   * @param access the access
    * @return the type of this field
    */
   public Type getFieldType(String access);
@@ -100,7 +100,7 @@ public interface RobotContext {
    * i.e. if you declared the variable in this.afterClassName(), just return its name
    * !!! Attention !!!
    * atm this method will also change function names (which are variables + () )
-   * @param variable
+   * @param variable the variable
    * @return i.e. an existing field access or error if there is no such variable defined
    */
   public String getFullVariableName(String variable);

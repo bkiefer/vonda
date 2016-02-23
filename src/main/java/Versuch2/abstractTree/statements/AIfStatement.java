@@ -21,9 +21,9 @@ public class AIfStatement implements AbstractStatement, AbstractTree{
 
   /**
    * if there is no else case, set statblockElse to null
-   * @param condition
-   * @param statblockIf
-   * @param statblockElse 
+   * @param condition the condition
+   * @param statblockIf the if block
+   * @param statblockElse  the else block if existing
    */
   public AIfStatement(ABooleanExp condition, AbstractBlock statblockIf, AbstractBlock statblockElse) {
     this.condition = condition;
