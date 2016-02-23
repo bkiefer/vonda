@@ -8,6 +8,7 @@ package Versuch2.abstractTree.expressions;
 import Versuch2.abstractTree.AbstractExpression;
 import Versuch2.abstractTree.AbstractTree;
 import Versuch2.abstractTree.AbstractType;
+import java.util.List;
 
 /**
  *
@@ -18,9 +19,9 @@ public class ALiteralOrGraphExp  implements AbstractTree, AbstractExpression{
   // LITERAL_OR_GRAPH LPAR ( exp (COMMA exp)*)? RPAR
   
   private String litGraph;
-  private AbstractExpression[] exps;
+  private List<AbstractExpression> exps;
 
-  public ALiteralOrGraphExp(String litGraph, AbstractExpression[] exps) {
+  public ALiteralOrGraphExp(String litGraph, List<AbstractExpression> exps) {
     this.litGraph = litGraph.substring(1, litGraph.length());
     this.exps = exps;
   }

@@ -185,22 +185,39 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitWhile_statement(RobotGrammarParser.While_statementContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // WHILE LPAR boolean_exp RPAR loop_statement_block
+    if(ctx.getChildCount() == 5){
+      return new AWhileStat((ABooleanExp) this.visit(ctx.getChild(2)),
+              (AbstractBlock) this.visit(ctx.getChild(4)));
+    }
+    // DO loop_statement_block WHILE LPAR boolean_exp RPAR
+    else{
+      return new ADoWhileStat((ABooleanExp) this.visit(ctx.getChild(4)),
+              (AbstractBlock) this.visit(ctx.getChild(1)));
+    }
   }
 
   @Override
   public AbstractTree visitExp(RobotGrammarParser.ExpContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // !! for the moment, we don't allow sth like exp comment SEMICOLON
+    return this.visit(ctx.getChild(0));
   }
 
   @Override
   public AbstractTree visitLiteral_or_graph_exp(RobotGrammarParser.Literal_or_graph_expContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // LITERAL_OR_GRAPH LPAR ( exp (COMMA exp)*)? RPAR
+    ArrayList<AbstractExpression> expList = new ArrayList<AbstractExpression> ();
+    for (int i = 2; i < ctx.getChildCount() - 1;){
+      expList.add((AbstractExpression)this.visit(ctx.getChild(i)));
+      i += 2;   // because we aren't interested in commas
+    }
+    return new ALiteralOrGraphExp(ctx.getChild(0).getText(), expList);
   }
 
   @Override
   public AbstractTree visitSimple_b_exp(RobotGrammarParser.Simple_b_expContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // !! for the moment, we don't allow sth like exp comment SEMICOLON
+    return this.visit(ctx.getChild(0));
   }
 
   @Override

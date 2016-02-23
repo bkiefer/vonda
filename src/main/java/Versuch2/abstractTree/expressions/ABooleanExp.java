@@ -16,6 +16,7 @@ import Versuch2.abstractTree.AbstractType;
 public class ABooleanExp implements AbstractTree, AbstractExpression{
   
   private boolean not;
+  private boolean isSubsumed = false;   // <- magic part!!!
   private AbstractExpression left;
   private AbstractExpression right;
   private String operator;
@@ -31,6 +32,11 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
     this.right = right;
     this.operator = operator;
     this.not = not;
+    if(left.getType().equals(right.getType())){
+      if(left.getType().equals(AbstractType.MAGIC)){
+        this.isSubsumed = true;
+      }
+    }
   }
 
   @Override
@@ -43,6 +49,9 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
     String ret = "";
     if(this.not){
       ret += "!";
+    }
+    if(this.isSubsumed){
+      return ret + "isSubsumed(" + left + ", " + right + ")";
     }
     if(this.right != null){
       return ret + "(" + this.left + this.operator + this.right + ")";
