@@ -35,9 +35,11 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
     this.right = right;
     this.operator = operator;
     this.not = not;
-    if(left.getType().equals(right.getType())){
-      if(left.getType().equals(AbstractType.MAGIC)){
-        this.isSubsumed = true;
+    if(operator != null && operator.equals("<=")){
+      if(left.getType().equals(right.getType())){
+        if(left.getType().equals(AbstractType.MAGIC)){
+          this.isSubsumed = true;
+        }
       }
     }
   }

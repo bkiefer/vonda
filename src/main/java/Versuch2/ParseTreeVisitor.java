@@ -12,6 +12,7 @@ import Versuch2.abstractTree.statements.*;
 import Versuch2.abstractTree.leaves.*;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -245,10 +246,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
             null, null, false);
     for (int i = ctx.getChildCount() - 2; i >= 0; i--){
       if(i % 2 == 1){
-        arit = new ABooleanExp(
-                new ABooleanExp(
-                        (AbstractExpression)this.visit(ctx.getChild(i--)),
-                              null, null, false),
+        arit = new ABooleanExp((AbstractExpression)this.visit(ctx.getChild(i-1)),
                         arit, ctx.getChild(i).getText(), false);
       }
     }
@@ -258,7 +256,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   @Override
   public AbstractTree visitBoolean_op(RobotGrammarParser.Boolean_opContext ctx) {
     // opereators are directly passed in boolean_exp
-    throw new UnsupportedOperationException("This method shouldn't be used");
+    throw new UnsupportedOperationException("This method shouldn't be used ");
   }
 
   @Override
