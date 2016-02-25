@@ -15,10 +15,10 @@ import java.util.List;
  */
 public class AbstractBlock implements AbstractStatement, AbstractTree{
   
-  private List<AbstractStatement> statblock;
+  private List<AbstractTree> statblock;
   private final boolean braces;
 
-  public AbstractBlock(List<AbstractStatement> statblock, boolean braces) {
+  public AbstractBlock(List<AbstractTree> statblock, boolean braces) {
     this.statblock = statblock;
     this.braces = braces;
   }
@@ -30,7 +30,7 @@ public class AbstractBlock implements AbstractStatement, AbstractTree{
   @Override
   public String toString(){
     String stats = "";
-    for (AbstractStatement stat : statblock){
+    for (AbstractTree stat : statblock){
       stats += stat.toString() + "\n";
     }
     if(braces){

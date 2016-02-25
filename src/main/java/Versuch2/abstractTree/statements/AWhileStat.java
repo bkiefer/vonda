@@ -16,10 +16,10 @@ import Versuch2.abstractTree.leaves.ACommentBlock;
  */
 public class AWhileStat implements AbstractStatement, AbstractTree{
   
-  private ABooleanExp condition;
+  private AbstractTree condition;
   private AbstractBlock statblock;
 
-  public AWhileStat(ABooleanExp condition, AbstractBlock statblock) {
+  public AWhileStat(AbstractTree condition, AbstractBlock statblock) {
     this.condition = condition;
     this.statblock = statblock;
   }

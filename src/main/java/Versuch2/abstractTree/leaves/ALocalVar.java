@@ -5,6 +5,7 @@
  */
 package Versuch2.abstractTree.leaves;
 
+import Versuch2.abstractTree.AbstractExpression;
 import Versuch2.abstractTree.AbstractLeaf;
 import Versuch2.abstractTree.AbstractTree;
 import Versuch2.abstractTree.AbstractType;
@@ -13,7 +14,7 @@ import Versuch2.abstractTree.AbstractType;
  *
  * @author anna
  */
-public class ALocalVar  implements AbstractTree, AbstractLeaf{
+public class ALocalVar  implements AbstractTree, AbstractExpression, AbstractLeaf{
   
   private AbstractType type;
   private String representation;

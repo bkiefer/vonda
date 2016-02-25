@@ -16,7 +16,7 @@ import Versuch2.abstractTree.leaves.ACommentBlock;
  */
 public class AIfStatement implements AbstractStatement, AbstractTree{
   
-  private ABooleanExp condition;
+  private AbstractTree condition;
   private AbstractBlock statblockIf;
   private AbstractBlock statblockElse;
 
@@ -26,7 +26,7 @@ public class AIfStatement implements AbstractStatement, AbstractTree{
    * @param statblockIf the if block
    * @param statblockElse  the else block if existing
    */
-  public AIfStatement(ABooleanExp condition, AbstractBlock statblockIf, 
+  public AIfStatement(AbstractTree condition, AbstractBlock statblockIf, 
           AbstractBlock statblockElse) {
     this.condition = condition;
     this.statblockIf = statblockIf;

@@ -33,6 +33,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   // the object that nows about context that we cannot see
   private RobotContext context;
   
+  // boolean that will allow to parse a=b exp in literal_or_graph although a not in memory
+  private boolean in_graph = false;
+  
   public ParseTreeVisitor(RobotContext context){
     this.memory = new HashMap<String, AbstractType>();
     this.context = context;
@@ -65,10 +68,10 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   @Override
   public AbstractTree visitStatement_block(RobotGrammarParser.Statement_blockContext ctx) {
     // comment LBRACE comment ( statement )* RBRACE
-    List<AbstractStatement> statblock = new ArrayList<AbstractStatement> ();
-      statblock.add((AbstractStatement)this.visit(ctx.getChild(0)));
+    List<AbstractTree> statblock = new ArrayList<AbstractTree> ();
+      statblock.add(this.visit(ctx.getChild(0)));
     for (int i = 2; i < ctx.getChildCount() -1; i++){
-      statblock.add((AbstractStatement)this.visit(ctx.getChild(i)));
+      statblock.add(this.visit(ctx.getChild(i)));
     }
     return new AbstractBlock(statblock, true);
   }
@@ -77,9 +80,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   public AbstractTree visitStatement(RobotGrammarParser.StatementContext ctx) {
     // childcount can be one to infinity since we allow comments
     // -> solution: use an abstract block without braces as return container
-    List<AbstractStatement> statblock = new ArrayList<AbstractStatement> ();
+    List<AbstractTree> statblock = new ArrayList<AbstractTree> ();
     for (int i = 0; i < ctx.getChildCount(); i++){
-      statblock.add((AbstractStatement)this.visit(ctx.getChild(i)));
+      statblock.add(this.visit(ctx.getChild(i)));
     }
     return new AbstractBlock(statblock, false);
   }
@@ -87,10 +90,10 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   @Override
   public AbstractTree visitLoop_statement_block(RobotGrammarParser.Loop_statement_blockContext ctx) {
     // comment LBRACE comment ( statement )* RBRACE
-    List<AbstractStatement> statblock = new ArrayList<AbstractStatement> ();
-      statblock.add((AbstractStatement)this.visit(ctx.getChild(0)));
+    List<AbstractTree> statblock = new ArrayList<AbstractTree> ();
+      statblock.add(this.visit(ctx.getChild(0)));
     for (int i = 2; i < ctx.getChildCount() -1; i++){
-      statblock.add((AbstractStatement)this.visit(ctx.getChild(i)));
+      statblock.add(this.visit(ctx.getChild(i)));
     }
     return new AbstractBlock(statblock, true);
   }
@@ -99,9 +102,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   public AbstractTree visitLoop_statement(RobotGrammarParser.Loop_statementContext ctx) {
     // childcount can be one to infinity since we allow comments
     // -> solution: use an abstract block without braces as return container
-    List<AbstractStatement> statblock = new ArrayList<AbstractStatement> ();
+    List<AbstractTree> statblock = new ArrayList<AbstractTree> ();
     for (int i = 0; i < ctx.getChildCount(); i++){
-      statblock.add((AbstractStatement)this.visit(ctx.getChild(i)));
+      statblock.add(this.visit(ctx.getChild(i)));
     }
     return new AbstractBlock(statblock, false);
   }
@@ -114,6 +117,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitArithmetic(RobotGrammarParser.ArithmeticContext ctx) {
+    if (ctx.getChildCount() == 1){
+      return this.visit(ctx.getChild(0));
+    }
     AArithmeticExp arit = new AArithmeticExp(
             (AbstractExpression)this.visit(ctx.getChild(ctx.getChildCount() - 1)),
             null, null, false);
@@ -132,6 +138,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   @Override
   public AbstractTree visitTerm(RobotGrammarParser.TermContext ctx) {
     // dasselbe in Grün
+    if (ctx.getChildCount() == 1){
+      return this.visit(ctx.getChild(0));
+    }
     AArithmeticExp arit = new AArithmeticExp(
             (AbstractExpression)this.visit(ctx.getChild(ctx.getChildCount() - 1)),
             null, null, false);
@@ -192,12 +201,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   public AbstractTree visitWhile_statement(RobotGrammarParser.While_statementContext ctx) {
     // WHILE LPAR boolean_exp RPAR loop_statement_block
     if(ctx.getChildCount() == 5){
-      return new AWhileStat((ABooleanExp) this.visit(ctx.getChild(2)),
+      return new AWhileStat(this.visit(ctx.getChild(2)),
               (AbstractBlock) this.visit(ctx.getChild(4)));
     }
     // DO loop_statement_block WHILE LPAR boolean_exp RPAR
     else{
-      return new ADoWhileStat((ABooleanExp) this.visit(ctx.getChild(4)),
+      return new ADoWhileStat(this.visit(ctx.getChild(4)),
               (AbstractBlock) this.visit(ctx.getChild(1)));
     }
   }
@@ -212,11 +221,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
     }
     if(ctx.getChildCount() == 5){ // exp of kind comment LPAR exp RPAR comment
     return new AnAbstractExp((ACommentBlock)this.visit(ctx.getChild(0)),
-            (AbstractTree)this.visit(ctx.getChild(2)),
+            (AbstractExpression)this.visit(ctx.getChild(2)),
             (ACommentBlock)this.visit(ctx.getChild(4)));
     }
     return new AnAbstractExp((ACommentBlock)this.visit(ctx.getChild(0)),
-            (AbstractTree)this.visit(ctx.getChild(1)),
+            (AbstractExpression)this.visit(ctx.getChild(1)),
             (ACommentBlock)this.visit(ctx.getChild(2)));
   }
 
@@ -224,23 +233,38 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   public AbstractTree visitLiteral_or_graph_exp(RobotGrammarParser.Literal_or_graph_expContext ctx) {
     // LITERAL_OR_GRAPH LPAR ( exp (COMMA exp)*)? RPAR
     ArrayList<AbstractExpression> expList = new ArrayList<AbstractExpression> ();
+    this.in_graph = true;
     for (int i = 2; i < ctx.getChildCount() - 1;){
       expList.add((AbstractExpression)this.visit(ctx.getChild(i)));
       i += 2;   // because we aren't interested in commas
     }
+    this.in_graph = false;
     return new ALiteralOrGraphExp(ctx.getChild(0).getText(), expList);
   }
 
   @Override
   public AbstractTree visitSimple_b_exp(RobotGrammarParser.Simple_b_expContext ctx) {
     // comment exp comment
+    if(ctx.getChildCount() == 4){ // exp of kind comment NOT boolean_exp comment
+      return new AnAbstractExp((ACommentBlock)this.visit(ctx.getChild(0)),
+              new ABooleanExp((AbstractExpression)this.visit(ctx.getChild(2)), null, null, true),
+              (ACommentBlock)this.visit(ctx.getChild(3)));
+    }
+    if(ctx.getChildCount() == 5){ // exp of kind comment LPAR exp RPAR comment
     return new AnAbstractExp((ACommentBlock)this.visit(ctx.getChild(0)),
-            (AbstractTree)this.visit(ctx.getChild(1)),
+            (AbstractExpression)this.visit(ctx.getChild(2)),
+            (ACommentBlock)this.visit(ctx.getChild(4)));
+    }
+    return new AnAbstractExp((ACommentBlock)this.visit(ctx.getChild(0)),
+            (AbstractExpression)this.visit(ctx.getChild(1)),
             (ACommentBlock)this.visit(ctx.getChild(2)));
   }
 
   @Override
   public AbstractTree visitBoolean_exp(RobotGrammarParser.Boolean_expContext ctx) {
+    if (ctx.getChildCount() == 1){
+      return this.visit(ctx.getChild(0));
+    }
     ABooleanExp arit = new ABooleanExp(
             (AbstractExpression)this.visit(ctx.getChild(ctx.getChildCount() - 1)),
             null, null, false);
@@ -263,6 +287,15 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   public AbstractTree visitAssignment(RobotGrammarParser.AssignmentContext ctx) {
     // TODO: save variable in memory!!!!!!!!!!!!
     if(ctx.getChildCount() == 3){ // no declaration
+      if (!memory.containsKey(ctx.getChild(0).getText())){ // then we are either in a literal_or_graph or variable wasn't declared
+        if(this.in_graph){
+          memory.put(ctx.getChild(0).getText(), AbstractType.OBJECT);
+          AAssignment a = new AAssignment(this.visit(ctx.getChild(0)), 
+              (AbstractExpression)this.visit(ctx.getChild(2)), false);
+          memory.remove(ctx.getChild(0).getText());
+          return a;
+        }
+      }
       return new AAssignment(this.visit(ctx.getChild(0)), 
               (AbstractExpression)this.visit(ctx.getChild(2)), false);
     }
@@ -313,11 +346,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   public AbstractTree visitIf_statement(RobotGrammarParser.If_statementContext ctx) {
     // IF LPAR boolean_exp RPAR statement (ELSE statement)?
     if(ctx.getChildCount() == 5){   // no else
-      return new AIfStatement((ABooleanExp)this.visit(ctx.getChild(2)),
+      return new AIfStatement(this.visit(ctx.getChild(2)),
               (AbstractBlock) this.visit(ctx.getChild(4)), null);
     }
     // if there is an else
-    return new AIfStatement((ABooleanExp)this.visit(ctx.getChild(2)),
+    return new AIfStatement(this.visit(ctx.getChild(2)),
             (AbstractBlock) this.visit(ctx.getChild(4)),
             (AbstractBlock) this.visit(ctx.getChild(6)));
   }
@@ -326,11 +359,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   public AbstractTree visitLoop_if_statement(RobotGrammarParser.Loop_if_statementContext ctx) {
     // IF LPAR boolean_exp RPAR statement (ELSE statement)?
     if(ctx.getChildCount() == 5){   // no else
-      return new AIfStatement((ABooleanExp)this.visit(ctx.getChild(2)),
+      return new AIfStatement(this.visit(ctx.getChild(2)),
               (AbstractBlock) this.visit(ctx.getChild(4)), null);
     }
     // if there is an else
-    return new AIfStatement((ABooleanExp)this.visit(ctx.getChild(2)),
+    return new AIfStatement(this.visit(ctx.getChild(2)),
             (AbstractBlock) this.visit(ctx.getChild(4)),
             (AbstractBlock) this.visit(ctx.getChild(6)));
   }

@@ -17,10 +17,10 @@ import Versuch2.abstractTree.leaves.ACommentBlock;
 public class AnAbstractExp implements AbstractTree, AbstractExpression{
   
   private ACommentBlock commentbefore;
-  private AbstractTree exp;
+  private AbstractExpression exp;
   private ACommentBlock commentafter;
 
-  public AnAbstractExp(ACommentBlock commentbefore, AbstractTree exp, ACommentBlock commentafter) {
+  public AnAbstractExp(ACommentBlock commentbefore, AbstractExpression exp, ACommentBlock commentafter) {
     this.commentbefore = commentbefore;
     this.exp = exp;
     this.commentafter = commentafter;
@@ -37,7 +37,7 @@ public class AnAbstractExp implements AbstractTree, AbstractExpression{
 
   @Override
   public AbstractType getType() {
-    return null;
+    return exp.getType();
   }
   
 }

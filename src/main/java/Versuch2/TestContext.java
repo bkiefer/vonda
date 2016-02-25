@@ -8,6 +8,7 @@ package Versuch2;
 import Versuch1.RobotContext;
 import Versuch1.Type;
 import Versuch2.abstractTree.AbstractType;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -55,23 +56,56 @@ public class TestContext implements RobotContext{
 
   @Override
   public boolean isGlobalVariable(String variable) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // for the moment, assume the user knows what he's doing
+    return true;
+  }
+  
+  
+  private static HashMap<String, AbstractType> variableMap = new HashMap<String, AbstractType>();
+  {
+    variableMap.put("myLastSA", AbstractType.MAGIC);
+    variableMap.put("currentSA", AbstractType.MAGIC);
+    variableMap.put("lastSA", AbstractType.MAGIC);
   }
 
   @Override
   public AbstractType getVariableType(String variable) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    if(variableMap.containsKey(variable)){
+      return variableMap.get(variable);
+    }
+    throw new UnsupportedOperationException("I don't know this variable: " + variable);
+  }
+  
+  private static HashMap<String, AbstractType> fieldMap = new HashMap<String, AbstractType>();
+  {
+    fieldMap.put("game.status", AbstractType.STRING);
+    fieldMap.put("initiated", AbstractType.STRING);
+    fieldMap.put("currentUser.gameTypePlayed", AbstractType.BOOL);
+    fieldMap.put("currentUser.id", AbstractType.STRING);
+    fieldMap.put("gameLogic.startSession", AbstractType.BOOL);
+    fieldMap.put("gameLogic.isTurnBased", AbstractType.BOOL);
+    fieldMap.put("gameLogic.newRound", AbstractType.BOOL);
+    fieldMap.put("game.name", AbstractType.STRING);
+    fieldMap.put("game.activeParticipant", AbstractType.BOOL);
+    fieldMap.put("currentSA.hasActor", AbstractType.BOOL);
   }
 
   @Override
   public AbstractType getFieldAccessType(String access) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    if (fieldMap.containsKey(access)){
+      return fieldMap.get(access);
+    }
+    throw new UnsupportedOperationException("I don't know this field: " + access);
   }
 
   @Override
   public AbstractType getFunctionAccessType(String access) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
+  
+  ////////////////////////////////////////////////////////////////////////////
+  /////////////////// following methods still needed? ////////////////////////
+  ////////////////////////////////////////////////////////////////////////////
 
   @Override
   public boolean testFunctionArguments(List<Type> arguments) {

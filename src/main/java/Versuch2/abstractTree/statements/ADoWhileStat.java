@@ -16,10 +16,10 @@ import Versuch2.abstractTree.leaves.ACommentBlock;
  */
 public class ADoWhileStat implements AbstractStatement, AbstractTree{
   
-  private ABooleanExp condition;
+  private AbstractTree condition;
   private AbstractBlock statblock;
 
-  public ADoWhileStat(ABooleanExp condition, AbstractBlock statblock) {
+  public ADoWhileStat(AbstractTree condition, AbstractBlock statblock) {
     this.condition = condition;
     this.statblock = statblock;
   }

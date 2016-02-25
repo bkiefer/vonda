@@ -5,6 +5,7 @@
  */
 package Versuch2.abstractTree.leaves;
 
+import Versuch2.abstractTree.AbstractExpression;
 import Versuch2.abstractTree.AbstractLeaf;
 import Versuch2.abstractTree.AbstractTree;
 import Versuch2.abstractTree.AbstractType;
@@ -13,7 +14,7 @@ import Versuch2.abstractTree.AbstractType;
  *
  * @author anna
  */
-public class AWildcard  implements AbstractTree, AbstractLeaf{
+public class AWildcard  implements AbstractTree, AbstractExpression, AbstractLeaf{
 
   @Override
   public void testType() {
