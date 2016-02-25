@@ -30,7 +30,7 @@ statement
     | while_statement
     | for_statement
     | statement_block
-    | SEMICOLON
+    //| SEMICOLON   <- we don't really need it, and it's a pain to find in parser
     ) comment
  ;
 
@@ -71,7 +71,7 @@ loop_statement
     | while_statement
     | for_statement
     | loop_statement_block
-    | SEMICOLON
+    //| SEMICOLON
     ) comment
   ;
 

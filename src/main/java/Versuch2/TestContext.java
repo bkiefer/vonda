@@ -66,6 +66,8 @@ public class TestContext implements RobotContext{
     variableMap.put("myLastSA", AbstractType.MAGIC);
     variableMap.put("currentSA", AbstractType.MAGIC);
     variableMap.put("lastSA", AbstractType.MAGIC);
+    variableMap.put("initiated", AbstractType.STRING);
+    variableMap.put("game", AbstractType.OBJECT);
   }
 
   @Override
@@ -79,7 +81,6 @@ public class TestContext implements RobotContext{
   private static HashMap<String, AbstractType> fieldMap = new HashMap<String, AbstractType>();
   {
     fieldMap.put("game.status", AbstractType.STRING);
-    fieldMap.put("initiated", AbstractType.STRING);
     fieldMap.put("currentUser.gameTypePlayed", AbstractType.BOOL);
     fieldMap.put("currentUser.id", AbstractType.STRING);
     fieldMap.put("gameLogic.startSession", AbstractType.BOOL);
@@ -100,7 +101,8 @@ public class TestContext implements RobotContext{
 
   @Override
   public AbstractType getFunctionAccessType(String access) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // could be anything
+    return AbstractType.OBJECT;
   }
   
   ////////////////////////////////////////////////////////////////////////////

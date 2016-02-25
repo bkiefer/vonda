@@ -9,6 +9,7 @@ import Versuch2.abstractTree.AbstractExpression;
 import Versuch2.abstractTree.AbstractLeaf;
 import Versuch2.abstractTree.AbstractTree;
 import Versuch2.abstractTree.AbstractType;
+import java.util.List;
 
 /**
  *
@@ -18,10 +19,12 @@ public class AFunctAccess  implements AbstractTree, AbstractExpression, Abstract
   
   private AbstractType type;
   private String representation;
+  private List<AbstractExpression> exps;
 
-  public AFunctAccess(AbstractType type, String representation) {
+  public AFunctAccess(AbstractType type, String representation, List<AbstractExpression> exps) {
     this.type = type;
     this.representation = representation;
+    this.exps = exps;
   }
 
   @Override
@@ -31,7 +34,14 @@ public class AFunctAccess  implements AbstractTree, AbstractExpression, Abstract
   
   @Override
   public String toString(){
-    return this.representation;
+    String args = "";
+    for(int i = 0; i < this.exps.size(); i++){
+      args += this.exps.get(i);
+      if(i != this.exps.size() -1){
+        args += ", ";
+      }
+    }
+    return this.representation + "(" + args + ")";
   }
 
   @Override

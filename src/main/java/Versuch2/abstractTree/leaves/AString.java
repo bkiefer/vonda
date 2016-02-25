@@ -29,7 +29,7 @@ public class AString implements AbstractTree, AbstractExpression, AbstractLeaf{
   
   @Override
   public String toString(){
-    return "\"" + this.content + "\"";
+    return this.content;
   }
 
   @Override

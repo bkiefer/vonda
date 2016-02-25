@@ -12,7 +12,6 @@ import Versuch2.abstractTree.statements.*;
 import Versuch2.abstractTree.leaves.*;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +53,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   public AbstractTree visitLabel(RobotGrammarParser.LabelContext ctx) {
     // this method should never be reached as label is a part of grammar rule and
     // is not invoked there
-    return null;
+    throw new UnsupportedOperationException("This method shouldn't be used");
   }
 
   @Override
@@ -78,12 +77,10 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitStatement(RobotGrammarParser.StatementContext ctx) {
-    // childcount can be one to infinity since we allow comments
-    // -> solution: use an abstract block without braces as return container
+    // (some_statement | exp SEMICOLON) comment
     List<AbstractTree> statblock = new ArrayList<AbstractTree> ();
-    for (int i = 0; i < ctx.getChildCount(); i++){
-      statblock.add(this.visit(ctx.getChild(i)));
-    }
+    statblock.add(this.visit(ctx.getChild(0)));
+    statblock.add(this.visit(ctx.getChild(ctx.getChildCount() - 1)));
     return new AbstractBlock(statblock, false);
   }
 
@@ -100,19 +97,25 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitLoop_statement(RobotGrammarParser.Loop_statementContext ctx) {
-    // childcount can be one to infinity since we allow comments
-    // -> solution: use an abstract block without braces as return container
+    // (some_statement | exp SEMICOLON) comment
     List<AbstractTree> statblock = new ArrayList<AbstractTree> ();
-    for (int i = 0; i < ctx.getChildCount(); i++){
-      statblock.add(this.visit(ctx.getChild(i)));
-    }
+    statblock.add(this.visit(ctx.getChild(0)));
+    statblock.add(this.visit(ctx.getChild(ctx.getChildCount() - 1)));
     return new AbstractBlock(statblock, false);
   }
 
   @Override
   public AbstractTree visitFunction_call(RobotGrammarParser.Function_callContext ctx) {
     // as we do not declare funccalls in grammar files, this must be a function access
-    return new AFunctAccess(context.getFunctionAccessType(ctx.getText()), ctx.getText());
+    // VARIABLE LPAR exp? (COMMA exp)* RPAR
+    ArrayList<AbstractExpression> expList = new ArrayList<AbstractExpression> ();
+    for (int i = 2; i < ctx.getChildCount() - 1;){
+      expList.add((AbstractExpression)this.visit(ctx.getChild(i)));
+      i += 2;   // because we aren't interested in commas
+    }
+    //throw new UnsupportedOperationException("Yay, I found a function: ");
+    return new AFunctAccess(context.getFunctionAccessType(ctx.getText()),
+            ctx.getChild(0).getText(), expList);
   }
 
   @Override
@@ -158,9 +161,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitFactor(RobotGrammarParser.FactorContext ctx) {
-    // number
+    // number (at least parsed as number)
     if(ctx.getChildCount() == 1){
-      return new ANumber(ctx.getText());
+      return this.visit(ctx.getChild(0));
     }
     // MINUS arithmetic
     else if (ctx.getChildCount() == 2){
@@ -194,7 +197,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitNumber(RobotGrammarParser.NumberContext ctx) {
-    return new ANumber(ctx.getChild(0).getText());
+    return this.visit(ctx.getChild(0));
   }
 
   @Override
@@ -232,14 +235,19 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   @Override
   public AbstractTree visitLiteral_or_graph_exp(RobotGrammarParser.Literal_or_graph_expContext ctx) {
     // LITERAL_OR_GRAPH LPAR ( exp (COMMA exp)*)? RPAR
-    ArrayList<AbstractExpression> expList = new ArrayList<AbstractExpression> ();
-    this.in_graph = true;
-    for (int i = 2; i < ctx.getChildCount() - 1;){
-      expList.add((AbstractExpression)this.visit(ctx.getChild(i)));
-      i += 2;   // because we aren't interested in commas
+//    ArrayList<AbstractExpression> expList = new ArrayList<AbstractExpression> ();
+//    this.in_graph = true;
+//    for (int i = 2; i < ctx.getChildCount() - 1;){
+//      expList.add((AbstractExpression)this.visit(ctx.getChild(i)));
+//      i += 2;   // because we aren't interested in commas
+//    }
+//    this.in_graph = false;
+//    return new ALiteralOrGraphExp(ctx.getChild(0).getText(), expList);
+    String rest = "";
+    for (int i = 1; i < ctx.getChildCount(); i++){
+      rest += ctx.getChild(i).getText();
     }
-    this.in_graph = false;
-    return new ALiteralOrGraphExp(ctx.getChild(0).getText(), expList);
+    return new ALiteralOrGraphExp(ctx.getChild(0).getText(), rest);
   }
 
   @Override
@@ -463,7 +471,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
       case 49:  // token is float
         return new ANumber(tn.getText());
     }
-    return null;
+    throw new UnsupportedOperationException("The terminal node for " + tn.getText() + " should never be used");
   }
 
   @Override
