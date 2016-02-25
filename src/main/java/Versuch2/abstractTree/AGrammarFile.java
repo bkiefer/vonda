@@ -25,7 +25,7 @@ public class AGrammarFile implements AbstractTree{
   public String toString(){
     String ret = "";
     for (AbstractTree r : rules){
-      ret += r.toString();
+      ret += r;
     }
     return ret;
   }

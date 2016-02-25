@@ -25,9 +25,9 @@ public class ACommentBlock implements AbstractTree, AbstractStatement{
   public String toString(){
     String ret = "";
     for (AComment c : comments){
-      ret += c.toString() + "\n";
+      ret += c;
     }
-    return ret + "\n";
+    return ret;
   }
 
   @Override

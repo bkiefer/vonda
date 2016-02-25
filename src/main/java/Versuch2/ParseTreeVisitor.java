@@ -59,7 +59,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   @Override
   public AbstractTree visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
     // label comment if_statement
-    return new AGrammarRule(ctx.getChild(0).getText(),
+    return new AGrammarRule(ctx.getChild(0).getText().substring(0, ctx.getChild(0).getText().length() - 1),
             (ACommentBlock)this.visit(ctx.getChild(1)),
             (AIfStatement)this.visit(ctx.getChild(2)));
   }
@@ -308,8 +308,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
               (AbstractExpression)this.visit(ctx.getChild(2)), false);
     }
     else {  // declaration
-      return new AAssignment(this.visit(ctx.getChild(0)), 
-              (AbstractExpression)this.visit(ctx.getChild(2)), true);
+      memory.put(ctx.getChild(1).getText(), AbstractType.OBJECT);
+      return new AAssignment(this.visit(ctx.getChild(1)),
+              (AbstractExpression)this.visit(ctx.getChild(3)), true);
     }
   }
 
@@ -424,7 +425,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   public AbstractTree visitComment(RobotGrammarParser.CommentContext ctx) {
     ArrayList<AComment> comments = new ArrayList<AComment>();
     for(int i = 0; i < ctx.getChildCount(); i++){
-      comments.add(new AComment(ctx.getText()));
+      comments.add(new AComment(ctx.getChild(i).getText()));
     }
     return new ACommentBlock(comments);
   }

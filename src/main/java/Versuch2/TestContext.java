@@ -67,6 +67,7 @@ public class TestContext implements RobotContext{
     variableMap.put("currentSA", AbstractType.MAGIC);
     variableMap.put("lastSA", AbstractType.MAGIC);
     variableMap.put("initiated", AbstractType.STRING);
+    variableMap.put("startSession", AbstractType.STRING);
     variableMap.put("game", AbstractType.OBJECT);
   }
 

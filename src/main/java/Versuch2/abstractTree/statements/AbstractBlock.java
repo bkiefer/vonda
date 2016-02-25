@@ -5,6 +5,7 @@
  */
 package Versuch2.abstractTree.statements;
 
+import Versuch2.abstractTree.AbstractExpression;
 import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
 import java.util.List;
@@ -31,6 +32,10 @@ public class AbstractBlock implements AbstractStatement, AbstractTree{
   public String toString(){
     String stats = "";
     for (AbstractTree stat : statblock){
+      if(stat instanceof AbstractExpression){
+        stats += stat.toString() + ";\n";
+        break;
+      }
       stats += stat.toString() + "\n";
     }
     if(braces){
