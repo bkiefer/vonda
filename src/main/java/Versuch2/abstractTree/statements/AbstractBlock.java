@@ -39,7 +39,7 @@ public class AbstractBlock implements AbstractStatement, AbstractTree{
       stats += stat.toString() + "\n";
     }
     if(braces){
-      stats = "{" + stats + "}\n";
+      stats = "{" + stats + "}";
     }
     return stats;
   }

@@ -58,6 +58,9 @@ public class TestContext implements RobotContext{
   @Override
   public boolean isGlobalVariable(String variable) {
     // for the moment, assume the user knows what he's doing
+    if(variableMap.containsKey(variable)){
+      return true;
+    }
     if(Pattern.matches("([A-Z]|_)+", variable)){
       return false;
     }
@@ -76,6 +79,20 @@ public class TestContext implements RobotContext{
     variableMap.put("Inform", AbstractType.OBJECT);
     variableMap.put("Confirm", AbstractType.OBJECT);
     variableMap.put("_pendingTask", AbstractType.OBJECT);
+    variableMap.put("MAX_WAIT_FOR_TABLET", AbstractType.FLOAT);
+    variableMap.put("currentTime", AbstractType.FLOAT);
+    variableMap.put("POINTS_TO_ME", AbstractType.BOOL);
+    variableMap.put("I_MYSELF", AbstractType.OBJECT);
+    variableMap.put("inSession", AbstractType.OBJECT);
+    variableMap.put("questionAsked", AbstractType.BOOL);
+    variableMap.put("Question", AbstractType.OBJECT);
+    variableMap.put("Answers", AbstractType.OBJECT);
+    variableMap.put("Solution", AbstractType.OBJECT);
+    variableMap.put("turnFinished", AbstractType.BOOL);
+    variableMap.put("answerGiven", AbstractType.OBJECT);
+    variableMap.put("no", AbstractType.OBJECT);
+    variableMap.put("proposed", AbstractType.OBJECT);
+    variableMap.put("yes", AbstractType.OBJECT);
   }
 
   @Override
@@ -89,18 +106,35 @@ public class TestContext implements RobotContext{
   private static HashMap<String, AbstractType> fieldMap = new HashMap<String, AbstractType>();
   {
     fieldMap.put("game.status", AbstractType.STRING);
-    fieldMap.put("currentUser.gameTypePlayed", AbstractType.BOOL);
-    fieldMap.put("currentUser.id", AbstractType.STRING);
+    fieldMap.put("game.name", AbstractType.STRING);
+    fieldMap.put("game.maxTries", AbstractType.INT);
+    fieldMap.put("game.activeParticipant", AbstractType.BOOL);
+    fieldMap.put("game.lastMove.Question", AbstractType.OBJECT);
+    fieldMap.put("game.lastMove.Question.explanationGiven", AbstractType.OBJECT);
+    fieldMap.put("game.lastMove.answerCorrect", AbstractType.BOOL);
+    fieldMap.put("game.lastMove.tries", AbstractType.INT);
+    fieldMap.put("game.lastMove.explanationGiven", AbstractType.OBJECT);
+    fieldMap.put("game.tablet.currentOrientation", AbstractType.OBJECT);
+    fieldMap.put("game.tablet.supposedOrientation", AbstractType.OBJECT);
+    fieldMap.put("game.tablet.isAvailable", AbstractType.BOOL);
+    fieldMap.put("game.tablet.orientation", AbstractType.OBJECT);
+    
     fieldMap.put("gameLogic.startSession", AbstractType.BOOL);
     fieldMap.put("gameLogic.isTurnBased", AbstractType.BOOL);
     fieldMap.put("gameLogic.newRound", AbstractType.BOOL);
-    fieldMap.put("game.name", AbstractType.STRING);
-    fieldMap.put("game.activeParticipant", AbstractType.BOOL);
+    
+    fieldMap.put("currentUser.gameTypePlayed", AbstractType.BOOL);
+    fieldMap.put("currentUser.id", AbstractType.STRING);
+    
     fieldMap.put("currentSA.hasActor", AbstractType.BOOL);
     fieldMap.put("currentSA.frame", AbstractType.OBJECT);
     fieldMap.put("currentSA.type", AbstractType.OBJECT);
+    fieldMap.put("currentSA.what", AbstractType.OBJECT);
+    
     fieldMap.put("_pendingTask.frame", AbstractType.OBJECT);
     fieldMap.put("_pendingTask.arg", AbstractType.OBJECT);
+    
+    fieldMap.put("last.time", AbstractType.FLOAT);
   }
 
   @Override

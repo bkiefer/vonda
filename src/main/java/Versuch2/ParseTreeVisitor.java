@@ -121,6 +121,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitArithmetic(RobotGrammarParser.ArithmeticContext ctx) {
+    // term ( arithmetic_lin_operator term )*
     if (ctx.getChildCount() == 1){
       return this.visit(ctx.getChild(0));
     }
@@ -131,7 +132,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
       if(i % 2 == 1){
         arit = new AArithmeticExp(
                 new AArithmeticExp(
-                        (AbstractExpression)this.visit(ctx.getChild(i--)),
+                        (AbstractExpression)this.visit(ctx.getChild(i-1)),
                               null, null, false),
                         arit, ctx.getChild(i).getText(), false);
       }
@@ -152,7 +153,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
       if(i % 2 == 1){
         arit = new AArithmeticExp(
                 new AArithmeticExp(
-                        (AbstractExpression)this.visit(ctx.getChild(i--)),
+                        (AbstractExpression)this.visit(ctx.getChild(i-1)),
                               null, null, false),
                         arit, ctx.getChild(i).getText(), false);
       }
@@ -322,15 +323,16 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitString_expression(RobotGrammarParser.String_expressionContext ctx) {
+    // someString (PLUS someString)*
     // TODO: stimmt das??
     AArithmeticExp arit = new AArithmeticExp(
             (AbstractExpression)this.visit(ctx.getChild(ctx.getChildCount() - 1)),
             null, null, false);
-    for (int i = ctx.getChildCount() - 2; i >= 0; i--){
+    for (int i = ctx.getChildCount() - 3; i >= 0; i--){
       if(i % 2 == 1){
         arit = new AArithmeticExp(
                 new AArithmeticExp(
-                        (AbstractExpression)this.visit(ctx.getChild(i--)),
+                        (AbstractExpression)this.visit(ctx.getChild(i-1)),
                               null, null, false),
                         arit, ctx.getChild(i).getText(), false);
       }

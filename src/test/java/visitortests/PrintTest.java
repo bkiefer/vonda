@@ -63,6 +63,12 @@ public class PrintTest {
         GrammarMain.main(strings);
     }
     
+    @Test
+    public void WholeQuizTest() throws Exception {
+        String[] strings = new String[]{"RulesQuiz"};
+        GrammarMain.main(strings);
+    }
+    
     /*
     @Test
     public void FourthAndFifthRuleTest() throws Exception {
