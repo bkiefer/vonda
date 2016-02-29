@@ -59,13 +59,17 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
       return ret + "isSubsumed(" + left + ", " + right + ")";
     }
     if(this.right != null){
-      return ret + "(" + this.left + this.operator + this.right + ")";
+      //return ret + "(" + this.left + this.operator + this.right + ")";
+      return ret + this.left + this.operator + this.right;
     }
     return ret + this.left.toString();
   }
 
   @Override
   public AbstractType getType() {
+    if(this.right == null){
+      return this.left.getType();
+    }
     return AbstractType.BOOL;
   }
 }
