@@ -7,14 +7,23 @@ package Versuch2.abstractTree.statements;
 
 import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
-import Versuch2.abstractTree.leaves.ACommentBlock;
+import java.util.List;
 
 /**
  * FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block
  * @author anna
  */
 public class AFor3Stat implements AbstractStatement, AbstractTree{
+  
+  private List<String> variables;
+  private AbstractTree exp;
+  private AbstractBlock block;
 
+  public AFor3Stat(List<String> variables, AbstractTree exp, AbstractBlock block) {
+    this.variables = variables;
+    this.exp = exp;
+    this.block = block;
+  }
   
   @Override
   public void testType() {
@@ -23,6 +32,11 @@ public class AFor3Stat implements AbstractStatement, AbstractTree{
   
   @Override
   public String toString(){
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    String ret = "for (Object[] o : " + this.exp + ") {";
+    int count = 0;
+    for (String s : this.variables){
+      ret += "\nObject " + s + " = o[" + count + "]";
+    }
+    return ret + block + "}\n";
   }
 }

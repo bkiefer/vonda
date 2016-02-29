@@ -384,6 +384,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
       // statement looks like "FOR LPAR VARIABLE COLON exp RPAR loop_statement_block"
       // TODO: or should we check here that the type of the variable in assignment
       // is the type the iterable in exp returns? How?
+      this.memory.put(ctx.getChild(2).getText(), AbstractType.OBJECT);
       return new AFor2Stat(new ALocalVar(ctx.getChild(2).getText()), this.visit(ctx.getChild(4)),
               (AbstractBlock)this.visit(ctx.getChild(6)));
     }
@@ -403,7 +404,13 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
     else{
       // statement looks like "FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block"
       // TODO: implement For3Stat; exp will return some Object[]
-      return new AFor3Stat();
+      List<String> vars = new ArrayList<String>();
+      for (int i = 3; i < ctx.getChildCount() - 5; i += 2){
+        this.memory.put(ctx.getChild(i).getText(), AbstractType.OBJECT);
+        vars.add(ctx.getChild(i).getText());
+      }
+      return new AFor3Stat(vars, this.visit(ctx.getChild(ctx.getChildCount() - 3)),
+              (AbstractBlock)this.visit(ctx.getChild(ctx.getChildCount() - 1)));
     }
   }
 
@@ -444,6 +451,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   @Override
   public AbstractTree visitTerminal(TerminalNode tn) {
     switch(tn.getSymbol().getType()){
+      case 8:   // token is NULL
+        return new ANull();
       case 9:   // token is TRUE
         return new AUnaryBoolean(tn.getText());
       case 10:  // token is FALSE

@@ -57,6 +57,12 @@ public class PrintTest {
         GrammarMain.main(strings);
     }
     
+    @Test
+    public void TupleForTest() throws Exception {
+        String[] strings = new String[]{"TupleFor"};
+        GrammarMain.main(strings);
+    }
+    
     /*
     @Test
     public void FourthAndFifthRuleTest() throws Exception {

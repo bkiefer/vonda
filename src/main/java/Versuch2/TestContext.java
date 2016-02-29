@@ -73,6 +73,9 @@ public class TestContext implements RobotContext{
     variableMap.put("initiated", AbstractType.STRING);
     variableMap.put("startSession", AbstractType.STRING);
     variableMap.put("game", AbstractType.OBJECT);
+    variableMap.put("Inform", AbstractType.OBJECT);
+    variableMap.put("Confirm", AbstractType.OBJECT);
+    variableMap.put("_pendingTask", AbstractType.OBJECT);
   }
 
   @Override
@@ -94,6 +97,10 @@ public class TestContext implements RobotContext{
     fieldMap.put("game.name", AbstractType.STRING);
     fieldMap.put("game.activeParticipant", AbstractType.BOOL);
     fieldMap.put("currentSA.hasActor", AbstractType.BOOL);
+    fieldMap.put("currentSA.frame", AbstractType.OBJECT);
+    fieldMap.put("currentSA.type", AbstractType.OBJECT);
+    fieldMap.put("_pendingTask.frame", AbstractType.OBJECT);
+    fieldMap.put("_pendingTask.arg", AbstractType.OBJECT);
   }
 
   @Override
