@@ -36,7 +36,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   private boolean in_graph = false;
   
   public ParseTreeVisitor(RobotContext context){
-    this.memory = new HashMap<String, AbstractType>();
+    //this.memory = new HashMap<String, AbstractType>();
+    this.memory = Mem.memory;
     this.context = context;
   }
 
@@ -244,7 +245,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 //    this.in_graph = false;
 //    return new ALiteralOrGraphExp(ctx.getChild(0).getText(), expList);
     String rest = "";
-    for (int i = 1; i < ctx.getChildCount(); i++){
+    for (int i = 2; i < ctx.getChildCount() - 1; i++){  // we don't need the parenthesis
       rest += ctx.getChild(i).getText();
     }
     return new ALiteralOrGraphExp(ctx.getChild(0).getText(), rest);

@@ -27,59 +27,60 @@ public class GrammarMain {
 
   protected static Writer writer;
 
+  public static RobotContext context;
+
   /**
-   * 
+   *
    * @param args: the file that should be parsed without ending (in args[0])
-   * @throws Exception 
+   * @throws Exception
    */
   public static void main(String[] args) throws Exception {
 
   // TODO: do something if there are no input arguments
+    System.out.println("parsing: " + args[0]);
 
-  System.out.println("parsing: " + args[0]);
+    // creating input file & make it readable
+    File in = new File("src/test/testfiles/" + args[0] + ".txt");
+    in.setReadable(true);
 
-  // creating input file & make it readable
-  File in = new File("src/test/testfiles/" + args[0] + ".txt");
-  in.setReadable(true);
+    // creating output file from input filename; TODO: what location?
+    String classname = args[0].substring(0, 1).toUpperCase() + args[0].substring(1);
+    String outputFile = "src/test/testfiles/" + classname + ".java";
+    File out = new File(outputFile);
+    out.setWritable(true);
+    out.setReadable(true);
 
-  // creating output file from input filename; TODO: what location?
-  String classname = args[0].substring(0, 1).toUpperCase() + args[0].substring(1);
-  String outputFile = "src/test/testfiles/" + classname + ".java";
-  File out = new File(outputFile);
-  out.setWritable(true);
-  out.setReadable(true);
-  
-  // initiate writer
-  writer = new BufferedWriter(new OutputStreamWriter(
+    // initiate writer
+    writer = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream(out)));
 
-  // initialise the context magic
-  RobotContext context = new TestContext();
-  
-  // prepare the output file
-  writer.write(context.beforeClassName());
-  classname = args[0].substring(0, 1).toUpperCase() + args[0].substring(1);
-  writer.write("public class " + classname + " extends RuleUnit {\n\n");
-  writer.write(context.afterClassName());
-  
-  // initialise the lexer with given input file
-  RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(in)));
+    // initialise the context magic
+    context = new TestContext();
 
-  // initialise the parser
-  RobotGrammarParser parser = new RobotGrammarParser(new CommonTokenStream(lexer));
+    // prepare the output file
+    writer.write(context.beforeClassName());
+    classname = args[0].substring(0, 1).toUpperCase() + args[0].substring(1);
+    writer.write("public class " + classname + " extends RuleUnit {\n\n");
+    writer.write(context.afterClassName());
 
-  // create a parse tree; grammar_file is the start rule
-  ParseTree tree = parser.grammar_file();
+    // initialise the lexer with given input file
+    RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(in)));
 
-  // initialise the visitor that will do all the work
-  ParseTreeVisitor visitor = new ParseTreeVisitor(context);
+    // initialise the parser
+    RobotGrammarParser parser = new RobotGrammarParser(new CommonTokenStream(lexer));
 
-  // walk the parse tree, (create output file here?)
-  AbstractTree myTree = visitor.visit(tree);
-  
-  writer.write(myTree + context.atEndOfFile() + "\n}");
-  
-  // close the writer
-  writer.close();
+    // create a parse tree; grammar_file is the start rule
+    ParseTree tree = parser.grammar_file();
+
+    // initialise the visitor that will do all the work
+    ParseTreeVisitor visitor = new ParseTreeVisitor(context);
+
+    // walk the parse tree, (create output file here?)
+    AbstractTree myTree = visitor.visit(tree);
+
+    writer.write(myTree + context.atEndOfFile() + "\n}");
+
+    // close the writer
+    writer.close();
   }
 }

@@ -10,6 +10,7 @@ import Versuch1.Type;
 import Versuch2.abstractTree.AbstractType;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -57,6 +58,9 @@ public class TestContext implements RobotContext{
   @Override
   public boolean isGlobalVariable(String variable) {
     // for the moment, assume the user knows what he's doing
+    if(Pattern.matches("([A-Z]|_)+", variable)){
+      return false;
+    }
     return true;
   }
   

@@ -5,6 +5,8 @@
  */
 package Versuch2.abstractTree.expressions;
 
+import Versuch2.GrammarMain;
+import Versuch2.Mem;
 import Versuch2.abstractTree.AbstractExpression;
 import Versuch2.abstractTree.AbstractTree;
 import Versuch2.abstractTree.AbstractType;
@@ -36,10 +38,40 @@ public class ALiteralOrGraphExp  implements AbstractTree, AbstractExpression{
   
   @Override
   public String toString(){
-    String ret = "new DialogueAct(\"" + litGraph + "(" + rest + ")\")";
-    // TODO: magically arrange exps
-    return ret;
-    //throw new UnsupportedOperationException("Magic not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    String ret = "new DialogueAct(\"" + litGraph + "(";
+    String rightParams = "";
+    String[] parameters = this.rest.split(",");
+    // the first argument will never need to be more than a String
+    rightParams += parameters[0];
+    for (int i = 1; i < parameters.length; i++){
+      String[] parts = parameters[i].split("=");
+      if(parts.length == 1){
+        // then this argument is a variable that is passed and should be found somewhere
+        if(Mem.memory.containsKey(parts[0])){
+          rightParams += ", \" + " + parts[0] + " + \"";
+        }
+        else if(GrammarMain.context.isGlobalVariable(parts[0])){
+          rightParams += ", \" + " + parts[0] + " + \"";          
+        }
+        else{
+          // TODO: or throw an error here?
+          rightParams += ", " + parts[0];
+        }
+      }
+      else{
+        // this argument is of kind x = y, look if y is a variable we know
+        if(Mem.memory.containsKey(parts[1])){
+          rightParams += ", " + parts[0] + " = \" + " + parts[1] + " + \"";
+        }
+        else if(GrammarMain.context.isGlobalVariable(parts[1])){
+          rightParams += ", " + parts[0] + " = \" + " + parts[1] + " + \"";          
+        }
+        else{
+          rightParams += ", " + parts[0] + " = " + parts[1];
+        }
+      }
+    }
+    return ret + rightParams + ")\")";
   }
 
   @Override
