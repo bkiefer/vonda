@@ -33,6 +33,7 @@ public class AGrammarRule implements AbstractTree{
 
   @Override
   public void testType() {
+    this.ifstat.testType();
   }
   
 }

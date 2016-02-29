@@ -32,5 +32,8 @@ public class AGrammarFile implements AbstractTree{
   
   @Override
   public void testType() {
+    for (AbstractTree t : this.rules){
+      t.testType();
+    }
   }
 }

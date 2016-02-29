@@ -225,11 +225,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
     }
     if(ctx.getChildCount() == 5){ // exp of kind comment LPAR exp RPAR comment
     return new AnAbstractExp((ACommentBlock)this.visit(ctx.getChild(0)),
-            (AbstractExpression)this.visit(ctx.getChild(2)),
+            this.visit(ctx.getChild(2)),
             (ACommentBlock)this.visit(ctx.getChild(4)));
     }
     return new AnAbstractExp((ACommentBlock)this.visit(ctx.getChild(0)),
-            (AbstractExpression)this.visit(ctx.getChild(1)),
+            this.visit(ctx.getChild(1)),
             (ACommentBlock)this.visit(ctx.getChild(2)));
   }
 
@@ -261,11 +261,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
     }
     if(ctx.getChildCount() == 5){ // exp of kind comment LPAR exp RPAR comment
     return new AnAbstractExp((ACommentBlock)this.visit(ctx.getChild(0)),
-            (AbstractExpression)this.visit(ctx.getChild(2)),
+            this.visit(ctx.getChild(2)),
             (ACommentBlock)this.visit(ctx.getChild(4)));
     }
     return new AnAbstractExp((ACommentBlock)this.visit(ctx.getChild(0)),
-            (AbstractExpression)this.visit(ctx.getChild(1)),
+            this.visit(ctx.getChild(1)),
             (ACommentBlock)this.visit(ctx.getChild(2)));
   }
 

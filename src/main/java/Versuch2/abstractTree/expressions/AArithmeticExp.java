@@ -35,12 +35,12 @@ public class AArithmeticExp  implements AbstractTree, AbstractExpression{
     this.right = right;
     this.operator = operator;
     this.minus = minus;
+    this.type = left.getType();
   }
 
   @Override
   public void testType() {
-    // TODO: test sth
-    this.type = AbstractType.OBJECT;
+    // TODO: test somehow right and left
   }
   
   @Override

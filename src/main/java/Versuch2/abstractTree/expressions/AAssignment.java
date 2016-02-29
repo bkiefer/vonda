@@ -25,12 +25,13 @@ public class AAssignment  implements AbstractTree, AbstractExpression{
     this.left = left;
     this.right = right;
     this.declaration = declaration;
+    this.type = ((AbstractExpression)left).getType();
   }
 
   @Override
   public void testType() {
     // TODO: test, look into memory, differ between String s = "" and s = ""
-    this.type = AbstractType.OBJECT;
+    
   }
   
   @Override
