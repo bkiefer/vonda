@@ -132,11 +132,12 @@ exp
   comment
   ;
 
-simple_b_exp
+simple_exp
   : comment
   (LPAR exp RPAR
   | arithmetic
   | function_call
+  | literal_or_graph_exp
   | field_access
   | assignment
   | ( STRING
@@ -151,9 +152,13 @@ simple_b_exp
   comment
   ;
 
+simple_b_exp
+    : simple_exp (boolean_op2 exp)?
+    ;
+
 boolean_exp
-  : simple_b_exp boolean_op1 exp
-  | simple_b_exp boolean_op2 exp
+  : simple_b_exp boolean_op1 boolean_exp
+  //| simple_b_exp boolean_op2 exp
   | simple_b_exp
   ;
 

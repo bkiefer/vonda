@@ -32,9 +32,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   // the object that nows about context that we cannot see
   private RobotContext context;
   
-  // boolean that will allow to parse a=b exp in literal_or_graph although a not in memory
-  private boolean in_graph = false;
-  
   public ParseTreeVisitor(RobotContext context){
     //this.memory = new HashMap<String, AbstractType>();
     this.memory = Mem.memory;
@@ -253,7 +250,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   }
 
   @Override
-  public AbstractTree visitSimple_b_exp(RobotGrammarParser.Simple_b_expContext ctx) {
+  public AbstractTree visitSimple_exp(RobotGrammarParser.Simple_expContext ctx) {
     // comment exp comment
     if(ctx.getChildCount() == 4){ // exp of kind comment NOT boolean_exp comment
       return new AnAbstractExp((ACommentBlock)this.visit(ctx.getChild(0)),
@@ -268,6 +265,19 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
     return new AnAbstractExp((ACommentBlock)this.visit(ctx.getChild(0)),
             this.visit(ctx.getChild(1)),
             (ACommentBlock)this.visit(ctx.getChild(2)));
+  }
+
+  @Override
+  public AbstractTree visitSimple_b_exp(RobotGrammarParser.Simple_b_expContext ctx) {
+    // simple_exp (boolean_op2 exp)?
+    if(ctx.getChildCount() == 1){
+      return this.visit(ctx.getChild(0));
+    }
+    else{
+      return new ABooleanExp((AbstractExpression)this.visit(ctx.getChild(0)),
+              (AbstractExpression)this.visit(ctx.getChild(2)),
+              ctx.getChild(1).getText(), false);
+    }
   }
 
   @Override
@@ -288,8 +298,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   }
 
   @Override
-  public AbstractTree visitBoolean_op(RobotGrammarParser.Boolean_opContext ctx) {
-    // opereators are directly passed in boolean_exp
+  public AbstractTree visitBoolean_op1(RobotGrammarParser.Boolean_op1Context ctx) {
+    // operators are directly passed in boolean_exp
+    throw new UnsupportedOperationException("This method shouldn't be used ");
+  }
+
+  @Override
+  public AbstractTree visitBoolean_op2(RobotGrammarParser.Boolean_op2Context ctx) {
+    // operators are directly passed in boolean_exp
     throw new UnsupportedOperationException("This method shouldn't be used ");
   }
 
@@ -297,7 +313,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   public AbstractTree visitAssignment(RobotGrammarParser.AssignmentContext ctx) {
     // TODO: save variable in memory!!!!!!!!!!!!
     if(ctx.getChildCount() == 3){ // no declaration
-      if (!memory.containsKey(ctx.getChild(0).getText())){ // then we are either in a literal_or_graph or variable wasn't declared
+      /*if (!memory.containsKey(ctx.getChild(0).getText())){ // then we are either in a literal_or_graph or variable wasn't declared
         if(this.in_graph){
           memory.put(ctx.getChild(0).getText(), AbstractType.OBJECT);
           AAssignment a = new AAssignment(this.visit(ctx.getChild(0)), 
@@ -305,7 +321,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
           memory.remove(ctx.getChild(0).getText());
           return a;
         }
-      }
+      }*/
       return new AAssignment(this.visit(ctx.getChild(0)), 
               (AbstractExpression)this.visit(ctx.getChild(2)), false);
     }
