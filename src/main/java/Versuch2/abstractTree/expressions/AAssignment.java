@@ -37,7 +37,7 @@ public class AAssignment  implements AbstractTree, AbstractExpression{
   @Override
   public String toString(){
     if (this.declaration){
-      return this.type + this.left.toString() + " = " + this.right;
+      return this.type + " " + this.left.toString() + " = " + this.right;
     }
     return this.left + " = " + this.right;
   }

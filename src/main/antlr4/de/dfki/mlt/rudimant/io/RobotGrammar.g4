@@ -152,14 +152,18 @@ simple_b_exp
   ;
 
 boolean_exp
-  : simple_b_exp ( boolean_op exp )*
+  : simple_b_exp boolean_op1 exp
+  | simple_b_exp boolean_op2 exp
+  | simple_b_exp
   ;
 
-boolean_op
-  : NOT
-  | EQUAL
-  | AND
+boolean_op1
+  : AND
   | OR
+  ;
+
+boolean_op2
+  : EQUAL
   | NOT_EQUAL
   | SMALLER_EQUAL
   | SMALLER
