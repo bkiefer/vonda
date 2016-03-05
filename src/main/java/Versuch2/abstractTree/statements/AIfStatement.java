@@ -39,9 +39,9 @@ public class AIfStatement implements AbstractStatement, AbstractTree{
   @Override
   public String toString(){
     if (this.statblockElse != null){
-      return "if (" + condition + ") \n" + statblockIf
-              + " else \n" + statblockElse;
+      return "if (" + condition + ") " + statblockIf
+              + " else " + statblockElse;
     }
-    return "if (" + condition + ") \n" + statblockIf + "\n";
+    return "if (" + condition + ") " + statblockIf + "\n";
   }
 }

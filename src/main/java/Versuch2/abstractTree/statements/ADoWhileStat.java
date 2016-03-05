@@ -31,7 +31,7 @@ public class ADoWhileStat implements AbstractStatement, AbstractTree{
   
   @Override
   public String toString(){
-    return "do {\n" + statblock + "}\nwhile (" + condition + ");\n";
+    return "do " + statblock + "while (" + condition + ");\n";
   }
   
 }

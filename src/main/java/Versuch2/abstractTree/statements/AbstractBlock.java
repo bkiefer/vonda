@@ -33,10 +33,10 @@ public class AbstractBlock implements AbstractStatement, AbstractTree{
     String stats = "";
     for (AbstractTree stat : statblock){
       if(stat instanceof AbstractExpression){
-        stats += stat.toString() + ";\n";
+        stats += stat.toString() + ";";
         break;
       }
-      stats += stat.toString() + "\n";
+      stats += stat.toString();
     }
     if(braces){
       stats = "{" + stats + "}";

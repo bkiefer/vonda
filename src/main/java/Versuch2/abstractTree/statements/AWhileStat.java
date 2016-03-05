@@ -31,6 +31,6 @@ public class AWhileStat implements AbstractStatement, AbstractTree{
   
   @Override
   public String toString(){
-    return "while (" + this.condition + ") {\n" + statblock + "}\n";
+    return "while (" + this.condition + ")" + statblock;
   }
 }

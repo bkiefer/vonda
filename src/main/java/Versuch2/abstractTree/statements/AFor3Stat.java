@@ -37,6 +37,6 @@ public class AFor3Stat implements AbstractStatement, AbstractTree{
     for (String s : this.variables){
       ret += "\nObject " + s + " = o[" + count + "]";
     }
-    return ret + block + "}\n";
+    return ret + block + "}";
   }
 }

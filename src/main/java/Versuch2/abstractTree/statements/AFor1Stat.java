@@ -40,10 +40,10 @@ public class AFor1Stat implements AbstractStatement, AbstractTree{
   public String toString(){
     if (arithmetic != null){
       return "for (" + assignment + "; " + condition + "; " + arithmetic
-              + ") {\n" + statblock + "}\n";
+              + ") " + statblock;
     }
     return "for ( "+ assignment + "; " + condition + ";"
-              + ") {\n" + statblock + "}\n";
+              + ") " + statblock;
   }
   
 }
