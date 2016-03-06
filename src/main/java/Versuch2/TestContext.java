@@ -5,11 +5,8 @@
  */
 package Versuch2;
 
-import Versuch1.RobotContext;
-import Versuch1.Type;
 import Versuch2.abstractTree.AbstractType;
 import java.util.HashMap;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -156,22 +153,7 @@ public class TestContext implements RobotContext{
   ////////////////////////////////////////////////////////////////////////////
 
   @Override
-  public boolean testFunctionArguments(List<Type> arguments) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  public Type getFunctionReturn(String functionname) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
   public boolean existsFieldAccess(String access) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  public Type getFieldType(String access) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 

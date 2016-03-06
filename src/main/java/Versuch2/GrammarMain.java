@@ -5,7 +5,6 @@
  */
 package Versuch2;
 
-import Versuch1.RobotContext;
 import Versuch2.abstractTree.AbstractTree;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;

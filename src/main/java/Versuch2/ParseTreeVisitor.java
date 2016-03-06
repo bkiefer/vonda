@@ -5,7 +5,6 @@
  */
 package Versuch2;
 
-import Versuch1.RobotContext;
 import Versuch2.abstractTree.*;
 import Versuch2.abstractTree.expressions.*;
 import Versuch2.abstractTree.statements.*;

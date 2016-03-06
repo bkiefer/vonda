@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Versuch1;
+package Versuch2;
 
 import Versuch2.abstractTree.AbstractType;
 import java.util.List;
@@ -66,19 +66,6 @@ public interface RobotContext {
   /////////////////// following methods still needed? ////////////////////////
   ////////////////////////////////////////////////////////////////////////////
   
-  /**
-   * method that will test whether the given arguments are of the correct type
-   * @param arguments all function arguments
-   * @return true if types are right
-   */
-  public boolean testFunctionArguments(List<Type> arguments);
-  
-  /**
-   * method that will give you the return type of a function
-   * @param functionname the function's name
-   * @return the return type of the function with name functionname
-   */
-  public Type getFunctionReturn(String functionname);
   
   /**
    * method that can say whether a field is existing or not
@@ -88,16 +75,10 @@ public interface RobotContext {
   public boolean existsFieldAccess(String access);
   
   /**
-   * method that finds the type of a field or returns null if there is no such field
-   * @param access the access
-   * @return the type of this field
-   */
-  public Type getFieldType(String access);
-  
-  /**
    * method that handles variables without field access not declared in the input file
    * (but may be declared somewhere else)
    * i.e. if you declared the variable in this.afterClassName(), just return its name
+   * function isn't used atm
    * !!! Attention !!!
    * atm this method will also change function names (which are variables + () )
    * @param variable the variable
