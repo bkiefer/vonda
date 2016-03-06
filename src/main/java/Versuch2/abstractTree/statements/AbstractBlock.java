@@ -18,10 +18,20 @@ public class AbstractBlock implements AbstractStatement, AbstractTree{
   
   private List<AbstractTree> statblock;
   private final boolean braces;
+  private int environmentPosition;
 
-  public AbstractBlock(List<AbstractTree> statblock, boolean braces) {
+  public AbstractBlock(List<AbstractTree> statblock, boolean braces, int environmentPosition) {
     this.statblock = statblock;
     this.braces = braces;
+    this.environmentPosition = environmentPosition;
+  }
+  
+  public AbstractBlock(List<AbstractTree> statblock, boolean braces){
+    this.statblock = statblock;
+    this.braces = braces;
+    if(braces){
+      throw new UnsupportedOperationException("Attention, you didn't create a new environment when entering a statement block!!");
+    }
   }
 
   @Override

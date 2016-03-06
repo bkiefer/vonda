@@ -13,7 +13,6 @@ import Versuch2.abstractTree.leaves.*;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -26,15 +25,11 @@ import org.antlr.v4.runtime.tree.TerminalNode;
  */
 public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   
-  // this memory will know the types of variables
-  private HashMap<String, AbstractType> memory;
-  
   // the object that nows about context that we cannot see
   private RobotContext context;
   
   public ParseTreeVisitor(RobotContext context){
     //this.memory = new HashMap<String, AbstractType>();
-    this.memory = Mem.memory;
     this.context = context;
   }
 
@@ -65,12 +60,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   @Override
   public AbstractTree visitStatement_block(RobotGrammarParser.Statement_blockContext ctx) {
     // comment LBRACE comment ( statement )* RBRACE
+    // when entering a statement block, we need to create a new local environment
+    int position = Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
     List<AbstractTree> statblock = new ArrayList<AbstractTree> ();
       statblock.add(this.visit(ctx.getChild(0)));
     for (int i = 2; i < ctx.getChildCount() -1; i++){
       statblock.add(this.visit(ctx.getChild(i)));
     }
-    return new AbstractBlock(statblock, true);
+    return new AbstractBlock(statblock, true, position);
   }
 
   @Override
@@ -85,12 +82,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   @Override
   public AbstractTree visitLoop_statement_block(RobotGrammarParser.Loop_statement_blockContext ctx) {
     // comment LBRACE comment ( statement )* RBRACE
+    // when entering a statement block, we need to create a new local environment
+    int position = Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth());
     List<AbstractTree> statblock = new ArrayList<AbstractTree> ();
       statblock.add(this.visit(ctx.getChild(0)));
     for (int i = 2; i < ctx.getChildCount() -1; i++){
       statblock.add(this.visit(ctx.getChild(i)));
     }
-    return new AbstractBlock(statblock, true);
+    return new AbstractBlock(statblock, true, position);
   }
 
   @Override
@@ -326,7 +325,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
               (AbstractExpression)this.visit(ctx.getChild(2)), false);
     }
     else {  // declaration
-      memory.put(ctx.getChild(1).getText(), AbstractType.OBJECT);
+      Mem.addElement(ctx.getChild(1).getText(), AbstractType.OBJECT);
       return new AAssignment(this.visit(ctx.getChild(1)),
               (AbstractExpression)this.visit(ctx.getChild(3)), true);
     }
@@ -402,7 +401,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
       // statement looks like "FOR LPAR VARIABLE COLON exp RPAR loop_statement_block"
       // TODO: or should we check here that the type of the variable in assignment
       // is the type the iterable in exp returns? How?
-      this.memory.put(ctx.getChild(2).getText(), AbstractType.OBJECT);
+      Mem.addElement(ctx.getChild(2).getText(), AbstractType.OBJECT);
       return new AFor2Stat(new ALocalVar(ctx.getChild(2).getText()), this.visit(ctx.getChild(4)),
               (AbstractBlock)this.visit(ctx.getChild(6)));
     }
@@ -424,7 +423,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
       // TODO: implement For3Stat; exp will return some Object[]
       List<String> vars = new ArrayList<String>();
       for (int i = 3; i < ctx.getChildCount() - 5; i += 2){
-        this.memory.put(ctx.getChild(i).getText(), AbstractType.OBJECT);
+        Mem.addElement(ctx.getChild(i).getText(), AbstractType.OBJECT);
         vars.add(ctx.getChild(i).getText());
       }
       return new AFor3Stat(vars, this.visit(ctx.getChild(ctx.getChildCount() - 3)),
@@ -484,8 +483,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
       case 40:  //token is wildcard
         return new AWildcard();
       case 47:  // token is variable
-        if (memory.containsKey(tn.getText())){
-          return new ALocalVar(memory.get(tn.getText()), tn.getText());
+        if (Mem.existsVariable(tn.getText())){
+          return new ALocalVar(Mem.getVariableType(tn.getText()), tn.getText());
         }
         else if (context.isGlobalVariable(tn.getText())){
           return new AGlobalVar(context.getVariableType(tn.getText()), tn.getText());

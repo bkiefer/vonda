@@ -39,6 +39,9 @@ public class Environment {
   }
   
   public AbstractType get(String k){
+    if(!this.containsKey(k)){
+      return null;
+    }
     return this.memory.get(k);
   }
   

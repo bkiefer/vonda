@@ -6,8 +6,9 @@
 package Versuch2;
 
 import Versuch2.abstractTree.AbstractType;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Stack;
+import java.util.List;
 
 /**
  *
@@ -15,56 +16,75 @@ import java.util.Stack;
  */
 public class Mem {
 
-  private Stack<Environment> environment;
-  private int depthAtm;
+  private static List<Environment> environment;
+  private static int positionAtm;
+  private static int depthAtm;
 
   public Mem() {
-    this.environment = new Stack<Environment>();
-    this.depthAtm = 0;
+    environment = new ArrayList<Environment>();
+    depthAtm = 0;
+    positionAtm = 0;
   }
   
-  public int getActualDepth(){
-    return this.depthAtm;
+  public static int getCurrentDepth(){
+    return depthAtm;
   }
 
-  public void addElement(String variable, AbstractType type) {
-    this.environment.peek().put(variable, type);
+  public static void addElement(String variable, AbstractType type) {
+    environment.get(positionAtm).put(variable, type);
   }
 
-  public boolean existsVariable(String variable) {
-    return this.getVariableType(variable) != null;
+  public static boolean existsVariable(String variable) {
+    return getVariableType(variable) != null;
   }
 
-  public AbstractType getVariableType(String variable) {
-    Environment actual = this.environment.peek();
+  public static AbstractType getVariableType(String variable) {
+    Environment actual = environment.get(positionAtm);
     if (!actual.containsKey(variable)) {
-      int position = actual.getDepth();
-      Iterator it = this.environment.listIterator();
-      while (it.hasNext()) {
+      int depth = actual.getDepth();
+      int position = positionAtm;
+      while (position >= 0) {
         if (!actual.containsKey(variable)) {
-          actual = (Environment) it.next();
-          while (!actual.isVisibleFrom(position) && it.hasNext()) {
-            actual = (Environment) it.next();
+          actual = environment.get(position++);
+          while (!actual.isVisibleFrom(depth) && position > 0) {
+            actual = environment.get(position++);
           }
         }
       }
-      return actual.get(variable);
     }
-    return null;
+    return actual.get(variable);
   }
 
-  public void addNextEnvironment(Environment env) {
-    this.depthAtm = env.getDepth();
-    this.environment.add(env);
+  public static void addNextEnvironment(Environment env) {
+    depthAtm = env.getDepth();
+    positionAtm++;
+    environment.add(env);
   }
-
-  public Environment getNextEnvironment() {
-    this.depthAtm = this.environment.peek().getDepth();
-    return this.environment.peek();
+  
+  /**
+   * adds a new Environment with the given depth
+   * @param depth the depth the environment is supposed to lie on
+   * @return the position in memory where the environment is stored
+   */
+  public static int addAndEnterNewEnvironment(int depth){
+    environment.add(new Environment(depth));
+    depthAtm = depth;
+    return ++positionAtm;
+  }
+  
+  public static void goToEnvironmentNumber(int number){
+    positionAtm = number;
+    depthAtm = environment.get(number).getDepth();
+  }
+/*
+  public Environment getFollowingEnvironment() {
+    this.depthAtm = this.environment.get(++this.positionAtm).getDepth();
+    return this.environment.get(this.positionAtm);
   }
 
   public void leaveEnvironment() {
-    this.environment.pop();
-    this.depthAtm = this.environment.peek().getDepth();
+    this.positionAtm++;
+    this.depthAtm = this.environment.get(this.positionAtm).getDepth();
   }
+*/
 }
