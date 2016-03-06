@@ -10,8 +10,6 @@ import Versuch2.Mem;
 import Versuch2.abstractTree.AbstractExpression;
 import Versuch2.abstractTree.AbstractTree;
 import Versuch2.abstractTree.AbstractType;
-import Versuch2.abstractTree.leaves.ACommentBlock;
-import java.util.List;
 
 /**
  *
@@ -47,7 +45,7 @@ public class ALiteralOrGraphExp  implements AbstractTree, AbstractExpression{
       String[] parts = parameters[i].split("=");
       if(parts.length == 1){
         // then this argument is a variable that is passed and should be found somewhere
-        if(Mem.memory.containsKey(parts[0])){
+        if(Mem.existsVariable(parts[0])){
           rightParams += ", \" + " + parts[0] + " + \"";
         }
         else if(GrammarMain.context.isGlobalVariable(parts[0])){
@@ -60,7 +58,7 @@ public class ALiteralOrGraphExp  implements AbstractTree, AbstractExpression{
       }
       else{
         // this argument is of kind x = y, look if y is a variable we know
-        if(Mem.memory.containsKey(parts[1])){
+        if(Mem.existsVariable(parts[1])){
           rightParams += ", " + parts[0] + " = \" + " + parts[1] + " + \"";
         }
         else if(GrammarMain.context.isGlobalVariable(parts[1])){

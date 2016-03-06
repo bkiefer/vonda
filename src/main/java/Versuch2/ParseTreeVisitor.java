@@ -35,6 +35,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
 
   @Override
   public AbstractTree visitGrammar_file(RobotGrammarParser.Grammar_fileContext ctx) {
+    // create an environment at the upper level
+    Mem.addAndEnterNewEnvironment(0);
     ArrayList<AbstractTree> rules = new ArrayList<AbstractTree>();
     for (int i = 0; i < ctx.getChildCount(); i++){
       rules.add(this.visit(ctx.getChild(i)));
@@ -83,7 +85,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
   public AbstractTree visitLoop_statement_block(RobotGrammarParser.Loop_statement_blockContext ctx) {
     // comment LBRACE comment ( statement )* RBRACE
     // when entering a statement block, we need to create a new local environment
-    int position = Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth());
+    int position = Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
     List<AbstractTree> statblock = new ArrayList<AbstractTree> ();
       statblock.add(this.visit(ctx.getChild(0)));
     for (int i = 2; i < ctx.getChildCount() -1; i++){

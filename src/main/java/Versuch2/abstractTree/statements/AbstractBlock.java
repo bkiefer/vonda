@@ -5,6 +5,7 @@
  */
 package Versuch2.abstractTree.statements;
 
+import Versuch2.Mem;
 import Versuch2.abstractTree.AbstractExpression;
 import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
@@ -41,6 +42,9 @@ public class AbstractBlock implements AbstractStatement, AbstractTree{
   @Override
   public String toString(){
     String stats = "";
+    if(braces){
+      Mem.goToEnvironmentNumber(environmentPosition);
+    }
     for (AbstractTree stat : statblock){
       if(stat instanceof AbstractExpression){
         stats += stat.toString() + ";";

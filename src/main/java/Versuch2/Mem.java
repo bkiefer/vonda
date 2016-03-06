@@ -7,7 +7,6 @@ package Versuch2;
 
 import Versuch2.abstractTree.AbstractType;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -16,15 +15,9 @@ import java.util.List;
  */
 public class Mem {
 
-  private static List<Environment> environment;
-  private static int positionAtm;
-  private static int depthAtm;
-
-  public Mem() {
-    environment = new ArrayList<Environment>();
-    depthAtm = 0;
-    positionAtm = 0;
-  }
+  private static List<Environment> environment = new ArrayList<Environment>();
+  private static int positionAtm = -1;
+  private static int depthAtm = -1;
   
   public static int getCurrentDepth(){
     return depthAtm;
@@ -45,10 +38,13 @@ public class Mem {
       int position = positionAtm;
       while (position >= 0) {
         if (!actual.containsKey(variable)) {
-          actual = environment.get(position++);
+          actual = environment.get(position--);
           while (!actual.isVisibleFrom(depth) && position > 0) {
-            actual = environment.get(position++);
+            actual = environment.get(position--);
           }
+        }
+        else{
+          break;
         }
       }
     }

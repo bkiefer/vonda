@@ -75,7 +75,7 @@ public class GrammarMain {
     // initialise the visitor that will do all the work
     ParseTreeVisitor visitor = new ParseTreeVisitor(context);
 
-    // walk the parse tree, (create output file here?)
+    // walk the parse tree
     AbstractTree myTree = visitor.visit(tree);
 
     writer.write(myTree + context.atEndOfFile() + "\n}");
