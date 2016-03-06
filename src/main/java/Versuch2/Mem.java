@@ -26,6 +26,10 @@ public class Mem {
   public static void addElement(String variable, AbstractType type) {
     environment.get(positionAtm).put(variable, type);
   }
+  
+  public static void decreaseDepth(){
+    depthAtm--;
+  }
 
   public static boolean existsVariable(String variable) {
     return getVariableType(variable) != null;

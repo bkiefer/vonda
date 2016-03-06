@@ -68,6 +68,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
     for (int i = 2; i < ctx.getChildCount() -1; i++){
       statblock.add(this.visit(ctx.getChild(i)));
     }
+    Mem.decreaseDepth();
     return new AbstractBlock(statblock, true, position);
   }
 
@@ -90,6 +91,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree>{
     for (int i = 2; i < ctx.getChildCount() -1; i++){
       statblock.add(this.visit(ctx.getChild(i)));
     }
+    Mem.decreaseDepth();
     return new AbstractBlock(statblock, true, position);
   }
 
