@@ -1,0 +1,20 @@
+// RULES FROM THE "IDLE" NODE
+
+/* what should rule labels look like?
+   if[check-start] (test) ....
+
+   check-start: // or sth else than ':' ?
+   if (test)
+*/
+
+// A new game is started
+initiated:
+if (game.status == initiated) {
+  propose("start-game") {
+    // gameTypePlayed is a predefined custom query (ASK)
+    if (currentUser.gameTypePlayed(game)) {
+      emitDA(@Inform(Instructions, what=game.name, sender=I_ROBOT, addressee=currentUser.id ));
+    }
+    gameLogic.startSession();
+  }
+}

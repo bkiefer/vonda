@@ -30,7 +30,7 @@ public class RulesQuiz extends RuleUnit {
           public void run() {
             if (executeQuery(currentUser, gameTypePlayed, game)) {
               emitDA(new DialogueAct("Inform(Instructions, what=" + game.name +
-                                     ", sender=I_ROBOT, addressee=" + currentUser.id));
+                                     ", sender=I_ROBOT, addressee=" + currentUser.id + ")"));
             }
             gameLogic.startSession();
           }

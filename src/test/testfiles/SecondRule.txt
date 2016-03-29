@@ -1,0 +1,8 @@
+ask_for_role:
+if (game.status == startSession && ! myLastSA <= @ChoiceQuestion(Role)) {
+  if (gameLogic.isTurnBased()) {
+    emitDA(@ChoiceQuestion(Role));
+  } else {
+    gameLogic.newRound();
+  }
+}
