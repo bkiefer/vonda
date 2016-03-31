@@ -25,6 +25,7 @@ label
 statement
   : 
     ( exp SEMICOLON
+    | set_operation SEMICOLON
     | propose_statement
     | if_statement
     | while_statement
@@ -35,7 +36,7 @@ statement
  ;
 
 comment
-  : (MULTI_L_COMMENT | ONE_L_COMMENT)*
+  : (MULTI_L_COMMENT | ONE_L_COMMENT | JAVA_CODE)*
   ;
 
 if_statement
@@ -66,6 +67,7 @@ loop_statement
   : 
     ( exp SEMICOLON
     | (CONTINUE | BREAK) SEMICOLON
+    | set_operation SEMICOLON
     | loop_propose_statement // do we want to be able to call break or continue here?
     | loop_if_statement
     | while_statement
@@ -218,6 +220,8 @@ assignment
     ASSIGN exp
   ;
 
+set_operation: (VARIABLE | field_access) (ADD | REMOVE) number;
+
 number
   : ( INCREMENT | DECREMENT )?
     ( ( INT | FLOAT | VARIABLE )
@@ -320,6 +324,8 @@ DECREMENT: '--';
 DIV: '/';
 MUL: '*';
 MOD: '%';
+ADD: '+=';
+REMOVE: '-=';
 
 /// additional operators:
 QUESTION: '?';
@@ -332,6 +338,7 @@ PROPOSE: 'propose';
 DEC_VAR: 'var';
 
 /// comments (starting with /* or //):
+JAVA_CODE: '/*@'.*?'@*/';
 ONE_L_COMMENT: '//'.*?'\n' ;//-> channel(HIDDEN);
 MULTI_L_COMMENT: '/*'.*?'*/' ;//-> channel(HIDDEN);
 
