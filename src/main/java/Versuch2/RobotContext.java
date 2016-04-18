@@ -14,6 +14,7 @@ import java.util.List;
  */
 public interface RobotContext {
   
+  public String doLog(String toLog);
   /**
    * method invoked by main before inserting the class name
    * @return a string to be printed to the beginning of the file

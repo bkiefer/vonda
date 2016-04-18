@@ -27,6 +27,7 @@ statement
     ( exp SEMICOLON
     | set_operation SEMICOLON
     | propose_statement
+    | timeout_statement
     | if_statement
     | while_statement
     | for_statement
@@ -69,6 +70,7 @@ loop_statement
     | (CONTINUE | BREAK) SEMICOLON
     | set_operation SEMICOLON
     | loop_propose_statement // do we want to be able to call break or continue here?
+    | timeout_statement
     | loop_if_statement
     | while_statement
     | for_statement
@@ -179,6 +181,8 @@ boolean_op2
   ;
 
 lambda_exp: LPAR (DEC_VAR? VARIABLE (COMMA DEC_VAR? VARIABLE)*)? RPAR ARROW exp;
+
+timeout_statement: TIMEOUT LPAR STRING COMMA INT RPAR statement_block;
 
 propose_statement
   : PROPOSE LPAR propose_arg RPAR statement_block
@@ -336,6 +340,7 @@ WILDCARD: '_';
 LITERAL_OR_GRAPH: '@'( '0'..'9'|'A'..'z'|'_' )+;
 PROPOSE: 'propose';
 DEC_VAR: 'var';
+TIMEOUT: 'timeout';
 
 /// comments (starting with /* or //):
 JAVA_CODE: '/*@'.*?'@*/';

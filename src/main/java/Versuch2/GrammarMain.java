@@ -25,7 +25,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 public class GrammarMain {
 
   protected static Writer writer;
-
+  private static boolean log;
   public static RobotContext context;
 
   /**
@@ -34,6 +34,19 @@ public class GrammarMain {
    * @throws Exception
    */
   public static void main(String[] args) throws Exception {
+    int i = 0;
+    for(String arg : args){
+      i++;
+      if(i == 1){continue;}
+      switch(arg){
+        case "-log": log = true;
+        default: System.out.println("Hello, this is rudimant. You typed in a command I do not"
+                + "know. Currently, the following flags are available:\n"
+                + "-log\tTranscribe file in logmode. Text will be added so that "
+                + "the outcome of all boolean expressions is being logged as "
+                + "soon as they are evaluated.");
+      }
+    }
 
   // TODO: do something if there are no input arguments
     System.out.println("parsing: " + args[0]);
@@ -54,12 +67,11 @@ public class GrammarMain {
             new FileOutputStream(out)));
 
     // initialise the context magic
-    context = new TestContext();
+    context = new TestContext(log);
 
     // prepare the output file
     writer.write(context.beforeClassName());
-    classname = args[0].substring(0, 1).toUpperCase() + args[0].substring(1);
-    writer.write("public class " + classname + " extends RuleUnit {\n\n");
+    //writer.write("public class " + classname + " extends RuleUnit {\n\n");
     writer.write(context.afterClassName());
 
     // initialise the lexer with given input file
