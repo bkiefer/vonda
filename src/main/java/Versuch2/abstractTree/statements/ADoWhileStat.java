@@ -5,10 +5,9 @@
  */
 package Versuch2.abstractTree.statements;
 
+import Versuch2.GrammarMain;
 import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
-import Versuch2.abstractTree.expressions.ABooleanExp;
-import Versuch2.abstractTree.leaves.ACommentBlock;
 
 /**
  *
@@ -31,7 +30,11 @@ public class ADoWhileStat implements AbstractStatement, AbstractTree{
   
   @Override
   public String toString(){
-    return "do " + statblock + "while (" + condition + ");\n";
+    String ret1 = "do " + statblock;
+    String log = GrammarMain.context.getLog();
+    String ret2 = "while (" + condition + ");\n";
+    // remember to insert the log to log the condition
+    return ret1.substring(0, ret1.length() - 2) + log + "}" + ret2;
   }
   
 }

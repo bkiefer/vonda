@@ -5,6 +5,7 @@
  */
 package Versuch2.abstractTree.statements;
 
+import Versuch2.GrammarMain;
 import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
 import Versuch2.abstractTree.expressions.ABooleanExp;
@@ -31,6 +32,9 @@ public class AWhileStat implements AbstractStatement, AbstractTree{
   
   @Override
   public String toString(){
-    return "while (" + this.condition + ")" + statblock;
+    String ret1 = "while (" + this.condition + ")";
+    String log = GrammarMain.context.getLog();
+    String ret2 = statblock.toString().substring(1);
+    return ret1 + "{" + log + ret2;
   }
 }

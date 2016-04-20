@@ -22,17 +22,26 @@ public class TestContext implements RobotContext {
   private Logger boolLogger;
   private FileHandler fh;
   private boolean log;
+  private String boolLog;
 
   public TestContext(boolean log) {
     this.log = log;
+    this.boolLog = "";
   }
 
   @Override
-  public String doLog(String toLog) {
+  public void doLog(String toLog) {
     if (!this.log) {
-      return "";
+      return;
     }
-    return "boolLogger.info(" + toLog + ");\n";
+    this.boolLog += "boolLogger.info(" + toLog + ");\n";
+  }
+  
+  @Override
+  public String getLog(){
+    String x = this.boolLog;
+    this.boolLog = "";
+    return x;
   }
 
   @Override

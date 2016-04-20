@@ -60,14 +60,13 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
     }
     if(this.right != null){
       //return ret + "(" + this.left + this.operator + this.right + ")";
-      ret = GrammarMain.context.doLog(
+      GrammarMain.context.doLog(
               "\"" + ret + this.left + this.operator + this.right + 
-                      " _ resulted to \"" + this.left + this.operator + this.right)
-              + ret;
+                      " _ resulted to \"" + this.left + this.operator + this.right);
       return ret + this.left + this.operator + this.right;
     }
-    ret = GrammarMain.context.doLog("\"" + ret + this.left.toString() +
-              "\" resulted to " + ret + this.left.toString()) + ret;
+    GrammarMain.context.doLog("\"" + ret + this.left.toString() +
+              "\" resulted to " + ret + this.left.toString());
     return ret + this.left.toString();
   }
 

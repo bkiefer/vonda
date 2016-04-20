@@ -14,7 +14,19 @@ import java.util.List;
  */
 public interface RobotContext {
   
-  public String doLog(String toLog);
+  /**
+   * method that adds a String to the logging block that will be printed before
+   * boolean expressions (only if -log switch was used)
+   * @param toLog the String to be logged
+   */
+  public void doLog(String toLog);
+  
+  /**
+   * resets the log memory of the context
+   * @return a String consisting of every log that toLog received until here
+   */
+  public String getLog();
+  
   /**
    * method invoked by main before inserting the class name
    * @return a string to be printed to the beginning of the file
