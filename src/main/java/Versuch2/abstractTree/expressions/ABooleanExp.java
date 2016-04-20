@@ -59,15 +59,16 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
       return ret + "isSubsumed(" + left + ", " + right + ")";
     }
     if(this.right != null){
-      //return ret + "(" + this.left + this.operator + this.right + ")";
+      ret += "(" + this.left + this.operator + this.right + ")";
       GrammarMain.context.doLog(
-              "\"" + ret + this.left + this.operator + this.right + 
-                      " _ resulted to \"" + this.left + this.operator + this.right);
-      return ret + this.left + this.operator + this.right;
+              "\"" + ret +  " _ resulted to \" + ("
+                      + this.left + this.operator + this.right + ")");
+      return ret;
     }
-    GrammarMain.context.doLog("\"" + ret + this.left.toString() +
-              "\" resulted to " + ret + this.left.toString());
-    return ret + this.left.toString();
+    ret += this.left.toString();
+    GrammarMain.context.doLog("\"" + ret +  "\" resulted to + ("
+            + ret + this.left.toString() +")");
+    return ret;
   }
 
   @Override
