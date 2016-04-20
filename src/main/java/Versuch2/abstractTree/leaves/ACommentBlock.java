@@ -5,6 +5,7 @@
  */
 package Versuch2.abstractTree.leaves;
 
+import Versuch2.GrammarMain;
 import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
 import java.util.List;
@@ -13,18 +14,43 @@ import java.util.List;
  *
  * @author anna
  */
-public class ACommentBlock implements AbstractTree, AbstractStatement{
-  
+public class ACommentBlock implements AbstractTree, AbstractStatement {
+
   List<AComment> comments;
+  private boolean containsClassName;
+  private boolean printClassName;
 
   public ACommentBlock(List<AComment> comments) {
     this.comments = comments;
+    this.containsClassName = false;
+    for (AComment c : comments) {
+      if (c.containsClassName()) {
+        this.containsClassName = true;
+      }
+    }
   }
-  
+
+  public void setPrintClassName() {
+    this.printClassName = true;
+  }
+
+  public boolean containsClassName() {
+    return this.containsClassName;
+  }
+
   @Override
-  public String toString(){
+  public String toString() {
     String ret = "";
-    for (AComment c : comments){
+    if (this.printClassName) {
+      for (AComment c : comments) {
+        ret += "\n" + c;
+        if(c.containsClassName()){
+          ret += "\n" + GrammarMain.context.afterClassName();
+        }
+      }
+      return ret;
+    }
+    for (AComment c : comments) {
       ret += "\n" + c;
     }
     return ret;
@@ -33,5 +59,5 @@ public class ACommentBlock implements AbstractTree, AbstractStatement{
   @Override
   public void testType() {
   }
-  
+
 }

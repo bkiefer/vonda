@@ -75,7 +75,7 @@ public class TestContext implements RobotContext {
 
   @Override
   public String atEndOfFile() {
-    return "}\n";
+    return "\n";
   }
 
   @Override

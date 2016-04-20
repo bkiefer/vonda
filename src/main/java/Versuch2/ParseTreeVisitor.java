@@ -37,6 +37,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   public AbstractTree visitGrammar_file(RobotGrammarParser.Grammar_fileContext ctx) {
     // create an environment at the upper level
     Mem.addAndEnterNewEnvironment(0);
+    // (comment grammar_rule)* comment
     ArrayList<AbstractTree> rules = new ArrayList<AbstractTree>();
     for (int i = 0; i < ctx.getChildCount(); i++) {
       rules.add(this.visit(ctx.getChild(i)));

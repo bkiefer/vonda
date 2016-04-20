@@ -18,9 +18,18 @@ import Versuch2.abstractTree.AbstractType;
 public class AComment implements AbstractTree, AbstractStatement, AbstractExpression, AbstractLeaf{
 
   private String comment;
+  private boolean containsClassName;
 
   public AComment(String comment) {
+    containsClassName = false;
+    if(comment.contains("public class ")){
+      containsClassName = true;
+    }
     this.comment = comment;
+  }
+  
+  public boolean containsClassName(){
+    return this.containsClassName;
   }
   
   @Override

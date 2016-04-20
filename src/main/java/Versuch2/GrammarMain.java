@@ -72,7 +72,6 @@ public class GrammarMain {
     // prepare the output file
     writer.write(context.beforeClassName());
     //writer.write("public class " + classname + " extends RuleUnit {\n\n");
-    writer.write(context.afterClassName());
 
     // initialise the lexer with given input file
     RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(in)));

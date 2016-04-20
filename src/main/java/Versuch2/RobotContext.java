@@ -34,8 +34,8 @@ public interface RobotContext {
   public String beforeClassName();
   
   /**
-   * method invoked by main after inserting the class name and before
-   * the parse tree is walked
+   * method invoked by AGrammarFile.toString() after the first comment (what should
+   * be the class declaration) is parsed
    * @return a string to be printed directly underneath "public class xy"
    */
   public String afterClassName();
