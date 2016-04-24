@@ -312,17 +312,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitAssignment(RobotGrammarParser.AssignmentContext ctx) {
-    // TODO: save variable in memory!!!!!!!!!!!!
     if (ctx.getChildCount() == 3) { // no declaration
-      /*if (!memory.containsKey(ctx.getChild(0).getText())){ // then we are either in a literal_or_graph or variable wasn't declared
-       if(this.in_graph){
-       memory.put(ctx.getChild(0).getText(), AbstractType.OBJECT);
-       AAssignment a = new AAssignment(this.visit(ctx.getChild(0)), 
-       (AbstractExpression)this.visit(ctx.getChild(2)), false);
-       memory.remove(ctx.getChild(0).getText());
-       return a;
-       }
-       }*/
       return new AAssignment(this.visit(ctx.getChild(0)),
               (AbstractExpression) this.visit(ctx.getChild(2)), false);
     } else {  // declaration
@@ -497,11 +487,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
         return new ACharacter(tn.getText());
       case 12:  // token is String
         return new AString(tn.getText());
-            //case 27:  // token is <=
-      // TODO: how to determine whether this is normal boolean or magic?
       case 42:  //token is wildcard
         return new AWildcard();
-      case 50:  // token is variable
+      case 51:  // token is variable
         if (Mem.existsVariable(tn.getText())) {
           return new ALocalVar(Mem.getVariableType(tn.getText()), tn.getText());
         } else if (context.isGlobalVariable(tn.getText())) {
@@ -511,9 +499,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
           throw new UnsupportedOperationException("This variable isn't declared "
                   + "anywhere: " + tn.getText());
         }
-      case 51:  // token is int
+      case 52:  // token is int
         return new ANumber(tn.getText());
-      case 52:  // token is float
+      case 53:  // token is float
         return new ANumber(tn.getText());
     }
         // Attention! if you added new tokens or deleted old ones, the case numbers might have changed and 

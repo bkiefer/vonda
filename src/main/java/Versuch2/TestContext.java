@@ -61,7 +61,7 @@ public class TestContext implements RobotContext {
             + "{    boolLogger = Logger.getLogger(\"BoolLog\");\n"
             + "    try {\n"
             + "      // This block configure the logger with handler and formatter  \n"
-            + "      fh = new FileHandler(\"src/log/BooleanExpressionLog\");\n"
+            + "      fh = new FileHandler(\"src/test/BooleanExpressionLog\");\n"
             + "      boolLogger.addHandler(fh);\n"
             + "      SimpleFormatter formatter = new SimpleFormatter();\n"
             + "      fh.setFormatter(formatter);\n"
