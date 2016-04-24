@@ -285,13 +285,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     if (ctx.getChildCount() == 1) {
       return this.visit(ctx.getChild(0));
     }
-    ABooleanExp arit = new ABooleanExp(
-            (AbstractExpression) this.visit(ctx.getChild(ctx.getChildCount() - 1)),
-            null, null, false);
+//    ABooleanExp arit = new ABooleanExp(
+//            (AbstractExpression) this.visit(ctx.getChild(ctx.getChildCount() - 1)),
+//            null, null, false);
+    AbstractTree arit = this.visit(ctx.getChild(ctx.getChildCount() - 1));
     for (int i = ctx.getChildCount() - 2; i >= 0; i--) {
       if (i % 2 == 1) {
         arit = new ABooleanExp((AbstractExpression) this.visit(ctx.getChild(i - 1)),
-                arit, ctx.getChild(i).getText(), false);
+                (AbstractExpression) arit, ctx.getChild(i).getText(), false);
       }
     }
     return arit;
