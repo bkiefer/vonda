@@ -44,10 +44,13 @@ public class GrammarMain {
                 + "know. Currently, the following flags are available:\n"
                 + "-log\tTranscribe file in logmode. Text will be added so that "
                 + "the outcome of all boolean expressions is being logged as "
-                + "soon as they are evaluated.");
+                + "soon as they are evaluated."
+                + "\n\nPlease use this tool as follows: java rudimant <name_of_file_without_ending> (-log)\n");
       }
     }
-
+    if(args.length == 0){
+      System.out.println("Please use this tool as follows: java rudimant <name_of_file_without_ending> (-log)\n");
+    }
   // TODO: do something if there are no input arguments
     System.out.println("parsing: " + args[0]);
 
