@@ -1,0 +1,11 @@
+/*@ public class LogThis{@*/
+// This is nothing but a log test
+/*@ public void newClass(){@*/
+
+logging:
+if ((1 == 2 && 3 == 4) || (4 == 4 && 5 == 6)) {
+    var s = "blabla";
+    var q = 12;
+}
+
+/*@}@*/

@@ -5,6 +5,7 @@
  */
 package Versuch2.abstractTree.expressions;
 
+import Versuch2.GrammarMain;
 import Versuch2.abstractTree.AbstractExpression;
 import Versuch2.abstractTree.AbstractTree;
 import Versuch2.abstractTree.AbstractType;
@@ -58,10 +59,15 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
       return ret + "isSubsumed(" + left + ", " + right + ")";
     }
     if(this.right != null){
-      //return ret + "(" + this.left + this.operator + this.right + ")";
-      return ret + this.left + this.operator + this.right;
+      ret += "(" + this.left + this.operator + this.right + ")";
+      GrammarMain.context.doLog(
+              "\"" + ret +  " _ resulted to \" + " + ret);
+      return ret;
     }
-    return ret + this.left.toString();
+    ret += this.left.toString();
+    GrammarMain.context.doLog("\"" + ret +  " resulted to \" + ("
+            + ret + ")");
+    return ret;
   }
 
   @Override

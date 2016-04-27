@@ -15,14 +15,27 @@ import java.util.List;
 public interface RobotContext {
   
   /**
+   * method that adds a String to the logging block that will be printed before
+   * boolean expressions (only if -log switch was used)
+   * @param toLog the String to be logged
+   */
+  public void doLog(String toLog);
+  
+  /**
+   * resets the log memory of the context
+   * @return a String consisting of every log that toLog received until here
+   */
+  public String getLog();
+  
+  /**
    * method invoked by main before inserting the class name
    * @return a string to be printed to the beginning of the file
    */
   public String beforeClassName();
   
   /**
-   * method invoked by main after inserting the class name and before
-   * the parse tree is walked
+   * method invoked by AGrammarFile.toString() after the first comment (what should
+   * be the class declaration) is parsed
    * @return a string to be printed directly underneath "public class xy"
    */
   public String afterClassName();

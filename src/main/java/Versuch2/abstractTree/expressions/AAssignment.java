@@ -25,7 +25,12 @@ public class AAssignment  implements AbstractTree, AbstractExpression{
     this.left = left;
     this.right = right;
     this.declaration = declaration;
+    if(declaration){
+      this.type = ((AbstractExpression)right).getType();
+    }
+    else{
     this.type = ((AbstractExpression)left).getType();
+    }
   }
 
   @Override

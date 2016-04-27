@@ -5,6 +5,8 @@
  */
 package Versuch2.abstractTree;
 
+import Versuch2.GrammarMain;
+import Versuch2.abstractTree.leaves.ACommentBlock;
 import java.util.List;
 
 /**
@@ -24,7 +26,15 @@ public class AGrammarFile implements AbstractTree{
   @Override
   public String toString(){
     String ret = "";
+    boolean foundClassName = false;
     for (AbstractTree r : rules){
+      // Don't forget to insert text after class name as specified in context
+      if(r instanceof ACommentBlock && foundClassName == false){
+        if(((ACommentBlock)r).containsClassName()){
+          ((ACommentBlock)r).setPrintClassName();
+          foundClassName = true;
+        }
+      }
       ret += r;
     }
     return ret;

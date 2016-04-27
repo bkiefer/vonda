@@ -41,7 +41,7 @@ public class PrintTest {
 
     @Test
     public void FirstRuleTest() throws Exception {
-        String[] strings = new String[]{"FirstRule"};
+        String[] strings = new String[]{"FirstRule", "-log"};
         GrammarMain.main(strings);
     }
     
@@ -66,6 +66,12 @@ public class PrintTest {
     @Test
     public void WholeQuizTest() throws Exception {
         String[] strings = new String[]{"RulesQuiz"};
+        GrammarMain.main(strings);
+    }
+    
+    @Test
+    public void LogTest() throws Exception {
+        String[] strings = new String[]{"LogThis", "-log"};
         GrammarMain.main(strings);
     }
     

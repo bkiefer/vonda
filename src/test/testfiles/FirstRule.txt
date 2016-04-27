@@ -6,8 +6,9 @@
    check-start: // or sth else than ':' ?
    if (test)
 */
-
+/*@ public class FirstRule extends RuleUnit {@*/
 // A new game is started
+/*@ public void newClass(){@*/
 initiated:
 if (game.status == initiated) {
   propose("start-game") {
@@ -18,3 +19,4 @@ if (game.status == initiated) {
     gameLogic.startSession();
   }
 }
+/*@}@*/

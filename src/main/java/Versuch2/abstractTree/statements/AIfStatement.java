@@ -5,6 +5,7 @@
  */
 package Versuch2.abstractTree.statements;
 
+import Versuch2.GrammarMain;
 import Versuch2.abstractTree.AbstractStatement;
 import Versuch2.abstractTree.AbstractTree;
 
@@ -39,9 +40,14 @@ public class AIfStatement implements AbstractStatement, AbstractTree{
   @Override
   public String toString(){
     if (this.statblockElse != null){
-      return "if (" + condition + ") " + statblockIf
-              + " else " + statblockElse;
+      String ret1 = "if (" + condition + ") ";
+      String log = GrammarMain.context.getLog();
+      String ret2 = statblockIf.toString().substring(1) + " else ";
+      String ret3 = statblockElse.toString().substring(1);
+      
+      return ret1 + "{" + log + ret2 + "{ " + log + ret3;
     }
-    return "if (" + condition + ") " + statblockIf + "\n";
+    return "if (" + condition + ") {" + GrammarMain.context.getLog() +
+            statblockIf.toString().substring(1) + "\n";
   }
 }
