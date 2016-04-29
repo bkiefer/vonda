@@ -27,7 +27,10 @@ public class ATimeoutStat implements AbstractStatement, AbstractTree {
     @Override
     public String toString() {
         // TODO: test this
-        return "MyTimer t = timeouts.newSpecialTimeout(" + name + "," + time + ");"
+        if(this.statblock == null){
+            return "newTimeout(" + name + "," + time + ");\n";
+        }
+        return "MyTimer t = newSpecialTimeout(" + name + "," + time + ");"
                 + "t.timer = new Timer(timeToFire, new ActionListener(){\n"
                 + "@Override\n public void actionPerformed(ActionEvent e)" + statblock + "});"
                 + "\n" + "t.started = System.currentTimeMillis();\n"
