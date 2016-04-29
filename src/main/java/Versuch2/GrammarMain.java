@@ -39,7 +39,7 @@ public class GrammarMain {
       i++;
       if(i == 1){continue;}
       switch(arg){
-        case "-log": log = true;
+        case "-log": log = true; break;
         default: System.out.println("Hello, this is rudimant. You typed in a command I do not"
                 + "know. Currently, the following flags are available:\n"
                 + "-log\tTranscribe file in logmode. Text will be added so that "
