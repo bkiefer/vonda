@@ -363,8 +363,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   @Override
   public AbstractTree visitTimeout_statement(RobotGrammarParser.Timeout_statementContext ctx) {
     // TIMEOUT LPAR STRING COMMA INT RPAR statement_block
+    if(ctx.getChildCount() == 7){   // timeout with statblock
     return new ATimeoutStat(ctx.getChild(2).getText(), Long.parseLong(ctx.getChild(4).getText()),
     this.visit(ctx.getChild(6)));
+    }
+    else{   // no statblock
+    return new ATimeoutStat(ctx.getChild(2).getText(), Long.parseLong(ctx.getChild(4).getText()),
+    null);        
+    }
   }
 
   @Override
