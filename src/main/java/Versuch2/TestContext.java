@@ -23,11 +23,29 @@ public class TestContext implements RobotContext {
   private FileHandler fh;
   private boolean log;
   private String boolLog;
+  private String currentRule;
+  private int lastBool;
 
   public TestContext(boolean log) {
     this.log = log;
     this.boolLog = "";
   }
+
+    @Override
+    public String getCurrentRule() {
+        return this.currentRule;
+    }
+
+    @Override
+    public int getCurrentBool() {
+        return ++this.lastBool;
+    }
+
+    @Override
+    public void setCurrentRule(String rule) {
+        this.currentRule = rule;
+        this.lastBool = 0;
+    }
 
   @Override
   public void doLog(String toLog) {
