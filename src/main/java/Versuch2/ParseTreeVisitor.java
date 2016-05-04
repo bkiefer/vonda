@@ -203,6 +203,16 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   }
 
   @Override
+  public AbstractTree visitReturn_statement(RobotGrammarParser.Return_statementContext ctx) {
+    // RETURN exp? SEMICOLON;
+    if (ctx.getChildCount() == 2) {
+      return new AReturnStat();
+    } else {
+      return new AReturnStat(this.visit(ctx.getChild(1)));
+    }
+  }
+
+  @Override
   public AbstractTree visitWhile_statement(RobotGrammarParser.While_statementContext ctx) {
     // WHILE LPAR boolean_exp RPAR loop_statement_block
     if (ctx.getChildCount() == 5) {
@@ -313,12 +323,17 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitAssignment(RobotGrammarParser.AssignmentContext ctx) {
+    // ((DEC_VAR | VARIABLE)? VARIABLE | field_access) ASSIGN exp
     if (ctx.getChildCount() == 3) { // no declaration
       return new AAssignment(this.visit(ctx.getChild(0)),
               (AbstractExpression) this.visit(ctx.getChild(2)), false);
     } else {  // declaration
       Mem.addElement(ctx.getChild(1).getText(), AbstractType.OBJECT);
+      if(ctx.getChild(0).getText().equals("var")){
       return new AAssignment(this.visit(ctx.getChild(1)),
+              (AbstractExpression) this.visit(ctx.getChild(3)), true);
+      }
+      return new AAssignment(ctx.getChild(0).getText(), this.visit(ctx.getChild(1)),
               (AbstractExpression) this.visit(ctx.getChild(3)), true);
     }
   }
@@ -364,13 +379,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   @Override
   public AbstractTree visitTimeout_statement(RobotGrammarParser.Timeout_statementContext ctx) {
     // TIMEOUT LPAR STRING COMMA INT RPAR statement_block
-    if(ctx.getChildCount() == 7){   // timeout with statblock
-    return new ATimeoutStat(ctx.getChild(2).getText(), Long.parseLong(ctx.getChild(4).getText()),
-    this.visit(ctx.getChild(6)));
-    }
-    else{   // no statblock
-    return new ATimeoutStat(ctx.getChild(2).getText(), Long.parseLong(ctx.getChild(4).getText()),
-    null);        
+    if (ctx.getChildCount() == 7) {   // timeout with statblock
+      return new ATimeoutStat(ctx.getChild(2).getText(), Long.parseLong(ctx.getChild(4).getText()),
+              this.visit(ctx.getChild(6)));
+    } else {   // no statblock
+      return new ATimeoutStat(ctx.getChild(2).getText(), Long.parseLong(ctx.getChild(4).getText()),
+              null);
     }
   }
 
@@ -483,6 +497,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitTerminal(TerminalNode tn) {
+    // Attention! if you added new tokens or deleted old ones, the case numbers might have changed and 
+    // you get unexpected behaviour! (see Generated Sources / RobotGrammarLexer.java for right numbers)
     switch (tn.getSymbol().getType()) {
       case 8:   // token is NULL
         return new ANull();
@@ -490,13 +506,13 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
         return new AUnaryBoolean(tn.getText());
       case 10:  // token is FALSE
         return new AUnaryBoolean(tn.getText());
-      case 11:  // token is character
+      case 12:  // token is character
         return new ACharacter(tn.getText());
-      case 12:  // token is String
+      case 13:  // token is String
         return new AString(tn.getText());
-      case 42:  //token is wildcard
+      case 43:  //token is wildcard
         return new AWildcard();
-      case 51:  // token is variable
+      case 52:  // token is variable
         if (Mem.existsVariable(tn.getText())) {
           return new ALocalVar(Mem.getVariableType(tn.getText()), tn.getText());
         } else if (context.isGlobalVariable(tn.getText())) {
@@ -506,13 +522,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
           throw new UnsupportedOperationException("This variable isn't declared "
                   + "anywhere: " + tn.getText());
         }
-      case 52:  // token is int
+      case 53:  // token is int
         return new ANumber(tn.getText());
-      case 53:  // token is float
+      case 54:  // token is float
         return new ANumber(tn.getText());
     }
-        // Attention! if you added new tokens or deleted old ones, the case numbers might have changed and 
-    // you get unexpected behaviour! (see Generated Sources / RobotGrammarLexer.java for right numbers)
     throw new UnsupportedOperationException("The terminal node for " + tn.getText() + " should never be used");
   }
 

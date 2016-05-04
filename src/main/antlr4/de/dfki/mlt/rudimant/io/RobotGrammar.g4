@@ -26,6 +26,7 @@ statement
   : 
     ( exp SEMICOLON
     | set_operation SEMICOLON
+    | return_statement
     | propose_statement
     | timeout_statement
     | if_statement
@@ -35,6 +36,8 @@ statement
     //| SEMICOLON   <- we don't really need it, and it's a pain to find in parser
     ) comment
  ;
+
+return_statement: RETURN exp? SEMICOLON;
 
 comment
   : (MULTI_L_COMMENT | ONE_L_COMMENT | JAVA_CODE)*
@@ -69,6 +72,7 @@ loop_statement
     ( exp SEMICOLON
     | (CONTINUE | BREAK) SEMICOLON
     | set_operation SEMICOLON
+    | return_statement
     | loop_propose_statement // do we want to be able to call break or continue here?
     | timeout_statement
     | loop_if_statement
@@ -218,7 +222,7 @@ literal_or_graph_exp
   ;
 
 assignment
-  : ( ( DEC_VAR )? VARIABLE
+  : ( ( DEC_VAR | VARIABLE)? VARIABLE
       | field_access
     )
     ASSIGN exp
@@ -287,6 +291,7 @@ FOR: 'for';
 NULL: 'null';
 TRUE: 'true';
 FALSE: 'false';
+RETURN: 'return';
 
 /// character literal (starting with ' ):
 CHARACTER: '\''.'\'';
@@ -343,7 +348,7 @@ DEC_VAR: 'var';
 TIMEOUT: 'timeout';
 
 /// comments (starting with /* or //):
-JAVA_CODE: '/*@'.*?'@*/';
+JAVA_CODE: '/*@'.*?'@*/';//-> channel(HIDDEN);
 ONE_L_COMMENT: '//'.*?'\n' ;//-> channel(HIDDEN);
 MULTI_L_COMMENT: '/*'.*?'*/' ;//-> channel(HIDDEN);
 
