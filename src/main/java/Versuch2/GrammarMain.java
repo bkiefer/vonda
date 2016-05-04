@@ -72,9 +72,6 @@ public class GrammarMain {
     // initialise the context magic
     context = new TestContext(log);
 
-    // prepare the output file
-    writer.write(context.beforeClassName());
-    //writer.write("public class " + classname + " extends RuleUnit {\n\n");
 
     // initialise the lexer with given input file
     RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(in)));
@@ -91,6 +88,10 @@ public class GrammarMain {
     // walk the parse tree
     AbstractTree myTree = visitor.visit(tree);
 
+    // prepare the output file
+    writer.write(context.beforeClassName());
+    //writer.write("public class " + classname + " extends RuleUnit {\n\n");
+    
     writer.write(myTree + context.atEndOfFile() + "\n}");
 
     // close the writer

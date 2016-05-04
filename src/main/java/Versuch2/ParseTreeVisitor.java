@@ -55,6 +55,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   @Override
   public AbstractTree visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
     // label comment if_statement
+    context.setCurrentRule(ctx.getChild(0).getText().substring(0, ctx.getChild(0).getText().length() - 1));
     return new AGrammarRule(ctx.getChild(0).getText().substring(0, ctx.getChild(0).getText().length() - 1),
             (ACommentBlock) this.visit(ctx.getChild(1)),
             (AIfStatement) this.visit(ctx.getChild(2)));

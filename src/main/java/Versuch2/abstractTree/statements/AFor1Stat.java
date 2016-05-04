@@ -45,7 +45,7 @@ public class AFor1Stat implements AbstractStatement, AbstractTree {
   @Override
   public String toString() {
     String ret0 = "if(this.whatToLog.get(\"" + this.currentRule + 
-            "\").contains(" + this.currentBool + "){";
+            "\").contains(" + this.currentBool + ")){";
     if (arithmetic != null) {
       String ret1 = "for (" + assignment + "; " + condition + "; " + arithmetic
               + ") ";

@@ -35,7 +35,7 @@ public class ADoWhileStat implements AbstractStatement, AbstractTree{
   @Override
   public String toString(){
     String ret0 = "if(this.whatToLog.get(\"" + this.currentRule + 
-            "\").contains(" + this.currentBool + "){";
+            "\").contains(" + this.currentBool + ")){";
     String ret1 = "do " + statblock;
     String log = "boolLogger.info(\"------------------------------------------------\\n\");\n" +
             GrammarMain.context.getLog() +
