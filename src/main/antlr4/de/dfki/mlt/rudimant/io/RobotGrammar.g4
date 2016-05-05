@@ -11,8 +11,12 @@ grammar RobotGrammar;
 
 /// start rule
 grammar_file
-  : (comment grammar_rule)* comment
+  : (comment (grammar_rule | method_declaration))* comment
   ;
+
+method_declaration
+  : (PUBLIC | PROTECTED | PRIVATE)? VARIABLE LPAR 
+    ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*) RPAR LBRACE rule_block RBRACE;
 
 grammar_rule
   : label comment if_statement
@@ -21,6 +25,9 @@ grammar_rule
 label
   : VARIABLE COLON
   ;
+
+rule_block
+  : (statement | grammar_rule)*;
 
 statement
   : 
@@ -292,6 +299,9 @@ NULL: 'null';
 TRUE: 'true';
 FALSE: 'false';
 RETURN: 'return';
+PUBLIC: 'public';
+PROTECTED: 'protected';
+PRIVATE: 'private';
 
 /// character literal (starting with ' ):
 CHARACTER: '\''.'\'';

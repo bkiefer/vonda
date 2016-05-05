@@ -46,6 +46,16 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   }
 
   @Override
+  public AbstractTree visitMethod_declaration(RobotGrammarParser.Method_declarationContext ctx) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public AbstractTree visitRule_block(RobotGrammarParser.Rule_blockContext ctx) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
   public AbstractTree visitLabel(RobotGrammarParser.LabelContext ctx) {
     // this method should never be reached as label is a part of grammar rule and
     // is not invoked there
@@ -506,13 +516,13 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
         return new AUnaryBoolean(tn.getText());
       case 10:  // token is FALSE
         return new AUnaryBoolean(tn.getText());
-      case 12:  // token is character
+      case 15:  // token is character
         return new ACharacter(tn.getText());
-      case 13:  // token is String
+      case 16:  // token is String
         return new AString(tn.getText());
-      case 43:  //token is wildcard
+      case 46:  //token is wildcard
         return new AWildcard();
-      case 52:  // token is variable
+      case 55:  // token is variable
         if (Mem.existsVariable(tn.getText())) {
           return new ALocalVar(Mem.getVariableType(tn.getText()), tn.getText());
         } else if (context.isGlobalVariable(tn.getText())) {
@@ -522,9 +532,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
           throw new UnsupportedOperationException("This variable isn't declared "
                   + "anywhere: " + tn.getText());
         }
-      case 53:  // token is int
+      case 56:  // token is int
         return new ANumber(tn.getText());
-      case 54:  // token is float
+      case 57:  // token is float
         return new ANumber(tn.getText());
     }
     throw new UnsupportedOperationException("The terminal node for " + tn.getText() + " should never be used");
