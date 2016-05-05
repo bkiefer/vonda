@@ -11,36 +11,39 @@ import java.util.HashMap;
  *
  * @author anna
  */
-public class AMethodDeclaration implements AbstractTree{
+public class AMethodDeclaration implements AbstractTree {
+
   private String visibility;
   private String return_type;
   private String name;
-  private HashMap<String,String> parameters_to_types;
+  private HashMap<String, String> parameters_to_types;
   private AbstractTree block;
-  
+
   public AMethodDeclaration(String visibility, String return_type, String name,
-          HashMap<String,String> parameters_to_types, AbstractTree block){
+          HashMap<String, String> parameters_to_types, AbstractTree block) {
     this.visibility = visibility;
     this.return_type = return_type;
     this.name = name;
     this.parameters_to_types = parameters_to_types;
     this.block = block;
   }
-  
+
   @Override
-  public String toString(){
+  public String toString() {
     String ret = visibility + " " + return_type + " " + name + "(";
-    if(!parameters_to_types.isEmpty()){
+    if (!parameters_to_types.isEmpty()) {
       int i = 0;
-      for (String s : parameters_to_types.keySet()){
+      for (String s : parameters_to_types.keySet()) {
         i++;
-        if(i == 1){
-          ret +=this.parameters_to_types.get(s) + " " + s;
+        if (i == 1) {
+          ret += this.parameters_to_types.get(s) + " " + s;
+        } else {
+          ret += ", " + this.parameters_to_types.get(s) + " " + s;
         }
-        ret += ", " + this.parameters_to_types.get(s) + " " + s;
       }
     }
-    return ret + "{" + block + "}";
+    ret += ")";
+    return ret + block;
   }
 
   @Override

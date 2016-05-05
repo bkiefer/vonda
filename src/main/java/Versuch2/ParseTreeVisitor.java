@@ -49,24 +49,36 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   @Override
   public AbstractTree visitMethod_declaration(RobotGrammarParser.Method_declarationContext ctx) {
     // (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | VARIABLE) VARIABLE LPAR 
-    // ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*) RPAR LBRACE statement_block RBRACE
-    
-    if(ctx.getChild(2).getText().equals("(")){ // we have public, protected or private modifier
+    // ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*) RPAR statement_block
+
+    if (ctx.getChild(3).getText().equals("(")) { // we have public, protected or private modifier
       HashMap<String, String> par_to_typ = new HashMap<String, String>();
       // get all the parameters of the function
-      for(int i = 3; i < ctx.getChildCount() - 4; i += 2){
-        par_to_typ.put(ctx.getChild(i+1).getText(), ctx.getChild(i).getText());
+      for (int i = 4; i < ctx.getChildCount() - 2;) {
+        String t = ctx.getChild(i).getText();
+        i++;
+        if (t.equals("var")) {
+          t = "Object";
+        }
+        par_to_typ.put(ctx.getChild(i).getText(), t);
+        i += 2;
       }
       return new AMethodDeclaration(ctx.getChild(0).getText(), ctx.getChild(1).getText(), ctx.getChild(2).getText(),
-          par_to_typ, this.visit(ctx.getChild(ctx.getChildCount() - 2)));
+              par_to_typ, this.visit(ctx.getChild(ctx.getChildCount() - 1)));
     }
-      HashMap<String, String> par_to_typ = new HashMap<String, String>();
-      // get all the parameters of the function
-      for(int i = 2; i < ctx.getChildCount() - 4; i += 2){
-        par_to_typ.put(ctx.getChild(i+1).getText(), ctx.getChild(i).getText());
-      }
+    HashMap<String, String> par_to_typ = new HashMap<String, String>();
+    // get all the parameters of the function
+    for (int i = 3; i < ctx.getChildCount() - 2;) {
+        String t = ctx.getChild(i).getText();
+        i++;
+        if (t.equals("var")) {
+          t = "Object";
+        }
+        par_to_typ.put(ctx.getChild(i).getText(), t);
+        i += 2;
+    }
     return new AMethodDeclaration("", ctx.getChild(0).getText(), ctx.getChild(1).getText(),
-          par_to_typ, this.visit(ctx.getChild(ctx.getChildCount() - 2)));
+            par_to_typ, this.visit(ctx.getChild(ctx.getChildCount() - 1)));
   }
 
   @Override
@@ -353,9 +365,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
               (AbstractExpression) this.visit(ctx.getChild(2)), false);
     } else {  // declaration
       Mem.addElement(ctx.getChild(1).getText(), AbstractType.OBJECT);
-      if(ctx.getChild(0).getText().equals("var")){
-      return new AAssignment(this.visit(ctx.getChild(1)),
-              (AbstractExpression) this.visit(ctx.getChild(3)), true);
+      if (ctx.getChild(0).getText().equals("var")) {
+        return new AAssignment(this.visit(ctx.getChild(1)),
+                (AbstractExpression) this.visit(ctx.getChild(3)), true);
       }
       return new AAssignment(ctx.getChild(0).getText(), this.visit(ctx.getChild(1)),
               (AbstractExpression) this.visit(ctx.getChild(3)), true);

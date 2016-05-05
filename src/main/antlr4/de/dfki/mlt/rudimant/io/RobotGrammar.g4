@@ -17,7 +17,7 @@ grammar_file
 method_declaration
   : (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | VARIABLE) VARIABLE LPAR 
     ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*)
-    RPAR LBRACE statement_block RBRACE;
+    RPAR statement_block;
 
 grammar_rule
   : label comment if_statement
@@ -38,6 +38,7 @@ statement
     | if_statement
     | while_statement
     | for_statement
+    | grammar_rule
     | statement_block
     //| SEMICOLON   <- we don't really need it, and it's a pain to find in parser
     ) comment
@@ -65,11 +66,11 @@ for_statement
   ;
 
 statement_block
-  : comment LBRACE comment (statement | grammar_rule)* RBRACE
+  : comment (LBRACE comment (statement)* RBRACE)
   ;
 
 loop_statement_block
-  : comment LBRACE comment ( loop_statement | grammar_rule)* RBRACE
+  : comment LBRACE comment ( loop_statement)* RBRACE
   ;
 
 /// loop_statement = all statements, allowing continue or break inside them
@@ -85,6 +86,7 @@ loop_statement
     | while_statement
     | for_statement
     | loop_statement_block
+    | grammar_rule
     //| SEMICOLON
     ) comment
   ;

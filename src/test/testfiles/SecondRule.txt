@@ -1,3 +1,8 @@
+
+/*@public class SecondRule extends RuleUnit {@*/
+
+public void testTest(String a, var b){
+
 ask_for_role:
 if (game.status == startSession && ! myLastSA <= @ChoiceQuestion(Role)) {
   if (gameLogic.isTurnBased()) {
@@ -5,4 +10,5 @@ if (game.status == startSession && ! myLastSA <= @ChoiceQuestion(Role)) {
   } else {
     gameLogic.newRound();
   }
+}
 }
