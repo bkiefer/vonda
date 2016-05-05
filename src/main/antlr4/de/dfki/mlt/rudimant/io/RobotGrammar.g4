@@ -15,8 +15,9 @@ grammar_file
   ;
 
 method_declaration
-  : (PUBLIC | PROTECTED | PRIVATE)? VARIABLE LPAR 
-    ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*) RPAR LBRACE rule_block RBRACE;
+  : (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | VARIABLE) VARIABLE LPAR 
+    ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*)
+    RPAR LBRACE statement_block RBRACE;
 
 grammar_rule
   : label comment if_statement
@@ -26,8 +27,6 @@ label
   : VARIABLE COLON
   ;
 
-rule_block
-  : (statement | grammar_rule)*;
 
 statement
   : 
@@ -66,11 +65,11 @@ for_statement
   ;
 
 statement_block
-  : comment LBRACE comment ( statement )* RBRACE
+  : comment LBRACE comment (statement | grammar_rule)* RBRACE
   ;
 
 loop_statement_block
-  : comment LBRACE comment ( loop_statement )* RBRACE
+  : comment LBRACE comment ( loop_statement | grammar_rule)* RBRACE
   ;
 
 /// loop_statement = all statements, allowing continue or break inside them

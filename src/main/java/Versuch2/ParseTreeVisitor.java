@@ -12,6 +12,7 @@ import Versuch2.abstractTree.leaves.*;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -47,12 +48,25 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitMethod_declaration(RobotGrammarParser.Method_declarationContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  public AbstractTree visitRule_block(RobotGrammarParser.Rule_blockContext ctx) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | VARIABLE) VARIABLE LPAR 
+    // ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*) RPAR LBRACE statement_block RBRACE
+    
+    if(ctx.getChild(2).getText().equals("(")){ // we have public, protected or private modifier
+      HashMap<String, String> par_to_typ = new HashMap<String, String>();
+      // get all the parameters of the function
+      for(int i = 3; i < ctx.getChildCount() - 4; i += 2){
+        par_to_typ.put(ctx.getChild(i+1).getText(), ctx.getChild(i).getText());
+      }
+      return new AMethodDeclaration(ctx.getChild(0).getText(), ctx.getChild(1).getText(), ctx.getChild(2).getText(),
+          par_to_typ, this.visit(ctx.getChild(ctx.getChildCount() - 2)));
+    }
+      HashMap<String, String> par_to_typ = new HashMap<String, String>();
+      // get all the parameters of the function
+      for(int i = 2; i < ctx.getChildCount() - 4; i += 2){
+        par_to_typ.put(ctx.getChild(i+1).getText(), ctx.getChild(i).getText());
+      }
+    return new AMethodDeclaration("", ctx.getChild(0).getText(), ctx.getChild(1).getText(),
+          par_to_typ, this.visit(ctx.getChild(ctx.getChildCount() - 2)));
   }
 
   @Override
@@ -73,7 +87,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitStatement_block(RobotGrammarParser.Statement_blockContext ctx) {
-    // comment LBRACE comment ( statement )* RBRACE
+    // comment LBRACE comment (statement  | grammar_rule)* RBRACE
     // when entering a statement block, we need to create a new local environment
     int position = Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
     List<AbstractTree> statblock = new ArrayList<AbstractTree>();
@@ -96,7 +110,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitLoop_statement_block(RobotGrammarParser.Loop_statement_blockContext ctx) {
-    // comment LBRACE comment ( statement )* RBRACE
+    // comment LBRACE comment ( statement  | grammar_rule)* RBRACE
     // when entering a statement block, we need to create a new local environment
     int position = Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
     List<AbstractTree> statblock = new ArrayList<AbstractTree>();
