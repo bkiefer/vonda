@@ -11,8 +11,13 @@ grammar RobotGrammar;
 
 /// start rule
 grammar_file
-  : (comment grammar_rule)* comment
+  : (comment (grammar_rule | method_declaration))* comment
   ;
+
+method_declaration
+  : (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | VARIABLE) VARIABLE LPAR 
+    ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*)
+    RPAR statement_block;
 
 grammar_rule
   : label comment if_statement
@@ -22,19 +27,24 @@ label
   : VARIABLE COLON
   ;
 
+
 statement
   : 
     ( exp SEMICOLON
     | set_operation SEMICOLON
+    | return_statement
     | propose_statement
     | timeout_statement
     | if_statement
     | while_statement
     | for_statement
+    | grammar_rule
     | statement_block
     //| SEMICOLON   <- we don't really need it, and it's a pain to find in parser
     ) comment
  ;
+
+return_statement: RETURN exp? SEMICOLON;
 
 comment
   : (MULTI_L_COMMENT | ONE_L_COMMENT | JAVA_CODE)*
@@ -56,11 +66,11 @@ for_statement
   ;
 
 statement_block
-  : comment LBRACE comment ( statement )* RBRACE
+  : comment (LBRACE comment (statement)* RBRACE)
   ;
 
 loop_statement_block
-  : comment LBRACE comment ( loop_statement )* RBRACE
+  : comment LBRACE comment ( loop_statement)* RBRACE
   ;
 
 /// loop_statement = all statements, allowing continue or break inside them
@@ -69,12 +79,14 @@ loop_statement
     ( exp SEMICOLON
     | (CONTINUE | BREAK) SEMICOLON
     | set_operation SEMICOLON
+    | return_statement
     | loop_propose_statement // do we want to be able to call break or continue here?
     | timeout_statement
     | loop_if_statement
     | while_statement
     | for_statement
     | loop_statement_block
+    | grammar_rule
     //| SEMICOLON
     ) comment
   ;
@@ -218,7 +230,7 @@ literal_or_graph_exp
   ;
 
 assignment
-  : ( ( DEC_VAR )? VARIABLE
+  : ( ( DEC_VAR | VARIABLE)? VARIABLE
       | field_access
     )
     ASSIGN exp
@@ -287,6 +299,10 @@ FOR: 'for';
 NULL: 'null';
 TRUE: 'true';
 FALSE: 'false';
+RETURN: 'return';
+PUBLIC: 'public';
+PROTECTED: 'protected';
+PRIVATE: 'private';
 
 /// character literal (starting with ' ):
 CHARACTER: '\''.'\'';
@@ -343,7 +359,7 @@ DEC_VAR: 'var';
 TIMEOUT: 'timeout';
 
 /// comments (starting with /* or //):
-JAVA_CODE: '/*@'.*?'@*/';
+JAVA_CODE: '/*@'.*?'@*/';//-> channel(HIDDEN);
 ONE_L_COMMENT: '//'.*?'\n' ;//-> channel(HIDDEN);
 MULTI_L_COMMENT: '/*'.*?'*/' ;//-> channel(HIDDEN);
 

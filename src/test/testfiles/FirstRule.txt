@@ -20,6 +20,7 @@ if (game.status == initiated) {
       emitDA(@Inform(Instructions, what=game.name, sender=I_ROBOT, addressee=currentUser.id ));
     }
     gameLogic.startSession();
+    String s = "bla";
   }
 }
 /*@}@*/

@@ -41,37 +41,37 @@ public class PrintTest {
 
     @Test
     public void FirstRuleTest() throws Exception {
-        String[] strings = new String[]{"FirstRule", "-log"};
+        String[] strings = new String[]{"FirstRule.txt", "-log"};
         GrammarMain.main(strings);
     }
     
     @Test
     public void SecondRuleTest() throws Exception {
-        String[] strings = new String[]{"SecondRule"};
+        String[] strings = new String[]{"SecondRule.txt"};
         GrammarMain.main(strings);
     }
     
     @Test
     public void ThirdRuleTest() throws Exception {
-        String[] strings = new String[]{"ThirdRule"};
+        String[] strings = new String[]{"ThirdRule.txt"};
         GrammarMain.main(strings);
     }
     
     @Test
     public void TupleForTest() throws Exception {
-        String[] strings = new String[]{"TupleFor"};
+        String[] strings = new String[]{"TupleFor.txt"};
         GrammarMain.main(strings);
     }
     
     @Test
     public void WholeQuizTest() throws Exception {
-        String[] strings = new String[]{"RulesQuiz"};
+        String[] strings = new String[]{"RulesQuiz.txt"};
         GrammarMain.main(strings);
     }
     
     @Test
     public void LogTest() throws Exception {
-        String[] strings = new String[]{"LogThis", "-log"};
+        String[] strings = new String[]{"LogThis.txt", "-log"};
         GrammarMain.main(strings);
     }
     

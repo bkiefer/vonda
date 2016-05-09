@@ -13,35 +13,52 @@ import Versuch2.abstractTree.AbstractType;
  *
  * @author anna
  */
-public class AAssignment  implements AbstractTree, AbstractExpression{
-  
+public class AAssignment implements AbstractTree, AbstractExpression {
+
   private AbstractType type;
   private AbstractTree left;
   private AbstractExpression right;
   private boolean declaration;
+  private String actualType;
 
-  public AAssignment(AbstractTree left, AbstractExpression right, 
+  public AAssignment(AbstractTree left, AbstractExpression right,
           boolean declaration) {
     this.left = left;
     this.right = right;
     this.declaration = declaration;
-    if(declaration){
-      this.type = ((AbstractExpression)right).getType();
+    if (declaration) {
+      this.type = ((AbstractExpression) right).getType();
+    } else {
+      this.type = ((AbstractExpression) left).getType();
     }
-    else{
-    this.type = ((AbstractExpression)left).getType();
+    this.actualType = "";
+  }
+
+  public AAssignment(String actualType, AbstractTree left, AbstractExpression right,
+          boolean declaration) {
+    this.left = left;
+    this.right = right;
+    this.declaration = declaration;
+    if (declaration) {
+      this.type = ((AbstractExpression) right).getType();
+    } else {
+      this.type = ((AbstractExpression) left).getType();
     }
+    this.actualType = actualType;
   }
 
   @Override
   public void testType() {
     // TODO: test, look into memory, differ between String s = "" and s = ""
-    
+
   }
-  
+
   @Override
-  public String toString(){
-    if (this.declaration){
+  public String toString() {
+    if (this.declaration) {
+      if (!this.actualType.equals("")) {
+        return this.actualType + " " + this.left.toString() + " = " + this.right;
+      }
       return this.type + " " + this.left.toString() + " = " + this.right;
     }
     return this.left + " = " + this.right;
@@ -51,5 +68,5 @@ public class AAssignment  implements AbstractTree, AbstractExpression{
   public AbstractType getType() {
     return this.type;
   }
-  
+
 }

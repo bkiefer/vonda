@@ -18,6 +18,8 @@ public class AIfStatement implements AbstractStatement, AbstractTree{
   private AbstractTree condition;
   private AbstractBlock statblockIf;
   private AbstractBlock statblockElse;
+  private String currentRule;
+  private int currentBool;
 
   /**
    * if there is no else case, set statblockElse to null
@@ -30,6 +32,8 @@ public class AIfStatement implements AbstractStatement, AbstractTree{
     this.condition = condition;
     this.statblockIf = statblockIf;
     this.statblockElse = statblockElse;
+    this.currentRule = GrammarMain.context.getCurrentRule();
+    this.currentBool = GrammarMain.context.getCurrentBool();
   }
 
   @Override
@@ -39,15 +43,25 @@ public class AIfStatement implements AbstractStatement, AbstractTree{
   
   @Override
   public String toString(){
+    String ret0 = "if(this.whatToLog.get(\"" + this.currentRule + 
+            "\").contains(" + this.currentBool + ")){";
     if (this.statblockElse != null){
       String ret1 = "if (" + condition + ") ";
-      String log = GrammarMain.context.getLog();
+      String log = "boolLogger.info(\"------------------------------------------------\\n\");\n" +
+              GrammarMain.context.getLog() +
+              "boolLogger.info(\"------------------------------------------------\\n\");\n";
       String ret2 = statblockIf.toString().substring(1) + " else ";
       String ret3 = statblockElse.toString().substring(1);
       
-      return ret1 + "{" + log + ret2 + "{ " + log + ret3;
+      return ret0 + "if(!(" + this.condition + ")){" + log + "}}"
+              + ret1 + "{" + ret0 + log  + "}" + ret2 + "{ " + log + ret3;
     }
-    return "if (" + condition + ") {" + GrammarMain.context.getLog() +
+    String ret1 = "if (" + condition + ") {";
+    String log = "boolLogger.info(\"------------------------------------------------\\n\");\n" +
+              GrammarMain.context.getLog() +
+              "boolLogger.info(\"------------------------------------------------\\n\");\n";
+    return ret0 + "if(!(" + this.condition + ")){" + log + "}}" +
+            ret1 + ret0 + log + "}" +
             statblockIf.toString().substring(1) + "\n";
   }
 }

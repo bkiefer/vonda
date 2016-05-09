@@ -8,6 +8,8 @@ package Versuch2;
 import Versuch2.abstractTree.AbstractType;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -23,10 +25,31 @@ public class TestContext implements RobotContext {
   private FileHandler fh;
   private boolean log;
   private String boolLog;
+  private String currentRule;
+  private int lastBool;
+  private Set<String> rules;
 
   public TestContext(boolean log) {
     this.log = log;
     this.boolLog = "";
+    this.rules = new HashSet<String>();
+  }
+
+  @Override
+  public String getCurrentRule() {
+    return this.currentRule;
+  }
+
+  @Override
+  public int getCurrentBool() {
+    return ++this.lastBool;
+  }
+
+  @Override
+  public void setCurrentRule(String rule) {
+    this.currentRule = rule;
+    this.lastBool = 0;
+    this.rules.add(rule);
   }
 
   @Override
@@ -36,9 +59,9 @@ public class TestContext implements RobotContext {
     }
     this.boolLog += "boolLogger.info(" + toLog + ");\n";
   }
-  
+
   @Override
-  public String getLog(){
+  public String getLog() {
     String x = this.boolLog;
     this.boolLog = "";
     return x;
@@ -50,12 +73,24 @@ public class TestContext implements RobotContext {
             + "import java.io.IOException;\n"
             + "import java.util.logging.FileHandler;\n"
             + "import java.util.logging.Logger;\n"
-            + "import java.util.logging.SimpleFormatter;";
+            + "import java.util.logging.SimpleFormatter;\n"
+            + "import java.util.HashMap;\n"
+            + "import java.util.HashSet;\n"
+            + "import java.util.Set;\n";
   }
 
   @Override
   public String afterClassName() {
+    String ret1 = "// if you want to log a boolean expression, please enter its location here\n"
+            + "// (0 is default and will not match anything)\n"
+            + "whatToLog = new HashMap<String, Set<Integer>>();\n";
+    for (String r : this.rules) {
+      ret1 += "whatToLog.put(\"" + r + "\", new HashSet<Integer>());\n"
+              + "whatToLog.get(\"" + r + "\").add(0);\n";
+    }
     return ("\n"
+            + "  private static HashMap<String, Set<Integer>> whatToLog;\n"
+            + "{\n" + ret1 + "}\n"
             + "  private Logger boolLogger;\n"
             + "  private FileHandler fh;\n"
             + "{    boolLogger = Logger.getLogger(\"BoolLog\");\n"
