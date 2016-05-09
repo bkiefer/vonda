@@ -45,21 +45,29 @@ public class GrammarMain {
                 + "-log\tTranscribe file in logmode. Text will be added so that "
                 + "the outcome of all boolean expressions is being logged as "
                 + "soon as they are evaluated."
-                + "\n\nPlease use this tool as follows: java rudimant <name_of_file_without_ending> (-log)\n");
+                + "\n\nPlease use this tool as follows: java rudimant <full_name_of_file> (-log)\n");
       }
     }
     if(args.length == 0){
-      System.out.println("Please use this tool as follows: java rudimant <name_of_file_without_ending> (-log)\n");
+      System.out.println("Please use this tool as follows: java rudimant <full_name_of_file> (-log)\n"
+              + "For help see rumdimant -help\n");
     }
   // TODO: do something if there are no input arguments
     System.out.println("parsing: " + args[0]);
 
     // creating input file & make it readable
-    File in = new File("src/test/testfiles/" + args[0] + ".txt");
+    File in = new File("src/test/testfiles/" + args[0]);
     in.setReadable(true);
 
     // creating output file from input filename; TODO: what location?
-    String classname = args[0].substring(0, 1).toUpperCase() + args[0].substring(1);
+    String classname = "";
+    try{
+    classname = args[0].substring(0, 1).toUpperCase() + args[0].substring(1, args[0].indexOf("."));
+    } catch (StringIndexOutOfBoundsException e){
+      System.out.println("Please use this tool as follows: java rudimant <full_name_of_file> (-log)\n"
+              + "For help see rumdimant -help\n");
+      System.exit(-1);
+    }
     String outputFile = "src/test/testfiles/" + classname + ".java";
     File out = new File(outputFile);
     out.setWritable(true);
