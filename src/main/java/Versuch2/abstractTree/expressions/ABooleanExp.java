@@ -61,11 +61,11 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
     if(this.right != null){
       ret += "(" + this.left + this.operator + this.right + ")";
       GrammarMain.context.doLog(
-              "\"" + ret +  " _ resulted to \" + " + ret);
+              "\"" + ret.replace('"', ' ') +  " _ resulted to \" + " + ret);
       return ret;
     }
     ret += this.left.toString();
-    GrammarMain.context.doLog("\"" + ret +  " resulted to \" + ("
+    GrammarMain.context.doLog("\"" + ret.replace('"', ' ') +  " resulted to \" + ("
             + ret + ")");
     return ret;
   }
