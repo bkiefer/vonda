@@ -41,7 +41,7 @@ public class PrintTest {
 
     @Test
     public void FirstRuleTest() throws Exception {
-        String[] strings = new String[]{"src/test/", "src/test/testfiles/", "-log"};
+        String[] strings = new String[]{"src/test/testfiles", "-log"};
         GrammarMain.main(strings);
     }
     /*

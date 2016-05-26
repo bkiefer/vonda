@@ -90,7 +90,11 @@ public class GrammarMain {
   }
 
   public static void processFile(File file) throws IOException {
+    if(inputDirectory.equals(outputDirectory)){
+      outputDirectory = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf("/"));
+    }
     System.out.println("parsing: " + file);
+    System.out.println("to " + outputDirectory);
 
     // creating output file from input filename; 
     String classname = "";
