@@ -12,6 +12,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -28,6 +29,9 @@ public class GrammarMain {
   private static boolean log;
   public static RobotContext context;
 
+  private static String inputDirectory;
+  private static String outputDirectory;
+
   /**
    *
    * @param args: the file that should be parsed without ending (in args[0])
@@ -35,40 +39,69 @@ public class GrammarMain {
    */
   public static void main(String[] args) throws Exception {
     int i = 0;
-    for(String arg : args){
-      i++;
-      if(i == 1){continue;}
-      switch(arg){
-        case "-log": log = true; break;
-        default: System.out.println("Hello, this is rudimant. You typed in a command I do not"
-                + "know. Currently, the following flags are available:\n"
-                + "-log\tTranscribe file in logmode. Text will be added so that "
-                + "the outcome of all boolean expressions is being logged as "
-                + "soon as they are evaluated."
-                + "\n\nPlease use this tool as follows: java rudimant <full_name_of_file> (-log)\n");
-      }
-    }
-    if(args.length == 0){
-      System.out.println("Please use this tool as follows: java rudimant <full_name_of_file> (-log)\n"
-              + "For help see rumdimant -help\n");
-    }
-  // TODO: do something if there are no input arguments
-    System.out.println("parsing: " + args[0]);
-
-    // creating input file & make it readable
-    File in = new File("src/test/testfiles/" + args[0]);
-    in.setReadable(true);
-
-    // creating output file from input filename; TODO: what location?
-    String classname = "";
-    try{
-    classname = args[0].substring(0, 1).toUpperCase() + args[0].substring(1, args[0].indexOf("."));
-    } catch (StringIndexOutOfBoundsException e){
-      System.out.println("Please use this tool as follows: java rudimant <full_name_of_file> (-log)\n"
+    if (args.length == 0 || args[0].startsWith("-")) {
+      System.out.println("Please use this tool as follows: java rudimant <directory_to_be_searched/> <output_directory/>? (-log)\n"
               + "For help see rumdimant -help\n");
       System.exit(-1);
     }
-    String outputFile = "src/test/testfiles/" + classname + ".java";
+    inputDirectory = args[0];
+    if (args[1].startsWith("-")) {
+      outputDirectory = inputDirectory;
+    } else {
+      outputDirectory = args[1];
+      i--;
+    }
+    for (String arg : args) {
+      i++;
+      if (i == 1) {
+        continue;
+      }
+      switch (arg) {
+        case "-log":
+          log = true;
+          break;
+        default:
+          System.out.println("Hello, this is rudimant. You typed in a command I do not"
+                  + "know. Currently, the following flags are available:\n"
+                  + "-log\tTranscribe file in logmode. Text will be added so that "
+                  + "the outcome of all boolean expressions is being logged as "
+                  + "soon as they are evaluated."
+                  + "\n\nPlease use this tool as follows: java rudimant <directory_to_be_searched/> <output_directory/>? (-log)\n");
+      }
+    }
+    System.out.println("Searching directory " + inputDirectory + " for files to be translated.");
+
+    // find all .rudi files in directory and process them
+    File dir = new File(inputDirectory);
+    searchAndTranslateDirectory(dir);
+  }
+
+  public static void searchAndTranslateDirectory(File directory) throws IOException {
+    File[] contained = directory.listFiles();
+    for (File f : contained) {
+      if (f.isDirectory()) {
+        searchAndTranslateDirectory(f);
+      } else {
+        if (f.getName().endsWith(".rudi")) {
+          processFile(f);
+        }
+      }
+    }
+  }
+
+  public static void processFile(File file) throws IOException {
+    System.out.println("parsing: " + file);
+
+    // creating output file from input filename; 
+    String classname = "";
+    try {
+      classname = file.getName().substring(0, 1).toUpperCase() + file.getName().substring(1, file.getName().indexOf("."));
+    } catch (StringIndexOutOfBoundsException e) {
+      System.out.println("Please use this tool as follows: java rudimant <directory_to_be_searched/> <output_directory/>? (-log)\n"
+              + "For help see rumdimant -help\n");
+      System.exit(-1);
+    }
+    String outputFile = outputDirectory + classname + ".java";
     File out = new File(outputFile);
     out.setWritable(true);
     out.setReadable(true);
@@ -80,9 +113,8 @@ public class GrammarMain {
     // initialise the context magic
     context = new TestContext(log);
 
-
     // initialise the lexer with given input file
-    RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(in)));
+    RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(file)));
 
     // initialise the parser
     RobotGrammarParser parser = new RobotGrammarParser(new CommonTokenStream(lexer));
@@ -99,7 +131,7 @@ public class GrammarMain {
     // prepare the output file
     writer.write(context.beforeClassName());
     //writer.write("public class " + classname + " extends RuleUnit {\n\n");
-    
+
     writer.write(myTree + context.atEndOfFile() + "\n}");
 
     // close the writer
