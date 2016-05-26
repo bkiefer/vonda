@@ -41,10 +41,10 @@ public class PrintTest {
 
     @Test
     public void FirstRuleTest() throws Exception {
-        String[] strings = new String[]{"FirstRule.txt", "-log"};
+        String[] strings = new String[]{"src/test/", "src/test/testfiles/", "-log"};
         GrammarMain.main(strings);
     }
-    
+    /*
     @Test
     public void SecondRuleTest() throws Exception {
         String[] strings = new String[]{"SecondRule.txt"};

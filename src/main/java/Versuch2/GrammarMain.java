@@ -53,7 +53,7 @@ public class GrammarMain {
     }
     for (String arg : args) {
       i++;
-      if (i == 1) {
+      if (i <= 1) {
         continue;
       }
       switch (arg) {
