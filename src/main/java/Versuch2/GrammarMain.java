@@ -14,7 +14,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.Writer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -26,11 +29,22 @@ import org.antlr.v4.runtime.tree.ParseTree;
 public class GrammarMain {
 
   protected static Writer writer;
+  private static PrintStream logwriter;
   private static boolean log;
+  private static boolean throwExceptions = true;
   public static RobotContext context;
 
   private static String inputDirectory;
   private static String outputDirectory;
+
+  private static String help = "Hello, this is rudimant. You typed in a command I do not"
+          + "know. Currently, the following flags are available:\n"
+          + "-log\tTranscribe file in logmode. Text will be added so that "
+          + "the outcome of all boolean expressions is being logged as "
+          + "soon as they are evaluated.\n"
+          + "-e\tDo not crash if there are .rudi files that cannot be translated"
+          + "\n\nPlease use this tool as follows: "
+          + "java rudimant <directory_to_be_searched/> <output_directory/>? (-log)\n";
 
   /**
    *
@@ -43,6 +57,10 @@ public class GrammarMain {
       System.out.println("Please use this tool as follows: java rudimant <directory_to_be_searched/> <output_directory/>? (-log)\n"
               + "For help see rumdimant -help\n");
       System.exit(-1);
+    }
+    if (args[0].equals("help")) {
+      System.out.println(help);
+      System.exit(0);
     }
     inputDirectory = args[0];
     if (args[1].startsWith("-")) {
@@ -60,37 +78,61 @@ public class GrammarMain {
         case "-log":
           log = true;
           break;
+        case "-e":
+          throwExceptions = false;
+          break;
         default:
-          System.out.println("Hello, this is rudimant. You typed in a command I do not"
-                  + "know. Currently, the following flags are available:\n"
-                  + "-log\tTranscribe file in logmode. Text will be added so that "
-                  + "the outcome of all boolean expressions is being logged as "
-                  + "soon as they are evaluated."
-                  + "\n\nPlease use this tool as follows: java rudimant <directory_to_be_searched/> <output_directory/>? (-log)\n");
+          System.out.println(help);
       }
     }
     System.out.println("Searching directory " + inputDirectory + " for files to be translated.");
 
     // find all .rudi files in directory and process them
     File dir = new File(inputDirectory);
-    searchAndTranslateDirectory(dir);
+    if (throwExceptions) {
+      searchAndTranslateDirectory(dir);
+    } else {
+      // initiate log writer
+      logwriter = new PrintStream("rudimant.log");
+      searchAndTranslateDirectoryLogEx(dir);
+    }
   }
 
-  public static void searchAndTranslateDirectory(File directory) throws IOException {
+  public static void searchAndTranslateDirectoryLogEx(File directory) {
     File[] contained = directory.listFiles();
     for (File f : contained) {
       if (f.isDirectory()) {
-        searchAndTranslateDirectory(f);
-      } else {
-        if (f.getName().endsWith(".rudi")) {
+        searchAndTranslateDirectoryLogEx(f);
+      } else if (f.getName().endsWith(".rudi")) {
+        try {
           processFile(f);
+        } catch (Exception e) {
+          System.out.println("A " + e.getClass() + "occurred during parsing"
+                  + " of file " + f.getName() + ". See rudimant.log for stack"
+                  + " trace.");
+          e.printStackTrace(logwriter);
+          try {
+            writer.close();
+          } catch (IOException ex) {
+          }
         }
       }
     }
   }
 
-  public static void processFile(File file) throws IOException {
-    if(inputDirectory.equals(outputDirectory)){
+  public static void searchAndTranslateDirectory(File directory) throws Exception {
+    File[] contained = directory.listFiles();
+    for (File f : contained) {
+      if (f.isDirectory()) {
+        searchAndTranslateDirectory(f);
+      } else if (f.getName().endsWith(".rudi")) {
+        processFile(f);
+      }
+    }
+  }
+
+  public static void processFile(File file) throws Exception {
+    if (inputDirectory.equals(outputDirectory)) {
       outputDirectory = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf("/"));
     }
     System.out.println("parsing: " + file);
@@ -101,9 +143,8 @@ public class GrammarMain {
     try {
       classname = file.getName().substring(0, 1).toUpperCase() + file.getName().substring(1, file.getName().indexOf("."));
     } catch (StringIndexOutOfBoundsException e) {
-      System.out.println("Please use this tool as follows: java rudimant <directory_to_be_searched/> <output_directory/>? (-log)\n"
-              + "For help see rumdimant -help\n");
-      System.exit(-1);
+      System.out.println("Could not parse file" + file.getName());
+      return;
     }
     String outputFile = outputDirectory + classname + ".java";
     File out = new File(outputFile);
