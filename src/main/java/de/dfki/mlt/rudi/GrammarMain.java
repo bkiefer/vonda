@@ -37,14 +37,15 @@ public class GrammarMain {
   private static String inputDirectory;
   private static String outputDirectory;
 
-  private static String help = "Hello, this is rudimant. You typed in a command I do not"
-          + "know. Currently, the following flags are available:\n"
-          + "-log\tTranscribe file in logmode. Text will be added so that "
-          + "the outcome of all boolean expressions is being logged as "
-          + "soon as they are evaluated.\n"
-          + "-e\tDo not crash if there are .rudi files that cannot be translated"
-          + "\n\nPlease use this tool as follows: "
-          + "java rudimant <directory_to_be_searched/> <output_directory/>? (-log)\n";
+  private static String help = "Hello, this is rudimant.\n"
+      + "Currently, the following flags are available:\n"
+      + "-log\tTranscribe file in logmode. Text will be added so that "
+      + "the outcome of\n"
+      + "\tall boolean expressions is being logged as "
+      + "soon as they are evaluated.\n"
+      + "-e\tDo not crash if there are .rudi files that cannot be translated"
+      + "\n\nPlease use this tool as follows:\n"
+      + "java rudimant <directory_to_be_searched/> [output_directory/] (-log)\n";
 
   /**
    *
@@ -53,14 +54,14 @@ public class GrammarMain {
    */
   public static void main(String[] args) throws Exception {
     int i = 0;
+    if (args.length == 0 || args[0].equals("-help")) {
+      System.out.println(help);
+      System.exit(0);
+    }
     if (args.length == 0 || args[0].startsWith("-")) {
       System.out.println("Please use this tool as follows: java rudimant <directory_to_be_searched/> <output_directory/>? (-log)\n"
               + "For help see rumdimant -help\n");
       System.exit(-1);
-    }
-    if (args[0].equals("help")) {
-      System.out.println(help);
-      System.exit(0);
     }
     inputDirectory = args[0];
     if (args[1].startsWith("-")) {
@@ -138,7 +139,7 @@ public class GrammarMain {
     System.out.println("parsing: " + file);
     System.out.println("to " + outputDirectory);
 
-    // creating output file from input filename; 
+    // creating output file from input filename;
     String classname = "";
     try {
       classname = file.getName().substring(0, 1).toUpperCase() + file.getName().substring(1, file.getName().indexOf("."));
