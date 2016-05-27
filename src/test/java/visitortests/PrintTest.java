@@ -5,12 +5,14 @@
  */
 package visitortests;
 
-import Versuch2.GrammarMain;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import de.dfki.mlt.rudi.GrammarMain;
+
 import static org.junit.Assert.*;
 
 /**
