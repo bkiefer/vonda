@@ -15,7 +15,7 @@ if ((currentSA.type == Inform || currentSA.type == Confirm)
   if (isFullySpecified(_pendingTask)) {
     createTask(_pendingTask);
     // possibly inform that the task will now be executed
-    emitSA(@Inform(_pendingTask.Frame));
+    emitSA(#Inform(_pendingTask.Frame));
     _pendingTask = null;
   }
 }

@@ -353,7 +353,7 @@ COLON: ':';
 
 /// special for dialogue grammar:
 WILDCARD: '_';
-LITERAL_OR_GRAPH: '@'( '0'..'9'|'A'..'z'|'_' )+;
+LITERAL_OR_GRAPH: '#'( '0'..'9'|'A'..'z'|'_' )+;
 PROPOSE: 'propose';
 DEC_VAR: 'var';
 TIMEOUT: 'timeout';

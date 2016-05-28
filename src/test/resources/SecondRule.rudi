@@ -4,9 +4,9 @@
 public void testTest(String a, var b){
 
 ask_for_role:
-if (game.status == startSession && ! myLastSA <= @ChoiceQuestion(Role)) {
+if (game.status == startSession && ! myLastSA <= #ChoiceQuestion(Role)) {
   if (gameLogic.isTurnBased()) {
-    emitDA(@ChoiceQuestion(Role));
+    emitDA(#ChoiceQuestion(Role));
   } else {
     gameLogic.newRound();
   }
