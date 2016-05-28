@@ -452,14 +452,19 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitFor_statement(RobotGrammarParser.For_statementContext ctx) {
-    if (ctx.getChildCount() == 7) {
-      // statement looks like "FOR LPAR VARIABLE COLON exp RPAR loop_statement_block"
+    if (ctx.getChild(3).getText().equals(":")) {
+      // FOR LPAR  VARIABLE COLON exp RPAR loop_statement_block"
       // TODO: or should we check here that the type of the variable in assignment
       // is the type the iterable in exp returns? How?
       Mem.addElement(ctx.getChild(2).getText(), AbstractType.OBJECT);
       return new AFor2Stat(new ALocalVar(ctx.getChild(2).getText()), this.visit(ctx.getChild(4)),
               (AbstractBlock) this.visit(ctx.getChild(6)));
-    } else if (ctx.getChildCount() == 8) {
+    } else if(ctx.getChild(4).getText().equals(":")){
+      // FOR LPAR (DEC_VAR | VARIABLE) VARIABLE COLON exp RPAR loop_statement_block"
+      Mem.addElement(ctx.getChild(3).getText(), AbstractType.OBJECT);
+      return new AFor2Stat(ctx.getChild(2).getText(), new ALocalVar(ctx.getChild(3).getText()), this.visit(ctx.getChild(5)),
+              (AbstractBlock) this.visit(ctx.getChild(7)));
+    }  else if (ctx.getChildCount() == 8) {
       // statement looks like "FOR LPAR assignment SEMICOLON exp SEMICOLON RPAR loop_statement_block"
       return new AFor1Stat((AAssignment) this.visit(ctx.getChild(2)),
               (ABooleanExp) this.visit(ctx.getChild(4)),
