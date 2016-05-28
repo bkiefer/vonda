@@ -48,7 +48,7 @@ public class AbstractBlock implements AbstractStatement, AbstractTree{
     }
     for (AbstractTree stat : statblock){
       if(stat instanceof AbstractExpression){
-        stats += stat.toString() + ";";
+        stats += stat.toString() + ";\n";
         break;
       }
       stats += stat.toString();

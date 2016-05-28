@@ -11,7 +11,7 @@ grammar RobotGrammar;
 
 /// start rule
 grammar_file
-  : (comment (grammar_rule | method_declaration))* comment
+  : (comment (grammar_rule | method_declaration | statement | ANNOTATION))* comment
   ;
 
 method_declaration
@@ -313,8 +313,9 @@ STRING: '\"'.*?'\"';
 /// assignments
 ASSIGN: '=';
 
-// operator for lambda expressions
+// operator for lambda expressions, annotations
 ARROW: '->';
+ANNOTATION: '@'('0'..'9'|'A'..'z'|'_'|'('|')')+;
 
 /// separators:
 LPAR: '(';

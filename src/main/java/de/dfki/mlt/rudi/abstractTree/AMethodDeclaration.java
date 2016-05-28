@@ -43,7 +43,7 @@ public class AMethodDeclaration implements AbstractTree {
       }
     }
     ret += ")";
-    return ret + block;
+    return ret + "\n" + block;
   }
 
   @Override

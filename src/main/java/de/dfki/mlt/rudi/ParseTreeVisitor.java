@@ -551,9 +551,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
         return new ACharacter(tn.getText());
       case 16:  // token is String
         return new AString(tn.getText());
-      case 46:  //token is wildcard
+      case 19:  // token is an annotation
+        return new AString(tn.getText() + "\n");
+      case 47:  //token is wildcard
         return new AWildcard();
-      case 55:  // token is variable
+      case 56:  // token is variable
         if (Mem.existsVariable(tn.getText())) {
           return new ALocalVar(Mem.getVariableType(tn.getText()), tn.getText());
         } else if (context.isGlobalVariable(tn.getText())) {
@@ -563,9 +565,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
           throw new UnsupportedOperationException("This variable isn't declared "
                   + "anywhere: " + tn.getText());
         }
-      case 56:  // token is int
+      case 57:  // token is int
         return new ANumber(tn.getText());
-      case 57:  // token is float
+      case 58:  // token is float
         return new ANumber(tn.getText());
     }
     throw new UnsupportedOperationException("The terminal node for " + tn.getText() + " should never be used");
