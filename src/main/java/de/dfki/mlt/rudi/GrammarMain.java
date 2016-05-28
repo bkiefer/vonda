@@ -29,23 +29,24 @@ import org.antlr.v4.runtime.tree.ParseTree;
 public class GrammarMain {
 
   protected static Writer writer;
-  private static PrintStream logwriter;
+  private static Writer logwriter;
   private static boolean log;
   private static boolean throwExceptions = true;
   public static RobotContext context;
 
+  private static int originalInputDirectory;
   private static String inputDirectory;
   private static String outputDirectory;
 
   private static String help = "Hello, this is rudimant.\n"
-      + "Currently, the following flags are available:\n"
-      + "-log\tTranscribe file in logmode. Text will be added so that "
-      + "the outcome of\n"
-      + "\tall boolean expressions is being logged as "
-      + "soon as they are evaluated.\n"
-      + "-e\tDo not crash if there are .rudi files that cannot be translated"
-      + "\n\nPlease use this tool as follows:\n"
-      + "java rudimant <directory_to_be_searched/> [output_directory/] (-log)\n";
+          + "Currently, the following flags are available:\n"
+          + "-log\tTranscribe file in logmode. Text will be added so that "
+          + "the outcome of\n"
+          + "\tall boolean expressions is being logged as "
+          + "soon as they are evaluated.\n"
+          + "-e\tDo not crash if there are .rudi files that cannot be translated"
+          + "\n\nPlease use this tool as follows:\n"
+          + "java rudimant <directory_to_be_searched/> [output_directory/] (-log)\n";
 
   /**
    *
@@ -64,10 +65,16 @@ public class GrammarMain {
       System.exit(-1);
     }
     inputDirectory = args[0];
+    if (!inputDirectory.endsWith("/")) {
+      inputDirectory += "/";
+    }
     if (args[1].startsWith("-")) {
       outputDirectory = inputDirectory;
     } else {
       outputDirectory = args[1];
+      if (!outputDirectory.endsWith("/")) {
+        outputDirectory += "/";
+      }
       i--;
     }
     for (String arg : args) {
@@ -90,11 +97,13 @@ public class GrammarMain {
 
     // find all .rudi files in directory and process them
     File dir = new File(inputDirectory);
+    originalInputDirectory = dir.getAbsolutePath().length() + 1;
     if (throwExceptions) {
       searchAndTranslateDirectory(dir);
     } else {
       // initiate log writer
-      logwriter = new PrintStream("rudimant.log");
+      logwriter = new BufferedWriter(new OutputStreamWriter(
+              new FileOutputStream("rudimant.log")));
       searchAndTranslateDirectoryLogEx(dir);
     }
   }
@@ -111,8 +120,8 @@ public class GrammarMain {
           System.out.println("A " + e.getClass() + "occurred during parsing"
                   + " of file " + f.getName() + ". See rudimant.log for stack"
                   + " trace.");
-          e.printStackTrace(logwriter);
           try {
+            logwriter.write(e.getLocalizedMessage());
             writer.close();
           } catch (IOException ex) {
           }
@@ -134,15 +143,17 @@ public class GrammarMain {
 
   public static void processFile(File file) throws Exception {
     if (inputDirectory.equals(outputDirectory)) {
-      outputDirectory = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf("/"));
+      outputDirectory = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf("/") + 1);
     }
-    System.out.println("parsing: " + file);
+    System.out.println("parsing: " + file.getAbsolutePath()
+            .substring(originalInputDirectory));
     System.out.println("to " + outputDirectory);
 
     // creating output file from input filename;
     String classname = "";
     try {
-      classname = file.getName().substring(0, 1).toUpperCase() + file.getName().substring(1, file.getName().indexOf("."));
+      classname = file.getName().substring(0, 1).toUpperCase()
+              + file.getName().substring(1, file.getName().indexOf("."));
     } catch (StringIndexOutOfBoundsException e) {
       System.out.println("Could not parse file" + file.getName());
       return;
