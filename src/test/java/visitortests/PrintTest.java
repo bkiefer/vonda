@@ -5,12 +5,14 @@
  */
 package visitortests;
 
-import Versuch2.GrammarMain;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import de.dfki.mlt.rudi.GrammarMain;
+
 import static org.junit.Assert.*;
 
 /**
@@ -41,10 +43,10 @@ public class PrintTest {
 
     @Test
     public void FirstRuleTest() throws Exception {
-        String[] strings = new String[]{"FirstRule.txt", "-log"};
+        String[] strings = new String[]{"src/test/resources", "src/test/testfiles", "-log"};
         GrammarMain.main(strings);
     }
-    
+    /*
     @Test
     public void SecondRuleTest() throws Exception {
         String[] strings = new String[]{"SecondRule.txt"};

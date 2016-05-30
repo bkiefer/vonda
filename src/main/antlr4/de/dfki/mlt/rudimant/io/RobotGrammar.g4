@@ -11,12 +11,12 @@ grammar RobotGrammar;
 
 /// start rule
 grammar_file
-  : (comment (grammar_rule | method_declaration))* comment
+  : (comment (grammar_rule | method_declaration | statement | ANNOTATION))* comment
   ;
 
 method_declaration
   : (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | VARIABLE) VARIABLE LPAR 
-    ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*)
+    ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*)?
     RPAR statement_block;
 
 grammar_rule
@@ -61,7 +61,7 @@ while_statement
 
 for_statement
   : FOR LPAR assignment SEMICOLON exp SEMICOLON exp? RPAR loop_statement_block
-  | FOR LPAR VARIABLE COLON exp RPAR loop_statement_block
+  | FOR LPAR (DEC_VAR | VARIABLE)? VARIABLE COLON exp RPAR loop_statement_block
   | FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block
   ;
 
@@ -313,8 +313,9 @@ STRING: '\"'.*?'\"';
 /// assignments
 ASSIGN: '=';
 
-// operator for lambda expressions
+// operator for lambda expressions, annotations
 ARROW: '->';
+ANNOTATION: '@'('0'..'9'|'A'..'z'|'_'|'('|')')+;
 
 /// separators:
 LPAR: '(';
@@ -353,7 +354,7 @@ COLON: ':';
 
 /// special for dialogue grammar:
 WILDCARD: '_';
-LITERAL_OR_GRAPH: '@'( '0'..'9'|'A'..'z'|'_' )+;
+LITERAL_OR_GRAPH: '#'( '0'..'9'|'A'..'z'|'_' )+;
 PROPOSE: 'propose';
 DEC_VAR: 'var';
 TIMEOUT: 'timeout';
