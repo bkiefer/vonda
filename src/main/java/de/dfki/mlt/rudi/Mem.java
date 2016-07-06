@@ -8,7 +8,6 @@ package de.dfki.mlt.rudi;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.dfki.mlt.rudi.abstractTree.AbstractType;
 
 /**
  *
@@ -24,7 +23,7 @@ public class Mem {
     return depthAtm;
   }
 
-  public static void addElement(String variable, AbstractType type) {
+  public static void addElement(String variable, String type) {
     environment.get(positionAtm).put(variable, type);
   }
   
@@ -36,7 +35,7 @@ public class Mem {
     return getVariableType(variable) != null;
   }
 
-  public static AbstractType getVariableType(String variable) {
+  public static String getVariableType(String variable) {
     Environment actual = environment.get(positionAtm);
     if (!actual.containsKey(variable)) {
       int depth = actual.getDepth();

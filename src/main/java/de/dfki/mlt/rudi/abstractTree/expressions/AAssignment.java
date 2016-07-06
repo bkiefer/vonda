@@ -7,7 +7,6 @@ package de.dfki.mlt.rudi.abstractTree.expressions;
 
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
-import de.dfki.mlt.rudi.abstractTree.AbstractType;
 
 /**
  *
@@ -15,7 +14,7 @@ import de.dfki.mlt.rudi.abstractTree.AbstractType;
  */
 public class AAssignment implements AbstractTree, AbstractExpression {
 
-  private AbstractType type;
+  private String type;
   private AbstractTree left;
   private AbstractExpression right;
   private boolean declaration;
@@ -65,7 +64,7 @@ public class AAssignment implements AbstractTree, AbstractExpression {
   }
 
   @Override
-  public AbstractType getType() {
+  public String getType() {
     return this.type;
   }
 

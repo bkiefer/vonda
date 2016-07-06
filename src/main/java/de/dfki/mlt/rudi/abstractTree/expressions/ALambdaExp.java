@@ -7,7 +7,6 @@ package de.dfki.mlt.rudi.abstractTree.expressions;
 
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
-import de.dfki.mlt.rudi.abstractTree.AbstractType;
 import de.dfki.mlt.rudi.abstractTree.leaves.ACommentBlock;
 
 /**
@@ -33,9 +32,9 @@ public class ALambdaExp implements AbstractTree, AbstractExpression{
   }
 
   @Override
-  public AbstractType getType() {
+  public String getType() {
     // TODO: what's the type of a lambda expression?
-    return AbstractType.OBJECT;
+    return "Object";
   }
   
   

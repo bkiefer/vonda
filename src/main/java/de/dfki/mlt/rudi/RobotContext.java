@@ -7,7 +7,6 @@ package de.dfki.mlt.rudi;
 
 import java.util.List;
 
-import de.dfki.mlt.rudi.abstractTree.AbstractType;
 
 /**
  *
@@ -64,21 +63,21 @@ public interface RobotContext {
    * @param variable the variable
    * @return the type of this variable
    */
-  public AbstractType getVariableType(String variable);
+  public String getVariableType(String variable);
   
   /**
    * method that finds the type of a field or returns null if there is no such field
    * @param access the access
    * @return the type of this field
    */
-  public AbstractType getFieldAccessType(String access);
+  public String getFieldAccessType(String access);
   
   /**
    * method that finds the type of a function or returns null if there is no such function
    * @param access the access
    * @return the type of this function
    */
-  public AbstractType getFunctionAccessType(String access);
+  public String getFunctionAccessType(String access);
   
   ////////////////////////////////////////////////////////////////////////////
   /////////////////// following methods still needed? ////////////////////////

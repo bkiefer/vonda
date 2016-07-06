@@ -19,8 +19,8 @@ public class ANull  implements AbstractTree, AbstractExpression, AbstractLeaf{
   }
 
   @Override
-  public AbstractType getType() {
-    return AbstractType.OBJECT;   // for you can assign null to anything
+  public String getType() {
+    return "Object";   // for you can assign null to anything
   }
   
   @Override

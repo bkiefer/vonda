@@ -34,8 +34,8 @@ public class AComment implements AbstractTree, AbstractStatement, AbstractExpres
   }
 
   @Override
-  public AbstractType getType() {
-    return AbstractType.NONE;
+  public String getType() {
+    return null;
   }
 
   @Override

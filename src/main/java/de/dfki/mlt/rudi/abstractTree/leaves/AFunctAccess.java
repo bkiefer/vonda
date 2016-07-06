@@ -15,11 +15,11 @@ import de.dfki.mlt.rudi.abstractTree.*;
  */
 public class AFunctAccess  implements AbstractTree, AbstractExpression, AbstractLeaf{
   
-  private AbstractType type;
+  private String type;
   private String representation;
   private List<AbstractExpression> exps;
 
-  public AFunctAccess(AbstractType type, String representation, List<AbstractExpression> exps) {
+  public AFunctAccess(String type, String representation, List<AbstractExpression> exps) {
     this.type = type;
     this.representation = representation;
     this.exps = exps;
@@ -43,7 +43,7 @@ public class AFunctAccess  implements AbstractTree, AbstractExpression, Abstract
   }
 
   @Override
-  public AbstractType getType() {
+  public String getType() {
     return this.type;
   }
 }

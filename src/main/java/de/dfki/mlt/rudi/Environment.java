@@ -7,7 +7,6 @@ package de.dfki.mlt.rudi;
 
 import java.util.HashMap;
 
-import de.dfki.mlt.rudi.abstractTree.AbstractType;
 
 /**
  *
@@ -15,12 +14,12 @@ import de.dfki.mlt.rudi.abstractTree.AbstractType;
  */
 public class Environment {
   
-  private HashMap<String, AbstractType> memory;
+  private HashMap<String, String> memory;
   private int depth;
   
   public Environment(int depth){
     this.depth = depth;
-    this.memory = new HashMap<String, AbstractType>();
+    this.memory = new HashMap<String, String>();
   }
   
   public boolean isVisibleFrom(int somewhere){
@@ -31,7 +30,7 @@ public class Environment {
     return this.depth;
   }
   
-  public void put(String v, AbstractType t){
+  public void put(String v, String t){
     this.memory.put(v, t);
   }
   
@@ -39,7 +38,7 @@ public class Environment {
     return this.memory.containsKey(k);
   }
   
-  public AbstractType get(String k){
+  public String get(String k){
     if(!this.containsKey(k)){
       return null;
     }

@@ -9,7 +9,6 @@ import de.dfki.mlt.rudi.GrammarMain;
 import de.dfki.mlt.rudi.Mem;
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
-import de.dfki.mlt.rudi.abstractTree.AbstractType;
 
 /**
  *
@@ -73,8 +72,8 @@ public class ALiteralOrGraphExp  implements AbstractTree, AbstractExpression{
   }
 
   @Override
-  public AbstractType getType() {
-    return AbstractType.MAGIC;
+  public String getType() {
+    return "magic";
   }
   
 }

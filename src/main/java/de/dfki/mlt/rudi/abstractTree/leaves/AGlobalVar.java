@@ -13,10 +13,10 @@ import de.dfki.mlt.rudi.abstractTree.*;
  */
 public class AGlobalVar  implements AbstractTree, AbstractExpression, AbstractLeaf{
   
-  private AbstractType type;
+  private String type;
   private String representation;
 
-  public AGlobalVar(AbstractType type, String representation) {
+  public AGlobalVar(String type, String representation) {
     this.type = type;
     this.representation = representation;
   }
@@ -32,7 +32,7 @@ public class AGlobalVar  implements AbstractTree, AbstractExpression, AbstractLe
   }
 
   @Override
-  public AbstractType getType() {
+  public String getType() {
     return this.type;
   }
 }

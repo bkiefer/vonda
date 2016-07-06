@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.regex.Pattern;
 
-import de.dfki.mlt.rudi.abstractTree.AbstractType;
 
 /**
  *
@@ -126,79 +125,79 @@ public class TestContext implements RobotContext {
     return true;
   }
 
-  private static HashMap<String, AbstractType> variableMap = new HashMap<String, AbstractType>();
+  private static HashMap<String, String> variableMap = new HashMap<String, String>();
 
   {
-    variableMap.put("myLastSA", AbstractType.MAGIC);
-    variableMap.put("currentSA", AbstractType.MAGIC);
-    variableMap.put("lastSA", AbstractType.MAGIC);
-    variableMap.put("initiated", AbstractType.STRING);
-    variableMap.put("startSession", AbstractType.STRING);
-    variableMap.put("game", AbstractType.OBJECT);
-    variableMap.put("Inform", AbstractType.OBJECT);
-    variableMap.put("Confirm", AbstractType.OBJECT);
-    variableMap.put("_pendingTask", AbstractType.OBJECT);
-    variableMap.put("MAX_WAIT_FOR_TABLET", AbstractType.FLOAT);
-    variableMap.put("currentTime", AbstractType.FLOAT);
-    variableMap.put("POINTS_TO_ME", AbstractType.BOOL);
-    variableMap.put("I_MYSELF", AbstractType.OBJECT);
-    variableMap.put("inSession", AbstractType.OBJECT);
-    variableMap.put("questionAsked", AbstractType.BOOL);
-    variableMap.put("Question", AbstractType.OBJECT);
-    variableMap.put("Answers", AbstractType.OBJECT);
-    variableMap.put("Solution", AbstractType.OBJECT);
-    variableMap.put("turnFinished", AbstractType.BOOL);
-    variableMap.put("answerGiven", AbstractType.OBJECT);
-    variableMap.put("no", AbstractType.OBJECT);
-    variableMap.put("proposed", AbstractType.OBJECT);
-    variableMap.put("yes", AbstractType.OBJECT);
+    variableMap.put("myLastSA", "magic");
+    variableMap.put("currentSA", "magic");
+    variableMap.put("lastSA", "magic");
+    variableMap.put("initiated", "String");
+    variableMap.put("startSession", "String");
+    variableMap.put("game", "Object");
+    variableMap.put("Inform", "Object");
+    variableMap.put("Confirm", "Object");
+    variableMap.put("_pendingTask", "Object");
+    variableMap.put("MAX_WAIT_FOR_TABLET", "float");
+    variableMap.put("currentTime", "float");
+    variableMap.put("POINTS_TO_ME", "boolean");
+    variableMap.put("I_MYSELF", "Object");
+    variableMap.put("inSession", "Object");
+    variableMap.put("questionAsked", "boolean");
+    variableMap.put("Question", "Object");
+    variableMap.put("Answers", "Object");
+    variableMap.put("Solution", "Object");
+    variableMap.put("turnFinished", "boolean");
+    variableMap.put("answerGiven", "Object");
+    variableMap.put("no", "Object");
+    variableMap.put("proposed", "Object");
+    variableMap.put("yes", "Object");
   }
 
   @Override
-  public AbstractType getVariableType(String variable) {
+  public String getVariableType(String variable) {
     if (variableMap.containsKey(variable)) {
       return variableMap.get(variable);
     }
     throw new UnsupportedOperationException("I don't know this variable: " + variable);
   }
 
-  private static HashMap<String, AbstractType> fieldMap = new HashMap<String, AbstractType>();
+  private static HashMap<String, String> fieldMap = new HashMap<String, String>();
 
   {
-    fieldMap.put("game.status", AbstractType.STRING);
-    fieldMap.put("game.name", AbstractType.STRING);
-    fieldMap.put("game.maxTries", AbstractType.INT);
-    fieldMap.put("game.activeParticipant", AbstractType.BOOL);
-    fieldMap.put("game.lastMove.Question", AbstractType.OBJECT);
-    fieldMap.put("game.lastMove.Question.explanationGiven", AbstractType.OBJECT);
-    fieldMap.put("game.lastMove.answerCorrect", AbstractType.BOOL);
-    fieldMap.put("game.lastMove.tries", AbstractType.INT);
-    fieldMap.put("game.lastMove.explanationGiven", AbstractType.OBJECT);
-    fieldMap.put("game.tablet.currentOrientation", AbstractType.OBJECT);
-    fieldMap.put("game.tablet.supposedOrientation", AbstractType.OBJECT);
-    fieldMap.put("game.tablet.isAvailable", AbstractType.BOOL);
-    fieldMap.put("game.tablet.orientation", AbstractType.OBJECT);
+    fieldMap.put("game.status", "String");
+    fieldMap.put("game.name", "String");
+    fieldMap.put("game.maxTries", "int");
+    fieldMap.put("game.activeParticipant", "boolean");
+    fieldMap.put("game.lastMove.Question", "Object");
+    fieldMap.put("game.lastMove.Question.explanationGiven", "Object");
+    fieldMap.put("game.lastMove.answerCorrect", "boolean");
+    fieldMap.put("game.lastMove.tries", "int");
+    fieldMap.put("game.lastMove.explanationGiven", "Object");
+    fieldMap.put("game.tablet.currentOrientation", "Object");
+    fieldMap.put("game.tablet.supposedOrientation", "Object");
+    fieldMap.put("game.tablet.isAvailable", "boolean");
+    fieldMap.put("game.tablet.orientation", "Object");
 
-    fieldMap.put("gameLogic.startSession", AbstractType.BOOL);
-    fieldMap.put("gameLogic.isTurnBased", AbstractType.BOOL);
-    fieldMap.put("gameLogic.newRound", AbstractType.BOOL);
+    fieldMap.put("gameLogic.startSession", "boolean");
+    fieldMap.put("gameLogic.isTurnBased", "boolean");
+    fieldMap.put("gameLogic.newRound", "boolean");
 
-    fieldMap.put("currentUser.gameTypePlayed", AbstractType.BOOL);
-    fieldMap.put("currentUser.id", AbstractType.STRING);
+    fieldMap.put("currentUser.gameTypePlayed", "boolean");
+    fieldMap.put("currentUser.id", "String");
 
-    fieldMap.put("currentSA.hasActor", AbstractType.BOOL);
-    fieldMap.put("currentSA.frame", AbstractType.OBJECT);
-    fieldMap.put("currentSA.type", AbstractType.OBJECT);
-    fieldMap.put("currentSA.what", AbstractType.OBJECT);
+    fieldMap.put("currentSA.hasActor", "boolean");
+    fieldMap.put("currentSA.frame", "Object");
+    fieldMap.put("currentSA.type", "Object");
+    fieldMap.put("currentSA.what", "Object");
 
-    fieldMap.put("_pendingTask.frame", AbstractType.OBJECT);
-    fieldMap.put("_pendingTask.arg", AbstractType.OBJECT);
+    fieldMap.put("_pendingTask.frame", "Object");
+    fieldMap.put("_pendingTask.arg", "Object");
 
-    fieldMap.put("last.time", AbstractType.FLOAT);
+    fieldMap.put("last.time", "float");
   }
 
   @Override
-  public AbstractType getFieldAccessType(String access) {
+  public String getFieldAccessType(String access) {
     if (fieldMap.containsKey(access)) {
       return fieldMap.get(access);
     }
@@ -206,9 +205,9 @@ public class TestContext implements RobotContext {
   }
 
   @Override
-  public AbstractType getFunctionAccessType(String access) {
+  public String getFunctionAccessType(String access) {
     // could be anything
-    return AbstractType.OBJECT;
+    return "Object";
   }
 
   ////////////////////////////////////////////////////////////////////////////
