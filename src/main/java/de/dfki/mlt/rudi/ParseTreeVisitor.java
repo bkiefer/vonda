@@ -365,11 +365,13 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
       return new AAssignment(((AbstractExpression)left).getType(), this.visit(ctx.getChild(0)),
               (AbstractExpression) this.visit(ctx.getChild(2)), false);
     } else {  // declaration
-      Mem.addElement(ctx.getChild(1).getText(), ctx.getChild(0).getText());
       if (ctx.getChild(0).getText().equals("var")) {
+        AbstractTree right = this.visit(ctx.getChild(3));
+        Mem.addElement(ctx.getChild(1).getText(), ((AbstractExpression)right).getType());
         return new AAssignment(this.visit(ctx.getChild(1)),
-                (AbstractExpression) this.visit(ctx.getChild(3)), true);
+                (AbstractExpression) right, true);
       }
+      Mem.addElement(ctx.getChild(1).getText(), ctx.getChild(0).getText());
       return new AAssignment(ctx.getChild(0).getText(), this.visit(ctx.getChild(1)),
               (AbstractExpression) this.visit(ctx.getChild(3)), true);
     }

@@ -13,6 +13,8 @@ initiated:
 if (game.status == initiated) {
   timeout("bla", 12){
   var x = "test";
+  x = "blabla";
+  //x = 1000;
 }
   propose("start-game") {
     // gameTypePlayed is a predefined custom query (ASK)
