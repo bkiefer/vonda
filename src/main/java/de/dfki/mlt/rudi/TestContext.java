@@ -23,7 +23,7 @@ public class TestContext implements RobotContext {
 
   private Logger boolLogger;
   private FileHandler fh;
-  private boolean log;
+  private static boolean log;
   private String boolLog;
   private String currentRule;
   private int lastBool;
@@ -164,7 +164,7 @@ public class TestContext implements RobotContext {
   private static HashMap<String, String> fieldMap = new HashMap<String, String>();
 
   {
-    fieldMap.put("game.status", "String");
+    fieldMap.put("game.status", "boolean");
     fieldMap.put("game.name", "String");
     fieldMap.put("game.maxTries", "int");
     fieldMap.put("game.activeParticipant", "boolean");
@@ -209,7 +209,7 @@ public class TestContext implements RobotContext {
     // could be anything
     return "Object";
   }
-
+  
   ////////////////////////////////////////////////////////////////////////////
   /////////////////// following methods still needed? ////////////////////////
   ////////////////////////////////////////////////////////////////////////////
@@ -222,5 +222,6 @@ public class TestContext implements RobotContext {
   public String getFullVariableName(String variable) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
+
 
 }

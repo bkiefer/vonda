@@ -452,6 +452,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
             (AbstractBlock) this.visit(ctx.getChild(4)),
             (AbstractBlock) this.visit(ctx.getChild(6)));
   }
+  
+  @Override
+  public AbstractTree visitIf_exp(RobotGrammarParser.If_expContext ctx) {
+    // boolean_exp QUESTION exp COLON exp
+    return new AIfExp(this.visit(ctx.getChild(0)), this.visit(ctx.getChild(2)), this.visit(ctx.getChild(4)));
+  }
 
   @Override
   public AbstractTree visitFor_statement(RobotGrammarParser.For_statementContext ctx) {
@@ -587,5 +593,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   public AbstractTree visitErrorNode(ErrorNode en) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
+
 
 }

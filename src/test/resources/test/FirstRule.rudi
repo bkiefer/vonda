@@ -17,6 +17,7 @@ if (game.status == initiated) {
 // if this line is commented in, rudimant should complain
   //x = 1000;
 }
+  true ? false : true;
   propose("start-game") {
     // gameTypePlayed is a predefined custom query (ASK)
     if (currentUser.gameTypePlayed(game)) {

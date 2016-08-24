@@ -10,7 +10,6 @@ import de.dfki.mlt.rudi.Mem;
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
 
-
 /**
  *
  * @author anna
@@ -28,7 +27,12 @@ public class AAssignment implements AbstractTree, AbstractExpression {
     this.left = left;
     this.right = right;
     this.declaration = declaration;
-    if (declaration) {
+    findType();
+    this.actualType = this.type;
+  }
+
+  public void findType() {
+    if (declaration || !GrammarMain.checkTypes()) {
       this.type = ((AbstractExpression) right).getType();
     } else {
       this.type = ((AbstractExpression) left).getType();
@@ -39,7 +43,6 @@ public class AAssignment implements AbstractTree, AbstractExpression {
                 + " does not match " + ((AbstractExpression) right).getType());
       }
     }
-    this.actualType = this.type;
   }
 
   public AAssignment(String actualType, AbstractTree left, AbstractExpression right,
@@ -47,24 +50,29 @@ public class AAssignment implements AbstractTree, AbstractExpression {
     this.left = left;
     this.right = right;
     this.declaration = declaration;
+    if (GrammarMain.checkTypes()) {
+      findTypeDecl(actualType);
+    }
+    this.actualType = actualType;
+  }
+
+  public void findTypeDecl(String actualType) {
     if (declaration) {
       this.type = ((AbstractExpression) right).getType();
     } else {
       this.type = ((AbstractExpression) left).getType();
-      try{
-      if (!(((AbstractExpression)left).getType()).equals(((AbstractExpression) right).getType())) {
-        throw new UnsupportedOperationException("The following assignment has type mismatches:\n\t\t"
-                + this.toString() + "\nType " + ((AbstractExpression)left).getType()
-                + " does not match " + ((AbstractExpression) right).getType());
-      }
-      }
-      catch(NullPointerException e){
-        throw new UnsupportedOperationException("left: " + left.toString() + 
-                " of type " + ((AbstractExpression)left).getType() + "; right: " + 
-                right.toString() + " of type " + ((AbstractExpression) right).getType());
+      try {
+        if (!(((AbstractExpression) left).getType()).equals(((AbstractExpression) right).getType())) {
+          throw new UnsupportedOperationException("The following assignment has type mismatches:\n\t\t"
+                  + this.toString() + "\nType " + ((AbstractExpression) left).getType()
+                  + " does not match " + ((AbstractExpression) right).getType());
+        }
+      } catch (NullPointerException e) {
+        throw new UnsupportedOperationException("left: " + left.toString()
+                + " of type " + ((AbstractExpression) left).getType() + "; right: "
+                + right.toString() + " of type " + ((AbstractExpression) right).getType());
       }
     }
-    this.actualType = actualType;
   }
 
   @Override

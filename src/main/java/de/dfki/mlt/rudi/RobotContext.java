@@ -18,6 +18,7 @@ public interface RobotContext {
   public int getCurrentBool();
   public void setCurrentRule(String rule);
   
+  
   /**
    * method that adds a String to the logging block that will be printed before
    * boolean expressions (only if -log switch was used)
