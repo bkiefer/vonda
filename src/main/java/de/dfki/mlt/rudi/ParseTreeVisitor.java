@@ -51,12 +51,15 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitImports(RobotGrammarParser.ImportsContext ctx) {
+    //System.out.println("Rudi was here");
     String file = ctx.getChild(1).getText();
     try {
       // TODO: how to resolve a typical import to a file?
-      GrammarMain.processFile(new File(file + ".java"));
+      GrammarMain.processImport(new File(file));
     } catch (Exception ex) {
       Logger.getLogger(ParseTreeVisitor.class.getName()).log(Level.SEVERE, null, ex);
+      throw new UnsupportedOperationException("Parsing of import " + file + " failed.\n"
+              + "See log file for further details.");
     }
     return new AImport(file);
   }
@@ -588,14 +591,15 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
       case 48:  //token is wildcard
         return new AWildcard();
       case 57:  // token is variable
-        if (Mem.existsVariable(tn.getText())) {
-          return new ALocalVar(Mem.getVariableType(tn.getText()), tn.getText());
-        } else if (context.isGlobalVariable(tn.getText())) {
-          return new AGlobalVar(context.getVariableType(tn.getText()), tn.getText());
+        String text = tn.getText();
+        if (Mem.existsVariable(text)) {
+          return new ALocalVar(Mem.getVariableType(text), text);
+        } else if (context.isGlobalVariable(text)) {
+          return new AGlobalVar(context.getVariableType(text), text);
         } else {
           // TODO: find a nice exception
           throw new UnsupportedOperationException("This variable isn't declared "
-                  + "anywhere: " + tn.getText());
+                  + "anywhere: " + text);
         }
       case 58:  // token is int
         return new ANumber(tn.getText());

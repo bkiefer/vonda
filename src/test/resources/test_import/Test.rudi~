@@ -1,6 +1,5 @@
 
 import bla;
 
-if(true) {
+if(true)
   activity = "blabla";
-}

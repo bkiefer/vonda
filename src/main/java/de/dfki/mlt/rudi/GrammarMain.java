@@ -163,6 +163,25 @@ public class GrammarMain {
     Mem.addAndEnterNewEnvironment(0);
     processFile(file);
   }
+  
+  public static void processImport(File file) throws Exception{
+    // no writing here!!
+        // initialise the lexer with given input file
+        // import test crasht hier; warum??
+    RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(file)));
+
+    // initialise the parser
+    RobotGrammarParser parser = new RobotGrammarParser(new CommonTokenStream(lexer));
+
+    // create a parse tree; grammar_file is the start rule
+    ParseTree tree = parser.grammar_file();
+
+    // initialise the visitor that will do all the work
+    ParseTreeVisitor visitor = new ParseTreeVisitor(context);
+
+    // walk the parse tree
+    AbstractTree myTree = visitor.visit(tree);
+  }
 
   public static void processFile(File file) throws Exception {
     if (inputDirectory.equals(outputDirectory)) {

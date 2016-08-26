@@ -41,12 +41,12 @@ public class PrintTest {
   }
 
 
-    @Test
-    public void FirstRuleTest() throws Exception {
-        String[] strings = new String[]{"src/test/resources/FirstRule.rudi", 
-          "src/test/testfiles", "-log"};
-        GrammarMain.main(strings);
-    }
+//    @Test
+//    public void FirstRuleTest() throws Exception {
+//        String[] strings = new String[]{"src/test/resources/FirstRule.rudi", 
+//          "src/test/testfiles", "-log"};
+//        GrammarMain.main(strings);
+//    }
     
     @Test
     public void ImportTest() throws Exception {

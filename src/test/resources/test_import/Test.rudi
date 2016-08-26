@@ -1,5 +1,4 @@
 
 import bla;
 
-if(true)
-  activity = "blabla";
+activity = "blabla";
