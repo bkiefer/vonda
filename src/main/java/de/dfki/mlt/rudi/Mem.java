@@ -19,6 +19,12 @@ public class Mem {
   private static int positionAtm = -1;
   private static int depthAtm = -1;
   
+  public static void newMem(){
+    environment = new ArrayList<Environment>();
+    positionAtm = -1;
+    depthAtm = -1;
+  }
+  
   public static int getCurrentDepth(){
     return depthAtm;
   }

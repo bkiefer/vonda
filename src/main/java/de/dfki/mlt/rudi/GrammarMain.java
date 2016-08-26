@@ -98,10 +98,17 @@ public class GrammarMain {
           System.out.println(help);
       }
     }
-    System.out.println("Searching directory " + inputDirectory + " for files to be translated.");
 
-    // find all .rudi files in directory and process them
     File dir = new File(inputDirectory);
+
+    //is this really a directory, or is it a single file?
+    if (!dir.isDirectory()) {
+      System.out.println("Translating file " + args[0]);
+      processFileDirectly(dir);
+      return;
+    }
+    // find all .rudi files in directory and process them
+    System.out.println("Searching directory " + inputDirectory + " for files to be translated.");
     originalInputDirectory = dir.getAbsolutePath().length() + 1;
     if (throwExceptions) {
       searchAndTranslateDirectory(dir);
@@ -111,6 +118,10 @@ public class GrammarMain {
               new FileOutputStream("rudimant.log")));
       searchAndTranslateDirectoryLogEx(dir);
     }
+    //clean the memory
+    Mem.newMem();
+
+    System.exit(0);
   }
 
   public static void searchAndTranslateDirectoryLogEx(File directory) {
@@ -120,6 +131,7 @@ public class GrammarMain {
         searchAndTranslateDirectoryLogEx(f);
       } else if (f.getName().endsWith(".rudi")) {
         try {
+          Mem.addAndEnterNewEnvironment(0);
           processFile(f);
         } catch (Exception e) {
           System.out.println("A " + e.getClass() + "occurred during parsing"
@@ -141,9 +153,15 @@ public class GrammarMain {
       if (f.isDirectory()) {
         searchAndTranslateDirectory(f);
       } else if (f.getName().endsWith(".rudi")) {
+        Mem.addAndEnterNewEnvironment(0);
         processFile(f);
       }
     }
+  }
+
+  public static void processFileDirectly(File file) throws Exception {
+    Mem.addAndEnterNewEnvironment(0);
+    processFile(file);
   }
 
   public static void processFile(File file) throws Exception {
@@ -198,9 +216,11 @@ public class GrammarMain {
 
     // close the writer
     writer.close();
+
+    System.out.println("\nDone.");
   }
-  
-  public static boolean checkTypes(){
+
+  public static boolean checkTypes() {
     return typeCheck;
   }
 }

@@ -11,9 +11,11 @@ import de.dfki.mlt.rudi.abstractTree.leaves.*;
 import de.dfki.mlt.rudi.abstractTree.statements.*;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -37,8 +39,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   @Override
   public AbstractTree visitGrammar_file(RobotGrammarParser.Grammar_fileContext ctx) {
     // create an environment at the upper level
-    Mem.addAndEnterNewEnvironment(0);
-    // (comment grammar_rule)* comment
+    // TODO: move to GrammarMain before single file visit so it is "really" global
+    // Mem.addAndEnterNewEnvironment(0);
+    // imports* (comment (grammar_rule | ...))* comment
     ArrayList<AbstractTree> rules = new ArrayList<AbstractTree>();
     for (int i = 0; i < ctx.getChildCount(); i++) {
       rules.add(this.visit(ctx.getChild(i)));
@@ -48,7 +51,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitImports(RobotGrammarParser.ImportsContext ctx) {
-    return new AImport(ctx.getChild(1).getText());
+    String file = ctx.getChild(1).getText();
+    try {
+      // TODO: how to resolve a typical import to a file?
+      GrammarMain.processFile(new File(file + ".java"));
+    } catch (Exception ex) {
+      Logger.getLogger(ParseTreeVisitor.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return new AImport(file);
   }
 
   @Override
