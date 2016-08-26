@@ -47,6 +47,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   }
 
   @Override
+  public AbstractTree visitImports(RobotGrammarParser.ImportsContext ctx) {
+    return new AImport(ctx.getChild(1).getText());
+  }
+
+  @Override
   public AbstractTree visitMethod_declaration(RobotGrammarParser.Method_declarationContext ctx) {
     // (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | VARIABLE) VARIABLE LPAR 
     // ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*) RPAR statement_block
@@ -362,12 +367,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     // ((DEC_VAR | VARIABLE)? VARIABLE | field_access) ASSIGN exp
     if (ctx.getChildCount() == 3) { // no declaration
       AbstractTree left = this.visit(ctx.getChild(0));
-      return new AAssignment(((AbstractExpression)left).getType(), this.visit(ctx.getChild(0)),
+      return new AAssignment(((AbstractExpression) left).getType(), this.visit(ctx.getChild(0)),
               (AbstractExpression) this.visit(ctx.getChild(2)), false);
     } else {  // declaration
       if (ctx.getChild(0).getText().equals("var")) {
         AbstractTree right = this.visit(ctx.getChild(3));
-        Mem.addElement(ctx.getChild(1).getText(), ((AbstractExpression)right).getType());
+        Mem.addElement(ctx.getChild(1).getText(), ((AbstractExpression) right).getType());
         return new AAssignment(this.visit(ctx.getChild(1)),
                 (AbstractExpression) right, true);
       }
@@ -452,13 +457,13 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
             (AbstractBlock) this.visit(ctx.getChild(4)),
             (AbstractBlock) this.visit(ctx.getChild(6)));
   }
-  
+
   @Override
   public AbstractTree visitIf_exp(RobotGrammarParser.If_expContext ctx) {
     // boolean_exp QUESTION exp COLON exp
-    return new AIfExp((AbstractExpression)this.visit(ctx.getChild(0)),
-            (AbstractExpression)this.visit(ctx.getChild(2)), 
-            (AbstractExpression)this.visit(ctx.getChild(4)));
+    return new AIfExp((AbstractExpression) this.visit(ctx.getChild(0)),
+            (AbstractExpression) this.visit(ctx.getChild(2)),
+            (AbstractExpression) this.visit(ctx.getChild(4)));
   }
 
   @Override
@@ -497,7 +502,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
       List<String> vars = new ArrayList<String>();
       AbstractTree exp = this.visit(ctx.getChild(ctx.getChildCount() - 3));
       for (int i = 3; i < ctx.getChildCount() - 5; i += 2) {
-        Mem.addElement(ctx.getChild(i).getText(), ((AbstractExpression)exp).getType());
+        Mem.addElement(ctx.getChild(i).getText(), ((AbstractExpression) exp).getType());
         vars.add(ctx.getChild(i).getText());
       }
       return new AFor3Stat(vars, exp,
@@ -558,21 +563,21 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     // Attention! if you added new tokens or deleted old ones, the case numbers might have changed and 
     // you get unexpected behaviour! (see Generated Sources / RobotGrammarLexer.java for right numbers)
     switch (tn.getSymbol().getType()) {
-      case 8:   // token is NULL
+      case 9:   // token is NULL
         return new ANull();
-      case 9:   // token is TRUE
+      case 10:   // token is TRUE
         return new AUnaryBoolean(tn.getText());
-      case 10:  // token is FALSE
+      case 11:  // token is FALSE
         return new AUnaryBoolean(tn.getText());
-      case 15:  // token is character
+      case 16:  // token is character
         return new ACharacter(tn.getText());
-      case 16:  // token is String
+      case 17:  // token is String
         return new AString(tn.getText());
-      case 19:  // token is an annotation
+      case 20:  // token is an annotation
         return new AString(tn.getText() + "\n");
-      case 47:  //token is wildcard
+      case 48:  //token is wildcard
         return new AWildcard();
-      case 56:  // token is variable
+      case 57:  // token is variable
         if (Mem.existsVariable(tn.getText())) {
           return new ALocalVar(Mem.getVariableType(tn.getText()), tn.getText());
         } else if (context.isGlobalVariable(tn.getText())) {
@@ -582,9 +587,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
           throw new UnsupportedOperationException("This variable isn't declared "
                   + "anywhere: " + tn.getText());
         }
-      case 57:  // token is int
+      case 58:  // token is int
         return new ANumber(tn.getText());
-      case 58:  // token is float
+      case 59:  // token is float
         return new ANumber(tn.getText());
     }
     throw new UnsupportedOperationException("The terminal node for " + tn.getText()
@@ -595,6 +600,5 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   public AbstractTree visitErrorNode(ErrorNode en) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
-
 
 }

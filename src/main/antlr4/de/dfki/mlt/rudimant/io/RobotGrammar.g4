@@ -11,7 +11,14 @@ grammar RobotGrammar;
 
 /// start rule
 grammar_file
-  : (comment (grammar_rule | method_declaration | statement | ANNOTATION))* comment
+  : imports*
+    (comment 
+    (grammar_rule | method_declaration | statement | ANNOTATION))* 
+    comment
+  ;
+
+imports
+  : IMPORT VARIABLE SEMICOLON
   ;
 
 method_declaration
@@ -33,6 +40,7 @@ statement
     ( exp SEMICOLON
     | set_operation SEMICOLON
     | return_statement
+    | imports
     | propose_statement
     | timeout_statement
     | if_statement
@@ -84,6 +92,7 @@ loop_statement
     | (CONTINUE | BREAK) SEMICOLON
     | set_operation SEMICOLON
     | return_statement
+    | imports
     | loop_propose_statement // do we want to be able to call break or continue here?
     | timeout_statement
     | loop_if_statement
@@ -294,6 +303,7 @@ factor
  */
 
 /// keywords + true, false, null:
+IMPORT: 'import';
 IF: 'if';
 ELSE: 'else';
 WHILE: 'while';

@@ -6,6 +6,9 @@
    check-start: // or sth else than ':' ?
    if (test)
 */
+
+import bla;
+
 /*@ public class FirstRule extends RuleUnit {@*/
 // A new game is started
 /*@ public void newClass(){@*/
