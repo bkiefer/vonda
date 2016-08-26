@@ -32,6 +32,7 @@ public class GrammarMain {
   private static Writer logwriter;
   private static boolean log;
   private static boolean throwExceptions = true;
+  private static boolean typeCheck = true;
   public static RobotContext context;
 
   private static int originalInputDirectory;
@@ -45,8 +46,9 @@ public class GrammarMain {
           + "\tall boolean expressions is being logged as "
           + "soon as they are evaluated.\n"
           + "-e\tDo not crash if there are .rudi files that cannot be translated"
+          + "-nt\tDo not try to do type checking while translating\n"
           + "\n\nPlease use this tool as follows:\n"
-          + "java rudimant <directory_to_be_searched/> [output_directory/] (-log)\n";
+          + "java rudimant <directory_to_be_searched/> [output_directory/] (flags)\n";
 
   /**
    *
@@ -88,6 +90,9 @@ public class GrammarMain {
           break;
         case "-e":
           throwExceptions = false;
+          break;
+        case "-nt":
+          typeCheck = false;
           break;
         default:
           System.out.println(help);
@@ -193,5 +198,9 @@ public class GrammarMain {
 
     // close the writer
     writer.close();
+  }
+  
+  public static boolean checkTypes(){
+    return typeCheck;
   }
 }

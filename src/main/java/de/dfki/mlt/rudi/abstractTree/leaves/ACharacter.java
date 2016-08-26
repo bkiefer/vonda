@@ -30,8 +30,8 @@ public class ACharacter  implements AbstractTree, AbstractExpression, AbstractLe
   }
 
   @Override
-  public AbstractType getType() {
-    return AbstractType.STRING;
+  public String getType() {
+    return "char";
   }
   
 }

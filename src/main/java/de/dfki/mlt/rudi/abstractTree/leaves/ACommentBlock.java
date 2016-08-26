@@ -25,8 +25,10 @@ public class ACommentBlock implements AbstractTree, AbstractStatement {
     this.comments = comments;
     this.containsClassName = false;
     for (AComment c : comments) {
-      if (c.containsClassName()) {
-        this.containsClassName = true;
+      if (!(c.toString().startsWith("//") || c.toString().startsWith("/*"))) {
+        if (c.containsClassName()) {
+          this.containsClassName = true;
+        }
       }
     }
   }
@@ -45,7 +47,7 @@ public class ACommentBlock implements AbstractTree, AbstractStatement {
     if (this.printClassName) {
       for (AComment c : comments) {
         ret += "\n" + c;
-        if(c.containsClassName()){
+        if (c.containsClassName()) {
           ret += "\n" + GrammarMain.context.afterClassName();
         }
       }

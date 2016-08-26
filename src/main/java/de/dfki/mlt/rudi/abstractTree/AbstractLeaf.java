@@ -14,7 +14,7 @@ public interface AbstractLeaf {
   /**
    * the leaf's type
    */
-  AbstractType type = AbstractType.OBJECT;
+  String type = "Object";
   
-  public AbstractType getType();
+  public String getType();
 }

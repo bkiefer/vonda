@@ -31,8 +31,8 @@ public class AUnaryBoolean implements AbstractTree, AbstractExpression, Abstract
   }
 
   @Override
-  public AbstractType getType() {
-    return AbstractType.BOOL;
+  public String getType() {
+    return "boolean";
   }
   
 }

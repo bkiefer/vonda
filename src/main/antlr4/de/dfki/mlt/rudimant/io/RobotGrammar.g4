@@ -54,6 +54,10 @@ if_statement
   : IF LPAR boolean_exp RPAR statement (ELSE statement)?
   ;
 
+if_exp
+  : boolean_exp QUESTION exp COLON exp
+  ;
+
 while_statement
   : WHILE LPAR boolean_exp RPAR loop_statement_block
   | DO loop_statement_block WHILE LPAR boolean_exp RPAR
@@ -134,6 +138,7 @@ exp
   | NOT boolean_exp
   | field_access
   | assignment
+  | if_exp
   | arithmetic
   | function_call
   | literal_or_graph_exp

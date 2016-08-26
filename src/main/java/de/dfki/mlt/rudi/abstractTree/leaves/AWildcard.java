@@ -24,7 +24,7 @@ public class AWildcard  implements AbstractTree, AbstractExpression, AbstractLea
   }
 
   @Override
-  public AbstractType getType() {
-    return AbstractType.OBJECT; // ???
+  public String getType() {
+    return "Object"; // ???
   }
 }

@@ -69,13 +69,13 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     HashMap<String, String> par_to_typ = new HashMap<String, String>();
     // get all the parameters of the function
     for (int i = 3; i < ctx.getChildCount() - 2;) {
-        String t = ctx.getChild(i).getText();
-        i++;
-        if (t.equals("var")) {
-          t = "Object";
-        }
-        par_to_typ.put(ctx.getChild(i).getText(), t);
-        i += 2;
+      String t = ctx.getChild(i).getText();
+      i++;
+      if (t.equals("var")) {
+        t = "Object";
+      }
+      par_to_typ.put(ctx.getChild(i).getText(), t);
+      i += 2;
     }
     return new AMethodDeclaration("", ctx.getChild(0).getText(), ctx.getChild(1).getText(),
             par_to_typ, this.visit(ctx.getChild(ctx.getChildCount() - 1)));
@@ -361,14 +361,17 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   public AbstractTree visitAssignment(RobotGrammarParser.AssignmentContext ctx) {
     // ((DEC_VAR | VARIABLE)? VARIABLE | field_access) ASSIGN exp
     if (ctx.getChildCount() == 3) { // no declaration
-      return new AAssignment(this.visit(ctx.getChild(0)),
+      AbstractTree left = this.visit(ctx.getChild(0));
+      return new AAssignment(((AbstractExpression)left).getType(), this.visit(ctx.getChild(0)),
               (AbstractExpression) this.visit(ctx.getChild(2)), false);
     } else {  // declaration
-      Mem.addElement(ctx.getChild(1).getText(), AbstractType.OBJECT);
       if (ctx.getChild(0).getText().equals("var")) {
+        AbstractTree right = this.visit(ctx.getChild(3));
+        Mem.addElement(ctx.getChild(1).getText(), ((AbstractExpression)right).getType());
         return new AAssignment(this.visit(ctx.getChild(1)),
-                (AbstractExpression) this.visit(ctx.getChild(3)), true);
+                (AbstractExpression) right, true);
       }
+      Mem.addElement(ctx.getChild(1).getText(), ctx.getChild(0).getText());
       return new AAssignment(ctx.getChild(0).getText(), this.visit(ctx.getChild(1)),
               (AbstractExpression) this.visit(ctx.getChild(3)), true);
     }
@@ -449,6 +452,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
             (AbstractBlock) this.visit(ctx.getChild(4)),
             (AbstractBlock) this.visit(ctx.getChild(6)));
   }
+  
+  @Override
+  public AbstractTree visitIf_exp(RobotGrammarParser.If_expContext ctx) {
+    // boolean_exp QUESTION exp COLON exp
+    return new AIfExp(this.visit(ctx.getChild(0)), this.visit(ctx.getChild(2)), this.visit(ctx.getChild(4)));
+  }
 
   @Override
   public AbstractTree visitFor_statement(RobotGrammarParser.For_statementContext ctx) {
@@ -456,15 +465,20 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
       // FOR LPAR  VARIABLE COLON exp RPAR loop_statement_block"
       // TODO: or should we check here that the type of the variable in assignment
       // is the type the iterable in exp returns? How?
-      Mem.addElement(ctx.getChild(2).getText(), AbstractType.OBJECT);
-      return new AFor2Stat(new ALocalVar(ctx.getChild(2).getText()), this.visit(ctx.getChild(4)),
+      AbstractTree exp = this.visit(ctx.getChild(4));
+      Mem.addElement(ctx.getChild(2).getText(), ((AbstractExpression) exp).getType());
+      return new AFor2Stat(new ALocalVar(ctx.getChild(2).getText()), exp,
               (AbstractBlock) this.visit(ctx.getChild(6)));
-    } else if(ctx.getChild(4).getText().equals(":")){
+    } else if (ctx.getChild(4).getText().equals(":")) {
       // FOR LPAR (DEC_VAR | VARIABLE) VARIABLE COLON exp RPAR loop_statement_block"
-      Mem.addElement(ctx.getChild(3).getText(), AbstractType.OBJECT);
+      if (ctx.getChild(2).getText().equals("var")) {
+        Mem.addElement(ctx.getChild(3).getText(), "Object");
+      } else {
+        Mem.addElement(ctx.getChild(3).getText(), ctx.getChild(2).getText());
+      }
       return new AFor2Stat(ctx.getChild(2).getText(), new ALocalVar(ctx.getChild(3).getText()), this.visit(ctx.getChild(5)),
               (AbstractBlock) this.visit(ctx.getChild(7)));
-    }  else if (ctx.getChildCount() == 8) {
+    } else if (ctx.getChildCount() == 8) {
       // statement looks like "FOR LPAR assignment SEMICOLON exp SEMICOLON RPAR loop_statement_block"
       return new AFor1Stat((AAssignment) this.visit(ctx.getChild(2)),
               (ABooleanExp) this.visit(ctx.getChild(4)),
@@ -479,11 +493,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
       // statement looks like "FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block"
       // TODO: implement For3Stat; exp will return some Object[]
       List<String> vars = new ArrayList<String>();
+      AbstractTree exp = this.visit(ctx.getChild(ctx.getChildCount() - 3));
       for (int i = 3; i < ctx.getChildCount() - 5; i += 2) {
-        Mem.addElement(ctx.getChild(i).getText(), AbstractType.OBJECT);
+        Mem.addElement(ctx.getChild(i).getText(), ((AbstractExpression)exp).getType());
         vars.add(ctx.getChild(i).getText());
       }
-      return new AFor3Stat(vars, this.visit(ctx.getChild(ctx.getChildCount() - 3)),
+      return new AFor3Stat(vars, exp,
               (AbstractBlock) this.visit(ctx.getChild(ctx.getChildCount() - 1)));
     }
   }
@@ -570,12 +585,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
       case 58:  // token is float
         return new ANumber(tn.getText());
     }
-    throw new UnsupportedOperationException("The terminal node for " + tn.getText() + " should never be used");
+    throw new UnsupportedOperationException("The terminal node for " + tn.getText()
+            + ", tree type: " + tn.getSymbol().getType() + " should never be used");
   }
 
   @Override
   public AbstractTree visitErrorNode(ErrorNode en) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
+
 
 }

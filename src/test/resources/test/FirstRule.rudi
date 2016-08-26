@@ -13,7 +13,11 @@ initiated:
 if (game.status == initiated) {
   timeout("bla", 12){
   var x = "test";
+  x = "blabla";
+// if this line is commented in, rudimant should complain
+  //x = 1000;
 }
+  true ? false : true;
   propose("start-game") {
     // gameTypePlayed is a predefined custom query (ASK)
     if (currentUser.gameTypePlayed(game)) {

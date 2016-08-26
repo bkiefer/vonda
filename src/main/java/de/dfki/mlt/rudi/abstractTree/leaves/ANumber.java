@@ -30,8 +30,8 @@ public class ANumber  implements AbstractTree, AbstractExpression, AbstractLeaf{
   }
 
   @Override
-  public AbstractType getType() {
+  public String getType() {
     // every int can be a float
-    return AbstractType.FLOAT;
+    return "float";
   }
 }

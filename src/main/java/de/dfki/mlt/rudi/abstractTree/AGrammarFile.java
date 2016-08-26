@@ -14,10 +14,9 @@ import de.dfki.mlt.rudi.abstractTree.leaves.ACommentBlock;
  *
  * @author anna
  */
-public class AGrammarFile implements AbstractTree{
-  
+public class AGrammarFile implements AbstractTree {
+
   // (comment grammar_rule)* comment
-  
   private List<AbstractTree> rules;
 
   public AGrammarFile(List<AbstractTree> rules) {
@@ -25,14 +24,14 @@ public class AGrammarFile implements AbstractTree{
   }
 
   @Override
-  public String toString(){
+  public String toString() {
     String ret = "";
     boolean foundClassName = false;
-    for (AbstractTree r : rules){
+    for (AbstractTree r : rules) {
       // Don't forget to insert text after class name as specified in context
-      if(r instanceof ACommentBlock && foundClassName == false){
-        if(((ACommentBlock)r).containsClassName()){
-          ((ACommentBlock)r).setPrintClassName();
+      if (r instanceof ACommentBlock && foundClassName == false) {
+        if (((ACommentBlock) r).containsClassName()) {
+          ((ACommentBlock) r).setPrintClassName();
           foundClassName = true;
         }
       }
@@ -40,11 +39,13 @@ public class AGrammarFile implements AbstractTree{
     }
     return ret;
   }
-  
+
   @Override
   public void testType() {
-    for (AbstractTree t : this.rules){
-      t.testType();
+    if (GrammarMain.checkTypes()) {
+      for (AbstractTree t : this.rules) {
+        t.testType();
+      }
     }
   }
 }

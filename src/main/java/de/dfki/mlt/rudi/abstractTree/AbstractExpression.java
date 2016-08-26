@@ -15,5 +15,5 @@ public interface AbstractExpression {
    * 
    * @return the expression's type
    */
-  public AbstractType getType();
+  public String getType();
 }

@@ -13,16 +13,16 @@ import de.dfki.mlt.rudi.abstractTree.*;
  */
 public class ALocalVar  implements AbstractTree, AbstractExpression, AbstractLeaf{
   
-  private AbstractType type;
+  private String type;
   private String representation;
 
-  public ALocalVar(AbstractType type, String representation) {
+  public ALocalVar(String type, String representation) {
     this.type = type;
     this.representation = representation;
   }
   
   public ALocalVar(String representation) {
-    this.type = AbstractType.OBJECT;
+    this.type = "Objecct";
     this.representation = representation;
   }
 
@@ -37,7 +37,7 @@ public class ALocalVar  implements AbstractTree, AbstractExpression, AbstractLea
   }
 
   @Override
-  public AbstractType getType() {
+  public String getType() {
     return this.type;
   }
   

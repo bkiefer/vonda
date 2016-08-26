@@ -13,10 +13,10 @@ import de.dfki.mlt.rudi.abstractTree.*;
  */
 public class AFieldAccess  implements AbstractTree, AbstractExpression, AbstractLeaf{
   
-  private AbstractType type;
+  private String type;
   private String representation;
 
-  public AFieldAccess(AbstractType type, String representation) {
+  public AFieldAccess(String type, String representation) {
     this.type = type;
     this.representation = representation;
   }
@@ -32,7 +32,7 @@ public class AFieldAccess  implements AbstractTree, AbstractExpression, Abstract
   }
 
   @Override
-  public AbstractType getType() {
+  public String getType() {
     return this.type;
   }
 }

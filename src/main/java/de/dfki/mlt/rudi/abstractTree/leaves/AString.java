@@ -30,8 +30,8 @@ public class AString implements AbstractTree, AbstractExpression, AbstractLeaf{
   }
 
   @Override
-  public AbstractType getType() {
-    return AbstractType.STRING;
+  public String getType() {
+    return "String";
   }
   
 }
