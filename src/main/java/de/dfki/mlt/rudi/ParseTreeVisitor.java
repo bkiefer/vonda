@@ -52,6 +52,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   @Override
   public AbstractTree visitImports(RobotGrammarParser.ImportsContext ctx) {
     //System.out.println("Rudi was here");
+    Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth());
     String file = ctx.getChild(1).getText();
     try {
       // TODO: how to resolve a typical import to a file?
