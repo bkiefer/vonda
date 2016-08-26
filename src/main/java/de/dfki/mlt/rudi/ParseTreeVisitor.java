@@ -456,7 +456,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   @Override
   public AbstractTree visitIf_exp(RobotGrammarParser.If_expContext ctx) {
     // boolean_exp QUESTION exp COLON exp
-    return new AIfExp(this.visit(ctx.getChild(0)), this.visit(ctx.getChild(2)), this.visit(ctx.getChild(4)));
+    return new AIfExp((AbstractExpression)this.visit(ctx.getChild(0)),
+            (AbstractExpression)this.visit(ctx.getChild(2)), 
+            (AbstractExpression)this.visit(ctx.getChild(4)));
   }
 
   @Override

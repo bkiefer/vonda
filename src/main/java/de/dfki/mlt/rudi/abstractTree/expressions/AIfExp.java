@@ -14,11 +14,11 @@ import de.dfki.mlt.rudi.abstractTree.AbstractTree;
  */
 public class AIfExp implements AbstractTree, AbstractExpression{
   
-  private AbstractTree bool;
-  private AbstractTree ifexp;
-  private AbstractTree thenexp;
+  private AbstractExpression bool;
+  private AbstractExpression ifexp;
+  private AbstractExpression thenexp;
   
-  public AIfExp(AbstractTree bool, AbstractTree ifexp, AbstractTree thenexp){
+  public AIfExp(AbstractExpression bool, AbstractExpression ifexp, AbstractExpression thenexp){
     this.bool = bool;
     this.ifexp = ifexp;
     this.thenexp = thenexp;
@@ -26,13 +26,16 @@ public class AIfExp implements AbstractTree, AbstractExpression{
 
   @Override
   public void testType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    ((AbstractTree)bool).testType();
+    ((AbstractTree)ifexp).testType();
+    ((AbstractTree)thenexp).testType();
+    assert(bool.getType().equals("boolean"));
+    assert(ifexp.getType().equals(thenexp.getType()));
   }
 
   @Override
   public String getType() {
-    // TODO: geht das genauer?
-    return "Object";
+    return ifexp.getType();
   }
   
   @Override

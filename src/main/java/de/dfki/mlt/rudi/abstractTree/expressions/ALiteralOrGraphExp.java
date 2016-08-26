@@ -35,6 +35,7 @@ public class ALiteralOrGraphExp  implements AbstractTree, AbstractExpression{
   
   @Override
   public String toString(){
+      // TODO: Variablen mit ^ anstatt Strings mit ""!!! 
     String ret = "new DialogueAct(\"" + litGraph + "(";
     String rightParams = "";
     String[] parameters = this.rest.split(",");
