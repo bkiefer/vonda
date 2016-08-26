@@ -103,6 +103,7 @@ public class GrammarMain {
 
     //is this really a directory, or is it a single file?
     if (!dir.isDirectory()) {
+      inputDirectory = inputDirectory.substring(0, inputDirectory.indexOf(dir.getName()));
       System.out.println("Translating file " + args[0]);
       processFileDirectly(dir);
       return;
@@ -164,11 +165,12 @@ public class GrammarMain {
     processFile(file);
   }
   
-  public static void processImport(File file) throws Exception{
+  public static void processImport(String file) throws Exception{
     // no writing here!!
         // initialise the lexer with given input file
         // import test crasht hier; warum??
-    RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(file)));
+    RobotGrammarLexer lexer = new RobotGrammarLexer(
+            new ANTLRInputStream(new FileInputStream(inputDirectory + file)));
 
     // initialise the parser
     RobotGrammarParser parser = new RobotGrammarParser(new CommonTokenStream(lexer));
