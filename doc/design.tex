@@ -1,0 +1,45 @@
+\section{Options for translating rules and .rudi files}
+
+Naming convention: a label followed by a colon followed by an \emph{if} is
+called \emph{rule} from now on.
+
+There are two main options to translate:
+\begin{itemize}
+\item[A)] translate the whole project into one large Java class / method
+  Problems with this approach
+  \begin{itemize}
+  \item The relation to the source code is hard to track: no modularity, one
+    large blob
+  \item The execution regime can not be changed except by changing the
+    translation (no dynamic adaptation of execution)
+  \end{itemize}
+\item[B)] Create a class for each .rudi file and each top-level rule
+  \begin{itemize}
+  \item Clear structure that is isomorphic to the .rudi files
+  \item Dynamic execution strategy is easier to imagine, albeit not really
+    feasible (do we want/need it?)
+  \item Variables on the top level of a file can be implemented by class
+    fields and fully specified access, such as Introduction.special\_variable
+  \end{itemize}
+\end{itemize}
+
+We're going for version B), assuming that most of the variables which have
+non-local scope are state variables in the agent, which also might be
+specified in special top-level files. These should also contain specifications
+for general framework functions, i.e., the whole signatures including types
+for the arguments and return types, to enable advanced type checking.
+
+Similar files could be used for custom user state variables and functions,
+i.e., for Quiz logic, custom knowledge bases, etc.
+
+Embedded rules will be treated differently to avoid the overhead of handling
+local scope and lifetime of variables.
+
+\texttt{return} statements can have optional labels that indicate the exit
+point / level, which may be local rule, top-level rule or file. A return
+without label exits from the innermost scope.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "master"
+%%% End:
