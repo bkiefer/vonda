@@ -48,7 +48,7 @@ public class AFor2Stat implements AbstractStatement, AbstractTree {
   }
 
   @Override
-  public String toString() {
+  public String generate(Writer out) {
     return "for (" + varType + " " + var + ": " + exp + ") " + statblock;
   }
 }

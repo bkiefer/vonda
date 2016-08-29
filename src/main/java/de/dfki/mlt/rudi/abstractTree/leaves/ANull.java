@@ -11,7 +11,7 @@ import de.dfki.mlt.rudi.abstractTree.*;
  *
  * @author anna
  */
-public class ANull  implements AbstractTree, AbstractExpression, AbstractLeaf{
+public class ANull extends AbstractLeaf {
 
   @Override
   public void testType() {
@@ -22,10 +22,10 @@ public class ANull  implements AbstractTree, AbstractExpression, AbstractLeaf{
   public String getType() {
     return "Object";   // for you can assign null to anything
   }
-  
+
   @Override
-  public String toString(){
+  public String generate(Writer out){
     return "null";
   }
-  
+
 }

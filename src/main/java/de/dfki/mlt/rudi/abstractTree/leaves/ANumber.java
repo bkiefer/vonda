@@ -11,8 +11,8 @@ import de.dfki.mlt.rudi.abstractTree.*;
  *
  * @author anna
  */
-public class ANumber  implements AbstractTree, AbstractExpression, AbstractLeaf{
-  
+public class ANumber extends AbstractLeaf{
+
   private String value;
 
   public ANumber(String value) {
@@ -23,9 +23,9 @@ public class ANumber  implements AbstractTree, AbstractExpression, AbstractLeaf{
   public void testType() {
     // everything okay
   }
-  
+
   @Override
-  public String toString(){
+  public String generate(Writer out){
     return this.value;
   }
 

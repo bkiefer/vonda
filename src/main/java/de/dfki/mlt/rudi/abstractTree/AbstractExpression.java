@@ -9,10 +9,10 @@ package de.dfki.mlt.rudi.abstractTree;
  *
  * @author anna
  */
-public interface AbstractExpression {
-  
+public interface AbstractExpression extends AbstractTree {
+
   /**
-   * 
+   *
    * @return the expression's type
    */
   public String getType();

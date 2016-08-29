@@ -11,15 +11,15 @@ import de.dfki.mlt.rudi.abstractTree.*;
  *
  * @author anna
  */
-public class AWildcard  implements AbstractTree, AbstractExpression, AbstractLeaf{
+public class AWildcard extends AbstractLeaf{
 
   @Override
   public void testType() {
     // do nothing
   }
-  
+
   @Override
-  public String toString(){
+  public String generate(Writer out){
     return "this.wildcard";   // wildcard is a local variable in resulting class
   }
 

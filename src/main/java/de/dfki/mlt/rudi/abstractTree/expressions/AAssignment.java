@@ -36,10 +36,10 @@ public class AAssignment implements AbstractTree, AbstractExpression {
       this.type = ((AbstractExpression) right).getType();
     } else {
       this.type = ((AbstractExpression) left).getType();
-      if (!(Mem.getVariableType(left.toString())
+      if (!(Mem.getVariableType(left.generate(null))
               .equals(((AbstractExpression) right).getType()))) {
         throw new UnsupportedOperationException("The following assignment has type mismatches:\n\t\t"
-                + this.toString() + "\nType " + Mem.getVariableType(left.toString())
+                + this.generate(null) + "\nType " + Mem.getVariableType(left.generate(null))
                 + " does not match " + ((AbstractExpression) right).getType());
       }
     }
@@ -64,13 +64,13 @@ public class AAssignment implements AbstractTree, AbstractExpression {
       try {
         if (!(((AbstractExpression) left).getType()).equals(((AbstractExpression) right).getType())) {
           throw new UnsupportedOperationException("The following assignment has type mismatches:\n\t\t"
-                  + this.toString() + "\nType " + ((AbstractExpression) left).getType()
+                  + this.generate(null) + "\nType " + ((AbstractExpression) left).getType()
                   + " does not match " + ((AbstractExpression) right).getType());
         }
       } catch (NullPointerException e) {
-        throw new UnsupportedOperationException("left: " + left.toString()
+        throw new UnsupportedOperationException("left: " + left.generate(null)
                 + " of type " + ((AbstractExpression) left).getType() + "; right: "
-                + right.toString() + " of type " + ((AbstractExpression) right).getType());
+                + right.generate(null) + " of type " + ((AbstractExpression) right).getType());
       }
     }
   }
@@ -82,12 +82,12 @@ public class AAssignment implements AbstractTree, AbstractExpression {
   }
 
   @Override
-  public String toString() {
+  public String generate(Writer out) {
     if (this.declaration) {
       if (!this.actualType.equals("")) {
-        return this.actualType + " " + this.left.toString() + " = " + this.right;
+        return this.actualType + " " + this.left.generate(null) + " = " + this.right;
       }
-      return this.type + " " + this.left.toString() + " = " + this.right;
+      return this.type + " " + this.left.generate(null) + " = " + this.right;
     }
     return this.left + " = " + this.right;
   }

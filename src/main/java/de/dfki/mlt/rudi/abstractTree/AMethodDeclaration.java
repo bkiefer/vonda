@@ -29,7 +29,7 @@ public class AMethodDeclaration implements AbstractTree {
   }
 
   @Override
-  public String toString() {
+  public String generate(Writer out) {
     String ret = visibility + " " + return_type + " " + name + "(";
     if (!parameters_to_types.isEmpty()) {
       int i = 0;

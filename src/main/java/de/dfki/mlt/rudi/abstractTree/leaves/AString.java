@@ -11,8 +11,8 @@ import de.dfki.mlt.rudi.abstractTree.*;
  *
  * @author anna
  */
-public class AString implements AbstractTree, AbstractExpression, AbstractLeaf{
-  
+public class AString extends AbstractLeaf {
+
   private String content;
 
   public AString(String content) {
@@ -23,9 +23,9 @@ public class AString implements AbstractTree, AbstractExpression, AbstractLeaf{
   public void testType() {
     // everything okay
   }
-  
+
   @Override
-  public String toString(){
+  public String generate(Writer out){
     return this.content;
   }
 
@@ -33,5 +33,5 @@ public class AString implements AbstractTree, AbstractExpression, AbstractLeaf{
   public String getType() {
     return "String";
   }
-  
+
 }

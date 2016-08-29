@@ -43,7 +43,7 @@ public class AFor1Stat implements AbstractStatement, AbstractTree {
   }
 
   @Override
-  public String toString() {
+  public String generate(Writer out) {
     String ret0 = "if(this.whatToLog.get(\"" + this.currentRule + 
             "\").contains(" + this.currentBool + ")){";
     if (arithmetic != null) {
@@ -52,7 +52,7 @@ public class AFor1Stat implements AbstractStatement, AbstractTree {
       String log = "boolLogger.info(\"------------------------------------------------\\n\");\n" +
               GrammarMain.context.getLog() +
               "boolLogger.info(\"------------------------------------------------\\n\");\n";
-      String ret2 = statblock.toString().substring(1);
+      String ret2 = statblock.generate(null).substring(1);
       return ret0 + "if(!(" + this.condition + ")){" + log + "}}" +
               ret1 + "{" + ret0 + log + "}" + ret2;
     }
@@ -61,7 +61,7 @@ public class AFor1Stat implements AbstractStatement, AbstractTree {
     String log = "boolLogger.info(\"------------------------------------------------\\n\");\n" +
             GrammarMain.context.getLog() +
             "boolLogger.info(\"------------------------------------------------\\n\");\n";
-    String ret2 = statblock.toString().substring(1);
+    String ret2 = statblock.generate(null).substring(1);
     return ret0 + "if(!(" + this.condition + ")){" + log + "}}" +
             ret1 + "{" + ret0 + log + "}" + ret2;
   }

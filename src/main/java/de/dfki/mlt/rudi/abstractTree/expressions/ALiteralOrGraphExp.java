@@ -14,10 +14,10 @@ import de.dfki.mlt.rudi.abstractTree.AbstractTree;
  *
  * @author anna
  */
-public class ALiteralOrGraphExp  implements AbstractTree, AbstractExpression{
+public class ALiteralOrGraphExp implements AbstractTree, AbstractExpression{
 
   // comment LITERAL_OR_GRAPH LPAR ( exp (COMMA exp)*)? RPAR comment
-  
+
   private String litGraph;
   //private List<AbstractExpression> exps;
   private String rest;
@@ -27,15 +27,15 @@ public class ALiteralOrGraphExp  implements AbstractTree, AbstractExpression{
     //this.exps = exps;
     this.rest = rest;
   }
-  
+
   @Override
   public void testType() {
     // no type testing here
   }
-  
+
   @Override
-  public String toString(){
-      // TODO: Variablen mit ^ anstatt Strings mit ""!!! 
+  public String generate(Writer out){
+      // TODO: Variablen mit ^ anstatt Strings mit ""!!!
     String ret = "new DialogueAct(\"" + litGraph + "(";
     String rightParams = "";
     String[] parameters = this.rest.split(",");
@@ -49,7 +49,7 @@ public class ALiteralOrGraphExp  implements AbstractTree, AbstractExpression{
           rightParams += ", \" + " + parts[0] + " + \"";
         }
         else if(GrammarMain.context.isGlobalVariable(parts[0])){
-          rightParams += ", \" + " + parts[0] + " + \"";          
+          rightParams += ", \" + " + parts[0] + " + \"";
         }
         else{
           // TODO: or throw an error here?
@@ -62,7 +62,7 @@ public class ALiteralOrGraphExp  implements AbstractTree, AbstractExpression{
           rightParams += ", " + parts[0] + " = \" + " + parts[1] + " + \"";
         }
         else if(GrammarMain.context.isGlobalVariable(parts[1])){
-          rightParams += ", " + parts[0] + " = \" + " + parts[1] + " + \"";          
+          rightParams += ", " + parts[0] + " = \" + " + parts[1] + " + \"";
         }
         else{
           rightParams += ", " + parts[0] + " = " + parts[1];
@@ -76,5 +76,5 @@ public class ALiteralOrGraphExp  implements AbstractTree, AbstractExpression{
   public String getType() {
     return "magic";
   }
-  
+
 }

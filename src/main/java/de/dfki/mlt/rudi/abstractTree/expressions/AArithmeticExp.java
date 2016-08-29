@@ -5,19 +5,16 @@
  */
 package de.dfki.mlt.rudi.abstractTree.expressions;
 
+import de.dfki.mlt.rudi.abstractTree.AbstractBinaryExpression;
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
-import de.dfki.mlt.rudi.abstractTree.AbstractTree;
-import de.dfki.mlt.rudi.abstractTree.leaves.ACommentBlock;
 
 /**
  *
  * @author anna
  */
-public class AArithmeticExp  implements AbstractTree, AbstractExpression{
-  
+public class AArithmeticExp extends AbstractBinaryExpression {
+
   private String type;
-  private AbstractExpression left;
-  private AbstractExpression right;
   private String operator;
   private boolean minus;
 
@@ -41,9 +38,9 @@ public class AArithmeticExp  implements AbstractTree, AbstractExpression{
   public void testType() {
     // TODO: test somehow right and left
   }
-  
+
   @Override
-  public String toString(){
+  public String generate(Writer out){
     String ret = "";
     if (this.minus){
       ret += "-";
@@ -59,5 +56,5 @@ public class AArithmeticExp  implements AbstractTree, AbstractExpression{
   public String getType() {
     return this.type;
   }
-  
+
 }

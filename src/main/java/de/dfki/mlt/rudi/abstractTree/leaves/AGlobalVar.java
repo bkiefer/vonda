@@ -11,8 +11,8 @@ import de.dfki.mlt.rudi.abstractTree.*;
  *
  * @author anna
  */
-public class AGlobalVar  implements AbstractTree, AbstractExpression, AbstractLeaf{
-  
+public class AGlobalVar extends AbstractLeaf{
+
   private String type;
   private String representation;
 
@@ -25,9 +25,9 @@ public class AGlobalVar  implements AbstractTree, AbstractExpression, AbstractLe
   public void testType() {
     // nothing to do
   }
-  
+
   @Override
-  public String toString(){
+  public String generate(Writer out){
     return this.representation;
   }
 

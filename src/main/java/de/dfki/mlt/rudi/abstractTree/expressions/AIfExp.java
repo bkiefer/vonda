@@ -13,34 +13,34 @@ import de.dfki.mlt.rudi.abstractTree.AbstractTree;
  * @author anna
  */
 public class AIfExp implements AbstractTree, AbstractExpression{
-  
-  private AbstractExpression bool;
-  private AbstractExpression ifexp;
+
+  private AbstractExpression boolexp;
   private AbstractExpression thenexp;
-  
-  public AIfExp(AbstractExpression bool, AbstractExpression ifexp, AbstractExpression thenexp){
-    this.bool = bool;
-    this.ifexp = ifexp;
+  private AbstractExpression elseexp;
+
+  public AIfExp(AbstractExpression bool, AbstractExpression thenexp, AbstractExpression elseexp){
+    this.boolexp = bool;
     this.thenexp = thenexp;
+    this.elseexp = elseexp;
   }
 
   @Override
   public void testType() {
-    ((AbstractTree)bool).testType();
-    ((AbstractTree)ifexp).testType();
+    ((AbstractTree)boolexp).testType();
     ((AbstractTree)thenexp).testType();
-    assert(bool.getType().equals("boolean"));
-    assert(ifexp.getType().equals(thenexp.getType()));
+    ((AbstractTree)elseexp).testType();
+    assert(boolexp.getType().equals("boolean"));
+    assert(thenexp.getType().equals(elseexp.getType()));
   }
 
   @Override
   public String getType() {
-    return ifexp.getType();
+    return thenexp.getType();
   }
-  
+
   @Override
-  public String toString(){
-    return this.bool + " ? " + this.ifexp + " : " + this.thenexp;
+  public String generate(Writer out){
+    return this.boolexp + " ? " + this.thenexp + " : " + this.elseexp;
   }
-  
+
 }

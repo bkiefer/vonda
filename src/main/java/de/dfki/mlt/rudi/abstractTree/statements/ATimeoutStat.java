@@ -25,7 +25,7 @@ public class ATimeoutStat implements AbstractStatement, AbstractTree {
     }
 
     @Override
-    public String toString() {
+    public String generate(Writer out) {
         // TODO: test this
         if(this.statblock == null){
             return "newTimeout(" + name + "," + time + ");\n";

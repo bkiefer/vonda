@@ -11,8 +11,8 @@ import de.dfki.mlt.rudi.abstractTree.*;
  *
  * @author anna
  */
-public class AUnaryBoolean implements AbstractTree, AbstractExpression, AbstractLeaf{
-  
+public class AUnaryBoolean extends AbstractLeaf{
+
   // true or false
   private String content;
 
@@ -24,9 +24,9 @@ public class AUnaryBoolean implements AbstractTree, AbstractExpression, Abstract
   public void testType() {
     // everything okay
   }
-  
+
   @Override
-  public String toString(){
+  public String generate(Writer out){
     return this.content;
   }
 
@@ -34,5 +34,5 @@ public class AUnaryBoolean implements AbstractTree, AbstractExpression, Abstract
   public String getType() {
     return "boolean";
   }
-  
+
 }

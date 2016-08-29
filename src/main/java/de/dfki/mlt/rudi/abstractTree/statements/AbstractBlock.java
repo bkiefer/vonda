@@ -41,17 +41,17 @@ public class AbstractBlock implements AbstractStatement, AbstractTree{
   }
   
   @Override
-  public String toString(){
+  public String generate(Writer out){
     String stats = "";
     if(braces){
       Mem.goToEnvironmentNumber(environmentPosition);
     }
     for (AbstractTree stat : statblock){
       if(stat instanceof AbstractExpression){
-        stats += stat.toString() + ";\n";
+        stats += stat.generate(null) + ";\n";
         break;
       }
-      stats += stat.toString();
+      stats += stat.generate(null);
     }
     if(braces){
       stats = "{" + stats + "}";

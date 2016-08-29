@@ -11,8 +11,8 @@ import de.dfki.mlt.rudi.abstractTree.*;
  *
  * @author anna
  */
-public class AFieldAccess  implements AbstractTree, AbstractExpression, AbstractLeaf{
-  
+public class AFieldAccess  extends AbstractLeaf{
+
   private String type;
   private String representation;
 
@@ -25,9 +25,9 @@ public class AFieldAccess  implements AbstractTree, AbstractExpression, Abstract
   public void testType() {
     // nothing to do
   }
-  
+
   @Override
-  public String toString(){
+  public String generate(Writer out){
     return this.representation;
   }
 

@@ -6,19 +6,17 @@
 package de.dfki.mlt.rudi.abstractTree.expressions;
 
 import de.dfki.mlt.rudi.GrammarMain;
+import de.dfki.mlt.rudi.abstractTree.AbstractBinaryExpression;
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
-import de.dfki.mlt.rudi.abstractTree.AbstractTree;
 
 /**
  *
  * @author anna
  */
-public class ABooleanExp implements AbstractTree, AbstractExpression{
-  
+public class ABooleanExp extends AbstractBinaryExpression {
+
   private boolean not;
   private boolean isSubsumed = false;   // <- magic part!!!
-  private AbstractExpression left;
-  private AbstractExpression right;
   private String operator;
 
   /**
@@ -28,7 +26,7 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
    * @param operator  operator in between
    * @param not set true if there is a ! in front of the expression
    */
-  public ABooleanExp(AbstractExpression left, 
+  public ABooleanExp(AbstractExpression left,
           AbstractExpression right, String operator, boolean not) {
     this.left = left;
     this.right = right;
@@ -47,9 +45,9 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
   public void testType() {
     // TODO: test, test...
   }
-  
+
   @Override
-  public String toString(){
+  public String generate(Writer out){
     String ret = "";
     if(this.not){
       ret += "!";
@@ -63,7 +61,7 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
               "\"" + ret.replace('"', ' ') +  " _ resulted to \" + " + ret);
       return ret;
     }
-    ret += this.left.toString();
+    ret += this.left.generate(null);
     GrammarMain.context.doLog("\"" + ret.replace('"', ' ') +  " resulted to \" + ("
             + ret + ")");
     return ret;

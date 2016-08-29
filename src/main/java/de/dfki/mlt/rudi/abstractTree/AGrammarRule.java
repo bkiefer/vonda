@@ -27,7 +27,7 @@ public class AGrammarRule implements AbstractTree{
   }
   
   @Override
-  public String toString(){
+  public String generate(Writer out){
     return "execute(\"" + label + "\");\n" + comment + ifstat + "\n";
   }
 

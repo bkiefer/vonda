@@ -29,7 +29,7 @@ public class AProposeStat implements AbstractStatement, AbstractTree{
   }
   
   @Override
-  public String toString(){
+  public String generate(Writer out){
     return "propose(" + arg + ", new Proposal() {public void run()\n"
             + block + "});";
   }

@@ -8,6 +8,7 @@ package de.dfki.mlt.rudi.abstractTree.leaves;
 import java.util.List;
 
 import de.dfki.mlt.rudi.GrammarMain;
+import de.dfki.mlt.rudi.abstractTree.AbstractLeaf;
 import de.dfki.mlt.rudi.abstractTree.AbstractStatement;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
 
@@ -15,7 +16,7 @@ import de.dfki.mlt.rudi.abstractTree.AbstractTree;
  *
  * @author anna
  */
-public class ACommentBlock implements AbstractTree, AbstractStatement {
+public class ACommentBlock extends AbstractLeaf implements AbstractStatement {
 
   List<AComment> comments;
   private boolean containsClassName;
@@ -25,7 +26,7 @@ public class ACommentBlock implements AbstractTree, AbstractStatement {
     this.comments = comments;
     this.containsClassName = false;
     for (AComment c : comments) {
-      if (!(c.toString().startsWith("//") || c.toString().startsWith("/*"))) {
+      if (!(c.generate(null).startsWith("//") || c.generate(null).startsWith("/*"))) {
         if (c.containsClassName()) {
           this.containsClassName = true;
         }
@@ -42,7 +43,7 @@ public class ACommentBlock implements AbstractTree, AbstractStatement {
   }
 
   @Override
-  public String toString() {
+  public String generate(Writer out) {
     String ret = "";
     if (this.printClassName) {
       for (AComment c : comments) {
@@ -62,5 +63,8 @@ public class ACommentBlock implements AbstractTree, AbstractStatement {
   @Override
   public void testType() {
   }
+
+  @Override
+  public String getType() { return null; }
 
 }

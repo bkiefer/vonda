@@ -13,8 +13,8 @@ import de.dfki.mlt.rudi.abstractTree.*;
  *
  * @author anna
  */
-public class AFunctAccess  implements AbstractTree, AbstractExpression, AbstractLeaf{
-  
+public class AFunctAccess extends AbstractLeaf{
+
   private String type;
   private String representation;
   private List<AbstractExpression> exps;
@@ -29,9 +29,9 @@ public class AFunctAccess  implements AbstractTree, AbstractExpression, Abstract
   public void testType() {
     // nothing to do
   }
-  
+
   @Override
-  public String toString(){
+  public String generate(Writer out){
     String args = "";
     for(int i = 0; i < this.exps.size(); i++){
       args += this.exps.get(i);

@@ -25,7 +25,7 @@ public class ASetOperation implements AbstractStatement, AbstractTree{
     }
     
     @Override
-    public String toString(){
+    public String generate(Writer out){
         if(add){
             return this.left + ".add(" + this.right + ");";
         }

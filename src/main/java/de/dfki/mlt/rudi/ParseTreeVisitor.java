@@ -67,7 +67,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitMethod_declaration(RobotGrammarParser.Method_declarationContext ctx) {
-    // (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | VARIABLE) VARIABLE LPAR 
+    // (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | VARIABLE) VARIABLE LPAR
     // ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*) RPAR statement_block
 
     if (ctx.getChild(3).getText().equals("(")) { // we have public, protected or private modifier
@@ -111,7 +111,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   public AbstractTree visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
     // label comment if_statement
     String ruleName = ctx.getChild(0).getText().substring(0, ctx.getChild(0).getText().length() - 1);
-    
+
     // TODO: if the depth is greater than 0, this is a 'child' of another class -> we might want
     // to put it in a new directory to have more of an order
     context.setCurrentRule(ruleName);
@@ -585,7 +585,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitTerminal(TerminalNode tn) {
-    // Attention! if you added new tokens or deleted old ones, the case numbers might have changed and 
+    // Attention! if you added new tokens or deleted old ones, the case numbers might have changed and
     // you get unexpected behaviour! (see Generated Sources / RobotGrammarLexer.java for right numbers)
     switch (tn.getSymbol().getType()) {
       case 9:   // token is NULL

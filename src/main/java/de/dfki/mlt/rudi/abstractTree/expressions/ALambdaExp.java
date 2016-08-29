@@ -22,7 +22,7 @@ public class ALambdaExp implements AbstractTree, AbstractExpression{
   }
 
   @Override
-  public String toString(){
+  public String generate(Writer out){
     return exp;
   }
   

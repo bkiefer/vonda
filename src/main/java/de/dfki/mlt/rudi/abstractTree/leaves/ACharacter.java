@@ -11,8 +11,8 @@ import de.dfki.mlt.rudi.abstractTree.*;
  *
  * @author anna
  */
-public class ACharacter  implements AbstractTree, AbstractExpression, AbstractLeaf{
-  
+public class ACharacter extends AbstractLeaf {
+
   private String content;
 
   public ACharacter(String content) {
@@ -23,9 +23,9 @@ public class ACharacter  implements AbstractTree, AbstractExpression, AbstractLe
   public void testType() {
     // everything okay
   }
-  
+
   @Override
-  public String toString(){
+  public String generate(Writer out){
     return "\'" + this.content + "\'";
   }
 
@@ -33,5 +33,5 @@ public class ACharacter  implements AbstractTree, AbstractExpression, AbstractLe
   public String getType() {
     return "char";
   }
-  
+
 }

@@ -26,8 +26,8 @@ public class AnAbstractExp implements AbstractTree, AbstractExpression{
   }
   
   @Override
-  public String toString(){
-    return commentbefore.toString() + exp + commentafter.toString();
+  public String generate(Writer out){
+    return commentbefore.generate(null) + exp + commentafter.generate(null);
   }
 
   @Override

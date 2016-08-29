@@ -32,7 +32,7 @@ public class AFor3Stat implements AbstractStatement, AbstractTree{
   }
   
   @Override
-  public String toString(){
+  public String generate(Writer out){
     String ret = "for (Object[] o : " + this.exp + ") {";
     int count = 0;
     for (String s : this.variables){

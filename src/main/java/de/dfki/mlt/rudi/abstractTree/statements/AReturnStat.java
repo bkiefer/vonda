@@ -24,7 +24,7 @@ public class AReturnStat implements AbstractStatement, AbstractTree{
     this.toRet = exp;
   }
   @Override
-  public String toString(){
+  public String generate(Writer out){
     if(this.toRet == null){
       return "return;\n";
     }

@@ -35,14 +35,14 @@ public class AWhileStat implements AbstractStatement, AbstractTree{
   }
   
   @Override
-  public String toString(){
+  public String generate(Writer out){
     String ret0 = "if(this.whatToLog.get(\"" + this.currentRule + 
             "\").contains(" + this.currentBool + "){";
     String ret1 = "while (" + this.condition + ")";
     String log = "boolLogger.info(\"------------------------------------------------\\n\");\n" +
             GrammarMain.context.getLog() +
             "boolLogger.info(\"------------------------------------------------\\n\");\n";
-    String ret2 = statblock.toString().substring(1);
+    String ret2 = statblock.generate(null).substring(1);
     return ret0 + "if(!(" + this.condition + ")){" + log + "}}"
             + ret1 + "{\nif(this.whatToLog.get(\"" + this.currentRule + 
             "\").contains(" + this.currentBool + "){" + log + "}" + ret2;
