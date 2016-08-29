@@ -144,6 +144,7 @@ public class GrammarMain {
           } catch (IOException ex) {
           }
         }
+        Mem.leaveEnvironment();
       }
     }
   }
@@ -156,6 +157,7 @@ public class GrammarMain {
       } else if (f.getName().endsWith(".rudi")) {
         Mem.addAndEnterNewEnvironment(0);
         processFile(f);
+        Mem.leaveEnvironment();
       }
     }
   }
@@ -163,6 +165,7 @@ public class GrammarMain {
   public static void processFileDirectly(File file) throws Exception {
     Mem.addAndEnterNewEnvironment(0);
     processFile(file);
+    Mem.leaveEnvironment();
   }
   
   public static void processImport(String file) throws Exception{
