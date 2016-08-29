@@ -41,12 +41,13 @@ public class PrintTest {
   public void tearDown() {
   }
 
-//    @Test
-//    public void FirstRuleTest() throws Exception {
-//        String[] strings = new String[]{"src/test/resources/FirstRule.rudi", 
-//          "src/test/testfiles", "-log"};
-//        GrammarMain.main(strings);
-//    }
+  @Test
+  public void FirstRuleTest() throws Exception {
+    String[] strings = new String[]{"src/test/resources/FirstRule.rudi",
+      "src/test/testfiles", "-log"};
+    GrammarMain.main(strings);
+  }
+
   @Test
   public void ImportTest() throws Exception {
     String[] strings = new String[]{"src/test/resources/test_import/Test.rudi",
@@ -55,7 +56,7 @@ public class PrintTest {
     //assertFail(GrammarMain.main(strings2));
   }
 
-  @Test(expected=UnsupportedOperationException.class)
+  @Test(expected = UnsupportedOperationException.class)
   public void ImportFailTest() throws Exception {
     String[] strings2 = new String[]{"src/test/resources/test_import/Test2.rudi",
       "src/test/testfiles"};

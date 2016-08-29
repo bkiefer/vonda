@@ -1,6 +1,5 @@
-
 activity = "f";
-
+int test = 0;
 {{{
 // very very local block
 String test = "test";

@@ -54,6 +54,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     String file = ctx.getChild(1).getText();
     try {
       // TODO: how to resolve a typical import to a file?
+      System.out.println("Processing import " + file);
       GrammarMain.processImport(file);
     } catch (Exception ex) {
       Logger.getLogger(ParseTreeVisitor.class.getName()).log(Level.SEVERE, null, ex);
