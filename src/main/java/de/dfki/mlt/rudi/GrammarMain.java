@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudi;
 
+import de.dfki.mlt.rudi.abstractTree.AGrammarFile;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
@@ -28,7 +29,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
  */
 public class GrammarMain {
 
-  protected static Writer writer;
   private static Writer logwriter;
   private static boolean log;
   private static boolean throwExceptions = true;
@@ -140,7 +140,7 @@ public class GrammarMain {
                   + " trace.");
           try {
             logwriter.write(e.getLocalizedMessage());
-            writer.close();
+            //writer.close();
           } catch (IOException ex) {
           }
         }
@@ -205,7 +205,7 @@ public class GrammarMain {
       System.out.println("Could not parse file" + file.getName());
       return;
     }
-    String outputFile = outputDirectory + classname + ".java";
+    /*String outputFile = outputDirectory + classname + ".java";
     File out = new File(outputFile);
     out.setWritable(true);
     out.setReadable(true);
@@ -213,7 +213,7 @@ public class GrammarMain {
     // initiate writer
     writer = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream(out)));
-
+*/
     // initialise the context magic
     context = new TestContext(log);
     context.setCurrentRule(classname);
@@ -231,15 +231,20 @@ public class GrammarMain {
 
     // walk the parse tree
     AbstractTree myTree = visitor.visit(tree);
-
+    if(myTree instanceof AGrammarFile){
+      ((AGrammarFile)myTree).print(classname, outputDirectory);
+    } else {
+      throw new UnsupportedOperationException("There is sth going very,very wrong...");
+    }
+/*
     // prepare the output file
     writer.write(context.beforeClassName());
     //writer.write("public class " + classname + " extends RuleUnit {\n\n");
 
     writer.write(myTree + context.atEndOfFile() + "\n}");
-
+*/
     // close the writer
-    writer.close();
+    //writer.close();
 
     System.out.println("\nDone.");
   }

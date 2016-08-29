@@ -111,6 +111,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   public AbstractTree visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
     // label comment if_statement
     String ruleName = ctx.getChild(0).getText().substring(0, ctx.getChild(0).getText().length() - 1);
+    
+    // TODO: if the depth is greater than 0, this is a 'child' of another class -> we might want
+    // to put it in a new directory to have more of an order
     context.setCurrentRule(ruleName);
     return new AGrammarRule(ruleName,
             (ACommentBlock) this.visit(ctx.getChild(1)),
