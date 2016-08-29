@@ -6,6 +6,8 @@
 package de.dfki.mlt.rudi.abstractTree.leaves;
 
 import de.dfki.mlt.rudi.abstractTree.*;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
@@ -30,15 +32,20 @@ public class ALocalVar extends AbstractLeaf {
   }
 
   @Override
+  public String toString(){
+    return this.representation;
+  }
+
+  @Override
   public void testType() {
     // nothing to do
   }
 
   @Override
-  public String generate(Writer out){
+  public void generate(Writer out) throws IOException{
     if(!origin.equals(""))
       origin += ".";
-    return origin + representation;
+    out.append(origin + representation);
   }
 
   @Override

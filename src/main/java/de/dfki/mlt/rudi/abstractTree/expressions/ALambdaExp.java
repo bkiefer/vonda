@@ -8,13 +8,15 @@ package de.dfki.mlt.rudi.abstractTree.expressions;
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
 import de.dfki.mlt.rudi.abstractTree.leaves.ACommentBlock;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
 public class ALambdaExp implements AbstractTree, AbstractExpression{
-  
+
   private String exp;
 
   public ALambdaExp(String exp) {
@@ -22,10 +24,10 @@ public class ALambdaExp implements AbstractTree, AbstractExpression{
   }
 
   @Override
-  public String generate(Writer out){
-    return exp;
+  public void generate(Writer out) throws IOException{
+    out.append(exp);
   }
-  
+
   @Override
   public void testType() {
     // nothing to do for now
@@ -36,6 +38,6 @@ public class ALambdaExp implements AbstractTree, AbstractExpression{
     // TODO: what's the type of a lambda expression?
     return "Object";
   }
-  
-  
+
+
 }

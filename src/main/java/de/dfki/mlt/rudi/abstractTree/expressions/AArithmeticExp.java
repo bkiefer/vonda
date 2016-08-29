@@ -5,15 +5,18 @@
  */
 package de.dfki.mlt.rudi.abstractTree.expressions;
 
-import de.dfki.mlt.rudi.abstractTree.AbstractBinaryExpression;
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
-public class AArithmeticExp extends AbstractBinaryExpression {
+public class AArithmeticExp implements AbstractExpression {
 
+  private AbstractExpression left;
+  private AbstractExpression right;
   private String type;
   private String operator;
   private boolean minus;
@@ -40,16 +43,20 @@ public class AArithmeticExp extends AbstractBinaryExpression {
   }
 
   @Override
-  public String generate(Writer out){
+  public void generate(Writer out) throws IOException{
     String ret = "";
     if (this.minus){
-      ret += "-";
+      out.append("-");
     }
     if(this.right != null){
-      return ret + "(" + this.left + this.operator + this.right
-              + ")";
+      out.append("(");
+      this.left.generate(out);
+      out.append(this.operator);
+      this.right.generate(out);
+      out.append(")");
+      return;
     }
-    return ret + this.left;
+    this.left.generate(out);
   }
 
   @Override

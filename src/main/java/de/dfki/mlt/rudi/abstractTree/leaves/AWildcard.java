@@ -6,6 +6,8 @@
 package de.dfki.mlt.rudi.abstractTree.leaves;
 
 import de.dfki.mlt.rudi.abstractTree.*;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
@@ -19,8 +21,8 @@ public class AWildcard extends AbstractLeaf{
   }
 
   @Override
-  public String generate(Writer out){
-    return "this.wildcard";   // wildcard is a local variable in resulting class
+  public void generate(Writer out) throws IOException{
+    out.append("this.wildcard");   // wildcard is a local variable in resulting class
   }
 
   @Override

@@ -10,13 +10,15 @@ import de.dfki.mlt.rudi.abstractTree.AbstractStatement;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
 import de.dfki.mlt.rudi.abstractTree.expressions.ABooleanExp;
 import de.dfki.mlt.rudi.abstractTree.leaves.ACommentBlock;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
-public class AWhileStat implements AbstractStatement, AbstractTree{
-  
+public class AWhileStat implements AbstractStatement, AbstractTree {
+
   private AbstractTree condition;
   private AbstractBlock statblock;
   private String currentRule;
@@ -33,18 +35,12 @@ public class AWhileStat implements AbstractStatement, AbstractTree{
   public void testType() {
     // no types for statements
   }
-  
+
   @Override
-  public String generate(Writer out){
-    String ret0 = "if(this.whatToLog.get(\"" + this.currentRule + 
-            "\").contains(" + this.currentBool + "){";
-    String ret1 = "while (" + this.condition + ")";
-    String log = "boolLogger.info(\"------------------------------------------------\\n\");\n" +
-            GrammarMain.context.getLog() +
-            "boolLogger.info(\"------------------------------------------------\\n\");\n";
-    String ret2 = statblock.generate(null).substring(1);
-    return ret0 + "if(!(" + this.condition + ")){" + log + "}}"
-            + ret1 + "{\nif(this.whatToLog.get(\"" + this.currentRule + 
-            "\").contains(" + this.currentBool + "){" + log + "}" + ret2;
+  public void generate(Writer out) throws IOException {
+    out.append("while (");
+    this.condition.generate(out);
+    out.append(")");
+    statblock.generate(out);
   }
 }

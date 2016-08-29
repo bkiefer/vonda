@@ -5,14 +5,16 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import java.io.Writer;
+
 /**
  *
  * @author anna
  */
 public class AImport implements AbstractTree{
-  
+
   private String text;
-  
+
   public AImport(String text){
     this.text = text;
   }
@@ -21,10 +23,10 @@ public class AImport implements AbstractTree{
   public void testType() {
     //nothing to do
   }
-  
+
   @Override
-  public String generate(Writer out){
+  public void generate(Writer out){
     return "import " + this.text + ";";
   }
-  
+
 }

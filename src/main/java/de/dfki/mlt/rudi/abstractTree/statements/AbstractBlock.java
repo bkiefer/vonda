@@ -11,13 +11,15 @@ import de.dfki.mlt.rudi.Mem;
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
 import de.dfki.mlt.rudi.abstractTree.AbstractStatement;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
 public class AbstractBlock implements AbstractStatement, AbstractTree{
-  
+
   private List<AbstractTree> statblock;
   private final boolean braces;
   private int environmentPosition;
@@ -27,7 +29,7 @@ public class AbstractBlock implements AbstractStatement, AbstractTree{
     this.braces = braces;
     this.environmentPosition = environmentPosition;
   }
-  
+
   public AbstractBlock(List<AbstractTree> statblock, boolean braces){
     this.statblock = statblock;
     this.braces = braces;
@@ -39,24 +41,25 @@ public class AbstractBlock implements AbstractStatement, AbstractTree{
   @Override
   public void testType() {
   }
-  
+
   @Override
-  public String generate(Writer out){
+  public void generate(Writer out) throws IOException{
     String stats = "";
     if(braces){
       Mem.goToEnvironmentNumber(environmentPosition);
+      out.append("{");
     }
     for (AbstractTree stat : statblock){
       if(stat instanceof AbstractExpression){
-        stats += stat.generate(null) + ";\n";
+        stat.generate(out);
+        out.append(";\n");
         break;
       }
-      stats += stat.generate(null);
+      stat.generate(out);
     }
     if(braces){
-      stats = "{" + stats + "}";
+      out.append("}");
     }
-    return stats;
   }
-  
+
 }

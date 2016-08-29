@@ -6,6 +6,8 @@
 package de.dfki.mlt.rudi.abstractTree.leaves;
 
 import de.dfki.mlt.rudi.abstractTree.*;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
@@ -24,8 +26,8 @@ public class ANull extends AbstractLeaf {
   }
 
   @Override
-  public String generate(Writer out){
-    return "null";
+  public void generate(Writer out) throws IOException{
+    out.append("null");
   }
 
 }

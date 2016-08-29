@@ -10,6 +10,8 @@ import de.dfki.mlt.rudi.abstractTree.AbstractStatement;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
 import de.dfki.mlt.rudi.abstractTree.leaves.ACommentBlock;
 import de.dfki.mlt.rudi.abstractTree.leaves.ALocalVar;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  * FOR LPAR VARIABLE COLON exp RPAR loop_statement_block
@@ -48,7 +50,12 @@ public class AFor2Stat implements AbstractStatement, AbstractTree {
   }
 
   @Override
-  public String generate(Writer out) {
-    return "for (" + varType + " " + var + ": " + exp + ") " + statblock;
+  public void generate(Writer out) throws IOException {
+    out.append("for (" + varType + " ");
+    var.generate(out);
+    out.append(": ");
+    exp.generate(out);
+    out.append(") ");
+    statblock.generate(out);
   }
 }

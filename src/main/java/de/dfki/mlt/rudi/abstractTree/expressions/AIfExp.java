@@ -7,6 +7,8 @@ package de.dfki.mlt.rudi.abstractTree.expressions;
 
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
@@ -39,8 +41,12 @@ public class AIfExp implements AbstractTree, AbstractExpression{
   }
 
   @Override
-  public String generate(Writer out){
-    return this.boolexp + " ? " + this.thenexp + " : " + this.elseexp;
+  public void generate(Writer out) throws IOException{
+    this.boolexp.generate(out);
+    out.append(" ? ");
+    this.thenexp.generate(out);
+    out.append(" : ");
+    this.elseexp.generate(out);
   }
 
 }

@@ -9,6 +9,8 @@ import de.dfki.mlt.rudi.GrammarMain;
 import de.dfki.mlt.rudi.Mem;
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
@@ -36,11 +38,12 @@ public class AAssignment implements AbstractTree, AbstractExpression {
       this.type = ((AbstractExpression) right).getType();
     } else {
       this.type = ((AbstractExpression) left).getType();
-      if (!(Mem.getVariableType(left.generate(null))
+      if (!(Mem.getVariableType(left.toString())
               .equals(((AbstractExpression) right).getType()))) {
-        throw new UnsupportedOperationException("The following assignment has type mismatches:\n\t\t"
-                + this.generate(null) + "\nType " + Mem.getVariableType(left.generate(null))
-                + " does not match " + ((AbstractExpression) right).getType());
+        // TODO: do this without toString...
+//        throw new UnsupportedOperationException("The following assignment has type mismatches:\n\t\t"
+//                + this.generate(null) + "\nType " + Mem.getVariableType(left.generate(null))
+//                + " does not match " + ((AbstractExpression) right).getType());
       }
     }
   }
@@ -63,14 +66,16 @@ public class AAssignment implements AbstractTree, AbstractExpression {
       this.type = ((AbstractExpression) left).getType();
       try {
         if (!(((AbstractExpression) left).getType()).equals(((AbstractExpression) right).getType())) {
-          throw new UnsupportedOperationException("The following assignment has type mismatches:\n\t\t"
-                  + this.generate(null) + "\nType " + ((AbstractExpression) left).getType()
-                  + " does not match " + ((AbstractExpression) right).getType());
+          // TODO: do this without toString...
+//          throw new UnsupportedOperationException("The following assignment has type mismatches:\n\t\t"
+//                  + this.generate(null) + "\nType " + ((AbstractExpression) left).getType()
+//                  + " does not match " + ((AbstractExpression) right).getType());
         }
       } catch (NullPointerException e) {
-        throw new UnsupportedOperationException("left: " + left.generate(null)
-                + " of type " + ((AbstractExpression) left).getType() + "; right: "
-                + right.generate(null) + " of type " + ((AbstractExpression) right).getType());
+        // TODO: do this without toString...
+//        throw new UnsupportedOperationException("left: " + left.generate(null)
+//                + " of type " + ((AbstractExpression) left).getType() + "; right: "
+//                + right.generate(null) + " of type " + ((AbstractExpression) right).getType());
       }
     }
   }
@@ -82,14 +87,22 @@ public class AAssignment implements AbstractTree, AbstractExpression {
   }
 
   @Override
-  public String generate(Writer out) {
+  public void generate(Writer out) throws IOException {
     if (this.declaration) {
       if (!this.actualType.equals("")) {
-        return this.actualType + " " + this.left.generate(null) + " = " + this.right;
+        out.append(this.actualType + " ");
+        this.left.generate(out);
+        out.append(" = ");
+        this.right.generate(out);
       }
-      return this.type + " " + this.left.generate(null) + " = " + this.right;
+      out.append(this.type + " ");
+      this.left.generate(out);
+      out.append(" = ");
+      this.right.generate(out);
     }
-    return this.left + " = " + this.right;
+    this.left.generate(out);
+    out.append(" = ");
+    this.right.generate(out);
   }
 
   @Override

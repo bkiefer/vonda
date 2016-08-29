@@ -9,13 +9,17 @@ import java.util.List;
 
 import de.dfki.mlt.rudi.abstractTree.AbstractStatement;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
- * FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block
+ * FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR
+ * loop_statement_block
+ *
  * @author anna
  */
-public class AFor3Stat implements AbstractStatement, AbstractTree{
-  
+public class AFor3Stat implements AbstractStatement, AbstractTree {
+
   private List<String> variables;
   private AbstractTree exp;
   private AbstractBlock block;
@@ -25,19 +29,22 @@ public class AFor3Stat implements AbstractStatement, AbstractTree{
     this.exp = exp;
     this.block = block;
   }
-  
+
   @Override
   public void testType() {
     // no types for statements
   }
-  
+
   @Override
-  public String generate(Writer out){
-    String ret = "for (Object[] o : " + this.exp + ") {";
+  public void generate(Writer out) throws IOException {
+    out.append("for (Object[] o : ");
+    this.exp.generate(out);
+    out.append(") {");
     int count = 0;
-    for (String s : this.variables){
-      ret += "\nObject " + s + " = o[" + count + "]";
+    for (String s : this.variables) {
+      out.append("\nObject " + s + " = o[" + count++ + "]");
     }
-    return ret + block + "}";
+    block.generate(out);
+    out.append("}");
   }
 }

@@ -7,15 +7,16 @@ package de.dfki.mlt.rudi.abstractTree;
 
 import de.dfki.mlt.rudi.abstractTree.leaves.ACommentBlock;
 import de.dfki.mlt.rudi.abstractTree.statements.AIfStatement;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
 public class AGrammarRule implements AbstractTree{
-  
+
   // label comment if_statement
-  
+
   private String label;
   private ACommentBlock comment;
   private AIfStatement ifstat;
@@ -25,9 +26,9 @@ public class AGrammarRule implements AbstractTree{
     this.ifstat = ifstat;
     this.comment = comment;
   }
-  
+
   @Override
-  public String generate(Writer out){
+  public void generate(Writer out){
     return "execute(\"" + label + "\");\n" + comment + ifstat + "\n";
   }
 
@@ -35,5 +36,5 @@ public class AGrammarRule implements AbstractTree{
   public void testType() {
     this.ifstat.testType();
   }
-  
+
 }

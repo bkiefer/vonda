@@ -36,7 +36,7 @@ public class AGrammarFile implements AbstractTree {
   }
 
   @Override
-  public String generate(Writer out, Object par1) {
+  public void generate(Writer out) {
     String ret = "";
     //boolean foundClassName = false;
     for (AbstractTree r : rules) {

@@ -6,6 +6,8 @@
 package de.dfki.mlt.rudi.abstractTree.leaves;
 
 import de.dfki.mlt.rudi.abstractTree.*;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
@@ -22,13 +24,18 @@ public class AGlobalVar extends AbstractLeaf{
   }
 
   @Override
+  public String toString(){
+    return this.representation;
+  }
+
+  @Override
   public void testType() {
     // nothing to do
   }
 
   @Override
-  public String generate(Writer out){
-    return this.representation;
+  public void generate(Writer out) throws IOException{
+    out.append(this.representation);
   }
 
   @Override

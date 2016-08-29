@@ -12,6 +12,8 @@ import de.dfki.mlt.rudi.abstractTree.AbstractTree;
 import de.dfki.mlt.rudi.abstractTree.expressions.AAssignment;
 import de.dfki.mlt.rudi.abstractTree.expressions.ABooleanExp;
 import de.dfki.mlt.rudi.abstractTree.leaves.ACommentBlock;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  * FOR LPAR assignment SEMICOLON exp SEMICOLON exp? RPAR loop_statement_block
@@ -43,8 +45,21 @@ public class AFor1Stat implements AbstractStatement, AbstractTree {
   }
 
   @Override
-  public String generate(Writer out) {
-    String ret0 = "if(this.whatToLog.get(\"" + this.currentRule + 
+  public void generate(Writer out) throws IOException {
+    out.append("for ( ");
+    assignment.generate(out);
+    out.append("; ");
+    condition.generate(out);
+    out.append(";");
+    if(arithmetic != null){
+      arithmetic.generate(out);
+    }
+    out.append(");");
+    statblock.generate(out);
+
+
+
+    /*String ret0 = "if(this.whatToLog.get(\"" + this.currentRule +
             "\").contains(" + this.currentBool + ")){";
     if (arithmetic != null) {
       String ret1 = "for (" + assignment + "; " + condition + "; " + arithmetic
@@ -63,7 +78,7 @@ public class AFor1Stat implements AbstractStatement, AbstractTree {
             "boolLogger.info(\"------------------------------------------------\\n\");\n";
     String ret2 = statblock.generate(null).substring(1);
     return ret0 + "if(!(" + this.condition + ")){" + log + "}}" +
-            ret1 + "{" + ret0 + log + "}" + ret2;
+            ret1 + "{" + ret0 + log + "}" + ret2;*/
   }
 
 }
