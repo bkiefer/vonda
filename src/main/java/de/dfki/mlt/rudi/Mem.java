@@ -20,16 +20,12 @@ public class Mem {
   private static int positionAtm = -1;
   private static int depthAtm = -1;
 
-  // bei Eintritt in neues Environment: nichts passiert
-  // bei Hinzufügen einer Variablen: Variablen zur HashMap vom Environment hinzufügen, 
-  // in actual auf aktuellen Wert ändern
-  // bei Austritt aus einem Environment: lokale Variablen des Environments löschen,
-  // die, die von obendrüber shadowed wurden in actual wieder einfügen
-  // Problem: dann muss man beim Austritt alle Environments nochmal durchgehen, anstatt
-  // es wie aktuell dann zu machen wenn die Variable benutzt wird
-  // -> Verbesserung: ja, aber immer noch suboptimal
-  // Lösung: wir sagen dem Environment, wenn eine Variable schon in actual war, 
-  // es soll sich die und ihren Wert gefälligst merken
+  // was sich Mem außer types noch merken sollte:
+  // in welcher Regel variable vorkam, damit Java später in der Klassenstruktur
+  // nachschlagen kann (-> Klassen sind statisch),
+  // außerdem die mit zB Global.activity zugänglichen Felder aus global.rudi
+  // nicht vergessen
+  
   public static void newMem() {
     environment = new ArrayList<Environment>();
     positionAtm = -1;
