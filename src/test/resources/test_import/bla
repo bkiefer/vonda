@@ -1,2 +1,7 @@
 
-String activity = "hi";
+activity = "f";
+
+{{{
+// very very local block
+String test = "test";
+}}}

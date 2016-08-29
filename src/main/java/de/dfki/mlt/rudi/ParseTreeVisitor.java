@@ -52,6 +52,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   @Override
   public AbstractTree visitImports(RobotGrammarParser.ImportsContext ctx) {
     //System.out.println("Rudi was here");
+    Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth());
     String file = ctx.getChild(1).getText();
     try {
       // TODO: how to resolve a typical import to a file?
@@ -61,6 +62,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
       throw new UnsupportedOperationException("Parsing of import " + file + " failed.\n"
               + "See log file for further details.");
     }
+    Mem.leaveEnvironment();
     return new AImport(file);
   }
 
@@ -125,7 +127,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     for (int i = 2; i < ctx.getChildCount() - 1; i++) {
       statblock.add(this.visit(ctx.getChild(i)));
     }
-    Mem.decreaseDepth();
+    Mem.leaveEnvironment();
     return new AbstractBlock(statblock, true, position);
   }
 
@@ -148,7 +150,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     for (int i = 2; i < ctx.getChildCount() - 1; i++) {
       statblock.add(this.visit(ctx.getChild(i)));
     }
-    Mem.decreaseDepth();
+    Mem.leaveEnvironment();
     return new AbstractBlock(statblock, true, position);
   }
 
