@@ -216,7 +216,7 @@ public class GrammarMain {
 
     // initialise the context magic
     context = new TestContext(log);
-
+    context.setCurrentRule(classname);
     // initialise the lexer with given input file
     RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(file)));
 

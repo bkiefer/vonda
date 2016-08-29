@@ -11,19 +11,22 @@ import de.dfki.mlt.rudi.abstractTree.*;
  *
  * @author anna
  */
-public class ALocalVar  implements AbstractTree, AbstractExpression, AbstractLeaf{
+public class ALocalVar implements AbstractTree, AbstractExpression, AbstractLeaf{
   
   private String type;
   private String representation;
+  private String origin;
 
-  public ALocalVar(String type, String representation) {
+  public ALocalVar(String type, String representation, String origin) {
     this.type = type;
     this.representation = representation;
+    this.origin = origin;
   }
   
-  public ALocalVar(String representation) {
-    this.type = "Objecct";
+  public ALocalVar(String representation, String origin) {
+    this.type = "Object";
     this.representation = representation;
+    this.origin = origin;
   }
 
   @Override
@@ -33,7 +36,9 @@ public class ALocalVar  implements AbstractTree, AbstractExpression, AbstractLea
   
   @Override
   public String toString(){
-    return this.representation;
+    if(!origin.equals(""))
+      origin += ".";
+    return origin + representation;
   }
 
   @Override

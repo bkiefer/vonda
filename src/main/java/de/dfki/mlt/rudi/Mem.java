@@ -17,6 +17,7 @@ public class Mem {
 
   private static List<Environment> environment = new ArrayList<Environment>();
   private static HashMap<String, String> actualValues = new HashMap<String, String>();
+  private static HashMap<String, String> variableOrigin = new HashMap<String, String>();
   private static int positionAtm = -1;
   private static int depthAtm = -1;
 
@@ -28,6 +29,8 @@ public class Mem {
   
   public static void newMem() {
     environment = new ArrayList<Environment>();
+    actualValues = new HashMap<String, String>();
+    variableOrigin = new HashMap<String, String>();
     positionAtm = -1;
     depthAtm = -1;
   }
@@ -36,15 +39,17 @@ public class Mem {
     return depthAtm;
   }
 
-  public static void addElement(String variable, String type) {
+  public static void addElement(String variable, String type, String origin) {
     //environment.get(positionAtm).put(variable, type);
     if (actualValues.containsKey(variable)) {
       // we overwrite it
-      environment.get(positionAtm).override(variable, actualValues.get(variable), type);
+      environment.get(positionAtm).override(variable, actualValues.get(variable),
+              type, variableOrigin.get(variable));
     } else {
       // we add it
       environment.get(positionAtm).put(variable, type);
     }
+    variableOrigin.put(variable, origin);
     actualValues.put(variable, type);
   }
 
@@ -54,6 +59,15 @@ public class Mem {
 
   public static boolean existsVariable(String variable) {
     return actualValues.containsKey(variable);
+  }
+  
+  /**
+   * get the rule the given variable is located
+   * @param variable a variable
+   * @return the rule it came from
+   */
+  public static String getVariableOrigin(String variable){
+    return variableOrigin.get(variable);
   }
 
   /**
@@ -123,9 +137,11 @@ public class Mem {
 
   public static void eraseLocalV(String variable) {
     actualValues.remove(variable);
+    variableOrigin.remove(variable);
   }
 
-  public static void restoreLocalV(String variable, String type) {
+  public static void restoreLocalV(String variable, String type, String origin) {
     actualValues.put(variable, type);
+    variableOrigin.put(variable, origin);
   }
 }

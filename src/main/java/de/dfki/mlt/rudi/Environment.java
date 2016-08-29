@@ -16,12 +16,14 @@ public class Environment {
   
   private HashMap<String, String> memory;
   private HashMap<String, String> overwritten;
+  private static HashMap<String, String> variableOrigin = new HashMap<String, String>();
   private int depth;
   
   public Environment(int depth){
     this.depth = depth;
     this.memory = new HashMap<String, String>();
     this.overwritten = new HashMap<String, String>();
+    this.variableOrigin = new HashMap<String, String>();
   }
   
   /**
@@ -32,7 +34,7 @@ public class Environment {
       Mem.eraseLocalV(v);
     }
     for (String v : overwritten.keySet()){
-      Mem.restoreLocalV(v, overwritten.get(v));
+      Mem.restoreLocalV(v, overwritten.get(v), variableOrigin.get(v));
     }
   }
   
@@ -41,9 +43,12 @@ public class Environment {
    * @param variable the variable in question
    * @param oldType the old type of the variable
    * @param newType the new type of the variable
+   * @param oldClass the old rule where the variable came from
+   * @param newClass the new (current) rule
    */
-  public void override(String variable, String oldType, String newType){
+  public void override(String variable, String oldType, String newType, String oldClass){
     overwritten.put(variable, oldType);
+    variableOrigin.put(variable, oldClass);
     memory.put(variable, newType);
   }
   
