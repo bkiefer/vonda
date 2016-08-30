@@ -5,14 +5,10 @@
  */
 package de.dfki.mlt.rudi;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-import java.util.regex.Pattern;
 
 
 /**
@@ -36,20 +32,8 @@ public class TestContext implements RobotContext {
   }
 
   @Override
-  public String getCurrentRule() {
-    return this.currentRule;
-  }
-
-  @Override
   public int getCurrentBool() {
     return ++this.lastBool;
-  }
-
-  @Override
-  public void setCurrentRule(String rule) {
-    this.currentRule = rule;
-    this.lastBool = 0;
-    this.rules.add(rule);
   }
 
   @Override
@@ -113,18 +97,7 @@ public class TestContext implements RobotContext {
     return "\n";
   }
 
-  @Override
-  public boolean isGlobalVariable(String variable) {
-    // for the moment, assume the user knows what he's doing
-    if (variableMap.containsKey(variable)) {
-      return true;
-    }
-    if (Pattern.matches("([A-Z]|_)+", variable)) {
-      return false;
-    }
-    return true;
-  }
-
+/*
   private static HashMap<String, String> variableMap = new HashMap<String, String>();
 
   {
@@ -152,15 +125,7 @@ public class TestContext implements RobotContext {
     variableMap.put("proposed", "Object");
     variableMap.put("yes", "Object");
   }
-
-  @Override
-  public String getVariableType(String variable) {
-    if (variableMap.containsKey(variable)) {
-      return variableMap.get(variable);
-    }
-    throw new UnsupportedOperationException("I don't know this variable: " + variable);
-  }
-
+*//*
   private static HashMap<String, String> fieldMap = new HashMap<String, String>();
 
   {
@@ -195,33 +160,5 @@ public class TestContext implements RobotContext {
 
     fieldMap.put("last.time", "float");
   }
-
-  @Override
-  public String getFieldAccessType(String access) {
-    if (fieldMap.containsKey(access)) {
-      return fieldMap.get(access);
-    }
-    throw new UnsupportedOperationException("I don't know this field: " + access);
-  }
-
-  @Override
-  public String getFunctionAccessType(String access) {
-    // could be anything
-    return "Object";
-  }
-  
-  ////////////////////////////////////////////////////////////////////////////
-  /////////////////// following methods still needed? ////////////////////////
-  ////////////////////////////////////////////////////////////////////////////
-  @Override
-  public boolean existsFieldAccess(String access) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  public String getFullVariableName(String variable) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-
+*/
 }

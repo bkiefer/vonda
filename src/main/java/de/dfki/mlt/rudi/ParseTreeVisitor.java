@@ -25,12 +25,16 @@ import org.antlr.v4.runtime.tree.TerminalNode;
  */
 public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
-  // the object that nows about context that we cannot see
-  private RobotContext context;
+  // a container to always remember in which rule we are
+  private String currentRule;
 
-  public ParseTreeVisitor(RobotContext context) {
+  /**
+   * constructor; the visitor needs to know in which rule/file we're in
+   * @param masterFile the name of the current rule (filename)
+   */
+  public ParseTreeVisitor(String masterFile) {
     //this.memory = new HashMap<String, AbstractType>();
-    this.context = context;
+    currentRule = masterFile;
   }
 
   @Override
@@ -68,7 +72,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
       return new AMethodDeclaration(ctx.getChild(0).getText(), ctx.getChild(1).getText(),
               ctx.getChild(2).getText(), parameters, partypes,
               this.visit(ctx.getChild(ctx.getChildCount() - 1)),
-              context.getCurrentRule());
+              currentRule);
     }
     ArrayList<String> parameters = new ArrayList<>();
     ArrayList<String> partypes = new ArrayList<>();
@@ -81,7 +85,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     return new AMethodDeclaration(ctx.getChild(0).getText(), ctx.getChild(1).getText(),
             ctx.getChild(2).getText(), parameters, partypes,
             this.visit(ctx.getChild(ctx.getChildCount() - 1)),
-            context.getCurrentRule());
+            currentRule);
   }
 
   @Override
@@ -98,7 +102,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
     // TODO: if the depth is greater than 0, this is a 'child' of another class -> we might want
     // to put it in a new directory to have more of an order
-    context.setCurrentRule(ruleName);
+    currentRule = ruleName;
     return new AGrammarRule(ruleName,
             (ACommentBlock) this.visit(ctx.getChild(1)),
             (AIfStatement) this.visit(ctx.getChild(2)));
@@ -354,17 +358,17 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     if (ctx.getChildCount() == 3) { // no declaration
       AbstractTree left = this.visit(ctx.getChild(0));
       return new AAssignment(((AbstractExpression) left).getType(), this.visit(ctx.getChild(0)),
-              (AbstractExpression) this.visit(ctx.getChild(2)), false, context.getCurrentRule());
+              (AbstractExpression) this.visit(ctx.getChild(2)), false, currentRule);
     } else {  // declaration
       if (ctx.getChild(0).getText().equals("var")) {
         AbstractTree right = this.visit(ctx.getChild(3));
         return new AAssignment(this.visit(ctx.getChild(1)),
-                (AbstractExpression) right, true, context.getCurrentRule());
+                (AbstractExpression) right, true, currentRule);
       }
       // now, this could be a special variable
       String type = ctx.getChild(0).getText();
       return new AAssignment(type, this.visit(ctx.getChild(1)),
-              (AbstractExpression) this.visit(ctx.getChild(3)), true, context.getCurrentRule());
+              (AbstractExpression) this.visit(ctx.getChild(3)), true, currentRule);
     }
   }
 
@@ -459,14 +463,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
       // TODO: or should we check here that the type of the variable in assignment
       // is the type the iterable in exp returns? How?
       AbstractTree exp = this.visit(ctx.getChild(4));
-      return new AFor2Stat(new AVariable(ctx.getChild(2).getText(), context.getCurrentRule()), exp,
-              (AbstractBlock) this.visit(ctx.getChild(6)), context.getCurrentRule());
+      return new AFor2Stat(new AVariable(ctx.getChild(2).getText(), currentRule), exp,
+              (AbstractBlock) this.visit(ctx.getChild(6)), currentRule);
     } else if (ctx.getChild(4).getText().equals(":")) {
       // FOR LPAR (DEC_VAR | VARIABLE) VARIABLE COLON exp RPAR loop_statement_block
       return new AFor2Stat(ctx.getChild(2).getText(),
-              new AVariable(ctx.getChild(3).getText(), context.getCurrentRule()),
+              new AVariable(ctx.getChild(3).getText(), currentRule),
               this.visit(ctx.getChild(5)),
-              (AbstractBlock) this.visit(ctx.getChild(7)), context.getCurrentRule());
+              (AbstractBlock) this.visit(ctx.getChild(7)), currentRule);
     } else if (ctx.getChildCount() == 8) {
       // statement looks like "FOR LPAR assignment SEMICOLON exp SEMICOLON RPAR loop_statement_block"
       return new AFor1Stat((AAssignment) this.visit(ctx.getChild(2)),
@@ -488,7 +492,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
       }
       return new AFor3Stat(vars, exp,
               (AbstractBlock) this.visit(ctx.getChild(ctx.getChildCount() - 1)),
-              context.getCurrentRule());
+              currentRule);
     }
   }
 
@@ -559,7 +563,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
       parnames.add(ctx.getChild(j++).getText());
       j++;
     }
-    return new AFunDef(type, funcname, parnames, partypes, context.getCurrentRule());
+    return new AFunDef(type, funcname, parnames, partypes, currentRule);
   }
 
   @Override
@@ -567,7 +571,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     // type_spec VARIABLE SEMICOLON
     // type_spec is either a boring normal type or a type of form Rdf<Child>
     String type = ctx.getChild(0).getText();
-    return new AVarDef(type, ctx.getChild(1).getText(), context.getCurrentRule());
+    return new AVarDef(type, ctx.getChild(1).getText(), currentRule);
   }
 
   @Override
@@ -601,7 +605,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
         return new AWildcard();
       case 57:  // token is variable
         String text = tn.getText();
-        return new AVariable(text, context.getCurrentRule());
+        return new AVariable(text, currentRule);
       /*if (Mem.existsVariable(text)) {
           String origin = "";
           if (context.getCurrentRule().equals(Mem.getVariableOrigin(text))) {

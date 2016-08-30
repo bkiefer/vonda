@@ -185,7 +185,6 @@ public class GrammarMain {
 */
     // initialise the context magic
     context = new TestContext(log);
-    context.setCurrentRule(classname);
     // initialise the lexer with given input file
     RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(file)));
 
@@ -196,7 +195,7 @@ public class GrammarMain {
     ParseTree tree = parser.grammar_file();
 
     // initialise the visitor that will do all the work
-    ParseTreeVisitor visitor = new ParseTreeVisitor(context);
+    ParseTreeVisitor visitor = new ParseTreeVisitor(classname);
 
     // walk the parse tree
     AbstractTree myTree = visitor.visit(tree);
