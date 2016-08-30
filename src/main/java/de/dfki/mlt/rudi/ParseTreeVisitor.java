@@ -502,7 +502,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     for (int i = 0; i < ctx.getChildCount(); i += 2) {
       parts.add(ctx.getChild(i).getText());
     }
-    return new AFieldAccess(context.getFieldAccessType(ctx.getText()), parts);
+    return new AFieldAccess(parts);
   }
 
   @Override
@@ -511,7 +511,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     for (int i = 0; i < ctx.getChildCount(); i += 2) {
       parts.add(ctx.getChild(i).getText());
     }
-    return new AFieldAccess(context.getFieldAccessType(ctx.getText()), parts);
+    return new AFieldAccess(parts);
   }
 
   @Override

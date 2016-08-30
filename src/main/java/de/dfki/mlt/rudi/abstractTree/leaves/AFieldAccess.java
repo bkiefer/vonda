@@ -5,10 +5,12 @@
  */
 package de.dfki.mlt.rudi.abstractTree.leaves;
 
+import de.dfki.mlt.rudi.Mem;
 import de.dfki.mlt.rudi.abstractTree.*;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import de.dfki.lt.hfc.db.rdfProxy.*;
 
 /**
  *
@@ -18,9 +20,9 @@ public class AFieldAccess  extends AbstractLeaf{
 
   private String type;
   private ArrayList<String> representation;
+  private boolean asked = false;
 
-  public AFieldAccess(String type, ArrayList<String> representation) {
-    this.type = type;
+  public AFieldAccess(ArrayList<String> representation) {
     this.representation = representation;
   }
 
@@ -31,12 +33,28 @@ public class AFieldAccess  extends AbstractLeaf{
 
   @Override
   public void generate(Writer out) throws IOException{
+    if(!asked){
+      this.type = askChristophe();
+    }
     out.append("Rdf here\n");
     //out.append(this.representation);
   }
 
   @Override
   public String getType() {
+    if(!asked){
+      this.type = askChristophe();
+    }
     return this.type;
+  }
+
+  /**
+   * ask the ontology about the type of this object
+   * @return the type of this object
+   */
+  public String askChristophe(){
+    asked = true;
+    String typ = Mem.getVariableType(representation.get(0));
+    
   }
 }
