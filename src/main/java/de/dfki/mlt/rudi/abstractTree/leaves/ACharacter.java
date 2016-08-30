@@ -6,13 +6,15 @@
 package de.dfki.mlt.rudi.abstractTree.leaves;
 
 import de.dfki.mlt.rudi.abstractTree.*;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
-public class ACharacter  implements AbstractTree, AbstractExpression, AbstractLeaf{
-  
+public class ACharacter extends AbstractLeaf {
+
   private String content;
 
   public ACharacter(String content) {
@@ -23,15 +25,15 @@ public class ACharacter  implements AbstractTree, AbstractExpression, AbstractLe
   public void testType() {
     // everything okay
   }
-  
+
   @Override
-  public String toString(){
-    return "\'" + this.content + "\'";
+  public void generate(Writer out) throws IOException{
+    out.append("\'" + this.content + "\'");
   }
 
   @Override
   public String getType() {
     return "char";
   }
-  
+
 }

@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudi;
 
+import de.dfki.mlt.rudi.abstractTree.AGrammarFile;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
@@ -14,10 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.io.Writer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -28,7 +26,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
  */
 public class GrammarMain {
 
-  protected static Writer writer;
   private static Writer logwriter;
   private static boolean log;
   private static boolean throwExceptions = true;
@@ -98,10 +95,18 @@ public class GrammarMain {
           System.out.println(help);
       }
     }
-    System.out.println("Searching directory " + inputDirectory + " for files to be translated.");
 
-    // find all .rudi files in directory and process them
     File dir = new File(inputDirectory);
+
+    //is this really a directory, or is it a single file?
+    if (!dir.isDirectory()) {
+      inputDirectory = inputDirectory.substring(0, inputDirectory.indexOf(dir.getName()));
+      System.out.println("Translating file " + args[0]);
+      processFile(dir);
+      return;
+    }
+    // find all .rudi files in directory and process them
+    System.out.println("Searching directory " + inputDirectory + " for files to be translated.");
     originalInputDirectory = dir.getAbsolutePath().length() + 1;
     if (throwExceptions) {
       searchAndTranslateDirectory(dir);
@@ -111,6 +116,10 @@ public class GrammarMain {
               new FileOutputStream("rudimant.log")));
       searchAndTranslateDirectoryLogEx(dir);
     }
+    //clean the memory
+    Mem.newMem();
+
+    System.exit(0);
   }
 
   public static void searchAndTranslateDirectoryLogEx(File directory) {
@@ -120,6 +129,7 @@ public class GrammarMain {
         searchAndTranslateDirectoryLogEx(f);
       } else if (f.getName().endsWith(".rudi")) {
         try {
+          Mem.addAndEnterNewEnvironment(0);
           processFile(f);
         } catch (Exception e) {
           System.out.println("A " + e.getClass() + "occurred during parsing"
@@ -127,10 +137,11 @@ public class GrammarMain {
                   + " trace.");
           try {
             logwriter.write(e.getLocalizedMessage());
-            writer.close();
+            //writer.close();
           } catch (IOException ex) {
           }
         }
+        Mem.leaveEnvironment();
       }
     }
   }
@@ -146,7 +157,7 @@ public class GrammarMain {
     }
   }
 
-  public static void processFile(File file) throws Exception {
+  public static void processFile(File file) throws IOException {
     if (inputDirectory.equals(outputDirectory)) {
       outputDirectory = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf("/") + 1);
     }
@@ -163,7 +174,7 @@ public class GrammarMain {
       System.out.println("Could not parse file" + file.getName());
       return;
     }
-    String outputFile = outputDirectory + classname + ".java";
+    /*String outputFile = outputDirectory + classname + ".java";
     File out = new File(outputFile);
     out.setWritable(true);
     out.setReadable(true);
@@ -171,10 +182,10 @@ public class GrammarMain {
     // initiate writer
     writer = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream(out)));
-
+*/
     // initialise the context magic
     context = new TestContext(log);
-
+    context.setCurrentRule(classname);
     // initialise the lexer with given input file
     RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(file)));
 
@@ -189,18 +200,33 @@ public class GrammarMain {
 
     // walk the parse tree
     AbstractTree myTree = visitor.visit(tree);
-
+    if(myTree instanceof AGrammarFile){
+      ((AGrammarFile)myTree).print(classname);
+    } else {
+      throw new UnsupportedOperationException("There is sth going very,very wrong...");
+    }
+/*
     // prepare the output file
     writer.write(context.beforeClassName());
     //writer.write("public class " + classname + " extends RuleUnit {\n\n");
 
     writer.write(myTree + context.atEndOfFile() + "\n}");
-
+*/
     // close the writer
-    writer.close();
+    //writer.close();
+
+    System.out.println("\nDone.");
   }
-  
-  public static boolean checkTypes(){
+
+  public static String getOutputDirectory(){
+    return outputDirectory;
+  }
+
+  public static String getInputDirectory(){
+    return inputDirectory;
+  }
+
+  public static boolean checkTypes() {
     return typeCheck;
   }
 }

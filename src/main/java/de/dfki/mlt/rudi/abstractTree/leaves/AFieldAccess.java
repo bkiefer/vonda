@@ -6,13 +6,15 @@
 package de.dfki.mlt.rudi.abstractTree.leaves;
 
 import de.dfki.mlt.rudi.abstractTree.*;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
-public class AFieldAccess  implements AbstractTree, AbstractExpression, AbstractLeaf{
-  
+public class AFieldAccess  extends AbstractLeaf{
+
   private String type;
   private String representation;
 
@@ -25,10 +27,10 @@ public class AFieldAccess  implements AbstractTree, AbstractExpression, Abstract
   public void testType() {
     // nothing to do
   }
-  
+
   @Override
-  public String toString(){
-    return this.representation;
+  public void generate(Writer out) throws IOException{
+    out.append(this.representation);
   }
 
   @Override

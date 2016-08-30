@@ -7,33 +7,37 @@ package de.dfki.mlt.rudi.abstractTree.statements;
 
 import de.dfki.mlt.rudi.abstractTree.AbstractStatement;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
 public class AReturnStat implements AbstractStatement, AbstractTree{
-  
+
   private AbstractTree toRet;
-  
+
   public AReturnStat(){
     this.toRet = null;
   }
-  
+
   public AReturnStat(AbstractTree exp){
     this.toRet = exp;
   }
   @Override
-  public String toString(){
+  public void generate(Writer out) throws IOException{
     if(this.toRet == null){
-      return "return;\n";
+      out.append("return;\n");
     }
-    return "return " + this.toRet + ";\n";
+    out.append("return ");
+    this.toRet.generate(out);
+    out.append(";\n");
   }
 
   @Override
   public void testType() {
     // test return type??
   }
-  
+
 }

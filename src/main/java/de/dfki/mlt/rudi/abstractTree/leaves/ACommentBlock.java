@@ -8,59 +8,37 @@ package de.dfki.mlt.rudi.abstractTree.leaves;
 import java.util.List;
 
 import de.dfki.mlt.rudi.GrammarMain;
+import de.dfki.mlt.rudi.abstractTree.AbstractLeaf;
 import de.dfki.mlt.rudi.abstractTree.AbstractStatement;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
-public class ACommentBlock implements AbstractTree, AbstractStatement {
+public class ACommentBlock extends AbstractLeaf implements AbstractStatement {
 
   List<AComment> comments;
-  private boolean containsClassName;
-  private boolean printClassName;
 
   public ACommentBlock(List<AComment> comments) {
     this.comments = comments;
-    this.containsClassName = false;
-    for (AComment c : comments) {
-      if (!(c.toString().startsWith("//") || c.toString().startsWith("/*"))) {
-        if (c.containsClassName()) {
-          this.containsClassName = true;
-        }
-      }
-    }
-  }
-
-  public void setPrintClassName() {
-    this.printClassName = true;
-  }
-
-  public boolean containsClassName() {
-    return this.containsClassName;
   }
 
   @Override
-  public String toString() {
-    String ret = "";
-    if (this.printClassName) {
-      for (AComment c : comments) {
-        ret += "\n" + c;
-        if (c.containsClassName()) {
-          ret += "\n" + GrammarMain.context.afterClassName();
-        }
-      }
-      return ret;
-    }
+  public void generate(Writer out) throws IOException {
     for (AComment c : comments) {
-      ret += "\n" + c;
+      c.generate(out);
+      out.append("\n");
     }
-    return ret;
   }
 
   @Override
   public void testType() {
   }
+
+  @Override
+  public String getType() { return null; }
 
 }

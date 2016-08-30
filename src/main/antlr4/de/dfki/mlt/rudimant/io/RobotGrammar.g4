@@ -10,8 +10,16 @@ grammar RobotGrammar;
  */
 
 /// start rule
+// the part "LBRACE statement RBRACE" is ridiciulous but currently solves a parsing exception...
 grammar_file
-  : (comment (grammar_rule | method_declaration | statement | ANNOTATION))* comment
+  : imports*
+    (comment 
+    (grammar_rule | method_declaration | statement | LBRACE statement RBRACE | ANNOTATION))* 
+    comment
+  ;
+
+imports
+  : IMPORT VARIABLE SEMICOLON
   ;
 
 method_declaration
@@ -31,15 +39,16 @@ label
 statement
   : 
     ( exp SEMICOLON
+    | statement_block
+    | grammar_rule
     | set_operation SEMICOLON
     | return_statement
+    | imports
     | propose_statement
     | timeout_statement
     | if_statement
     | while_statement
     | for_statement
-    | grammar_rule
-    | statement_block
     //| SEMICOLON   <- we don't really need it, and it's a pain to find in parser
     ) comment
  ;
@@ -81,15 +90,16 @@ loop_statement_block
 loop_statement
   : 
     ( exp SEMICOLON
+    | loop_statement_block
     | (CONTINUE | BREAK) SEMICOLON
     | set_operation SEMICOLON
     | return_statement
+    | imports
     | loop_propose_statement // do we want to be able to call break or continue here?
     | timeout_statement
     | loop_if_statement
     | while_statement
     | for_statement
-    | loop_statement_block
     | grammar_rule
     //| SEMICOLON
     ) comment
@@ -294,6 +304,7 @@ factor
  */
 
 /// keywords + true, false, null:
+IMPORT: 'import';
 IF: 'if';
 ELSE: 'else';
 WHILE: 'while';

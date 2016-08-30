@@ -9,15 +9,17 @@ import de.dfki.mlt.rudi.GrammarMain;
 import de.dfki.mlt.rudi.Mem;
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
-public class ALiteralOrGraphExp  implements AbstractTree, AbstractExpression{
+public class ALiteralOrGraphExp implements AbstractTree, AbstractExpression{
 
   // comment LITERAL_OR_GRAPH LPAR ( exp (COMMA exp)*)? RPAR comment
-  
+
   private String litGraph;
   //private List<AbstractExpression> exps;
   private String rest;
@@ -27,53 +29,52 @@ public class ALiteralOrGraphExp  implements AbstractTree, AbstractExpression{
     //this.exps = exps;
     this.rest = rest;
   }
-  
+
   @Override
   public void testType() {
     // no type testing here
   }
-  
+
   @Override
-  public String toString(){
-    String ret = "new DialogueAct(\"" + litGraph + "(";
-    String rightParams = "";
+  public void generate(Writer out) throws IOException{
+    out.append("new DialogueAct(\"" + litGraph + "(");
     String[] parameters = this.rest.split(",");
     // the first argument will never need to be more than a String
-    rightParams += parameters[0];
+    out.append(parameters[0]);
     for (int i = 1; i < parameters.length; i++){
       String[] parts = parameters[i].split("=");
       if(parts.length == 1){
         // then this argument is a variable that is passed and should be found somewhere
         if(Mem.existsVariable(parts[0])){
-          rightParams += ", \" + " + parts[0] + " + \"";
+          out.append(", \" + " + parts[0] + " + \"");
         }
         else if(GrammarMain.context.isGlobalVariable(parts[0])){
-          rightParams += ", \" + " + parts[0] + " + \"";          
+          out.append(", \" + " + parts[0] + " + \"");
         }
         else{
           // TODO: or throw an error here?
-          rightParams += ", " + parts[0];
+          out.append(", " + parts[0]);
         }
       }
       else{
         // this argument is of kind x = y, look if y is a variable we know
         if(Mem.existsVariable(parts[1])){
-          rightParams += ", " + parts[0] + " = \" + " + parts[1] + " + \"";
+          out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         }
         else if(GrammarMain.context.isGlobalVariable(parts[1])){
-          rightParams += ", " + parts[0] + " = \" + " + parts[1] + " + \"";          
+          out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         }
         else{
-          rightParams += ", " + parts[0] + " = " + parts[1];
+          out.append(", " + parts[0] + " = " + parts[1]);
         }
       }
     }
-    return ret + rightParams + ")\")";
+    out.append(")\")");
   }
 
   @Override
   public String getType() {
     return "magic";
   }
-  
+
 }

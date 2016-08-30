@@ -14,7 +14,6 @@ import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
@@ -37,8 +36,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   @Override
   public AbstractTree visitGrammar_file(RobotGrammarParser.Grammar_fileContext ctx) {
     // create an environment at the upper level
-    Mem.addAndEnterNewEnvironment(0);
-    // (comment grammar_rule)* comment
+    // imports* (comment (grammar_rule | ...))* comment
     ArrayList<AbstractTree> rules = new ArrayList<AbstractTree>();
     for (int i = 0; i < ctx.getChildCount(); i++) {
       rules.add(this.visit(ctx.getChild(i)));
@@ -47,8 +45,15 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   }
 
   @Override
+  public AbstractTree visitImports(RobotGrammarParser.ImportsContext ctx) {
+    //System.out.println("Rudi was here");
+    String file = ctx.getChild(1).getText();
+    return new AImport(file);
+  }
+
+  @Override
   public AbstractTree visitMethod_declaration(RobotGrammarParser.Method_declarationContext ctx) {
-    // (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | VARIABLE) VARIABLE LPAR 
+    // (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | VARIABLE) VARIABLE LPAR
     // ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*) RPAR statement_block
 
     if (ctx.getChild(3).getText().equals("(")) { // we have public, protected or private modifier
@@ -91,8 +96,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   @Override
   public AbstractTree visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
     // label comment if_statement
-    context.setCurrentRule(ctx.getChild(0).getText().substring(0, ctx.getChild(0).getText().length() - 1));
-    return new AGrammarRule(ctx.getChild(0).getText().substring(0, ctx.getChild(0).getText().length() - 1),
+    String ruleName = ctx.getChild(0).getText().substring(0, ctx.getChild(0).getText().length() - 1);
+
+    // TODO: if the depth is greater than 0, this is a 'child' of another class -> we might want
+    // to put it in a new directory to have more of an order
+    context.setCurrentRule(ruleName);
+    return new AGrammarRule(ruleName,
             (ACommentBlock) this.visit(ctx.getChild(1)),
             (AIfStatement) this.visit(ctx.getChild(2)));
   }
@@ -100,15 +109,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   @Override
   public AbstractTree visitStatement_block(RobotGrammarParser.Statement_blockContext ctx) {
     // comment LBRACE comment (statement  | grammar_rule)* RBRACE
-    // when entering a statement block, we need to create a new local environment
-    int position = Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
     List<AbstractTree> statblock = new ArrayList<AbstractTree>();
     statblock.add(this.visit(ctx.getChild(0)));
     for (int i = 2; i < ctx.getChildCount() - 1; i++) {
       statblock.add(this.visit(ctx.getChild(i)));
     }
-    Mem.decreaseDepth();
-    return new AbstractBlock(statblock, true, position);
+    return new AbstractBlock(statblock, true);
   }
 
   @Override
@@ -124,14 +130,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   public AbstractTree visitLoop_statement_block(RobotGrammarParser.Loop_statement_blockContext ctx) {
     // comment LBRACE comment ( statement  | grammar_rule)* RBRACE
     // when entering a statement block, we need to create a new local environment
-    int position = Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
     List<AbstractTree> statblock = new ArrayList<AbstractTree>();
     statblock.add(this.visit(ctx.getChild(0)));
     for (int i = 2; i < ctx.getChildCount() - 1; i++) {
       statblock.add(this.visit(ctx.getChild(i)));
     }
-    Mem.decreaseDepth();
-    return new AbstractBlock(statblock, true, position);
+    return new AbstractBlock(statblock, true);
   }
 
   @Override
@@ -362,18 +366,16 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     // ((DEC_VAR | VARIABLE)? VARIABLE | field_access) ASSIGN exp
     if (ctx.getChildCount() == 3) { // no declaration
       AbstractTree left = this.visit(ctx.getChild(0));
-      return new AAssignment(((AbstractExpression)left).getType(), this.visit(ctx.getChild(0)),
-              (AbstractExpression) this.visit(ctx.getChild(2)), false);
+      return new AAssignment(((AbstractExpression) left).getType(), this.visit(ctx.getChild(0)),
+              (AbstractExpression) this.visit(ctx.getChild(2)), false, context.getCurrentRule());
     } else {  // declaration
       if (ctx.getChild(0).getText().equals("var")) {
         AbstractTree right = this.visit(ctx.getChild(3));
-        Mem.addElement(ctx.getChild(1).getText(), ((AbstractExpression)right).getType());
         return new AAssignment(this.visit(ctx.getChild(1)),
-                (AbstractExpression) right, true);
+                (AbstractExpression) right, true, context.getCurrentRule());
       }
-      Mem.addElement(ctx.getChild(1).getText(), ctx.getChild(0).getText());
       return new AAssignment(ctx.getChild(0).getText(), this.visit(ctx.getChild(1)),
-              (AbstractExpression) this.visit(ctx.getChild(3)), true);
+              (AbstractExpression) this.visit(ctx.getChild(3)), true, context.getCurrentRule());
     }
   }
 
@@ -452,32 +454,30 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
             (AbstractBlock) this.visit(ctx.getChild(4)),
             (AbstractBlock) this.visit(ctx.getChild(6)));
   }
-  
+
   @Override
   public AbstractTree visitIf_exp(RobotGrammarParser.If_expContext ctx) {
     // boolean_exp QUESTION exp COLON exp
-    return new AIfExp(this.visit(ctx.getChild(0)), this.visit(ctx.getChild(2)), this.visit(ctx.getChild(4)));
+    return new AIfExp((AbstractExpression) this.visit(ctx.getChild(0)),
+            (AbstractExpression) this.visit(ctx.getChild(2)),
+            (AbstractExpression) this.visit(ctx.getChild(4)));
   }
 
   @Override
   public AbstractTree visitFor_statement(RobotGrammarParser.For_statementContext ctx) {
     if (ctx.getChild(3).getText().equals(":")) {
-      // FOR LPAR  VARIABLE COLON exp RPAR loop_statement_block"
+      // FOR LPAR  VARIABLE COLON exp RPAR loop_statement_block
       // TODO: or should we check here that the type of the variable in assignment
       // is the type the iterable in exp returns? How?
       AbstractTree exp = this.visit(ctx.getChild(4));
-      Mem.addElement(ctx.getChild(2).getText(), ((AbstractExpression) exp).getType());
-      return new AFor2Stat(new ALocalVar(ctx.getChild(2).getText()), exp,
-              (AbstractBlock) this.visit(ctx.getChild(6)));
+      return new AFor2Stat(new AVariable(ctx.getChild(2).getText(), context.getCurrentRule()), exp,
+              (AbstractBlock) this.visit(ctx.getChild(6)), context.getCurrentRule());
     } else if (ctx.getChild(4).getText().equals(":")) {
-      // FOR LPAR (DEC_VAR | VARIABLE) VARIABLE COLON exp RPAR loop_statement_block"
-      if (ctx.getChild(2).getText().equals("var")) {
-        Mem.addElement(ctx.getChild(3).getText(), "Object");
-      } else {
-        Mem.addElement(ctx.getChild(3).getText(), ctx.getChild(2).getText());
-      }
-      return new AFor2Stat(ctx.getChild(2).getText(), new ALocalVar(ctx.getChild(3).getText()), this.visit(ctx.getChild(5)),
-              (AbstractBlock) this.visit(ctx.getChild(7)));
+      // FOR LPAR (DEC_VAR | VARIABLE) VARIABLE COLON exp RPAR loop_statement_block
+      return new AFor2Stat(ctx.getChild(2).getText(),
+              new AVariable(ctx.getChild(3).getText(), context.getCurrentRule()),
+              this.visit(ctx.getChild(5)),
+              (AbstractBlock) this.visit(ctx.getChild(7)), context.getCurrentRule());
     } else if (ctx.getChildCount() == 8) {
       // statement looks like "FOR LPAR assignment SEMICOLON exp SEMICOLON RPAR loop_statement_block"
       return new AFor1Stat((AAssignment) this.visit(ctx.getChild(2)),
@@ -495,11 +495,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
       List<String> vars = new ArrayList<String>();
       AbstractTree exp = this.visit(ctx.getChild(ctx.getChildCount() - 3));
       for (int i = 3; i < ctx.getChildCount() - 5; i += 2) {
-        Mem.addElement(ctx.getChild(i).getText(), ((AbstractExpression)exp).getType());
         vars.add(ctx.getChild(i).getText());
       }
       return new AFor3Stat(vars, exp,
-              (AbstractBlock) this.visit(ctx.getChild(ctx.getChildCount() - 1)));
+              (AbstractBlock) this.visit(ctx.getChild(ctx.getChildCount() - 1)),
+              context.getCurrentRule());
     }
   }
 
@@ -553,36 +553,44 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitTerminal(TerminalNode tn) {
-    // Attention! if you added new tokens or deleted old ones, the case numbers might have changed and 
+    // Attention! if you added new tokens or deleted old ones, the case numbers might have changed and
     // you get unexpected behaviour! (see Generated Sources / RobotGrammarLexer.java for right numbers)
     switch (tn.getSymbol().getType()) {
-      case 8:   // token is NULL
+      case 9:   // token is NULL
         return new ANull();
-      case 9:   // token is TRUE
+      case 10:   // token is TRUE
         return new AUnaryBoolean(tn.getText());
-      case 10:  // token is FALSE
+      case 11:  // token is FALSE
         return new AUnaryBoolean(tn.getText());
-      case 15:  // token is character
+      case 16:  // token is character
         return new ACharacter(tn.getText());
-      case 16:  // token is String
+      case 17:  // token is String
         return new AString(tn.getText());
-      case 19:  // token is an annotation
+      case 20:  // token is an annotation
         return new AString(tn.getText() + "\n");
-      case 47:  //token is wildcard
+      case 48:  //token is wildcard
         return new AWildcard();
-      case 56:  // token is variable
-        if (Mem.existsVariable(tn.getText())) {
-          return new ALocalVar(Mem.getVariableType(tn.getText()), tn.getText());
-        } else if (context.isGlobalVariable(tn.getText())) {
-          return new AGlobalVar(context.getVariableType(tn.getText()), tn.getText());
+      case 57:  // token is variable
+        String text = tn.getText();
+        return new AVariable(text, context.getCurrentRule());
+      /*if (Mem.existsVariable(text)) {
+          String origin = "";
+          if (context.getCurrentRule().equals(Mem.getVariableOrigin(text))) {
+            origin = "";
+          } else {
+            origin = context.getCurrentRule();
+          }
+          return new ALocalVar(Mem.getVariableType(text), text, origin);
+        } else if (context.isGlobalVariable(text)) {
+          return new AGlobalVar(context.getVariableType(text), text);
         } else {
           // TODO: find a nice exception
           throw new UnsupportedOperationException("This variable isn't declared "
-                  + "anywhere: " + tn.getText());
-        }
-      case 57:  // token is int
+                  + "anywhere: " + text);
+        }*/
+      case 58:  // token is int
         return new ANumber(tn.getText());
-      case 58:  // token is float
+      case 59:  // token is float
         return new ANumber(tn.getText());
     }
     throw new UnsupportedOperationException("The terminal node for " + tn.getText()
@@ -593,6 +601,5 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   public AbstractTree visitErrorNode(ErrorNode en) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
-
 
 }

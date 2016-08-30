@@ -7,37 +7,46 @@ package de.dfki.mlt.rudi.abstractTree.expressions;
 
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
 public class AIfExp implements AbstractTree, AbstractExpression{
-  
-  private AbstractTree bool;
-  private AbstractTree ifexp;
-  private AbstractTree thenexp;
-  
-  public AIfExp(AbstractTree bool, AbstractTree ifexp, AbstractTree thenexp){
-    this.bool = bool;
-    this.ifexp = ifexp;
+
+  private AbstractExpression boolexp;
+  private AbstractExpression thenexp;
+  private AbstractExpression elseexp;
+
+  public AIfExp(AbstractExpression bool, AbstractExpression thenexp, AbstractExpression elseexp){
+    this.boolexp = bool;
     this.thenexp = thenexp;
+    this.elseexp = elseexp;
   }
 
   @Override
   public void testType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    ((AbstractTree)boolexp).testType();
+    ((AbstractTree)thenexp).testType();
+    ((AbstractTree)elseexp).testType();
+    assert(boolexp.getType().equals("boolean"));
+    assert(thenexp.getType().equals(elseexp.getType()));
   }
 
   @Override
   public String getType() {
-    // TODO: geht das genauer?
-    return "Object";
+    return thenexp.getType();
   }
-  
+
   @Override
-  public String toString(){
-    return this.bool + " ? " + this.ifexp + " : " + this.thenexp;
+  public void generate(Writer out) throws IOException{
+    this.boolexp.generate(out);
+    out.append(" ? ");
+    this.thenexp.generate(out);
+    out.append(" : ");
+    this.elseexp.generate(out);
   }
-  
+
 }

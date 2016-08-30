@@ -6,12 +6,14 @@
 package de.dfki.mlt.rudi.abstractTree.leaves;
 
 import de.dfki.mlt.rudi.abstractTree.*;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  * class that handles comments, please don't use this as one side in an expression!
  * @author anna
  */
-public class AComment implements AbstractTree, AbstractStatement, AbstractExpression, AbstractLeaf{
+public class AComment extends AbstractLeaf implements AbstractStatement {
 
   private String comment;
   private boolean containsClassName;
@@ -23,14 +25,14 @@ public class AComment implements AbstractTree, AbstractStatement, AbstractExpres
     }
     this.comment = comment;
   }
-  
+
   public boolean containsClassName(){
     return this.containsClassName;
   }
-  
+
   @Override
-  public String toString(){
-    return this.comment;
+  public void generate(Writer out) throws IOException{
+    out.append(this.comment);
   }
 
   @Override

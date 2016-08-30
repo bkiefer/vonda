@@ -6,18 +6,18 @@
 package de.dfki.mlt.rudi.abstractTree.expressions;
 
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
-import de.dfki.mlt.rudi.abstractTree.AbstractTree;
-import de.dfki.mlt.rudi.abstractTree.leaves.ACommentBlock;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
-public class AArithmeticExp  implements AbstractTree, AbstractExpression{
-  
-  private String type;
+public class AArithmeticExp implements AbstractExpression {
+
   private AbstractExpression left;
   private AbstractExpression right;
+  private String type;
   private String operator;
   private boolean minus;
 
@@ -41,23 +41,27 @@ public class AArithmeticExp  implements AbstractTree, AbstractExpression{
   public void testType() {
     // TODO: test somehow right and left
   }
-  
+
   @Override
-  public String toString(){
+  public void generate(Writer out) throws IOException{
     String ret = "";
     if (this.minus){
-      ret += "-";
+      out.append("-");
     }
     if(this.right != null){
-      return ret + "(" + this.left + this.operator + this.right
-              + ")";
+      out.append("(");
+      this.left.generate(out);
+      out.append(this.operator);
+      this.right.generate(out);
+      out.append(")");
+      return;
     }
-    return ret + this.left;
+    this.left.generate(out);
   }
 
   @Override
   public String getType() {
     return this.type;
   }
-  
+
 }

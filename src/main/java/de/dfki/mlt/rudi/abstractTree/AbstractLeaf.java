@@ -9,12 +9,12 @@ package de.dfki.mlt.rudi.abstractTree;
  *
  * @author anna
  */
-public interface AbstractLeaf {
-  
+public abstract class AbstractLeaf implements AbstractExpression {
+
   /**
    * the leaf's type
    */
   String type = "Object";
-  
-  public String getType();
+
+  public abstract String getType();
 }

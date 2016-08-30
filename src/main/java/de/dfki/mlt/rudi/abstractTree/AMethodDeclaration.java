@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
 
 /**
@@ -29,7 +31,7 @@ public class AMethodDeclaration implements AbstractTree {
   }
 
   @Override
-  public String toString() {
+  public void generate(Writer out) throws IOException {
     String ret = visibility + " " + return_type + " " + name + "(";
     if (!parameters_to_types.isEmpty()) {
       int i = 0;
@@ -43,7 +45,8 @@ public class AMethodDeclaration implements AbstractTree {
       }
     }
     ret += ")";
-    return ret + "\n" + block;
+    out.append(ret + "\n");
+    block.generate(out);
   }
 
   @Override

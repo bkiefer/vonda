@@ -5,19 +5,21 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import java.io.IOException;
+import java.io.Writer;
+
 /**
  *
  * @author anna
  */
 public interface AbstractTree {
-  
+
   /**
    * method that can print the tree to code
    * @return code representing this treenode
    */
-  @Override
-  public String toString();
-  
+  public void generate(Writer out) throws IOException;
+
   /**
    * method for type testing
    */

@@ -6,13 +6,15 @@
 package de.dfki.mlt.rudi.abstractTree.leaves;
 
 import de.dfki.mlt.rudi.abstractTree.*;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
-public class ANumber  implements AbstractTree, AbstractExpression, AbstractLeaf{
-  
+public class ANumber extends AbstractLeaf{
+
   private String value;
 
   public ANumber(String value) {
@@ -23,15 +25,19 @@ public class ANumber  implements AbstractTree, AbstractExpression, AbstractLeaf{
   public void testType() {
     // everything okay
   }
-  
+
   @Override
-  public String toString(){
-    return this.value;
+  public void generate(Writer out) throws IOException{
+    out.append(this.value);
   }
 
   @Override
   public String getType() {
-    // every int can be a float
-    return "float";
+    // for the moment, we assume we don't get longs or doubles here
+    if(this.value.contains(".")){
+      return "float";
+    } else {
+      return "int";
+    }
   }
 }

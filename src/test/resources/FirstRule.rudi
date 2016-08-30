@@ -6,6 +6,8 @@
    check-start: // or sth else than ':' ?
    if (test)
 */
+
+
 /*@ public class FirstRule extends RuleUnit {@*/
 // A new game is started
 /*@ public void newClass(){@*/
@@ -13,6 +15,10 @@ initiated:
 if (game.status == initiated) {
   timeout("bla", 12){
   var x = "test";
+test:
+if(true){
+//blabla
+}
   x = "blabla";
 // if this line is commented in, rudimant should complain
   //x = 1000;

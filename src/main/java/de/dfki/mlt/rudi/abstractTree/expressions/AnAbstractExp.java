@@ -8,13 +8,15 @@ package de.dfki.mlt.rudi.abstractTree.expressions;
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
 import de.dfki.mlt.rudi.abstractTree.leaves.ACommentBlock;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
 public class AnAbstractExp implements AbstractTree, AbstractExpression{
-  
+
   private ACommentBlock commentbefore;
   private AbstractTree exp;
   private ACommentBlock commentafter;
@@ -24,10 +26,12 @@ public class AnAbstractExp implements AbstractTree, AbstractExpression{
     this.exp = exp;
     this.commentafter = commentafter;
   }
-  
+
   @Override
-  public String toString(){
-    return commentbefore.toString() + exp + commentafter.toString();
+  public void generate(Writer out) throws IOException{
+    commentbefore.generate(out);
+    exp.generate(out);
+    commentafter.generate(out);
   }
 
   @Override
@@ -39,5 +43,5 @@ public class AnAbstractExp implements AbstractTree, AbstractExpression{
   public String getType() {
     return ((AbstractExpression) exp).getType();
   }
-  
+
 }

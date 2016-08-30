@@ -1,0 +1,7 @@
+int activity = 0;
+
+import bla;
+
+activity = 3;
+
+test = notThere;

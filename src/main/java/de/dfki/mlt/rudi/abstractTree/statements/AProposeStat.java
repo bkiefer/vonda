@@ -8,13 +8,15 @@ package de.dfki.mlt.rudi.abstractTree.statements;
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
 import de.dfki.mlt.rudi.abstractTree.AbstractStatement;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
-public class AProposeStat implements AbstractStatement, AbstractTree{
-  
+public class AProposeStat implements AbstractStatement, AbstractTree {
+
   private AbstractExpression arg;
   private AbstractBlock block;
 
@@ -27,10 +29,13 @@ public class AProposeStat implements AbstractStatement, AbstractTree{
   public void testType() {
     // TODO: arg should be a string expression
   }
-  
+
   @Override
-  public String toString(){
-    return "propose(" + arg + ", new Proposal() {public void run()\n"
-            + block + "});";
+  public void generate(Writer out) throws IOException {
+    out.append("propose(");
+    arg.generate(out);
+    out.append(", new Proposal() {public void run()\n");
+    block.generate(out);
+    out.append("});");
   }
 }

@@ -7,6 +7,8 @@ package de.dfki.mlt.rudi.abstractTree.statements;
 
 import de.dfki.mlt.rudi.abstractTree.AbstractStatement;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
@@ -25,16 +27,16 @@ public class ATimeoutStat implements AbstractStatement, AbstractTree {
     }
 
     @Override
-    public String toString() {
+    public void generate(Writer out) throws IOException {
         // TODO: test this
         if(this.statblock == null){
-            return "newTimeout(" + name + "," + time + ");\n";
+            out.append("newTimeout(" + name + "," + time + ");\n");
         }
-        return "MyTimer t = newSpecialTimeout(" + name + "," + time + ");"
+        out.append("MyTimer t = newSpecialTimeout(" + name + "," + time + ");"
                 + "t.timer = new Timer(timeToFire, new ActionListener(){\n"
                 + "@Override\n public void actionPerformed(ActionEvent e)" + statblock + "});"
                 + "\n" + "t.started = System.currentTimeMillis();\n"
-                + " t.timer.start();\n";
+                + " t.timer.start();\n");
     }
 
     @Override

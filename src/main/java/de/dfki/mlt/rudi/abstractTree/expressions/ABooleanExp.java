@@ -5,20 +5,20 @@
  */
 package de.dfki.mlt.rudi.abstractTree.expressions;
 
-import de.dfki.mlt.rudi.GrammarMain;
 import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
-import de.dfki.mlt.rudi.abstractTree.AbstractTree;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
-public class ABooleanExp implements AbstractTree, AbstractExpression{
-  
-  private boolean not;
-  private boolean isSubsumed = false;   // <- magic part!!!
+public class ABooleanExp implements AbstractExpression {
+
   private AbstractExpression left;
   private AbstractExpression right;
+  private boolean not;
+  private boolean isSubsumed = false;   // <- magic part!!!
   private String operator;
 
   /**
@@ -28,7 +28,7 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
    * @param operator  operator in between
    * @param not set true if there is a ! in front of the expression
    */
-  public ABooleanExp(AbstractExpression left, 
+  public ABooleanExp(AbstractExpression left,
           AbstractExpression right, String operator, boolean not) {
     this.left = left;
     this.right = right;
@@ -47,26 +47,33 @@ public class ABooleanExp implements AbstractTree, AbstractExpression{
   public void testType() {
     // TODO: test, test...
   }
-  
+
   @Override
-  public String toString(){
+  public void generate(Writer out) throws IOException{
     String ret = "";
     if(this.not){
-      ret += "!";
+      out.append("!");
     }
     if(this.isSubsumed){
-      return ret + "isSubsumed(" + left + ", " + right + ")";
+      out.append("isSubsumed(");
+      left.generate(out);
+      out.append(", ");
+      right.generate(out);
+      out.append(")");
     }
     if(this.right != null){
-      ret += "(" + this.left + this.operator + this.right + ")";
-      GrammarMain.context.doLog(
-              "\"" + ret.replace('"', ' ') +  " _ resulted to \" + " + ret);
-      return ret;
+      out.append("(");
+      this.left.generate(out);
+      out.append(this.operator);
+      this.right.generate(out);
+      out.append(")");
+      //GrammarMain.context.doLog(
+      //        "\"" + ret.replace('"', ' ') +  " _ resulted to \" + " + ret);
+      return;
     }
-    ret += this.left.toString();
-    GrammarMain.context.doLog("\"" + ret.replace('"', ' ') +  " resulted to \" + ("
-            + ret + ")");
-    return ret;
+    this.left.generate(out);
+    //GrammarMain.context.doLog("\"" + ret.replace('"', ' ') +  " resulted to \" + ("
+    //        + ret + ")");
   }
 
   @Override

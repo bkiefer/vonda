@@ -1,0 +1,5 @@
+String activity = "j";
+
+import bla;
+
+activity = "blabla";

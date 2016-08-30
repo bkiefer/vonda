@@ -6,13 +6,15 @@
 package de.dfki.mlt.rudi.abstractTree.leaves;
 
 import de.dfki.mlt.rudi.abstractTree.*;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
-public class AUnaryBoolean implements AbstractTree, AbstractExpression, AbstractLeaf{
-  
+public class AUnaryBoolean extends AbstractLeaf{
+
   // true or false
   private String content;
 
@@ -24,15 +26,15 @@ public class AUnaryBoolean implements AbstractTree, AbstractExpression, Abstract
   public void testType() {
     // everything okay
   }
-  
+
   @Override
-  public String toString(){
-    return this.content;
+  public void generate(Writer out) throws IOException{
+    out.append(this.content);
   }
 
   @Override
   public String getType() {
     return "boolean";
   }
-  
+
 }

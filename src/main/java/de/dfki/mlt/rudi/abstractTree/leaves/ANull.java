@@ -6,12 +6,14 @@
 package de.dfki.mlt.rudi.abstractTree.leaves;
 
 import de.dfki.mlt.rudi.abstractTree.*;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
  * @author anna
  */
-public class ANull  implements AbstractTree, AbstractExpression, AbstractLeaf{
+public class ANull extends AbstractLeaf {
 
   @Override
   public void testType() {
@@ -22,10 +24,10 @@ public class ANull  implements AbstractTree, AbstractExpression, AbstractLeaf{
   public String getType() {
     return "Object";   // for you can assign null to anything
   }
-  
+
   @Override
-  public String toString(){
-    return "null";
+  public void generate(Writer out) throws IOException{
+    out.append("null");
   }
-  
+
 }

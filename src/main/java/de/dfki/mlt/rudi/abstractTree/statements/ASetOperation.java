@@ -7,6 +7,8 @@ package de.dfki.mlt.rudi.abstractTree.statements;
 
 import de.dfki.mlt.rudi.abstractTree.AbstractStatement;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  *
@@ -23,20 +25,26 @@ public class ASetOperation implements AbstractStatement, AbstractTree{
         this.add = add;
         this.right = right;
     }
-    
+
     @Override
-    public String toString(){
+    public void generate(Writer out) throws IOException{
         if(add){
-            return this.left + ".add(" + this.right + ");";
+            this.left.generate(out);
+            out.append(".add(");
+            this.right.generate(out);
+            out.append(");");
         }
         else{
-            return this.left + ".remove(" + this.right + ");";
+            this.left.generate(out);
+            out.append(".remove(");
+            this.right.generate(out);
+            out.append(");");
         }
     }
-    
+
     @Override
     public void testType() {
         // TODO: test somehow
     }
-    
+
 }
