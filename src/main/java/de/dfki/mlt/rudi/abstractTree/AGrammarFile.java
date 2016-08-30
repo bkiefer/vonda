@@ -12,6 +12,7 @@ import de.dfki.mlt.rudi.abstractTree.leaves.ACommentBlock;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import static java.lang.System.out;
@@ -24,21 +25,25 @@ public class AGrammarFile implements AbstractTree {
 
   // (comment grammar_rule)* comment
   private List<AbstractTree> rules;
-  protected static Writer writer;
+  protected static Writer out;
+  private String classname;
 
   public AGrammarFile(List<AbstractTree> rules) {
     this.rules = rules;
   }
 
-  public void print(String classname, String outDir) throws FileNotFoundException {
-    writer = new BufferedWriter(new OutputStreamWriter(
-            new FileOutputStream(outDir + classname + ".java")));
+  public void print(String classname) throws FileNotFoundException, IOException {
+    this.classname = classname;
+    out = new BufferedWriter(new OutputStreamWriter(
+            new FileOutputStream(GrammarMain.getOutputDirectory() + classname + ".java")));
+    this.generate(out);
   }
 
   @Override
-  public void generate(Writer out) {
-    String ret = "";
+  public void generate(Writer out) throws IOException {
     //boolean foundClassName = false;
+    out.append("public class " + classname + "{\n"
+            + "  public void process(){");
     for (AbstractTree r : rules) {
       // Don't forget to insert text after class name as specified in context
       // Edit: no one wants to use this anyway
@@ -48,9 +53,9 @@ public class AGrammarFile implements AbstractTree {
           foundClassName = true;
         }
       }*/
-      ret += r;
+      r.generate(out);
     }
-    return ret;
+    out.append("  }\n}");
   }
 
   @Override

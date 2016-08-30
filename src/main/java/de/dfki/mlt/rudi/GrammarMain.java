@@ -167,28 +167,8 @@ public class GrammarMain {
     processFile(file);
     Mem.leaveEnvironment();
   }
-  
-  public static void processImport(String file) throws Exception{
-    // no writing here!!
-        // initialise the lexer with given input file
-        // import test crasht hier; warum??
-    RobotGrammarLexer lexer = new RobotGrammarLexer(
-            new ANTLRInputStream(new FileInputStream(inputDirectory + file)));
 
-    // initialise the parser
-    RobotGrammarParser parser = new RobotGrammarParser(new CommonTokenStream(lexer));
-
-    // create a parse tree; grammar_file is the start rule
-    ParseTree tree = parser.grammar_file();
-
-    // initialise the visitor that will do all the work
-    ParseTreeVisitor visitor = new ParseTreeVisitor(context);
-
-    // walk the parse tree
-    AbstractTree myTree = visitor.visit(tree);
-  }
-
-  public static void processFile(File file) throws Exception {
+  public static void processFile(File file) throws IOException {
     if (inputDirectory.equals(outputDirectory)) {
       outputDirectory = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf("/") + 1);
     }
@@ -232,7 +212,7 @@ public class GrammarMain {
     // walk the parse tree
     AbstractTree myTree = visitor.visit(tree);
     if(myTree instanceof AGrammarFile){
-      ((AGrammarFile)myTree).print(classname, outputDirectory);
+      ((AGrammarFile)myTree).print(classname);
     } else {
       throw new UnsupportedOperationException("There is sth going very,very wrong...");
     }
@@ -247,6 +227,10 @@ public class GrammarMain {
     //writer.close();
 
     System.out.println("\nDone.");
+  }
+
+  public static String getOutputDirectory(){
+    return outputDirectory;
   }
 
   public static boolean checkTypes() {
