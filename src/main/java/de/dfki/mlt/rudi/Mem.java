@@ -15,28 +15,65 @@ import java.util.List;
  */
 public class Mem {
 
-  private static List<Environment> environment = new ArrayList<Environment>();
-  private static HashMap<String, String> actualValues = new HashMap<String, String>();
-  private static HashMap<String, String> variableOrigin = new HashMap<String, String>();
+  private static List<Environment> environment = new ArrayList<>();
+  private static HashMap<String, String> actualValues = new HashMap<>();
+  private static HashMap<String, String> variableOrigin = new HashMap<>();
   private static int positionAtm = -1;
   private static int depthAtm = -1;
 
-  // was sich Mem außer types noch merken sollte:
-  // in welcher Regel variable vorkam, damit Java später in der Klassenstruktur
-  // nachschlagen kann (-> Klassen sind statisch),
-  // außerdem die mit zB Global.activity zugänglichen Felder aus global.rudi
-  // nicht vergessen
-  
+  // as this is only a way to provide mem with information about the types of
+  // imported java functions, we probably don't need local namespaces
+  private static HashMap<String, ArrayList<String>> specialVars = new HashMap<>();
+  // functions, too, are not implemented locally in this version
+  private static HashMap<String, ArrayList<String>> functionTypes = new HashMap<>();
+  private static HashMap<String, ArrayList<String>> functionParTypes = new HashMap<>();
+
   public static void newMem() {
-    environment = new ArrayList<Environment>();
-    actualValues = new HashMap<String, String>();
-    variableOrigin = new HashMap<String, String>();
+    environment = new ArrayList<>();
+    actualValues = new HashMap<>();
+    variableOrigin = new HashMap<>();
     positionAtm = -1;
     depthAtm = -1;
   }
 
   public static int getCurrentDepth() {
     return depthAtm;
+  }
+
+  public static void addFunction(String funcname, ArrayList<String> functype,
+          ArrayList<String> partypes, String origin){
+    functionTypes.put(funcname, functype);
+    functionParTypes.put(funcname, partypes);
+    // we may need this later, it doesn't harm us now
+    variableOrigin.put(funcname, origin);
+  }
+
+  public static boolean existsFunction(String funcname, ArrayList<String> functype,
+          ArrayList<String> partypes){
+    if(!functionTypes.containsKey(funcname)){
+      return false;
+    }
+    return (functionTypes.get(funcname).equals(functype) &&
+            partypes.equals(functionParTypes.get(funcname)));
+  }
+
+  /**
+   * returns null if there is no such function
+   * @param funcname the name of the function
+   * @return its return type or null
+   */
+  public static ArrayList<String> getFunctionRetType(String funcname){
+    // TODO: we could also identify the function by the parameter types, is this
+    // necessary?
+    return functionTypes.get(funcname);
+  }
+
+  public static void addElement(String variable, ArrayList<String> type, String origin) {
+    if (type.size() == 1) {
+      addElement(variable, type.get(0), origin);
+    }
+    specialVars.put(variable, type);
+    variableOrigin.put(variable, origin);
   }
 
   public static void addElement(String variable, String type, String origin) {
@@ -58,16 +95,25 @@ public class Mem {
   }
 
   public static boolean existsVariable(String variable) {
-    return actualValues.containsKey(variable);
+    return (actualValues.containsKey(variable));
   }
-  
+
   /**
    * get the rule the given variable is located
+   *
    * @param variable a variable
    * @return the rule it came from
    */
-  public static String getVariableOrigin(String variable){
+  public static String getVariableOrigin(String variable) {
     return variableOrigin.get(variable);
+  }
+
+  public static boolean isSpecial(String variable){
+    return specialVars.containsKey(variable);
+  }
+
+  public static ArrayList<String> getSpecialVariableType(String variable){
+    return specialVars.get(variable);
   }
 
   /**

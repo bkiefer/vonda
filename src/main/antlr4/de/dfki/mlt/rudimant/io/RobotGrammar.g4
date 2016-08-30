@@ -85,28 +85,7 @@ statement_block
   ;
 
 loop_statement_block
-  : comment LBRACE comment ( loop_statement)* RBRACE
-  ;
-
-/// loop_statement = all statements, allowing continue or break inside them
-loop_statement
-  :
-    ( exp SEMICOLON
-    | loop_statement_block
-    | (CONTINUE | BREAK) SEMICOLON
-    | set_operation SEMICOLON
-    | return_statement
-    | imports
-    | loop_propose_statement // do we want to be able to call break or continue here?
-    | timeout_statement
-    | loop_if_statement
-    | while_statement
-    | for_statement
-    | grammar_rule
-    | var_def
-    | fun_def
-    //| SEMICOLON
-    ) comment
+  : comment LBRACE comment (statement | (CONTINUE | BREAK) SEMICOLON)* RBRACE
   ;
 
 loop_propose_statement
@@ -118,7 +97,8 @@ loop_propose_statement
   ;*/
 
 loop_if_statement
-  : IF LPAR boolean_exp RPAR loop_statement ( ELSE loop_statement )?
+  : IF LPAR boolean_exp RPAR (statement | (CONTINUE | BREAK) SEMICOLON)
+    ( ELSE (statement | (CONTINUE | BREAK) SEMICOLON) )?
   ;
 
 function_call
@@ -255,14 +235,23 @@ assignment
     ASSIGN exp
   ;
 
-type_spec: VARIABLE | VARIABLE SMALLER VARIABLE GREATER;
+type_spec
+  : VARIABLE
+    | VARIABLE SMALLER VARIABLE GREATER
+  ;
 
-var_def: type_spec VARIABLE SEMICOLON ;
+var_def
+  : type_spec VARIABLE SEMICOLON
+  ;
 
-fun_def: type_spec VARIABLE LPAR
-    ( type_spec VARIABLE (COMMA type_spec VARIABLE)* )? RPAR SEMICOLON ;
+fun_def
+  : type_spec VARIABLE LPAR
+    ( type_spec VARIABLE (COMMA type_spec VARIABLE)* )? RPAR SEMICOLON
+  ;
 
-set_operation: (VARIABLE | field_access) (ADD | REMOVE) number;
+set_operation
+  : (VARIABLE | field_access) (ADD | REMOVE) number
+  ;
 
 number
   : ( INCREMENT | DECREMENT )?
