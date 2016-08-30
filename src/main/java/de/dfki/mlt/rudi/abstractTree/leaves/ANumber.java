@@ -33,7 +33,11 @@ public class ANumber extends AbstractLeaf{
 
   @Override
   public String getType() {
-    // every int can be a float
-    return "float";
+    // for the moment, we assume we don't get longs or doubles here
+    if(this.value.contains(".")){
+      return "float";
+    } else {
+      return "int";
+    }
   }
 }

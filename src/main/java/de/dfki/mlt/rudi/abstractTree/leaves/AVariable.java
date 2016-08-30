@@ -29,7 +29,7 @@ public class AVariable extends AbstractLeaf {
   }
 
   public AVariable(String representation, String origin) {
-    this.type = "Object";
+    //this.type = "Object";
     this.representation = representation;
     this.origin = origin;
   }
@@ -53,7 +53,7 @@ public class AVariable extends AbstractLeaf {
 
   @Override
   public String getType() {
-    return this.type;
+    return Mem.getVariableType(representation);
   }
 
 }
