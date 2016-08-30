@@ -23,14 +23,19 @@ public class AAssignment implements AbstractTree, AbstractExpression {
   private AbstractExpression right;
   private boolean declaration;
   private String actualType;
+  private String position;
 
   public AAssignment(AbstractTree left, AbstractExpression right,
-          boolean declaration) {
+          boolean declaration, String position) {
     this.left = left;
     this.right = right;
     this.declaration = declaration;
     findType();
     this.actualType = this.type;
+    this.position = position;
+    // irgendwohin in generate:
+//        Mem.addElement(ctx.getChild(1).getText(), ((AbstractExpression) right).getType(),
+//                context.getCurrentRule());
   }
 
   public void findType() {
@@ -49,7 +54,7 @@ public class AAssignment implements AbstractTree, AbstractExpression {
   }
 
   public AAssignment(String actualType, AbstractTree left, AbstractExpression right,
-          boolean declaration) {
+          boolean declaration, String position) {
     this.left = left;
     this.right = right;
     this.declaration = declaration;
@@ -57,6 +62,7 @@ public class AAssignment implements AbstractTree, AbstractExpression {
       findTypeDecl(actualType);
     }
     this.actualType = actualType;
+    this.position = position;
   }
 
   public void findTypeDecl(String actualType) {

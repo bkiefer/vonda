@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudi.abstractTree.statements;
 
+import de.dfki.mlt.rudi.Mem;
+import de.dfki.mlt.rudi.abstractTree.AbstractExpression;
 import de.dfki.mlt.rudi.abstractTree.AbstractStatement;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
 import de.dfki.mlt.rudi.abstractTree.leaves.AVariable;
@@ -22,23 +24,28 @@ public class AFor2Stat implements AbstractStatement, AbstractTree {
   private AVariable var;
   private AbstractTree exp;
   private AbstractBlock statblock;
+  private String position;
 
-  public AFor2Stat(AVariable var, AbstractTree exp, AbstractBlock statblock) {
+  public AFor2Stat(AVariable var, AbstractTree exp, AbstractBlock statblock,
+          String position) {
     this.var = var;
     this.exp = exp;
     this.statblock = statblock;
-    this.varType = "Object";
+    this.varType = null;
+    this.position = position;
   }
 
-  public AFor2Stat(String varType, AVariable var, AbstractTree exp, AbstractBlock statblock) {
+  public AFor2Stat(String varType, AVariable var, AbstractTree exp,
+          AbstractBlock statblock, String position) {
     this.var = var;
     this.exp = exp;
     this.statblock = statblock;
     if (varType.equals("var")) {
-      this.varType = "Object";
+      this.varType = null;
     } else {
       this.varType = varType;
     }
+    this.position = position;
   }
 
   @Override
@@ -49,6 +56,12 @@ public class AFor2Stat implements AbstractStatement, AbstractTree {
 
   @Override
   public void generate(Writer out) throws IOException {
+    // TODO: or should we check here that the type of the variable in assignment
+    // is the type the iterable in exp returns? How?
+    if (varType == null) {
+      varType = ((AbstractExpression) exp).getType();
+    }
+    Mem.addElement(var.toString(), varType, position);
     out.append("for (" + varType + " ");
     var.generate(out);
     out.append(": ");

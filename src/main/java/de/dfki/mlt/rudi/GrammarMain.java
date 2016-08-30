@@ -15,10 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.io.Writer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -105,7 +102,7 @@ public class GrammarMain {
     if (!dir.isDirectory()) {
       inputDirectory = inputDirectory.substring(0, inputDirectory.indexOf(dir.getName()));
       System.out.println("Translating file " + args[0]);
-      processFileDirectly(dir);
+      processFile(dir);
       return;
     }
     // find all .rudi files in directory and process them
@@ -155,17 +152,9 @@ public class GrammarMain {
       if (f.isDirectory()) {
         searchAndTranslateDirectory(f);
       } else if (f.getName().endsWith(".rudi")) {
-        Mem.addAndEnterNewEnvironment(0);
         processFile(f);
-        Mem.leaveEnvironment();
       }
     }
-  }
-
-  public static void processFileDirectly(File file) throws Exception {
-    Mem.addAndEnterNewEnvironment(0);
-    processFile(file);
-    Mem.leaveEnvironment();
   }
 
   public static void processFile(File file) throws IOException {
@@ -231,6 +220,10 @@ public class GrammarMain {
 
   public static String getOutputDirectory(){
     return outputDirectory;
+  }
+
+  public static String getInputDirectory(){
+    return inputDirectory;
   }
 
   public static boolean checkTypes() {

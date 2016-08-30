@@ -8,14 +8,13 @@ package de.dfki.mlt.rudi.abstractTree;
 import java.util.List;
 
 import de.dfki.mlt.rudi.GrammarMain;
-import de.dfki.mlt.rudi.abstractTree.leaves.ACommentBlock;
+import de.dfki.mlt.rudi.Mem;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import static java.lang.System.out;
 
 /**
  *
@@ -42,6 +41,7 @@ public class AGrammarFile implements AbstractTree {
   @Override
   public void generate(Writer out) throws IOException {
     //boolean foundClassName = false;
+    Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
     out.append("public class " + classname + "{\n"
             + "  public void process(){");
     for (AbstractTree r : rules) {
@@ -57,6 +57,7 @@ public class AGrammarFile implements AbstractTree {
     }
     out.append("  }\n}");
     out.close();
+    Mem.leaveEnvironment();
   }
 
   @Override

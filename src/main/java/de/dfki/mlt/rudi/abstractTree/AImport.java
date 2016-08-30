@@ -6,6 +6,7 @@
 package de.dfki.mlt.rudi.abstractTree;
 
 import de.dfki.mlt.rudi.GrammarMain;
+import de.dfki.mlt.rudi.Mem;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
@@ -29,8 +30,11 @@ public class AImport implements AbstractTree{
 
   @Override
   public void generate(Writer out) throws IOException{
+    System.out.println("Processing import " + text);
+    Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
     out.append(text + ".process()");
-    GrammarMain.processFile(new File(GrammarMain.getOutputDirectory() + text + ".rudi"));
+    GrammarMain.processFile(new File(GrammarMain.getInputDirectory() + text + ".rudi"));
+    Mem.leaveEnvironment();
   }
 
 }

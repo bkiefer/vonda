@@ -41,12 +41,12 @@ public class PrintTest {
   public void tearDown() {
   }
 
-  @Test
+  /*@Test
   public void FirstRuleTest() throws Exception {
     String[] strings = new String[]{"src/test/resources/FirstRule.rudi",
       "src/test/testfiles", "-log"};
     GrammarMain.main(strings);
-  }
+  }*/
 
   @Test
   public void ImportTest() throws Exception {
@@ -69,31 +69,31 @@ public class PrintTest {
         String[] strings = new String[]{"SecondRule.txt"};
         GrammarMain.main(strings);
     }
-    
+
     @Test
     public void ThirdRuleTest() throws Exception {
         String[] strings = new String[]{"ThirdRule.txt"};
         GrammarMain.main(strings);
     }
-    
+
     @Test
     public void TupleForTest() throws Exception {
         String[] strings = new String[]{"TupleFor.txt"};
         GrammarMain.main(strings);
     }
-    
+
     @Test
     public void WholeQuizTest() throws Exception {
         String[] strings = new String[]{"RulesQuiz.txt"};
         GrammarMain.main(strings);
     }
-    
+
     @Test
     public void LogTest() throws Exception {
         String[] strings = new String[]{"LogThis.txt", "-log"};
         GrammarMain.main(strings);
     }
-    
+
     /*
     @Test
     public void FourthAndFifthRuleTest() throws Exception {

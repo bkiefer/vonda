@@ -46,6 +46,7 @@ public class AFor1Stat implements AbstractStatement, AbstractTree {
 
   @Override
   public void generate(Writer out) throws IOException {
+    // the assignment will add the variable to the memory!!
     out.append("for ( ");
     assignment.generate(out);
     out.append("; ");

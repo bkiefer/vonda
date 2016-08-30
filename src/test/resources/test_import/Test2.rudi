@@ -4,4 +4,4 @@ import bla;
 
 activity = 3;
 
-String test = notThere;
+test = notThere;

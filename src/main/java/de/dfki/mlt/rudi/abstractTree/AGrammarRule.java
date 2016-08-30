@@ -6,6 +6,7 @@
 package de.dfki.mlt.rudi.abstractTree;
 
 import de.dfki.mlt.rudi.GrammarMain;
+import de.dfki.mlt.rudi.Mem;
 import static de.dfki.mlt.rudi.abstractTree.AGrammarFile.out;
 import de.dfki.mlt.rudi.abstractTree.leaves.ACommentBlock;
 import de.dfki.mlt.rudi.abstractTree.statements.AIfStatement;
@@ -41,11 +42,13 @@ public class AGrammarRule implements AbstractTree{
   public void generate(Writer out) throws FileNotFoundException, IOException{
     out = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream(GrammarMain.getOutputDirectory() + classname + ".java")));
+    Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
     out.append("public class " + classname + "{\n"
             + "  public void process(){");
     comment.generate(out);
     ifstat.generate(out);
     out.append("\n  }\n}");
+    Mem.leaveEnvironment();
   }
 
   @Override
