@@ -1,0 +1,99 @@
+introduction:
+if (! activity <= Introduction) return;
+
+
+// new session: greet user
+// TODO: ADD INFO FUNCTION TO GENERATION SO IT CAN CAPTURE USER NAME ETC.
+initial_greeting:
+if (user.id) {
+  if (! myLastDA()) {
+    propose("greeting") {
+      salutation = firstEncounter() ? InitialGreeting : ReturnGreeting;
+      DialogueAct da = emitDA(#salutation(Meeting));
+
+    ask_user_name:
+      if (! user.GivenName && saidInSession(#Request(Name)) < 0) {
+        // TODO: USE SAME LABELS IN GRAMMAR AND DATABASE
+        // Max: ERROR? TODO: there is no Request(Name) DA!
+        // make sure the next DA is send only send out after 900ms pause
+        introduceDADelay(900);
+        emitDA(#Request(Name));
+      }
+    }
+  }
+}
+
+// All these rules require that a greeting has taken place
+greetings_exchanged:
+if (saidInSession(#Greeting(Meeting))
+    && receivedInSession(#Greeting(Meeting))
+    && ! waitingForResponse()) {
+
+  // TODO: we need a better introduction end criterion
+  if (!intro.has(INTRODUCTION_GAMEPROPOSED)) {
+    // TODO: GET LIST FROM THE PROPERTIES OF A USER
+    slots = allProperties(user.getRange(getLiking));
+    //for (slot : slots) {
+    {
+      slot = Hobby;
+      // SLOT unknown: ask for slot
+      // Ask for favorite hobby and color
+
+    ask_user_preference:
+      if (! user.getLiking.slot
+          && ! saidInSession(Request(Liking, theme=slot))) {
+        propose("ask_for_preference_" + slot) {
+          emitDA(#Request(Liking, theme=slot));
+        }
+      }
+
+    confirm_user_preference:
+      if (user.getLiking.slot
+          && saidInSession(Request(Liking, theme=slot))
+          // TODO find a nice way to express the disjunction (supertype?)
+          && ! saidInSession((Confirm|Disconfirm)(Liking, theme=slot))) {
+        // Nao says he also likes the hobby/color
+        // TODO: Check whether Nao shares the hobby / likes the color.
+
+        propose("like_preference_" + slot) {
+          emitDA(#Confirm(Liking, theme=slot));
+        }
+        propose("dislike_preference_" + slot) {
+          emitDA(#Disconfirm(Liking, theme=slot));
+        }
+      }
+    }
+
+  ask_user_birthdate:
+    // TODO: GET LIST FROM THE PROPERTIES OF A USER
+    String[] infoslots = {Birthdate};
+    // TODO: USE SAME LABELS IN GRAMMAR AND IN DATABASE
+    String[] mapped = {"Age"};
+    int i = 0;
+    for (String slot : infoslots) {
+      // SLOT unknown: ask for slot
+      final String daLabel = mapped[i];
+      if (! user.slot
+          && !saidInSession(#Request(^daLabel))) {
+        propose("ask_for_" + daLabel) { // slot.toLowerCase()
+          emitDA(#Request(^daLabel));
+        }
+      }
+    }
+  }
+}
+
+/* this should not be done in Introduction
+        propose("play_game", new Proposal() {
+          public void run() {
+            // TODO: isn't this rather a propose
+            //DialogueAct da = emitDA("YNQuestion", "Playing", "theme", "Quiz");
+            DialogueAct da = emitDA("Request", "Playing", "theme", "Quiz");
+            intro.put(INTRODUCTION_GAMEPROPOSED, da);
+          }
+        });
+
+      }
+    }
+  }
+*/

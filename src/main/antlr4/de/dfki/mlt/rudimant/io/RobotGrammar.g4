@@ -13,8 +13,8 @@ grammar RobotGrammar;
 // the part "LBRACE statement RBRACE" is ridiciulous but currently solves a parsing exception...
 grammar_file
   : imports*
-    (comment 
-    (grammar_rule | method_declaration | statement | LBRACE statement RBRACE | ANNOTATION))* 
+    (comment
+    (grammar_rule | method_declaration | statement | LBRACE statement RBRACE | ANNOTATION))*
     comment
   ;
 
@@ -23,7 +23,7 @@ imports
   ;
 
 method_declaration
-  : (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | VARIABLE) VARIABLE LPAR 
+  : (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | VARIABLE) VARIABLE LPAR
     ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*)?
     RPAR statement_block;
 
@@ -37,7 +37,7 @@ label
 
 
 statement
-  : 
+  :
     ( exp SEMICOLON
     | statement_block
     | grammar_rule
@@ -49,6 +49,8 @@ statement
     | if_statement
     | while_statement
     | for_statement
+    | var_def
+    | fun_def
     //| SEMICOLON   <- we don't really need it, and it's a pain to find in parser
     ) comment
  ;
@@ -88,7 +90,7 @@ loop_statement_block
 
 /// loop_statement = all statements, allowing continue or break inside them
 loop_statement
-  : 
+  :
     ( exp SEMICOLON
     | loop_statement_block
     | (CONTINUE | BREAK) SEMICOLON
@@ -101,6 +103,8 @@ loop_statement
     | while_statement
     | for_statement
     | grammar_rule
+    | var_def
+    | fun_def
     //| SEMICOLON
     ) comment
   ;
@@ -250,6 +254,13 @@ assignment
     )
     ASSIGN exp
   ;
+
+type_spec: VARIABLE | VARIABLE SMALLER VARIABLE GREATER;
+
+var_def: type_spec VARIABLE SEMICOLON ;
+
+fun_def: type_spec VARIABLE LPAR
+    ( type_spec VARIABLE (COMMA type_spec VARIABLE)* )? RPAR SEMICOLON ;
 
 set_operation: (VARIABLE | field_access) (ADD | REMOVE) number;
 

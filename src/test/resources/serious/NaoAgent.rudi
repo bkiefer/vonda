@@ -1,0 +1,577 @@
+// Highlighting auf F# gestellt passt wohl am besten ;)
+
+// BK: Grundsätzlich: Wir schmeissen alles, was eine Java-Methode ist, hier
+// raus und in ein Java-File, wenn möglich.
+// hier bleiben dann nur noch die rudimant-Regeln und Makros (nenne ich jetzt
+// mal so)
+
+
+/*@ package de.dfki.dialogue @*/ //! <- wie kann rudimant das package herausfinden ? (wahrscheinlich gar nicht)
+
+//! rdfs müssen nicht importiert werden, werden automatisch eingesetzt
+
+//! java.util imports, cplan Import: sollte Rudimant die selbst herausfinden können, oder soll man sie einfach schreiben können?
+
+//! Klasse kann problemlos automatisch erstellt werden, aber das hier will man vermutlich sagen können, da es nicht immer der Agent sein muss
+extend Agent;
+
+//! Die Initialisierung brauchen wir (?), ist aber definitiv ein Fall für die Java-Klammern
+/*@   NaoAgent(String ip, int port) {
+    super(ip, "InteractionManager", port);
+    subscribe("Intention", new IntentionHandler(this));
+    subscribe("UserTextFeedback", new InterpretationHandler(this));
+    subscribe("QuizResponse", new QuizResponseHandler(this));
+    subscribe("QuizCommand", new QuizCommandHandler(this));
+    subscribe("QuizQuestion", new QuizQuestionHandler(this));
+    subscribe("SystemInfo", new SystemInfoHandler(this));
+    subscribe("LowLevelNaoCommand", new LowLevelNaoCommandHandler(this));
+  }
+
+  static final String I_ROBOT = "<pal:nao_0>";
+@*/
+
+  Activity activity = null;
+
+  Child user = null;
+
+  Session currentSession = null;
+
+//! hier kommen emitDA, reset, setUser, getActivityName, getUser, getUserName, getUserGender, getUserColor, getUserHobby, firstEncounter, isFamiliar
+//! das will man hier bestimmt nicht haben, Auslagerung in eine (eingeschobene) Superklasse, damit man die Methoden trotzdem noch bequem benutzen kann?!
+
+//! Sollen diese Methoden hier bleiben? : hasPlayedGame, getNumberOfQuestionsCurrentAsker, getCurrentAsker
+
+/******************************* GAME LOGIC ********************************/
+
+//! Für das hier wollten wir vielleicht new benutzen können
+
+// Tell the QuizLogic that the quiz starts now, and who starts asking
+start_quiz:
+/*@    QuizCommand start = new QuizCommand(); @*/
+    start.setId(generateId());
+    start.setCommand("start;" + agent.getUser().get("id"));
+    start.setAsker((String) q.getCurrentAsker());
+    agent.send(start);
+    agent.logger.info("<- Quiz Start {}", System.currentTimeMillis());
+
+stop_quiz:
+/*@     QuizCommand stop = new QuizCommand(); @*/
+    stop.setId(generateId());
+    stop.setCommand("stop");
+    stop.setAsker((String) q.getCurrentAsker());
+    agent.send(stop);
+    agent.logger.info("<- Quiz Stop {}", System.currentTimeMillis());
+
+assess_performance:
+if (! (myLastDA <= #Inform(AssessingPerformance))
+    && ! (myLastDA <= #Goodbye(Meeting))  // wenn subtype /supertyp funktioniert
+    // && ! (myLastDA <= #InitialGoodbye(Meeting"))
+    ) {
+  emitDA(#Breaking(Playing, Reason=reason));
+  logger.info("AssessingPerformance");
+  propose("AssessUserPerformance") {
+    //TODO get actual total and correct values
+    //TODO look at information from previous games
+    emitDA(#Inform(AssessingPerformance, theme="Answer",
+                   agent="user", total="5", correct="5"));
+  }
+  propose("AssessRobotPerformance") {
+    emitDA(#Inform(AssessingPerformance, theme="Answer", agent="robot",
+                   total="5", correct="0"));
+  }
+  endQuiz(q, reason);
+}
+
+end_quiz:
+if (isMyLastDA(#Inform(AssessingPerformance))) {
+  propose("endQuiz") {
+    logger.info("we are in endQuiz");
+    if (myLastDA <= #Inform(AssessingPerformance)) {
+      String dialogueAct = firstEncounter() ? "InitialGoodbye" : "ReturnGoodbye";
+      if (user.isEqual(CHILD_LOCATION, "Home")) {
+        dialogueAct = "ReturnGoodbye";
+      }
+    // TODO: Übergeben von #ReturnGoodbye als String wird nicht funktionieren,
+    // gibt es hier eine andere Möglichkeit als das Ganze in drei Emits
+    // aufzuteilen?
+      DialogueAct close = #_dialogueAct(Meeting, theme="Quiz");
+      stopQuiz(q, NaoAgent.this);
+      /*@ activity = newActivity(new Closing(NaoAgent.this)); @*/
+      closeSession((Closing) activity, close);
+    }
+  }
+}
+
+// BK: ist und bleibt java funktion, diese timeouts fliegen raus!
+close_session:
+    activity.put(CLOSING_PROPOSED, close);
+    user.addToList(CHILD_SESSIONS, currentSession);
+
+    newTimeout("EndSession", 35000) {
+/*@        SystemInfo endsession = new SystemInfo(); @*/
+        endsession.setId(generateId());
+        endsession.setContent("end_session");
+        send(endsession);
+        logger.info("<- End Session {}", System.currentTimeMillis());
+      }
+
+// BK: ist und bleibt java funktion
+request_next_question:
+/*@    QuizSelectQuestion qc = new QuizSelectQuestion(); @*/
+    qc.setAsker(
+            ((String) ((Quiz) agent.activity).getCurrentAsker())
+            .equals(NaoAgent.I_ROBOT)
+            ? "robot" : "child");
+    qc.setGoal("");
+    agent.send(qc);
+    agent.logger.info("<- Quiz Question {}", System.currentTimeMillis());
+
+//! hier kämen getQuestionArgs und getAnswerArgs, wollen wir die hier haben?
+// BK: sind und bleiben java funktionen
+
+// BK TODO: Mal wieder so ein Makro / Methode ...
+user_reads_question:
+//! Casten: bisher kann rudimant das nicht
+// BK: braucht es auch nicht, das wird ein RdfProxy objekt, das sieht dann
+// sowieso ganz anders aus. Nur wie ist das mit dem Typ, siehe naechste
+// Anmerkung
+    Quiz quiz = (Quiz) activity;
+// BK TODO: hier stellt sich eher die Frage: Wie kann man RdfProxies um
+// eigene Methoden erweitern? Subklassieren von RdfProxy???
+    Turn currentTurn = quiz.getCurrentTurn();
+    if (currentTurn != null) {
+      QuizQuestion q = getQuizQuestion(currentTurn.QuestionId);
+      if (q != null) {
+        // Generate next question / answers
+        // BK: evtl markieren mit ^ zum "einspleissen"?
+        addLastDA(#Inform(Asking, ^getQuestionArgs(q, currentTurn)));
+        addLastDA(#Inform(Answering, ^getAnswerArgs(q)));
+      }
+    }
+
+// BK: siehe oben.
+robot_answers:
+//! wieder Casting // BK: siehe oben.
+    Quiz quiz = activity;
+    emitDA(#Inform(Answer, id=^Integer.toString(number + 1),
+                   ^("string"+Integer.toString(number + 1))=^answerString));
+    quiz.status= "answer_given";
+    Turn current = quiz.getCurrentTurn();
+/*@    current.put("AnswerCorrect", new Boolean(correct)); @*/
+    lastDAprocessed();
+
+//! newActivity: auch hier: verschieben?
+// BK: vielleicht ein Makro
+
+process_rules:
+if (user == null) {
+  //! rudimant kann return, aber wahrscheinlich ist das hier trotzdem
+  //! Quatsch!
+  // BK: nicht unbedingt. Das koennte fuer rudimant so was sein wie fuer
+  // Prolog das Cut. Nach dem Motto: wenn das schon nicht, dann ist hier
+  // Schluss
+  return;
+}
+
+if (! currentSession) {
+/*@      currentSession = new Session(this); @*/
+  currentSession.child = user;
+  if (! activity) {
+    if (user.location != "Hospital")) {
+/*@          newActivity(new Introduction(this)); @*/
+  } else {
+    initQuiz();
+  }
+ }
+}
+
+//BK: wird viel mehr.
+process_timeouts:
+if (isTimedout("start")) {
+  removeTimeout("start");
+}
+
+//! hier folgen mapToAgent und mapAgentToUri, verschieben (?)
+// BK: Java-Methoden. raus.
+
+init_quiz:
+/*@    Quiz quiz = newActivity(new Quiz(this)); @*/
+if (quiz.status == "none" || !quiz.status) {
+  quiz.player = user.id;
+  quiz.status = started;
+/*@      quiz.begins = new Date(); @*/
+
+  //Max: put tabletorientation to child
+  quiz.tabletorientation = "child";
+}
+
+//! instanceof und Casting mag rudimant nicht; sollte das eingebaut werden, oder umgehen wir das Problem hier indem der Code umgeschrieben wird?
+
+process_incoming_speechacts:
+    // TODO: ALL THESE RULES DEFINITELY LOOK AT AN !!UNPROCESSED!!
+    // INCOMING DIALOGUE ACT
+
+if (lastDA <= #Greeting(Meeting)) {
+  // || lastDA <= #ReturnGreeting(Meeting) // BK: wieder subclass
+  if (activity <= Introduction) {
+    intro = activity;
+    intro.greetingreceived = lastDA;
+  } else {
+    logger.warn("greeting while not doing intro.");
+  }
+  lastDAprocessed();
+}
+
+robot_starts_quiz:
+if ((lastDA <= #AcceptRequest(Playing) || lastDA <= #Confirm(Playing))
+    && !(activity <= Quiz)) {
+  initQuiz();
+  lastDAprocessed();
+}
+
+robots_accepts_game_reject:
+if ((lastDA <= #RejectRequest(Playing) || lastDA <= #Disconfirm(Playing))
+    && activity && !(activity <= Quiz) && !(activity <= Closing)) {
+  // OK, maybe next time
+  emitDA(#Disconfirm(Playing));
+/*@      newActivity(new Closing(this)); @*/
+  lastDAprocessed();
+}
+
+robot_accepts_role:
+if (lastDA <= #Request(AssigningRole)) { // BK subclass
+  //  || lastDA <= #AcceptRequest(AssigningRole))
+  //        || lastDA <= #RejectRequest(AssigningRole))) {
+  if (!activity || !(activity <= Quiz)) // TODO: clarification dialogue??
+    {
+      return;
+    }
+  String theme = lastDA.theme;
+  String agent = lastDA.agent;
+  if (null == theme) {
+    agent = "user";
+  } else // turn agent around
+    if (lastDA <= #RejectRequest(AssigningRole)) {
+      agent = "user".equals(agent) ? "robot" : "user";
+    }
+  String currentAgent = mapAgentToUri(agent);
+
+  // TODO check if theme matches current activity (e.g. quiz game)
+  Quiz quiz = activity;
+  // BK: fishy, RdfProxy problem
+  Turn t = quiz.newTurn();
+  // BK: fishy, RdfProxy problem
+  t.setAsker(currentAgent,
+          (currentAgent.equals(I_ROBOT) ? (String) user.get("id") : I_ROBOT));
+  // THIS IS ONLY THE COMMUNICATION WITH THE QUIZ LOGIC
+  // Todo: see above, not yet implemented, always accept
+  if (true) {
+    emitDA(#Accept(AssigningRole, theme=^theme, agent=^agent));
+    emitDA(#Inform(Instructing, theme=^theme,
+                   agent=^agent, purpose="Asking"));
+    startQuiz(quiz, this);
+    if (quiz.status == "started") {
+      quiz.status = "running";
+    }
+  }
+  lastDAprocessed();
+}
+
+// The child has read question and answers, now the robot has to give an
+// answer
+robot_gives_answer:
+if (lastDA <= #Inform(Answering)) {
+  // BK: solche timeouts fliegen raus.
+  newTimeout("RobotSeeksAnswer", 600) {
+    //Quiz quiz = (Quiz) activity;
+    quiz = activity;
+    Turn currentTurn = quiz.getCurrentTurn();
+    // siehe oben
+    QuizQuestion q = (QuizQuestion) currentTurn.get("QuestionId");
+    int correct = q.getWhichCorrect();
+    // Answers were read by child, give an answer
+    emitDA(#Stalling(Answering));
+    propose("give_correct_answer") {
+      robotAnswers(q.getAnswers().get(correct), correct, true);
+      // maybe invalidate the lastDAs, also below
+    }
+
+    propose("give_wrong_answer") {
+      int number = 0;
+      while ((number = random.nextInt(q.getAnswersSize())) == correct) {
+      }
+      robotAnswers(q.getAnswers().get(number), number, false);
+    }
+    lastDAprocessed();
+  }
+}
+
+//! hier kommt: waitingForResponse; hat returns
+
+
+  /* **********************************************************************
+   * The rule section : Introduction
+   *   - no data for color, name, hobby, age : ask for data
+   *   - if hobby given that NAO shares: inform about it
+   *   - if only hobby given : ask about other hobbies
+   * ********************************************************************* */
+
+process_rules_introduction:
+if (! activity || !(activity <= Introduction))
+  //! <- brauchen wir das in dieser Form? Wenn ja: instanceof-Problem, genauso
+  //! später das Casten
+  // BK: das scheint mir hier nicht das Problem aber das return erfordert
+  // irgendeine Art von Klammerung. sonst werden die Regeln danach nicht mehr
+  // ausgeführt. Vielleicht muss das dann in eine eigene .rudi Datei
+  // die nur für Introduction regeln ist.
+
+  return;
+
+Introduction intro = activity;
+// new session: greet user
+// TODO: ADD INFO FUNCTION TO GENERATION SO IT CAN CAPTURE USER NAME ETC.
+greet_user:
+if (user.id) {
+  if (! myLastDA()) {
+
+    propose("greeting") {
+      DialogueAct da = emitDA(#salutation(greeting));
+      // the default for the timeout name should be the proposal name
+      // timeouts.newTimeout("greeting", 10000);
+      // TODO: add the timeout if you want to do something in case the
+      // child does not react.
+      intro.greeting = da;
+      //! rudimant kann noch kein try-catch, also: sollte man das einbauen, wenn nicht, einfach als Javacode markieren (zum Debuggen sollte ja letzteres reichen)
+      /*@            try {
+        Thread.sleep(900);
+        } catch (InterruptedException e) {
+        e.printStackTrace();
+        } @*/
+      // TODO: CONDITION THIS ON THE FIRST SESSION
+      // TODO: HAVE A REASONABLE PAUSE BETWEEN TO TWO SENTENCES
+      String slot = CHILD_NAME;
+      if (user.get(slot) == null
+          && lastOccurenceOfMyDA("Request", slot) < 0) {
+        // TODO: USE SAME LABELS IN GRAMMAR AND DATABASE
+        emitDA(#Request("Name"));
+      }
+    }
+  }
+
+  // All these rules require that a greeting has taken place
+
+  // BK: hier wäre vielleicht ein status-slot wie für Quiz besser. Der
+  // funktioniert wie eine Zustandsvariable. Vielleicht auch nicht.
+  if (intro.greeting
+      && intro.greetingreceived
+      && ! waitingForResponse()) {
+    if (! intro.gameproposed) {
+      // TODO: GET LIST FROM THE PROPERTIES OF A USER
+      // BK: hier ist der Mist, dass man gerne ueber slots von RdfProxies
+      // iterieren will
+      String[] slots = { CHILD_HOBBY, CHILD_COLOR };
+      for (String slot : slots) {
+        if (user.get(slot) == null
+            && lastOccurenceOfMyDA(#Request(^slot)) < 0) {
+          propose("ask_for_preference_" + slot.toLowerCase()) {
+            emitDA(#Request("Liking", "theme", slot));
+          }
+        }
+      }
+
+      // TODO: GET LIST FROM THE PROPERTIES OF A USER
+      String[] infoslots = { CHILD_BIRTHDATE };
+      // TODO: USE SAME LABELS IN GRAMMAR AND IN DATABASE
+      String[] mapped = { "Age" };
+      int i = 0;
+      for (String slot : infoslots) {
+        final String daLabel = mapped[i];
+        if (user.get(slot) == null
+            && lastOccurenceOfMyDA(#Request(^daLabel)) < 0) {
+          propose("ask_for_" + daLabel) {
+            emitDA(#Request(daLabel));
+          }
+        }
+        ++i;
+      }
+    }
+
+    propose("play_game") {
+      // TODO: isn't this rather a propose
+      DialogueAct da = emitDA(#Request(Playing, theme="Quiz"));
+      intro.gameproposed = da;
+    }
+  }
+}
+
+  /* **********************************************************************
+   * The rule section : Quiz
+   * ********************************************************************* */
+
+process_rules_quiz:
+    if (activity == null || ! (activity instanceof Quiz)) //! wie letzte Regel: instanceof
+      return;
+
+    Quiz quiz = (Quiz) activity;
+    logger.info("Quiz status: {}, Asker: {}", quiz.get(QUIZ_STATUS),
+        quiz.getCurrentAsker());
+
+    if (quiz.isEqual(QUIZ_STATUS, "started")) {
+      logger.info("Quiz started {}", System.currentTimeMillis());
+      int lastInfo = lastOccurenceOfMyDA(#Inform("Instructing", "theme", "Quiz"));
+      if (! user.hasPlayedQuiz() && lastInfo < 0) {
+        propose("inform_gamerules") {
+            emitDA(#Inform("Instructing", "theme", "Quiz"));
+          }
+      }
+
+      if ((user.hasPlayedQuiz()
+           || lastOccurenceOfMyDA(#Inform("Instructing", "theme", "Quiz")) >= 0)
+          && quiz.getCurrentAsker() == null
+          && ! waitingForResponse()
+          ) {
+        propose("ask_for_user_starts") {
+            emitDA(#Request("AssigningRole", "theme", "Quiz", "agent", "user"));
+            // TODO: ADD: RE-ASK WHEN NO REACTION: MAYBE DO IT MORE GENERAL
+            // timeouts.newTimeout("ask_for_role", 10000);
+          }
+        propose("ask_for_robot_starts") {
+            emitDA(#Request("AssigningRole", "theme", "Quiz", "agent", "robot"));
+            // TODO: ADD: RE-ASK WHEN NO REACTION: MAYBE DO IT MORE GENERAL
+            // timeouts.newTimeout("ask_for_role", 10000);
+          }
+      }
+    }
+
+    if (quiz.oneOf(QUIZ_STATUS,
+        "running", "wait_for_question", "wait_for_question_read",
+        "wait_for_tablet", "wait_for_answer", "answer_given",
+        "wait_for_continue")) {
+      processRulesQuizRunning(quiz);
+    }
+
+process_rules_quiz_running:
+    // Question asked already??
+    if (! quiz.getCurrentTurn().has(TURN_QUESTIONID)
+        && ! quiz.isEqual(QUIZ_STATUS, "wait_for_question")
+        && ! quiz.isEqual(QUIZ_STATUS, "wait_for_continue")) {
+
+      logger.info("REQUEST NEW QUESTION, THE CURRENT ASKER IS {}, THE CURRENT RESPONDER IS {}",
+          quiz.getCurrentAsker(),
+          quiz.getCurrentAsker().equals(I_ROBOT) ? user.get("id") : I_ROBOT);
+
+      // retrieve question/answer from quizdb
+      requestNextQuestion(this);
+      quiz.put(QUIZ_STATUS, "wait_for_question");
+      // TODO: ADD A CONTINOUS TIMER THAT RETRIES SEVERAL TIMES IF NO QUESTION
+      // COMES, AND AFTER TWO RETRIES COMES BACK TO THE USER AND TELLS HER/HIM
+      // THERE ARE TECHNICAL PROBLEMS
+
+    } else if (quiz.isEqual(QUIZ_STATUS, "wait_for_tablet")) {
+      // CurrentAsker has the correct value now, a question arrived
+      if (! quiz.isEqual(QUIZ_TABLETORIENTATION,
+          quiz.getCurrentAsker().equals(I_ROBOT) ? "robot" : "child" )) {
+        if (! isMyLastDA(#Request("Turning"))) {
+          propose("request_turn_tablet") {
+              emitDA(#Request("Turning", "theme", "Tablet"));
+              // maybe introduce a timeout to ask again
+            }
+        }
+      } else {
+        // tablet orientation is OK, question will be posed by robot or child
+        if (quiz.getCurrentAsker().equals(I_ROBOT)) {
+          // The robot reads the question and answers
+          propose("give_next_question") {
+              Turn current = quiz.getCurrentTurn();
+              QuizQuestion q = (QuizQuestion) current.get(Turn.TURN_QUESTIONID);
+              String[] answerArgs = new String[2 * q.getAnswers().size()];
+              int i = 0;
+              for (String answer : q.getAnswers()) {
+                answerArgs[i] = "string" + (1 + i/2);
+                answerArgs[i+1] = answer;
+                i += 2;
+              }
+              // Generate next question / answers
+              // This needs to know the number of questions that was asked
+              // by this agent, done by infoState
+              emitDA(#Inform("Asking",
+                  "string", q.getQuestionText(),
+                  "id", Integer.toString(1 + getNumberOfQuestionsCurrentAsker())));
+              emitDA(#Inform("Answering", answerArgs));
+
+              // turn tablet
+              emitDA(#Inform("Turning", "theme", "Tablet", "manner", "silent"));
+
+              // change status
+              quiz.put(QUIZ_STATUS, "wait_for_answer");
+            }
+        } else {
+          // The user is the asker, wait for the user to finish reading
+          // the question and answers, if we have a real robot
+          quiz.put(QUIZ_STATUS, "wait_for_question_read");
+        }
+      }
+    } else if (quiz.isEqual(QUIZ_STATUS, "answer_given")) {
+      // TODO: IF THE ROBOT SHOULD SAY WHAT THE RIGHT SOLUTION WAS:
+      //  @raw:Inform(GivingSolution ^ <string3>"this is the solution" ^ <id>3)
+
+      Turn current = quiz.getCurrentTurn();
+
+//! Wieder das Problem: sollte rudimant Casten vertragen? Würde wahrscheinlich Probleme im entstehenden Javacode vorbeugen, wenn rudimant nicht zu Object greifen muss weil es durch das Casten ja Hinweise kriegt
+      Boolean correct = (Boolean) current.get(TURN_ANSWERCORRECT);
+      String responder = ((String) current.get(TURN_RESPONDER)).equals(I_ROBOT)
+          ? "robot" : "user";
+      String proposal = "feedback_" + (correct ? "correct_" : "wrong_")
+          + responder;
+      // give feedback to my or the user's success
+      propose(proposal) {
+          if (responder.equals("robot")) {
+//! Hier wieder das Problem: String concatenation geht nicht mehr wenn wir #Confirm schreiben wollen
+            emitDA("Allo" + (correct ? "Positive" : "Negative"),
+                "BeingSuccessful", "theme", "Quiz");
+          } else {
+            emitDA((correct ? "Confirm" : "Disconfirm"), "BeingCorrect",
+                "theme", "Quiz", "agent", "user");
+          }
+        }
+
+      // since currently one proposal is always taken, we just propose also
+      // a continue_quiz
+      // TODO: adapt once that changes
+
+      quiz.put(QUIZ_STATUS, "wait_for_continue");
+    }
+
+    if (quiz.isEqual(QUIZ_STATUS, "wait_for_continue")) {
+      propose("continue_quiz") {
+          Turn last = quiz.getCurrentTurn();
+          Turn t = quiz.newTurn();
+          // Switch roles after each turn
+          t.setAsker((String)last.get(TURN_RESPONDER),
+              (String)last.get(TURN_ASKER));
+          quiz.put(QUIZ_STATUS, "running");
+        }
+
+      propose("quiz_game_ends_max_time") {
+          emitDA(#provide("playStop", "Reason", "technical"));
+          activity = newActivity(new Closing(NaoAgent.this));
+        }
+
+      propose("quiz_game_ends_max_rounds") {
+          emitDA(#provide("playStop", "Reason", "time"));
+          activity = new Closing(NaoAgent.this);
+        }
+    }
+
+process_rules_closing:
+    if (! (activity instanceof Closing)) return; //! Wieder instanceof
+    Closing closing = (Closing)activity;
+
+    if (! closing.has(CLOSING_PROPOSED)) {
+      closing.put(CLOSING_PROPOSED, "null");
+      propose("closing") {
+          closing.put(CLOSING_PROPOSED, emitDA(#salutation("closing")));
+          user.addToList(CHILD_SESSIONS, currentSession);
+          reset();
+        }
+    }
