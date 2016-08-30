@@ -138,7 +138,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitFunction_call(RobotGrammarParser.Function_callContext ctx) {
-    // as we do not declare funccalls in grammar files, this must be a function access
     // VARIABLE LPAR exp? (COMMA exp)* RPAR
     ArrayList<AbstractExpression> expList = new ArrayList<AbstractExpression>();
     for (int i = 2; i < ctx.getChildCount() - 1;) {
@@ -146,8 +145,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
       i += 2;   // because we aren't interested in commas
     }
     //throw new UnsupportedOperationException("Yay, I found a function: ");
-    return new AFunctAccess(context.getFunctionAccessType(ctx.getText()),
-            ctx.getChild(0).getText(), expList);
+    return new AFuncCall(ctx.getChild(0).getText(), expList);
   }
 
   @Override

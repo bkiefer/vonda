@@ -47,13 +47,12 @@ public class Mem {
     variableOrigin.put(funcname, origin);
   }
 
-  public static boolean existsFunction(String funcname, String functype,
+  public static boolean existsFunction(String funcname,
           ArrayList<String> partypes){
     if(!functionTypes.containsKey(funcname)){
       return false;
     }
-    return (functionTypes.get(funcname).equals(functype) &&
-            partypes.equals(functionParTypes.get(funcname)));
+    return (partypes.equals(functionParTypes.get(funcname)));
   }
 
   /**

@@ -5,35 +5,45 @@
  */
 package de.dfki.mlt.rudi.abstractTree.leaves;
 
+import de.dfki.mlt.rudi.GrammarMain;
+import de.dfki.mlt.rudi.Mem;
 import java.util.List;
 
 import de.dfki.mlt.rudi.abstractTree.*;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 
 /**
  *
  * @author anna
  */
-public class AFunctAccess extends AbstractLeaf{
+public class AFuncCall extends AbstractLeaf{
 
   private String type;
   private String representation;
   private List<AbstractExpression> exps;
 
-  public AFunctAccess(String type, String representation, List<AbstractExpression> exps) {
-    this.type = type;
+  public AFuncCall(String representation, List<AbstractExpression> exps) {
     this.representation = representation;
     this.exps = exps;
   }
 
   @Override
   public void testType() {
-    // nothing to do
+    // test whether the given parameters are of the correct type
+    ArrayList<String> partypes = new ArrayList<String>();
+    for (AbstractExpression e : exps){
+      partypes.add(e.getType());
+    }
+    Mem.existsFunction(representation, partypes);
   }
 
   @Override
   public void generate(Writer out) throws IOException{
+    if(GrammarMain.checkTypes()){
+      testType();
+    }
     out.append(this.representation + "(");
     for(int i = 0; i < this.exps.size(); i++){
       this.exps.get(i).generate(out);
@@ -46,6 +56,9 @@ public class AFunctAccess extends AbstractLeaf{
 
   @Override
   public String getType() {
+    if(this.type == null){
+      type = Mem.getFunctionRetType(representation);
+    }
     return this.type;
   }
 }
