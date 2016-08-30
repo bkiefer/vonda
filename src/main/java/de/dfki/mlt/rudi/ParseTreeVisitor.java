@@ -57,33 +57,31 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     // ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*) RPAR statement_block
 
     if (ctx.getChild(3).getText().equals("(")) { // we have public, protected or private modifier
-      HashMap<String, String> par_to_typ = new HashMap<String, String>();
+      ArrayList<String> parameters = new ArrayList<>();
+      ArrayList<String> partypes = new ArrayList<>();
       // get all the parameters of the function
       for (int i = 4; i < ctx.getChildCount() - 2;) {
-        String t = ctx.getChild(i).getText();
-        i++;
-        if (t.equals("var")) {
-          t = "Object";
-        }
-        par_to_typ.put(ctx.getChild(i).getText(), t);
+        partypes.add(ctx.getChild(i).getText());
+        partypes.add(ctx.getChild(++i).getText());
         i += 2;
       }
-      return new AMethodDeclaration(ctx.getChild(0).getText(), ctx.getChild(1).getText(), ctx.getChild(2).getText(),
-              par_to_typ, this.visit(ctx.getChild(ctx.getChildCount() - 1)));
+      return new AMethodDeclaration(ctx.getChild(0).getText(), ctx.getChild(1).getText(),
+              ctx.getChild(2).getText(), parameters, partypes,
+              this.visit(ctx.getChild(ctx.getChildCount() - 1)),
+              context.getCurrentRule());
     }
-    HashMap<String, String> par_to_typ = new HashMap<String, String>();
+    ArrayList<String> parameters = new ArrayList<>();
+    ArrayList<String> partypes = new ArrayList<>();
     // get all the parameters of the function
     for (int i = 3; i < ctx.getChildCount() - 2;) {
-      String t = ctx.getChild(i).getText();
-      i++;
-      if (t.equals("var")) {
-        t = "Object";
-      }
-      par_to_typ.put(ctx.getChild(i).getText(), t);
+      partypes.add(ctx.getChild(i).getText());
+      partypes.add(ctx.getChild(++i).getText());
       i += 2;
     }
-    return new AMethodDeclaration("", ctx.getChild(0).getText(), ctx.getChild(1).getText(),
-            par_to_typ, this.visit(ctx.getChild(ctx.getChildCount() - 1)));
+    return new AMethodDeclaration(ctx.getChild(0).getText(), ctx.getChild(1).getText(),
+            ctx.getChild(2).getText(), parameters, partypes,
+            this.visit(ctx.getChild(ctx.getChildCount() - 1)),
+            context.getCurrentRule());
   }
 
   @Override

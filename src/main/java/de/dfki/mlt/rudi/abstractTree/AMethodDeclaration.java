@@ -5,8 +5,10 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import de.dfki.mlt.rudi.Mem;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -18,35 +20,43 @@ public class AMethodDeclaration implements AbstractTree {
   private String visibility;
   private String return_type;
   private String name;
-  private HashMap<String, String> parameters_to_types;
+  private ArrayList<String> parameters;
+  private ArrayList<String> partypes;
   private AbstractTree block;
+  private String position;
 
   public AMethodDeclaration(String visibility, String return_type, String name,
-          HashMap<String, String> parameters_to_types, AbstractTree block) {
+          ArrayList<String> parameters, ArrayList<String> partypes,
+          AbstractTree block, String position) {
     this.visibility = visibility;
     this.return_type = return_type;
     this.name = name;
-    this.parameters_to_types = parameters_to_types;
+    this.parameters = parameters;
+    this.partypes = partypes;
     this.block = block;
+    this.position = position;
+    Mem.addFunction(name, return_type, partypes, position);
   }
 
   @Override
   public void generate(Writer out) throws IOException {
+    Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth());
     String ret = visibility + " " + return_type + " " + name + "(";
-    if (!parameters_to_types.isEmpty()) {
-      int i = 0;
-      for (String s : parameters_to_types.keySet()) {
-        i++;
+    if (!parameters.isEmpty()) {
+      for (int i = 0; i < parameters.size(); i++) {
         if (i == 1) {
-          ret += this.parameters_to_types.get(s) + " " + s;
+          ret += partypes.get(i) + " " + parameters.get(i);
         } else {
-          ret += ", " + this.parameters_to_types.get(s) + " " + s;
+          ret += ", " + partypes.get(i) + " " + parameters.get(i);
         }
+        // add parameters to environment
+        Mem.addElement(parameters.get(i), partypes.get(i), position);
       }
     }
     ret += ")";
     out.append(ret + "\n");
     block.generate(out);
+    Mem.leaveEnvironment();
   }
 
   @Override
