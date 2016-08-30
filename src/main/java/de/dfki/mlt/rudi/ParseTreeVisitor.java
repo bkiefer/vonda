@@ -495,7 +495,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
       AbstractTree exp = this.visit(ctx.getChild(4));
       Mem.addElement(ctx.getChild(2).getText(), ((AbstractExpression) exp).getType(),
               context.getCurrentRule());
-      return new AFor2Stat(new ALocalVar(ctx.getChild(2).getText(), context.getCurrentRule()), exp,
+      return new AFor2Stat(new AVariable(ctx.getChild(2).getText(), context.getCurrentRule()), exp,
               (AbstractBlock) this.visit(ctx.getChild(6)));
     } else if (ctx.getChild(4).getText().equals(":")) {
       // FOR LPAR (DEC_VAR | VARIABLE) VARIABLE COLON exp RPAR loop_statement_block"
@@ -506,7 +506,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
                 context.getCurrentRule());
       }
       return new AFor2Stat(ctx.getChild(2).getText(),
-              new ALocalVar(ctx.getChild(3).getText(), context.getCurrentRule()),
+              new AVariable(ctx.getChild(3).getText(), context.getCurrentRule()),
               this.visit(ctx.getChild(5)),
               (AbstractBlock) this.visit(ctx.getChild(7)));
     } else if (ctx.getChildCount() == 8) {
@@ -604,7 +604,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
         return new AWildcard();
       case 57:  // token is variable
         String text = tn.getText();
-        if (Mem.existsVariable(text)) {
+        return new AVariable(text, context.getCurrentRule());
+        /*if (Mem.existsVariable(text)) {
           String origin = "";
           if (context.getCurrentRule().equals(Mem.getVariableOrigin(text))) {
             origin = "";
@@ -618,7 +619,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
           // TODO: find a nice exception
           throw new UnsupportedOperationException("This variable isn't declared "
                   + "anywhere: " + text);
-        }
+        }*/
       case 58:  // token is int
         return new ANumber(tn.getText());
       case 59:  // token is float

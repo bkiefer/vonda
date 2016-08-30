@@ -5,27 +5,30 @@
  */
 package de.dfki.mlt.rudi.abstractTree.leaves;
 
-import de.dfki.mlt.rudi.abstractTree.*;
+import de.dfki.mlt.rudi.Mem;
+import de.dfki.mlt.rudi.abstractTree.AbstractLeaf;
 import java.io.IOException;
 import java.io.Writer;
+
+// TODO: test whether variable exists?
 
 /**
  *
  * @author anna
  */
-public class ALocalVar extends AbstractLeaf {
+public class AVariable extends AbstractLeaf {
 
   private String type;
   private String representation;
   private String origin;
 
-  public ALocalVar(String type, String representation, String origin) {
+  public AVariable(String type, String representation, String origin) {
     this.type = type;
     this.representation = representation;
     this.origin = origin;
   }
 
-  public ALocalVar(String representation, String origin) {
+  public AVariable(String representation, String origin) {
     this.type = "Object";
     this.representation = representation;
     this.origin = origin;
@@ -43,7 +46,7 @@ public class ALocalVar extends AbstractLeaf {
 
   @Override
   public void generate(Writer out) throws IOException{
-    if(!origin.equals(""))
+    if(!origin.equals(Mem.getVariableOrigin(representation)))
       origin += ".";
     out.append(origin + representation);
   }

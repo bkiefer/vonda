@@ -5,11 +5,9 @@
  */
 package de.dfki.mlt.rudi.abstractTree.statements;
 
-import de.dfki.mlt.rudi.abstractTree.AbstractLeaf;
 import de.dfki.mlt.rudi.abstractTree.AbstractStatement;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
-import de.dfki.mlt.rudi.abstractTree.leaves.ACommentBlock;
-import de.dfki.mlt.rudi.abstractTree.leaves.ALocalVar;
+import de.dfki.mlt.rudi.abstractTree.leaves.AVariable;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -21,18 +19,18 @@ import java.io.Writer;
 public class AFor2Stat implements AbstractStatement, AbstractTree {
 
   private String varType;
-  private ALocalVar var;
+  private AVariable var;
   private AbstractTree exp;
   private AbstractBlock statblock;
 
-  public AFor2Stat(ALocalVar var, AbstractTree exp, AbstractBlock statblock) {
+  public AFor2Stat(AVariable var, AbstractTree exp, AbstractBlock statblock) {
     this.var = var;
     this.exp = exp;
     this.statblock = statblock;
     this.varType = "Object";
   }
 
-  public AFor2Stat(String varType, ALocalVar var, AbstractTree exp, AbstractBlock statblock) {
+  public AFor2Stat(String varType, AVariable var, AbstractTree exp, AbstractBlock statblock) {
     this.var = var;
     this.exp = exp;
     this.statblock = statblock;

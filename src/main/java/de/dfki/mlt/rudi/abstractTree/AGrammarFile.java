@@ -56,6 +56,7 @@ public class AGrammarFile implements AbstractTree {
       r.generate(out);
     }
     out.append("  }\n}");
+    out.close();
   }
 
   @Override
