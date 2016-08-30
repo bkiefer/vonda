@@ -365,7 +365,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
         return new AAssignment(this.visit(ctx.getChild(1)),
                 (AbstractExpression) right, true, context.getCurrentRule());
       }
-      return new AAssignment(ctx.getChild(0).getText(), this.visit(ctx.getChild(1)),
+      // now, this could be a special variable
+      String type = ctx.getChild(0).getText();
+      return new AAssignment(type, this.visit(ctx.getChild(1)),
               (AbstractExpression) this.visit(ctx.getChild(3)), true, context.getCurrentRule());
     }
   }
@@ -496,12 +498,20 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitField_access(RobotGrammarParser.Field_accessContext ctx) {
-    return new AFieldAccess(context.getFieldAccessType(ctx.getText()), ctx.getText());
+    ArrayList<String> parts = new ArrayList<String>();
+    for (int i = 0; i < ctx.getChildCount(); i += 2) {
+      parts.add(ctx.getChild(i).getText());
+    }
+    return new AFieldAccess(context.getFieldAccessType(ctx.getText()), parts);
   }
 
   @Override
   public AbstractTree visitField_access_vfunc(RobotGrammarParser.Field_access_vfuncContext ctx) {
-    return new AFieldAccess(context.getFieldAccessType(ctx.getText()), ctx.getText());
+    ArrayList<String> parts = new ArrayList<String>();
+    for (int i = 0; i < ctx.getChildCount(); i += 2) {
+      parts.add(ctx.getChild(i).getText());
+    }
+    return new AFieldAccess(context.getFieldAccessType(ctx.getText()), parts);
   }
 
   @Override
@@ -532,7 +542,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     }
   }
 
-
   @Override
   public AbstractTree visitType_spec(RobotGrammarParser.Type_specContext ctx) {
     // VARIABLE | VARIABLE SMALLER VARIABLE GREATER
@@ -543,18 +552,13 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   public AbstractTree visitFun_def(RobotGrammarParser.Fun_defContext ctx) {
     // type_spec VARIABLE LPAR ( type_spec VARIABLE (COMMA type_spec VARIABLE)* )? RPAR SEMICOLON
     // type_spec is either a boring normal type or a type of form Rdf<Child>
-    ArrayList<String> type = new ArrayList<>();
-    int i = 0;
-    while (i < ctx.getChild(0).getChildCount()){
-      type.add(ctx.getChild(0).getChild(i).getText());
-      i += 2;
-    }
+    String type = ctx.getChild(0).getText();
     String funcname = ctx.getChild(1).getText();
     // get all the parameters & their types
     ArrayList<String> parnames = new ArrayList<>();
     ArrayList<String> partypes = new ArrayList<>();
     int j = 3;
-    while (j < ctx.getChildCount() - 2){
+    while (j < ctx.getChildCount() - 2) {
       partypes.add(ctx.getChild(j++).getText());
       parnames.add(ctx.getChild(j++).getText());
       j++;
@@ -566,12 +570,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   public AbstractTree visitVar_def(RobotGrammarParser.Var_defContext ctx) {
     // type_spec VARIABLE SEMICOLON
     // type_spec is either a boring normal type or a type of form Rdf<Child>
-    ArrayList<String> type = new ArrayList<String>();
-    int i = 0;
-    while (i < ctx.getChild(0).getChildCount()){
-      type.add(ctx.getChild(0).getChild(i).getText());
-      i += 2;
-    }
+    String type = ctx.getChild(0).getText();
     return new AVarDef(type, ctx.getChild(1).getText(), context.getCurrentRule());
   }
 

@@ -19,10 +19,10 @@ import java.util.ArrayList;
 public class AVarDef implements AbstractStatement, AbstractTree{
 
   private String variable;
-  private ArrayList<String> type;
+  private String type;
   private String position;
 
-  public AVarDef(ArrayList<String> type, String variable, String position){
+  public AVarDef(String type, String variable, String position){
     this.type = type;
     this.variable = variable;
     this.position = position;

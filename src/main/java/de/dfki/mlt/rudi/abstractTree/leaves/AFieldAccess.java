@@ -8,6 +8,7 @@ package de.dfki.mlt.rudi.abstractTree.leaves;
 import de.dfki.mlt.rudi.abstractTree.*;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 
 /**
  *
@@ -16,9 +17,9 @@ import java.io.Writer;
 public class AFieldAccess  extends AbstractLeaf{
 
   private String type;
-  private String representation;
+  private ArrayList<String> representation;
 
-  public AFieldAccess(String type, String representation) {
+  public AFieldAccess(String type, ArrayList<String> representation) {
     this.type = type;
     this.representation = representation;
   }
@@ -30,7 +31,8 @@ public class AFieldAccess  extends AbstractLeaf{
 
   @Override
   public void generate(Writer out) throws IOException{
-    out.append(this.representation);
+    out.append("Rdf here\n");
+    //out.append(this.representation);
   }
 
   @Override

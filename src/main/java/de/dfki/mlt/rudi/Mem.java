@@ -23,9 +23,8 @@ public class Mem {
 
   // as this is only a way to provide mem with information about the types of
   // imported java functions, we probably don't need local namespaces
-  private static HashMap<String, ArrayList<String>> specialVars = new HashMap<>();
-  // functions, too, are not implemented locally in this version
-  private static HashMap<String, ArrayList<String>> functionTypes = new HashMap<>();
+  // functions are not implemented locally in this version
+  private static HashMap<String, String> functionTypes = new HashMap<>();
   private static HashMap<String, ArrayList<String>> functionParTypes = new HashMap<>();
 
   public static void newMem() {
@@ -40,7 +39,7 @@ public class Mem {
     return depthAtm;
   }
 
-  public static void addFunction(String funcname, ArrayList<String> functype,
+  public static void addFunction(String funcname, String functype,
           ArrayList<String> partypes, String origin){
     functionTypes.put(funcname, functype);
     functionParTypes.put(funcname, partypes);
@@ -48,7 +47,7 @@ public class Mem {
     variableOrigin.put(funcname, origin);
   }
 
-  public static boolean existsFunction(String funcname, ArrayList<String> functype,
+  public static boolean existsFunction(String funcname, String functype,
           ArrayList<String> partypes){
     if(!functionTypes.containsKey(funcname)){
       return false;
@@ -62,18 +61,10 @@ public class Mem {
    * @param funcname the name of the function
    * @return its return type or null
    */
-  public static ArrayList<String> getFunctionRetType(String funcname){
+  public static String getFunctionRetType(String funcname){
     // TODO: we could also identify the function by the parameter types, is this
     // necessary?
     return functionTypes.get(funcname);
-  }
-
-  public static void addElement(String variable, ArrayList<String> type, String origin) {
-    if (type.size() == 1) {
-      addElement(variable, type.get(0), origin);
-    }
-    specialVars.put(variable, type);
-    variableOrigin.put(variable, origin);
   }
 
   public static void addElement(String variable, String type, String origin) {
@@ -106,14 +97,6 @@ public class Mem {
    */
   public static String getVariableOrigin(String variable) {
     return variableOrigin.get(variable);
-  }
-
-  public static boolean isSpecial(String variable){
-    return specialVars.containsKey(variable);
-  }
-
-  public static ArrayList<String> getSpecialVariableType(String variable){
-    return specialVars.get(variable);
   }
 
   /**

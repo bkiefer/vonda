@@ -20,12 +20,12 @@ import java.util.ArrayList;
 public class AFunDef implements AbstractStatement, AbstractTree{
 
   private String funcname;
-  private ArrayList<String> type;
+  private String type;
   private ArrayList<String> parameters;
   private ArrayList<String> parameterTypes;
   private String position;
 
-  public AFunDef(ArrayList<String> type, String funcname, ArrayList<String> parameters,
+  public AFunDef(String type, String funcname, ArrayList<String> parameters,
           ArrayList<String> parameterTypes, String position){
     this.type = type;
     this.funcname = funcname;

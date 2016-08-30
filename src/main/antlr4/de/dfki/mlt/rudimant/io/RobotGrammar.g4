@@ -229,7 +229,7 @@ literal_or_graph_exp
   ;
 
 assignment
-  : ( ( DEC_VAR | VARIABLE)? VARIABLE
+  : ( ( DEC_VAR | type_spec)? VARIABLE
       | field_access
     )
     ASSIGN exp

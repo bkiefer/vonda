@@ -37,7 +37,7 @@ public class AAssignment implements AbstractTree, AbstractExpression {
 //                context.getCurrentRule());
   }
 
-  public void findType(Writer out) throws IOException {
+  public void testType(Writer out) throws IOException {
     // we don't know anything about an actualType, so let's look it up
     this.typeRight = ((AbstractExpression) right).getType();
     try {
@@ -67,7 +67,7 @@ public class AAssignment implements AbstractTree, AbstractExpression {
     this.position = position;
   }
 
-  public void findTypeDecl(String actualType, Writer out) throws IOException {
+  public void testTypeDecl(String actualType, Writer out) throws IOException {
     // an actualType exists, so we assume left is supposed to be actualType
     this.typeRight = ((AbstractExpression) right).getType();
     try {
@@ -95,18 +95,29 @@ public class AAssignment implements AbstractTree, AbstractExpression {
 
   @Override
   public void testType() {
-    // TODO: test, look into memory, differ between String s = "" and s = ""
+    // see generate
 
   }
+
+//  private void specialTest(Writer out){
+//    if(((AbstractExpression) right).getType() instanceof ArrayList<String>.class){
+//
+//    } else{
+//      throw new UnsupportedOperationException("The declaration of the variable "
+//              + ((AVariable) left).toString() + "\t in rule " + position
+//              + " has type mismatches:\n\t\t" + Mem.getSpecialVariableType(left.toString())
+//              + " does not match " + ((AbstractExpression) right).getType());
+//    }
+//  }
 
   @Override
   public void generate(Writer out) throws IOException {
     //System.out.println(((AVariable) left).toString());
     if (GrammarMain.checkTypes()) {
       if (this.actualType != null) {
-        findTypeDecl(actualType, out);
+        testTypeDecl(actualType, out);
       } else {
-        findType(out);
+        testType(out);
       }
     }
     if (this.declaration) {
