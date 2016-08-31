@@ -9,6 +9,7 @@ import de.dfki.mlt.rudi.GrammarMain;
 import de.dfki.mlt.rudi.Mem;
 import de.dfki.mlt.rudi.abstractTree.leaves.ACommentBlock;
 import de.dfki.mlt.rudi.abstractTree.statements.AIfStatement;
+import de.dfki.mlt.rudi.returnManagement;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -54,6 +55,13 @@ public class AGrammarRule implements AbstractTree{
   @Override
   public void testType() {
     this.ifstat.testType();
+  }
+
+  @Override
+  public void returnManaging() {
+    returnManagement.enterRule(label);
+    ifstat.returnManaging();
+    returnManagement.leaveRule();
   }
 
 }

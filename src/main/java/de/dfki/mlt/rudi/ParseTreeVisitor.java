@@ -12,7 +12,6 @@ import de.dfki.mlt.rudi.abstractTree.statements.*;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -176,7 +175,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitTerm(RobotGrammarParser.TermContext ctx) {
-    // dasselbe in Grün
+    // term ( arithmetic_lin_operator term )*
     if (ctx.getChildCount() == 1) {
       return this.visit(ctx.getChild(0));
     }
@@ -240,7 +239,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     if (ctx.getChildCount() == 2) {
       return new AReturnStat();
     } else {
-      return new AReturnStat(this.visit(ctx.getChild(1)));
+      return new AReturnStat(this.visit(ctx.getChild(1)), ctx.getChild(1).getText());
     }
   }
 
@@ -325,6 +324,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitBoolean_exp(RobotGrammarParser.Boolean_expContext ctx) {
+    // simple_b_exp boolean_op1 boolean_exp | simple_b_exp
     if (ctx.getChildCount() == 1) {
       return this.visit(ctx.getChild(0));
     }
@@ -508,6 +508,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   @Override
   public AbstractTree visitField_access_vfunc(RobotGrammarParser.Field_access_vfuncContext ctx) {
+    // ( VARIABLE | function_call) (( DOT VARIABLE | LPAR? function_call RPAR? ))+
     ArrayList<String> parts = new ArrayList<String>();
     for (int i = 0; i < ctx.getChildCount(); i += 2) {
       parts.add(ctx.getChild(i).getText());

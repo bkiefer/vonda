@@ -25,4 +25,9 @@ public interface AbstractTree {
    * method for type testing
    */
   public void testType();
+
+  /**
+   * method to manage the return magic
+   */
+  public void returnManaging();
 }

@@ -87,7 +87,7 @@ public class ABooleanExp implements AbstractExpression {
   @Override
   public String getType() {
     if (this.type == null) {
-      if (operator != null && left.getType().equals("magic")) {
+      if (operator != null && left.getType().equals("rdf")) {
         if (left.getType().equals(right.getType())) {
           if (operator.equals("<=")) {
             this.isSubsumed = true;
