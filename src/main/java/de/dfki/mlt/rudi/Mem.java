@@ -7,11 +7,12 @@ package de.dfki.mlt.rudi;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
  * this is rudimants memory, used for type checking
- * 
+ *
  * @author Anna Welker
  */
 public class Mem {
@@ -21,6 +22,7 @@ public class Mem {
   private static HashMap<String, String> variableOrigin = new HashMap<>();
   private static int positionAtm = -1;
   private static int depthAtm = -1;
+  private static HashSet<String> rdfs = new HashSet<>();
 
   // as this is only a way to provide mem with information about the types of
   // imported java functions, we probably don't need local namespaces
@@ -172,5 +174,13 @@ public class Mem {
   public static void restoreLocalV(String variable, String type, String origin) {
     actualValues.put(variable, type);
     variableOrigin.put(variable, origin);
+  }
+
+  public static void addRdf(String variable){
+    rdfs.add(variable);
+  }
+
+  public static boolean isRdf(String variable){
+    return rdfs.contains(variable);
   }
 }
