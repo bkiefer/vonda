@@ -89,7 +89,36 @@ public class RdfTests {
     Mem.addElement("child", "Child", "here");
     AFieldAccess field = new AFieldAccess(elem, _client);
     String result = field.askChristophe();
-    System.out.println(result);
+    assertEquals("get forename", "String", result);
   }
 
+  @Test
+  public void testgetType2() throws TException {
+    ArrayList<String> elem = new ArrayList<String>() {
+      {
+        add("child");
+        add("hasTreatment");
+      }
+    };
+    Mem.addAndEnterNewEnvironment(0);
+    Mem.addElement("child", "Child", "here");
+    AFieldAccess field = new AFieldAccess(elem, _client);
+    String result = field.askChristophe();
+    assertEquals("get hasTreatment", "Treatment", result);
+  }
+
+  @Test
+  public void testgetType3() throws TException {
+    ArrayList<String> elem = new ArrayList<String>() {
+      {
+        add("child");
+        add("birthdate");
+      }
+    };
+    Mem.addAndEnterNewEnvironment(0);
+    Mem.addElement("child", "Child", "here");
+    AFieldAccess field = new AFieldAccess(elem, _client);
+    String result = field.askChristophe();
+    assertEquals("get birthdate", "<xsd:date>", result);
+  }
 }
