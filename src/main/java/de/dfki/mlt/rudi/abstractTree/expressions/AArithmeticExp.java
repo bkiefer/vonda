@@ -10,9 +10,10 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * this is an arithmetic expression with an operator, two expressions left and right,
- * and eventually if this is no complex term but a single number there is a -
- * in front of it
+ * this is an arithmetic expression with an operator, two expressions left and
+ * right, and eventually if this is no complex term but a single number there is
+ * a - in front of it
+ *
  * @author Anna Welker
  */
 public class AArithmeticExp implements AbstractExpression {
@@ -25,6 +26,7 @@ public class AArithmeticExp implements AbstractExpression {
 
   /**
    * if the expression consists of only one part, set right and operator to null
+   *
    * @param left the left part
    * @param right the right part
    * @param operator the operator in between
@@ -45,12 +47,12 @@ public class AArithmeticExp implements AbstractExpression {
   }
 
   @Override
-  public void generate(Writer out) throws IOException{
+  public void generate(Writer out) throws IOException {
     String ret = "";
-    if (this.minus){
+    if (this.minus) {
       out.append("-");
     }
-    if(this.right != null){
+    if (this.right != null) {
       out.append("(");
       this.left.generate(out);
       out.append(this.operator);
@@ -64,6 +66,11 @@ public class AArithmeticExp implements AbstractExpression {
   @Override
   public String getType() {
     return this.type;
+  }
+
+  @Override
+  public void returnManaging() {
+    // nothing to do
   }
 
 }

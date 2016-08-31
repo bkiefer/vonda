@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 /**
  * class that allows the implementation of methods in a .rudi file; we are not
- * sure whether this should still be possibledd
+ * sure whether this should still be possible
  * @author Anna Welker
  */
 public class AMethodDeclaration implements AbstractTree {
@@ -63,5 +63,10 @@ public class AMethodDeclaration implements AbstractTree {
   @Override
   public void testType() {
     // ...
+  }
+
+  @Override
+  public void returnManaging() {
+    block.returnManaging();
   }
 }

@@ -11,7 +11,7 @@ import java.io.Writer;
 
 /**
  * a String
- * 
+ *
  * @author Anna Welker
  */
 public class AString extends AbstractLeaf {
@@ -37,4 +37,8 @@ public class AString extends AbstractLeaf {
     return "String";
   }
 
+  @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

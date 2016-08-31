@@ -17,7 +17,7 @@ import java.io.Writer;
 /**
  * a class to represent a set of statements, might have curly braces or just be
  * an abstract object for grouping (without showing that grouping in the output)
- * 
+ *
  * @author Anna Welker
  */
 public class AbstractBlock implements AbstractStatement, AbstractTree {
@@ -57,4 +57,10 @@ public class AbstractBlock implements AbstractStatement, AbstractTree {
     }
   }
 
+  @Override
+  public void returnManaging() {
+    for (AbstractTree stat : statblock) {
+      stat.returnManaging();
+    }
+  }
 }

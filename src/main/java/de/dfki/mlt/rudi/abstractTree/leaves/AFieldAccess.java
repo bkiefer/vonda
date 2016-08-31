@@ -59,4 +59,9 @@ public class AFieldAccess  extends AbstractLeaf{
     String typ = Mem.getVariableType(representation.get(0));
 
   }
+
+  @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

@@ -15,7 +15,7 @@ import java.io.Writer;
 
 /**
  * representing a while statement
- * 
+ *
  * @author Anna Welker
  */
 public class AWhileStat implements AbstractStatement, AbstractTree {
@@ -41,5 +41,10 @@ public class AWhileStat implements AbstractStatement, AbstractTree {
     this.condition.generate(out);
     out.append(")");
     statblock.generate(out);
+  }
+
+  @Override
+  public void returnManaging() {
+    statblock.returnManaging();
   }
 }

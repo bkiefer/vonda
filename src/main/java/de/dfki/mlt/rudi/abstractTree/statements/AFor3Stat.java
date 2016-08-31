@@ -53,4 +53,9 @@ public class AFor3Stat implements AbstractStatement, AbstractTree {
     block.generate(out);
     out.append("}");
   }
+
+  @Override
+  public void returnManaging() {
+    block.returnManaging();
+  }
 }

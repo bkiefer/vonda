@@ -44,4 +44,9 @@ public class AComment extends AbstractLeaf implements AbstractStatement {
   public void testType() {
     // no type to be tested
   }
+
+  @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

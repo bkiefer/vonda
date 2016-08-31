@@ -17,7 +17,7 @@ import java.io.Writer;
  *
  * @author Anna Welker
  */
-public class ALambdaExp implements AbstractTree, AbstractExpression{
+public class ALambdaExp implements AbstractTree, AbstractExpression {
 
   private String exp;
 
@@ -26,7 +26,7 @@ public class ALambdaExp implements AbstractTree, AbstractExpression{
   }
 
   @Override
-  public void generate(Writer out) throws IOException{
+  public void generate(Writer out) throws IOException {
     out.append(exp);
   }
 
@@ -41,5 +41,8 @@ public class ALambdaExp implements AbstractTree, AbstractExpression{
     return "Object";
   }
 
-
+  @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

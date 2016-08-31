@@ -41,14 +41,18 @@ public class AGrammarRule implements AbstractTree{
 
   @Override
   public void generate(Writer out) throws FileNotFoundException, IOException{
+    String returnType = "void";
+    if(returnManagement.shouldAddReturnto(label)){
+      returnType = "String";
+    }
     out = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream(GrammarMain.getOutputDirectory() + classname + ".java")));
     Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
     out.append("public class " + classname + "{\n"
-            + "  public void process(){");
+            + "  public " + returnType + "process(){");
     comment.generate(out);
     ifstat.generate(out);
-    out.append("\n  }\n}");
+    out.append("\n\t return;\n  }\n}");
     Mem.leaveEnvironment();
   }
 

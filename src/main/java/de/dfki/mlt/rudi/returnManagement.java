@@ -21,7 +21,7 @@ public class returnManagement {
   /**
    * tell the returnMem that we enter a new rule
    *
-   * @param newRule the rule we go to
+   * @param newRule the rule (LABEL) we go to
    */
   public static void enterRule(String newRule) {
     findPredecessor.put(newRule, inRule);
@@ -36,6 +36,11 @@ public class returnManagement {
     inRule = findPredecessor.get(inRule);
   }
 
+  /**
+   * is this an existing rule?
+   * @param r the label of the rule
+   * @return yes or no
+   */
   public static boolean isExistingRule(String r){
     return hasReturn.containsKey(r);
   }
@@ -44,7 +49,7 @@ public class returnManagement {
    * tell the returnMem that we found a return (not needed if it is a simple
    * return, i.e., if the return has no argument
    *
-   * @param to the label we want to return to
+   * @param to the LABEL we want to return to
    */
   public static void foundReturnTo(String to) {
     hasReturn.put(inRule, Boolean.TRUE);
@@ -59,10 +64,10 @@ public class returnManagement {
   }
 
   /**
-   * tells whether it is necessary to look up whether we should jump higher in
-   * the hierarchy
+   * tells whether this rule has a return statement (= whether it is necessary to look up whether we should jump higher in
+   * the hierarchy)
    *
-   * @param rule the rule we are in
+   * @param rule the rule (LABEL) we are in
    * @return yes or no
    */
   public static boolean shouldAddReturnto(String rule) {

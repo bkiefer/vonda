@@ -31,4 +31,8 @@ public class ANull extends AbstractLeaf {
     out.append("null");
   }
 
+  @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

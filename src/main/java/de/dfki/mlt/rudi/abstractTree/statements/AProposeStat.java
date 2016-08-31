@@ -13,7 +13,7 @@ import java.io.Writer;
 
 /**
  * represents a propose statement, creating a proposal
- * 
+ *
  * @author Anna Welker
  */
 public class AProposeStat implements AbstractStatement, AbstractTree {
@@ -38,5 +38,10 @@ public class AProposeStat implements AbstractStatement, AbstractTree {
     out.append(", new Proposal() {public void run()\n");
     block.generate(out);
     out.append("});");
+  }
+
+  @Override
+  public void returnManaging() {
+    // nothing to do
   }
 }

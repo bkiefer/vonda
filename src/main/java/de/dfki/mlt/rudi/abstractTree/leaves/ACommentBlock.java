@@ -14,7 +14,7 @@ import java.io.Writer;
 
 /**
  * this is used to represent a set of comments
- * 
+ *
  * @author Anna Welker
  */
 public class ACommentBlock extends AbstractLeaf implements AbstractStatement {
@@ -40,4 +40,8 @@ public class ACommentBlock extends AbstractLeaf implements AbstractStatement {
   @Override
   public String getType() { return null; }
 
+  @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

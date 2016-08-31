@@ -70,4 +70,9 @@ public class AFor2Stat implements AbstractStatement, AbstractTree {
     out.append(") ");
     statblock.generate(out);
   }
+
+  @Override
+  public void returnManaging() {
+    statblock.returnManaging();
+  }
 }

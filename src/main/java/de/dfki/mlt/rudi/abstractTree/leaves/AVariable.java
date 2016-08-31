@@ -14,7 +14,7 @@ import java.io.Writer;
 
 /**
  * representation of a variable
- * 
+ *
  * @author Anna Welker
  */
 public class AVariable extends AbstractLeaf {
@@ -57,4 +57,8 @@ public class AVariable extends AbstractLeaf {
     return Mem.getVariableType(representation);
   }
 
+  @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

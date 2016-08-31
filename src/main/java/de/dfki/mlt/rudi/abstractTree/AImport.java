@@ -42,4 +42,10 @@ public class AImport implements AbstractTree{
     Mem.leaveEnvironment();
   }
 
+  @Override
+  public void returnManaging() {
+    // for the moment, let's just say we cannot return from an import to a superclass
+    // of the importing class
+  }
+
 }

@@ -49,4 +49,8 @@ public class ASetOperation implements AbstractStatement, AbstractTree{
         // TODO: test somehow
     }
 
+    @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

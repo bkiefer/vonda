@@ -53,4 +53,8 @@ public class ADoWhileStat implements AbstractStatement, AbstractTree{
     return ret1.substring(0, ret1.length() - 2) + ret0 + log + "}}" + ret2;*/
   }
 
+  @Override
+  public void returnManaging() {
+    statblock.returnManaging();
+  }
 }

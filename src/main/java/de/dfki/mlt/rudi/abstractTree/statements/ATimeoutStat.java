@@ -12,7 +12,7 @@ import java.io.Writer;
 
 /**
  * class representing a timeout
- * 
+ *
  * @author Anna Welker
  */
 public class ATimeoutStat implements AbstractStatement, AbstractTree {
@@ -45,4 +45,8 @@ public class ATimeoutStat implements AbstractStatement, AbstractTree {
         //nothing to test here
     }
 
+    @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

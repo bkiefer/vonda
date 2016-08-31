@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * type_spec VARIABLE LPAR
     ( type_spec VARIABLE (COMMA type_spec VARIABLE)* )? RPAR SEMICOLON
  * = only to get the types of this function into memory
- * 
+ *
  * @author Anna Welker
  */
 public class AFunDef implements AbstractStatement, AbstractTree{
@@ -46,4 +46,8 @@ public class AFunDef implements AbstractStatement, AbstractTree{
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
+  @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

@@ -100,4 +100,9 @@ public class ABooleanExp implements AbstractExpression {
     this.type = "boolean";
     return type;
   }
+
+  @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

@@ -50,6 +50,11 @@ public class AIfStatement implements AbstractStatement, AbstractTree{
       statblockIf.generate(out);
       out.append("else");
       statblockElse.generate(out);
+    } else {
+      out.append("if (");
+      condition.generate(out);
+      out.append(") ");
+      statblockIf.generate(out);
     }
 
 
@@ -73,5 +78,13 @@ public class AIfStatement implements AbstractStatement, AbstractTree{
     return ret0 + "if(!(" + this.condition + ")){" + log + "}}" +
             ret1 + ret0 + log + "}" +
             statblockIf.generate(null).substring(1) + "\n";*/
+  }
+
+  @Override
+  public void returnManaging() {
+    statblockIf.returnManaging();
+    if (statblockElse != null){
+      statblockElse.returnManaging();
+    }
   }
 }

@@ -11,7 +11,7 @@ import java.io.Writer;
 
 /**
  * a wildcard...
- * 
+ *
  * @author Anna Welker
  */
 public class AWildcard extends AbstractLeaf{
@@ -29,5 +29,10 @@ public class AWildcard extends AbstractLeaf{
   @Override
   public String getType() {
     return "Object"; // ???
+  }
+
+  @Override
+  public void returnManaging() {
+    // nothing to do
   }
 }

@@ -40,4 +40,8 @@ public class AVarDef implements AbstractStatement, AbstractTree{
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
+  @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

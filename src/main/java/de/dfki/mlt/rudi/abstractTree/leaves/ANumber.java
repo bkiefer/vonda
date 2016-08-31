@@ -11,7 +11,7 @@ import java.io.Writer;
 
 /**
  * this is either an int or a float
- * 
+ *
  * @author Anna Welker
  */
 public class ANumber extends AbstractLeaf{
@@ -40,5 +40,10 @@ public class ANumber extends AbstractLeaf{
     } else {
       return "int";
     }
+  }
+
+  @Override
+  public void returnManaging() {
+    // nothing to do
   }
 }

@@ -46,4 +46,8 @@ public class AnAbstractExp implements AbstractTree, AbstractExpression{
     return ((AbstractExpression) exp).getType();
   }
 
+  @Override
+  public void returnManaging() {
+    exp.returnManaging();
+  }
 }

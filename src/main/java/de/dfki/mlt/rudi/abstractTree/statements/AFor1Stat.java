@@ -81,4 +81,8 @@ public class AFor1Stat implements AbstractStatement, AbstractTree {
             ret1 + "{" + ret0 + log + "}" + ret2;*/
   }
 
+  @Override
+  public void returnManaging() {
+    statblock.returnManaging();
+  }
 }

@@ -17,14 +17,14 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 /**
- * class that represents a top-level file that was handed over to GrammarMain
- * (= the root of the whole tree)
+ * class that represents a top-level file that was handed over to GrammarMain (=
+ * the root of the whole tree)
+ *
  * @author Anna Welker
  */
 public class AGrammarFile implements AbstractTree {
 
   // imports* (comment grammar_rule | method_declaration | statement )* comment
-  
   private List<AbstractTree> rules;
   protected static Writer out;
   private String classname;
@@ -42,6 +42,8 @@ public class AGrammarFile implements AbstractTree {
 
   @Override
   public void generate(Writer out) throws IOException {
+    //let the return guy do its work
+    returnManaging();
     //boolean foundClassName = false;
     Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
     out.append("public class " + classname + "{\n"
@@ -68,6 +70,13 @@ public class AGrammarFile implements AbstractTree {
       for (AbstractTree t : this.rules) {
         t.testType();
       }
+    }
+  }
+
+  @Override
+  public void returnManaging() {
+    for (AbstractTree t : this.rules) {
+      t.returnManaging();
     }
   }
 }

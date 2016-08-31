@@ -50,4 +50,8 @@ public class AIfExp implements AbstractTree, AbstractExpression{
     this.elseexp.generate(out);
   }
 
+  @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

@@ -72,4 +72,8 @@ public class ALiteralOrGraphExp implements AbstractTree, AbstractExpression{
     return "magic";
   }
 
+  @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

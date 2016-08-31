@@ -11,7 +11,7 @@ import java.io.Writer;
 
 /**
  * this represents either true or false
- * 
+ *
  * @author Anna Welker
  */
 public class AUnaryBoolean extends AbstractLeaf{
@@ -38,4 +38,8 @@ public class AUnaryBoolean extends AbstractLeaf{
     return "boolean";
   }
 
+  @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

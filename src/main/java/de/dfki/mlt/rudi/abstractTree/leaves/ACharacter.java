@@ -11,7 +11,7 @@ import java.io.Writer;
 
 /**
  * class representing a character
- * 
+ *
  * @author Anna Welker
  */
 public class ACharacter extends AbstractLeaf {
@@ -37,4 +37,8 @@ public class ACharacter extends AbstractLeaf {
     return "char";
   }
 
+  @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

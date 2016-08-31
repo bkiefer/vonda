@@ -64,4 +64,9 @@ public class AFuncCall extends AbstractLeaf{
     }
     return this.type;
   }
+
+  @Override
+  public void returnManaging() {
+    // nothing to do
+  }
 }

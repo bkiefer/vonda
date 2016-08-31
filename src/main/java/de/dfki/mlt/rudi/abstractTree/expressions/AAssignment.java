@@ -137,4 +137,9 @@ public class AAssignment implements AbstractTree, AbstractExpression {
     return this.actualType;
   }
 
+  @Override
+  public void returnManaging() {
+    // nothing to do
+  }
+
 }
