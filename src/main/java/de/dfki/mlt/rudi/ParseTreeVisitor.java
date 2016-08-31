@@ -51,6 +51,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
   @Override
   public AbstractTree visitImports(RobotGrammarParser.ImportsContext ctx) {
     //System.out.println("Rudi was here");
+    // IMPORT VARIABLE SEMICOLON
     String file = ctx.getChild(1).getText();
     return new AImport(file);
   }
@@ -248,11 +249,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     // WHILE LPAR boolean_exp RPAR loop_statement_block
     if (ctx.getChildCount() == 5) {
       return new AWhileStat(this.visit(ctx.getChild(2)),
-              (AbstractBlock) this.visit(ctx.getChild(4)));
+              (AbstractBlock) this.visit(ctx.getChild(4)), currentRule);
     } // DO loop_statement_block WHILE LPAR boolean_exp RPAR
     else {
       return new ADoWhileStat(this.visit(ctx.getChild(4)),
-              (AbstractBlock) this.visit(ctx.getChild(1)));
+              (AbstractBlock) this.visit(ctx.getChild(1)), currentRule);
     }
   }
 
@@ -427,12 +428,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     // IF LPAR boolean_exp RPAR statement (ELSE statement)?
     if (ctx.getChildCount() == 5) {   // no else
       return new AIfStatement(this.visit(ctx.getChild(2)),
-              (AbstractBlock) this.visit(ctx.getChild(4)), null);
+              (AbstractBlock) this.visit(ctx.getChild(4)), null, currentRule);
     }
     // if there is an else
     return new AIfStatement(this.visit(ctx.getChild(2)),
             (AbstractBlock) this.visit(ctx.getChild(4)),
-            (AbstractBlock) this.visit(ctx.getChild(6)));
+            (AbstractBlock) this.visit(ctx.getChild(6)), currentRule);
   }
 
   @Override
@@ -440,12 +441,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     // IF LPAR boolean_exp RPAR statement (ELSE statement)?
     if (ctx.getChildCount() == 5) {   // no else
       return new AIfStatement(this.visit(ctx.getChild(2)),
-              (AbstractBlock) this.visit(ctx.getChild(4)), null);
+              (AbstractBlock) this.visit(ctx.getChild(4)), null, currentRule);
     }
     // if there is an else
     return new AIfStatement(this.visit(ctx.getChild(2)),
             (AbstractBlock) this.visit(ctx.getChild(4)),
-            (AbstractBlock) this.visit(ctx.getChild(6)));
+            (AbstractBlock) this.visit(ctx.getChild(6)), currentRule);
   }
 
   @Override
@@ -475,13 +476,13 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
       // statement looks like "FOR LPAR assignment SEMICOLON exp SEMICOLON RPAR loop_statement_block"
       return new AFor1Stat((AAssignment) this.visit(ctx.getChild(2)),
               (ABooleanExp) this.visit(ctx.getChild(4)),
-              null, (AbstractBlock) this.visit(ctx.getChild(7)));
+              null, (AbstractBlock) this.visit(ctx.getChild(7)), currentRule);
     } else if (ctx.getChildCount() == 9) {
       // statement looks like "FOR LPAR assignment SEMICOLON exp SEMICOLON exp RPAR loop_statement_block"
       return new AFor1Stat((AAssignment) this.visit(ctx.getChild(2)),
               (ABooleanExp) this.visit(ctx.getChild(4)),
               (AbstractExpression) this.visit(ctx.getChild(6)),
-              (AbstractBlock) this.visit(ctx.getChild(8)));
+              (AbstractBlock) this.visit(ctx.getChild(8)), currentRule);
     } else {
       // statement looks like "FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block"
       // TODO: implement For3Stat; exp will return some Object[]

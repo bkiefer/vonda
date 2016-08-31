@@ -14,21 +14,20 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- *
- * @author anna
+ * representing a while statement
+ * 
+ * @author Anna Welker
  */
 public class AWhileStat implements AbstractStatement, AbstractTree {
 
   private AbstractTree condition;
   private AbstractBlock statblock;
   private String currentRule;
-  private int currentBool;
 
-  public AWhileStat(AbstractTree condition, AbstractBlock statblock) {
+  public AWhileStat(AbstractTree condition, AbstractBlock statblock, String position) {
     this.condition = condition;
     this.statblock = statblock;
-    this.currentRule = GrammarMain.context.getCurrentRule();
-    this.currentBool = GrammarMain.context.getCurrentBool();
+    this.currentRule = position;
   }
 
   @Override

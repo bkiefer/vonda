@@ -7,16 +7,15 @@ package de.dfki.mlt.rudi.abstractTree.leaves;
 
 import java.util.List;
 
-import de.dfki.mlt.rudi.GrammarMain;
 import de.dfki.mlt.rudi.abstractTree.AbstractLeaf;
 import de.dfki.mlt.rudi.abstractTree.AbstractStatement;
-import de.dfki.mlt.rudi.abstractTree.AbstractTree;
 import java.io.IOException;
 import java.io.Writer;
 
 /**
- *
- * @author anna
+ * this is used to represent a set of comments
+ * 
+ * @author Anna Welker
  */
 public class ACommentBlock extends AbstractLeaf implements AbstractStatement {
 

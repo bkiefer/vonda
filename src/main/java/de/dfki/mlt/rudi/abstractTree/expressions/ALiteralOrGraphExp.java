@@ -13,8 +13,9 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
+ * this class represents dialogue acts
  *
- * @author anna
+ * @author Anna Welker
  */
 public class ALiteralOrGraphExp implements AbstractTree, AbstractExpression{
 
@@ -48,9 +49,6 @@ public class ALiteralOrGraphExp implements AbstractTree, AbstractExpression{
         if(Mem.existsVariable(parts[0])){
           out.append(", \" + " + parts[0] + " + \"");
         }
-        else if(GrammarMain.context.isGlobalVariable(parts[0])){
-          out.append(", \" + " + parts[0] + " + \"");
-        }
         else{
           // TODO: or throw an error here?
           out.append(", " + parts[0]);
@@ -59,9 +57,6 @@ public class ALiteralOrGraphExp implements AbstractTree, AbstractExpression{
       else{
         // this argument is of kind x = y, look if y is a variable we know
         if(Mem.existsVariable(parts[1])){
-          out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
-        }
-        else if(GrammarMain.context.isGlobalVariable(parts[1])){
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         }
         else{

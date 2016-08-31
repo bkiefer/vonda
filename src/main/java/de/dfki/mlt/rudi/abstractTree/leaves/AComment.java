@@ -11,7 +11,7 @@ import java.io.Writer;
 
 /**
  * class that handles comments, please don't use this as one side in an expression!
- * @author anna
+ * @author Anna Welker
  */
 public class AComment extends AbstractLeaf implements AbstractStatement {
 

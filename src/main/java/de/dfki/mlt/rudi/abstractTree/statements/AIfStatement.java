@@ -21,7 +21,6 @@ public class AIfStatement implements AbstractStatement, AbstractTree{
   private AbstractBlock statblockIf;
   private AbstractBlock statblockElse;
   private String currentRule;
-  private int currentBool;
 
   /**
    * if there is no else case, set statblockElse to null
@@ -30,12 +29,11 @@ public class AIfStatement implements AbstractStatement, AbstractTree{
    * @param statblockElse  the else block if existing
    */
   public AIfStatement(AbstractTree condition, AbstractBlock statblockIf,
-          AbstractBlock statblockElse) {
+          AbstractBlock statblockElse, String position) {
     this.condition = condition;
     this.statblockIf = statblockIf;
     this.statblockElse = statblockElse;
-    this.currentRule = GrammarMain.context.getCurrentRule();
-    this.currentBool = GrammarMain.context.getCurrentBool();
+    this.currentRule = position;
   }
 
   @Override

@@ -6,9 +6,9 @@
 package de.dfki.mlt.rudi.abstractTree;
 
 /**
- *
- * @author anna
+ * this is a marker for statement nodes
+ * @author Anna Welker
  */
 public interface AbstractStatement {
-  
+
 }

@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author anna
+ * @author Anna Welker
  */
 public class PrintTest {
 

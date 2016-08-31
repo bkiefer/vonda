@@ -13,8 +13,10 @@ import java.util.ArrayList;
 import de.dfki.lt.hfc.db.rdfProxy.*;
 
 /**
+ * this represents an access to the ontology (will result in an rdf object in
+ * output)
  *
- * @author anna
+ * @author Anna Welker
  */
 public class AFieldAccess  extends AbstractLeaf{
 
@@ -55,6 +57,6 @@ public class AFieldAccess  extends AbstractLeaf{
   public String askChristophe(){
     asked = true;
     String typ = Mem.getVariableType(representation.get(0));
-    
+
   }
 }

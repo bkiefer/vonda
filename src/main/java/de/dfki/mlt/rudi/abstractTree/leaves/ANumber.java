@@ -10,8 +10,9 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- *
- * @author anna
+ * this is either an int or a float
+ * 
+ * @author Anna Welker
  */
 public class ANumber extends AbstractLeaf{
 

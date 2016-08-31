@@ -10,8 +10,9 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- *
- * @author anna
+ * a wildcard...
+ * 
+ * @author Anna Welker
  */
 public class AWildcard extends AbstractLeaf{
 

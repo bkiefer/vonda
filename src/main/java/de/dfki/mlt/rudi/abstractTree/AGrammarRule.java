@@ -7,7 +7,6 @@ package de.dfki.mlt.rudi.abstractTree;
 
 import de.dfki.mlt.rudi.GrammarMain;
 import de.dfki.mlt.rudi.Mem;
-import static de.dfki.mlt.rudi.abstractTree.AGrammarFile.out;
 import de.dfki.mlt.rudi.abstractTree.leaves.ACommentBlock;
 import de.dfki.mlt.rudi.abstractTree.statements.AIfStatement;
 import java.io.BufferedWriter;
@@ -18,8 +17,9 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 /**
- *
- * @author anna
+ * represents a single grammar rule located in the .rudi file; each rule
+ * will be transformed in a separate .java class (i.e., a separate .java file)
+ * @author Anna Welker
  */
 public class AGrammarRule implements AbstractTree{
 

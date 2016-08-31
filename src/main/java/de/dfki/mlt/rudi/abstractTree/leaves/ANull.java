@@ -10,8 +10,9 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
+ * represents the null object
  *
- * @author anna
+ * @author Anna Welker
  */
 public class ANull extends AbstractLeaf {
 

@@ -6,8 +6,8 @@
 package de.dfki.mlt.rudi.abstractTree;
 
 /**
- *
- * @author anna
+ * the lowest, simplest nodes in the AbstractTree
+ * @author Anna Welker
  */
 public abstract class AbstractLeaf implements AbstractExpression {
 

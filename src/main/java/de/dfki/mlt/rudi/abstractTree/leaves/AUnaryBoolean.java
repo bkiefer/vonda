@@ -10,8 +10,9 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- *
- * @author anna
+ * this represents either true or false
+ * 
+ * @author Anna Welker
  */
 public class AUnaryBoolean extends AbstractLeaf{
 

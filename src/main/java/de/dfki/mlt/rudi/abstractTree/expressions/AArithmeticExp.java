@@ -10,8 +10,10 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- *
- * @author anna
+ * this is an arithmetic expression with an operator, two expressions left and right,
+ * and eventually if this is no complex term but a single number there is a -
+ * in front of it
+ * @author Anna Welker
  */
 public class AArithmeticExp implements AbstractExpression {
 

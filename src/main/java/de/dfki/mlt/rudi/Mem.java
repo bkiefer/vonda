@@ -10,8 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- *
- * @author anna
+ * this is rudimants memory, used for type checking
+ * 
+ * @author Anna Welker
  */
 public class Mem {
 

@@ -102,17 +102,7 @@ loop_if_statement
   ;
 
 function_call
-  : ( VARIABLE | field_access_vfunc ) LPAR ( exp ( COMMA exp )* )? RPAR
-  ;
-
-field_access_vfunc
-  : ( VARIABLE
-    | LPAR function_call RPAR
-    )
-    ( DOT ( VARIABLE
-          | LPAR? field_access RPAR?
-          )
-    )+
+  : VARIABLE LPAR ( exp ( COMMA exp )* )? RPAR
   ;
 
 field_access

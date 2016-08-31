@@ -13,8 +13,9 @@ import java.io.Writer;
 // TODO: test whether variable exists?
 
 /**
- *
- * @author anna
+ * representation of a variable
+ * 
+ * @author Anna Welker
  */
 public class AVariable extends AbstractLeaf {
 

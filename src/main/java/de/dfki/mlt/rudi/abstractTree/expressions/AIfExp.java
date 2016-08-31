@@ -11,8 +11,9 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
+ * this is an if expression, i.e., something like a ? b : c
  *
- * @author anna
+ * @author Anna Welker
  */
 public class AIfExp implements AbstractTree, AbstractExpression{
 

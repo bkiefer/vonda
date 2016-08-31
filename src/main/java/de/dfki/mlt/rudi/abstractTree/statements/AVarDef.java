@@ -14,7 +14,9 @@ import java.util.ArrayList;
 
 /**
  * type_spec VARIABLE SEMICOLON
- * @author anna
+ * = only to get the type of this variable into memory
+ *
+ * @author Anna Welker
  */
 public class AVarDef implements AbstractStatement, AbstractTree{
 

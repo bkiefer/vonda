@@ -10,8 +10,10 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
+ * this is a boolean expression; might also be a subsumes relation (but will
+ * in sum always be a boolean)
  *
- * @author anna
+ * @author Anna Welker
  */
 public class ABooleanExp implements AbstractExpression {
 
@@ -19,13 +21,16 @@ public class ABooleanExp implements AbstractExpression {
   private AbstractExpression right;
   private boolean not;
   private boolean isSubsumed = false;   // <- magic part!!!
+  private boolean doesSubsume = false;   // <- magic part!!!
   private String operator;
+  private String type;
 
   /**
    * if the expression consists of only one part, set right and operator to null
+   *
    * @param left left part
    * @param right right part
-   * @param operator  operator in between
+   * @param operator operator in between
    * @param not set true if there is a ! in front of the expression
    */
   public ABooleanExp(AbstractExpression left,
@@ -34,34 +39,37 @@ public class ABooleanExp implements AbstractExpression {
     this.right = right;
     this.operator = operator;
     this.not = not;
-    if(operator != null && operator.equals("<=")){
-      if(left.getType().equals(right.getType())){
-        if(left.getType().equals("magic")){
-          this.isSubsumed = true;
-        }
-      }
-    }
+    this.type = null;
   }
 
   @Override
   public void testType() {
-    // TODO: test, test...
+    // the getType method is testing, too
   }
 
   @Override
-  public void generate(Writer out) throws IOException{
+  public void generate(Writer out) throws IOException {
+    if (this.type == null) {
+      getType();
+    }
     String ret = "";
-    if(this.not){
+    if (this.not) {
       out.append("!");
     }
-    if(this.isSubsumed){
+    if (this.isSubsumed) {
       out.append("isSubsumed(");
       left.generate(out);
       out.append(", ");
       right.generate(out);
       out.append(")");
+    } else if (this.doesSubsume) {
+      out.append("isSubsumed(");
+      right.generate(out);
+      out.append(", ");
+      left.generate(out);
+      out.append(")");
     }
-    if(this.right != null){
+    if (this.right != null) {
       out.append("(");
       this.left.generate(out);
       out.append(this.operator);
@@ -78,9 +86,18 @@ public class ABooleanExp implements AbstractExpression {
 
   @Override
   public String getType() {
-    if(this.right == null){
-      return this.left.getType();
+    if (this.type == null) {
+      if (operator != null && left.getType().equals("magic")) {
+        if (left.getType().equals(right.getType())) {
+          if (operator.equals("<=")) {
+            this.isSubsumed = true;
+          } else if (operator.equals("=>")) {
+            this.doesSubsume = true;
+          }
+        }
+      }
     }
-    return "boolean";
+    this.type = "boolean";
+    return type;
   }
 }

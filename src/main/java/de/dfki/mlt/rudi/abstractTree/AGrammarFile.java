@@ -17,12 +17,14 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 /**
- *
- * @author anna
+ * class that represents a top-level file that was handed over to GrammarMain
+ * (= the root of the whole tree)
+ * @author Anna Welker
  */
 public class AGrammarFile implements AbstractTree {
 
-  // (comment grammar_rule)* comment
+  // imports* (comment grammar_rule | method_declaration | statement )* comment
+  
   private List<AbstractTree> rules;
   protected static Writer out;
   private String classname;

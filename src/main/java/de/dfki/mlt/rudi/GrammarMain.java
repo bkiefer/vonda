@@ -21,8 +21,9 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
- *
- * @author anna
+ * the main class of rudimant
+ * 
+ * @author Anna Welker
  */
 public class GrammarMain {
 

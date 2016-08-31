@@ -6,8 +6,8 @@
 package de.dfki.mlt.rudi.abstractTree;
 
 /**
- *
- * @author anna
+ * a special kind of the AbstractTree is an expression; expressions can have types
+ * @author Anna Welker
  */
 public interface AbstractExpression extends AbstractTree {
 

@@ -21,7 +21,6 @@ public class TestContext implements RobotContext {
   private FileHandler fh;
   private static boolean log;
   private String boolLog;
-  private String currentRule;
   private int lastBool;
   private Set<String> rules;
 

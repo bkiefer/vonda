@@ -12,8 +12,9 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- *
- * @author anna
+ * represents a propose statement, creating a proposal
+ * 
+ * @author Anna Welker
  */
 public class AProposeStat implements AbstractStatement, AbstractTree {
 

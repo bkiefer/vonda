@@ -17,8 +17,9 @@ import java.io.Writer;
 
 /**
  * FOR LPAR assignment SEMICOLON exp SEMICOLON exp? RPAR loop_statement_block
+ * = a 'normal' for statement containing three ;
  *
- * @author anna
+ * @author Anna Welker
  */
 public class AFor1Stat implements AbstractStatement, AbstractTree {
 
@@ -27,16 +28,14 @@ public class AFor1Stat implements AbstractStatement, AbstractTree {
   private AbstractExpression arithmetic;
   private AbstractBlock statblock;
   private String currentRule;
-  private int currentBool;
 
   public AFor1Stat(AAssignment assignment, ABooleanExp condition,
-          AbstractExpression arithmetic, AbstractBlock statblock) {
+          AbstractExpression arithmetic, AbstractBlock statblock, String position) {
     this.assignment = assignment;
     this.condition = condition;
     this.arithmetic = arithmetic;
     this.statblock = statblock;
-    this.currentRule = GrammarMain.context.getCurrentRule();
-    this.currentBool = GrammarMain.context.getCurrentBool();
+    this.currentRule = position;
   }
 
   @Override

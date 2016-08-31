@@ -12,8 +12,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- *
- * @author anna
+ * class that allows the implementation of methods in a .rudi file; we are not
+ * sure whether this should still be possibledd
+ * @author Anna Welker
  */
 public class AMethodDeclaration implements AbstractTree {
 

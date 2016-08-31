@@ -14,8 +14,10 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- *
- * @author anna
+ * this is either a variable declaration, or an assignment of a variable to a
+ * new value.
+ * Most of the type checking rudimant currently does happens here.
+ * @author Anna Welker
  */
 public class AAssignment implements AbstractTree, AbstractExpression {
 

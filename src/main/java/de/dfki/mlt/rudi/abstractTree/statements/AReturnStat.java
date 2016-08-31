@@ -11,8 +11,10 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- *
- * @author anna
+ * a return statement; returns can be used with labels to return to the
+ * corresponding point in execution
+ * 
+ * @author Anna Welker
  */
 public class AReturnStat implements AbstractStatement, AbstractTree{
 

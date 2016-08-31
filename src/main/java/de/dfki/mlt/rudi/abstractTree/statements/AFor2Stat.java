@@ -15,8 +15,9 @@ import java.io.Writer;
 
 /**
  * FOR LPAR VARIABLE COLON exp RPAR loop_statement_block
+ * a 'modern' for statement
  *
- * @author anna
+ * @author Anna Welker
  */
 public class AFor2Stat implements AbstractStatement, AbstractTree {
 

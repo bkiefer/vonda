@@ -11,8 +11,10 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
+ * representation of sth like a += b where a is a set and b should be added
+ * (also works with -, i.e. remove)
  *
- * @author mawo01
+ * @author Anna Welker
  */
 public class ASetOperation implements AbstractStatement, AbstractTree{
 

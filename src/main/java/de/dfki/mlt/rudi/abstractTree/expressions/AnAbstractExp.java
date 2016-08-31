@@ -12,8 +12,10 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
+ * major intent of this class is to be able to deal with comments in every
+ * position
  *
- * @author anna
+ * @author Anna Welker
  */
 public class AnAbstractExp implements AbstractTree, AbstractExpression{
 

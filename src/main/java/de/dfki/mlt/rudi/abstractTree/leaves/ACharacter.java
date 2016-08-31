@@ -10,8 +10,9 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- *
- * @author anna
+ * class representing a character
+ * 
+ * @author Anna Welker
  */
 public class ACharacter extends AbstractLeaf {
 

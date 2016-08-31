@@ -16,8 +16,9 @@ import java.io.Writer;
 /**
  * FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR
  * loop_statement_block
+ * = a special for statement allowing tuples of arbitrary size
  *
- * @author anna
+ * @author Anna Welker
  */
 public class AFor3Stat implements AbstractStatement, AbstractTree {
 

@@ -11,8 +11,9 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- *
- * @author anna
+ * class representing a timeout
+ * 
+ * @author Anna Welker
  */
 public class ATimeoutStat implements AbstractStatement, AbstractTree {
 

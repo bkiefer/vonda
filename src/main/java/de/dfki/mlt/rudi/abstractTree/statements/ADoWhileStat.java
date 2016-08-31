@@ -12,21 +12,20 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
+ * represents a do ... while statement
  *
- * @author anna
+ * @author Anna Welker
  */
 public class ADoWhileStat implements AbstractStatement, AbstractTree{
 
   private AbstractTree condition;
   private AbstractBlock statblock;
   private String currentRule;
-  private int currentBool;
 
-  public ADoWhileStat(AbstractTree condition, AbstractBlock statblock) {
+  public ADoWhileStat(AbstractTree condition, AbstractBlock statblock, String position) {
     this.condition = condition;
     this.statblock = statblock;
-    this.currentRule = GrammarMain.context.getCurrentRule();
-    this.currentBool = GrammarMain.context.getCurrentBool();
+    this.currentRule = position;
   }
 
   @Override
@@ -42,7 +41,7 @@ public class ADoWhileStat implements AbstractStatement, AbstractTree{
     condition.generate(out);
     out.append(");");
 
-    
+
     /*String ret0 = "if(this.whatToLog.get(\"" + this.currentRule +
             "\").contains(" + this.currentBool + ")){";
     String ret1 = "do " + statblock;

@@ -12,10 +12,15 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- *
- * @author anna
+ * represents an import statement; each import statement will cause the imported
+ * .rudi file to be parsed and translated. While parsing the imported file, rudimant
+ * will remember the variables from the original file, but the namespace of the
+ * imported file will not be visible from the original file thereafter.
+ * @author Anna Welker
  */
 public class AImport implements AbstractTree{
+
+  // IMPORT VARIABLE SEMICOLON
 
   private String text;
 

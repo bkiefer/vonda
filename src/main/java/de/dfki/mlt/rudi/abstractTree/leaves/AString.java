@@ -10,8 +10,9 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- *
- * @author anna
+ * a String
+ * 
+ * @author Anna Welker
  */
 public class AString extends AbstractLeaf {
 

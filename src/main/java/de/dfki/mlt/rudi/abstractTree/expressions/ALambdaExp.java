@@ -12,8 +12,10 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
+ * just to be able to deal with lambda expressions if someone should use them,
+ * but there is nothing like type checking implemented yet
  *
- * @author anna
+ * @author Anna Welker
  */
 public class ALambdaExp implements AbstractTree, AbstractExpression{
 

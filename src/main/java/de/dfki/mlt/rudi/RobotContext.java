@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  *
- * @author anna
+ * @author Anna Welker
  */
 public interface RobotContext {
 
