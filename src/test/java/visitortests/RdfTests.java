@@ -9,15 +9,20 @@ import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.lt.hfc.db.client.HfcDbClient;
 import de.dfki.lt.hfc.db.server.HfcDbServer;
+import de.dfki.mlt.rudi.Mem;
+import de.dfki.mlt.rudi.abstractTree.leaves.AFieldAccess;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TTransportException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -25,7 +30,7 @@ import org.junit.BeforeClass;
  */
 public class RdfTests {
 
- private static final String RESOURCE_DIR = "./src/test/resources/";
+ private static final String RESOURCE_DIR = "../hfc-database/src/test/resources/";
 
   private static HfcDbServer server;
 
@@ -72,5 +77,19 @@ public class RdfTests {
     client.shutdown();
   }
 
-  
+  @Test
+  public void testgetType1() throws TException {
+    ArrayList<String> elem = new ArrayList<String>() {
+      {
+        add("child");
+        add("forename");
+      }
+    };
+    Mem.addAndEnterNewEnvironment(0);
+    Mem.addElement("child", "Child", "here");
+    AFieldAccess field = new AFieldAccess(elem, _client);
+    String result = field.askChristophe();
+    System.out.println(result);
+  }
+
 }

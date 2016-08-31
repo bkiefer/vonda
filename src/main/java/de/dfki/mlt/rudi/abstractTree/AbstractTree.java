@@ -19,7 +19,7 @@ public interface AbstractTree {
    * method that can print the tree to code
    * @return code representing this treenode
    */
-  public void generate(Writer out) throws IOException;
+  public void generate(Writer out) throws Exception;
 
   /**
    * method for type testing

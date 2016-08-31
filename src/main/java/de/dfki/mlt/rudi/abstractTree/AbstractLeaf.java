@@ -16,5 +16,6 @@ public abstract class AbstractLeaf implements AbstractExpression {
    */
   String type = "Object";
 
-  public abstract String getType();
+  @Override
+  public abstract String getType() throws Exception;
 }

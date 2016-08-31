@@ -5,12 +5,14 @@
  */
 package de.dfki.mlt.rudi.abstractTree.leaves;
 
+import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.mlt.rudi.Mem;
 import de.dfki.mlt.rudi.abstractTree.*;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import de.dfki.lt.hfc.db.rdfProxy.*;
+import org.apache.thrift.TException;
 
 /**
  * this represents an access to the ontology (will result in an rdf object in
@@ -20,12 +22,20 @@ import de.dfki.lt.hfc.db.rdfProxy.*;
  */
 public class AFieldAccess  extends AbstractLeaf{
 
+    /**
+   * Client-field, taken from client/HfcDbClient.java, more information
+   * under server/HfcDbService.Client.java
+   */
+  protected HfcDbService.Client _client;
+
+
   private String type;
   private ArrayList<String> representation;
   private boolean asked = false;
 
-  public AFieldAccess(ArrayList<String> representation) {
+  public AFieldAccess(ArrayList<String> representation, HfcDbService.Client client) {
     this.representation = representation;
+    this._client = client;
   }
 
   @Override
@@ -34,7 +44,7 @@ public class AFieldAccess  extends AbstractLeaf{
   }
 
   @Override
-  public void generate(Writer out) throws IOException{
+  public void generate(Writer out) throws Exception{
     if(!asked){
       this.type = askChristophe();
     }
@@ -43,7 +53,7 @@ public class AFieldAccess  extends AbstractLeaf{
   }
 
   @Override
-  public String getType() {
+  public String getType() throws Exception {
     if(!asked){
       this.type = askChristophe();
     }
@@ -53,10 +63,14 @@ public class AFieldAccess  extends AbstractLeaf{
   /**
    * ask the ontology about the type of this object
    * @return the type of this object
+   * @throws org.apache.thrift.TException
    */
-  public String askChristophe(){
+  public String askChristophe() throws TException {
     asked = true;
+    // first element of representation is type
+    // everything else specifies the wanted predicate information
     String typ = Mem.getVariableType(representation.get(0));
+    return RdfClass.getPredicateType(typ, representation.subList(1, representation.size()), _client);
 
   }
 
