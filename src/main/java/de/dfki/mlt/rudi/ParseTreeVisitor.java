@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudi;
 
+import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.mlt.rudi.abstractTree.*;
 import de.dfki.mlt.rudi.abstractTree.expressions.*;
 import de.dfki.mlt.rudi.abstractTree.leaves.*;
@@ -26,14 +27,16 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
 
   // a container to always remember in which rule we are
   private String currentRule;
+  private HfcDbService.Client _client;
 
   /**
    * constructor; the visitor needs to know in which rule/file we're in
    * @param masterFile the name of the current rule (filename)
    */
-  public ParseTreeVisitor(String masterFile) {
+  public ParseTreeVisitor(String masterFile, HfcDbService.Client client) {
     //this.memory = new HashMap<String, AbstractType>();
     currentRule = masterFile;
+    _client = client;
   }
 
   @Override
@@ -503,7 +506,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     for (int i = 0; i < ctx.getChildCount(); i += 2) {
       parts.add(ctx.getChild(i).getText());
     }
-    return new AFieldAccess(parts);
+    return new AFieldAccess(parts, _client);
   }
 
   @Override
@@ -513,7 +516,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<AbstractTree> {
     for (int i = 0; i < ctx.getChildCount(); i += 2) {
       parts.add(ctx.getChild(i).getText());
     }
-    return new AFieldAccess(parts);
+    return new AFieldAccess(parts,_client);
   }
 
   @Override

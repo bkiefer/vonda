@@ -5,6 +5,10 @@
  */
 package de.dfki.mlt.rudi;
 
+import de.dfki.lt.hfc.WrongFormatException;
+import de.dfki.lt.hfc.db.HfcDbService;
+import de.dfki.lt.hfc.db.client.HfcDbClient;
+import de.dfki.lt.hfc.db.server.HfcDbServer;
 import de.dfki.mlt.rudi.abstractTree.AGrammarFile;
 import de.dfki.mlt.rudi.abstractTree.AbstractTree;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
@@ -12,6 +16,7 @@ import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -19,10 +24,11 @@ import java.io.Writer;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.apache.thrift.transport.TTransportException;
 
 /**
  * the main class of rudimant
- * 
+ *
  * @author Anna Welker
  */
 public class GrammarMain {
@@ -47,6 +53,18 @@ public class GrammarMain {
           + "-nt\tDo not try to do type checking while translating\n"
           + "\n\nPlease use this tool as follows:\n"
           + "java rudimant <directory_to_be_searched/> [output_directory/] (flags)\n";
+
+  // RDF functionality
+  private static final String RESOURCE_DIR = "../hfc-database/src/test/resources/";
+
+  private static HfcDbServer server;
+
+  private HfcDbClient client;
+  protected HfcDbService.Client _client;
+
+  // alternative PORTS
+  private static final int SERVER_PORT = 8996;
+  private static final int WEBSERVER_PORT = 8995;
 
   /**
    *
@@ -97,6 +115,7 @@ public class GrammarMain {
       }
     }
 
+    startServer();
     File dir = new File(inputDirectory);
 
     //is this really a directory, or is it a single file?
@@ -120,6 +139,7 @@ public class GrammarMain {
     //clean the memory
     Mem.newMem();
 
+    shutdownServer();
     System.exit(0);
   }
 
@@ -183,7 +203,7 @@ public class GrammarMain {
     // initiate writer
     writer = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream(out)));
-*/
+     */
     // initialise the context magic
     context = new TestContext(log);
     // initialise the lexer with given input file
@@ -196,37 +216,49 @@ public class GrammarMain {
     ParseTree tree = parser.grammar_file();
 
     // initialise the visitor that will do all the work
-    ParseTreeVisitor visitor = new ParseTreeVisitor(classname);
+    ParseTreeVisitor visitor = new ParseTreeVisitor(classname, _client);
 
     // walk the parse tree
     AbstractTree myTree = visitor.visit(tree);
-    if(myTree instanceof AGrammarFile){
-      ((AGrammarFile)myTree).print(classname);
+    if (myTree instanceof AGrammarFile) {
+      ((AGrammarFile) myTree).print(classname);
     } else {
       throw new UnsupportedOperationException("There is sth going very,very wrong...");
     }
-/*
+    /*
     // prepare the output file
     writer.write(context.beforeClassName());
     //writer.write("public class " + classname + " extends RuleUnit {\n\n");
 
     writer.write(myTree + context.atEndOfFile() + "\n}");
-*/
+     */
     // close the writer
     //writer.close();
 
     System.out.println("\nDone.");
   }
 
-  public static String getOutputDirectory(){
+  public static String getOutputDirectory() {
     return outputDirectory;
   }
 
-  public static String getInputDirectory(){
+  public static String getInputDirectory() {
     return inputDirectory;
   }
 
   public static boolean checkTypes() {
     return typeCheck;
+  }
+
+  public static void startServer() throws TTransportException, FileNotFoundException, IOException, WrongFormatException {
+    File config = new File(RESOURCE_DIR + "ontos/pal.ini");
+    server = new HfcDbServer(SERVER_PORT);
+    server.readConfig(config);
+    server.runServer();
+    server.runHttpService(WEBSERVER_PORT);
+  }
+
+  public static void shutdownServer() {
+    server.shutdown();
   }
 }

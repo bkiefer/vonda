@@ -15,5 +15,5 @@ public interface AbstractExpression extends AbstractTree {
    *
    * @return the expression's type
    */
-  public String getType() throws Exception;
+  public String getType();
 }

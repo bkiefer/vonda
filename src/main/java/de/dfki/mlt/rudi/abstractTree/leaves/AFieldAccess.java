@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import de.dfki.lt.hfc.db.rdfProxy.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.thrift.TException;
 
 /**
@@ -44,18 +46,26 @@ public class AFieldAccess  extends AbstractLeaf{
   }
 
   @Override
-  public void generate(Writer out) throws Exception{
+  public void generate(Writer out) throws IOException{
     if(!asked){
-      this.type = askChristophe();
+      try {
+        this.type = askChristophe();
+      } catch (TException ex) {
+        Logger.getLogger(AFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
+      }
     }
     out.append("Rdf here\n");
     //out.append(this.representation);
   }
 
   @Override
-  public String getType() throws Exception {
+  public String getType(){
     if(!asked){
-      this.type = askChristophe();
+      try {
+        this.type = askChristophe();
+      } catch (TException ex) {
+        Logger.getLogger(AFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
+      }
     }
     return this.type;
   }
@@ -70,7 +80,10 @@ public class AFieldAccess  extends AbstractLeaf{
     // first element of representation is type
     // everything else specifies the wanted predicate information
     String typ = Mem.getVariableType(representation.get(0));
-    return RdfClass.getPredicateType(typ, representation.subList(1, representation.size()), _client);
+    String result = RdfClass.getPredicateType(typ,
+            representation.subList(1, representation.size()), _client);
+    // TODO: result = <xsd:string>
+    return result;
 
   }
 
