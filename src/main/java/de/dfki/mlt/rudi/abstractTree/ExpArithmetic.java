@@ -5,10 +5,6 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import java.io.IOException;
-import java.io.Writer;
-import de.dfki.mlt.rudi.abstractTree.RTExpression;
-
 /**
  * this is an arithmetic expression with an operator, two expressions left and
  * right, and eventually if this is no complex term but a single number there is

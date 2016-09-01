@@ -5,10 +5,6 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import de.dfki.mlt.rudi.abstractTree.*;
-import java.io.IOException;
-import java.io.Writer;
-
 /**
  * this represents either true or false
  *

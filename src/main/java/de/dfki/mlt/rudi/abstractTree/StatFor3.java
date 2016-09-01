@@ -5,13 +5,8 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import de.dfki.mlt.rudi.Mem;
 import java.util.List;
 
-import java.io.IOException;
-import java.io.Writer;
-import de.dfki.mlt.rudi.abstractTree.RudiTree;
-import de.dfki.mlt.rudi.abstractTree.RTStatement;
 
 /**
  * FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR

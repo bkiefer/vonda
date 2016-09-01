@@ -5,11 +5,6 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import java.io.IOException;
-import java.io.Writer;
-import de.dfki.mlt.rudi.abstractTree.RudiTree;
-import de.dfki.mlt.rudi.abstractTree.RTExpression;
-
 /**
  * just to be able to deal with lambda expressions if someone should use them,
  * but there is nothing like type checking implemented yet

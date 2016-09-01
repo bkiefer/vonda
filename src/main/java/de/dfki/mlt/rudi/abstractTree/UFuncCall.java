@@ -5,13 +5,9 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import de.dfki.mlt.rudi.GrammarMain;
 import de.dfki.mlt.rudi.Mem;
 import java.util.List;
 
-import de.dfki.mlt.rudi.abstractTree.*;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 
 /**

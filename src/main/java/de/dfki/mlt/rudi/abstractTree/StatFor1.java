@@ -5,16 +5,6 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import de.dfki.mlt.rudi.GrammarMain;
-import de.dfki.mlt.rudi.abstractTree.ExpAssignment;
-import de.dfki.mlt.rudi.abstractTree.ExpBoolean;
-import de.dfki.mlt.rudi.abstractTree.UCommentBlock;
-import java.io.IOException;
-import java.io.Writer;
-import de.dfki.mlt.rudi.abstractTree.RudiTree;
-import de.dfki.mlt.rudi.abstractTree.RTStatement;
-import de.dfki.mlt.rudi.abstractTree.RTExpression;
-
 /**
  * FOR LPAR assignment SEMICOLON exp SEMICOLON exp? RPAR loop_statement_block
  * = a 'normal' for statement containing three ;

@@ -5,9 +5,6 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import java.io.IOException;
-import java.io.Writer;
-
 /**
  * all classes that can be created by the ParseTreeVisitor should implement this
  * interface, for it is the return type of the visit methods

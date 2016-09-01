@@ -5,13 +5,6 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import de.dfki.mlt.rudi.GrammarMain;
-import de.dfki.mlt.rudi.Mem;
-import java.io.IOException;
-import java.io.Writer;
-import de.dfki.mlt.rudi.abstractTree.RudiTree;
-import de.dfki.mlt.rudi.abstractTree.RTExpression;
-
 /**
  * this class represents dialogue acts
  *

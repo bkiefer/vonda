@@ -5,10 +5,6 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import de.dfki.mlt.rudi.abstractTree.*;
-import java.io.IOException;
-import java.io.Writer;
-
 /**
  * class that handles comments, please don't use this as one side in an expression!
  * @author Anna Welker

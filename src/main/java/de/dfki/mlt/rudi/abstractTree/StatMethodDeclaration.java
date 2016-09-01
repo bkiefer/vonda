@@ -6,10 +6,7 @@
 package de.dfki.mlt.rudi.abstractTree;
 
 import de.dfki.mlt.rudi.Mem;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * class that allows the implementation of methods in a .rudi file; we are not

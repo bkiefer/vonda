@@ -5,10 +5,6 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import java.io.IOException;
-import java.io.Writer;
-import de.dfki.mlt.rudi.abstractTree.RTExpression;
-
 /**
  * this is a boolean expression; might also be a subsumes relation (but will
  * in sum always be a boolean)

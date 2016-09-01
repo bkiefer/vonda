@@ -8,7 +8,6 @@ package de.dfki.mlt.rudi.abstractTree;
 import java.util.List;
 
 import de.dfki.mlt.rudi.GrammarMain;
-import de.dfki.mlt.rudi.Mem;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

@@ -5,11 +5,6 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import java.io.IOException;
-import java.io.Writer;
-import de.dfki.mlt.rudi.abstractTree.RudiTree;
-import de.dfki.mlt.rudi.abstractTree.RTExpression;
-
 /**
  * this is an if expression, i.e., something like a ? b : c
  *

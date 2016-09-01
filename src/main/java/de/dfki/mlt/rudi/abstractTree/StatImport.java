@@ -5,12 +5,6 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import de.dfki.mlt.rudi.GrammarMain;
-import de.dfki.mlt.rudi.Mem;
-import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
-
 /**
  * represents an import statement; each import statement will cause the imported
  * .rudi file to be parsed and translated. While parsing the imported file, rudimant

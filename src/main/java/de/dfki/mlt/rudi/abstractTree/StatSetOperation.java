@@ -5,11 +5,6 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import java.io.IOException;
-import java.io.Writer;
-import de.dfki.mlt.rudi.abstractTree.RudiTree;
-import de.dfki.mlt.rudi.abstractTree.RTStatement;
-
 /**
  * representation of sth like a += b where a is a set and b should be added
  * (also works with -, i.e. remove)

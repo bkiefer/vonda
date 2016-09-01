@@ -6,9 +6,6 @@
 package de.dfki.mlt.rudi.abstractTree;
 
 import de.dfki.mlt.rudi.Mem;
-import de.dfki.mlt.rudi.abstractTree.RTLeaf;
-import java.io.IOException;
-import java.io.Writer;
 
 // TODO: test whether variable exists?
 

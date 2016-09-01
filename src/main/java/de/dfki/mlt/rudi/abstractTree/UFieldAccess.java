@@ -7,12 +7,8 @@ package de.dfki.mlt.rudi.abstractTree.leaves;
 
 import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.mlt.rudi.Mem;
-import de.dfki.mlt.rudi.RudimantCompiler;
-import de.dfki.mlt.rudi.abstractTree.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import de.dfki.lt.hfc.db.rdfProxy.*;
-import de.dfki.mlt.rudi.ReturnManagement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.thrift.TException;

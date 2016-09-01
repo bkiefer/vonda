@@ -7,10 +7,6 @@ package de.dfki.mlt.rudi.abstractTree;
 
 import java.util.List;
 
-import de.dfki.mlt.rudi.abstractTree.RTLeaf;
-import java.io.IOException;
-import java.io.Writer;
-import de.dfki.mlt.rudi.abstractTree.RTStatement;
 
 /**
  * this is used to represent a set of comments
