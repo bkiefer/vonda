@@ -39,6 +39,59 @@ local scope and lifetime of variables.
 point / level, which may be local rule, top-level rule or file. A return
 without label exits from the innermost scope.
 
+Example for a top-level rule:
+
+\begin{verbatim}
+a:
+if ( XXXX ) {
+  x = child_27;
+  b:
+  if (YYYY) {
+     x = child_3;
+     c:
+     if ( ZZZZ ) {
+        ....
+        if (....) return b:;
+        ....
+     } // c: ends
+     ....
+  } // b: ends
+} // a: ends
+\end{verbatim}
+
+The labeled exits are implemented by setting flags in a bit mask that are
+tested in the following to skip code not to be executed:
+\newpage
+Possible translation, (example starts at \texttt{return b:})
+\begin{verbatim}
+a:
+if ( XXXX ) {
+  x = child_27;
+  b:
+  if (YYYY) {
+     x = child_3;
+     c:
+     if ( ZZZZ ) {
+        ....
+        if (....) {
+           // return b:;
+           returnMask |= b_mask;
+        }
+        if ((returnMask | (a_mask | b_mask | c_mask)) == 0) {
+           ....
+        }
+     } // c: ends
+     if ((returnMask | (a_mask | b_mask)) == 0) {
+     ....
+     }
+  } // b: ends
+  if ((returnMask | a_mask) == 0) {
+  }
+} // a: ends
+\end{verbatim}
+
+
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "master"
