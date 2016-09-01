@@ -10,7 +10,7 @@ import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.lt.hfc.db.client.HfcDbClient;
 import de.dfki.lt.hfc.db.server.HfcDbServer;
 import de.dfki.mlt.rudi.Mem;
-import de.dfki.mlt.rudi.abstractTree.leaves.UFieldAccess;
+import de.dfki.mlt.rudi.abstractTree.UFieldAccess;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;

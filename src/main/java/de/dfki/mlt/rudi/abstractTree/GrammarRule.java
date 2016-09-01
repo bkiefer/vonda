@@ -7,8 +7,6 @@ package de.dfki.mlt.rudi.abstractTree;
 
 import de.dfki.mlt.rudi.GrammarMain;
 import de.dfki.mlt.rudi.Mem;
-import de.dfki.mlt.rudi.abstractTree.leaves.UCommentBlock;
-import de.dfki.mlt.rudi.abstractTree.statements.StatIf;
 import de.dfki.mlt.rudi.returnManagement;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
