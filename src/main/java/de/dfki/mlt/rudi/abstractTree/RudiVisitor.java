@@ -9,78 +9,78 @@ package de.dfki.mlt.rudi.abstractTree;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public interface RudiVisitor <T> {
+public interface RudiVisitor {
 
-  T visitNode(RudiTree node);
+  void visitNode(RudiTree node);
 
-  T visitNode(ExpAbstractWrapper node);
+  void visitNode(ExpAbstractWrapper node);
 
-  T visitNode(ExpArithmetic node);
+  void visitNode(ExpArithmetic node);
 
-  T visitNode(ExpAssignment node);
+  void visitNode(ExpAssignment node);
 
-  T visitNode(ExpBoolean node);
+  void visitNode(ExpBoolean node);
 
-  T visitNode(ExpDialogueAct node);
+  void visitNode(ExpDialogueAct node);
 
-  T visitNode(ExpIf node);
+  void visitNode(ExpIf node);
 
-  T visitNode(ExpLambda node);
+  void visitNode(ExpLambda node);
 
-  T visitNode(GrammarFile node);
+  void visitNode(GrammarFile node);
 
-  T visitNode(GrammarRule node);
+  void visitNode(GrammarRule node);
 
-  T visitNode(StatAbstractBlock node);
+  void visitNode(StatAbstractBlock node);
 
-  T visitNode(StatDoWhile node);
+  void visitNode(StatDoWhile node);
 
-  T visitNode(StatFor1 node);
+  void visitNode(StatFor1 node);
 
-  T visitNode(StatFor2 node);
+  void visitNode(StatFor2 node);
 
-  T visitNode(StatFor3 node);
+  void visitNode(StatFor3 node);
 
-  T visitNode(StatFunDef node);
+  void visitNode(StatFunDef node);
 
-  T visitNode(StatIf node);
+  void visitNode(StatIf node);
 
-  T visitNode(StatImport node);
+  void visitNode(StatImport node);
 
-  T visitNode(StatMethodDeclaration node);
+  void visitNode(StatMethodDeclaration node);
 
-  T visitNode(StatPropose node);
+  void visitNode(StatPropose node);
 
-  T visitNode(StatReturn node);
+  void visitNode(StatReturn node);
 
-  T visitNode(StatSetOperation node);
+  void visitNode(StatSetOperation node);
 
-  T visitNode(StatTimeout node);
+  void visitNode(StatTimeout node);
 
-  T visitNode(StatVarDef node);
+  void visitNode(StatVarDef node);
 
-  T visitNode(StatWhile node);
+  void visitNode(StatWhile node);
 
-  T visitNode(UCharacter node);
+  void visitNode(UCharacter node);
 
-  T visitNode(UComment node);
+  void visitNode(UComment node);
 
-  T visitNode(UCommentBlock node);
+  void visitNode(UCommentBlock node);
 
-  T visitNode(UFieldAccess node);
+  void visitNode(UFieldAccess node);
 
-  T visitNode(UFuncCall node);
+  void visitNode(UFuncCall node);
 
-  T visitNode(UNull node);
+  void visitNode(UNull node);
 
-  T visitNode(UNumber node);
+  void visitNode(UNumber node);
 
-  T visitNode(UString node);
+  void visitNode(UString node);
 
-  T visitNode(UVariable node);
+  void visitNode(UVariable node);
 
-  T visitNode(UWildcard node);
+  void visitNode(UWildcard node);
 
-  T visitNode(UnaryBoolean node);
+  void visitNode(UnaryBoolean node);
 
 }
