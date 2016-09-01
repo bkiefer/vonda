@@ -50,13 +50,6 @@ public class GrammarFile implements RudiTree {
   }
 
   @Override
-  public void returnManaging() {
-    for (RudiTree t : this.rules) {
-      t.returnManaging();
-    }
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

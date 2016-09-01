@@ -75,9 +75,4 @@ public class AFieldAccess extends AbstractLeaf {
     return result;
 
   }
-
-  @Override
-  public void returnManaging(ReturnManagement rm) {
-    // nothing to do
-  }
 }
