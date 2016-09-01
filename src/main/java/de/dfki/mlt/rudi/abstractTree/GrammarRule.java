@@ -7,7 +7,7 @@ package de.dfki.mlt.rudi.abstractTree;
 
 import de.dfki.mlt.rudi.GrammarMain;
 import de.dfki.mlt.rudi.Mem;
-import de.dfki.mlt.rudi.returnManagement;
+import de.dfki.mlt.rudi.ReturnManagement;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,11 +24,11 @@ public class GrammarRule implements RudiTree{
 
   // label comment if_statement
 
-  private String label;
-  private String classname;
-  private UCommentBlock comment;
-  private StatIf ifstat;
-  protected static Writer out;
+  String label;
+  String classname;
+  UCommentBlock comment;
+  StatIf ifstat;
+  static Writer out;
 
   public GrammarRule(String label, UCommentBlock comment,StatIf ifstat) {
     this.label = label;
@@ -40,7 +40,7 @@ public class GrammarRule implements RudiTree{
   @Override
   public void generate(Writer out) throws FileNotFoundException, IOException{
     String returnType = "void";
-    if(returnManagement.shouldAddReturnto(label)){
+    if(ReturnManagement.shouldAddReturnto(label)){
       returnType = "String";
     }
     out = new BufferedWriter(new OutputStreamWriter(
@@ -61,9 +61,9 @@ public class GrammarRule implements RudiTree{
 
   @Override
   public void returnManaging() {
-    returnManagement.enterRule(label);
+    ReturnManagement.enterRule(label);
     ifstat.returnManaging();
-    returnManagement.leaveRule();
+    ReturnManagement.leaveRule();
   }
 
   @Override

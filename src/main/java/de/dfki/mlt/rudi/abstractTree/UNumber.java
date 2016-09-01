@@ -16,7 +16,7 @@ import java.io.Writer;
  */
 public class UNumber extends RTLeaf{
 
-  private String value;
+  String value;
 
   public UNumber(String value) {
     this.value = value;

@@ -18,9 +18,9 @@ import de.dfki.mlt.rudi.abstractTree.RTExpression;
  */
 public class ExpAbstractWrapper implements RudiTree, RTExpression{
 
-  private UCommentBlock commentbefore;
-  private RudiTree exp;
-  private UCommentBlock commentafter;
+  UCommentBlock commentbefore;
+  RudiTree exp;
+  UCommentBlock commentafter;
 
   public ExpAbstractWrapper(UCommentBlock commentbefore, RudiTree exp, UCommentBlock commentafter) {
     this.commentbefore = commentbefore;

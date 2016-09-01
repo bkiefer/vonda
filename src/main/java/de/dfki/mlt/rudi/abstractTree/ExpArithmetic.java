@@ -18,11 +18,11 @@ import de.dfki.mlt.rudi.abstractTree.RTExpression;
  */
 public class ExpArithmetic implements RTExpression {
 
-  private RTExpression left;
-  private RTExpression right;
-  private String type;
-  private String operator;
-  private boolean minus;
+  RTExpression left;
+  RTExpression right;
+  String type;
+  String operator;
+  boolean minus;
 
   /**
    * if the expression consists of only one part, set right and operator to null

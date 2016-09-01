@@ -17,10 +17,10 @@ import de.dfki.mlt.rudi.abstractTree.RTStatement;
  */
 public class StatIf implements RTStatement, RudiTree{
 
-  private RudiTree condition;
-  private StatAbstractBlock statblockIf;
-  private StatAbstractBlock statblockElse;
-  private String currentRule;
+  RudiTree condition;
+  StatAbstractBlock statblockIf;
+  StatAbstractBlock statblockElse;
+  String currentRule;
 
   /**
    * if there is no else case, set statblockElse to null

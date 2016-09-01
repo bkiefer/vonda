@@ -18,9 +18,9 @@ import de.dfki.mlt.rudi.abstractTree.RTStatement;
  */
 public class StatSetOperation implements RTStatement, RudiTree{
 
-    private RudiTree left;
+    RudiTree left;
     boolean add;
-    private RudiTree right;
+    RudiTree right;
 
     public StatSetOperation(RudiTree left, boolean add, RudiTree right) {
         this.left = left;

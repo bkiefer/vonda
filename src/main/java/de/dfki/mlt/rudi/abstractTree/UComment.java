@@ -15,8 +15,8 @@ import java.io.Writer;
  */
 public class UComment extends RTLeaf implements RTStatement {
 
-  private String comment;
-  private boolean containsClassName;
+  String comment;
+  boolean containsClassName;
 
   public UComment(String comment) {
     containsClassName = false;

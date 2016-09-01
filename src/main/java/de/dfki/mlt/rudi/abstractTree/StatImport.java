@@ -22,7 +22,7 @@ public class StatImport implements RudiTree{
 
   // IMPORT VARIABLE SEMICOLON
 
-  private String text;
+  String text;
 
   public StatImport(String text){
     this.text = text;

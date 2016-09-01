@@ -18,9 +18,9 @@ import de.dfki.mlt.rudi.abstractTree.RTStatement;
  */
 public class StatDoWhile implements RTStatement, RudiTree{
 
-  private RudiTree condition;
-  private StatAbstractBlock statblock;
-  private String currentRule;
+  RudiTree condition;
+  StatAbstractBlock statblock;
+  String currentRule;
 
   public StatDoWhile(RudiTree condition, StatAbstractBlock statblock, String position) {
     this.condition = condition;

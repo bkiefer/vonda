@@ -16,7 +16,7 @@ import java.io.Writer;
  */
 public class UCharacter extends RTLeaf {
 
-  private String content;
+  String content;
 
   public UCharacter(String content) {
     this.content = content;

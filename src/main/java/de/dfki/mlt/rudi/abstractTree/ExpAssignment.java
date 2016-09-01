@@ -20,12 +20,12 @@ import de.dfki.mlt.rudi.abstractTree.RTExpression;
  */
 public class ExpAssignment implements RudiTree, RTExpression {
 
-  private String typeRight;
-  private RudiTree left;
-  private RTExpression right;
-  private boolean declaration;
-  private String actualType;
-  private String position;
+  String typeRight;
+  RudiTree left;
+  RTExpression right;
+  boolean declaration;
+  String actualType;
+  String position;
 
   public ExpAssignment(RudiTree left, RTExpression right,
           boolean declaration, String position) {

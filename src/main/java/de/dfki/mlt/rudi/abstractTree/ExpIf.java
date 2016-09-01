@@ -17,9 +17,9 @@ import de.dfki.mlt.rudi.abstractTree.RTExpression;
  */
 public class ExpIf implements RudiTree, RTExpression{
 
-  private RTExpression boolexp;
-  private RTExpression thenexp;
-  private RTExpression elseexp;
+  RTExpression boolexp;
+  RTExpression thenexp;
+  RTExpression elseexp;
 
   public ExpIf(RTExpression bool, RTExpression thenexp, RTExpression elseexp){
     this.boolexp = bool;

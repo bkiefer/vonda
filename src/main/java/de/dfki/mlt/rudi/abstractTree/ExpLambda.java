@@ -18,7 +18,7 @@ import de.dfki.mlt.rudi.abstractTree.RTExpression;
  */
 public class ExpLambda implements RudiTree, RTExpression {
 
-  private String exp;
+  String exp;
 
   public ExpLambda(String exp) {
     this.exp = exp;

@@ -25,9 +25,9 @@ import java.io.Writer;
 public class GrammarFile implements RudiTree {
 
   // imports* (comment grammar_rule | method_declaration | statement )* comment
-  private List<RudiTree> rules;
-  protected static Writer out;
-  private String classname;
+  List<RudiTree> rules;
+  static Writer out;
+  String classname;
 
   public GrammarFile(List<RudiTree> rules) {
     this.rules = rules;

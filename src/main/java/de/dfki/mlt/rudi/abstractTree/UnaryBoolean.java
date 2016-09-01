@@ -17,7 +17,7 @@ import java.io.Writer;
 public class UnaryBoolean extends RTLeaf{
 
   // true or false
-  private String content;
+  String content;
 
   public UnaryBoolean(String content) {
     this.content = content;

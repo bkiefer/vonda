@@ -16,7 +16,7 @@ import java.io.Writer;
  */
 public class UString extends RTLeaf {
 
-  private String content;
+  String content;
 
   public UString(String content) {
     this.content = content;

@@ -19,9 +19,9 @@ import java.io.Writer;
  */
 public class UVariable extends RTLeaf {
 
-  private String type;
-  private String representation;
-  private String origin;
+  String type;
+  String representation;
+  String origin;
 
   public UVariable(String type, String representation, String origin) {
     this.type = type;

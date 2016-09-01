@@ -12,7 +12,7 @@ import java.util.HashSet;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class returnManagement {
+public class ReturnManagement {
 
   private HashMap<String, String> findPredecessor;
   private HashMap<String, Boolean> hasReturn;

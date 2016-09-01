@@ -21,11 +21,11 @@ import de.dfki.mlt.rudi.abstractTree.RTStatement;
  */
 public class StatFunDef implements RTStatement, RudiTree{
 
-  private String funcname;
-  private String type;
-  private ArrayList<String> parameters;
-  private ArrayList<String> parameterTypes;
-  private String position;
+  String funcname;
+  String type;
+  ArrayList<String> parameters;
+  ArrayList<String> parameterTypes;
+  String position;
 
   public StatFunDef(String type, String funcname, ArrayList<String> parameters,
           ArrayList<String> parameterTypes, String position){

@@ -20,9 +20,9 @@ import de.dfki.mlt.rudi.abstractTree.RTStatement;
  */
 public class StatWhile implements RTStatement, RudiTree {
 
-  private RudiTree condition;
-  private StatAbstractBlock statblock;
-  private String currentRule;
+  RudiTree condition;
+  StatAbstractBlock statblock;
+  String currentRule;
 
   public StatWhile(RudiTree condition, StatAbstractBlock statblock, String position) {
     this.condition = condition;

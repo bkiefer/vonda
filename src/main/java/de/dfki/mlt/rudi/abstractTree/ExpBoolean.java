@@ -17,13 +17,13 @@ import de.dfki.mlt.rudi.abstractTree.RTExpression;
  */
 public class ExpBoolean implements RTExpression {
 
-  private RTExpression left;
-  private RTExpression right;
-  private boolean not;
-  private boolean isSubsumed = false;   // <- magic part!!!
-  private boolean doesSubsume = false;   // <- magic part!!!
-  private String operator;
-  private String type;
+  RTExpression left;
+  RTExpression right;
+  boolean not;
+  boolean isSubsumed = false;   // <- magic part!!!
+  boolean doesSubsume = false;   // <- magic part!!!
+  String operator;
+  String type;
 
   /**
    * if the expression consists of only one part, set right and operator to null

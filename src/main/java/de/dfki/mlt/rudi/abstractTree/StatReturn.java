@@ -5,7 +5,7 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import de.dfki.mlt.rudi.returnManagement;
+import de.dfki.mlt.rudi.ReturnManagement;
 import java.io.IOException;
 import java.io.Writer;
 import de.dfki.mlt.rudi.abstractTree.RudiTree;
@@ -19,16 +19,16 @@ import de.dfki.mlt.rudi.abstractTree.RTStatement;
  */
 public class StatReturn implements RTStatement, RudiTree {
 
-  private RudiTree toRet;
-  private String lit;
+  RudiTree toRet;
+  String lit;
 
   public StatReturn() {
     this.toRet = null;
   }
 
   public StatReturn(RudiTree exp, String lit) {
-    if (returnManagement.isExistingRule(lit)) {
-      returnManagement.foundReturnTo(lit);
+    if (ReturnManagement.isExistingRule(lit)) {
+      ReturnManagement.foundReturnTo(lit);
     } else {
       this.toRet = exp;
       this.lit = lit;
@@ -52,8 +52,8 @@ public class StatReturn implements RTStatement, RudiTree {
 
   @Override
   public void returnManaging() {
-    if (returnManagement.isExistingRule(lit)) {
-      returnManagement.foundReturnTo(lit);
+    if (ReturnManagement.isExistingRule(lit)) {
+      ReturnManagement.foundReturnTo(lit);
       this.toRet = null;
     }
   }

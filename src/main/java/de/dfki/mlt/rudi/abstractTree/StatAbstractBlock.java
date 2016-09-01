@@ -22,9 +22,9 @@ import de.dfki.mlt.rudi.abstractTree.RTExpression;
  */
 public class StatAbstractBlock implements RTStatement, RudiTree {
 
-  private List<RudiTree> statblock;
-  private final boolean braces;
-  private int environmentPosition;
+  List<RudiTree> statblock;
+  final boolean braces;
+  int environmentPosition;
 
   public StatAbstractBlock(List<RudiTree> statblock, boolean braces) {
     this.statblock = statblock;

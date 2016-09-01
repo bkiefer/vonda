@@ -22,10 +22,10 @@ import de.dfki.mlt.rudi.abstractTree.RTStatement;
  */
 public class StatFor3 implements RTStatement, RudiTree {
 
-  private List<String> variables;
-  private RudiTree exp;
-  private StatAbstractBlock block;
-  private String position;
+  List<String> variables;
+  RudiTree exp;
+  StatAbstractBlock block;
+  String position;
 
   public StatFor3(List<String> variables, RudiTree exp,
           StatAbstractBlock block, String position) {

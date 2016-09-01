@@ -15,8 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.HfcDbService;
-import de.dfki.mlt.rudi.abstractTree.AGrammarFile;
-import de.dfki.mlt.rudi.abstractTree.AbstractTree;
+import de.dfki.mlt.rudi.abstractTree.GrammarFile;
+import de.dfki.mlt.rudi.abstractTree.RudiTree;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 
@@ -190,9 +190,9 @@ public class RudimantCompiler {
     ParseTreeVisitor visitor = new ParseTreeVisitor(className, _client);
 
     // walk the parse tree
-    AbstractTree myTree = visitor.visit(tree);
-    if (myTree instanceof AGrammarFile) {
-      ((AGrammarFile) myTree).generate(this);
+    RudiTree myTree = visitor.visit(tree);
+    if (myTree instanceof GrammarFile) {
+      ((GrammarFile) myTree).generate(this);
     } else {
       throw new UnsupportedOperationException("There is sth going very,very wrong...");
     }

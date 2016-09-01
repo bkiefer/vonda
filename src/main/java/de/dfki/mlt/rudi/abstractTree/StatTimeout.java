@@ -17,9 +17,9 @@ import de.dfki.mlt.rudi.abstractTree.RTStatement;
  */
 public class StatTimeout implements RTStatement, RudiTree {
 
-    private long time;
-    private String name;
-    private RudiTree statblock;
+    long time;
+    String name;
+    RudiTree statblock;
 
     public StatTimeout(String name, long time, RudiTree statblock) {
         this.time = time;

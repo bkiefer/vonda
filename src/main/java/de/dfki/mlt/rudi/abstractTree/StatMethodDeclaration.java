@@ -18,13 +18,13 @@ import java.util.HashMap;
  */
 public class StatMethodDeclaration implements RudiTree {
 
-  private String visibility;
-  private String return_type;
-  private String name;
-  private ArrayList<String> parameters;
-  private ArrayList<String> partypes;
-  private RudiTree block;
-  private String position;
+  String visibility;
+  String return_type;
+  String name;
+  ArrayList<String> parameters;
+  ArrayList<String> partypes;
+  RudiTree block;
+  String position;
 
   public StatMethodDeclaration(String visibility, String return_type, String name,
           ArrayList<String> parameters, ArrayList<String> partypes,

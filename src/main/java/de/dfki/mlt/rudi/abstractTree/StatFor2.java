@@ -21,11 +21,11 @@ import de.dfki.mlt.rudi.abstractTree.RTExpression;
  */
 public class StatFor2 implements RTStatement, RudiTree {
 
-  private String varType;
-  private UVariable var;
-  private RudiTree exp;
-  private StatAbstractBlock statblock;
-  private String position;
+  String varType;
+  UVariable var;
+  RudiTree exp;
+  StatAbstractBlock statblock;
+  String position;
 
   public StatFor2(UVariable var, RudiTree exp, StatAbstractBlock statblock,
           String position) {

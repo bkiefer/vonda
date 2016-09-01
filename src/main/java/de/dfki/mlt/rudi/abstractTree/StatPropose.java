@@ -18,8 +18,8 @@ import de.dfki.mlt.rudi.abstractTree.RTExpression;
  */
 public class StatPropose implements RTStatement, RudiTree {
 
-  private RTExpression arg;
-  private StatAbstractBlock block;
+  RTExpression arg;
+  StatAbstractBlock block;
 
   public StatPropose(RTExpression arg, StatAbstractBlock block) {
     this.arg = arg;

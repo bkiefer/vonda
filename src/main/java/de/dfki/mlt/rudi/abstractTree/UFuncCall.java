@@ -23,9 +23,9 @@ import java.util.ArrayList;
  */
 public class UFuncCall extends RTLeaf{
 
-  private String type;
-  private String representation;
-  private List<RTExpression> exps;
+  String type;
+  String representation;
+  List<RTExpression> exps;
 
   public UFuncCall(String representation, List<RTExpression> exps) {
     this.representation = representation;

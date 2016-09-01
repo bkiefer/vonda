@@ -20,9 +20,9 @@ import de.dfki.mlt.rudi.abstractTree.RTStatement;
  */
 public class StatVarDef implements RTStatement, RudiTree{
 
-  private String variable;
-  private String type;
-  private String position;
+  String variable;
+  String type;
+  String position;
 
   public StatVarDef(String type, String variable, String position){
     this.type = type;

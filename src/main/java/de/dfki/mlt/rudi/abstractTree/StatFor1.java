@@ -23,11 +23,11 @@ import de.dfki.mlt.rudi.abstractTree.RTExpression;
  */
 public class StatFor1 implements RTStatement, RudiTree {
 
-  private ExpAssignment assignment;
-  private ExpBoolean condition;
-  private RTExpression arithmetic;
-  private StatAbstractBlock statblock;
-  private String currentRule;
+  ExpAssignment assignment;
+  ExpBoolean condition;
+  RTExpression arithmetic;
+  StatAbstractBlock statblock;
+  String currentRule;
 
   public StatFor1(ExpAssignment assignment, ExpBoolean condition,
           RTExpression arithmetic, StatAbstractBlock statblock, String position) {
