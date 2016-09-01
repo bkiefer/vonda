@@ -62,14 +62,14 @@ public class GenerationVisitor implements RudiVisitor {
         testType(out);
       }
     }
-    if (node..declaration) {
+    if (node.declaration) {
       Mem.addElement(((UVariable) node.left).toString(), node.actualType, node.position);
-      out.append(node..actualType + " " + ((UVariable) node.left).toString() + " = ");
-      node..right.generate(out);
+      out.append(node.actualType + " " + ((UVariable) node.left).toString() + " = ");
+      node.right.generate(out);
       return;
     }
     out.append(((UVariable) node.left).toString() + " = ");
-    node..right.generate(out);
+    node.right.generate(out);
   }
 
   @Override
@@ -111,8 +111,8 @@ public class GenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpDialogueAct node) {
-    out.append("new DialogueAct(\"" + litGraph + "(");
-    String[] parameters = this.rest.split(",");
+    out.append("new DialogueAct(\"" + node.litGraph + "(");
+    String[] parameters = node.rest.split(",");
     // the first argument will never need to be more than a String
     out.append(parameters[0]);
     for (int i = 1; i < parameters.length; i++){
@@ -142,11 +142,11 @@ public class GenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpIf node) {
-    this.boolexp.generate(out);
+    node.boolexp.generate(out);
     out.append(" ? ");
-    this.thenexp.generate(out);
+    node.thenexp.generate(out);
     out.append(" : ");
-    this.elseexp.generate(out);
+    node.elseexp.generate(out);
   }
 
   @Override
@@ -157,12 +157,12 @@ public class GenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(GrammarFile node) {
     //let the return guy do its work
-    returnManaging();
+    //returnManaging();
     //boolean foundClassName = false;
     Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
-    out.append("public class " + classname + "{\n"
+    out.append("public class " + node.classname + "{\n"
             + "  public void process(){");
-    for (RudiTree r : rules) {
+    for (RudiTree r : node.rules) {
       // Don't forget to insert text after class name as specified in context
       // Edit: no one wants to use this anyway
       /*if (r instanceof ACommentBlock && foundClassName == false) {
@@ -181,16 +181,16 @@ public class GenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(GrammarRule node) {
     String returnType = "void";
-    if(ReturnManagement.shouldAddReturnto(label)){
+    if(ReturnManagement.shouldAddReturnto(node.label)){
       returnType = "String";
     }
     out = new BufferedWriter(new OutputStreamWriter(
-            new FileOutputStream(GrammarMain.getOutputDirectory() + classname + ".java")));
+            new FileOutputStream(GrammarMain.getOutputDirectory() + node.classname + ".java")));
     Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
-    out.append("public class " + classname + "{\n"
-            + "  public " + returnType + "process(){");
-    comment.generate(out);
-    ifstat.generate(out);
+    out.append("public class " + node.classname + "{\n"
+            + "  public " + node.returnType + "process(){");
+    node.comment.generate(out);
+    node.ifstat.generate(out);
     out.append("\n\t return;\n  }\n}");
     Mem.leaveEnvironment();
   }
@@ -198,12 +198,12 @@ public class GenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatAbstractBlock node) {
         String stats = "";
-    if (braces) {
+    if (node.braces) {
       // when entering a statement block, we need to create a new local environment
-      this.environmentPosition = Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
+      node.environmentPosition = Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
       out.append("{");
     }
-    for (RudiTree stat : statblock) {
+    for (RudiTree stat : node.statblock) {
       if (stat instanceof RTExpression) {
         stat.generate(out);
         out.append(";\n");
@@ -211,7 +211,7 @@ public class GenerationVisitor implements RudiVisitor {
       }
       stat.generate(out);
     }
-    if (braces) {
+    if (node.braces) {
       out.append("}");
       Mem.leaveEnvironment();
     }
@@ -220,9 +220,9 @@ public class GenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatDoWhile node) {
     out.append("do");
-    statblock.generate(out);
+    node.statblock.generate(out);
     out.append("while (");
-    condition.generate(out);
+    node.condition.generate(out);
     out.append(");");
   }
 
@@ -230,150 +230,150 @@ public class GenerationVisitor implements RudiVisitor {
   public void visitNode(StatFor1 node) {
     // the assignment will add the variable to the memory!!
     out.append("for ( ");
-    assignment.generate(out);
+    node.assignment.generate(out);
     out.append("; ");
-    condition.generate(out);
+    node.condition.generate(out);
     out.append(";");
-    if(arithmetic != null){
-      arithmetic.generate(out);
+    if(node.arithmetic != null){
+      node.arithmetic.generate(out);
     }
     out.append(");");
-    statblock.generate(out);
+    node.statblock.generate(out);
   }
 
   @Override
   public void visitNode(StatFor2 node) {
        // TODO: or should we check here that the type of the variable in assignment
     // is the type the iterable in exp returns? How?
-    if (varType == null) {
-      varType = ((RTExpression) exp).getType();
+    if (node.varType == null) {
+      node.varType = ((RTExpression) exp).getType();
     }
-    Mem.addElement(var.toString(), varType, position);
+    Mem.addElement(node.var.toString(), node.varType, node.position);
     out.append("for (" + varType + " ");
-    var.generate(out);
+    node.var.generate(out);
     out.append(": ");
-    exp.generate(out);
+    node.exp.generate(out);
     out.append(") ");
-    statblock.generate(out);
+    node.statblock.generate(out);
   }
 
   @Override
   public void visitNode(StatFor3 node) {
     out.append("for (Object[] o : ");
-    this.exp.generate(out);
+    node.exp.generate(out);
     out.append(") {");
     int count = 0;
-    for (String s : this.variables) {
+    for (String s : node.variables) {
       Mem.addElement(s, "Object", position);
       out.append("\nObject " + s + " = o[" + count++ + "]");
     }
-    statblock.generate(out);
+    node.statblock.generate(out);
     out.append("}");
   }
 
   @Override
   public void visitNode(StatFunDef node) {
-    Mem.addFunction(funcname, type, parameterTypes, position);
+    Mem.addFunction(node.funcname, node.type, node.parameterTypes, node.position);
   }
 
   @Override
   public void visitNode(StatIf node) {
-    if (this.statblockElse != null){
+    if (node.statblockElse != null){
       out.append("if (");
-      condition.generate(out);
+      node.condition.generate(out);
       out.append(") ");
-      statblockIf.generate(out);
+      node.statblockIf.generate(out);
       out.append("else");
-      statblockElse.generate(out);
+      node.statblockElse.generate(out);
     } else {
       out.append("if (");
-      condition.generate(out);
+      node.condition.generate(out);
       out.append(") ");
-      statblockIf.generate(out);
+      node.statblockIf.generate(out);
     }
   }
 
   @Override
   public void visitNode(StatImport node) {
-    System.out.println("Processing import " + text);
+    System.out.println("Processing import " + node.text);
     Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
     out.append(text + ".process()");
-    GrammarMain.processFile(new File(GrammarMain.getInputDirectory() + text + ".rudi"));
+    GrammarMain.processFile(new File(GrammarMain.getInputDirectory() + node.text + ".rudi"));
     Mem.leaveEnvironment();
   }
 
   @Override
   public void visitNode(StatMethodDeclaration node) {
     Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth());
-    String ret = visibility + " " + return_type + " " + name + "(";
-    if (!parameters.isEmpty()) {
-      for (int i = 0; i < parameters.size(); i++) {
+    String ret = node.visibility + " " + node.return_type + " " + node.name + "(";
+    if (!node.parameters.isEmpty()) {
+      for (int i = 0; i < node.parameters.size(); i++) {
         if (i == 1) {
-          ret += partypes.get(i) + " " + parameters.get(i);
+          ret += node.partypes.get(i) + " " + node.parameters.get(i);
         } else {
-          ret += ", " + partypes.get(i) + " " + parameters.get(i);
+          ret += ", " + node.partypes.get(i) + " " + node.parameters.get(i);
         }
         // add parameters to environment
-        Mem.addElement(parameters.get(i), partypes.get(i), position);
+        Mem.addElement(node.parameters.get(i), node.partypes.get(i), node.position);
       }
     }
     ret += ")";
     out.append(ret + "\n");
-    block.generate(out);
+    node.block.generate(out);
     Mem.leaveEnvironment();
   }
 
   @Override
   public void visitNode(StatPropose node) {
     out.append("propose(");
-    arg.generate(out);
+    node.arg.generate(out);
     out.append(", new Proposal() {public void run()\n");
-    block.generate(out);
+    node.block.generate(out);
     out.append("});");
   }
 
   @Override
   public void visitNode(StatReturn node) {
-    if (this.toRet == null) {
+    if (node.toRet == null) {
       out.append("return;\n");
     }
     out.append("return ");
-    this.toRet.generate(out);
+    node.toRet.generate(out);
     out.append(";\n");
   }
 
   @Override
   public void visitNode(StatSetOperation node) {
-     if(add){
-            this.left.generate(out);
+     if(node.add){
+            node.left.generate(out);
             out.append(".add(");
-            this.right.generate(out);
+            node.right.generate(out);
             out.append(");");
         }
         else{
-            this.left.generate(out);
+            node.left.generate(out);
             out.append(".remove(");
-            this.right.generate(out);
+            node.right.generate(out);
             out.append(");");
         }
   }
 
   @Override
   public void visitNode(StatTimeout node) {
-    Mem.addElement(variable, type, position);
+    Mem.addElement(node.variable, node.type, node.position);
   }
 
   @Override
   public void visitNode(StatVarDef node) {
-    Mem.addElement(name, type, position);
+    Mem.addElement(node.name, node.type, node.position);
   }
 
   @Override
   public void visitNode(StatWhile node) {
     out.append("while (");
-    this.condition.generate(out);
+    node.condition.generate(out);
     out.append(")");
-    statblock.generate(out);
+    node.statblock.generate(out);
   }
 
   @Override
