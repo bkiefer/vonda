@@ -81,14 +81,6 @@ public class StatIf implements RTStatement, RudiTree{
   }
 
   @Override
-  public void returnManaging() {
-    statblockIf.returnManaging();
-    if (statblockElse != null){
-      statblockElse.returnManaging();
-    }
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

@@ -39,12 +39,7 @@ public class StatPropose implements RTStatement, RudiTree {
     block.generate(out);
     out.append("});");
   }
-
-  @Override
-  public void returnManaging() {
-    // nothing to do
-  }
-
+  
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);

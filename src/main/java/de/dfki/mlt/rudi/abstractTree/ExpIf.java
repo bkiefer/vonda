@@ -51,11 +51,6 @@ public class ExpIf implements RudiTree, RTExpression{
   }
 
   @Override
-  public void returnManaging() {
-    // nothing to do
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

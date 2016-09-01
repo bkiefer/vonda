@@ -45,11 +45,6 @@ public class StatTimeout implements RTStatement, RudiTree {
         //nothing to test here
     }
 
-    @Override
-  public void returnManaging() {
-    // nothing to do
-  }
-
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);

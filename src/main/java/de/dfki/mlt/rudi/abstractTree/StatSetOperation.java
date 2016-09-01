@@ -49,10 +49,6 @@ public class StatSetOperation implements RTStatement, RudiTree{
         // TODO: test somehow
     }
 
-    @Override
-  public void returnManaging() {
-    // nothing to do
-  }
 
   @Override
   public void visit(RudiVisitor v) {

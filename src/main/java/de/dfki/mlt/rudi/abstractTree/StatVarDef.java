@@ -41,11 +41,6 @@ public class StatVarDef implements RTStatement, RudiTree{
   }
 
   @Override
-  public void returnManaging() {
-    // nothing to do
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

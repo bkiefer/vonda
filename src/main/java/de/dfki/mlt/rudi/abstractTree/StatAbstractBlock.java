@@ -58,13 +58,6 @@ public class StatAbstractBlock implements RTStatement, RudiTree {
   }
 
   @Override
-  public void returnManaging() {
-    for (RudiTree stat : statblock) {
-      stat.returnManaging();
-    }
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

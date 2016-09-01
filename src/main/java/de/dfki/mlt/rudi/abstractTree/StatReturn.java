@@ -51,14 +51,6 @@ public class StatReturn implements RTStatement, RudiTree {
   }
 
   @Override
-  public void returnManaging() {
-    if (ReturnManagement.isExistingRule(lit)) {
-      ReturnManagement.foundReturnTo(lit);
-      this.toRet = null;
-    }
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

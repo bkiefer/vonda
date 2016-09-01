@@ -43,12 +43,6 @@ public class StatImport implements RudiTree{
   }
 
   @Override
-  public void returnManaging() {
-    // for the moment, let's just say we cannot return from an import to a superclass
-    // of the importing class
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

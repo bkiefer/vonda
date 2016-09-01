@@ -24,14 +24,14 @@ public class StatFor3 implements RTStatement, RudiTree {
 
   List<String> variables;
   RudiTree exp;
-  StatAbstractBlock block;
+  StatAbstractBlock statblock;
   String position;
 
   public StatFor3(List<String> variables, RudiTree exp,
           StatAbstractBlock block, String position) {
     this.variables = variables;
     this.exp = exp;
-    this.block = block;
+    this.statblock = block;
     this.position = position;
   }
 
@@ -50,13 +50,13 @@ public class StatFor3 implements RTStatement, RudiTree {
       Mem.addElement(s, "Object", position);
       out.append("\nObject " + s + " = o[" + count++ + "]");
     }
-    block.generate(out);
+    statblock.generate(out);
     out.append("}");
   }
 
   @Override
   public void returnManaging() {
-    block.returnManaging();
+    statblock.returnManaging();
   }
 
   @Override
