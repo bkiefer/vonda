@@ -16,7 +16,7 @@ public class Environment {
 
   private HashMap<String, String> memory;
   private HashMap<String, String> overwritten;
-  private static HashMap<String, String> variableOrigin = new HashMap<String, String>();
+  private HashMap<String, String> variableOrigin = new HashMap<String, String>();
   private int depth;
 
   public Environment(int depth){
@@ -29,12 +29,12 @@ public class Environment {
   /**
    * restore the environment that was actual before this one
    */
-  public void restoreOld(){
+  public void restoreOld(Mem mem){
     for (String v : memory.keySet()){
-      Mem.eraseLocalV(v);
+     mem.eraseLocalV(v);
     }
     for (String v : overwritten.keySet()){
-      Mem.restoreLocalV(v, overwritten.get(v), variableOrigin.get(v));
+      mem.restoreLocalV(v, overwritten.get(v), variableOrigin.get(v));
     }
   }
 

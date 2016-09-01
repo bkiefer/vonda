@@ -17,20 +17,20 @@ import java.util.List;
  */
 public class Mem {
 
-  private static List<Environment> environment = new ArrayList<>();
-  private static HashMap<String, String> actualValues = new HashMap<>();
-  private static HashMap<String, String> variableOrigin = new HashMap<>();
-  private static int positionAtm = -1;
-  private static int depthAtm = -1;
-  private static HashSet<String> rdfs = new HashSet<>();
+  private List<Environment> environment = new ArrayList<>();
+  private HashMap<String, String> actualValues = new HashMap<>();
+  private HashMap<String, String> variableOrigin = new HashMap<>();
+  private int positionAtm = -1;
+  private int depthAtm = -1;
+  private HashSet<String> rdfs = new HashSet<>();
 
   // as this is only a way to provide mem with information about the types of
   // imported java functions, we probably don't need local namespaces
   // functions are not implemented locally in this version
-  private static HashMap<String, String> functionTypes = new HashMap<>();
-  private static HashMap<String, ArrayList<String>> functionParTypes = new HashMap<>();
+  private HashMap<String, String> functionTypes = new HashMap<>();
+  private HashMap<String, ArrayList<String>> functionParTypes = new HashMap<>();
 
-  public static void newMem() {
+  public Mem() {
     environment = new ArrayList<>();
     actualValues = new HashMap<>();
     variableOrigin = new HashMap<>();
@@ -38,11 +38,11 @@ public class Mem {
     depthAtm = -1;
   }
 
-  public static int getCurrentDepth() {
+  public int getCurrentDepth() {
     return depthAtm;
   }
 
-  public static void addFunction(String funcname, String functype,
+  public void addFunction(String funcname, String functype,
           ArrayList<String> partypes, String origin){
     functionTypes.put(funcname, functype);
     functionParTypes.put(funcname, partypes);
@@ -50,7 +50,7 @@ public class Mem {
     variableOrigin.put(funcname, origin);
   }
 
-  public static boolean existsFunction(String funcname,
+  public boolean existsFunction(String funcname,
           ArrayList<String> partypes){
     if(!functionTypes.containsKey(funcname)){
       return false;
@@ -63,13 +63,13 @@ public class Mem {
    * @param funcname the name of the function
    * @return its return type or null
    */
-  public static String getFunctionRetType(String funcname){
+  public String getFunctionRetType(String funcname){
     // TODO: we could also identify the function by the parameter types, is this
     // necessary?
     return functionTypes.get(funcname);
   }
 
-  public static void addElement(String variable, String type, String origin) {
+  public void addElement(String variable, String type, String origin) {
     //environment.get(positionAtm).put(variable, type);
     if (actualValues.containsKey(variable)) {
       // we overwrite it
@@ -83,11 +83,11 @@ public class Mem {
     actualValues.put(variable, type);
   }
 
-  public static void decreaseDepth() {
+  public void decreaseDepth() {
     depthAtm--;
   }
 
-  public static boolean existsVariable(String variable) {
+  public boolean existsVariable(String variable) {
     return (actualValues.containsKey(variable));
   }
 
@@ -97,7 +97,7 @@ public class Mem {
    * @param variable a variable
    * @return the rule it came from
    */
-  public static String getVariableOrigin(String variable) {
+  public String getVariableOrigin(String variable) {
     return variableOrigin.get(variable);
   }
 
@@ -107,7 +107,7 @@ public class Mem {
    * @param variable a variable
    * @return the variable's type
    */
-  public static String getVariableType(String variable) {
+  public String getVariableType(String variable) {
     return actualValues.get(variable);
     /*Environment actual = environment.get(positionAtm);
     if (!actual.containsKey(variable)) {
@@ -128,7 +128,7 @@ public class Mem {
     return actual.get(variable);*/
   }
 
-  public static void addNextEnvironment(Environment env) {
+  public void addNextEnvironment(Environment env) {
     depthAtm = env.getDepth();
     positionAtm++;
     environment.add(env);
@@ -140,13 +140,13 @@ public class Mem {
    * @param depth the depth the environment is supposed to lie on
    * @return the position in memory where the environment is stored
    */
-  public static int addAndEnterNewEnvironment(int depth) {
+  public int addAndEnterNewEnvironment(int depth) {
     environment.add(new Environment(depth));
     depthAtm = depth;
     return ++positionAtm;
   }
 
-  public static void goToEnvironmentNumber(int number) {
+  public void goToEnvironmentNumber(int number) {
     positionAtm = number;
     depthAtm = environment.get(number).getDepth();
   }
@@ -157,30 +157,30 @@ public class Mem {
     return this.environment.get(this.positionAtm);
   }
    */
-  public static void leaveEnvironment() {
+  public void leaveEnvironment() {
     // restore the values in actual that we changed
-    environment.get(positionAtm).restoreOld();
+    environment.get(positionAtm).restoreOld(this);
     decreaseDepth();
     // this is no longer needed because it's handled in add&Enter
 //    this.positionAtm++;
 //    this.depthAtm = this.environment.get(this.positionAtm).getDepth();
   }
 
-  public static void eraseLocalV(String variable) {
+  public void eraseLocalV(String variable) {
     actualValues.remove(variable);
     variableOrigin.remove(variable);
   }
 
-  public static void restoreLocalV(String variable, String type, String origin) {
+  public void restoreLocalV(String variable, String type, String origin) {
     actualValues.put(variable, type);
     variableOrigin.put(variable, origin);
   }
 
-  public static void addRdf(String variable){
+  public void addRdf(String variable){
     rdfs.add(variable);
   }
 
-  public static boolean isRdf(String variable){
+  public boolean isRdf(String variable){
     return rdfs.contains(variable);
   }
 }

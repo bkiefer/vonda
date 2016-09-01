@@ -14,16 +14,16 @@ import java.util.HashSet;
  */
 public class returnManagement {
 
-  private static HashMap<String, String> findPredecessor;
-  private static HashMap<String, Boolean> hasReturn;
-  private static String inRule;
+  private HashMap<String, String> findPredecessor;
+  private HashMap<String, Boolean> hasReturn;
+  private String inRule;
 
   /**
    * tell the returnMem that we enter a new rule
    *
    * @param newRule the rule (LABEL) we go to
    */
-  public static void enterRule(String newRule) {
+  public void enterRule(String newRule) {
     findPredecessor.put(newRule, inRule);
     hasReturn.put(newRule, Boolean.FALSE);
     inRule = newRule;
@@ -32,7 +32,7 @@ public class returnManagement {
   /**
    * tell the returnMem that we leave the rule we are currently in
    */
-  public static void leaveRule() {
+  public void leaveRule() {
     inRule = findPredecessor.get(inRule);
   }
 
@@ -41,7 +41,7 @@ public class returnManagement {
    * @param r the label of the rule
    * @return yes or no
    */
-  public static boolean isExistingRule(String r){
+  public boolean isExistingRule(String r){
     return hasReturn.containsKey(r);
   }
 
@@ -51,7 +51,7 @@ public class returnManagement {
    *
    * @param to the LABEL we want to return to
    */
-  public static void foundReturnTo(String to) {
+  public void foundReturnTo(String to) {
     hasReturn.put(inRule, Boolean.TRUE);
     String r = inRule;
     while (true) {
@@ -70,7 +70,7 @@ public class returnManagement {
    * @param rule the rule (LABEL) we are in
    * @return yes or no
    */
-  public static boolean shouldAddReturnto(String rule) {
+  public boolean shouldAddReturnto(String rule) {
     return hasReturn.get(rule);
   }
 }
