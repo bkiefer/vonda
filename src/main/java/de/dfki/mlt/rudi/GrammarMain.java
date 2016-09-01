@@ -9,8 +9,7 @@ import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.lt.hfc.db.client.HfcDbClient;
 import de.dfki.lt.hfc.db.server.HfcDbServer;
-import de.dfki.mlt.rudi.abstractTree.AGrammarFile;
-import de.dfki.mlt.rudi.abstractTree.AbstractTree;
+import de.dfki.mlt.rudi.abstractTree.GrammarFile;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import java.io.BufferedWriter;
@@ -25,6 +24,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.thrift.transport.TTransportException;
+import de.dfki.mlt.rudi.abstractTree.RudiTree;
 
 /**
  * the main class of rudimant
@@ -219,9 +219,9 @@ public class GrammarMain {
     ParseTreeVisitor visitor = new ParseTreeVisitor(classname, _client);
 
     // walk the parse tree
-    AbstractTree myTree = visitor.visit(tree);
-    if (myTree instanceof AGrammarFile) {
-      ((AGrammarFile) myTree).print(classname);
+    RudiTree myTree = visitor.visit(tree);
+    if (myTree instanceof GrammarFile) {
+      ((GrammarFile) myTree).print(classname);
     } else {
       throw new UnsupportedOperationException("There is sth going very,very wrong...");
     }

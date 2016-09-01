@@ -10,7 +10,7 @@ import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.lt.hfc.db.client.HfcDbClient;
 import de.dfki.lt.hfc.db.server.HfcDbServer;
 import de.dfki.mlt.rudi.Mem;
-import de.dfki.mlt.rudi.abstractTree.leaves.AFieldAccess;
+import de.dfki.mlt.rudi.abstractTree.leaves.UFieldAccess;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -87,7 +87,7 @@ public class RdfTests {
     };
     Mem.addAndEnterNewEnvironment(0);
     Mem.addElement("child", "Child", "here");
-    AFieldAccess field = new AFieldAccess(elem, _client);
+    UFieldAccess field = new UFieldAccess(elem, _client);
     String result = field.askChristophe();
     assertEquals("get forename", "String", result);
   }
@@ -102,7 +102,7 @@ public class RdfTests {
     };
     Mem.addAndEnterNewEnvironment(0);
     Mem.addElement("child", "Child", "here");
-    AFieldAccess field = new AFieldAccess(elem, _client);
+    UFieldAccess field = new UFieldAccess(elem, _client);
     String result = field.askChristophe();
     assertEquals("get hasTreatment", "Treatment", result);
   }
@@ -117,7 +117,7 @@ public class RdfTests {
     };
     Mem.addAndEnterNewEnvironment(0);
     Mem.addElement("child", "Child", "here");
-    AFieldAccess field = new AFieldAccess(elem, _client);
+    UFieldAccess field = new UFieldAccess(elem, _client);
     String result = field.askChristophe();
     assertEquals("get birthdate", "<xsd:date>", result);
   }
