@@ -30,4 +30,9 @@ public interface RudiTree {
    * method to manage the return magic
    */
   public void returnManaging();
+
+  /**
+   * visitor method
+   */
+  public void visit(RudiVisitor v);
 }
