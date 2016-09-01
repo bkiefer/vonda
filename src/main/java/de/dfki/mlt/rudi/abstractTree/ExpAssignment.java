@@ -112,26 +112,6 @@ public class ExpAssignment implements RudiTree, RTExpression {
 //  }
 
   @Override
-  public void generate(Writer out) throws IOException {
-    //System.out.println(((UVariable) left).toString());
-    if (GrammarMain.checkTypes()) {
-      if (this.actualType != null) {
-        testTypeDecl(actualType, out);
-      } else {
-        testType(out);
-      }
-    }
-    if (this.declaration) {
-      Mem.addElement(((UVariable) left).toString(), actualType, position);
-      out.append(this.actualType + " " + ((UVariable) left).toString() + " = ");
-      this.right.generate(out);
-      return;
-    }
-    out.append(((UVariable) left).toString() + " = ");
-    this.right.generate(out);
-  }
-
-  @Override
   public String getType() {
     return this.actualType;
   }

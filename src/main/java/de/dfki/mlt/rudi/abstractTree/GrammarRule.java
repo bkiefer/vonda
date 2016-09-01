@@ -38,23 +38,6 @@ public class GrammarRule implements RudiTree{
   }
 
   @Override
-  public void generate(Writer out) throws FileNotFoundException, IOException{
-    String returnType = "void";
-    if(ReturnManagement.shouldAddReturnto(label)){
-      returnType = "String";
-    }
-    out = new BufferedWriter(new OutputStreamWriter(
-            new FileOutputStream(GrammarMain.getOutputDirectory() + classname + ".java")));
-    Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
-    out.append("public class " + classname + "{\n"
-            + "  public " + returnType + "process(){");
-    comment.generate(out);
-    ifstat.generate(out);
-    out.append("\n\t return;\n  }\n}");
-    Mem.leaveEnvironment();
-  }
-
-  @Override
   public void testType() {
     this.ifstat.testType();
   }

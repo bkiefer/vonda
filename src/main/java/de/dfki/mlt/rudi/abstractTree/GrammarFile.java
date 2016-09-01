@@ -41,30 +41,6 @@ public class GrammarFile implements RudiTree {
   }
 
   @Override
-  public void generate(Writer out) throws IOException {
-    //let the return guy do its work
-    returnManaging();
-    //boolean foundClassName = false;
-    Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
-    out.append("public class " + classname + "{\n"
-            + "  public void process(){");
-    for (RudiTree r : rules) {
-      // Don't forget to insert text after class name as specified in context
-      // Edit: no one wants to use this anyway
-      /*if (r instanceof ACommentBlock && foundClassName == false) {
-        if (((ACommentBlock) r).containsClassName()) {
-          ((ACommentBlock) r).setPrintClassName();
-          foundClassName = true;
-        }
-      }*/
-      r.generate(out);
-    }
-    out.append("  }\n}");
-    out.close();
-    Mem.leaveEnvironment();
-  }
-
-  @Override
   public void testType() {
     if (GrammarMain.checkTypes()) {
       for (RudiTree t : this.rules) {

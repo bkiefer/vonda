@@ -25,11 +25,6 @@ public class ExpLambda implements RudiTree, RTExpression {
   }
 
   @Override
-  public void generate(Writer out) throws IOException {
-    out.append(exp);
-  }
-
-  @Override
   public void testType() {
     // nothing to do for now
   }

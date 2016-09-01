@@ -29,13 +29,6 @@ public class ExpAbstractWrapper implements RudiTree, RTExpression{
   }
 
   @Override
-  public void generate(Writer out) throws IOException{
-    commentbefore.generate(out);
-    exp.generate(out);
-    commentafter.generate(out);
-  }
-
-  @Override
   public void testType() {
     this.exp.testType();
   }

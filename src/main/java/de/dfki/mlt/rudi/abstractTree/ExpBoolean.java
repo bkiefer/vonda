@@ -48,43 +48,6 @@ public class ExpBoolean implements RTExpression {
   }
 
   @Override
-  public void generate(Writer out) throws IOException {
-    if (this.type == null) {
-      getType();
-    }
-    String ret = "";
-    if (this.not) {
-      out.append("!");
-    }
-    if (this.isSubsumed) {
-      out.append("isSubsumed(");
-      left.generate(out);
-      out.append(", ");
-      right.generate(out);
-      out.append(")");
-    } else if (this.doesSubsume) {
-      out.append("isSubsumed(");
-      right.generate(out);
-      out.append(", ");
-      left.generate(out);
-      out.append(")");
-    }
-    if (this.right != null) {
-      out.append("(");
-      this.left.generate(out);
-      out.append(this.operator);
-      this.right.generate(out);
-      out.append(")");
-      //GrammarMain.context.doLog(
-      //        "\"" + ret.replace('"', ' ') +  " _ resulted to \" + " + ret);
-      return;
-    }
-    this.left.generate(out);
-    //GrammarMain.context.doLog("\"" + ret.replace('"', ' ') +  " resulted to \" + ("
-    //        + ret + ")");
-  }
-
-  @Override
   public String getType() {
     if (this.type == null) {
       if (operator != null && left.getType().equals("rdf")) {

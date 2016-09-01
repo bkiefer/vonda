@@ -42,15 +42,6 @@ public class ExpIf implements RudiTree, RTExpression{
   }
 
   @Override
-  public void generate(Writer out) throws IOException{
-    this.boolexp.generate(out);
-    out.append(" ? ");
-    this.thenexp.generate(out);
-    out.append(" : ");
-    this.elseexp.generate(out);
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

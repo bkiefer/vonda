@@ -47,23 +47,6 @@ public class ExpArithmetic implements RTExpression {
   }
 
   @Override
-  public void generate(Writer out) throws IOException {
-    String ret = "";
-    if (this.minus) {
-      out.append("-");
-    }
-    if (this.right != null) {
-      out.append("(");
-      this.left.generate(out);
-      out.append(this.operator);
-      this.right.generate(out);
-      out.append(")");
-      return;
-    }
-    this.left.generate(out);
-  }
-
-  @Override
   public String getType() {
     return this.type;
   }

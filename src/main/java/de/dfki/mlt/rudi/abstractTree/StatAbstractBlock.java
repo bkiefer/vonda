@@ -36,28 +36,6 @@ public class StatAbstractBlock implements RTStatement, RudiTree {
   }
 
   @Override
-  public void generate(Writer out) throws IOException {
-    String stats = "";
-    if (braces) {
-      // when entering a statement block, we need to create a new local environment
-      this.environmentPosition = Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
-      out.append("{");
-    }
-    for (RudiTree stat : statblock) {
-      if (stat instanceof RTExpression) {
-        stat.generate(out);
-        out.append(";\n");
-        break;
-      }
-      stat.generate(out);
-    }
-    if (braces) {
-      out.append("}");
-      Mem.leaveEnvironment();
-    }
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
