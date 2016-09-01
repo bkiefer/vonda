@@ -141,4 +141,9 @@ public class ExpAssignment implements RudiTree, RTExpression {
     // nothing to do
   }
 
+  @Override
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
+  }
+
 }

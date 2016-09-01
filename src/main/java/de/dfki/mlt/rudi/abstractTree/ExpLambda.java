@@ -44,4 +44,9 @@ public class ExpLambda implements RudiTree, RTExpression {
   public void returnManaging() {
     // nothing to do
   }
+
+  @Override
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
+  }
 }

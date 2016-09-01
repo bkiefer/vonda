@@ -73,4 +73,9 @@ public class ExpArithmetic implements RTExpression {
     // nothing to do
   }
 
+  @Override
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
+  }
+
 }

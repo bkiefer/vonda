@@ -50,4 +50,9 @@ public class StatFunDef implements RTStatement, RudiTree{
   public void returnManaging() {
     // nothing to do
   }
+
+  @Override
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
+  }
 }

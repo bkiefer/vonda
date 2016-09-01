@@ -66,4 +66,9 @@ public class GrammarRule implements RudiTree{
     returnManagement.leaveRule();
   }
 
+  @Override
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
+  }
+
 }

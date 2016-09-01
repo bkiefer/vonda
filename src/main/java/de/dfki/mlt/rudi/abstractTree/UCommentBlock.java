@@ -44,4 +44,9 @@ public class UCommentBlock extends RTLeaf implements RTStatement {
   public void returnManaging() {
     // nothing to do
   }
+
+  @Override
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
+  }
 }

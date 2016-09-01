@@ -69,4 +69,9 @@ public class StatMethodDeclaration implements RudiTree {
   public void returnManaging() {
     block.returnManaging();
   }
+
+  @Override
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
+  }
 }

@@ -75,4 +75,9 @@ public class StatFor2 implements RTStatement, RudiTree {
   public void returnManaging() {
     statblock.returnManaging();
   }
+
+  @Override
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
+  }
 }

@@ -48,4 +48,9 @@ public class StatImport implements RudiTree{
     // of the importing class
   }
 
+  @Override
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
+  }
+
 }

@@ -35,4 +35,9 @@ public class UNull extends RTLeaf {
   public void returnManaging() {
     // nothing to do
   }
+
+  @Override
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
+  }
 }
