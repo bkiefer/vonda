@@ -23,7 +23,7 @@ import org.apache.thrift.TException;
  *
  * @author Anna Welker
  */
-public class AFieldAccess extends AbstractLeaf {
+public class UFieldAccess extends RTLeaf {
 
   /**
    * Client-field, taken from client/HfcDbClient.java, more information under
@@ -35,17 +35,15 @@ public class AFieldAccess extends AbstractLeaf {
   private ArrayList<String> representation;
   private boolean asked = false;
 
-  public AFieldAccess(ArrayList<String> representation, HfcDbService.Client client) {
+  public UFieldAccess(ArrayList<String> representation, HfcDbService.Client client) {
     this.representation = representation;
     this._client = client;
   }
 
-  @Override
   public void testType(Mem mem) {
     // nothing to do
   }
 
-  @Override
   public String getType(Mem mem) {
     if (!asked) {
       try {
@@ -74,5 +72,20 @@ public class AFieldAccess extends AbstractLeaf {
     // TODO: result = <xsd:string>
     return result;
 
+  }
+
+  @Override
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
+  }
+
+  @Override
+  public String getType() {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void testType() {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 }

@@ -8,7 +8,7 @@ package de.dfki.mlt.rudi.abstractTree;
 import de.dfki.mlt.rudi.GrammarMain;
 import de.dfki.mlt.rudi.Mem;
 import de.dfki.mlt.rudi.ReturnManagement;
-import de.dfki.mlt.rudi.abstractTree.leaves.AFieldAccess;
+import de.dfki.mlt.rudi.abstractTree.leaves.UFieldAccess;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
