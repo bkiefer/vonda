@@ -5,26 +5,7 @@
  */
 package de.dfki.mlt.rudi;
 
-import de.dfki.lt.hfc.WrongFormatException;
-import de.dfki.lt.hfc.db.HfcDbService;
-import de.dfki.lt.hfc.db.client.HfcDbClient;
-import de.dfki.lt.hfc.db.server.HfcDbServer;
-import de.dfki.mlt.rudi.abstractTree.GrammarFile;
-import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
-import de.dfki.mlt.rudimant.io.RobotGrammarParser;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.apache.thrift.transport.TTransportException;
-import de.dfki.mlt.rudi.abstractTree.RudiTree;
 
 /**
  * the main class of rudimant
@@ -32,16 +13,6 @@ import de.dfki.mlt.rudi.abstractTree.RudiTree;
  * @author Anna Welker
  */
 public class GrammarMain {
-
-  private static Writer logwriter;
-  private static boolean log;
-  private static boolean throwExceptions = true;
-  private static boolean typeCheck = true;
-  public static RobotContext context;
-
-  private static int originalInputDirectory;
-  private static String inputDirectory;
-  private static String outputDirectory;
 
   private static String help = "Hello, this is rudimant.\n"
           + "Currently, the following flags are available:\n"
@@ -57,11 +28,6 @@ public class GrammarMain {
   // RDF functionality
   private static final String RESOURCE_DIR = "../hfc-database/src/test/resources/";
 
-  private static HfcDbServer server;
-
-  private HfcDbClient client;
-  protected HfcDbService.Client _client;
-
   // alternative PORTS
   private static final int SERVER_PORT = 8996;
   private static final int WEBSERVER_PORT = 8995;
@@ -72,6 +38,7 @@ public class GrammarMain {
    * @throws Exception
    */
   public static void main(String[] args) throws Exception {
+
     int i = 0;
     if (args.length == 0 || args[0].equals("-help")) {
       System.out.println(help);
@@ -82,19 +49,9 @@ public class GrammarMain {
               + "For help see rumdimant -help\n");
       System.exit(-1);
     }
-    inputDirectory = args[0];
-    if (!inputDirectory.endsWith("/")) {
-      inputDirectory += "/";
-    }
-    if (args[1].startsWith("-")) {
-      outputDirectory = inputDirectory;
-    } else {
-      outputDirectory = args[1];
-      if (!outputDirectory.endsWith("/")) {
-        outputDirectory += "/";
-      }
-      i--;
-    }
+    String inputDirectory = args[0];
+    RudimantCompiler rc = new RudimantCompiler();
+
     for (String arg : args) {
       i++;
       if (i <= 1) {
@@ -102,163 +59,23 @@ public class GrammarMain {
       }
       switch (arg) {
         case "-log":
-          log = true;
+          rc.setLog(true);
           break;
         case "-e":
-          throwExceptions = false;
+          rc.setThrowExceptions(false);
           break;
         case "-nt":
-          typeCheck = false;
+          rc.setTypeCheck(false);
           break;
         default:
           System.out.println(help);
       }
     }
 
-    startServer();
     File dir = new File(inputDirectory);
 
-    //is this really a directory, or is it a single file?
-    if (!dir.isDirectory()) {
-      inputDirectory = inputDirectory.substring(0, inputDirectory.indexOf(dir.getName()));
-      System.out.println("Translating file " + args[0]);
-      processFile(dir);
-      return;
-    }
-    // find all .rudi files in directory and process them
-    System.out.println("Searching directory " + inputDirectory + " for files to be translated.");
-    originalInputDirectory = dir.getAbsolutePath().length() + 1;
-    if (throwExceptions) {
-      searchAndTranslateDirectory(dir);
-    } else {
-      // initiate log writer
-      logwriter = new BufferedWriter(new OutputStreamWriter(
-              new FileOutputStream("rudimant.log")));
-      searchAndTranslateDirectoryLogEx(dir);
-    }
-    //clean the memory
-    Mem.newMem();
+    rc.process(dir);
 
-    shutdownServer();
-    System.exit(0);
   }
 
-  public static void searchAndTranslateDirectoryLogEx(File directory) {
-    File[] contained = directory.listFiles();
-    for (File f : contained) {
-      if (f.isDirectory()) {
-        searchAndTranslateDirectoryLogEx(f);
-      } else if (f.getName().endsWith(".rudi")) {
-        try {
-          Mem.addAndEnterNewEnvironment(0);
-          processFile(f);
-        } catch (Exception e) {
-          System.out.println("A " + e.getClass() + "occurred during parsing"
-                  + " of file " + f.getName() + ". See rudimant.log for stack"
-                  + " trace.");
-          try {
-            logwriter.write(e.getLocalizedMessage());
-            //writer.close();
-          } catch (IOException ex) {
-          }
-        }
-        Mem.leaveEnvironment();
-      }
-    }
-  }
-
-  public static void searchAndTranslateDirectory(File directory) throws Exception {
-    File[] contained = directory.listFiles();
-    for (File f : contained) {
-      if (f.isDirectory()) {
-        searchAndTranslateDirectory(f);
-      } else if (f.getName().endsWith(".rudi")) {
-        processFile(f);
-      }
-    }
-  }
-
-  public static void processFile(File file) throws IOException {
-    if (inputDirectory.equals(outputDirectory)) {
-      outputDirectory = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf("/") + 1);
-    }
-    System.out.println("parsing: " + file.getAbsolutePath()
-            .substring(originalInputDirectory));
-    System.out.println("to " + outputDirectory);
-
-    // creating output file from input filename;
-    String classname = "";
-    try {
-      classname = file.getName().substring(0, 1).toUpperCase()
-              + file.getName().substring(1, file.getName().indexOf("."));
-    } catch (StringIndexOutOfBoundsException e) {
-      System.out.println("Could not parse file" + file.getName());
-      return;
-    }
-    /*String outputFile = outputDirectory + classname + ".java";
-    File out = new File(outputFile);
-    out.setWritable(true);
-    out.setReadable(true);
-
-    // initiate writer
-    writer = new BufferedWriter(new OutputStreamWriter(
-            new FileOutputStream(out)));
-     */
-    // initialise the context magic
-    context = new TestContext(log);
-    // initialise the lexer with given input file
-    RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(new FileInputStream(file)));
-
-    // initialise the parser
-    RobotGrammarParser parser = new RobotGrammarParser(new CommonTokenStream(lexer));
-
-    // create a parse tree; grammar_file is the start rule
-    ParseTree tree = parser.grammar_file();
-
-    // initialise the visitor that will do all the work
-    ParseTreeVisitor visitor = new ParseTreeVisitor(classname, _client);
-
-    // walk the parse tree
-    RudiTree myTree = visitor.visit(tree);
-    if (myTree instanceof GrammarFile) {
-      ((GrammarFile) myTree).print(classname);
-    } else {
-      throw new UnsupportedOperationException("There is sth going very,very wrong...");
-    }
-    /*
-    // prepare the output file
-    writer.write(context.beforeClassName());
-    //writer.write("public class " + classname + " extends RuleUnit {\n\n");
-
-    writer.write(myTree + context.atEndOfFile() + "\n}");
-     */
-    // close the writer
-    //writer.close();
-
-    System.out.println("\nDone.");
-  }
-
-  public static String getOutputDirectory() {
-    return outputDirectory;
-  }
-
-  public static String getInputDirectory() {
-    return inputDirectory;
-  }
-
-  public static boolean checkTypes() {
-    return typeCheck;
-  }
-
-  public static void startServer() throws TTransportException, FileNotFoundException, IOException, WrongFormatException {
-    File config = new File(RESOURCE_DIR + "ontos/pal.ini");
-    server = new HfcDbServer(SERVER_PORT);
-    server.readConfig(config);
-    server.runServer();
-    server.runHttpService(WEBSERVER_PORT);
-  }
-
-  public static void shutdownServer() {
-    server.shutdown();
-  }
 }
