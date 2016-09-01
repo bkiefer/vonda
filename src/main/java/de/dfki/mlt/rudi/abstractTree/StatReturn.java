@@ -58,4 +58,9 @@ public class StatReturn implements RTStatement, RudiTree {
     }
   }
 
+  @Override
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
+  }
+
 }

@@ -79,4 +79,9 @@ public class GrammarFile implements RudiTree {
       t.returnManaging();
     }
   }
+
+  @Override
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
+  }
 }

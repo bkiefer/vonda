@@ -47,4 +47,9 @@ public class StatWhile implements RTStatement, RudiTree {
   public void returnManaging() {
     statblock.returnManaging();
   }
+
+  @Override
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
+  }
 }

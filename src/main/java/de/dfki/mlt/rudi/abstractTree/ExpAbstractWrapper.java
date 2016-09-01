@@ -49,4 +49,9 @@ public class ExpAbstractWrapper implements RudiTree, RTExpression{
   public void returnManaging() {
     exp.returnManaging();
   }
+
+  @Override
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
+  }
 }

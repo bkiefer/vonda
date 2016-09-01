@@ -87,4 +87,9 @@ public class StatIf implements RTStatement, RudiTree{
       statblockElse.returnManaging();
     }
   }
+
+  @Override
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
+  }
 }
