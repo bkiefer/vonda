@@ -27,11 +27,6 @@ public class UNull extends RTLeaf {
   }
 
   @Override
-  public void generate(Writer out) throws IOException{
-    out.append("null");
-  }
-
-  @Override
   public void returnManaging() {
     // nothing to do
   }

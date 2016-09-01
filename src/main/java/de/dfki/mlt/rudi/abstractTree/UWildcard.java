@@ -22,11 +22,6 @@ public class UWildcard extends RTLeaf{
   }
 
   @Override
-  public void generate(Writer out) throws IOException{
-    out.append("this.wildcard");   // wildcard is a local variable in resulting class
-  }
-
-  @Override
   public String getType() {
     return "Object"; // ???
   }

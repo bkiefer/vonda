@@ -46,13 +46,6 @@ public class UVariable extends RTLeaf {
   }
 
   @Override
-  public void generate(Writer out) throws IOException{
-    if(!origin.equals(Mem.getVariableOrigin(representation)))
-      origin += ".";
-    out.append(origin + representation);
-  }
-
-  @Override
   public String getType() {
     return Mem.getVariableType(representation);
   }

@@ -42,20 +42,6 @@ public class UFuncCall extends RTLeaf{
     Mem.existsFunction(representation, partypes);
   }
 
-  @Override
-  public void generate(Writer out) throws IOException{
-    if(GrammarMain.checkTypes()){
-      testType();
-    }
-    out.append(this.representation + "(");
-    for(int i = 0; i < this.exps.size(); i++){
-      this.exps.get(i).generate(out);
-      if(i != this.exps.size() -1){
-        out.append(", ");
-      }
-    }
-    out.append(")");
-  }
 
   @Override
   public String getType() {

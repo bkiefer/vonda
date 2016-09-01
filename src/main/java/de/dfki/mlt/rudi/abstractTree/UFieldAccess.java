@@ -3,15 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.dfki.mlt.rudi.abstractTree;
+package de.dfki.mlt.rudi.abstractTree.leaves;
 
 import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.mlt.rudi.Mem;
+import de.dfki.mlt.rudi.RudimantCompiler;
 import de.dfki.mlt.rudi.abstractTree.*;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import de.dfki.lt.hfc.db.rdfProxy.*;
+import de.dfki.mlt.rudi.ReturnManagement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.thrift.TException;
@@ -22,49 +23,35 @@ import org.apache.thrift.TException;
  *
  * @author Anna Welker
  */
-public class UFieldAccess  extends RTLeaf{
+public class AFieldAccess extends AbstractLeaf {
 
-    /**
-   * Client-field, taken from client/HfcDbClient.java, more information
-   * under server/HfcDbService.Client.java
+  /**
+   * Client-field, taken from client/HfcDbClient.java, more information under
+   * server/HfcDbService.Client.java
    */
-  HfcDbService.Client _client;
-
+  protected HfcDbService.Client _client;
 
   private String type;
   private ArrayList<String> representation;
   private boolean asked = false;
 
-  public UFieldAccess(ArrayList<String> representation, HfcDbService.Client client) {
+  public AFieldAccess(ArrayList<String> representation, HfcDbService.Client client) {
     this.representation = representation;
     this._client = client;
   }
 
   @Override
-  public void testType() {
+  public void testType(Mem mem) {
     // nothing to do
   }
 
   @Override
-  public void generate(Writer out) throws IOException{
-    if(!asked){
+  public String getType(Mem mem) {
+    if (!asked) {
       try {
-        this.type = askChristophe();
+        this.type = askChristophe(mem);
       } catch (TException ex) {
-        Logger.getLogger(UFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
-      }
-    }
-    out.append("Rdf here\n");
-    //out.append(this.representation);
-  }
-
-  @Override
-  public String getType(){
-    if(!asked){
-      try {
-        this.type = askChristophe();
-      } catch (TException ex) {
-        Logger.getLogger(UFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(AFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
       }
     }
     return this.type;
@@ -72,14 +59,16 @@ public class UFieldAccess  extends RTLeaf{
 
   /**
    * ask the ontology about the type of this object
+   *
+   * @param rudi
    * @return the type of this object
    * @throws org.apache.thrift.TException
    */
-  public String askChristophe() throws TException {
+  public String askChristophe(Mem mem) throws TException {
     asked = true;
     // first element of representation is type
     // everything else specifies the wanted predicate information
-    String typ = Mem.getVariableType(representation.get(0));
+    String typ = mem.getVariableType(representation.get(0));
     String result = RdfClass.getPredicateType(typ,
             representation.subList(1, representation.size()), _client);
     // TODO: result = <xsd:string>
@@ -88,12 +77,7 @@ public class UFieldAccess  extends RTLeaf{
   }
 
   @Override
-  public void returnManaging() {
+  public void returnManaging(ReturnManagement rm) {
     // nothing to do
-  }
-
-  @Override
-  public void visit(RudiVisitor v) {
-    v.visitNode(this);
   }
 }
