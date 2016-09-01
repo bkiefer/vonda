@@ -538,16 +538,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   }
 
   @Override
-  public RudiTree visitField_access_vfunc(RobotGrammarParser.Field_access_vfuncContext ctx) {
-    // ( VARIABLE | function_call) (( DOT VARIABLE | LPAR? function_call RPAR? ))+
-    ArrayList<String> parts = new ArrayList<String>();
-    for (int i = 0; i < ctx.getChildCount(); i += 2) {
-      parts.add(ctx.getChild(i).getText());
-    }
-    return new UFieldAccess(parts,_client);
-  }
-
-  @Override
   public RudiTree visitLambda_exp(RobotGrammarParser.Lambda_expContext ctx) {
     return new ExpLambda(ctx.getText());
   }

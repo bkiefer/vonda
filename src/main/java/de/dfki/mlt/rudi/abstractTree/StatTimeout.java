@@ -28,19 +28,6 @@ public class StatTimeout implements RTStatement, RudiTree {
     }
 
     @Override
-    public void generate(Writer out) throws IOException {
-        // TODO: test this
-        if(this.statblock == null){
-            out.append("newTimeout(" + name + "," + time + ");\n");
-        }
-        out.append("MyTimer t = newSpecialTimeout(" + name + "," + time + ");"
-                + "t.timer = new Timer(timeToFire, new ActionListener(){\n"
-                + "@Override\n public void actionPerformed(ActionEvent e)" + statblock + "});"
-                + "\n" + "t.started = System.currentTimeMillis();\n"
-                + " t.timer.start();\n");
-    }
-
-    @Override
     public void testType() {
         //nothing to test here
     }

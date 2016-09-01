@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.dfki.mlt.rudi.abstractTree.leaves;
+package de.dfki.mlt.rudi.abstractTree;
 
 import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.mlt.rudi.Mem;
