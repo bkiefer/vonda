@@ -28,11 +28,6 @@ public class UString extends RTLeaf {
   }
 
   @Override
-  public void generate(Writer out) throws IOException{
-    out.append(this.content);
-  }
-
-  @Override
   public String getType() {
     return "String";
   }

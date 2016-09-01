@@ -27,12 +27,6 @@ public class UnaryBoolean extends RTLeaf{
   public void testType() {
     // everything okay
   }
-
-  @Override
-  public void generate(Writer out) throws IOException{
-    out.append(this.content);
-  }
-
   @Override
   public String getType() {
     return "boolean";

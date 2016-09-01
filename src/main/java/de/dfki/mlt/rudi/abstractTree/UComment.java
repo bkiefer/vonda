@@ -30,10 +30,6 @@ public class UComment extends RTLeaf implements RTStatement {
     return this.containsClassName;
   }
 
-  @Override
-  public void generate(Writer out) throws IOException{
-    out.append(this.comment);
-  }
 
   @Override
   public String getType() {

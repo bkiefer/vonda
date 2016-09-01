@@ -27,10 +27,6 @@ public class UNumber extends RTLeaf{
     // everything okay
   }
 
-  @Override
-  public void generate(Writer out) throws IOException{
-    out.append(this.value);
-  }
 
   @Override
   public String getType() {
