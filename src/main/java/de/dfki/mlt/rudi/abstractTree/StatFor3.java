@@ -34,12 +34,7 @@ public class StatFor3 implements RTStatement, RudiTree {
   public void testType() {
     // no types for statements
   }
-
-  @Override
-  public void returnManaging() {
-    statblock.returnManaging();
-  }
-
+  
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
