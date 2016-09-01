@@ -26,14 +26,6 @@ public class UCommentBlock extends RTLeaf implements RTStatement {
   }
 
   @Override
-  public void generate(Writer out) throws IOException {
-    for (UComment c : comments) {
-      c.generate(out);
-      out.append("\n");
-    }
-  }
-
-  @Override
   public void testType() {
   }
 
