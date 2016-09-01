@@ -41,23 +41,6 @@ public class StatIf implements RTStatement, RudiTree{
     // no types for statements
   }
 
-  @Override
-  public void generate(Writer out) throws IOException{
-    if (this.statblockElse != null){
-      out.append("if (");
-      condition.generate(out);
-      out.append(") ");
-      statblockIf.generate(out);
-      out.append("else");
-      statblockElse.generate(out);
-    } else {
-      out.append("if (");
-      condition.generate(out);
-      out.append(") ");
-      statblockIf.generate(out);
-    }
-
-
     /*String ret0 = "if(this.whatToLog.get(\"" + this.currentRule +
             "\").contains(" + this.currentBool + ")){";
     if (this.statblockElse != null){
@@ -78,7 +61,6 @@ public class StatIf implements RTStatement, RudiTree{
     return ret0 + "if(!(" + this.condition + ")){" + log + "}}" +
             ret1 + ret0 + log + "}" +
             statblockIf.generate(null).substring(1) + "\n";*/
-  }
 
   @Override
   public void visit(RudiVisitor v) {

@@ -56,22 +56,6 @@ public class StatFor2 implements RTStatement, RudiTree {
   }
 
   @Override
-  public void generate(Writer out) throws IOException {
-    // TODO: or should we check here that the type of the variable in assignment
-    // is the type the iterable in exp returns? How?
-    if (varType == null) {
-      varType = ((RTExpression) exp).getType();
-    }
-    Mem.addElement(var.toString(), varType, position);
-    out.append("for (" + varType + " ");
-    var.generate(out);
-    out.append(": ");
-    exp.generate(out);
-    out.append(") ");
-    statblock.generate(out);
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

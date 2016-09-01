@@ -36,14 +36,6 @@ public class StatWhile implements RTStatement, RudiTree {
   }
 
   @Override
-  public void generate(Writer out) throws IOException {
-    out.append("while (");
-    this.condition.generate(out);
-    out.append(")");
-    statblock.generate(out);
-  }
-
-  @Override
   public void returnManaging() {
     statblock.returnManaging();
   }

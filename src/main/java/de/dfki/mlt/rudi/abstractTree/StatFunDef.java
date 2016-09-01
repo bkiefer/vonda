@@ -37,11 +37,6 @@ public class StatFunDef implements RTStatement, RudiTree{
   }
 
   @Override
-  public void generate(Writer out) throws IOException {
-    Mem.addFunction(funcname, type, parameterTypes, position);
-  }
-
-  @Override
   public void testType() {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }

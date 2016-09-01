@@ -29,22 +29,6 @@ public class StatSetOperation implements RTStatement, RudiTree{
     }
 
     @Override
-    public void generate(Writer out) throws IOException{
-        if(add){
-            this.left.generate(out);
-            out.append(".add(");
-            this.right.generate(out);
-            out.append(");");
-        }
-        else{
-            this.left.generate(out);
-            out.append(".remove(");
-            this.right.generate(out);
-            out.append(");");
-        }
-    }
-
-    @Override
     public void testType() {
         // TODO: test somehow
     }

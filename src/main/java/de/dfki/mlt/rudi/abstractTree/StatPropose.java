@@ -32,15 +32,6 @@ public class StatPropose implements RTStatement, RudiTree {
   }
 
   @Override
-  public void generate(Writer out) throws IOException {
-    out.append("propose(");
-    arg.generate(out);
-    out.append(", new Proposal() {public void run()\n");
-    block.generate(out);
-    out.append("});");
-  }
-  
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

@@ -40,27 +40,6 @@ public class StatMethodDeclaration implements RudiTree {
   }
 
   @Override
-  public void generate(Writer out) throws IOException {
-    Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth());
-    String ret = visibility + " " + return_type + " " + name + "(";
-    if (!parameters.isEmpty()) {
-      for (int i = 0; i < parameters.size(); i++) {
-        if (i == 1) {
-          ret += partypes.get(i) + " " + parameters.get(i);
-        } else {
-          ret += ", " + partypes.get(i) + " " + parameters.get(i);
-        }
-        // add parameters to environment
-        Mem.addElement(parameters.get(i), partypes.get(i), position);
-      }
-    }
-    ret += ")";
-    out.append(ret + "\n");
-    block.generate(out);
-    Mem.leaveEnvironment();
-  }
-
-  @Override
   public void testType() {
     // ...
   }

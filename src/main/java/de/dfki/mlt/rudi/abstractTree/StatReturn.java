@@ -34,17 +34,7 @@ public class StatReturn implements RTStatement, RudiTree {
       this.lit = lit;
     }
   }
-
-  @Override
-  public void generate(Writer out) throws IOException {
-    if (this.toRet == null) {
-      out.append("return;\n");
-    }
-    out.append("return ");
-    this.toRet.generate(out);
-    out.append(";\n");
-  }
-
+  
   @Override
   public void testType() {
     // test return type??

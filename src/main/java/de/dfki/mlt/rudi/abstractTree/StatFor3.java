@@ -41,20 +41,6 @@ public class StatFor3 implements RTStatement, RudiTree {
   }
 
   @Override
-  public void generate(Writer out) throws IOException {
-    out.append("for (Object[] o : ");
-    this.exp.generate(out);
-    out.append(") {");
-    int count = 0;
-    for (String s : this.variables) {
-      Mem.addElement(s, "Object", position);
-      out.append("\nObject " + s + " = o[" + count++ + "]");
-    }
-    statblock.generate(out);
-    out.append("}");
-  }
-
-  @Override
   public void returnManaging() {
     statblock.returnManaging();
   }

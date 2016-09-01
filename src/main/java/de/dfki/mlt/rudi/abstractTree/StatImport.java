@@ -34,15 +34,6 @@ public class StatImport implements RudiTree{
   }
 
   @Override
-  public void generate(Writer out) throws IOException{
-    System.out.println("Processing import " + text);
-    Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
-    out.append(text + ".process()");
-    GrammarMain.processFile(new File(GrammarMain.getInputDirectory() + text + ".rudi"));
-    Mem.leaveEnvironment();
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

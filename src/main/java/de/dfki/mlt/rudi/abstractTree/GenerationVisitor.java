@@ -10,6 +10,7 @@ import de.dfki.mlt.rudi.Mem;
 import de.dfki.mlt.rudi.ReturnManagement;
 import de.dfki.mlt.rudi.abstractTree.leaves.AFieldAccess;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.logging.Level;
@@ -227,67 +228,152 @@ public class GenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatFor1 node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // the assignment will add the variable to the memory!!
+    out.append("for ( ");
+    assignment.generate(out);
+    out.append("; ");
+    condition.generate(out);
+    out.append(";");
+    if(arithmetic != null){
+      arithmetic.generate(out);
+    }
+    out.append(");");
+    statblock.generate(out);
   }
 
   @Override
   public void visitNode(StatFor2 node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       // TODO: or should we check here that the type of the variable in assignment
+    // is the type the iterable in exp returns? How?
+    if (varType == null) {
+      varType = ((RTExpression) exp).getType();
+    }
+    Mem.addElement(var.toString(), varType, position);
+    out.append("for (" + varType + " ");
+    var.generate(out);
+    out.append(": ");
+    exp.generate(out);
+    out.append(") ");
+    statblock.generate(out);
   }
 
   @Override
   public void visitNode(StatFor3 node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    out.append("for (Object[] o : ");
+    this.exp.generate(out);
+    out.append(") {");
+    int count = 0;
+    for (String s : this.variables) {
+      Mem.addElement(s, "Object", position);
+      out.append("\nObject " + s + " = o[" + count++ + "]");
+    }
+    statblock.generate(out);
+    out.append("}");
   }
 
   @Override
   public void visitNode(StatFunDef node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    Mem.addFunction(funcname, type, parameterTypes, position);
   }
 
   @Override
   public void visitNode(StatIf node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    if (this.statblockElse != null){
+      out.append("if (");
+      condition.generate(out);
+      out.append(") ");
+      statblockIf.generate(out);
+      out.append("else");
+      statblockElse.generate(out);
+    } else {
+      out.append("if (");
+      condition.generate(out);
+      out.append(") ");
+      statblockIf.generate(out);
+    }
   }
 
   @Override
   public void visitNode(StatImport node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    System.out.println("Processing import " + text);
+    Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth() + 1);
+    out.append(text + ".process()");
+    GrammarMain.processFile(new File(GrammarMain.getInputDirectory() + text + ".rudi"));
+    Mem.leaveEnvironment();
   }
 
   @Override
   public void visitNode(StatMethodDeclaration node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    Mem.addAndEnterNewEnvironment(Mem.getCurrentDepth());
+    String ret = visibility + " " + return_type + " " + name + "(";
+    if (!parameters.isEmpty()) {
+      for (int i = 0; i < parameters.size(); i++) {
+        if (i == 1) {
+          ret += partypes.get(i) + " " + parameters.get(i);
+        } else {
+          ret += ", " + partypes.get(i) + " " + parameters.get(i);
+        }
+        // add parameters to environment
+        Mem.addElement(parameters.get(i), partypes.get(i), position);
+      }
+    }
+    ret += ")";
+    out.append(ret + "\n");
+    block.generate(out);
+    Mem.leaveEnvironment();
   }
 
   @Override
   public void visitNode(StatPropose node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    out.append("propose(");
+    arg.generate(out);
+    out.append(", new Proposal() {public void run()\n");
+    block.generate(out);
+    out.append("});");
   }
 
   @Override
   public void visitNode(StatReturn node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    if (this.toRet == null) {
+      out.append("return;\n");
+    }
+    out.append("return ");
+    this.toRet.generate(out);
+    out.append(";\n");
   }
 
   @Override
   public void visitNode(StatSetOperation node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+     if(add){
+            this.left.generate(out);
+            out.append(".add(");
+            this.right.generate(out);
+            out.append(");");
+        }
+        else{
+            this.left.generate(out);
+            out.append(".remove(");
+            this.right.generate(out);
+            out.append(");");
+        }
   }
 
   @Override
   public void visitNode(StatTimeout node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    Mem.addElement(variable, type, position);
   }
 
   @Override
   public void visitNode(StatVarDef node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    Mem.addElement(name, type, position);
   }
 
   @Override
   public void visitNode(StatWhile node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    out.append("while (");
+    this.condition.generate(out);
+    out.append(")");
+    statblock.generate(out);
   }
 
   @Override

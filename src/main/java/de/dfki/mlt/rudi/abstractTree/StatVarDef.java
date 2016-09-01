@@ -31,11 +31,6 @@ public class StatVarDef implements RTStatement, RudiTree{
   }
 
   @Override
-  public void generate(Writer out) throws IOException {
-    Mem.addElement(variable, type, position);
-  }
-
-  @Override
   public void testType() {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
