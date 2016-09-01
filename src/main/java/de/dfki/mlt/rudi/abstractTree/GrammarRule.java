@@ -33,7 +33,7 @@ public class GrammarRule implements RudiTree{
   public void testType() {
     this.ifstat.testType();
   }
-  
+
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);

@@ -21,5 +21,5 @@ public interface RudiTree {
   /**
    * visitor method
    */
-  public void visit(RudiVisitor v);
+  public void visit(RudiVisitor v) throws Exception;
 }

@@ -25,11 +25,11 @@ public class UFieldAccess extends RTLeaf {
    * Client-field, taken from client/HfcDbClient.java, more information under
    * server/HfcDbService.Client.java
    */
-  protected HfcDbService.Client _client;
+  HfcDbService.Client _client;
 
-  private String type;
-  private ArrayList<String> representation;
-  private boolean asked = false;
+  String type;
+  ArrayList<String> representation;
+  boolean asked = false;
 
   public UFieldAccess(ArrayList<String> representation, HfcDbService.Client client) {
     this.representation = representation;

@@ -11,76 +11,76 @@ package de.dfki.mlt.rudi.abstractTree;
  */
 public interface RudiVisitor {
 
-  void visitNode(RudiTree node);
+  void visitNode(RudiTree node) throws Exception;
 
-  void visitNode(ExpAbstractWrapper node);
+  void visitNode(ExpAbstractWrapper node) throws Exception;
 
-  void visitNode(ExpArithmetic node);
+  void visitNode(ExpArithmetic node) throws Exception;
 
-  void visitNode(ExpAssignment node);
+  void visitNode(ExpAssignment node) throws Exception;
 
-  void visitNode(ExpBoolean node);
+  void visitNode(ExpBoolean node) throws Exception;
 
-  void visitNode(ExpDialogueAct node);
+  void visitNode(ExpDialogueAct node) throws Exception;
 
-  void visitNode(ExpIf node);
+  void visitNode(ExpIf node) throws Exception;
 
-  void visitNode(ExpLambda node);
+  void visitNode(ExpLambda node) throws Exception;
 
-  void visitNode(GrammarFile node);
+  void visitNode(GrammarFile node) throws Exception;
 
-  void visitNode(GrammarRule node);
+  void visitNode(GrammarRule node) throws Exception;
 
-  void visitNode(StatAbstractBlock node);
+  void visitNode(StatAbstractBlock node) throws Exception;
 
-  void visitNode(StatDoWhile node);
+  void visitNode(StatDoWhile node) throws Exception;
 
-  void visitNode(StatFor1 node);
+  void visitNode(StatFor1 node) throws Exception;
 
-  void visitNode(StatFor2 node);
+  void visitNode(StatFor2 node) throws Exception;
 
-  void visitNode(StatFor3 node);
+  void visitNode(StatFor3 node) throws Exception;
 
-  void visitNode(StatFunDef node);
+  void visitNode(StatFunDef node) throws Exception;
 
-  void visitNode(StatIf node);
+  void visitNode(StatIf node) throws Exception;
 
-  void visitNode(StatImport node);
+  void visitNode(StatImport node) throws Exception;
 
-  void visitNode(StatMethodDeclaration node);
+  void visitNode(StatMethodDeclaration node) throws Exception;
 
-  void visitNode(StatPropose node);
+  void visitNode(StatPropose node) throws Exception;
 
-  void visitNode(StatReturn node);
+  void visitNode(StatReturn node) throws Exception;
 
-  void visitNode(StatSetOperation node);
+  void visitNode(StatSetOperation node) throws Exception;
 
-  void visitNode(StatTimeout node);
+  void visitNode(StatTimeout node) throws Exception;
 
-  void visitNode(StatVarDef node);
+  void visitNode(StatVarDef node) throws Exception;
 
-  void visitNode(StatWhile node);
+  void visitNode(StatWhile node) throws Exception;
 
-  void visitNode(UCharacter node);
+  void visitNode(UCharacter node) throws Exception;
 
-  void visitNode(UComment node);
+  void visitNode(UComment node) throws Exception;
 
-  void visitNode(UCommentBlock node);
+  void visitNode(UCommentBlock node) throws Exception;
 
-  void visitNode(UFieldAccess node);
+  void visitNode(UFieldAccess node) throws Exception;
 
-  void visitNode(UFuncCall node);
+  void visitNode(UFuncCall node) throws Exception;
 
-  void visitNode(UNull node);
+  void visitNode(UNull node) throws Exception;
 
-  void visitNode(UNumber node);
+  void visitNode(UNumber node) throws Exception;
 
-  void visitNode(UString node);
+  void visitNode(UString node) throws Exception;
 
-  void visitNode(UVariable node);
+  void visitNode(UVariable node) throws Exception;
 
-  void visitNode(UWildcard node);
+  void visitNode(UWildcard node) throws Exception;
 
-  void visitNode(UnaryBoolean node);
+  void visitNode(UnaryBoolean node) throws Exception;
 
 }
