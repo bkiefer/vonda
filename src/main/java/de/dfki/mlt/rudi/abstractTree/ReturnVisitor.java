@@ -13,7 +13,7 @@ public class ReturnVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpAbstractWrapper node) {
-    visitNode(node.exp);
+    node.exp.visit(this);
   }
 
   @Override
@@ -64,28 +64,28 @@ public class ReturnVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatAbstractBlock node) {
     for (RudiTree stat : node.statblock) {
-      visitNode(stat);
+      stat.visit(this);
     }
   }
 
   @Override
   public void visitNode(StatDoWhile node) {
-    visitNode(node.statblock);
+    node.statblock.visit(this);
   }
 
   @Override
   public void visitNode(StatFor1 node) {
-    visitNode(node.statblock);
+    node.statblock.visit(this);
   }
 
   @Override
   public void visitNode(StatFor2 node) {
-    visitNode(node.statblock);
+    node.statblock.visit(this);
   }
 
   @Override
   public void visitNode(StatFor3 node) {
-    visitNode(node.statblock);
+    node.statblock.visit(this);
   }
 
   @Override
@@ -95,9 +95,9 @@ public class ReturnVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatIf node) {
-    visitNode(node.statblockIf);
+    node.statblockIf.visit(this);
     if (node.statblockElse != null) {
-      visitNode(node.statblockElse);
+      node.statblockElse.visit(this);
     }
   }
 
@@ -109,7 +109,7 @@ public class ReturnVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatMethodDeclaration node) {
-    visitNode(node.block);
+    node.block.visit(this);
   }
 
   @Override
@@ -142,7 +142,7 @@ public class ReturnVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatWhile node) {
-    visitNode(node.statblock);
+    node.statblock.visit(this);
   }
 
   @Override
