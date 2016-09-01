@@ -18,6 +18,13 @@ public class ReturnManagement {
   private HashMap<String, Boolean> hasReturn;
   private String inRule;
 
+
+  public ReturnManagement(String input) {
+    findPredecessor = new HashMap<>();
+    hasReturn = new HashMap<>();
+    inRule = input;
+  }
+
   /**
    * tell the returnMem that we enter a new rule
    *
