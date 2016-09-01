@@ -50,12 +50,7 @@ public class UFuncCall extends RTLeaf{
     }
     return this.type;
   }
-
-  @Override
-  public void returnManaging() {
-    // nothing to do
-  }
-
+  
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);

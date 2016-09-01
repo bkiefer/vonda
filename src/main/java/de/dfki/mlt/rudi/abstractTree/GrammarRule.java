@@ -58,14 +58,7 @@ public class GrammarRule implements RudiTree{
   public void testType() {
     this.ifstat.testType();
   }
-
-  @Override
-  public void returnManaging() {
-    ReturnManagement.enterRule(label);
-    ifstat.returnManaging();
-    ReturnManagement.leaveRule();
-  }
-
+  
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);

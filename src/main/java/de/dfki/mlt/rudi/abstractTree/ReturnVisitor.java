@@ -18,7 +18,7 @@ public class ReturnVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(RudiTree node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    node.visit(this);
   }
 
   @Override
@@ -53,13 +53,17 @@ public class ReturnVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(GrammarFile node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    for (RudiTree t : node.rules) {
+      t.visit(this);
+    }
   }
 
   @Override
   public void visitNode(GrammarRule node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
+    ReturnManagement.enterRule(node.label);
+    node.ifstat.visit(this);
+    ReturnManagement.leaveRule();
+}
 
   @Override
   public void visitNode(StatAbstractBlock node) {
@@ -147,57 +151,57 @@ public class ReturnVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UCharacter node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
   }
 
   @Override
   public void visitNode(UComment node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
   }
 
   @Override
   public void visitNode(UCommentBlock node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
   }
 
   @Override
   public void visitNode(UFieldAccess node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
   }
 
   @Override
   public void visitNode(UFuncCall node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
   }
 
   @Override
   public void visitNode(UNull node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
   }
 
   @Override
   public void visitNode(UNumber node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
   }
 
   @Override
   public void visitNode(UString node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
   }
 
   @Override
   public void visitNode(UVariable node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
   }
 
   @Override
   public void visitNode(UWildcard node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
   }
 
   @Override
   public void visitNode(UnaryBoolean node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
   }
 
 }
