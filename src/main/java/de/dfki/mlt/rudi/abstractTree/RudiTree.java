@@ -15,21 +15,11 @@ import java.io.Writer;
  */
 public interface RudiTree {
 
-  /**
-   * method that can print the tree to code
-   * @return code representing this treenode
-   */
-  public void generate(Writer out) throws IOException;
 
   /**
    * method for type testing
    */
   public void testType();
-
-  /**
-   * method to manage the return magic
-   */
-  public void returnManaging();
 
   /**
    * visitor method
