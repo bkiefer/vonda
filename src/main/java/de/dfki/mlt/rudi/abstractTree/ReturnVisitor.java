@@ -5,11 +5,19 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import de.dfki.mlt.rudi.ReturnManagement;
+
 /**
  *
  * @author Christophe Biwer, christophe.biwer@dfki.de
  */
 public class ReturnVisitor implements RudiVisitor {
+
+  private ReturnManagement _rm;
+
+  public ReturnVisitor(ReturnManagement rm_ini) {
+    _rm = rm_ini;
+  }
 
   @Override
   public void visitNode(ExpAbstractWrapper node) {
@@ -60,9 +68,9 @@ public class ReturnVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(GrammarRule node) {
-    ReturnManagement.enterRule(node.label);
+    _rm.enterRule(node.label);
     node.ifstat.visit(this);
-    ReturnManagement.leaveRule();
+    _rm.leaveRule();
 }
 
   @Override
@@ -123,8 +131,8 @@ public class ReturnVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatReturn node) {
-    if (ReturnManagement.isExistingRule(node.lit)) {
-      ReturnManagement.foundReturnTo(node.lit);
+    if (_rm.isExistingRule(node.lit)) {
+      _rm.foundReturnTo(node.lit);
       node.toRet = null;
     }
   }
