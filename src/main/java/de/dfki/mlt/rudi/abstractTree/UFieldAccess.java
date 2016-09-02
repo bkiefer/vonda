@@ -36,18 +36,7 @@ public class UFieldAccess extends RTLeaf {
     this._client = client;
   }
 
-  public void testType(Mem mem) {
-    // nothing to do
-  }
-
   public String getType(Mem mem) {
-    if (!asked) {
-      try {
-        this.type = askChristophe(mem);
-      } catch (TException ex) {
-        Logger.getLogger(AFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
-      }
-    }
     return this.type;
   }
 
@@ -77,11 +66,6 @@ public class UFieldAccess extends RTLeaf {
 
   @Override
   public String getType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  public void testType() {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 }

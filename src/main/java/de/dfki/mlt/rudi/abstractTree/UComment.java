@@ -33,11 +33,6 @@ public class UComment extends RTLeaf implements RTStatement {
   }
 
   @Override
-  public void testType() {
-    // no type to be tested
-  }
-  
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

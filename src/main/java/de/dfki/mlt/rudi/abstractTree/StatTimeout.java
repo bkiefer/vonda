@@ -5,9 +5,6 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import java.io.IOException;
-import java.io.Writer;
-
 /**
  * class representing a timeout
  *
@@ -15,20 +12,15 @@ import java.io.Writer;
  */
 public class StatTimeout implements RTStatement, RudiTree {
 
-    long time;
-    String name;
-    RudiTree statblock;
+  long time;
+  String name;
+  RudiTree statblock;
 
-    public StatTimeout(String name, long time, RudiTree statblock) {
-        this.time = time;
-        this.name = name;
-        this.statblock = statblock;
-    }
-
-    @Override
-    public void testType() {
-        //nothing to test here
-    }
+  public StatTimeout(String name, long time, RudiTree statblock) {
+    this.time = time;
+    this.name = name;
+    this.statblock = statblock;
+  }
 
   @Override
   public void visit(RudiVisitor v) {

@@ -11,23 +11,17 @@ package de.dfki.mlt.rudi.abstractTree;
  *
  * @author Anna Welker
  */
-public class StatSetOperation implements RTStatement, RudiTree{
+public class StatSetOperation implements RTStatement, RudiTree {
 
-    RudiTree left;
-    boolean add;
-    RudiTree right;
+  RudiTree left;
+  boolean add;
+  RudiTree right;
 
-    public StatSetOperation(RudiTree left, boolean add, RudiTree right) {
-        this.left = left;
-        this.add = add;
-        this.right = right;
-    }
-
-    @Override
-    public void testType() {
-        // TODO: test somehow
-    }
-
+  public StatSetOperation(RudiTree left, boolean add, RudiTree right) {
+    this.left = left;
+    this.add = add;
+    this.right = right;
+  }
 
   @Override
   public void visit(RudiVisitor v) {

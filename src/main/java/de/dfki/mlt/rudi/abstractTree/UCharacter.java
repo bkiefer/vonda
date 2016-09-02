@@ -19,11 +19,6 @@ public class UCharacter extends RTLeaf {
   }
 
   @Override
-  public void testType() {
-    // everything okay
-  }
-
-  @Override
   public String getType() {
     return "char";
   }

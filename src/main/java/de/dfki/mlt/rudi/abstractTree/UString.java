@@ -19,11 +19,6 @@ public class UString extends RTLeaf {
   }
 
   @Override
-  public void testType() {
-    // everything okay
-  }
-
-  @Override
   public String getType() {
     return "String";
   }

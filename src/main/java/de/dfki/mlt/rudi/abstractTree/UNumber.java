@@ -19,12 +19,6 @@ public class UNumber extends RTLeaf{
   }
 
   @Override
-  public void testType() {
-    // everything okay
-  }
-
-
-  @Override
   public String getType() {
     // for the moment, we assume we don't get longs or doubles here
     if(this.value.contains(".")){

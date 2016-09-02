@@ -7,6 +7,10 @@ package de.dfki.mlt.rudi.abstractTree;
 
 import de.dfki.mlt.rudi.Mem;
 import de.dfki.mlt.rudi.RudimantCompiler;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.thrift.TException;
 
 /**
  *
@@ -147,87 +151,101 @@ public class testTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatPropose node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do (?)
   }
 
   @Override
   public void visitNode(StatReturn node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do (?)
   }
 
   @Override
   public void visitNode(StatSetOperation node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // TODO: test whether the set accepts variables of this type??
   }
 
   @Override
   public void visitNode(StatTimeout node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do
   }
 
   @Override
   public void visitNode(StatVarDef node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do
   }
 
   @Override
   public void visitNode(StatWhile node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    node.condition.visit(this);
+    node.statblock.visit(this);
+    assert(node.condition.getType().equals("boolean"));
   }
 
   @Override
   public void visitNode(UCharacter node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // everything okay
   }
 
   @Override
   public void visitNode(UComment node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // everything okay
   }
 
   @Override
   public void visitNode(UCommentBlock node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // everything okay
   }
 
   @Override
   public void visitNode(UFieldAccess node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+      try {
+        node.type = node.askChristophe(rudi.getMem());
+      } catch (TException ex) {
+        Logger.getLogger(UFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
+      }
   }
 
   @Override
   public void visitNode(UFuncCall node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if(node.type == null){
+      node.type = rudi.getMem().getFunctionRetType(node.representation);
+    }
+    // test whether the given parameters are of the correct type
+    ArrayList<String> partypes = new ArrayList<String>();
+    for (RTExpression e : node.exps){
+      partypes.add(e.getType());
+    }
+    assert(rudi.getMem().existsFunction(node.representation, partypes));
   }
 
   @Override
   public void visitNode(UNull node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do
   }
 
   @Override
   public void visitNode(UNumber node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do
   }
 
   @Override
   public void visitNode(UString node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do
   }
 
   @Override
   public void visitNode(UVariable node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    node.type = rudi.getMem().getVariableType(node.representation);
   }
 
   @Override
   public void visitNode(UWildcard node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do
   }
 
   @Override
   public void visitNode(UnaryBoolean node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do
   }
 
 }

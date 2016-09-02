@@ -22,10 +22,6 @@ public class UCommentBlock extends RTLeaf implements RTStatement {
   }
 
   @Override
-  public void testType() {
-  }
-
-  @Override
   public String getType() { return null; }
 
   @Override

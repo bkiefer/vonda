@@ -29,24 +29,10 @@ public class UFuncCall extends RTLeaf{
   }
 
   @Override
-  public void testType() {
-    // test whether the given parameters are of the correct type
-    ArrayList<String> partypes = new ArrayList<String>();
-    for (RTExpression e : exps){
-      partypes.add(e.getType());
-    }
-    Mem.existsFunction(representation, partypes);
-  }
-
-
-  @Override
   public String getType() {
-    if(this.type == null){
-      type = Mem.getFunctionRetType(representation);
-    }
     return this.type;
   }
-  
+
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);

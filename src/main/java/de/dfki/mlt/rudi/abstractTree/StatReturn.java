@@ -30,11 +30,6 @@ public class StatReturn implements RTStatement, RudiTree {
       this.lit = lit;
     }
   }
-  
-  @Override
-  public void testType() {
-    // test return type??
-  }
 
   @Override
   public void visit(RudiVisitor v) {

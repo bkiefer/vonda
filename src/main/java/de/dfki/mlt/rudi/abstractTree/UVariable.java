@@ -38,13 +38,8 @@ public class UVariable extends RTLeaf {
   }
 
   @Override
-  public void testType() {
-    // nothing to do
-  }
-
-  @Override
   public String getType() {
-    return Mem.getVariableType(representation);
+    return this.type;
   }
 
   @Override

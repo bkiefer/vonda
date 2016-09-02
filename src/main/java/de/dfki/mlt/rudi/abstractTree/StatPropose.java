@@ -21,11 +21,6 @@ public class StatPropose implements RTStatement, RudiTree {
   }
 
   @Override
-  public void testType() {
-    // TODO: arg should be a string expression
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

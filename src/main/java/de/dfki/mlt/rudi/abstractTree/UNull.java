@@ -13,11 +13,6 @@ package de.dfki.mlt.rudi.abstractTree;
 public class UNull extends RTLeaf {
 
   @Override
-  public void testType() {
-    // nothing to do
-  }
-
-  @Override
   public String getType() {
     return "Object";   // for you can assign null to anything
   }

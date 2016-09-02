@@ -20,10 +20,6 @@ public class UnaryBoolean extends RTLeaf{
   }
 
   @Override
-  public void testType() {
-    // everything okay
-  }
-  @Override
   public String getType() {
     return "boolean";
   }

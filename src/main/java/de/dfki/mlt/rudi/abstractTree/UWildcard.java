@@ -13,11 +13,6 @@ package de.dfki.mlt.rudi.abstractTree;
 public class UWildcard extends RTLeaf{
 
   @Override
-  public void testType() {
-    // do nothing
-  }
-
-  @Override
   public String getType() {
     return "Object"; // ???
   }
