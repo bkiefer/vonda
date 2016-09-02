@@ -62,13 +62,13 @@ public class GenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(ExpAssignment  node) {
     //System.out.println(((UVariable) left).toString());
-    if (out.checkTypes()) {
+    /*if (out.checkTypes()) {
       if (node.actualType != null) {
         testTypeDecl(node.actualType, out);
       } else {
         testType(out);
       }
-    }
+    }*/
     if (node.declaration) {
       mem.addElement(((UVariable) node.left).toString(), node.actualType, node.position);
       out.append(node.actualType + " " + ((UVariable) node.left).toString() + " = ");
@@ -299,7 +299,7 @@ public class GenerationVisitor implements RudiVisitor {
   public void visitNode(StatImport  node) {
     System.out.println("Processing import " + node.text);
     mem.addAndEnterNewEnvironment(mem.getCurrentDepth() + 1);
-    out.append(text + ".process()");
+    out.append(node.text + ".process()");
     out.processFile(new File(out.getInputDirectory() + node.text + ".rudi"));
     mem.leaveEnvironment();
   }
@@ -417,9 +417,6 @@ public class GenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UFuncCall  node) {
-    if (out.checkTypes()) {
-      node.testType();
-    }
     out.append(node.representation + "(");
     for (int i = 0; i < node.exps.size(); i++) {
       node.exps.get(i).visit(this);

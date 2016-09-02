@@ -5,7 +5,6 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import de.dfki.mlt.rudi.Mem;
 import de.dfki.mlt.rudi.RudimantCompiler;
 import java.util.ArrayList;
 import java.util.logging.Level;

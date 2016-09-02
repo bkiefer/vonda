@@ -38,7 +38,6 @@ public class RudimantCompiler {
   private Writer out;
 
   //public RobotContext context;
-
   protected HfcDbService.Client _client;
 
   private Mem mem;
@@ -94,10 +93,10 @@ public class RudimantCompiler {
     processForReal(getOutputDirectory());
   }
 
-  /** Return the inputfile, which is relative to inputDirectory, the
-   *  subdirectory is specified by the subPackage, and the last entry of
-   *  subPackage, which is the class name of the file to be processed, is
-   *  removed.
+  /**
+   * Return the inputfile, which is relative to inputDirectory, the subdirectory
+   * is specified by the subPackage, and the last entry of subPackage, which is
+   * the class name of the file to be processed, is removed.
    */
   private File getInputFile() {
     File result = inputDirectory;
@@ -107,10 +106,10 @@ public class RudimantCompiler {
     return new File(result, className + ".rudi");
   }
 
-  /** Return the inputfile, which is relative to inputDirectory, the
-   *  subdirectory is specified by the subPackage, and the last entry of
-   *  subPackage, which is the class name of the file to be processed, is
-   *  removed.
+  /**
+   * Return the inputfile, which is relative to inputDirectory, the subdirectory
+   * is specified by the subPackage, and the last entry of subPackage, which is
+   * the class name of the file to be processed, is removed.
    */
   private File getOutputDirectory() {
     File result = outputDirectory;
@@ -158,8 +157,12 @@ public class RudimantCompiler {
     return this;
   }
 
-  public void flush() throws IOException {
-    out.flush();
+  public void flush() {
+    try {
+      out.flush();
+    } catch (IOException ex) {
+      throw new RuntimeException(ex);
+    }
   }
 
   public String getClassName(File inputFile) {
@@ -174,7 +177,7 @@ public class RudimantCompiler {
   }
 
   private void processForReal(File outputdir) throws IOException {
-    if (! outputdir.isDirectory()) {
+    if (!outputdir.isDirectory()) {
       Files.createDirectories(outputdir.toPath());
       // throw new IOException(outputdir + " is not a directory");
     }
@@ -188,7 +191,7 @@ public class RudimantCompiler {
     // context = new TestContext(log);
     // initialise the lexer with given input file
     RobotGrammarLexer lexer = new RobotGrammarLexer(
-        new ANTLRInputStream(new FileInputStream(inputFile)));
+            new ANTLRInputStream(new FileInputStream(inputFile)));
 
     // initialise the parser
     RobotGrammarParser parser = new RobotGrammarParser(new CommonTokenStream(lexer));
@@ -211,7 +214,11 @@ public class RudimantCompiler {
     GenerationVisitor gv = new GenerationVisitor(this);
 
     if (myTree instanceof GrammarFile) {
-      gv.visitNode(myTree);
+      try {
+        gv.visitNode(myTree);
+      } catch (RuntimeException e) {
+        throw new IOException(e);
+      }
     } else {
       throw new UnsupportedOperationException("There is sth going very,very wrong...");
     }
@@ -220,40 +227,46 @@ public class RudimantCompiler {
   }
 
   /**
-   * takes a look into the memory to tell whether the given variable has the given type
+   * takes a look into the memory to tell whether the given variable has the
+   * given type
+   *
    * @param variable the variable
    * @param type the type
    * @return true if it is correct; false otherwise
    */
-  public boolean testType(String variable, String type){
+  public boolean testType(String variable, String type) {
     return this.mem.getVariableType(variable).equals(type);
   }
 
   /**
    * asks the memory about the type of the given variable
+   *
    * @param variable
    * @return the variable's type
    */
-  public String getType(String variable){
+  public String getType(String variable) {
     return this.mem.getVariableType(variable);
   }
 
   /**
-   * to test whether the parameters given to the function are of the correct types
+   * to test whether the parameters given to the function are of the correct
+   * types
+   *
    * @param funcname
    * @param partypes
    * @return true or false
    */
-  public boolean testFunctionType(String funcname, ArrayList<String> partypes){
+  public boolean testFunctionType(String funcname, ArrayList<String> partypes) {
     return this.mem.existsFunction(funcname, partypes);
   }
 
-    /**
+  /**
    * asks the memory about the type of the given function
+   *
    * @param funcname
    * @return the function's type
    */
-  public String getFunctionReturnType(String funcname){
+  public String getFunctionReturnType(String funcname) {
     return this.mem.getFunctionRetType(funcname);
   }
 
