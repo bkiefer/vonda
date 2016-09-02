@@ -96,7 +96,7 @@ public class TestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(GrammarFile node) {
-    mem.addAndEnterNewEnvironment(mem.getCurrentDepth() + 1);
+    mem.addAndEnterNewEnvironment();
     for (RudiTree t : node.rules) {
       t.visit(this);
     }
@@ -105,7 +105,7 @@ public class TestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(GrammarRule node) {
-    mem.addAndEnterNewEnvironment(mem.getCurrentDepth() + 1);
+    mem.addAndEnterNewEnvironment();
     node.ifstat.visit(this);
     mem.leaveEnvironment();
   }
@@ -113,7 +113,7 @@ public class TestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatAbstractBlock node) {
     if (node.braces) {
-      mem.addAndEnterNewEnvironment(mem.getCurrentDepth() + 1);
+      mem.addAndEnterNewEnvironment();
     }
     for (RudiTree t : node.statblock) {
       t.visit(this);
@@ -175,7 +175,7 @@ public class TestTypeVisitor implements RudiVisitor {
   public void visitNode(StatMethodDeclaration node) {
     mem.addFunction(node.name, node.return_type, node.partypes,
             node.position);
-    mem.addAndEnterNewEnvironment(mem.getCurrentDepth());
+    mem.addAndEnterNewEnvironment();
     if (!node.parameters.isEmpty()) {
       for (int i = 0; i < node.parameters.size(); i++) {
         // add parameters to environment

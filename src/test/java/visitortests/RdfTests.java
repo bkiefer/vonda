@@ -37,6 +37,8 @@ public class RdfTests {
   private HfcDbClient client;
   private HfcDbService.Client _client;
 
+  private Mem mem;
+
   // alternative PORTS
   private static final int SERVER_PORT = 8996;
   private static final int WEBSERVER_PORT = 8995;
@@ -85,10 +87,10 @@ public class RdfTests {
         add("forename");
       }
     };
-    Mem.addAndEnterNewEnvironment(0);
-    Mem.addElement("child", "Child", "here");
+    mem.addAndEnterNewEnvironment();
+    mem.addElement("child", "Child", "here");
     UFieldAccess field = new UFieldAccess(elem, _client);
-    String result = field.askChristophe();
+    String result = field.askChristophe(mem);
     assertEquals("get forename", "String", result);
   }
 
@@ -100,10 +102,10 @@ public class RdfTests {
         add("hasTreatment");
       }
     };
-    Mem.addAndEnterNewEnvironment(0);
-    Mem.addElement("child", "Child", "here");
+    mem.addAndEnterNewEnvironment();
+    mem.addElement("child", "Child", "here");
     UFieldAccess field = new UFieldAccess(elem, _client);
-    String result = field.askChristophe();
+    String result = field.askChristophe(mem);
     assertEquals("get hasTreatment", "Treatment", result);
   }
 
@@ -115,10 +117,10 @@ public class RdfTests {
         add("birthdate");
       }
     };
-    Mem.addAndEnterNewEnvironment(0);
-    Mem.addElement("child", "Child", "here");
+    mem.addAndEnterNewEnvironment();
+    mem.addElement("child", "Child", "here");
     UFieldAccess field = new UFieldAccess(elem, _client);
-    String result = field.askChristophe();
+    String result = field.askChristophe(mem);
     assertEquals("get birthdate", "<xsd:date>", result);
   }
 }

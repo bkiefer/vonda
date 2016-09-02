@@ -43,7 +43,7 @@ public class Mem {
   }
 
   public void addFunction(String funcname, String functype,
-          ArrayList<String> partypes, String origin){
+          ArrayList<String> partypes, String origin) {
     functionTypes.put(funcname, functype);
     functionParTypes.put(funcname, partypes);
     // we may need this later, it doesn't harm us now
@@ -51,8 +51,8 @@ public class Mem {
   }
 
   public boolean existsFunction(String funcname,
-          ArrayList<String> partypes){
-    if(!functionTypes.containsKey(funcname)){
+          ArrayList<String> partypes) {
+    if (!functionTypes.containsKey(funcname)) {
       return false;
     }
     return (partypes.equals(functionParTypes.get(funcname)));
@@ -60,10 +60,11 @@ public class Mem {
 
   /**
    * returns null if there is no such function
+   *
    * @param funcname the name of the function
    * @return its return type or null
    */
-  public String getFunctionRetType(String funcname){
+  public String getFunctionRetType(String funcname) {
     // TODO: we could also identify the function by the parameter types, is this
     // necessary?
     return functionTypes.get(funcname);
@@ -131,12 +132,11 @@ public class Mem {
   /**
    * adds a new Environment with the given depth
    *
-   * @param depth the depth the environment is supposed to lie on
    * @return the position in memory where the environment is stored
    */
-  public int addAndEnterNewEnvironment(int depth) {
-    environment.add(new Environment(depth));
-    depthAtm = depth;
+  public int addAndEnterNewEnvironment() {
+    depthAtm = getCurrentDepth() + 1;
+    environment.add(new Environment(depthAtm));
     return ++positionAtm;
   }
 
@@ -170,11 +170,11 @@ public class Mem {
     variableOrigin.put(variable, origin);
   }
 
-  public void addRdf(String variable){
+  public void addRdf(String variable) {
     rdfs.add(variable);
   }
 
-  public boolean isRdf(String variable){
+  public boolean isRdf(String variable) {
     return rdfs.contains(variable);
   }
 }

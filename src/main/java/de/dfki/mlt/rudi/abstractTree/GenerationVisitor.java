@@ -10,9 +10,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.thrift.TException;
 
 /**
  * this visitor generates the java code

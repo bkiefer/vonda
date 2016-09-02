@@ -21,7 +21,6 @@ import de.dfki.mlt.rudi.abstractTree.ReturnVisitor;
 import de.dfki.mlt.rudi.abstractTree.RudiTree;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
-import java.util.logging.Level;
 
 public class RudimantCompiler {
 
