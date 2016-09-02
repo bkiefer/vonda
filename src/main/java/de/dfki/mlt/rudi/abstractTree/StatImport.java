@@ -23,11 +23,6 @@ public class StatImport implements RudiTree{
   }
 
   @Override
-  public void testType() {
-    //nothing to do
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

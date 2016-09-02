@@ -40,15 +40,6 @@ public class GrammarFile implements RudiTree {
   }
 
   @Override
-  public void testType() {
-    if (GrammarMain.checkTypes()) {
-      for (RudiTree t : this.rules) {
-        t.testType();
-      }
-    }
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

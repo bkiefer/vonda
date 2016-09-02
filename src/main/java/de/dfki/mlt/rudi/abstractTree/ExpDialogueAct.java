@@ -25,11 +25,6 @@ public class ExpDialogueAct implements RudiTree, RTExpression{
   }
 
   @Override
-  public void testType() {
-    // no type testing here
-  }
-
-  @Override
   public String getType() {
     return "magic";
   }

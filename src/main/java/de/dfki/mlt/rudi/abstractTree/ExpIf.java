@@ -23,15 +23,6 @@ public class ExpIf implements RudiTree, RTExpression{
   }
 
   @Override
-  public void testType() {
-    ((RudiTree)boolexp).testType();
-    ((RudiTree)thenexp).testType();
-    ((RudiTree)elseexp).testType();
-    assert(boolexp.getType().equals("boolean"));
-    assert(thenexp.getType().equals(elseexp.getType()));
-  }
-
-  @Override
   public String getType() {
     return thenexp.getType();
   }

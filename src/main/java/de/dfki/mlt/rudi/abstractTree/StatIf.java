@@ -30,11 +30,6 @@ public class StatIf implements RTStatement, RudiTree{
     this.currentRule = position;
   }
 
-  @Override
-  public void testType() {
-    // no types for statements
-  }
-
     /*String ret0 = "if(this.whatToLog.get(\"" + this.currentRule +
             "\").contains(" + this.currentBool + ")){";
     if (this.statblockElse != null){

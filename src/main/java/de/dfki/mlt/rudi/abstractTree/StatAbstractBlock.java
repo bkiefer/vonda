@@ -26,10 +26,6 @@ public class StatAbstractBlock implements RTStatement, RudiTree {
   }
 
   @Override
-  public void testType() {
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

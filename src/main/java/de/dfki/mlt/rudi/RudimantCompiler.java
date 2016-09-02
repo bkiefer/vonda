@@ -15,10 +15,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.HfcDbService;
+import de.dfki.mlt.rudi.abstractTree.GenerationVisitor;
 import de.dfki.mlt.rudi.abstractTree.GrammarFile;
+import de.dfki.mlt.rudi.abstractTree.ReturnVisitor;
 import de.dfki.mlt.rudi.abstractTree.RudiTree;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
+import java.util.logging.Level;
 
 public class RudimantCompiler {
 
@@ -50,7 +53,6 @@ public class RudimantCompiler {
 
   private RudimantCompiler(Mem m) {
     mem = m;
-    rm = new ReturnManagement();
     //context = new TestContext();
   }
 
@@ -138,13 +140,21 @@ public class RudimantCompiler {
     return mem;
   }
 
-  public RudimantCompiler append(char c) throws IOException {
-    out.append(c);
+  public RudimantCompiler append(char c) {
+    try {
+      out.append(c);
+    } catch (IOException ex) {
+      throw new RuntimeException(ex);
+    }
     return this;
   }
 
-  public RudimantCompiler append(CharSequence c) throws IOException {
-    out.append(c);
+  public RudimantCompiler append(CharSequence c) {
+    try {
+      out.append(c);
+    } catch (IOException ex) {
+      throw new RuntimeException(ex);
+    }
     return this;
   }
 
@@ -191,8 +201,17 @@ public class RudimantCompiler {
 
     // walk the parse tree
     RudiTree myTree = visitor.visit(tree);
+
+    // walk the rudi tree
+    // look for returns
+    rm = new ReturnManagement(className);
+    ReturnVisitor vret = new ReturnVisitor(rm);
+    vret.visitNode(myTree);
+    // generate the output
+    GenerationVisitor gv = new GenerationVisitor(this);
+
     if (myTree instanceof GrammarFile) {
-      ((GrammarFile) myTree).generate(this);
+      gv.visitNode(myTree);
     } else {
       throw new UnsupportedOperationException("There is sth going very,very wrong...");
     }
@@ -200,5 +219,42 @@ public class RudimantCompiler {
     logger.info("Done parsing" + inputFile.getName());
   }
 
+  /**
+   * takes a look into the memory to tell whether the given variable has the given type
+   * @param variable the variable
+   * @param type the type
+   * @return true if it is correct; false otherwise
+   */
+  public boolean testType(String variable, String type){
+    return this.mem.getVariableType(variable).equals(type);
+  }
+
+  /**
+   * asks the memory about the type of the given variable
+   * @param variable
+   * @return the variable's type
+   */
+  public String getType(String variable){
+    return this.mem.getVariableType(variable);
+  }
+
+  /**
+   * to test whether the parameters given to the function are of the correct types
+   * @param funcname
+   * @param partypes
+   * @return true or false
+   */
+  public boolean testFunctionType(String funcname, ArrayList<String> partypes){
+    return this.mem.existsFunction(funcname, partypes);
+  }
+
+    /**
+   * asks the memory about the type of the given function
+   * @param funcname
+   * @return the function's type
+   */
+  public String getFunctionReturnType(String funcname){
+    return this.mem.getFunctionRetType(funcname);
+  }
 
 }

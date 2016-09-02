@@ -20,11 +20,6 @@ public class ExpLambda implements RudiTree, RTExpression {
   }
 
   @Override
-  public void testType() {
-    // nothing to do for now
-  }
-
-  @Override
   public String getType() {
     // TODO: what's the type of a lambda expression?
     return "Object";

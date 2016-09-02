@@ -22,11 +22,6 @@ public class StatDoWhile implements RTStatement, RudiTree{
     this.currentRule = position;
   }
 
-  @Override
-  public void testType() {
-    // no types for statements
-  }
-
     /*String ret0 = "if(this.whatToLog.get(\"" + this.currentRule +
             "\").contains(" + this.currentBool + ")){";
     String ret1 = "do " + statblock;
@@ -36,7 +31,7 @@ public class StatDoWhile implements RTStatement, RudiTree{
     String ret2 = "while (" + condition + ");\n";
     // remember to insert the log to log the condition
     return ret1.substring(0, ret1.length() - 2) + ret0 + log + "}}" + ret2;*/
-  
+
 
   @Override
   public void visit(RudiVisitor v) {

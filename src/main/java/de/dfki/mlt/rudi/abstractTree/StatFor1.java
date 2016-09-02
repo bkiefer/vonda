@@ -28,11 +28,6 @@ public class StatFor1 implements RTStatement, RudiTree {
     this.currentRule = position;
   }
 
-  @Override
-  public void testType() {
-    // no types for statements
-  }
-
     /*String ret0 = "if(this.whatToLog.get(\"" + this.currentRule +
             "\").contains(" + this.currentBool + ")){";
     if (arithmetic != null) {
@@ -53,7 +48,7 @@ public class StatFor1 implements RTStatement, RudiTree {
     String ret2 = statblock.generate(null).substring(1);
     return ret0 + "if(!(" + this.condition + ")){" + log + "}}" +
             ret1 + "{" + ret0 + log + "}" + ret2;*/
- 
+
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);

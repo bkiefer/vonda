@@ -12,14 +12,8 @@ package de.dfki.mlt.rudi.abstractTree;
  */
 public interface RudiTree {
 
-
-  /**
-   * method for type testing
-   */
-  public void testType();
-
   /**
    * visitor method
    */
-  public void visit(RudiVisitor v) throws Exception;
+  public void visit(RudiVisitor v);
 }

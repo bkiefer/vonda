@@ -24,11 +24,6 @@ public class ExpAbstractWrapper implements RudiTree, RTExpression{
   }
 
   @Override
-  public void testType() {
-    this.exp.testType();
-  }
-
-  @Override
   public String getType() {
     return ((RTExpression) exp).getType();
   }

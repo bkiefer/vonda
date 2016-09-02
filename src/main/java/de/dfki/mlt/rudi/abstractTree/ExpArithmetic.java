@@ -38,11 +38,6 @@ public class ExpArithmetic implements RTExpression {
   }
 
   @Override
-  public void testType() {
-    // TODO: test somehow right and left
-  }
-
-  @Override
   public String getType() {
     return this.type;
   }

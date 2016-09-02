@@ -31,19 +31,19 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(RudiTree  node) throws Exception {
+  public void visitNode(RudiTree  node) {
     node.visit(this);
   }
 
   @Override
-  public void visitNode(ExpAbstractWrapper  node) throws Exception {
+  public void visitNode(ExpAbstractWrapper  node) {
     node.commentbefore.visit(this);
     node.exp.visit(this);
     node.commentafter.visit(this);
   }
 
   @Override
-  public void visitNode(ExpArithmetic  node) throws Exception {
+  public void visitNode(ExpArithmetic  node) {
     String ret = "";
     if (node.minus) {
       out.append("-");
@@ -60,7 +60,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpAssignment  node) throws Exception {
+  public void visitNode(ExpAssignment  node) {
     //System.out.println(((UVariable) left).toString());
     if (out.checkTypes()) {
       if (node.actualType != null) {
@@ -80,7 +80,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpBoolean  node) throws Exception {
+  public void visitNode(ExpBoolean  node) {
     if (node.type == null) {
       node.getType();
     }
@@ -117,7 +117,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpDialogueAct  node) throws Exception {
+  public void visitNode(ExpDialogueAct  node) {
     out.append("new DialogueAct(\"" + node.litGraph + "(");
     String[] parameters = node.rest.split(",");
     // the first argument will never need to be more than a String
@@ -143,7 +143,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpIf  node) throws Exception {
+  public void visitNode(ExpIf  node) {
     node.boolexp.visit(this);
     out.append(" ? ");
     node.thenexp.visit(this);
@@ -152,12 +152,12 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpLambda  node) throws Exception {
+  public void visitNode(ExpLambda  node) {
     out.append(node.exp);
   }
 
   @Override
-  public void visitNode(GrammarFile  node) throws Exception {
+  public void visitNode(GrammarFile  node) {
     //let the return guy do its work
     //returnManaging();
     //boolean foundClassName = false;
@@ -181,7 +181,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(GrammarRule node) throws FileNotFoundException, IOException {
+  public void visitNode(GrammarRule node) {
     String returnType = "void";
     if (ReturnManagement.shouldAddReturnto(node.label)) {
       returnType = "String";
@@ -198,7 +198,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatAbstractBlock  node) throws Exception {
+  public void visitNode(StatAbstractBlock  node) {
     String stats = "";
     if (node.braces) {
       // when entering a statement block, we need to create a new local environment
@@ -220,7 +220,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatDoWhile  node) throws Exception {
+  public void visitNode(StatDoWhile  node) {
     out.append("do");
     node.statblock.visit(this);
     out.append("while (");
@@ -229,7 +229,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatFor1  node) throws Exception {
+  public void visitNode(StatFor1  node) {
     // the assignment will add the variable to the memory!!
     out.append("for ( ");
     node.assignment.visit(this);
@@ -244,7 +244,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatFor2  node) throws Exception {
+  public void visitNode(StatFor2  node) {
     // TODO: or should we check here that the type of the variable in assignment
     // is the type the iterable in exp returns? How?
     if (node.varType == null) {
@@ -260,7 +260,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatFor3  node) throws Exception {
+  public void visitNode(StatFor3  node) {
     out.append("for (Object[] o : ");
     node.exp.visit(this);
     out.append(") {");
@@ -274,12 +274,12 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatFunDef  node) throws Exception {
+  public void visitNode(StatFunDef  node) {
     mem.addFunction(node.funcname, node.type, node.parameterTypes, node.position);
   }
 
   @Override
-  public void visitNode(StatIf  node) throws Exception {
+  public void visitNode(StatIf  node) {
     if (node.statblockElse != null) {
       out.append("if (");
       node.condition.visit(this);
@@ -296,7 +296,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatImport  node) throws Exception {
+  public void visitNode(StatImport  node) {
     System.out.println("Processing import " + node.text);
     mem.addAndEnterNewEnvironment(mem.getCurrentDepth() + 1);
     out.append(text + ".process()");
@@ -305,7 +305,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatMethodDeclaration  node) throws Exception {
+  public void visitNode(StatMethodDeclaration  node) {
     mem.addAndEnterNewEnvironment(mem.getCurrentDepth());
     String ret = node.visibility + " " + node.return_type + " " + node.name + "(";
     if (!node.parameters.isEmpty()) {
@@ -326,7 +326,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatPropose  node) throws Exception {
+  public void visitNode(StatPropose  node) {
     out.append("propose(");
     node.arg.visit(this);
     out.append(", new Proposal() {public void run()\n");
@@ -335,7 +335,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatReturn  node) throws Exception {
+  public void visitNode(StatReturn  node) {
     if (node.toRet == null) {
       out.append("return;\n");
     }
@@ -345,7 +345,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatSetOperation  node) throws Exception {
+  public void visitNode(StatSetOperation  node) {
     node.left.visit(this);
     if (node.add) {
       out.append(".add(");
@@ -357,7 +357,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatTimeout  node) throws Exception {
+  public void visitNode(StatTimeout  node) {
     if (node.statblock == null) {
       out.append("newTimeout(" + node.name + "," + node.time + ");\n");
     }
@@ -369,12 +369,12 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatVarDef  node) throws Exception {
+  public void visitNode(StatVarDef  node) {
     mem.addElement(node.variable, node.type, node.position);
   }
 
   @Override
-  public void visitNode(StatWhile  node) throws Exception {
+  public void visitNode(StatWhile  node) {
     out.append("while (");
     node.condition.visit(this);
     out.append(")");
@@ -382,17 +382,17 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UCharacter  node) throws Exception {
+  public void visitNode(UCharacter  node) {
     out.append("\'" + node.content + "\'");
   }
 
   @Override
-  public void visitNode(UComment  node) throws Exception {
+  public void visitNode(UComment  node) {
     out.append(node.comment);
   }
 
   @Override
-  public void visitNode(UCommentBlock  node) throws Exception {
+  public void visitNode(UCommentBlock  node) {
     for (UComment c : node.comments) {
       c.visit(this);
       out.append("\n");
@@ -400,7 +400,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UFieldAccess  node) throws Exception {
+  public void visitNode(UFieldAccess  node) {
     if (!node.asked) {
       try {
         node.type = node.askChristophe(out.getMem());
@@ -416,7 +416,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UFuncCall  node) throws Exception {
+  public void visitNode(UFuncCall  node) {
     if (out.checkTypes()) {
       node.testType();
     }
@@ -431,22 +431,22 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UNull  node) throws Exception {
+  public void visitNode(UNull  node) {
     out.append("null");
   }
 
   @Override
-  public void visitNode(UNumber  node) throws Exception {
+  public void visitNode(UNumber  node) {
     out.append(node.value);
   }
 
   @Override
-  public void visitNode(UString  node) throws Exception {
+  public void visitNode(UString  node) {
     out.append(node.content);
   }
 
   @Override
-  public void visitNode(UVariable  node) throws Exception {
+  public void visitNode(UVariable  node) {
     if (!node.origin.equals(mem.getVariableOrigin(node.representation))) {
       node.origin += ".";
       out.append(node.origin + node.representation);
@@ -456,12 +456,12 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UWildcard  node) throws Exception {
+  public void visitNode(UWildcard  node) {
     out.append("this.wildcard");   // wildcard is a local variable in resulting class
   }
 
   @Override
-  public void visitNode(UnaryBoolean  node) throws Exception {
+  public void visitNode(UnaryBoolean  node) {
     out.append(node.content);
   }
 }

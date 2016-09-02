@@ -42,12 +42,6 @@ public class StatFor2 implements RTStatement, RudiTree {
   }
 
   @Override
-  public void testType() {
-    // somehow test return type of exp & variable?!
-    // currently we will always assume that type of var is object
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

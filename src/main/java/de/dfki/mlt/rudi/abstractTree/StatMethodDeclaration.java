@@ -33,12 +33,6 @@ public class StatMethodDeclaration implements RudiTree {
     this.partypes = partypes;
     this.block = block;
     this.position = position;
-    Mem.addFunction(name, return_type, partypes, position);
-  }
-
-  @Override
-  public void testType() {
-    // ...
   }
 
   @Override

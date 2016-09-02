@@ -35,28 +35,11 @@ public class ExpBoolean implements RTExpression {
     this.right = right;
     this.operator = operator;
     this.not = not;
-    this.type = null;
-  }
-
-  @Override
-  public void testType() {
-    // the getType method is testing, too
+    this.type = "boolean";
   }
 
   @Override
   public String getType() {
-    if (this.type == null) {
-      if (operator != null && left.getType().equals("rdf")) {
-        if (left.getType().equals(right.getType())) {
-          if (operator.equals("<=")) {
-            this.isSubsumed = true;
-          } else if (operator.equals("=>")) {
-            this.doesSubsume = true;
-          }
-        }
-      }
-    }
-    this.type = "boolean";
     return type;
   }
 
