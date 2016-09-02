@@ -219,6 +219,12 @@ public class RudimantCompiler {
     if (myTree instanceof GrammarFile) {
       // tell the file its name (for class definition)
       ((GrammarFile)myTree).setClassName(className);
+      // maybe we need to import the class that imported us to use its variables
+      try{
+        out.append("import " + this.parent.className + ";\n");
+      } catch (NullPointerException e){
+        ; // no imported file
+      }
 //       try {
       gv.visitNode(myTree);
 //      } catch (RuntimeException e) {

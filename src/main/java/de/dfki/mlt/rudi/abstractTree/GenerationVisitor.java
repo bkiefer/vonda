@@ -62,12 +62,12 @@ public class GenerationVisitor implements RudiVisitor {
   public void visitNode(ExpAssignment node) {
     //System.out.println(((UVariable) left).toString());
     if (node.declaration) {
-      out.append(node.actualType + " " + ((UVariable) node.left).toString() + " = ");
-      node.right.visit(this);
-    } else {
-      out.append(((UVariable) node.left).toString() + " = ");
-      node.right.visit(this);
+      out.append(node.actualType + " ");
     }
+    // visit also the left side, it could be using another class's variable!
+    node.left.visit(this);
+    out.append(" = ");
+    node.right.visit(this);
     out.append(";");
   }
 
@@ -450,11 +450,10 @@ public class GenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UVariable node) {
-    /*if (!node.origin.equals(mem.getVariableOrigin(node.representation))) {
-      node.origin += ".";
-      out.append(node.origin + node.representation);
+    if (!node.origin.equals(mem.getVariableOrigin(node.representation))) {
+      out.append(mem.getVariableOrigin(node.representation) + "." + node.representation);
       return;
-    }*/
+    }
     out.append(node.representation);
   }
 
