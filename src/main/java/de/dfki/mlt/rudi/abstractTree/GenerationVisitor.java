@@ -8,15 +8,14 @@ package de.dfki.mlt.rudi.abstractTree;
 import de.dfki.mlt.rudi.*;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.thrift.TException;
 
 /**
+ * this visitor generates the java code
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
@@ -31,19 +30,19 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(RudiTree  node) {
+  public void visitNode(RudiTree node) {
     node.visit(this);
   }
 
   @Override
-  public void visitNode(ExpAbstractWrapper  node) {
+  public void visitNode(ExpAbstractWrapper node) {
     node.commentbefore.visit(this);
     node.exp.visit(this);
     node.commentafter.visit(this);
   }
 
   @Override
-  public void visitNode(ExpArithmetic  node) {
+  public void visitNode(ExpArithmetic node) {
     String ret = "";
     if (node.minus) {
       out.append("-");
@@ -60,17 +59,9 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpAssignment  node) {
+  public void visitNode(ExpAssignment node) {
     //System.out.println(((UVariable) left).toString());
-    /*if (out.checkTypes()) {
-      if (node.actualType != null) {
-        testTypeDecl(node.actualType, out);
-      } else {
-        testType(out);
-      }
-    }*/
     if (node.declaration) {
-      mem.addElement(((UVariable) node.left).toString(), node.actualType, node.position);
       out.append(node.actualType + " " + ((UVariable) node.left).toString() + " = ");
       node.right.visit(this);
       return;
@@ -80,7 +71,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpBoolean  node) {
+  public void visitNode(ExpBoolean node) {
     if (node.type == null) {
       node.getType();
     }
@@ -117,7 +108,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpDialogueAct  node) {
+  public void visitNode(ExpDialogueAct node) {
     out.append("new DialogueAct(\"" + node.litGraph + "(");
     String[] parameters = node.rest.split(",");
     // the first argument will never need to be more than a String
@@ -133,17 +124,19 @@ public class GenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-      if (mem.existsVariable(parts[1])) {
-        out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
-      } else {
-        out.append(", " + parts[0] + " = " + parts[1]);
+      {
+        if (mem.existsVariable(parts[1])) {
+          out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
+        } else {
+          out.append(", " + parts[0] + " = " + parts[1]);
+        }
       }
     }
     out.append(")\")");
   }
 
   @Override
-  public void visitNode(ExpIf  node) {
+  public void visitNode(ExpIf node) {
     node.boolexp.visit(this);
     out.append(" ? ");
     node.thenexp.visit(this);
@@ -152,16 +145,16 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpLambda  node) {
+  public void visitNode(ExpLambda node) {
     out.append(node.exp);
   }
 
   @Override
-  public void visitNode(GrammarFile  node) {
+  public void visitNode(GrammarFile node) {
     //let the return guy do its work
     //returnManaging();
     //boolean foundClassName = false;
-    mem.addAndEnterNewEnvironment(mem.getCurrentDepth() + 1);
+    mem.enterNextEnvironment();
     out.append("public class " + node.classname + "{\n"
             + "  public void process(){");
     for (RudiTree r : node.rules) {
@@ -188,7 +181,7 @@ public class GenerationVisitor implements RudiVisitor {
     }
     out = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream(out.getOutputDirectory() + node.classname + ".java")));
-    mem.addAndEnterNewEnvironment(mem.getCurrentDepth() + 1);
+    mem.enterNextEnvironment();
     out.append("public class " + node.classname + "{\n"
             + "  public " + returnType + "process(){");
     node.comment.visit(this);
@@ -198,11 +191,11 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatAbstractBlock  node) {
+  public void visitNode(StatAbstractBlock node) {
     String stats = "";
     if (node.braces) {
       // when entering a statement block, we need to create a new local environment
-      node.environmentPosition = mem.addAndEnterNewEnvironment(mem.getCurrentDepth() + 1);
+      mem.enterNextEnvironment();
       out.append("{");
     }
     for (RudiTree stat : node.statblock) {
@@ -220,7 +213,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatDoWhile  node) {
+  public void visitNode(StatDoWhile node) {
     out.append("do");
     node.statblock.visit(this);
     out.append("while (");
@@ -229,8 +222,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatFor1  node) {
-    // the assignment will add the variable to the memory!!
+  public void visitNode(StatFor1 node) {
     out.append("for ( ");
     node.assignment.visit(this);
     out.append("; ");
@@ -244,13 +236,12 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatFor2  node) {
+  public void visitNode(StatFor2 node) {
     // TODO: or should we check here that the type of the variable in assignment
     // is the type the iterable in exp returns? How?
     if (node.varType == null) {
       node.varType = ((RTExpression) node.exp).getType();
     }
-    mem.addElement(node.var.toString(), node.varType, node.position);
     out.append("for (" + node.varType + " ");
     node.var.visit(this);
     out.append(": ");
@@ -260,13 +251,12 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatFor3  node) {
+  public void visitNode(StatFor3 node) {
     out.append("for (Object[] o : ");
     node.exp.visit(this);
     out.append(") {");
     int count = 0;
     for (String s : node.variables) {
-      mem.addElement(s, "Object", node.position);
       out.append("\nObject " + s + " = o[" + count++ + "]");
     }
     node.statblock.visit(this);
@@ -274,12 +264,12 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatFunDef  node) {
-    mem.addFunction(node.funcname, node.type, node.parameterTypes, node.position);
+  public void visitNode(StatFunDef node) {
+    // no generation here
   }
 
   @Override
-  public void visitNode(StatIf  node) {
+  public void visitNode(StatIf node) {
     if (node.statblockElse != null) {
       out.append("if (");
       node.condition.visit(this);
@@ -296,7 +286,8 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatImport  node) {
+  public void visitNode(StatImport node) {
+    // TODO: memory creation should be handled in testTypeVisitor...
     System.out.println("Processing import " + node.text);
     mem.addAndEnterNewEnvironment(mem.getCurrentDepth() + 1);
     out.append(node.text + ".process()");
@@ -305,8 +296,8 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatMethodDeclaration  node) {
-    mem.addAndEnterNewEnvironment(mem.getCurrentDepth());
+  public void visitNode(StatMethodDeclaration node) {
+    mem.enterNextEnvironment();
     String ret = node.visibility + " " + node.return_type + " " + node.name + "(";
     if (!node.parameters.isEmpty()) {
       for (int i = 0; i < node.parameters.size(); i++) {
@@ -315,8 +306,6 @@ public class GenerationVisitor implements RudiVisitor {
         } else {
           ret += ", " + node.partypes.get(i) + " " + node.parameters.get(i);
         }
-        // add parameters to environment
-        mem.addElement(node.parameters.get(i), node.partypes.get(i), node.position);
       }
     }
     ret += ")";
@@ -326,7 +315,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatPropose  node) {
+  public void visitNode(StatPropose node) {
     out.append("propose(");
     node.arg.visit(this);
     out.append(", new Proposal() {public void run()\n");
@@ -335,7 +324,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatReturn  node) {
+  public void visitNode(StatReturn node) {
     if (node.toRet == null) {
       out.append("return;\n");
     }
@@ -345,7 +334,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatSetOperation  node) {
+  public void visitNode(StatSetOperation node) {
     node.left.visit(this);
     if (node.add) {
       out.append(".add(");
@@ -357,7 +346,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatTimeout  node) {
+  public void visitNode(StatTimeout node) {
     if (node.statblock == null) {
       out.append("newTimeout(" + node.name + "," + node.time + ");\n");
     }
@@ -369,12 +358,12 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatVarDef  node) {
-    mem.addElement(node.variable, node.type, node.position);
+  public void visitNode(StatVarDef node) {
+    // no generation here
   }
 
   @Override
-  public void visitNode(StatWhile  node) {
+  public void visitNode(StatWhile node) {
     out.append("while (");
     node.condition.visit(this);
     out.append(")");
@@ -382,17 +371,17 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UCharacter  node) {
+  public void visitNode(UCharacter node) {
     out.append("\'" + node.content + "\'");
   }
 
   @Override
-  public void visitNode(UComment  node) {
+  public void visitNode(UComment node) {
     out.append(node.comment);
   }
 
   @Override
-  public void visitNode(UCommentBlock  node) {
+  public void visitNode(UCommentBlock node) {
     for (UComment c : node.comments) {
       c.visit(this);
       out.append("\n");
@@ -400,14 +389,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UFieldAccess  node) {
-    if (!node.asked) {
-      try {
-        node.type = node.askChristophe(out.getMem());
-      } catch (TException ex) {
-        Logger.getLogger(UFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
-      }
-    }
+  public void visitNode(UFieldAccess node) {
     // TODO: tell me how the client is named!!!
     out.append(node.representation.get(0));
     for (int i = 1; i < node.representation.size(); i++) {
@@ -416,7 +398,7 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UFuncCall  node) {
+  public void visitNode(UFuncCall node) {
     out.append(node.representation + "(");
     for (int i = 0; i < node.exps.size(); i++) {
       node.exps.get(i).visit(this);
@@ -428,37 +410,37 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UNull  node) {
+  public void visitNode(UNull node) {
     out.append("null");
   }
 
   @Override
-  public void visitNode(UNumber  node) {
+  public void visitNode(UNumber node) {
     out.append(node.value);
   }
 
   @Override
-  public void visitNode(UString  node) {
+  public void visitNode(UString node) {
     out.append(node.content);
   }
 
   @Override
-  public void visitNode(UVariable  node) {
-    if (!node.origin.equals(mem.getVariableOrigin(node.representation))) {
+  public void visitNode(UVariable node) {
+    /*if (!node.origin.equals(mem.getVariableOrigin(node.representation))) {
       node.origin += ".";
       out.append(node.origin + node.representation);
       return;
-    }
+    }*/
     out.append(node.representation);
   }
 
   @Override
-  public void visitNode(UWildcard  node) {
+  public void visitNode(UWildcard node) {
     out.append("this.wildcard");   // wildcard is a local variable in resulting class
   }
 
   @Override
-  public void visitNode(UnaryBoolean  node) {
+  public void visitNode(UnaryBoolean node) {
     out.append(node.content);
   }
 }

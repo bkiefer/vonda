@@ -18,7 +18,6 @@ public class StatAbstractBlock implements RTStatement, RudiTree {
 
   List<RudiTree> statblock;
   final boolean braces;
-  int environmentPosition;
 
   public StatAbstractBlock(List<RudiTree> statblock, boolean braces) {
     this.statblock = statblock;

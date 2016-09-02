@@ -128,12 +128,6 @@ public class Mem {
     return actual.get(variable);*/
   }
 
-  public void addNextEnvironment(Environment env) {
-    depthAtm = env.getDepth();
-    positionAtm++;
-    environment.add(env);
-  }
-
   /**
    * adds a new Environment with the given depth
    *
@@ -146,9 +140,9 @@ public class Mem {
     return ++positionAtm;
   }
 
-  public void goToEnvironmentNumber(int number) {
-    positionAtm = number;
-    depthAtm = environment.get(number).getDepth();
+  public void enterNextEnvironment() {
+    positionAtm++;
+    depthAtm = environment.get(positionAtm).getDepth();
   }
 
   /*

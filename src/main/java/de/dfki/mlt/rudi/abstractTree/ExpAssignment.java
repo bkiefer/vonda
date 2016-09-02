@@ -6,6 +6,7 @@
 package de.dfki.mlt.rudi.abstractTree;
 
 import de.dfki.mlt.rudi.Mem;
+import de.dfki.mlt.rudi.RudimantCompiler;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -35,7 +36,7 @@ public class ExpAssignment implements RudiTree, RTExpression {
 //                context.getCurrentRule());
   }
 
-  public void testType(Writer out) throws IOException {
+  public void testType(RudimantCompiler out) {
     // we don't know anything about an actualType, so let's look it up
     this.typeRight = ((RTExpression) right).getType();
     try {
@@ -48,7 +49,7 @@ public class ExpAssignment implements RudiTree, RTExpression {
     }
     if (!(actualType.equals(typeRight))) {
       out.append("// an Exception occurred; closing the writer here\n");
-      out.close();
+      out.flush();
       throw new UnsupportedOperationException("The assignment of the variable "
               + ((UVariable) left).toString() + "\t in rule " + position
               + " has type mismatches:\n\t\t" + actualType
@@ -65,13 +66,13 @@ public class ExpAssignment implements RudiTree, RTExpression {
     this.position = position;
   }
 
-  public void testTypeDecl(String actualType, Writer out) throws IOException {
+  public void testTypeDecl(RudimantCompiler out) {
     // an actualType exists, so we assume left is supposed to be actualType
     this.typeRight = ((RTExpression) right).getType();
     try {
-      if (!(actualType.equals(((RTExpression) right).getType()))) {
+      if (!(actualType.equals(typeRight))) {
       out.append("// an Exception occurred; closing the writer here\n");
-        out.close();
+        out.flush();
         throw new UnsupportedOperationException("The declaration of the variable "
                 + ((UVariable) left).toString() + " in rule " + position
                 + " has type mismatches:\n\t\t" + actualType
@@ -83,18 +84,12 @@ public class ExpAssignment implements RudiTree, RTExpression {
       }
     } catch (NullPointerException e) {
       out.append("// an Exception occurred; closing the writer here\n");
-      out.close();
+      out.flush();
       throw new UnsupportedOperationException("The declaration of the variable "
               + ((UVariable) left).toString() + "\t in rule " + position
-              + " has type mismatches:\n\t\t" + Mem.getVariableType(left.toString())
+              + " has type mismatches:\n\t\t" + out.getMem().getVariableType(left.toString())
               + " does not match " + ((RTExpression) right).getType());
     }
-  }
-
-  @Override
-  public void testType() {
-    // see generate
-
   }
 
 //  private void specialTest(Writer out){
