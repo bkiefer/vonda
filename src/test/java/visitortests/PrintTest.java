@@ -57,7 +57,7 @@ public class PrintTest {
   @Test
   public void ImportTest() throws Exception {
     String[] strings = new String[]{"src/test/resources/test_import/Test.rudi",
-      "src/test/testfiles"};
+      "target/test/testfiles"};
     GrammarMain.main(strings);
     //assertFail(GrammarMain.main(strings2));
   }

@@ -68,7 +68,7 @@ public class RudimantCompiler {
     outputDirectory = outputdir;
 
     className = getClassName(topLevel);
-    subPackage.add(className);
+    // subPackage.add(className);
 
     processForReal(outputdir);
   }
@@ -83,7 +83,7 @@ public class RudimantCompiler {
 
     String[] elements = importSpec.split("\\.");
     subPackage = parent.subPackage;
-    subPackage.add(parent.className);
+    // subPackage.add(parent.className);
     subPackage.addAll(Arrays.asList(elements));
 
     className = subPackage.get(subPackage.size() - 1);
