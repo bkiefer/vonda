@@ -64,10 +64,11 @@ public class GenerationVisitor implements RudiVisitor {
     if (node.declaration) {
       out.append(node.actualType + " " + ((UVariable) node.left).toString() + " = ");
       node.right.visit(this);
-      return;
+    } else {
+      out.append(((UVariable) node.left).toString() + " = ");
+      node.right.visit(this);
     }
-    out.append(((UVariable) node.left).toString() + " = ");
-    node.right.visit(this);
+    out.append(";");
   }
 
   @Override
@@ -124,13 +125,11 @@ public class GenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-      {
-        if (mem.existsVariable(parts[1])) {
+       if (mem.existsVariable(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
-      }
     }
     out.append(")\")");
   }
@@ -156,18 +155,34 @@ public class GenerationVisitor implements RudiVisitor {
     //boolean foundClassName = false;
     //mem.enterNextEnvironment();
     out.append("public class " + node.classname + "{\n"
-            + "\tprivate int returnTo = 0;\n"
-            + "\tpublic void process(){");
+            + "\tprivate int returnTo = 0;\n");
     for (RudiTree r : node.rules) {
-      // Don't forget to insert text after class name as specified in context
-      // Edit: no one wants to use this anyway
-      /*if (r instanceof ACommentBlock && foundClassName == false) {
-        if (((ACommentBlock) r).containsClassName()) {
-          ((ACommentBlock) r).setPrintClassName();
-          foundClassName = true;
+      if (r instanceof StatAbstractBlock) {
+        for (RudiTree e : ((StatAbstractBlock) r).statblock) {
+          if (e instanceof ExpAbstractWrapper && ((ExpAbstractWrapper) e).exp instanceof ExpAbstractWrapper
+                  && ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp instanceof ExpAssignment) {
+            // then it is a class attribute and we want it to be defined outside
+            // of the process method
+            ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp.visit(this);
+          }
         }
-      }*/
-      r.visit(this);
+      }
+    }
+    out.append("\tpublic void process(){\n");
+    // Now, only get those statements that are not assignments of class attributes
+    for (RudiTree r : node.rules) {
+      if (r instanceof StatAbstractBlock) {
+        for (RudiTree e : ((StatAbstractBlock) r).statblock) {
+          if (e instanceof ExpAbstractWrapper && ((ExpAbstractWrapper) e).exp instanceof ExpAbstractWrapper
+                  && ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp instanceof ExpAssignment) {
+            continue;
+          } else {
+            e.visit(this);
+          }
+        }
+      } else {
+        r.visit(this);
+      }
     }
     out.append("}\n}");
     out.flush();
