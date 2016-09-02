@@ -171,6 +171,7 @@ public class GenerationVisitor implements RudiVisitor {
     out.append("  }\n}");
     out.flush();
     mem.leaveEnvironment();
+    mem.goBackToBeginning();
   }
 
   @Override

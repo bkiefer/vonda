@@ -5,39 +5,8 @@
  */
 package de.dfki.mlt.rudi;
 
-import de.dfki.mlt.rudi.abstractTree.StatPropose;
-import de.dfki.mlt.rudi.abstractTree.StatIf;
-import de.dfki.mlt.rudi.abstractTree.StatVarDef;
-import de.dfki.mlt.rudi.abstractTree.StatWhile;
-import de.dfki.mlt.rudi.abstractTree.StatFor1;
-import de.dfki.mlt.rudi.abstractTree.StatFunDef;
-import de.dfki.mlt.rudi.abstractTree.StatSetOperation;
-import de.dfki.mlt.rudi.abstractTree.StatFor2;
-import de.dfki.mlt.rudi.abstractTree.StatFor3;
-import de.dfki.mlt.rudi.abstractTree.StatReturn;
-import de.dfki.mlt.rudi.abstractTree.StatDoWhile;
-import de.dfki.mlt.rudi.abstractTree.StatTimeout;
-import de.dfki.mlt.rudi.abstractTree.StatAbstractBlock;
-import de.dfki.mlt.rudi.abstractTree.UFieldAccess;
-import de.dfki.mlt.rudi.abstractTree.UCommentBlock;
-import de.dfki.mlt.rudi.abstractTree.UnaryBoolean;
-import de.dfki.mlt.rudi.abstractTree.UNull;
-import de.dfki.mlt.rudi.abstractTree.UComment;
-import de.dfki.mlt.rudi.abstractTree.UString;
-import de.dfki.mlt.rudi.abstractTree.UWildcard;
-import de.dfki.mlt.rudi.abstractTree.UFuncCall;
-import de.dfki.mlt.rudi.abstractTree.UNumber;
-import de.dfki.mlt.rudi.abstractTree.UCharacter;
-import de.dfki.mlt.rudi.abstractTree.UVariable;
-import de.dfki.mlt.rudi.abstractTree.ExpDialogueAct;
-import de.dfki.mlt.rudi.abstractTree.ExpAbstractWrapper;
-import de.dfki.mlt.rudi.abstractTree.ExpIf;
-import de.dfki.mlt.rudi.abstractTree.ExpBoolean;
-import de.dfki.mlt.rudi.abstractTree.ExpAssignment;
-import de.dfki.mlt.rudi.abstractTree.ExpArithmetic;
-import de.dfki.mlt.rudi.abstractTree.ExpLambda;
-import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.mlt.rudi.abstractTree.*;
+import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
 import java.util.ArrayList;
@@ -390,7 +359,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // ((DEC_VAR | VARIABLE)? VARIABLE | field_access) ASSIGN exp
     if (ctx.getChildCount() == 3) { // no declaration
       RudiTree left = this.visit(ctx.getChild(0));
-      return new ExpAssignment(((RTExpression) left).getType(), this.visit(ctx.getChild(0)),
+      return new ExpAssignment(this.visit(ctx.getChild(0)),
               (RTExpression) this.visit(ctx.getChild(2)), false, currentRule);
     } else {  // declaration
       if (ctx.getChild(0).getText().equals("var")) {

@@ -68,7 +68,9 @@ public class GrammarMain {
           rc.setTypeCheck(false);
           break;
         default:
-          System.out.println(help);
+          if (arg.startsWith("-")) {
+            System.out.println(help);
+          }
       }
     }
 

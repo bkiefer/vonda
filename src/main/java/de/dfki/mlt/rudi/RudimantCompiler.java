@@ -17,6 +17,7 @@ import de.dfki.mlt.rudi.abstractTree.GenerationVisitor;
 import de.dfki.mlt.rudi.abstractTree.GrammarFile;
 import de.dfki.mlt.rudi.abstractTree.ReturnVisitor;
 import de.dfki.mlt.rudi.abstractTree.RudiTree;
+import de.dfki.mlt.rudi.abstractTree.TestTypeVisitor;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 
@@ -204,18 +205,23 @@ public class RudimantCompiler {
 
     // walk the rudi tree
     // look for returns
-    rm = new ReturnManagement(className);
-    ReturnVisitor vret = new ReturnVisitor(rm);
-    vret.visitNode(myTree);
+    //rm = new ReturnManagement(className);
+    //ReturnVisitor vret = new ReturnVisitor(rm);
+    //vret.visitNode(myTree);
+
+    // do the type checking
+    TestTypeVisitor ttv = new TestTypeVisitor(this);
+    ttv.visitNode(myTree);
+
     // generate the output
     GenerationVisitor gv = new GenerationVisitor(this);
 
     if (myTree instanceof GrammarFile) {
-      try {
+//       try {
         gv.visitNode(myTree);
-      } catch (RuntimeException e) {
-        throw new IOException(e);
-      }
+//      } catch (RuntimeException e) {
+//        throw new IOException(e);
+//      }
     } else {
       throw new UnsupportedOperationException("There is sth going very,very wrong...");
     }

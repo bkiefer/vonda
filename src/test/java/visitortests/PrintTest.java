@@ -10,7 +10,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import java.lang.UnsupportedOperationException;
 
 import de.dfki.mlt.rudi.GrammarMain;
 
@@ -48,12 +47,12 @@ public class PrintTest {
     GrammarMain.main(strings);
   }*/
 
-  @Test(expected = UnsupportedOperationException.class)
+ /* @Test(expected = UnsupportedOperationException.class)
   public void ImportFailTest() throws Exception {
     String[] strings2 = new String[]{"src/test/resources/test_import/Test2.rudi",
       "src/test/testfiles"};
     GrammarMain.main(strings2);
-  }
+  }*/
 
   @Test
   public void ImportTest() throws Exception {

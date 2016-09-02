@@ -49,11 +49,18 @@ public class TestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(ExpAssignment node) {
     // TODO: think about this, it doesn't seem to make a lot of sense
+    System.out.println("Testing an assignment");
+    node.right.visit(this);
     if (node.declaration) {
       mem.addElement(((UVariable) node.left).toString(),
               node.actualType, node.position);
+      // do not forget to tell the variable what type we find out it is
+      ((UVariable)node.left).type = node.actualType;
       node.testTypeDecl(rudi);
     } else {
+    // we have to visit the left part, too, because if this is no declaration
+    // that visit method will find out the variable type for us
+    node.left.visit(this);
       node.testType(rudi);
     }
   }
@@ -101,6 +108,7 @@ public class TestTypeVisitor implements RudiVisitor {
       t.visit(this);
     }
     mem.leaveEnvironment();
+    mem.goBackToBeginning();
   }
 
   @Override

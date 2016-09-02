@@ -145,16 +145,14 @@ public class Mem {
   }
 
   public void enterNextEnvironment() {
+    depthAtm = getCurrentDepth() + 1;
     positionAtm++;
-    depthAtm = environment.get(positionAtm).getDepth();
   }
 
-  /*
-  public Environment getFollowingEnvironment() {
-    this.depthAtm = this.environment.get(++this.positionAtm).getDepth();
-    return this.environment.get(this.positionAtm);
+  public void goBackToBeginning(){
+    positionAtm = -1;
   }
-   */
+
   public void leaveEnvironment() {
     // restore the values in actual that we changed
     environment.get(positionAtm).restoreOld(this);
