@@ -278,7 +278,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitWhile_statement(RobotGrammarParser.While_statementContext ctx) {
     // WHILE LPAR boolean_exp RPAR loop_statement_block
     if (ctx.getChildCount() == 5) {
-      return new StatWhile(this.visit(ctx.getChild(2)),
+      return new StatWhile((RTExpression)this.visit(ctx.getChild(2)),
               (StatAbstractBlock) this.visit(ctx.getChild(4)), currentRule);
     } // DO loop_statement_block WHILE LPAR boolean_exp RPAR
     else {
