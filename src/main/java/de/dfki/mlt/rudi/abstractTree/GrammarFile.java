@@ -32,6 +32,10 @@ public class GrammarFile implements RudiTree {
     this.rules = rules;
   }
 
+  public void setClassName(String name){
+    this.classname = name;
+  }
+
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);

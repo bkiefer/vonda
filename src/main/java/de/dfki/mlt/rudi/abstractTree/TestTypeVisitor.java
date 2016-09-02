@@ -107,7 +107,8 @@ public class TestTypeVisitor implements RudiVisitor {
     for (RudiTree t : node.rules) {
       t.visit(this);
     }
-    mem.leaveEnvironment();
+    // do not leave the environment, we are still in it!
+    //mem.leaveEnvironment();
     mem.goBackToBeginning();
   }
 

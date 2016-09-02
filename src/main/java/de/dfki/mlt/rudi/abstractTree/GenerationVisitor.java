@@ -154,9 +154,10 @@ public class GenerationVisitor implements RudiVisitor {
     //let the return guy do its work
     //returnManaging();
     //boolean foundClassName = false;
-    mem.enterNextEnvironment();
+    //mem.enterNextEnvironment();
     out.append("public class " + node.classname + "{\n"
-            + "\tprivate int returnTo = 0;");
+            + "\tprivate int returnTo = 0;\n"
+            + "\tpublic void process(){");
     for (RudiTree r : node.rules) {
       // Don't forget to insert text after class name as specified in context
       // Edit: no one wants to use this anyway
@@ -168,9 +169,9 @@ public class GenerationVisitor implements RudiVisitor {
       }*/
       r.visit(this);
     }
-    out.append("  }\n}");
+    out.append("}\n}");
     out.flush();
-    mem.leaveEnvironment();
+    // mem.leaveEnvironment();
     mem.goBackToBeginning();
   }
 

@@ -12,8 +12,8 @@ import java.io.Writer;
 
 /**
  * this is either a variable declaration, or an assignment of a variable to a
- * new value.
- * Most of the type checking rudimant currently does happens here.
+ * new value. Most of the type checking rudimant currently does happens here.
+ *
  * @author Anna Welker
  */
 public class ExpAssignment implements RudiTree, RTExpression {
@@ -47,13 +47,21 @@ public class ExpAssignment implements RudiTree, RTExpression {
       actualType = typeRight;
       return;
     }
-    if (!(actualType.equals(typeRight))) {
+    try {
+      if (!(actualType.equals(typeRight))) {
+        out.append("// an Exception occurred; closing the writer here\n");
+        out.flush();
+        throw new UnsupportedOperationException("The assignment of the variable "
+                + ((UVariable) left).toString() + "\t in rule " + position
+                + " has type mismatches:\n\t\t" + actualType
+                + " does not match " + typeRight);
+      }
+    } catch (NullPointerException e) {
       out.append("// an Exception occurred; closing the writer here\n");
       out.flush();
       throw new UnsupportedOperationException("The assignment of the variable "
               + ((UVariable) left).toString() + "\t in rule " + position
-              + " has type mismatches:\n\t\t" + actualType
-              + " does not match " + typeRight);
+              + " cannot work; it was not defined!!");
     }
   }
 
@@ -71,7 +79,7 @@ public class ExpAssignment implements RudiTree, RTExpression {
     this.typeRight = ((RTExpression) right).getType();
     try {
       if (!(actualType.equals(typeRight))) {
-      out.append("// an Exception occurred; closing the writer here\n");
+        out.append("// an Exception occurred; closing the writer here\n");
         out.flush();
         throw new UnsupportedOperationException("The declaration of the variable "
                 + ((UVariable) left).toString() + " in rule " + position
@@ -102,7 +110,6 @@ public class ExpAssignment implements RudiTree, RTExpression {
 //              + " does not match " + ((RTExpression) right).getType());
 //    }
 //  }
-
   @Override
   public String getType() {
     return this.actualType;
