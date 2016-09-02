@@ -5,8 +5,6 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import java.io.Writer;
-
 /**
  * represents a single grammar rule located in the .rudi file; each rule
  * will be transformed in a separate .java class (i.e., a separate .java file)
@@ -17,16 +15,23 @@ public class GrammarRule implements RudiTree{
   // label comment if_statement
 
   String label;
-  String classname;
   UCommentBlock comment;
   StatIf ifstat;
-  static Writer out;
+  // a help to mark this rule for return managing
+  int number;
 
   public GrammarRule(String label, UCommentBlock comment,StatIf ifstat) {
     this.label = label;
     this.ifstat = ifstat;
     this.comment = comment;
-    this.classname = label.substring(0, 1).toUpperCase() + label.substring(1);
+  }
+
+  /**
+   * this is the number-t subrule of the superrule
+   * @param number
+   */
+  void setNumber(int number){
+    this.number = number;
   }
 
   @Override

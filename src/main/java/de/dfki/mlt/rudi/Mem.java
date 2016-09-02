@@ -17,6 +17,10 @@ import java.util.List;
  */
 public class Mem {
 
+  // to remember those labels that get an own method
+  private int ruleNumber;
+  private HashMap<String, Integer> ruleNums = new HashMap<>();
+
   private List<Environment> environment = new ArrayList<>();
   private HashMap<String, String> actualValues = new HashMap<>();
   private HashMap<String, String> variableOrigin = new HashMap<>();
@@ -176,5 +180,26 @@ public class Mem {
 
   public boolean isRdf(String variable) {
     return rdfs.contains(variable);
+  }
+
+  public void addRule(String rule){
+    if(this.depthAtm == 0){
+      this.ruleNumber = 1;
+    } else {
+      this.ruleNumber *= 2;
+    }
+    this.ruleNums.put(rule, ruleNumber);
+  }
+
+  public boolean isTopLevel(String rule){
+    return ruleNums.get(rule) == 1;
+  }
+
+  public int getRuleNumber(String rule){
+    return ruleNums.get(rule);
+  }
+
+  public boolean isExistingRule(String rule){
+    return ruleNums.containsKey(rule);
   }
 }

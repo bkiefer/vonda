@@ -23,12 +23,9 @@ public class StatReturn implements RTStatement, RudiTree {
   }
 
   public StatReturn(RudiTree exp, String lit) {
-    if (ReturnManagement.isExistingRule(lit)) {
-      ReturnManagement.foundReturnTo(lit);
-    } else {
-      this.toRet = exp;
-      this.lit = lit;
-    }
+
+    this.toRet = exp;
+    this.lit = lit;
   }
 
   @Override

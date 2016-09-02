@@ -9,8 +9,6 @@ import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.mlt.rudi.Mem;
 import java.util.ArrayList;
 import de.dfki.lt.hfc.db.rdfProxy.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.thrift.TException;
 
 /**

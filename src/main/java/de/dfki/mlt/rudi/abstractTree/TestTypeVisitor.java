@@ -25,7 +25,7 @@ public class TestTypeVisitor implements RudiVisitor {
 
   public TestTypeVisitor(RudimantCompiler rudi) {
     this.rudi = rudi;
-    this.mem = mem;
+    this.mem = rudi.getMem();
   }
 
   @Override
@@ -105,6 +105,8 @@ public class TestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(GrammarRule node) {
+    mem.addRule(node.label);
+    node.setNumber(mem.getRuleNumber(node.label));
     mem.addAndEnterNewEnvironment();
     node.ifstat.visit(this);
     mem.leaveEnvironment();

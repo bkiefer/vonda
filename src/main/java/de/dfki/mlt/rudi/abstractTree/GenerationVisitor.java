@@ -9,7 +9,10 @@ import de.dfki.mlt.rudi.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * this visitor generates the java code
@@ -153,7 +156,7 @@ public class GenerationVisitor implements RudiVisitor {
     //boolean foundClassName = false;
     mem.enterNextEnvironment();
     out.append("public class " + node.classname + "{\n"
-            + "  public void process(){");
+            + "\tprivate int returnTo = 0;");
     for (RudiTree r : node.rules) {
       // Don't forget to insert text after class name as specified in context
       // Edit: no one wants to use this anyway
@@ -172,19 +175,20 @@ public class GenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(GrammarRule node) {
-    String returnType = "void";
-    if (ReturnManagement.shouldAddReturnto(node.label)) {
-      returnType = "String";
+    if (mem.isTopLevel(node.label)) {
+      // this is a toplevel rule and will be converted to a method
+      out.append("public void " + node.label + "() {\n");
+      mem.enterNextEnvironment();
+      node.comment.visit(this);
+      node.ifstat.visit(this);
+      mem.leaveEnvironment();
+    } else {
+      // this is a sublevel rule and will get an if to determine whether it should be executed
+      out.append("if (returnTo & " + node.number + ") {\n");
+      node.comment.visit(this);
+      node.ifstat.visit(this);
     }
-    out = new BufferedWriter(new OutputStreamWriter(
-            new FileOutputStream(out.getOutputDirectory() + node.classname + ".java")));
-    mem.enterNextEnvironment();
-    out.append("public class " + node.classname + "{\n"
-            + "  public " + returnType + "process(){");
-    node.comment.visit(this);
-    node.ifstat.visit(this);
-    out.append("\n\t return;\n  }\n}");
-    mem.leaveEnvironment();
+    out.append("}\n");
   }
 
   @Override
@@ -286,10 +290,12 @@ public class GenerationVisitor implements RudiVisitor {
   public void visitNode(StatImport node) {
     // TODO: memory creation should be handled in testTypeVisitor...
     System.out.println("Processing import " + node.text);
-    mem.addAndEnterNewEnvironment(mem.getCurrentDepth() + 1);
     out.append(node.text + ".process()");
-    out.processFile(new File(out.getInputDirectory() + node.text + ".rudi"));
-    mem.leaveEnvironment();
+    try {
+      RudimantCompiler.getEmbedded(out).process(node.text);
+    } catch (IOException ex) {
+      throw new RuntimeException(ex);
+    }
   }
 
   @Override
@@ -324,6 +330,10 @@ public class GenerationVisitor implements RudiVisitor {
   public void visitNode(StatReturn node) {
     if (node.toRet == null) {
       out.append("return;\n");
+      return;
+    } else if (mem.isExistingRule(node.lit)) {
+      out.append("returnTo | " + mem.getRuleNumber(node.lit) + ";\nreturn;\n");
+      return;
     }
     out.append("return ");
     node.toRet.visit(this);

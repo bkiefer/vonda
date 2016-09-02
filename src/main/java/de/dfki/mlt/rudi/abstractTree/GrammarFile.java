@@ -32,13 +32,6 @@ public class GrammarFile implements RudiTree {
     this.rules = rules;
   }
 
-  public void print(String classname) throws FileNotFoundException, IOException {
-    this.classname = classname;
-    out = new BufferedWriter(new OutputStreamWriter(
-            new FileOutputStream(GrammarMain.getOutputDirectory() + classname + ".java")));
-    this.generate(out);
-  }
-
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
