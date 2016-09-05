@@ -22,6 +22,12 @@ public class StatReturn implements RTStatement, RudiTree {
     this.toRet = null;
   }
 
+  /**
+   * give me the expression after 'return' as well as the String it is, so if this
+   * is a return to a rule I can transform accordingly
+   * @param exp
+   * @param lit
+   */
   public StatReturn(RudiTree exp, String lit) {
     this.toRet = exp;
     this.lit = lit;

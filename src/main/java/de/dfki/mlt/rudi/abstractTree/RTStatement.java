@@ -9,6 +9,6 @@ package de.dfki.mlt.rudi.abstractTree;
  * this is a marker for statement nodes
  * @author Anna Welker
  */
-public interface RTStatement {
+public interface RTStatement extends RudiTree{
 
 }

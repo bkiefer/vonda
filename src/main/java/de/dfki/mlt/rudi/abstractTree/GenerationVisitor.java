@@ -68,7 +68,7 @@ public class GenerationVisitor implements RudiVisitor {
     node.left.visit(this);
     out.append(" = ");
     node.right.visit(this);
-    out.append(";");
+    //out.append(";");
   }
 
   @Override
@@ -125,11 +125,13 @@ public class GenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-       if (mem.existsVariable(parts[1])) {
+      {
+        if (mem.existsVariable(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
+      }
     }
     out.append(")\")");
   }
@@ -230,7 +232,6 @@ public class GenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatAbstractBlock node) {
-    String stats = "";
     if (node.braces) {
       // when entering a statement block, we need to create a new local environment
       mem.enterNextEnvironment();
@@ -365,11 +366,12 @@ public class GenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatReturn node) {
-    if (node.toRet == null) {
-      out.append("return;\n");
+    if (out.rm.isExistingRule(node.lit)) {
+      out.append("returnTo = returnTo | return_" + node.lit + ";\n");
       return;
-    } else if (out.rm.isExistingRule(node.lit)) {
-      out.append("returnTo | return_" + node.lit + ";\nreturn;\n");
+
+    } else if (node.toRet == null) {
+      out.append("return;\n");
       return;
     }
     out.append("return ");

@@ -12,4 +12,19 @@ LabelA:
             return LabelA;
           }
       }
+    LabelD:
+      //if(d.equals("adf"){
+      if(true){
+        int s = 0;
+      } else {
+        LabelE:
+          if(true){
+            // blablabla
+            LabelF:
+              if(false){
+                return LabelD;
+              }
+          }
+      }
+      return LabelA;
   }

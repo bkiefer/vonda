@@ -13,16 +13,13 @@ import java.util.List;
  *
  * @author Anna Welker
  */
-public class UCommentBlock extends RTLeaf implements RTStatement {
+public class UCommentBlock implements RTStatement {
 
   List<UComment> comments;
 
   public UCommentBlock(List<UComment> comments) {
     this.comments = comments;
   }
-
-  @Override
-  public String getType() { return null; }
 
   @Override
   public void visit(RudiVisitor v) {
