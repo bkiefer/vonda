@@ -125,11 +125,13 @@ public class GenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-       if (mem.existsVariable(parts[1])) {
+      {
+        if (mem.existsVariable(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
+      }
     }
     out.append(")\")");
   }
@@ -156,6 +158,11 @@ public class GenerationVisitor implements RudiVisitor {
     //mem.enterNextEnvironment();
     out.append("public class " + node.classname + "{\n"
             + "\tprivate int returnTo = 0;\n");
+    // initialize all return markers
+    for (String k : out.rm.getMarkers()) {
+      out.append("return_" + k + " = " + out.rm.getMarker(k) + ";\n");
+    }
+    // initialize all class attributes before the main process method
     for (RudiTree r : node.rules) {
       if (r instanceof StatAbstractBlock) {
         for (RudiTree e : ((StatAbstractBlock) r).statblock) {
@@ -201,7 +208,17 @@ public class GenerationVisitor implements RudiVisitor {
       mem.leaveEnvironment();
     } else {
       // this is a sublevel rule and will get an if to determine whether it should be executed
-      out.append("if (returnTo & " + node.number + ") {\n");
+      out.append("if ((returnTo | (");
+      int i = 0;
+      for (String r : out.rm.shouldAddReturnto(node.label)) {
+        if (i != 0) {
+          out.append(" | return_" + r);
+        } else {
+          out.append("return_" + r);
+        }
+        i++;
+      }
+      out.append(")) == 0) {\n");
       node.comment.visit(this);
       node.ifstat.visit(this);
     }
@@ -348,8 +365,8 @@ public class GenerationVisitor implements RudiVisitor {
     if (node.toRet == null) {
       out.append("return;\n");
       return;
-    } else if (mem.isExistingRule(node.lit)) {
-      out.append("returnTo | " + mem.getRuleNumber(node.lit) + ";\nreturn;\n");
+    } else if (out.rm.isExistingRule(node.lit)) {
+      out.append("returnTo | return_" + node.lit + ";\nreturn;\n");
       return;
     }
     out.append("return ");

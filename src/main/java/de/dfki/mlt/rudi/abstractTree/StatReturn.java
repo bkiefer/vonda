@@ -23,7 +23,6 @@ public class StatReturn implements RTStatement, RudiTree {
   }
 
   public StatReturn(RudiTree exp, String lit) {
-
     this.toRet = exp;
     this.lit = lit;
   }

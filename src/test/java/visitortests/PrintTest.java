@@ -46,12 +46,12 @@ public class PrintTest {
       "src/test/testfiles", "-log"};
     GrammarMain.main(strings);
   }*/
-//  @Test(expected = UnsupportedOperationException.class)
-//  public void ImportFailTest() throws Exception {
-//    String[] strings2 = new String[]{"src/test/resources/test_import/Test2.rudi",
-//      "src/test/testfiles"};
-//    GrammarMain.main(strings2);
-//  }
+  @Test(expected = UnsupportedOperationException.class)
+  public void ImportFailTest() throws Exception {
+    String[] strings2 = new String[]{"src/test/resources/test_import/Test2.rudi",
+      "src/test/testfiles"};
+    GrammarMain.main(strings2);
+  }
 
   @Test
   public void ImportTest() throws Exception {
@@ -60,6 +60,22 @@ public class PrintTest {
     GrammarMain.main(strings);
     //assertFail(GrammarMain.main(strings2));
   }
+//  @Test
+//  public void howDoesReturnWorkTest() {
+//
+//    int test = 0;
+//    int marker = 0 | 8;
+//    test = marker | test;
+//    if ((test | 0) == 0) {
+//      System.out.println("here");
+//    }
+//    if ((test | marker) == 0) {
+//      System.out.println("there");
+//    } else {
+//      System.out.println("marker set");
+//    }
+//
+//  }
 
   /*
     @Test

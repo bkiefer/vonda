@@ -7,6 +7,7 @@ package de.dfki.mlt.rudi;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -15,13 +16,23 @@ import java.util.HashSet;
 public class ReturnManagement {
 
   private HashMap<String, String> findPredecessor;
-  private HashMap<String, Boolean> hasReturn;
-  private String inRule;
 
+  // remember, where this rule (or a neighbour or sub rule) wants to go
+  private HashMap<String, HashSet<String>> hasReturnTo;
+  private String inRule;
+  private String neighbour;
+  // on the toplevel methods, we don't need to set a predecessor and we can start
+  // counting rule numbers new, so remember where we are
+  private int depth = 0;
+
+  // every rule that we want to return to sometime gets a return marker
+  // TODO: is it true that we never return to a rule that is not a superrule??
+  private HashMap<String, Integer> markers;
 
   public ReturnManagement(String input) {
     findPredecessor = new HashMap<>();
-    hasReturn = new HashMap<>();
+    hasReturnTo = new HashMap<>();
+    markers = new HashMap<>();
     inRule = input;
   }
 
@@ -31,8 +42,18 @@ public class ReturnManagement {
    * @param newRule the rule (LABEL) we go to
    */
   public void enterRule(String newRule) {
-    findPredecessor.put(newRule, inRule);
-    hasReturn.put(newRule, Boolean.FALSE);
+    if (depth > 0) {
+      findPredecessor.put(newRule, inRule);
+    }
+    depth++;
+    hasReturnTo.put(newRule, new HashSet<String>());
+    if (findPredecessor.get(neighbour).equals(inRule)) {
+      // then we are on the same level as that previous rule, and we might want
+      // to jump over this with a return statement from there
+      for (String r : hasReturnTo.get(neighbour)) {
+        hasReturnTo.get(newRule).add(r);
+      }
+    }
     inRule = newRule;
   }
 
@@ -40,16 +61,26 @@ public class ReturnManagement {
    * tell the returnMem that we leave the rule we are currently in
    */
   public void leaveRule() {
+    depth--;
+    neighbour = inRule;
     inRule = findPredecessor.get(inRule);
   }
 
   /**
    * is this an existing rule?
+   *
    * @param r the label of the rule
    * @return yes or no
    */
-  public boolean isExistingRule(String r){
-    return hasReturn.containsKey(r);
+  public boolean isExistingRule(String r) {
+    return hasReturnTo.containsKey(r);
+  }
+
+  public boolean isToplevel(String r) {
+    if (isExistingRule(r)) {
+      return this.findPredecessor.get(r) == null;
+    }
+    return false;
   }
 
   /**
@@ -59,25 +90,39 @@ public class ReturnManagement {
    * @param to the LABEL we want to return to
    */
   public void foundReturnTo(String to) {
-    hasReturn.put(inRule, Boolean.TRUE);
+    // we give this rule a marker of the current depth, if it is not already marked
+    if(!markers.containsKey(to)){
+      markers.put(to, depth + 1);
+    }
+    hasReturnTo.get(inRule).add(to);
     String r = inRule;
     while (true) {
       r = findPredecessor.get(r);
       if (r == null || r.equals(to)) {
         break;
       }
-      hasReturn.put(r, Boolean.TRUE);
+      hasReturnTo.get(r).add(to);
     }
   }
 
+  public Set<String> getMarkers(){
+    return this.markers.keySet();
+  }
+
+  public int getMarker(String rule){
+    return markers.get(rule);
+  }
+
   /**
-   * tells whether this rule has a return statement (= whether it is necessary to look up whether we should jump higher in
-   * the hierarchy)
+   * tells to which rule the lower rules might want to return
    *
    * @param rule the rule (LABEL) we are in
    * @return yes or no
    */
-  public boolean shouldAddReturnto(String rule) {
-    return hasReturn.get(rule);
+  public HashSet<String> shouldAddReturnto(String rule) {
+    if (isExistingRule(rule)) {
+      return hasReturnTo.get(rule);
+    }
+    return null;
   }
 }
