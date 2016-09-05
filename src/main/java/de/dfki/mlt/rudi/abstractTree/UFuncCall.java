@@ -5,15 +5,12 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import de.dfki.mlt.rudi.Mem;
 import java.util.List;
-
-import java.util.ArrayList;
 
 /**
  * this is a call to a function; as field accesses are considered to be retrieving
  * sth from the ontology, we define that there will never be functions used in
- * a .rudi file that would need to be accessed via another class
+ * a .rudi file that would need to be accessed via multiple other classes
  *
  * @author Anna Welker
  */

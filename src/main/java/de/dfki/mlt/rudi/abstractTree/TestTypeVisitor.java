@@ -88,6 +88,11 @@ public class TestTypeVisitor implements RudiVisitor {
   }
 
   @Override
+  public void visitNode(ExpFuncOnObject node) {
+    node.funccall.visit(this);
+  }
+
+  @Override
   public void visitNode(ExpIf node) {
     node.boolexp.visit(this);
     node.thenexp.visit(this);

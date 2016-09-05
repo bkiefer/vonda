@@ -6,13 +6,7 @@
 package de.dfki.mlt.rudi.abstractTree;
 
 import de.dfki.mlt.rudi.*;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * this visitor generates the java code
@@ -138,6 +132,13 @@ public class GenerationVisitor implements RudiVisitor {
   }
 
   @Override
+  public void visitNode(ExpFuncOnObject node) {
+    node.on.visit(this);
+    out.append(".");
+    node.funccall.visit(this);
+  }
+
+  @Override
   public void visitNode(ExpIf node) {
     node.boolexp.visit(this);
     out.append(" ? ");
@@ -219,6 +220,7 @@ public class GenerationVisitor implements RudiVisitor {
       mem.leaveEnvironment();
     } else {
       // this is a sublevel rule and will get an if to determine whether it should be executed
+      out.append("//Rule " + node.label + "\n");
       out.append("if ((returnTo | (");
       int i = 0;
       for (String r : out.rm.shouldAddReturnto(node.label)) {

@@ -50,6 +50,11 @@ public class ReturnVisitor implements RudiVisitor {
   }
 
   @Override
+  public void visitNode(ExpFuncOnObject node) {
+    
+  }
+
+  @Override
   public void visitNode(ExpIf node ) {
 
   }

@@ -1,4 +1,6 @@
-// this is a file o test whether the return to label - functionality works as it is supposed to
+// this is a file to test whether the return to label - functionality works as it is supposed to
+
+String equals(String b);
 
 LabelA:
   if (true){
@@ -13,8 +15,8 @@ LabelA:
           }
       }
     LabelD:
-      //if(d.equals("adf"){
-      if(true){
+      if(d.equals("adf")){
+      //if(true){
         int s = 0;
       } else {
         LabelE:

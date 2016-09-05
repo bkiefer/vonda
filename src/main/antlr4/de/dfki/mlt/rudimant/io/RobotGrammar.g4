@@ -105,14 +105,13 @@ function_call
   : VARIABLE LPAR ( exp ( COMMA exp )* )? RPAR
   ;
 
+funccall_on_object
+  : VARIABLE DOT function_call
+  ;
+
 field_access
-  : ( VARIABLE
-    | function_call
-    )
-    ( ( DOT VARIABLE
-      | LPAR? function_call RPAR?
-      )
-    )+
+  : VARIABLE
+    ( ( DOT VARIABLE ) )+
   ;
 
 exp
@@ -121,6 +120,7 @@ exp
   | boolean_exp
   | NOT boolean_exp
   | field_access
+  | funccall_on_object
   | assignment
   | if_exp
   | arithmetic
@@ -144,6 +144,7 @@ simple_exp
   | function_call
   | literal_or_graph_exp
   | field_access
+  | funccall_on_object
   | assignment
   | ( STRING
     | WILDCARD

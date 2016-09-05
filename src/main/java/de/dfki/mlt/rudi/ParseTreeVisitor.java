@@ -501,6 +501,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   }
 
   @Override
+  public RudiTree visitFunccall_on_object(RobotGrammarParser.Funccall_on_objectContext ctx) {
+    // VARIABLE DOT function_call
+    //throw new UnsupportedOperationException("Yay, I found a function: ");
+    return new ExpFuncOnObject((RTExpression) this.visit(ctx.getChild(0)),
+            (RTExpression) this.visit(ctx.getChild(2)));
+  }
+
+  @Override
   public RudiTree visitField_access(RobotGrammarParser.Field_accessContext ctx) {
     ArrayList<String> parts = new ArrayList<String>();
     for (int i = 0; i < ctx.getChildCount(); i += 2) {
@@ -630,5 +638,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitErrorNode(ErrorNode en) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
+
 
 }

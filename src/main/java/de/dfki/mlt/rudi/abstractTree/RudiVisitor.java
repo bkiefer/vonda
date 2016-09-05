@@ -23,6 +23,8 @@ public interface RudiVisitor {
 
   void visitNode(ExpDialogueAct node);
 
+  void visitNode(ExpFuncOnObject node);
+
   void visitNode(ExpIf node);
 
   void visitNode(ExpLambda node);
