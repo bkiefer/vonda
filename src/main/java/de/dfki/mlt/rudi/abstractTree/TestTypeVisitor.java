@@ -55,12 +55,12 @@ public class TestTypeVisitor implements RudiVisitor {
       mem.addElement(((UVariable) node.left).toString(),
               node.actualType, node.position);
       // do not forget to tell the variable what type we find out it is
-      ((UVariable)node.left).type = node.actualType;
+      ((UVariable) node.left).type = node.actualType;
       node.testTypeDecl(rudi);
     } else {
-    // we have to visit the left part, too, because if this is no declaration
-    // that visit method will find out the variable type for us
-    node.left.visit(this);
+      // we have to visit the left part, too, because if this is no declaration
+      // that visit method will find out the variable type for us
+      node.left.visit(this);
       node.testType(rudi);
     }
   }
@@ -173,8 +173,10 @@ public class TestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatIf node) {
     node.condition.visit(this);
-    node.statblockElse.visit(this);
     node.statblockIf.visit(this);
+    if (node.statblockElse != null) {
+      node.statblockElse.visit(this);
+    }
   }
 
   @Override

@@ -49,13 +49,21 @@ public class PrintTest {
   @Test(expected = UnsupportedOperationException.class)
   public void ImportFailTest() throws Exception {
     String[] strings2 = new String[]{"src/test/resources/test_import/Test2.rudi",
-      "src/test/testfiles"};
+      "target/test/testfiles"};
     GrammarMain.main(strings2);
   }
 
   @Test
   public void ImportTest() throws Exception {
     String[] strings = new String[]{"src/test/resources/test_import/Test.rudi",
+      "target/test/testfiles"};
+    GrammarMain.main(strings);
+    //assertFail(GrammarMain.main(strings2));
+  }
+
+    @Test
+  public void ReturnTest() throws Exception {
+    String[] strings = new String[]{"src/test/resources/test_return/aLotOfReturns.rudi",
       "target/test/testfiles"};
     GrammarMain.main(strings);
     //assertFail(GrammarMain.main(strings2));

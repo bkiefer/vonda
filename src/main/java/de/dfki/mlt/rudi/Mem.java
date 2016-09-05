@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * this is rudimants memory, used for type checking
@@ -187,6 +188,16 @@ public class Mem {
       this.ruleNumber *= 2;
     }
     this.ruleNums.put(rule, ruleNumber);
+  }
+
+  public Set<String> getTopLevelRules(){
+    HashSet<String> rs = new HashSet<>();
+    for(String k : this.ruleNums.keySet()){
+      if(isTopLevel(k)){
+        rs.add(k);
+      }
+    }
+    return rs;
   }
 
   public boolean isTopLevel(String rule){

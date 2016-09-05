@@ -32,6 +32,9 @@ public class RudimantCompiler {
 
   private File inputDirectory;
   private File outputDirectory;
+  // there may be users that do not start the .rudi files with capital letters,
+  // we don't want to crash in that case
+  private String inputRealName;
 
   private Writer out;
 
@@ -66,7 +69,6 @@ public class RudimantCompiler {
   public void process(File topLevel, File outputdir) throws IOException {
     inputDirectory = topLevel.getParentFile();
     outputDirectory = outputdir;
-
     className = getClassName(topLevel);
     // subPackage.add(className);
 
@@ -103,7 +105,11 @@ public class RudimantCompiler {
         result = new File(result, s);
       }
     }
-    return new File(result, className + ".rudi");
+    if (inputRealName != null) {
+      return new File(result, inputRealName + ".rudi");
+    } else {
+      return new File(result, className + ".rudi");
+    }
   }
 
   /**
@@ -166,6 +172,9 @@ public class RudimantCompiler {
   }
 
   public String getClassName(File inputFile) {
+    // remember the real name, without upper case transformation, so getInputFile()
+    // won't crash
+    this.inputRealName = inputFile.getName().replace(".rudi", "");
     String classname = null;
     try {
       classname = inputFile.getName().substring(0, 1).toUpperCase()
@@ -220,11 +229,11 @@ public class RudimantCompiler {
 
     if (myTree instanceof GrammarFile) {
       // tell the file its name (for class definition)
-      ((GrammarFile)myTree).setClassName(className);
+      ((GrammarFile) myTree).setClassName(className);
       // maybe we need to import the class that imported us to use its variables
-      try{
+      try {
         out.append("import " + this.parent.className + ";\n");
-      } catch (NullPointerException e){
+      } catch (NullPointerException e) {
         ; // no imported file
       }
 //       try {

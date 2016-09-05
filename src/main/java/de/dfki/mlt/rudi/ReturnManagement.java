@@ -47,7 +47,8 @@ public class ReturnManagement {
     }
     depth++;
     hasReturnTo.put(newRule, new HashSet<String>());
-    if (findPredecessor.get(neighbour).equals(inRule)) {
+    String neighboursPred = findPredecessor.get(neighbour);
+    if (neighboursPred != null && neighboursPred.equals(inRule)) {
       // then we are on the same level as that previous rule, and we might want
       // to jump over this with a return statement from there
       for (String r : hasReturnTo.get(neighbour)) {

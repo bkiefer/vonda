@@ -1,0 +1,15 @@
+// this is a file o test whether the return to label - functionality works as it is supposed to
+
+LabelA:
+  if (true){
+    String d = "adf";
+    LabelB:
+      if(false){
+        //kljljlj
+      } else {
+        LabelC:
+          if(1 == 1){
+            return LabelA;
+          }
+      }
+  }
