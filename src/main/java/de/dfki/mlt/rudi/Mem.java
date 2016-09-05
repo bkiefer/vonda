@@ -24,7 +24,7 @@ public class Mem {
 
   private List<Environment> environment = new ArrayList<>();
   private HashMap<String, String> actualValues = new HashMap<>();
-  private HashMap<String, String> variableOrigin = new HashMap<>();
+  private HashMap<String, ArrayList<String>> variableOrigin = new HashMap<>();
   private int positionAtm = -1;
   private int depthAtm = -1;
   private HashSet<String> rdfs = new HashSet<>();
@@ -39,6 +39,7 @@ public class Mem {
   private String curRule;
   private String curClass;
   public int xtImport = 0;
+  private String curTopRule;
   private HashMap<String, HashSet<String>> neededClasses = new HashMap<>();
 
   public Mem() {
@@ -67,13 +68,19 @@ public class Mem {
     return this.curRule;
   }
 
-  public void leaveClass(String oldClassName, String oldCurRule) {
+  public String getCurrentTopRule(){
+    return this.curTopRule;
+  }
+
+  public void leaveClass(String oldClassName, String oldCurRule, String oldCurTRule) {
     if (oldClassName != null) {
       this.curClass = oldClassName;
       if (oldCurRule != null) {
         this.curRule = oldCurRule;
+        this.curTopRule = oldCurTRule;
       } else {
         this.curRule = oldClassName;
+        this.curTopRule = oldClassName;
       }
     }
   }
@@ -82,8 +89,15 @@ public class Mem {
     return depthAtm;
   }
 
+  /**
+   *
+   * @param funcname
+   * @param functype
+   * @param partypes
+   * @param origin first element class, second rule origin
+   */
   public void addFunction(String funcname, String functype,
-          ArrayList<String> partypes, String origin) {
+          ArrayList<String> partypes, ArrayList<String> origin) {
     functionTypes.put(funcname, functype);
     functionParTypes.put(funcname, partypes);
     // we may need this later, it doesn't harm us now
@@ -110,9 +124,21 @@ public class Mem {
     return functionTypes.get(funcname);
   }
 
-  public void addElement(String variable, String type, String origin) {
+  /**
+   *
+   * @param variable
+   * @param type
+   * @param origin first element class, second rule origin
+   * @return
+   */
+  public boolean addElement(String variable, String type, ArrayList<String> origin) {
     //environment.get(positionAtm).put(variable, type);
     if (actualValues.containsKey(variable)) {
+      //System.out.println("rudi thought about " + variable);
+      if (environment.get(positionAtm).overrides(variable)
+              || this.getVariableOriginTRule(variable).equals(this.curRule)) {
+        return false;
+      }
       // we overwrite it
       environment.get(positionAtm).override(variable, actualValues.get(variable),
               type, variableOrigin.get(variable));
@@ -122,6 +148,7 @@ public class Mem {
     }
     variableOrigin.put(variable, origin);
     actualValues.put(variable, type);
+    return true;
   }
 
   public void decreaseDepth() {
@@ -133,13 +160,23 @@ public class Mem {
   }
 
   /**
+   * get the class the given variable is located
+   *
+   * @param variable a variable
+   * @return the class it came from
+   */
+  public String getVariableOriginClass(String variable) {
+    return variableOrigin.get(variable).get(0);
+  }
+
+  /**
    * get the rule the given variable is located
    *
    * @param variable a variable
-   * @return the rule it came from
+   * @return the toplevel rule it came from
    */
-  public String getVariableOrigin(String variable) {
-    return variableOrigin.get(variable);
+  public String getVariableOriginTRule(String variable) {
+    return variableOrigin.get(variable).get(1);
   }
 
   /**
@@ -203,7 +240,7 @@ public class Mem {
     variableOrigin.remove(variable);
   }
 
-  public void restoreLocalV(String variable, String type, String origin) {
+  public void restoreLocalV(String variable, String type, ArrayList<String> origin) {
     actualValues.put(variable, type);
     variableOrigin.put(variable, origin);
   }
@@ -219,6 +256,7 @@ public class Mem {
   public void addRule(String rule) {
     if (this.depthAtm == xtImport) {
       this.ruleNumber = 1;
+      curTopRule = rule;
     } else {
       this.ruleNumber *= 2;
     }

@@ -52,8 +52,15 @@ public class TestTypeVisitor implements RudiVisitor {
     //System.out.println("Testing an assignment");
     node.right.visit(this);
     if (node.declaration) {
-      mem.addElement(((UVariable) node.left).toString(),
-              node.actualType, node.position);
+      ArrayList<String> a = new ArrayList<>();
+      a.add(node.position);
+      a.add(mem.getCurrentTopRule());
+      boolean worked = mem.addElement(((UVariable) node.left).toString(),
+              node.actualType, a);
+      if (!worked) {
+        throw new RuntimeException("You are trying to re-declare the variable "
+                + ((UVariable) node.left).toString() + ", don't do this");
+      }
       // do not forget to tell the variable what type we find out it is
       ((UVariable) node.left).type = node.actualType;
       node.testTypeDecl(rudi);
@@ -111,6 +118,7 @@ public class TestTypeVisitor implements RudiVisitor {
     mem.addAndEnterNewEnvironment();
     String oldname = mem.getClassName();
     String oldrule = mem.getCurrentRule();
+    String oldTrule = mem.getCurrentTopRule();
     mem.enterClass(rudi.className);
     for (RudiTree t : node.rules) {
       t.visit(this);
@@ -118,7 +126,7 @@ public class TestTypeVisitor implements RudiVisitor {
     // do not leave the environment, we are still in it!
     //mem.leaveEnvironment();
     mem.goBackToBeginning();
-    mem.leaveClass(oldname, oldrule);
+    mem.leaveClass(oldname, oldrule, oldTrule);
   }
 
   @Override
@@ -160,7 +168,10 @@ public class TestTypeVisitor implements RudiVisitor {
   public void visitNode(StatFor2 node) {
     // TODO: this is a bit more complicated; remember the types of the variables
     // that were declared in the condition
-    mem.addElement(node.var.toString(), node.varType, node.position);
+    ArrayList<String> a = new ArrayList<>();
+    a.add(node.position);
+    a.add(mem.getCurrentTopRule());
+    mem.addElement(node.var.toString(), node.varType, a);
   }
 
   @Override
@@ -168,15 +179,21 @@ public class TestTypeVisitor implements RudiVisitor {
     // TODO: this is a bit more complicated; remember the types of the variables
     // that were declared in the condition
     for (String s : node.variables) {
-      mem.addElement(s, "Object", node.position);
+      ArrayList<String> a = new ArrayList<>();
+      a.add(node.position);
+      a.add(mem.getCurrentTopRule());
+      mem.addElement(s, "Object", a);
     }
   }
 
   @Override
   public void visitNode(StatFunDef node) {
     // these are not tested, just added to the memory
+      ArrayList<String> a = new ArrayList<>();
+      a.add(node.position);
+      a.add(node.position);
     mem.addFunction(node.funcname, node.type,
-            node.parameterTypes, node.position);
+            node.parameterTypes, a);
   }
 
   @Override
@@ -195,14 +212,18 @@ public class TestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatMethodDeclaration node) {
+      ArrayList<String> a = new ArrayList<>();
+      a.add(node.position);
+      a.add(mem.getCurrentTopRule());
     mem.addFunction(node.name, node.return_type, node.partypes,
-            node.position);
+            a);
     mem.addAndEnterNewEnvironment();
     if (!node.parameters.isEmpty()) {
       for (int i = 0; i < node.parameters.size(); i++) {
         // add parameters to environment
-        mem.addElement(node.parameters.get(i), node.partypes.get(i),
-                node.position);
+      a.add(node.position);
+      a.add(mem.getCurrentTopRule());
+        mem.addElement(node.parameters.get(i), node.partypes.get(i), a);
       }
     }
     node.block.visit(this);
@@ -231,7 +252,10 @@ public class TestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatVarDef node) {
-    mem.addElement(node.variable, node.type, node.position);
+      ArrayList<String> a = new ArrayList<>();
+      a.add(node.position);
+      a.add(node.position);
+    mem.addElement(node.variable, node.type, a);
   }
 
   @Override
@@ -296,9 +320,9 @@ public class TestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(UVariable node) {
     node.type = mem.getVariableType(node.representation);
-    if (!node.origin.equals(mem.getVariableOrigin(node.representation))
-            && !(mem.getVariableOrigin(node.representation) == null)) {
-      mem.needsClass(mem.getVariableOrigin(node.representation));
+    if (!node.origin.equals(mem.getVariableOriginClass(node.representation))
+            && !(mem.getVariableOriginClass(node.representation) == null)) {
+      mem.needsClass(mem.getVariableOriginClass(node.representation));
     }
   }
 

@@ -3,8 +3,9 @@ importedRule:
   if(1){
     activity = "f";
     int te = 0;
+    //String te = "test";
     {{{
     // very very local block
-    String te = "test";
+    String e = "test";
     }}}
 }

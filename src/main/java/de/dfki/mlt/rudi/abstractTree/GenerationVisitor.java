@@ -157,6 +157,7 @@ public class GenerationVisitor implements RudiVisitor {
 
     String oldname = mem.getClassName();
     String oldrule = mem.getCurrentRule();
+    String oldTrule = mem.getCurrentTopRule();
     mem.enterClass(out.className);
     //mem.enterNextEnvironment();
     out.append("public class " + node.classname + "{\n"
@@ -229,7 +230,7 @@ public class GenerationVisitor implements RudiVisitor {
       }
     }
     out.append("}\n");
-    mem.leaveClass(oldname, oldrule);
+    mem.leaveClass(oldname, oldrule, oldTrule);
     out.flush();
     // mem.leaveEnvironment();
     mem.goBackToBeginning();
@@ -523,9 +524,9 @@ public class GenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(UVariable node) {
     // if the variable is not in the memory,
-    if (!node.origin.equals(mem.getVariableOrigin(node.representation))
-            && !(mem.getVariableOrigin(node.representation) == null)) {
-      out.append(mem.getVariableOrigin(node.representation).toLowerCase() + "." + node.representation);
+    if (!node.origin.equals(mem.getVariableOriginClass(node.representation))
+            && !(mem.getVariableOriginClass(node.representation) == null)) {
+      out.append(mem.getVariableOriginClass(node.representation).toLowerCase() + "." + node.representation);
       return;
     }
     out.append(node.representation);

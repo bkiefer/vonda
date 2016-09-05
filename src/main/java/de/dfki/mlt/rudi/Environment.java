@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudi;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -16,14 +17,14 @@ public class Environment {
 
   private HashMap<String, String> memory;
   private HashMap<String, String> overwritten;
-  private HashMap<String, String> variableOrigin = new HashMap<String, String>();
+  private HashMap<String, ArrayList<String>> variableOrigin;
   private int depth;
 
   public Environment(int depth){
     this.depth = depth;
-    this.memory = new HashMap<String, String>();
-    this.overwritten = new HashMap<String, String>();
-    this.variableOrigin = new HashMap<String, String>();
+    this.memory = new HashMap<>();
+    this.overwritten = new HashMap<>();
+    this.variableOrigin = new HashMap<>();
   }
 
   /**
@@ -46,10 +47,14 @@ public class Environment {
    * @param oldClass the old rule where the variable came from
    * @param newClass the new (current) rule
    */
-  public void override(String variable, String oldType, String newType, String oldClass){
+  public void override(String variable, String oldType, String newType, ArrayList<String> oldOrigin){
     overwritten.put(variable, oldType);
-    variableOrigin.put(variable, oldClass);
+    variableOrigin.put(variable, oldOrigin);
     memory.put(variable, newType);
+  }
+
+  public boolean overrides(String variable){
+    return overwritten.containsKey(variable);
   }
 
   public boolean isVisibleFrom(int somewhere){
