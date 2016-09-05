@@ -154,9 +154,10 @@ public class GenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(GrammarFile node) {
-    //let the return guy do its work
-    //returnManaging();
-    //boolean foundClassName = false;
+
+    String oldname = mem.getClassName();
+    String oldrule = mem.getCurrentRule();
+    mem.enterClass(out.className);
     //mem.enterNextEnvironment();
     out.append("public class " + node.classname + "{\n"
             + "\tprivate int returnTo = 0;\n");
@@ -201,9 +202,9 @@ public class GenerationVisitor implements RudiVisitor {
       i = 0;
       for (String n : mem.getNeededClasses(toplevel)) {
         if (i == 0) {
-          out.append(n + " " + n.toLowerCase());
+          out.append(n.toLowerCase());
         } else {
-          out.append(", " + n + " " + n.toLowerCase());
+          out.append(", " + n.toLowerCase());
         }
         i++;
       }
@@ -228,6 +229,7 @@ public class GenerationVisitor implements RudiVisitor {
       }
     }
     out.append("}\n");
+    mem.leaveClass(oldname, oldrule);
     out.flush();
     // mem.leaveEnvironment();
     mem.goBackToBeginning();
@@ -369,7 +371,10 @@ public class GenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatImport node) {
-    // TODO: memory creation should be handled in testTypeVisitor...
+    // remember the rule number we're in
+
+    int rn = mem.ruleNumber;
+    mem.xtImport++;
     System.out.println("Processing import " + node.text);
     out.append(node.text + ".process();");
     try {
@@ -377,6 +382,8 @@ public class GenerationVisitor implements RudiVisitor {
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     }
+    mem.xtImport--;
+    mem.ruleNumber = rn;
   }
 
   @Override

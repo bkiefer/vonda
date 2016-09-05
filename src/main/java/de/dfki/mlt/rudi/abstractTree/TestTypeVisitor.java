@@ -109,6 +109,8 @@ public class TestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(GrammarFile node) {
     mem.addAndEnterNewEnvironment();
+    String oldname = mem.getClassName();
+    String oldrule = mem.getCurrentRule();
     mem.enterClass(rudi.className);
     for (RudiTree t : node.rules) {
       t.visit(this);
@@ -116,6 +118,7 @@ public class TestTypeVisitor implements RudiVisitor {
     // do not leave the environment, we are still in it!
     //mem.leaveEnvironment();
     mem.goBackToBeginning();
+    mem.leaveClass(oldname, oldrule);
   }
 
   @Override

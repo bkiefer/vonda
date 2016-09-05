@@ -2,9 +2,9 @@
 importedRule:
   if(1){
     activity = "f";
-    int test = 0;
+    int te = 0;
     {{{
     // very very local block
-    String test = "test";
+    String te = "test";
     }}}
 }

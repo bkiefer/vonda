@@ -19,8 +19,8 @@ import java.util.Set;
 public class Mem {
 
   // to remember those labels that get an own method
-  private int ruleNumber;
-  private HashMap<String,HashMap<String, Integer>> ruleNums = new HashMap<>();
+  public int ruleNumber = 1;
+  private HashMap<String, HashMap<String, Integer>> ruleNums = new HashMap<>();
 
   private List<Environment> environment = new ArrayList<>();
   private HashMap<String, String> actualValues = new HashMap<>();
@@ -38,6 +38,7 @@ public class Mem {
   // every toplevel rule might use variables of super rules from the super file
   private String curRule;
   private String curClass;
+  public int xtImport = 0;
   private HashMap<String, HashSet<String>> neededClasses = new HashMap<>();
 
   public Mem() {
@@ -48,12 +49,34 @@ public class Mem {
     depthAtm = -1;
   }
 
-  public void enterClass(String classname){
-  this.curClass = classname;
-  this.curRule = classname;
-  this.ruleNums.put(classname, new HashMap<String, Integer>());
-  this.neededClasses.put(classname, new HashSet<String>());
-}
+  public void enterClass(String classname) {
+    this.curClass = classname;
+    this.curRule = classname;
+    if (ruleNums.get(classname) == null) {
+      this.ruleNums.put(classname, new HashMap<String, Integer>());
+      this.neededClasses.put(classname, new HashSet<String>());
+    }
+
+  }
+
+  public String getClassName() {
+    return this.curClass;
+  }
+
+  public String getCurrentRule() {
+    return this.curRule;
+  }
+
+  public void leaveClass(String oldClassName, String oldCurRule) {
+    if (oldClassName != null) {
+      this.curClass = oldClassName;
+      if (oldCurRule != null) {
+        this.curRule = oldCurRule;
+      } else {
+        this.curRule = oldClassName;
+      }
+    }
+  }
 
   public int getCurrentDepth() {
     return depthAtm;
@@ -162,7 +185,7 @@ public class Mem {
     positionAtm++;
   }
 
-  public void goBackToBeginning(){
+  public void goBackToBeginning() {
     positionAtm = -1;
   }
 
@@ -193,8 +216,8 @@ public class Mem {
     return rdfs.contains(variable);
   }
 
-  public void addRule(String rule){
-    if(this.depthAtm == 0){
+  public void addRule(String rule) {
+    if (this.depthAtm == xtImport) {
       this.ruleNumber = 1;
     } else {
       this.ruleNumber *= 2;
@@ -204,37 +227,38 @@ public class Mem {
     this.neededClasses.put(rule, new HashSet<String>());
   }
 
-  public Set<String> getTopLevelRules(String classname){
+  public Set<String> getTopLevelRules(String classname) {
     HashSet<String> rs = new HashSet<>();
-    for(String k : this.ruleNums.get(classname).keySet()){
-      if(isTopLevel(k)){
+    for (String k : this.ruleNums.get(classname).keySet()) {
+      if (isTopLevel(k)) {
         rs.add(k);
       }
     }
     return rs;
   }
 
-  public boolean isTopLevel(String rule){
-    if(rule.equals(curClass)){
+  public boolean isTopLevel(String rule) {
+    if (rule.equals(curClass)) {
       return false;
     }
-    return ruleNums.get(curClass).get(rule) == 1;
+    int i = ruleNums.get(curClass).get(rule);
+    return i == 1;
   }
 
-  public int getRuleNumber(String rule){
+  public int getRuleNumber(String rule) {
     return ruleNums.get(curClass).get(rule);
   }
 
-  public void needsClass(String ruleclass){
+  public void needsClass(String ruleclass) {
     System.out.println(ruleclass);
     this.neededClasses.get(curRule).add(ruleclass);
   }
 
-  public Set<String> getNeededClasses(String rule){
+  public Set<String> getNeededClasses(String rule) {
     return this.neededClasses.get(rule);
   }
 
-  public boolean isExistingRule(String rule){
+  public boolean isExistingRule(String rule) {
     return ruleNums.containsKey(rule);
   }
 }
