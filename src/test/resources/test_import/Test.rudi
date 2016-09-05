@@ -1,5 +1,7 @@
 String activity = "j";
 
 import bla;
-
-activity = "blabla";
+rule:
+  if(true){
+      activity = "blabla";
+  }

@@ -49,7 +49,7 @@ public class TestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(ExpAssignment node) {
     // TODO: think about this, it doesn't seem to make a lot of sense
-    System.out.println("Testing an assignment");
+    //System.out.println("Testing an assignment");
     node.right.visit(this);
     if (node.declaration) {
       mem.addElement(((UVariable) node.left).toString(),
@@ -109,6 +109,7 @@ public class TestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(GrammarFile node) {
     mem.addAndEnterNewEnvironment();
+    mem.enterClass(rudi.className);
     for (RudiTree t : node.rules) {
       t.visit(this);
     }
@@ -292,6 +293,10 @@ public class TestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(UVariable node) {
     node.type = mem.getVariableType(node.representation);
+    if (!node.origin.equals(mem.getVariableOrigin(node.representation))
+            && !(mem.getVariableOrigin(node.representation) == null)) {
+      mem.needsClass(mem.getVariableOrigin(node.representation));
+    }
   }
 
   @Override

@@ -1,6 +1,10 @@
-activity = "f";
-int test = 0;
-{{{
-// very very local block
-String test = "test";
-}}}
+
+importedRule:
+  if(1){
+    activity = "f";
+    int test = 0;
+    {{{
+    // very very local block
+    String test = "test";
+    }}}
+}

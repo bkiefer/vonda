@@ -59,11 +59,11 @@ public class GenerationVisitor implements RudiVisitor {
       out.append(node.actualType + " ");
     }
     // visit also the left side, it could be using another class's variable!
-    System.out.println("Generating assignment");
+    // System.out.println("Generating assignment");
     node.left.visit(this);
     out.append(" = ");
     node.right.visit(this);
-    //out.append(";");
+    out.append(";");
   }
 
   @Override
@@ -174,16 +174,40 @@ public class GenerationVisitor implements RudiVisitor {
             // of the process method
             if (((ExpAssignment) ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp).declaration) {
               ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp.visit(this);
-              out.append(";");
+              //out.append(";");
             }
           }
         }
       }
     }
-    out.append("\tpublic void process(){\n");
+    out.append("\tpublic void process(");
+    // get all those classes the toplevel rules need
+    int i = 0;
+    for (String s : mem.getTopLevelRules(out.className)) {
+      for (String n : mem.getNeededClasses(s)) {
+        if (i == 0) {
+          out.append(n + " " + n.toLowerCase());
+        } else {
+          out.append(", " + n + " " + n.toLowerCase());
+        }
+        i++;
+      }
+    }
+    out.append("){\n");
     // use all methods created from rules in this file
-    for (String toplevel : mem.getTopLevelRules()) {
-      out.append(toplevel + "();");
+    for (String toplevel : mem.getTopLevelRules(out.className)) {
+      out.append(toplevel + "(");
+      // don't forget the needed class instances here
+      i = 0;
+      for (String n : mem.getNeededClasses(toplevel)) {
+        if (i == 0) {
+          out.append(n + " " + n.toLowerCase());
+        } else {
+          out.append(", " + n + " " + n.toLowerCase());
+        }
+        i++;
+      }
+      out.append(");");
     }
     out.append("}\n");
     // Now, only get those statements that are not assignments of class attributes
@@ -213,7 +237,18 @@ public class GenerationVisitor implements RudiVisitor {
   public void visitNode(GrammarRule node) {
     if (mem.isTopLevel(node.label)) {
       // this is a toplevel rule and will be converted to a method
-      out.append("public void " + node.label + "() {\n");
+      out.append("public void " + node.label + "(");
+      // get all the required class instances
+      int i = 0;
+      for (String n : mem.getNeededClasses(node.label)) {
+        if (i == 0) {
+          out.append(n + " " + n.toLowerCase());
+        } else {
+          out.append(", " + n + " " + n.toLowerCase());
+        }
+        i++;
+      }
+      out.append("){\n");
       mem.enterNextEnvironment();
       node.comment.visit(this);
       node.ifstat.visit(this);
@@ -336,7 +371,7 @@ public class GenerationVisitor implements RudiVisitor {
   public void visitNode(StatImport node) {
     // TODO: memory creation should be handled in testTypeVisitor...
     System.out.println("Processing import " + node.text);
-    out.append(node.text + ".process()");
+    out.append(node.text + ".process();");
     try {
       RudimantCompiler.getEmbedded(out).process(node.text);
     } catch (IOException ex) {
@@ -483,7 +518,7 @@ public class GenerationVisitor implements RudiVisitor {
     // if the variable is not in the memory,
     if (!node.origin.equals(mem.getVariableOrigin(node.representation))
             && !(mem.getVariableOrigin(node.representation) == null)) {
-      out.append(mem.getVariableOrigin(node.representation) + "." + node.representation);
+      out.append(mem.getVariableOrigin(node.representation).toLowerCase() + "." + node.representation);
       return;
     }
     out.append(node.representation);

@@ -20,7 +20,7 @@ public class Mem {
 
   // to remember those labels that get an own method
   private int ruleNumber;
-  private HashMap<String, Integer> ruleNums = new HashMap<>();
+  private HashMap<String,HashMap<String, Integer>> ruleNums = new HashMap<>();
 
   private List<Environment> environment = new ArrayList<>();
   private HashMap<String, String> actualValues = new HashMap<>();
@@ -35,6 +35,11 @@ public class Mem {
   private HashMap<String, String> functionTypes = new HashMap<>();
   private HashMap<String, ArrayList<String>> functionParTypes = new HashMap<>();
 
+  // every toplevel rule might use variables of super rules from the super file
+  private String curRule;
+  private String curClass;
+  private HashMap<String, HashSet<String>> neededClasses = new HashMap<>();
+
   public Mem() {
     environment = new ArrayList<>();
     actualValues = new HashMap<>();
@@ -42,6 +47,13 @@ public class Mem {
     positionAtm = -1;
     depthAtm = -1;
   }
+
+  public void enterClass(String classname){
+  this.curClass = classname;
+  this.curRule = classname;
+  this.ruleNums.put(classname, new HashMap<String, Integer>());
+  this.neededClasses.put(classname, new HashSet<String>());
+}
 
   public int getCurrentDepth() {
     return depthAtm;
@@ -187,12 +199,14 @@ public class Mem {
     } else {
       this.ruleNumber *= 2;
     }
-    this.ruleNums.put(rule, ruleNumber);
+    this.ruleNums.get(curClass).put(rule, ruleNumber);
+    curRule = rule;
+    this.neededClasses.put(rule, new HashSet<String>());
   }
 
-  public Set<String> getTopLevelRules(){
+  public Set<String> getTopLevelRules(String classname){
     HashSet<String> rs = new HashSet<>();
-    for(String k : this.ruleNums.keySet()){
+    for(String k : this.ruleNums.get(classname).keySet()){
       if(isTopLevel(k)){
         rs.add(k);
       }
@@ -201,11 +215,23 @@ public class Mem {
   }
 
   public boolean isTopLevel(String rule){
-    return ruleNums.get(rule) == 1;
+    if(rule.equals(curClass)){
+      return false;
+    }
+    return ruleNums.get(curClass).get(rule) == 1;
   }
 
   public int getRuleNumber(String rule){
-    return ruleNums.get(rule);
+    return ruleNums.get(curClass).get(rule);
+  }
+
+  public void needsClass(String ruleclass){
+    System.out.println(ruleclass);
+    this.neededClasses.get(curRule).add(ruleclass);
+  }
+
+  public Set<String> getNeededClasses(String rule){
+    return this.neededClasses.get(rule);
   }
 
   public boolean isExistingRule(String rule){

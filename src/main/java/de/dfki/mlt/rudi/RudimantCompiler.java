@@ -150,7 +150,7 @@ public class RudimantCompiler {
     try {
       out.append(c);
     } catch (IOException ex) {
-      throw new RuntimeException(ex);
+      throw new InOutException(ex);
     }
     return this;
   }
@@ -159,7 +159,7 @@ public class RudimantCompiler {
     try {
       out.append(c);
     } catch (IOException ex) {
-      throw new RuntimeException(ex);
+      throw new InOutException(ex);
     }
     return this;
   }
@@ -237,11 +237,11 @@ public class RudimantCompiler {
       } catch (NullPointerException e) {
         ; // no imported file
       }
-//       try {
-      gv.visitNode(myTree);
-//      } catch (RuntimeException e) {
-//        throw new IOException(e);
-//      }
+      try {
+        gv.visitNode(myTree);
+      } catch (InOutException e) {
+        throw new IOException(e);
+      }
     } else {
       throw new UnsupportedOperationException("There is sth going very,very wrong...");
     }
