@@ -65,6 +65,7 @@ public class GenerationVisitor implements RudiVisitor {
       out.append(node.actualType + " ");
     }
     // visit also the left side, it could be using another class's variable!
+    System.out.println("Generating assignment");
     node.left.visit(this);
     out.append(" = ");
     node.right.visit(this);
@@ -170,7 +171,10 @@ public class GenerationVisitor implements RudiVisitor {
                   && ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp instanceof ExpAssignment) {
             // then it is a class attribute and we want it to be defined outside
             // of the process method
-            ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp.visit(this);
+            if (((ExpAssignment) ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp).declaration) {
+              ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp.visit(this);
+              out.append(";");
+            }
           }
         }
       }
@@ -187,10 +191,12 @@ public class GenerationVisitor implements RudiVisitor {
         for (RudiTree e : ((StatAbstractBlock) r).statblock) {
           if (e instanceof ExpAbstractWrapper && ((ExpAbstractWrapper) e).exp instanceof ExpAbstractWrapper
                   && ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp instanceof ExpAssignment) {
-            continue;
-          } else {
-            e.visit(this);
+            if (((ExpAssignment) ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp).declaration) {
+              continue;
+            }
           }
+          e.visit(this);
+
         }
       } else {
         r.visit(this);
@@ -472,7 +478,9 @@ public class GenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UVariable node) {
-    if (!node.origin.equals(mem.getVariableOrigin(node.representation))) {
+    // if the variable is not in the memory,
+    if (!node.origin.equals(mem.getVariableOrigin(node.representation))
+            && !(mem.getVariableOrigin(node.representation) == null)) {
       out.append(mem.getVariableOrigin(node.representation) + "." + node.representation);
       return;
     }

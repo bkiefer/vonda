@@ -52,22 +52,21 @@ public class PrintTest {
 //      "target/test/testfiles"};
 //    GrammarMain.main(strings2);
 //  }
-//
-//  @Test
-//  public void ImportTest() throws Exception {
-//    String[] strings = new String[]{"src/test/resources/test_import/Test.rudi",
-//      "target/test/testfiles"};
-//    GrammarMain.main(strings);
-//    //assertFail(GrammarMain.main(strings2));
-//  }
 
-    @Test
-  public void ReturnTest() throws Exception {
-    String[] strings = new String[]{"src/test/resources/test_return/aLotOfReturns.rudi",
+  @Test
+  public void ImportTest() throws Exception {
+    String[] strings = new String[]{"src/test/resources/test_import/Test.rudi",
       "target/test/testfiles"};
     GrammarMain.main(strings);
     //assertFail(GrammarMain.main(strings2));
   }
+
+//    @Test
+//  public void ReturnTest() throws Exception {
+//    String[] strings = new String[]{"src/test/resources/test_return/aLotOfReturns.rudi",
+//      "target/test/testfiles"};
+//    GrammarMain.main(strings);
+//  }
 //  @Test
 //  public void howDoesReturnWorkTest() {
 //

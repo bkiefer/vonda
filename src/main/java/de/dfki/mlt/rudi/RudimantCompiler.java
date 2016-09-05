@@ -84,6 +84,7 @@ public class RudimantCompiler {
     outputDirectory = parent.outputDirectory;
 
     String[] elements = importSpec.split("\\.");
+    inputRealName = elements[elements.length - 1];
     subPackage = parent.subPackage;
     // subPackage.add(parent.className);
     subPackage.addAll(Arrays.asList(elements));
@@ -209,7 +210,7 @@ public class RudimantCompiler {
     ParseTree tree = parser.grammar_file();
 
     // initialise the visitor that will do all the work
-    ParseTreeVisitor visitor = new ParseTreeVisitor(className, _client);
+    ParseTreeVisitor visitor = new ParseTreeVisitor(inputRealName, _client);
 
     // walk the parse tree
     RudiTree myTree = visitor.visit(tree);
