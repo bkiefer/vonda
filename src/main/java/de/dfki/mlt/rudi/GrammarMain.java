@@ -6,6 +6,7 @@
 package de.dfki.mlt.rudi;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * the main class of rudimant
@@ -37,7 +38,7 @@ public class GrammarMain {
    * @param args: the file that should be parsed without ending (in args[0])
    * @throws Exception
    */
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws IOException {
 
     int i = 0;
     if (args.length == 0 || args[0].equals("-help")) {
@@ -75,6 +76,14 @@ public class GrammarMain {
     }
 
     File dir = new File(inputDirectory);
+    File outputDir;
+
+    if(!args[1].startsWith("-")){
+      outputDir = new File(args[1]);
+      if(outputDir.isDirectory()){
+        rc.process(dir, outputDir);
+      }
+    }
 
     rc.process(dir);
 
