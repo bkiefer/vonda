@@ -38,7 +38,7 @@ public class ExpAssignment implements RudiTree, RTExpression {
 
   public void testType(RudimantCompiler out) {
     // we don't know anything about an actualType, so let's look it up
-    this.typeRight = ((RTExpression) right).getType();
+    this.typeRight = right.getType();
     try {
       this.actualType = ((RTExpression) left).getType();
     } catch (NullPointerException e) {
@@ -52,7 +52,7 @@ public class ExpAssignment implements RudiTree, RTExpression {
         out.append("// an Exception occurred; closing the writer here\n");
         out.flush();
         throw new UnsupportedOperationException("The assignment of the variable "
-                + ((UVariable) left).toString() + "\t in rule " + position
+                + left.toString() + "\t in rule " + position
                 + " has type mismatches:\n\t\t" + actualType
                 + " does not match " + typeRight);
       }
@@ -60,7 +60,7 @@ public class ExpAssignment implements RudiTree, RTExpression {
       out.append("// an Exception occurred; closing the writer here\n");
       out.flush();
       throw new UnsupportedOperationException("The assignment of the variable "
-              + ((UVariable) left).toString() + "\t in rule " + position
+              + left.toString() + "\t in rule " + position
               + " cannot work; it was not defined!!");
     }
   }
@@ -76,15 +76,15 @@ public class ExpAssignment implements RudiTree, RTExpression {
 
   public void testTypeDecl(RudimantCompiler out) {
     // an actualType exists, so we assume left is supposed to be actualType
-    this.typeRight = ((RTExpression) right).getType();
+    this.typeRight = right.getType();
     try {
       if (!(actualType.equals(typeRight))) {
         out.append("// an Exception occurred; closing the writer here\n");
         out.flush();
         throw new UnsupportedOperationException("The declaration of the variable "
-                + ((UVariable) left).toString() + " in rule " + position
+                + left.toString() + " in rule " + position
                 + " has type mismatches:\n\t\t" + actualType
-                + " does not match " + ((RTExpression) right).getType());
+                + " does not match " + right.getType());
         // TODO: do this without toString...
 //          throw new UnsupportedOperationException("The following assignment has type mismatches:\n\t\t"
 //                  + this.generate(null) + "\nType " + ((RTExpression) left).getType()
@@ -94,9 +94,9 @@ public class ExpAssignment implements RudiTree, RTExpression {
       out.append("// an Exception occurred; closing the writer here\n");
       out.flush();
       throw new UnsupportedOperationException("The declaration of the variable "
-              + ((UVariable) left).toString() + "\t in rule " + position
+              + left.toString() + "\t in rule " + position
               + " has type mismatches:\n\t\t" + out.getMem().getVariableType(left.toString())
-              + " does not match " + ((RTExpression) right).getType());
+              + " does not match " + right.getType());
     }
   }
 

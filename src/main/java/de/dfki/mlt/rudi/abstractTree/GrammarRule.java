@@ -19,11 +19,15 @@ public class GrammarRule implements RudiTree{
   StatIf ifstat;
   // a help to mark this rule for return managing
   int number;
+  // remember whether you are toplevel
+  boolean toplevel;
 
-  public GrammarRule(String label, UCommentBlock comment,StatIf ifstat) {
+  public GrammarRule(String label, UCommentBlock comment,StatIf ifstat,
+          boolean toplevel) {
     this.label = label;
     this.ifstat = ifstat;
     this.comment = comment;
+    this.toplevel = toplevel;
   }
 
   /**

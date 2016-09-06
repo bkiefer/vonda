@@ -7,6 +7,7 @@ package de.dfki.mlt.rudi.abstractTree;
 
 import de.dfki.mlt.rudi.*;
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * this visitor generates the java code
@@ -160,6 +161,13 @@ public class GenerationVisitor implements RudiVisitor {
     String oldTrule = mem.getCurrentTopRule();
     mem.enterClass(out.className);
     //mem.enterNextEnvironment();
+
+    for (String s : mem.getTopLevelRules(out.className)) {
+      for (String n : mem.getNeededClasses(s)) {
+        mem.needsClass(out.className, n);
+      }
+    }
+
     out.append("public class " + node.classname + "{\n"
             + "\tprivate int returnTo = 0;\n");
     // initialize all return markers
@@ -185,15 +193,13 @@ public class GenerationVisitor implements RudiVisitor {
     out.append("\tpublic void process(");
     // get all those classes the toplevel rules need
     int i = 0;
-    for (String s : mem.getTopLevelRules(out.className)) {
-      for (String n : mem.getNeededClasses(s)) {
-        if (i == 0) {
-          out.append(n + " " + n.toLowerCase());
-        } else {
-          out.append(", " + n + " " + n.toLowerCase());
-        }
-        i++;
+    for (String n : mem.getNeededClasses(out.className)) {
+      if (i == 0) {
+        out.append(n + " " + n.toLowerCase());
+      } else {
+        out.append(", " + n + " " + n.toLowerCase());
       }
+      i++;
     }
     out.append("){\n");
     // use all methods created from rules in this file
@@ -238,7 +244,7 @@ public class GenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(GrammarRule node) {
-    if (mem.isTopLevel(node.label)) {
+    if (node.toplevel) {
       // this is a toplevel rule and will be converted to a method
       out.append("public void " + node.label + "(");
       // get all the required class instances
@@ -252,10 +258,10 @@ public class GenerationVisitor implements RudiVisitor {
         i++;
       }
       out.append("){\n");
-      mem.enterNextEnvironment();
+      //mem.enterNextEnvironment();
       node.comment.visit(this);
       node.ifstat.visit(this);
-      mem.leaveEnvironment();
+      //mem.leaveEnvironment();
     } else {
       // this is a sublevel rule and will get an if to determine whether it should be executed
       out.append("//Rule " + node.label + "\n");
@@ -280,7 +286,7 @@ public class GenerationVisitor implements RudiVisitor {
   public void visitNode(StatAbstractBlock node) {
     if (node.braces) {
       // when entering a statement block, we need to create a new local environment
-      mem.enterNextEnvironment();
+      //mem.enterNextEnvironment();
       out.append("{");
     }
     for (RudiTree stat : node.statblock) {
@@ -293,7 +299,7 @@ public class GenerationVisitor implements RudiVisitor {
     }
     if (node.braces) {
       out.append("}");
-      mem.leaveEnvironment();
+      //mem.leaveEnvironment();
     }
   }
 
@@ -372,24 +378,34 @@ public class GenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatImport node) {
-    // remember the rule number we're in
-
-    int rn = mem.ruleNumber;
-    mem.xtImport++;
     System.out.println("Processing import " + node.text);
-    out.append(node.text + ".process();");
     try {
       RudimantCompiler.getEmbedded(out).process(node.text);
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     }
-    mem.xtImport--;
-    mem.ruleNumber = rn;
+    out.append(node.text + ".process(");
+    Set<String> ncs = mem.getNeededClasses(node.name);
+    if (ncs != null) {
+      int i = 0;
+      for (String c : ncs) {
+        if(c.equals(out.className)){
+          c = "this";
+        }
+        if (i == 0) {
+          out.append(c.toLowerCase());
+        } else {
+          out.append(", " + c.toLowerCase());
+        }
+        i++;
+      }
+    }
+    out.append(");\n");
   }
 
   @Override
   public void visitNode(StatMethodDeclaration node) {
-    mem.enterNextEnvironment();
+    //mem.enterNextEnvironment();
     String ret = node.visibility + " " + node.return_type + " " + node.name + "(";
     if (!node.parameters.isEmpty()) {
       for (int i = 0; i < node.parameters.size(); i++) {
@@ -403,7 +419,7 @@ public class GenerationVisitor implements RudiVisitor {
     ret += ")";
     out.append(ret + "\n");
     node.block.visit(this);
-    mem.leaveEnvironment();
+    //mem.leaveEnvironment();
   }
 
   @Override
@@ -524,9 +540,8 @@ public class GenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(UVariable node) {
     // if the variable is not in the memory,
-    if (!node.origin.equals(mem.getVariableOriginClass(node.representation))
-            && !(mem.getVariableOriginClass(node.representation) == null)) {
-      out.append(mem.getVariableOriginClass(node.representation).toLowerCase() + "." + node.representation);
+    if (node.realOrigin != null) {
+      out.append(node.realOrigin.toLowerCase() + "." + node.representation);
       return;
     }
     out.append(node.representation);

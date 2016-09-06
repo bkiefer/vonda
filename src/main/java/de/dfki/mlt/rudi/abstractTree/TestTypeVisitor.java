@@ -55,11 +55,11 @@ public class TestTypeVisitor implements RudiVisitor {
       ArrayList<String> a = new ArrayList<>();
       a.add(node.position);
       a.add(mem.getCurrentTopRule());
-      boolean worked = mem.addElement(((UVariable) node.left).toString(),
+      boolean worked = mem.addElement(node.left.toString(),
               node.actualType, a);
       if (!worked) {
         throw new RuntimeException("You are trying to re-declare the variable "
-                + ((UVariable) node.left).toString() + ", don't do this");
+                + node.left.toString() + ", don't do this");
       }
       // do not forget to tell the variable what type we find out it is
       ((UVariable) node.left).type = node.actualType;
@@ -131,8 +131,7 @@ public class TestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(GrammarRule node) {
-    mem.addRule(node.label);
-    node.setNumber(mem.getRuleNumber(node.label));
+    node.setNumber(mem.addRule(node.label, node.toplevel));
     mem.addAndEnterNewEnvironment();
     node.ifstat.visit(this);
     mem.leaveEnvironment();
@@ -320,9 +319,14 @@ public class TestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(UVariable node) {
     node.type = mem.getVariableType(node.representation);
-    if (!node.origin.equals(mem.getVariableOriginClass(node.representation))
-            && !(mem.getVariableOriginClass(node.representation) == null)) {
-      mem.needsClass(mem.getVariableOriginClass(node.representation));
+    String o = mem.getVariableOriginClass(node.representation);
+    if(o == null){
+      throw new UnsupportedOperationException("The variable " + node.representation
+      + " is used but was not declared");
+    }
+    if (!node.originClass.equals(o)) {
+      mem.needsClass(mem.getCurrentTopRule(), o);
+      node.realOrigin = o;
     }
   }
 

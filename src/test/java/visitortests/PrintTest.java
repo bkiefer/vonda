@@ -52,7 +52,7 @@ public class PrintTest {
 //      "target/test/testfiles"};
 //    GrammarMain.main(strings2);
 //  }
-//
+
   @Test
   public void ImportTest() throws Exception {
     String[] strings = new String[]{"src/test/resources/test_import/Test.rudi",
@@ -68,6 +68,7 @@ public class PrintTest {
 //    GrammarMain.main(strings);
 //    //assertFail(GrammarMain.main(strings2));
 //  }
+
 //  @Test
 //  public void howDoesReturnWorkTest() {
 //

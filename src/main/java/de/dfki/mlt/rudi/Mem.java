@@ -38,7 +38,6 @@ public class Mem {
   // every toplevel rule might use variables of super rules from the super file
   private String curRule;
   private String curClass;
-  public int xtImport = 0;
   private String curTopRule;
   private HashMap<String, HashSet<String>> neededClasses = new HashMap<>();
 
@@ -60,15 +59,26 @@ public class Mem {
 
   }
 
+  /**
+   * get the name of the current class
+   * @return
+   */
   public String getClassName() {
     return this.curClass;
   }
 
+  /**
+   * get the name of the current rule
+   * @return
+   */
   public String getCurrentRule() {
     return this.curRule;
   }
 
-  public String getCurrentTopRule(){
+  public String getCurrentTopRule() {
+    if (this.curTopRule == null) {
+      return this.curClass;
+    }
     return this.curTopRule;
   }
 
@@ -163,9 +173,14 @@ public class Mem {
    * get the class the given variable is located
    *
    * @param variable a variable
-   * @return the class it came from
+   * @return the class it came from, null if not declared
    */
   public String getVariableOriginClass(String variable) {
+    //System.out.println(variable);
+    if(variableOrigin.get(variable) == null){
+      // then the variable was never declared, the type checking should throw sth
+      return null;
+    }
     return variableOrigin.get(variable).get(0);
   }
 
@@ -217,11 +232,6 @@ public class Mem {
     return ++positionAtm;
   }
 
-  public void enterNextEnvironment() {
-    depthAtm = getCurrentDepth() + 1;
-    positionAtm++;
-  }
-
   public void goBackToBeginning() {
     positionAtm = -1;
   }
@@ -253,8 +263,13 @@ public class Mem {
     return rdfs.contains(variable);
   }
 
-  public void addRule(String rule) {
-    if (this.depthAtm == xtImport) {
+  /**
+   * add the rule to the memory
+   * @param rule
+   * @return the rule's number, to be used in bitwise if markers
+   */
+  public int addRule(String rule, boolean toplevel) {
+    if (toplevel) {
       this.ruleNumber = 1;
       curTopRule = rule;
     } else {
@@ -263,37 +278,36 @@ public class Mem {
     this.ruleNums.get(curClass).put(rule, ruleNumber);
     curRule = rule;
     this.neededClasses.put(rule, new HashSet<String>());
+    return this.ruleNumber;
   }
 
+  /**
+   * return all toplevel rules contained in the given class
+   * @param classname
+   * @return
+   */
   public Set<String> getTopLevelRules(String classname) {
     HashSet<String> rs = new HashSet<>();
     for (String k : this.ruleNums.get(classname).keySet()) {
-      if (isTopLevel(k)) {
+      if (this.ruleNums.get(classname).get(k) == 1) {
         rs.add(k);
       }
     }
     return rs;
   }
 
-  public boolean isTopLevel(String rule) {
-    if (rule.equals(curClass)) {
-      return false;
-    }
-    int i = ruleNums.get(curClass).get(rule);
-    return i == 1;
+  /**
+   * tell the memory to remember that the given rule/class needs an instance of the given class
+   * @param rule a rule or class
+   * @param ruleclass the class needed
+   */
+  public void needsClass(String rule, String ruleclass) {
+    //System.out.println(ruleclass);
+    this.neededClasses.get(rule).add(ruleclass);
   }
 
-  public int getRuleNumber(String rule) {
-    return ruleNums.get(curClass).get(rule);
-  }
-
-  public void needsClass(String ruleclass) {
-    System.out.println(ruleclass);
-    this.neededClasses.get(curRule).add(ruleclass);
-  }
-
-  public Set<String> getNeededClasses(String rule) {
-    return this.neededClasses.get(rule);
+  public Set<String> getNeededClasses(String ruleOrClass) {
+    return this.neededClasses.get(ruleOrClass);
   }
 
   public boolean isExistingRule(String rule) {

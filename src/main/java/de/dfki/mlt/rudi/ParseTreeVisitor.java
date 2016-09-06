@@ -26,6 +26,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   // as this was created for another design, use currentClass instead
   // private String currentRule;
   private String currentClass;
+  // same for the current toplevel rule
+  private String currentTRule;
+  private int curDepth;
   private HfcDbService.Client _client;
 
   /**
@@ -43,6 +46,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitGrammar_file(RobotGrammarParser.Grammar_fileContext ctx) {
     // create an environment at the upper level
     // imports* (comment (grammar_rule | ...))* comment
+    currentTRule = currentClass;
+    curDepth = 0;
     ArrayList<RudiTree> rules = new ArrayList<RudiTree>();
     for (int i = 0; i < ctx.getChildCount(); i++) {
       rules.add(this.visit(ctx.getChild(i)));
@@ -102,12 +107,16 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
     // label comment if_statement
     String ruleName = ctx.getChild(0).getText().substring(0, ctx.getChild(0).getText().length() - 1);
-
-    // this was used for another design, no longer valiable
-    //currentRule = ruleName;
+    boolean toplevel = false;
+    if(curDepth == 0){
+      // then this is a toplevel rule
+      currentTRule = ruleName;
+      toplevel = true;
+    }
+    curDepth++;
     return new GrammarRule(ruleName,
             (UCommentBlock) this.visit(ctx.getChild(1)),
-            (StatIf) this.visit(ctx.getChild(2)));
+            (StatIf) this.visit(ctx.getChild(2)), toplevel);
   }
 
   @Override
@@ -467,12 +476,13 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       // TODO: or should we check here that the type of the variable in assignment
       // is the type the iterable in exp returns? How?
       RudiTree exp = this.visit(ctx.getChild(4));
-      return new StatFor2(new UVariable(ctx.getChild(2).getText(), currentClass), exp,
+      return new StatFor2(new UVariable(ctx.getChild(2).getText(), currentClass,
+      currentTRule), exp,
               (StatAbstractBlock) this.visit(ctx.getChild(6)), currentClass);
     } else if (ctx.getChild(4).getText().equals(":")) {
       // FOR LPAR (DEC_VAR | VARIABLE) VARIABLE COLON exp RPAR loop_statement_block
       return new StatFor2(ctx.getChild(2).getText(),
-              new UVariable(ctx.getChild(3).getText(), currentClass),
+              new UVariable(ctx.getChild(3).getText(), currentClass, currentTRule),
               this.visit(ctx.getChild(5)),
               (StatAbstractBlock) this.visit(ctx.getChild(7)), currentClass);
     } else if (ctx.getChildCount() == 8) {
@@ -609,7 +619,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       case 57:  // token is variable
         String text = tn.getText();
         //System.out.println(currentClass);
-        return new UVariable(text, currentClass);
+        return new UVariable(text, currentClass, currentTRule);
       /*if (Mem.existsVariable(text)) {
           String origin = "";
           if (context.getCurrentRule().equals(Mem.getVariableOrigin(text))) {

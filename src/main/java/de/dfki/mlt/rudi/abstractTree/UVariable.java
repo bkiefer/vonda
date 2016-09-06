@@ -18,18 +18,21 @@ public class UVariable extends RTLeaf {
 
   String type;
   String representation;
-  String origin;
+  String originClass;
+  // set to the class whose attribute this variable is; null if the variable
+  // is declared in originClass
+  String realOrigin;
 
-  public UVariable(String type, String representation, String origin) {
+  public UVariable(String type, String representation, String originClass, String originTRule) {
     this.type = type;
     this.representation = representation;
-    this.origin = origin;
+    this.originClass = originClass;
   }
 
-  public UVariable(String representation, String origin) {
+  public UVariable(String representation, String originClass, String originTRule) {
     //this.type = "Object";
     this.representation = representation;
-    this.origin = origin;
+    this.originClass = originClass;
   }
 
   @Override

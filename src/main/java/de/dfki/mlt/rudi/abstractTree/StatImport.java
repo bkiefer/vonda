@@ -17,9 +17,15 @@ public class StatImport implements RudiTree{
   // IMPORT VARIABLE SEMICOLON
 
   String text;
+  String name;
 
   public StatImport(String text){
     this.text = text;
+    if(text.contains(".")){
+      name = text.substring(text.lastIndexOf("."));
+    } else {
+      name = text;
+    }
   }
 
   @Override
