@@ -139,6 +139,11 @@ public class TestTypeVisitor implements RudiVisitor {
     for (RudiTree t : node.rules) {
       t.visit(this);
     }
+//    for (String s : mem.getTopLevelRules(rudi.className)) {
+//      for (String n : mem.getNeededClasses(s)) {
+//        mem.needsClass(rudi.className, n);
+//      }
+//    }
     // do not leave the environment, we are still in it!
     //mem.leaveEnvironment();
     mem.leaveClass(oldname, oldrule, oldTrule);

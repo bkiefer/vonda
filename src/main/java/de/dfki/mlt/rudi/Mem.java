@@ -147,8 +147,11 @@ public class Mem {
     //environment.get(positionAtm).put(variable, type);
     if (actualValues.containsKey(variable)) {
       //System.out.println("rudi thought about " + variable);
-      if (environment.get(positionAtm).overrides(variable)
-              || this.getVariableOriginTRule(variable).equals(this.curRule)) {
+      // if this variable was introduced elsewhere, it could already have been overridden here;
+      // if we just introduced it in this toplevel rule, it shouldn't be
+      // redeclared, too
+      if (environment.get(positionAtm).overrides(variable)){
+              //|| this.getVariableOriginTRule(variable).equals(this.curRule)) {
         return false;
       }
       // we overwrite it

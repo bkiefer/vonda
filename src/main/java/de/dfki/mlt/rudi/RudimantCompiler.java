@@ -20,6 +20,7 @@ import de.dfki.mlt.rudi.abstractTree.RudiTree;
 import de.dfki.mlt.rudi.abstractTree.TestTypeVisitor;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
+import java.util.logging.Level;
 
 public class RudimantCompiler {
 
@@ -85,9 +86,13 @@ public class RudimantCompiler {
     inputRealName = elements[elements.length - 1];
     subPackage = parent.subPackage;
     // subPackage.add(parent.className);
-    subPackage.addAll(Arrays.asList(elements));
+    // TODO: okay?
+    subPackage.addAll(Arrays.asList(elements).subList(0, elements.length - 1));
 
-    className = subPackage.get(subPackage.size() - 1);
+    //?????????????????
+    // className = subPackage.get(subPackage.size() - 1);
+    className = inputRealName.substring(0, 1).toUpperCase()
+            + inputRealName.substring(1);
 
     processForReal(getOutputDirectory());
   }
@@ -118,7 +123,8 @@ public class RudimantCompiler {
    */
   private File getOutputDirectory() {
     File result = outputDirectory;
-    for (String s : subPackage.subList(0, subPackage.size() - 1)) {
+    // TODO: okay?
+    for (String s : subPackage){//.subList(0, subPackage.size() - 1)) {
       result = new File(result, s);
     }
     return result;
