@@ -33,11 +33,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   /**
    * constructor; the visitor needs to know in which rule/file we're in
+   *
    * @param masterFile the name of the current rule (filename), please not the
    * name of the resulting java file!!!!
    * @param client
    */
-
   public ParseTreeVisitor(String masterFile, HfcDbService.Client client) {
     //this.memory = new HashMap<String, AbstractType>();
     currentClass = masterFile;
@@ -49,9 +49,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // create an environment at the upper level
     // imports* (comment (grammar_rule | ...))* comment
     currentTRule = currentClass;
-    curDepth = 0;
     ArrayList<RudiTree> rules = new ArrayList<RudiTree>();
     for (int i = 0; i < ctx.getChildCount(); i++) {
+      curDepth = 0;
       rules.add(this.visit(ctx.getChild(i)));
     }
     return new GrammarFile(rules);
@@ -110,7 +110,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // label comment if_statement
     String ruleName = ctx.getChild(0).getText().substring(0, ctx.getChild(0).getText().length() - 1);
     boolean toplevel = false;
-    if(curDepth == 0){
+    if (curDepth == 0) {
       // then this is a toplevel rule
       currentTRule = ruleName;
       toplevel = true;
@@ -261,11 +261,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitWhile_statement(RobotGrammarParser.While_statementContext ctx) {
     // WHILE LPAR boolean_exp RPAR loop_statement_block
     if (ctx.getChildCount() == 5) {
-      return new StatWhile((RTExpression)this.visit(ctx.getChild(2)),
+      return new StatWhile((RTExpression) this.visit(ctx.getChild(2)),
               (StatAbstractBlock) this.visit(ctx.getChild(4)), currentClass);
     } // DO loop_statement_block WHILE LPAR boolean_exp RPAR
     else {
-      return new StatDoWhile((RTExpression)this.visit(ctx.getChild(4)),
+      return new StatDoWhile((RTExpression) this.visit(ctx.getChild(4)),
               (StatAbstractBlock) this.visit(ctx.getChild(1)), currentClass);
     }
   }
@@ -441,11 +441,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitIf_statement(RobotGrammarParser.If_statementContext ctx) {
     // IF LPAR boolean_exp RPAR statement (ELSE statement)?
     if (ctx.getChildCount() == 5) {   // no else
-      return new StatIf(ctx.getChild(2).getText(), (RTExpression)this.visit(ctx.getChild(2)),
+      return new StatIf(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)),
               (StatAbstractBlock) this.visit(ctx.getChild(4)), null, currentClass);
     }
     // if there is an else
-    return new StatIf(ctx.getChild(2).getText(), (RTExpression)this.visit(ctx.getChild(2)),
+    return new StatIf(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)),
             (StatAbstractBlock) this.visit(ctx.getChild(4)),
             (StatAbstractBlock) this.visit(ctx.getChild(6)), currentClass);
   }
@@ -454,11 +454,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitLoop_if_statement(RobotGrammarParser.Loop_if_statementContext ctx) {
     // IF LPAR boolean_exp RPAR statement (ELSE statement)?
     if (ctx.getChildCount() == 5) {   // no else
-      return new StatIf(ctx.getChild(2).getText(), (RTExpression)this.visit(ctx.getChild(2)),
+      return new StatIf(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)),
               (StatAbstractBlock) this.visit(ctx.getChild(4)), null, currentClass);
     }
     // if there is an else
-    return new StatIf(ctx.getChild(2).getText(), (RTExpression)this.visit(ctx.getChild(2)),
+    return new StatIf(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)),
             (StatAbstractBlock) this.visit(ctx.getChild(4)),
             (StatAbstractBlock) this.visit(ctx.getChild(6)), currentClass);
   }
@@ -479,7 +479,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       // is the type the iterable in exp returns? How?
       RudiTree exp = this.visit(ctx.getChild(4));
       return new StatFor2(new UVariable(ctx.getChild(2).getText(), currentClass,
-      currentTRule), exp,
+              currentTRule), exp,
               (StatAbstractBlock) this.visit(ctx.getChild(6)), currentClass);
     } else if (ctx.getChild(4).getText().equals(":")) {
       // FOR LPAR (DEC_VAR | VARIABLE) VARIABLE COLON exp RPAR loop_statement_block
@@ -650,6 +650,5 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitErrorNode(ErrorNode en) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
-
 
 }

@@ -121,7 +121,7 @@ public class ReturnManagement {
    * @return yes or no
    */
   public HashSet<String> shouldAddReturnto(String rule) {
-    if (isExistingRule(rule)) {
+    if (isExistingRule(rule) && !hasReturnTo.get(rule).isEmpty()) {
       return hasReturnTo.get(rule);
     }
     return null;

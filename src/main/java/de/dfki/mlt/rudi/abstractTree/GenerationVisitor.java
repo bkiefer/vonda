@@ -121,13 +121,11 @@ public class GenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-      {
-        if (mem.existsVariable(parts[1])) {
+       if (mem.existsVariable(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
-      }
     }
     out.append(")\")");
   }
@@ -162,12 +160,12 @@ public class GenerationVisitor implements RudiVisitor {
     mem.enterClass(out.className);
     //mem.enterNextEnvironment();
 
-    for (String s : mem.getTopLevelRules(out.className)) {
-      for (String n : mem.getNeededClasses(s)) {
-        mem.needsClass(out.className, n);
-      }
-    }
-
+    // moved to typevisitor where it belongs
+//    for (String s : mem.getTopLevelRules(out.className)) {
+//      for (String n : mem.getNeededClasses(s)) {
+//        mem.needsClass(out.className, n);
+//      }
+//    }
     out.append("public class " + node.classname + "{\n"
             + "\tprivate int returnTo = 0;\n");
     // initialize all return markers
@@ -264,17 +262,21 @@ public class GenerationVisitor implements RudiVisitor {
     } else {
       // this is a sublevel rule and will get an if to determine whether it should be executed
       out.append("//Rule " + node.label + "\n");
-      out.append("if ((returnTo | (");
-      int i = 0;
-      for (String r : out.rm.shouldAddReturnto(node.label)) {
-        if (i != 0) {
-          out.append(" | return_" + r);
-        } else {
-          out.append("return_" + r);
+      if (out.rm.shouldAddReturnto(node.label) != null) {
+        out.append("if ((returnTo | (");
+        int i = 0;
+        for (String r : out.rm.shouldAddReturnto(node.label)) {
+          if (i != 0) {
+            out.append(" | return_" + r);
+          } else {
+            out.append("return_" + r);
+          }
+          i++;
         }
-        i++;
+        out.append(")) == 0) {\n");
+      } else {
+        out.append("{\n");
       }
-      out.append(")) == 0) {\n");
       node.comment.visit(this);
       node.ifstat.visit(this);
     }
@@ -388,7 +390,7 @@ public class GenerationVisitor implements RudiVisitor {
     if (ncs != null) {
       int i = 0;
       for (String c : ncs) {
-        if(c.equals(out.className)){
+        if (c.equals(out.className)) {
           c = "this";
         }
         if (i == 0) {
