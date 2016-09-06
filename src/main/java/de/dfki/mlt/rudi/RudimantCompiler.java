@@ -83,12 +83,8 @@ public class RudimantCompiler {
     String[] elements = importSpec.split("\\.");
     inputRealName = elements[elements.length - 1];
     subPackage = parent.subPackage;
-    // subPackage.add(parent.className);
-    // TODO: okay?
     subPackage.addAll(Arrays.asList(elements).subList(0, elements.length - 1));
 
-    //?????????????????
-    // className = subPackage.get(subPackage.size() - 1);
     className = inputRealName.substring(0, 1).toUpperCase()
             + inputRealName.substring(1);
 
@@ -121,8 +117,7 @@ public class RudimantCompiler {
    */
   private File getOutputDirectory() {
     File result = outputDirectory;
-    // TODO: okay?
-    for (String s : subPackage){//.subList(0, subPackage.size() - 1)) {
+    for (String s : subPackage){
       result = new File(result, s);
     }
     return result;

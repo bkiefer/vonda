@@ -52,11 +52,8 @@ public class TestTypeVisitor implements RudiVisitor {
     //System.out.println("Testing an assignment");
     node.right.visit(this);
     if (node.declaration) {
-      ArrayList<String> a = new ArrayList<>();
-      a.add(node.position);
-      a.add(mem.getCurrentTopRule());
       boolean worked = mem.addElement(node.left.toString(),
-              node.actualType, a);
+              node.actualType, node.position);
       if (!worked) {
         rudi.handleTypeError("You are trying to re-declare the variable "
                 + node.left.toString() + ", you really shouldn't do this");
@@ -191,10 +188,7 @@ public class TestTypeVisitor implements RudiVisitor {
   public void visitNode(StatFor2 node) {
     // TODO: this is a bit more complicated; remember the types of the variables
     // that were declared in the condition
-    ArrayList<String> a = new ArrayList<>();
-    a.add(node.position);
-    a.add(mem.getCurrentTopRule());
-    mem.addElement(node.var.toString(), node.varType, a);
+    mem.addElement(node.var.toString(), node.varType, node.position);
   }
 
   @Override
@@ -202,10 +196,7 @@ public class TestTypeVisitor implements RudiVisitor {
     // TODO: this is a bit more complicated; remember the types of the variables
     // that were declared in the condition
     for (String s : node.variables) {
-      ArrayList<String> a = new ArrayList<>();
-      a.add(node.position);
-      a.add(mem.getCurrentTopRule());
-      mem.addElement(s, "Object", a);
+      mem.addElement(s, "Object", node.position);
     }
   }
 
@@ -248,9 +239,7 @@ public class TestTypeVisitor implements RudiVisitor {
     if (!node.parameters.isEmpty()) {
       for (int i = 0; i < node.parameters.size(); i++) {
         // add parameters to environment
-        a.add(node.position);
-        a.add(mem.getCurrentTopRule());
-        mem.addElement(node.parameters.get(i), node.partypes.get(i), a);
+        mem.addElement(node.parameters.get(i), node.partypes.get(i), node.position);
       }
     }
     node.block.visit(this);
@@ -279,10 +268,7 @@ public class TestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatVarDef node) {
-    ArrayList<String> a = new ArrayList<>();
-    a.add(node.position);
-    a.add(node.position);
-    mem.addElement(node.variable, node.type, a);
+    mem.addElement(node.variable, node.type, node.position);
   }
 
   @Override

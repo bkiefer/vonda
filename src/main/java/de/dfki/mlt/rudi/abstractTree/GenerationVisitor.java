@@ -116,14 +116,14 @@ public class GenerationVisitor implements RudiVisitor {
       String[] parts = parameters[i].split("=");
       if (parts.length == 1) {
         // then this argument is a variable that is passed and should be found somewhere
-        if (mem.existsVariable(parts[0])) {
+        if (mem.variableExists(parts[0])) {
           out.append(", \" + " + parts[0] + " + \"");
         } else {
           // TODO: or throw an error here?
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-       if (mem.existsVariable(parts[1])) {
+       if (mem.variableExists(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);

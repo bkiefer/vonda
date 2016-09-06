@@ -5,11 +5,7 @@
  */
 package de.dfki.mlt.rudi;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * this is rudimants memory, used for type checking
@@ -22,12 +18,9 @@ public class Mem {
   public int ruleNumber = 1;
   private HashMap<String, HashMap<String, Integer>> ruleNums = new HashMap<>();
 
-  private List<Environment> environment = new ArrayList<>();
-  private HashMap<String, String> actualValues = new HashMap<>();
-  private HashMap<String, ArrayList<String>> variableOrigin = new HashMap<>();
-  private int positionAtm = -1;
-  private int depthAtm = -1;
-  private HashSet<String> rdfs = new HashSet<>();
+  final private Deque<Environment> environment;
+
+  private Environment current;
 
   // as this is only a way to provide mem with information about the types of
   // imported java functions, we probably don't need local namespaces
@@ -42,11 +35,8 @@ public class Mem {
   private HashMap<String, HashSet<String>> neededClasses = new HashMap<>();
 
   public Mem() {
-    environment = new ArrayList<>();
-    actualValues = new HashMap<>();
-    variableOrigin = new HashMap<>();
-    positionAtm = -1;
-    depthAtm = -1;
+    environment = new ArrayDeque<>();
+    current = null;
   }
 
   /**
@@ -113,7 +103,8 @@ public class Mem {
     functionTypes.put(funcname, functype);
     functionParTypes.put(funcname, partypes);
     // we may need this later, it doesn't harm us now
-    variableOrigin.put(funcname, origin);
+    // TODO: still sensible?
+    //variableOrigin.put(funcname, origin);
   }
 
   public boolean existsFunction(String funcname,
@@ -143,31 +134,18 @@ public class Mem {
    * @param origin first element class, second rule origin
    * @return
    */
-  public boolean addElement(String variable, String type, ArrayList<String> origin) {
-    //environment.get(positionAtm).put(variable, type);
-    if (actualValues.containsKey(variable)) {
-      //System.out.println("rudi thought about " + variable);
-      // if this variable was introduced elsewhere, it could already have been overridden here;
-      // if we just introduced it in this toplevel rule, it shouldn't be
-      // redeclared, too
-      if (environment.get(positionAtm).overrides(variable)){
-              //|| this.getVariableOriginTRule(variable).equals(this.curRule)) {
-        return false;
-      }
-      // we overwrite it
-      environment.get(positionAtm).override(variable, actualValues.get(variable),
-              type, variableOrigin.get(variable));
-    } else {
-      // we add it
-      environment.get(positionAtm).put(variable, type);
+  public boolean addElement(String variable, String type, String origin) {
+    if (current.containsKey(variable)) {
+      return false;
     }
-    variableOrigin.put(variable, origin);
-    actualValues.put(variable, type);
+    // TODO: check if RDF type
+    boolean isRdf = false;
+    current.put(variable, type, isRdf, origin);
     return true;
   }
 
-  public boolean existsVariable(String variable) {
-    return (actualValues.containsKey(variable));
+  public boolean variableExists(String variable) {
+    return (current.containsKey(variable));
   }
 
   /**
@@ -177,12 +155,7 @@ public class Mem {
    * @return the class it came from, null if not declared
    */
   public String getVariableOriginClass(String variable) {
-    //System.out.println(variable);
-    if(variableOrigin.get(variable) == null){
-      // then the variable was never declared, the type checking should throw sth
-      return null;
-    }
-    return variableOrigin.get(variable).get(0);
+    return current.getOrigin(variable);
   }
 
   /**
@@ -190,10 +163,10 @@ public class Mem {
    *
    * @param variable a variable
    * @return the toplevel rule it came from
-   */
+   *
   public String getVariableOriginTRule(String variable) {
     return variableOrigin.get(variable).get(1);
-  }
+  }*/
 
   /**
    * get the type of the given variable
@@ -202,7 +175,7 @@ public class Mem {
    * @return the variable's type
    */
   public String getVariableType(String variable) {
-    return actualValues.get(variable);
+    return current.get(variable);
   }
 
   /**
@@ -210,34 +183,14 @@ public class Mem {
    *
    * @return the position in memory where the environment is stored
    */
-  public int addAndEnterNewEnvironment() {
-    depthAtm += 1;
-    environment.add(new Environment(depthAtm));
-    return ++positionAtm;
+  public void  addAndEnterNewEnvironment() {
+    current = current == null ? new Environment() : current.deepCopy();
+    environment.push(current);
   }
 
   public void leaveEnvironment() {
     // restore the values in actual that we changed
-    environment.get(positionAtm).restoreOld(this);
-    this.depthAtm--;
-  }
-
-  public void eraseLocalV(String variable) {
-    actualValues.remove(variable);
-    variableOrigin.remove(variable);
-  }
-
-  public void restoreLocalV(String variable, String type, ArrayList<String> origin) {
-    actualValues.put(variable, type);
-    variableOrigin.put(variable, origin);
-  }
-
-  public void addRdf(String variable) {
-    rdfs.add(variable);
-  }
-
-  public boolean isRdf(String variable) {
-    return rdfs.contains(variable);
+    environment.pop();
   }
 
   /**
