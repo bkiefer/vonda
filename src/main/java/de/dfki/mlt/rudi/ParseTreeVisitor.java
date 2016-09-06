@@ -263,7 +263,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
               (StatAbstractBlock) this.visit(ctx.getChild(4)), currentClass);
     } // DO loop_statement_block WHILE LPAR boolean_exp RPAR
     else {
-      return new StatDoWhile(this.visit(ctx.getChild(4)),
+      return new StatDoWhile((RTExpression)this.visit(ctx.getChild(4)),
               (StatAbstractBlock) this.visit(ctx.getChild(1)), currentClass);
     }
   }
@@ -273,7 +273,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // comment exp comment
     if (ctx.getChildCount() == 4) { // exp of kind comment NOT boolean_exp comment
       return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
-              new ExpBoolean((RTExpression) this.visit(ctx.getChild(2)), null, null, true),
+              new ExpBoolean(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)), null, null, true),
               (UCommentBlock) this.visit(ctx.getChild(3)));
     }
     if (ctx.getChildCount() == 5) { // exp of kind comment LPAR exp RPAR comment
@@ -309,7 +309,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // comment exp comment
     if (ctx.getChildCount() == 4) { // exp of kind comment NOT boolean_exp comment
       return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
-              new ExpBoolean((RTExpression) this.visit(ctx.getChild(2)), null, null, true),
+              new ExpBoolean(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)), null, null, true),
               (UCommentBlock) this.visit(ctx.getChild(3)));
     }
     if (ctx.getChildCount() == 5) { // exp of kind comment LPAR exp RPAR comment
@@ -328,7 +328,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     if (ctx.getChildCount() == 1) {
       return this.visit(ctx.getChild(0));
     } else {
-      return new ExpBoolean((RTExpression) this.visit(ctx.getChild(0)),
+      return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
               (RTExpression) this.visit(ctx.getChild(2)),
               ctx.getChild(1).getText(), false);
     }
@@ -346,7 +346,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     RudiTree arit = this.visit(ctx.getChild(ctx.getChildCount() - 1));
     for (int i = ctx.getChildCount() - 2; i >= 0; i--) {
       if (i % 2 == 1) {
-        arit = new ExpBoolean((RTExpression) this.visit(ctx.getChild(i - 1)),
+        arit = new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(i - 1)),
                 (RTExpression) arit, ctx.getChild(i).getText(), false);
       }
     }
@@ -439,11 +439,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitIf_statement(RobotGrammarParser.If_statementContext ctx) {
     // IF LPAR boolean_exp RPAR statement (ELSE statement)?
     if (ctx.getChildCount() == 5) {   // no else
-      return new StatIf(this.visit(ctx.getChild(2)),
+      return new StatIf(ctx.getChild(2).getText(), (RTExpression)this.visit(ctx.getChild(2)),
               (StatAbstractBlock) this.visit(ctx.getChild(4)), null, currentClass);
     }
     // if there is an else
-    return new StatIf(this.visit(ctx.getChild(2)),
+    return new StatIf(ctx.getChild(2).getText(), (RTExpression)this.visit(ctx.getChild(2)),
             (StatAbstractBlock) this.visit(ctx.getChild(4)),
             (StatAbstractBlock) this.visit(ctx.getChild(6)), currentClass);
   }
@@ -452,11 +452,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitLoop_if_statement(RobotGrammarParser.Loop_if_statementContext ctx) {
     // IF LPAR boolean_exp RPAR statement (ELSE statement)?
     if (ctx.getChildCount() == 5) {   // no else
-      return new StatIf(this.visit(ctx.getChild(2)),
+      return new StatIf(ctx.getChild(2).getText(), (RTExpression)this.visit(ctx.getChild(2)),
               (StatAbstractBlock) this.visit(ctx.getChild(4)), null, currentClass);
     }
     // if there is an else
-    return new StatIf(this.visit(ctx.getChild(2)),
+    return new StatIf(ctx.getChild(2).getText(), (RTExpression)this.visit(ctx.getChild(2)),
             (StatAbstractBlock) this.visit(ctx.getChild(4)),
             (StatAbstractBlock) this.visit(ctx.getChild(6)), currentClass);
   }
@@ -464,7 +464,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitIf_exp(RobotGrammarParser.If_expContext ctx) {
     // boolean_exp QUESTION exp COLON exp
-    return new ExpIf((RTExpression) this.visit(ctx.getChild(0)),
+    return new ExpIf(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
             (RTExpression) this.visit(ctx.getChild(2)),
             (RTExpression) this.visit(ctx.getChild(4)));
   }

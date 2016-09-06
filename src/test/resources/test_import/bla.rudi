@@ -1,6 +1,6 @@
 
 importedRule:
-  if(1){
+  if(false){
     activity = "f";
     int te = 0;
     //String te = "test";

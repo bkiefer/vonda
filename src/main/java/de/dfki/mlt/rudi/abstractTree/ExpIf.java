@@ -16,10 +16,14 @@ public class ExpIf implements RudiTree, RTExpression{
   RTExpression thenexp;
   RTExpression elseexp;
 
-  public ExpIf(RTExpression bool, RTExpression thenexp, RTExpression elseexp){
+  String fullexp;
+
+  public ExpIf(String fullexp, RTExpression bool, RTExpression thenexp,
+          RTExpression elseexp){
     this.boolexp = bool;
     this.thenexp = thenexp;
     this.elseexp = elseexp;
+    this.fullexp = fullexp;
   }
 
   @Override

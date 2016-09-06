@@ -64,7 +64,7 @@ public class GenerationVisitor implements RudiVisitor {
     node.left.visit(this);
     out.append(" = ");
     node.right.visit(this);
-    out.append(";");
+    //out.append(";");
   }
 
   @Override
@@ -184,7 +184,7 @@ public class GenerationVisitor implements RudiVisitor {
             // of the process method
             if (((ExpAssignment) ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp).declaration) {
               ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp.visit(this);
-              //out.append(";");
+              out.append(";");
             }
           }
         }
@@ -239,7 +239,6 @@ public class GenerationVisitor implements RudiVisitor {
     mem.leaveClass(oldname, oldrule, oldTrule);
     out.flush();
     // mem.leaveEnvironment();
-    mem.goBackToBeginning();
   }
 
   @Override

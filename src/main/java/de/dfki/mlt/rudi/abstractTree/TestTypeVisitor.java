@@ -58,8 +58,8 @@ public class TestTypeVisitor implements RudiVisitor {
       boolean worked = mem.addElement(node.left.toString(),
               node.actualType, a);
       if (!worked) {
-        throw new RuntimeException("You are trying to re-declare the variable "
-                + node.left.toString() + ", don't do this");
+        rudi.handleTypeError("You are trying to re-declare the variable "
+                + node.left.toString() + ", you really shouldn't do this");
       }
       // do not forget to tell the variable what type we find out it is
       ((UVariable) node.left).type = node.actualType;
@@ -85,7 +85,11 @@ public class TestTypeVisitor implements RudiVisitor {
         }
       }
     } else if (node.operator != null) {
-      assert (node.left.getType().equals(node.right.getType()));
+      if (!node.left.getType().equals(node.right.getType())) {
+        rudi.handleTypeError(node.fullexp + " s a boolean expression with type "
+                + node.left.getType() + " on the one and type " + node.right.getType()
+                + " on the other hand");
+      }
     }
   }
 
@@ -104,8 +108,16 @@ public class TestTypeVisitor implements RudiVisitor {
     node.boolexp.visit(this);
     node.thenexp.visit(this);
     node.elseexp.visit(this);
-    assert (node.boolexp.getType().equals("boolean"));
-    assert (node.thenexp.getType().equals(node.elseexp.getType()));
+    if (!node.boolexp.getType().equals("boolean")){
+      rudi.handleTypeError(node.fullexp + " is an if expression where the condition does not "
+              + "resolve to boolean!");
+    }
+    if (!node.thenexp.getType().equals(node.elseexp.getType())){
+      rudi.handleTypeError(node.fullexp + " is an if expression where the else expression "
+              + "does not have the same type as the right expression!\n("
+              + "comparing types " + node.thenexp.getType() + " on left and " +
+              node.elseexp.getType() + " on right)");
+    }
   }
 
   @Override
@@ -125,7 +137,6 @@ public class TestTypeVisitor implements RudiVisitor {
     }
     // do not leave the environment, we are still in it!
     //mem.leaveEnvironment();
-    mem.goBackToBeginning();
     mem.leaveClass(oldname, oldrule, oldTrule);
   }
 
@@ -153,6 +164,10 @@ public class TestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatDoWhile node) {
     node.condition.visit(this);
+    if(!node.condition.getType().equals("boolean")){
+      rudi.handleTypeError("This is a while statement where the condition does not "
+              + "resolve to boolean!");
+    }
     node.statblock.visit(this);
   }
 
@@ -188,9 +203,9 @@ public class TestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatFunDef node) {
     // these are not tested, just added to the memory
-      ArrayList<String> a = new ArrayList<>();
-      a.add(node.position);
-      a.add(node.position);
+    ArrayList<String> a = new ArrayList<>();
+    a.add(node.position);
+    a.add(node.position);
     mem.addFunction(node.funcname, node.type,
             node.parameterTypes, a);
   }
@@ -198,6 +213,10 @@ public class TestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatIf node) {
     node.condition.visit(this);
+    if(!node.condition.getType().equals("boolean")){
+      rudi.handleTypeError("This is an if statement where the condition: " +
+              node.conditionString + ", does not resolve to boolean!");
+    }
     node.statblockIf.visit(this);
     if (node.statblockElse != null) {
       node.statblockElse.visit(this);
@@ -211,17 +230,17 @@ public class TestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatMethodDeclaration node) {
-      ArrayList<String> a = new ArrayList<>();
-      a.add(node.position);
-      a.add(mem.getCurrentTopRule());
+    ArrayList<String> a = new ArrayList<>();
+    a.add(node.position);
+    a.add(mem.getCurrentTopRule());
     mem.addFunction(node.name, node.return_type, node.partypes,
             a);
     mem.addAndEnterNewEnvironment();
     if (!node.parameters.isEmpty()) {
       for (int i = 0; i < node.parameters.size(); i++) {
         // add parameters to environment
-      a.add(node.position);
-      a.add(mem.getCurrentTopRule());
+        a.add(node.position);
+        a.add(mem.getCurrentTopRule());
         mem.addElement(node.parameters.get(i), node.partypes.get(i), a);
       }
     }
@@ -251,17 +270,20 @@ public class TestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatVarDef node) {
-      ArrayList<String> a = new ArrayList<>();
-      a.add(node.position);
-      a.add(node.position);
+    ArrayList<String> a = new ArrayList<>();
+    a.add(node.position);
+    a.add(node.position);
     mem.addElement(node.variable, node.type, a);
   }
 
   @Override
   public void visitNode(StatWhile node) {
     node.condition.visit(this);
+    if(!node.condition.getType().equals("boolean")){
+      rudi.handleTypeError("This is a while statement where the condition does not "
+              + "resolve to boolean!");
+    }
     node.statblock.visit(this);
-    assert (node.condition.getType().equals("boolean"));
   }
 
   @Override
@@ -298,7 +320,10 @@ public class TestTypeVisitor implements RudiVisitor {
     for (RTExpression e : node.exps) {
       partypes.add(e.getType());
     }
-    assert (mem.existsFunction(node.representation, partypes));
+    if (!mem.existsFunction(node.representation, partypes)){
+      rudi.handleTypeError("The function call to " + node.representation + " referrs"
+              + " to a function that wasn't declared");
+    }
   }
 
   @Override
@@ -320,9 +345,9 @@ public class TestTypeVisitor implements RudiVisitor {
   public void visitNode(UVariable node) {
     node.type = mem.getVariableType(node.representation);
     String o = mem.getVariableOriginClass(node.representation);
-    if(o == null){
-      throw new UnsupportedOperationException("The variable " + node.representation
-      + " is used but was not declared");
+    if (o == null) {
+      rudi.handleTypeError("The variable " + node.representation
+              + " is used but was not declared");
     }
     if (!node.originClass.equals(o)) {
       mem.needsClass(mem.getCurrentTopRule(), o);

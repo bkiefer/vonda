@@ -49,17 +49,13 @@ public class ExpAssignment implements RudiTree, RTExpression {
     }
     try {
       if (!(actualType.equals(typeRight))) {
-        out.append("// an Exception occurred; closing the writer here\n");
-        out.flush();
-        throw new UnsupportedOperationException("The assignment of the variable "
+        out.handleTypeError("The assignment of the variable "
                 + left.toString() + "\t in rule " + position
                 + " has type mismatches:\n\t\t" + actualType
                 + " does not match " + typeRight);
       }
     } catch (NullPointerException e) {
-      out.append("// an Exception occurred; closing the writer here\n");
-      out.flush();
-      throw new UnsupportedOperationException("The assignment of the variable "
+      out.handleTypeError("The assignment of the variable "
               + left.toString() + "\t in rule " + position
               + " cannot work; it was not defined!!");
     }
@@ -79,9 +75,7 @@ public class ExpAssignment implements RudiTree, RTExpression {
     this.typeRight = right.getType();
     try {
       if (!(actualType.equals(typeRight))) {
-        out.append("// an Exception occurred; closing the writer here\n");
-        out.flush();
-        throw new UnsupportedOperationException("The declaration of the variable "
+        out.handleTypeError("The declaration of the variable "
                 + left.toString() + " in rule " + position
                 + " has type mismatches:\n\t\t" + actualType
                 + " does not match " + right.getType());
@@ -91,9 +85,7 @@ public class ExpAssignment implements RudiTree, RTExpression {
 //                  + " does not match " + ((RTExpression) right).getType());
       }
     } catch (NullPointerException e) {
-      out.append("// an Exception occurred; closing the writer here\n");
-      out.flush();
-      throw new UnsupportedOperationException("The declaration of the variable "
+      out.handleTypeError("The declaration of the variable "
               + left.toString() + "\t in rule " + position
               + " has type mismatches:\n\t\t" + out.getMem().getVariableType(left.toString())
               + " does not match " + right.getType());

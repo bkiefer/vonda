@@ -250,47 +250,17 @@ public class RudimantCompiler {
   }
 
   /**
-   * takes a look into the memory to tell whether the given variable has the
-   * given type
-   *
-   * @param variable the variable
-   * @param type the type
-   * @return true if it is correct; false otherwise
+   * use this to report a type checking error; it will be handled according to
+   * the set typeCheck parameter
+   * @param errorMessage
    */
-  public boolean testType(String variable, String type) {
-    return this.mem.getVariableType(variable).equals(type);
+  public void handleTypeError(String errorMessage){
+    if(this.typeCheck){
+      // throw a real Exception
+      throw new TypeException(errorMessage);
+    } else {
+      // just set a warning into the logger
+      logger.warn(errorMessage);
+    }
   }
-
-  /**
-   * asks the memory about the type of the given variable
-   *
-   * @param variable
-   * @return the variable's type
-   */
-  public String getType(String variable) {
-    return this.mem.getVariableType(variable);
-  }
-
-  /**
-   * to test whether the parameters given to the function are of the correct
-   * types
-   *
-   * @param funcname
-   * @param partypes
-   * @return true or false
-   */
-  public boolean testFunctionType(String funcname, ArrayList<String> partypes) {
-    return this.mem.existsFunction(funcname, partypes);
-  }
-
-  /**
-   * asks the memory about the type of the given function
-   *
-   * @param funcname
-   * @return the function's type
-   */
-  public String getFunctionReturnType(String funcname) {
-    return this.mem.getFunctionRetType(funcname);
-  }
-
 }

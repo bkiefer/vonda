@@ -12,11 +12,11 @@ package de.dfki.mlt.rudi.abstractTree;
  */
 public class StatDoWhile implements RTStatement, RudiTree{
 
-  RudiTree condition;
+  RTExpression condition;
   StatAbstractBlock statblock;
   String currentRule;
 
-  public StatDoWhile(RudiTree condition, StatAbstractBlock statblock, String position) {
+  public StatDoWhile(RTExpression condition, StatAbstractBlock statblock, String position) {
     this.condition = condition;
     this.statblock = statblock;
     this.currentRule = position;

@@ -20,7 +20,7 @@ public class GrammarMain {
           + "the outcome of\n"
           + "\tall boolean expressions is being logged as "
           + "soon as they are evaluated.\n"
-          + "-e\tDo not crash if there are .rudi files that cannot be translated"
+          + "-e\tDo not crash if there are .rudi files that cannot be translated\n"
           + "-nt\tDo not try to do type checking while translating\n"
           + "\n\nPlease use this tool as follows:\n"
           + "java rudimant <directory_to_be_searched/> [output_directory/] (flags)\n";

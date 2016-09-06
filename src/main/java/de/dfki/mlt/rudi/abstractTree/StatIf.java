@@ -11,10 +11,11 @@ package de.dfki.mlt.rudi.abstractTree;
  */
 public class StatIf implements RTStatement, RudiTree{
 
-  RudiTree condition;
+  RTExpression condition;
   StatAbstractBlock statblockIf;
   StatAbstractBlock statblockElse;
   String currentRule;
+  String conditionString;
 
   /**
    * if there is no else case, set statblockElse to null
@@ -22,12 +23,13 @@ public class StatIf implements RTStatement, RudiTree{
    * @param statblockIf the if block
    * @param statblockElse  the else block if existing
    */
-  public StatIf(RudiTree condition, StatAbstractBlock statblockIf,
+  public StatIf(String conditionString, RTExpression condition, StatAbstractBlock statblockIf,
           StatAbstractBlock statblockElse, String position) {
     this.condition = condition;
     this.statblockIf = statblockIf;
     this.statblockElse = statblockElse;
     this.currentRule = position;
+    this.conditionString = conditionString;
   }
 
     /*String ret0 = "if(this.whatToLog.get(\"" + this.currentRule +

@@ -93,7 +93,7 @@ public class ReturnManagement {
   public void foundReturnTo(String to) {
     // we give this rule a marker of the current depth, if it is not already marked
     if(!markers.containsKey(to)){
-      markers.put(to, depth + 1);
+      markers.put(to, depth^2);
     }
     hasReturnTo.get(inRule).add(to);
     String r = inRule;

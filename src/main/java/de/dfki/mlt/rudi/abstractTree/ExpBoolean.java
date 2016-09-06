@@ -21,21 +21,25 @@ public class ExpBoolean implements RTExpression {
   String operator;
   String type;
 
+  String fullexp;
+
   /**
    * if the expression consists of only one part, set right and operator to null
    *
+   * @param fullexp the String representation of the whole expression
    * @param left left part
    * @param right right part
    * @param operator operator in between
    * @param not set true if there is a ! in front of the expression
    */
-  public ExpBoolean(RTExpression left,
+  public ExpBoolean(String fullexp, RTExpression left,
           RTExpression right, String operator, boolean not) {
     this.left = left;
     this.right = right;
     this.operator = operator;
     this.not = not;
     this.type = "boolean";
+    this.fullexp = fullexp;
   }
 
   @Override

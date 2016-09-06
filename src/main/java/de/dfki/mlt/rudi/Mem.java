@@ -49,6 +49,12 @@ public class Mem {
     depthAtm = -1;
   }
 
+  /**
+   * enter a new (imported) class. please store the old values of getcurrentClass()
+   * and getCurrentRule in your visitor and use leaveClass() to give them back to the memory
+   * after the new class has been handled
+   * @param classname of the new class
+   */
   public void enterClass(String classname) {
     this.curClass = classname;
     this.curRule = classname;
@@ -93,10 +99,6 @@ public class Mem {
         this.curTopRule = oldClassName;
       }
     }
-  }
-
-  public int getCurrentDepth() {
-    return depthAtm;
   }
 
   /**
@@ -161,10 +163,6 @@ public class Mem {
     return true;
   }
 
-  public void decreaseDepth() {
-    depthAtm--;
-  }
-
   public boolean existsVariable(String variable) {
     return (actualValues.containsKey(variable));
   }
@@ -202,23 +200,6 @@ public class Mem {
    */
   public String getVariableType(String variable) {
     return actualValues.get(variable);
-    /*Environment actual = environment.get(positionAtm);
-    if (!actual.containsKey(variable)) {
-      int depth = actual.getDepth();
-      int position = positionAtm;
-      while (position >= 0) {
-        if (!actual.containsKey(variable)) {
-          actual = environment.get(position--);
-          while (!actual.isVisibleFrom(depth) && position > 0) {
-            actual = environment.get(position--);
-          }
-        }
-        else{
-          break;
-        }
-      }
-    }
-    return actual.get(variable);*/
   }
 
   /**
@@ -227,22 +208,15 @@ public class Mem {
    * @return the position in memory where the environment is stored
    */
   public int addAndEnterNewEnvironment() {
-    depthAtm = getCurrentDepth() + 1;
+    depthAtm += 1;
     environment.add(new Environment(depthAtm));
     return ++positionAtm;
-  }
-
-  public void goBackToBeginning() {
-    positionAtm = -1;
   }
 
   public void leaveEnvironment() {
     // restore the values in actual that we changed
     environment.get(positionAtm).restoreOld(this);
-    decreaseDepth();
-    // this is no longer needed because it's handled in add&Enter
-//    this.positionAtm++;
-//    this.depthAtm = this.environment.get(this.positionAtm).getDepth();
+    this.depthAtm--;
   }
 
   public void eraseLocalV(String variable) {

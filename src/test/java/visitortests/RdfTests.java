@@ -88,7 +88,7 @@ public class RdfTests {
       }
     };
     mem.addAndEnterNewEnvironment();
-    mem.addElement("child", "Child", "here");
+    mem.addElement("child", "Child", new ArrayList<String>());
     UFieldAccess field = new UFieldAccess(elem, _client);
     String result = field.askChristophe(mem);
     assertEquals("get forename", "String", result);
@@ -103,7 +103,7 @@ public class RdfTests {
       }
     };
     mem.addAndEnterNewEnvironment();
-    mem.addElement("child", "Child", "here");
+    mem.addElement("child", "Child", new ArrayList<String>());
     UFieldAccess field = new UFieldAccess(elem, _client);
     String result = field.askChristophe(mem);
     assertEquals("get hasTreatment", "Treatment", result);
@@ -118,7 +118,7 @@ public class RdfTests {
       }
     };
     mem.addAndEnterNewEnvironment();
-    mem.addElement("child", "Child", "here");
+    mem.addElement("child", "Child", new ArrayList<String>());
     UFieldAccess field = new UFieldAccess(elem, _client);
     String result = field.askChristophe(mem);
     assertEquals("get birthdate", "<xsd:date>", result);
