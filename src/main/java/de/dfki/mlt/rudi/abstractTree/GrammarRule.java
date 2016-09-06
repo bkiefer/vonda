@@ -17,8 +17,6 @@ public class GrammarRule implements RudiTree{
   String label;
   UCommentBlock comment;
   StatIf ifstat;
-  // a help to mark this rule for return managing
-  int number;
   // remember whether you are toplevel
   boolean toplevel;
 
@@ -28,14 +26,6 @@ public class GrammarRule implements RudiTree{
     this.ifstat = ifstat;
     this.comment = comment;
     this.toplevel = toplevel;
-  }
-
-  /**
-   * this is the number-t subrule of the superrule
-   * @param number
-   */
-  void setNumber(int number){
-    this.number = number;
   }
 
   @Override

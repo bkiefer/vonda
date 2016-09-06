@@ -80,7 +80,7 @@ public class TestTypeVisitor implements RudiVisitor {
       return;
     }
     node.right.visit(this);
-    if (node.operator != null && node.left.getType().equals("rdf")) {
+    if (node.operator != null && node.left.getType().equals("magic")) {
       if (node.left.getType().equals(node.right.getType())) {
         if (node.operator.equals("<=")) {
           node.isSubsumed = true;
@@ -151,7 +151,7 @@ public class TestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(GrammarRule node) {
-    node.setNumber(mem.addRule(node.label, node.toplevel));
+    mem.addRule(node.label, node.toplevel);
     mem.addAndEnterNewEnvironment();
     node.ifstat.visit(this);
     mem.leaveEnvironment();

@@ -24,6 +24,7 @@ public class ReturnManagement {
   // on the toplevel methods, we don't need to set a predecessor and we can start
   // counting rule numbers new, so remember where we are
   private int depth = 0;
+  private int returnNumber = 1;
 
   // every rule that we want to return to sometime gets a return marker
   // TODO: is it true that we never return to a rule that is not a superrule??
@@ -44,6 +45,9 @@ public class ReturnManagement {
   public void enterRule(String newRule) {
     if (depth > 0) {
       findPredecessor.put(newRule, inRule);
+    } else {
+      // this is a toplevel rule and we can set the return counter back to 1
+      this.returnNumber = 1;
     }
     depth++;
     hasReturnTo.put(newRule, new HashSet<String>());
@@ -93,7 +97,8 @@ public class ReturnManagement {
   public void foundReturnTo(String to) {
     // we give this rule a marker of the current depth, if it is not already marked
     if(!markers.containsKey(to)){
-      markers.put(to, depth^2);
+      returnNumber *= 2;
+      markers.put(to, returnNumber);
     }
     hasReturnTo.get(inRule).add(to);
     String r = inRule;

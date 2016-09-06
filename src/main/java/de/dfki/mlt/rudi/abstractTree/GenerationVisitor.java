@@ -82,12 +82,14 @@ public class GenerationVisitor implements RudiVisitor {
       out.append(", ");
       node.right.visit(this);
       out.append(")");
+      return;
     } else if (node.doesSubsume) {
       out.append("isSubsumed(");
       node.right.visit(this);
       out.append(", ");
       node.left.visit(this);
       out.append(")");
+      return;
     }
     if (node.right != null) {
       out.append("(");

@@ -245,7 +245,7 @@ public class Mem {
    * @param rule
    * @return the rule's number, to be used in bitwise if markers
    */
-  public int addRule(String rule, boolean toplevel) {
+  public void addRule(String rule, boolean toplevel) {
     if (toplevel) {
       this.ruleNumber = 1;
       curTopRule = rule;
@@ -255,7 +255,6 @@ public class Mem {
     this.ruleNums.get(curClass).put(rule, ruleNumber);
     curRule = rule;
     this.neededClasses.put(rule, new HashSet<String>());
-    return this.ruleNumber;
   }
 
   /**

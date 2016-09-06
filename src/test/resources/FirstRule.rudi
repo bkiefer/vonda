@@ -1,3 +1,6 @@
+magic activity;
+magic Introduction;
+
 introduction:
 if (! activity <= Introduction) return;
 

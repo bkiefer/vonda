@@ -1,17 +1,5 @@
 package de.dfki.mlt.rudi;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.mlt.rudi.abstractTree.GenerationVisitor;
 import de.dfki.mlt.rudi.abstractTree.GrammarFile;
@@ -20,13 +8,23 @@ import de.dfki.mlt.rudi.abstractTree.RudiTree;
 import de.dfki.mlt.rudi.abstractTree.TestTypeVisitor;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
+import java.io.*;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RudimantCompiler {
 
   public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
-  private Writer logwriter;
+
   private boolean log;
   private boolean throwExceptions = true;
   private boolean typeCheck = true;
@@ -34,7 +32,7 @@ public class RudimantCompiler {
   private File inputDirectory;
   private File outputDirectory;
   // there may be users that do not start the .rudi files with capital letters,
-  // we don't want to crash in that case
+  // we don't want to crash in that case by turning it to uppercase and then trying to read it
   private String inputRealName;
 
   private Writer out;
@@ -52,7 +50,7 @@ public class RudimantCompiler {
   private RudimantCompiler parent;
 
   private RudimantCompiler(Mem m) {
-    mem = m;
+      mem = m;
   }
 
   public RudimantCompiler() {
@@ -128,10 +126,6 @@ public class RudimantCompiler {
       result = new File(result, s);
     }
     return result;
-  }
-
-  public void setLogwriter(Writer logwriter) {
-    this.logwriter = logwriter;
   }
 
   public void setLog(boolean log) {
@@ -262,6 +256,7 @@ public class RudimantCompiler {
       throw new TypeException(errorMessage);
     } else {
       // just set a warning into the logger
+      //System.out.println("warning");
       logger.warn(errorMessage);
     }
   }
