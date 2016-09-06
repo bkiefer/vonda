@@ -47,6 +47,9 @@ public class UFieldAccess extends RTLeaf {
    */
   public String askChristophe(Mem mem) throws TException {
     asked = true;
+    if(_client == null){
+      return "Object";
+    }
     // first element of representation is type
     // everything else specifies the wanted predicate information
     String typ = mem.getVariableType(representation.get(0));
@@ -64,6 +67,6 @@ public class UFieldAccess extends RTLeaf {
 
   @Override
   public String getType() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return this.type;
   }
 }

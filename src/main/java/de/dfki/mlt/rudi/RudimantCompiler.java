@@ -38,7 +38,6 @@ public class RudimantCompiler {
 
   private Writer out;
 
-  //public RobotContext context;
   protected HfcDbService.Client _client;
 
   private Mem mem;
@@ -53,7 +52,6 @@ public class RudimantCompiler {
 
   private RudimantCompiler(Mem m) {
     mem = m;
-    //context = new TestContext();
   }
 
   public RudimantCompiler() {

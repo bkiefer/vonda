@@ -75,6 +75,10 @@ public class TestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(ExpBoolean node) {
     node.left.visit(this);
+    if(node.right == null){
+      // TODO: there is nothing else to do?
+      return;
+    }
     node.right.visit(this);
     if (node.operator != null && node.left.getType().equals("rdf")) {
       if (node.left.getType().equals(node.right.getType())) {
@@ -348,6 +352,7 @@ public class TestTypeVisitor implements RudiVisitor {
     if (o == null) {
       rudi.handleTypeError("The variable " + node.representation
               + " is used but was not declared");
+      node.type = "Object";
     }
     if (!node.originClass.equals(o)) {
       mem.needsClass(mem.getCurrentTopRule(), o);

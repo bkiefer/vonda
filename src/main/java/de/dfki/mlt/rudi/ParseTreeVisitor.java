@@ -35,7 +35,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
    * constructor; the visitor needs to know in which rule/file we're in
    * @param masterFile the name of the current rule (filename), please not the
    * name of the resulting java file!!!!
+   * @param client
    */
+
   public ParseTreeVisitor(String masterFile, HfcDbService.Client client) {
     //this.memory = new HashMap<String, AbstractType>();
     currentClass = masterFile;

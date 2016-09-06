@@ -1,36 +1,24 @@
-// RULES FROM THE "IDLE" NODE
-
-/* what should rule labels look like?
-   if[check-start] (test) ....
-
-   check-start: // or sth else than ':' ?
-   if (test)
-*/
+introduction:
+if (! activity <= Introduction) return;
 
 
-/*@ public class FirstRule extends RuleUnit {@*/
-// A new game is started
-/*@ public void newClass(){@*/
-initiated:
-if (game.status == initiated) {
-  timeout("bla", 12){
-  var x = "test";
-test:
-if(true){
-//blabla
-}
-  x = "blabla";
-// if this line is commented in, rudimant should complain
-  //x = 1000;
-}
-  true ? false : true;
-  propose("start-game") {
-    // gameTypePlayed is a predefined custom query (ASK)
-    if (currentUser.gameTypePlayed(game)) {
-      emitDA(#Inform(Instructions, what=game.name, sender=I_ROBOT, addressee=currentUser.id ));
+// new session: greet user
+// TODO: ADD INFO FUNCTION TO GENERATION SO IT CAN CAPTURE USER NAME ETC.
+initial_greeting:
+if (user.id) {
+  if (! myLastDA()) {
+    propose("greeting") {
+      salutation = firstEncounter() ? InitialGreeting : ReturnGreeting;
+      DialogueAct da = emitDA(#salutation(Meeting));
+
+    ask_user_name:
+      if (! user.GivenName && saidInSession(#Request(Name)) < 0) {
+        // TODO: USE SAME LABELS IN GRAMMAR AND DATABASE
+        // Max: ERROR? TODO: there is no Request(Name) DA!
+        // make sure the next DA is send only send out after 900ms pause
+        introduceDADelay(900);
+        emitDA(#Request(Name));
+      }
     }
-    gameLogic.startSession();
-    String s = "bla";
   }
 }
-/*@}@*/

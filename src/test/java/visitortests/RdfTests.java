@@ -57,6 +57,10 @@ public class RdfTests {
     server.readConfig(config);
     server.runServer();
     server.runHttpService(WEBSERVER_PORT);
+    File outDir = new File("target/test/testfiles");
+    if(!outDir.exists()){
+      outDir.mkdirs();
+    }
   }
 
   @AfterClass

@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import de.dfki.mlt.rudi.GrammarMain;
 import de.dfki.mlt.rudi.TypeException;
+import java.io.File;
 
 import static org.junit.Assert.*;
 
@@ -27,6 +28,10 @@ public class PrintTest {
 
   @BeforeClass
   public static void setUpClass() {
+    File outDir = new File("target/test/testfiles");
+    if(!outDir.exists()){
+      outDir.mkdirs();
+    }
   }
 
   @AfterClass
@@ -41,12 +46,7 @@ public class PrintTest {
   public void tearDown() {
   }
 
-  /*@Test
-  public void FirstRuleTest() throws Exception {
-    String[] strings = new String[]{"src/test/resources/FirstRule.rudi",
-      "src/test/testfiles", "-log"};
-    GrammarMain.main(strings);
-  }*/
+
   @Test(expected = TypeException.class)
   public void ImportFailTest() throws Exception {
     String[] strings2 = new String[]{"src/test/resources/test_import/Test2.rudi",
