@@ -17,6 +17,7 @@ public class StatReturn implements RTStatement, RudiTree {
 
   RudiTree toRet;
   String lit;
+  String curRuleLabel;
 
   public StatReturn() {
     this.toRet = null;

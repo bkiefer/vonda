@@ -72,7 +72,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(ExpBoolean node) {
     node.left.visit(this);
-    if(node.right == null){
+    if (node.right == null) {
       // TODO: there is nothing else to do?
       return;
     }
@@ -109,15 +109,15 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.boolexp.visit(this);
     node.thenexp.visit(this);
     node.elseexp.visit(this);
-    if (!node.boolexp.getType().equals("boolean")){
+    if (!node.boolexp.getType().equals("boolean")) {
       rudi.handleTypeError(node.fullexp + " is an if expression where the condition does not "
               + "resolve to boolean!");
     }
-    if (!node.thenexp.getType().equals(node.elseexp.getType())){
+    if (!node.thenexp.getType().equals(node.elseexp.getType())) {
       rudi.handleTypeError(node.fullexp + " is an if expression where the else expression "
               + "does not have the same type as the right expression!\n("
-              + "comparing types " + node.thenexp.getType() + " on left and " +
-              node.elseexp.getType() + " on right)");
+              + "comparing types " + node.thenexp.getType() + " on left and "
+              + node.elseexp.getType() + " on right)");
     }
   }
 
@@ -170,7 +170,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatDoWhile node) {
     node.condition.visit(this);
-    if(!node.condition.getType().equals("boolean")){
+    if (!node.condition.getType().equals("boolean")) {
       rudi.handleTypeError("This is a while statement where the condition does not "
               + "resolve to boolean!");
     }
@@ -203,19 +203,16 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatFunDef node) {
     // these are not tested, just added to the memory
-    ArrayList<String> a = new ArrayList<>();
-    a.add(node.position);
-    a.add(node.position);
     mem.addFunction(node.funcname, node.type,
-            node.parameterTypes, a);
+            node.parameterTypes, node.position);
   }
 
   @Override
   public void visitNode(StatIf node) {
     node.condition.visit(this);
-    if(!node.condition.getType().equals("boolean")){
-      rudi.handleTypeError("This is an if statement where the condition: " +
-              node.conditionString + ", does not resolve to boolean!");
+    if (!node.condition.getType().equals("boolean")) {
+      rudi.handleTypeError("This is an if statement where the condition: "
+              + node.conditionString + ", does not resolve to boolean!");
     }
     node.statblockIf.visit(this);
     if (node.statblockElse != null) {
@@ -230,11 +227,7 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatMethodDeclaration node) {
-    ArrayList<String> a = new ArrayList<>();
-    a.add(node.position);
-    a.add(mem.getCurrentTopRule());
-    mem.addFunction(node.name, node.return_type, node.partypes,
-            a);
+    mem.addFunction(node.name, node.return_type, node.partypes, node.position);
     mem.enterEnvironment();
     if (!node.parameters.isEmpty()) {
       for (int i = 0; i < node.parameters.size(); i++) {
@@ -274,7 +267,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatWhile node) {
     node.condition.visit(this);
-    if(!node.condition.getType().equals("boolean")){
+    if (!node.condition.getType().equals("boolean")) {
       rudi.handleTypeError("This is a while statement where the condition does not "
               + "resolve to boolean!");
     }
@@ -315,7 +308,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     for (RTExpression e : node.exps) {
       partypes.add(e.getType());
     }
-    if (!mem.existsFunction(node.representation, partypes)){
+    if (!mem.existsFunction(node.representation, partypes)) {
       rudi.handleTypeError("The function call to " + node.representation + " referrs"
               + " to a function that wasn't declared");
     }

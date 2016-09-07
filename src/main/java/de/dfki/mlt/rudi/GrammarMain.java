@@ -31,7 +31,7 @@ public class GrammarMain {
           + "-d\tDo not try to do type checking while translating\n"
           + "\n\nPlease use this tool as follows:\n"
           + "java rudimant <directory_to_be_searched/> [output_directory/] OPTIONS\n"
-          + "-o:DIRECTORY\tSpecify DIRECTORY as the output directory";
+          + "-o=DIRECTORY\tSpecify DIRECTORY as the output directory";
 
   // RDF functionality
   private static final String RESOURCE_DIR = "../hfc-database/src/test/resources/";
@@ -66,7 +66,7 @@ public class GrammarMain {
     if (things.isEmpty()) {
       usage("");
     }
-    
+
     File outputDirectory = null;
     File dir = new File((String) things.get(0));
 
@@ -88,7 +88,7 @@ public class GrammarMain {
       outputDirectory = new File((String) options.valueOf("o"));
     }
 
-    System.out.println("test");
+    //System.out.println("test");
     if(outputDirectory != null){
         rc.process(dir, outputDirectory);
     }

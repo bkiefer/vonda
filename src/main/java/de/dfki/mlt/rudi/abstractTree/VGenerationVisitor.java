@@ -264,6 +264,7 @@ public class VGenerationVisitor implements RudiVisitor {
     } else {
       // this is a sublevel rule and will get an if to determine whether it should be executed
       out.append("//Rule " + node.label + "\n");
+      out.append(node.label + ":\n");
       if (out.rm.shouldAddReturnto(node.label) != null) {
         out.append("if ((returnTo | (");
         int i = 0;
@@ -437,11 +438,16 @@ public class VGenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatReturn node) {
     if (out.rm.isExistingRule(node.lit)) {
+      if (out.rm.isToplevel(node.curRuleLabel)){
+        out.append("return;\n");
+        return;
+      }
       out.append("returnTo = returnTo | return_" + node.lit + ";\n");
+      out.append("break " + node.curRuleLabel + ";\n");
       return;
 
     } else if (node.toRet == null) {
-      out.append("return;\n");
+      out.append("break " + node.curRuleLabel + ";\n");
       return;
     }
     out.append("return ");

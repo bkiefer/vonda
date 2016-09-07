@@ -104,7 +104,7 @@ public class Mem {
    * @param origin first element class, second rule origin
    */
   public void addFunction(String funcname, String functype,
-          ArrayList<String> partypes, ArrayList<String> origin) {
+          ArrayList<String> partypes, String origin) {
     functionTypes.put(funcname, functype);
     functionParTypes.put(funcname, partypes);
     // we may need this later, it doesn't harm us now

@@ -111,6 +111,10 @@ public class ReturnManagement {
     }
   }
 
+  public String getCurrentRule(){
+    return this.inRule;
+  }
+
   public Set<String> getMarkers(){
     return this.markers.keySet();
   }

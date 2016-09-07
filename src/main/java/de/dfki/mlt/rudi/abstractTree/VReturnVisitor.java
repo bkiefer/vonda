@@ -51,7 +51,7 @@ public class VReturnVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpFuncOnObject node) {
-    
+
   }
 
   @Override
@@ -140,6 +140,8 @@ public class VReturnVisitor implements RudiVisitor {
       _rm.foundReturnTo(node.lit);
       node.toRet = null;
     }
+    // TODO: if the return has no literal, we want to escape from the innermost rule...
+    node.curRuleLabel = _rm.getCurrentRule();
   }
 
   @Override
