@@ -15,6 +15,9 @@ public class StatDoWhile implements RTStatement, RudiTree{
   RTExpression condition;
   StatAbstractBlock statblock;
   String currentRule;
+  // if the boolexp is no boolexp, type visitor should set this to the correct
+  // way of testing the existance of boolexp
+  String isTrue;
 
   public StatDoWhile(RTExpression condition, StatAbstractBlock statblock, String position) {
     this.condition = condition;

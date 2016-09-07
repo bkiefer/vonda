@@ -109,10 +109,10 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.boolexp.visit(this);
     node.thenexp.visit(this);
     node.elseexp.visit(this);
-    if (!node.boolexp.getType().equals("boolean")) {
-      rudi.handleTypeError(node.fullexp + " is an if expression where the condition does not "
-              + "resolve to boolean!");
-    }
+    String t = node.boolexp.getType();
+    node.isTrue = this.conditionHandling(t);
+//      rudi.handleTypeError(node.fullexp + " is an if expression where the condition does not "
+//              + "resolve to boolean!");
     if (!node.thenexp.getType().equals(node.elseexp.getType())) {
       rudi.handleTypeError(node.fullexp + " is an if expression where the else expression "
               + "does not have the same type as the right expression!\n("
@@ -170,10 +170,11 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatDoWhile node) {
     node.condition.visit(this);
-    if (!node.condition.getType().equals("boolean")) {
+    node.isTrue = this.conditionHandling(node.condition.getType());
+    /*if (!node.condition.getType().equals("boolean")) {
       rudi.handleTypeError("This is a while statement where the condition does not "
               + "resolve to boolean!");
-    }
+    }*/
     node.statblock.visit(this);
   }
 
@@ -210,10 +211,11 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatIf node) {
     node.condition.visit(this);
-    if (!node.condition.getType().equals("boolean")) {
+    node.isTrue = this.conditionHandling(node.condition.getType());
+    /*if (!node.condition.getType().equals("boolean")) {
       rudi.handleTypeError("This is an if statement where the condition: "
               + node.conditionString + ", does not resolve to boolean!");
-    }
+    }*/
     node.statblockIf.visit(this);
     if (node.statblockElse != null) {
       node.statblockElse.visit(this);
@@ -267,6 +269,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatWhile node) {
     node.condition.visit(this);
+    node.isTrue = this.conditionHandling(node.condition.getType());
     if (!node.condition.getType().equals("boolean")) {
       rudi.handleTypeError("This is a while statement where the condition does not "
               + "resolve to boolean!");
@@ -355,4 +358,16 @@ public class VTestTypeVisitor implements RudiVisitor {
     // nothing to do
   }
 
+  private String conditionHandling(String conditionType) {
+    if (!conditionType.equals("boolean")) {
+      // tell the expression how it should handle its condition
+      if (conditionType.equals("int") || conditionType.equals("float")) {
+        return " != 0";
+      } else {
+        return " != null";
+      }
+    } else {
+      return "";
+    }
+  }
 }

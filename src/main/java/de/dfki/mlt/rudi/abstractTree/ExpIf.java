@@ -17,6 +17,9 @@ public class ExpIf implements RudiTree, RTExpression{
   RTExpression elseexp;
 
   String fullexp;
+  // if the boolexp is no boolexp, type visitor should set this to the correct
+  // way of testing the existance of boolexp
+  String isTrue;
 
   public ExpIf(String fullexp, RTExpression bool, RTExpression thenexp,
           RTExpression elseexp){

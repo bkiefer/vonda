@@ -142,6 +142,7 @@ public class VGenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(ExpIf node) {
     node.boolexp.visit(this);
+    this.conditionHandling(node.isTrue);
     out.append(" ? ");
     node.thenexp.visit(this);
     out.append(" : ");
@@ -313,6 +314,7 @@ public class VGenerationVisitor implements RudiVisitor {
     node.statblock.visit(this);
     out.append("while (");
     node.condition.visit(this);
+    this.conditionHandling(node.isTrue);
     out.append(");");
   }
 
@@ -368,6 +370,7 @@ public class VGenerationVisitor implements RudiVisitor {
     if (node.statblockElse != null) {
       out.append("if (");
       node.condition.visit(this);
+      this.conditionHandling(node.isTrue);
       out.append(") ");
       node.statblockIf.visit(this);
       out.append("else");
@@ -375,6 +378,7 @@ public class VGenerationVisitor implements RudiVisitor {
     } else {
       out.append("if (");
       node.condition.visit(this);
+      this.conditionHandling(node.isTrue);
       out.append(") ");
       node.statblockIf.visit(this);
     }
@@ -488,6 +492,7 @@ public class VGenerationVisitor implements RudiVisitor {
   public void visitNode(StatWhile node) {
     out.append("while (");
     node.condition.visit(this);
+    this.conditionHandling(node.isTrue);
     out.append(")");
     node.statblock.visit(this);
   }
@@ -564,5 +569,9 @@ public class VGenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(UnaryBoolean node) {
     out.append(node.content);
+  }
+
+  private void conditionHandling(String condaddition){
+    out.append(condaddition);
   }
 }

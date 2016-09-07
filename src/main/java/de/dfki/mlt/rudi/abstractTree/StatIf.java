@@ -16,6 +16,9 @@ public class StatIf implements RTStatement, RudiTree{
   StatAbstractBlock statblockElse;
   String currentRule;
   String conditionString;
+  // if the boolexp is no boolexp, type visitor should set this to the correct
+  // way of testing the existance of boolexp
+  String isTrue;
 
   /**
    * if there is no else case, set statblockElse to null
