@@ -7,6 +7,10 @@ package de.dfki.mlt.rudi;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import joptsimple.OptionException;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
 
 import org.apache.log4j.BasicConfigurator;
 
@@ -44,6 +48,18 @@ public class GrammarMain {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
+    OptionParser parser = new OptionParser("hledo:");
+    parser.accepts("--help");
+    OptionSet options = null;
+
+    try {
+      options = parser.parse(args);
+    } catch (OptionException ex) {
+      usage("Error parsing options: " + ex.getLocalizedMessage());
+    } catch (NumberFormatException nex) {
+      usage("Argument of -p (port) must be a number");
+    }
+
     int i = 0;
     if (args.length == 0 || args[0].equals("-help")) {
       System.out.println(help);
@@ -56,6 +72,10 @@ public class GrammarMain {
     }
     String inputDirectory = args[0];
     RudimantCompiler rc = new RudimantCompiler();
+
+    if (options.has("l")) {
+      rc.setLog(true);
+    }
 
     for (String arg : args) {
       i++;
@@ -78,6 +98,8 @@ public class GrammarMain {
           }
       }
     }
+
+    List things = options.nonOptionArguments();
 
     File dir = new File(inputDirectory);
     File outputDir;
