@@ -1,11 +1,11 @@
 package de.dfki.mlt.rudi;
 
 import de.dfki.lt.hfc.db.HfcDbService;
-import de.dfki.mlt.rudi.abstractTree.GenerationVisitor;
+import de.dfki.mlt.rudi.abstractTree.VGenerationVisitor;
 import de.dfki.mlt.rudi.abstractTree.GrammarFile;
-import de.dfki.mlt.rudi.abstractTree.ReturnVisitor;
+import de.dfki.mlt.rudi.abstractTree.VReturnVisitor;
 import de.dfki.mlt.rudi.abstractTree.RudiTree;
-import de.dfki.mlt.rudi.abstractTree.TestTypeVisitor;
+import de.dfki.mlt.rudi.abstractTree.VTestTypeVisitor;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import java.io.*;
@@ -211,15 +211,15 @@ public class RudimantCompiler {
     // walk the rudi tree
     // look for returns
     rm = new ReturnManagement(className);
-    ReturnVisitor vret = new ReturnVisitor(rm);
+    VReturnVisitor vret = new VReturnVisitor(rm);
     vret.visitNode(myTree);
 
     // do the type checking
-    TestTypeVisitor ttv = new TestTypeVisitor(this);
+    VTestTypeVisitor ttv = new VTestTypeVisitor(this);
     ttv.visitNode(myTree);
 
     // generate the output
-    GenerationVisitor gv = new GenerationVisitor(this);
+    VGenerationVisitor gv = new VGenerationVisitor(this);
 
     if (myTree instanceof GrammarFile) {
       // tell the file its name (for class definition)

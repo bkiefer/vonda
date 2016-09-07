@@ -18,12 +18,12 @@ import org.apache.thrift.TException;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class TestTypeVisitor implements RudiVisitor {
+public class VTestTypeVisitor implements RudiVisitor {
 
   private RudimantCompiler rudi;
   private Mem mem;
 
-  public TestTypeVisitor(RudimantCompiler rudi) {
+  public VTestTypeVisitor(RudimantCompiler rudi) {
     this.rudi = rudi;
     this.mem = rudi.getMem();
   }

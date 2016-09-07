@@ -11,11 +11,11 @@ import de.dfki.mlt.rudi.ReturnManagement;
  *
  * @author Christophe Biwer, christophe.biwer@dfki.de
  */
-public class ReturnVisitor implements RudiVisitor {
+public class VReturnVisitor implements RudiVisitor {
 
   private ReturnManagement _rm;
 
-  public ReturnVisitor(ReturnManagement rm_ini ) {
+  public VReturnVisitor(ReturnManagement rm_ini ) {
     _rm = rm_ini;
   }
 

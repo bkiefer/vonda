@@ -99,7 +99,7 @@
         <version>2.6</version>
         <configuration>
           <systemPropertyVariables>
-            <log4j.configuration>file:${project.build.testSourceDirectory}/../testfiles/log4j.properties</log4j.configuration>
+            <log4j.configuration>file:${project.build.testSourceDirectory}/../resources/log4j.properties</log4j.configuration>
           </systemPropertyVariables>
         </configuration>
       </plugin>

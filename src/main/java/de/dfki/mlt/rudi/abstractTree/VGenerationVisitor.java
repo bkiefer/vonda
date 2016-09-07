@@ -14,12 +14,12 @@ import java.util.Set;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class GenerationVisitor implements RudiVisitor {
+public class VGenerationVisitor implements RudiVisitor {
 
   private RudimantCompiler out;
   private Mem mem;
 
-  public GenerationVisitor(RudimantCompiler out) {
+  public VGenerationVisitor(RudimantCompiler out) {
     this.out = out;
     this.mem = out.getMem();
   }

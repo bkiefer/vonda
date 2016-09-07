@@ -23,14 +23,15 @@ public class GrammarMain {
 
   private static String help = "Hello, this is rudimant.\n"
           + "Currently, the following flags are available:\n"
-          + "-log\tTranscribe file in logmode. Text will be added so that "
+          + "-l\tTranscribe file in logmode. Text will be added so that "
           + "the outcome of\n"
           + "\tall boolean expressions is being logged as "
           + "soon as they are evaluated.\n"
           + "-e\tDo not crash if there are .rudi files that cannot be translated\n"
-          + "-nt\tDo not try to do type checking while translating\n"
+          + "-d\tDo not try to do type checking while translating\n"
           + "\n\nPlease use this tool as follows:\n"
-          + "java rudimant <directory_to_be_searched/> [output_directory/] (flags)\n";
+          + "java rudimant <directory_to_be_searched/> [output_directory/] OPTIONS\n"
+          + "-o:DIRECTORY\tSpecify DIRECTORY as the output directory";
 
   // RDF functionality
   private static final String RESOURCE_DIR = "../hfc-database/src/test/resources/";
@@ -49,7 +50,7 @@ public class GrammarMain {
     // BasicConfigurator.configure();
 
     OptionParser parser = new OptionParser("hledo:");
-    parser.accepts("--help");
+    parser.accepts("help");
     OptionSet options = null;
 
     try {
@@ -60,59 +61,47 @@ public class GrammarMain {
       usage("Argument of -p (port) must be a number");
     }
 
-    int i = 0;
-    if (args.length == 0 || args[0].equals("-help")) {
+    List things = options.nonOptionArguments();
+
+    if (things.isEmpty()) {
+      usage("");
+    }
+    
+    File outputDirectory = null;
+    File dir = new File((String) things.get(0));
+
+    if (options.has("help") || options.has("h")) {
       System.out.println(help);
       System.exit(0);
     }
-    if (args.length == 0 || args[0].startsWith("-")) {
-      System.out.println("Please use this tool as follows: java rudimant <directory_to_be_searched/> <output_directory/>? (-log)\n"
-              + "For help see rumdimant -help\n");
-      System.exit(-1);
-    }
-    String inputDirectory = args[0];
     RudimantCompiler rc = new RudimantCompiler();
-
     if (options.has("l")) {
       rc.setLog(true);
     }
-
-    for (String arg : args) {
-      i++;
-      if (i <= 1) {
-        continue;
-      }
-      switch (arg) {
-        case "-log":
-          rc.setLog(true);
-          break;
-        case "-e":
-          rc.setThrowExceptions(false);
-          break;
-        case "-nt":
-          rc.setTypeCheck(false);
-          break;
-        default:
-          if (arg.startsWith("-")) {
-            System.out.println(help);
-          }
-      }
+    if (options.has("e")) {
+      rc.setThrowExceptions(false);
+    }
+    if (options.has("d")) {
+      rc.setTypeCheck(false);
+    }
+    if (options.has("o")) {
+      outputDirectory = new File((String) options.valueOf("o"));
     }
 
-    List things = options.nonOptionArguments();
-
-    File dir = new File(inputDirectory);
-    File outputDir;
-
-    if(!args[1].startsWith("-")){
-      outputDir = new File(args[1]);
-      if(outputDir.isDirectory()){
-        rc.process(dir, outputDir);
-      }
+    System.out.println("test");
+    if(outputDirectory != null){
+        rc.process(dir, outputDirectory);
     }
 
     rc.process(dir);
 
+  }
+
+  private static void usage(String message) {
+    System.out.println(message);
+    System.out.println("Please use this tool as follows: java rudimant <directory_to_be_searched/> <output_directory/>? OPTIONS\n"
+            + "For help see rumdimant -help\n");
+    System.exit(-1);
   }
 
 }
