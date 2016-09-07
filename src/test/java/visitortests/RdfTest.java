@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  *
  * @author anna
  */
-public class RdfTests {
+public class RdfTest {
 
  private static final String RESOURCE_DIR = "../hfc-database/src/test/resources/";
 
@@ -91,8 +91,8 @@ public class RdfTests {
         add("forename");
       }
     };
-    mem.addAndEnterNewEnvironment();
-    mem.addElement("child", "Child", new ArrayList<String>());
+    mem.enterEnvironment();
+    mem.addElement("child", "Child", null);
     UFieldAccess field = new UFieldAccess(elem, _client);
     String result = field.askChristophe(mem);
     assertEquals("get forename", "String", result);
@@ -106,8 +106,8 @@ public class RdfTests {
         add("hasTreatment");
       }
     };
-    mem.addAndEnterNewEnvironment();
-    mem.addElement("child", "Child", new ArrayList<String>());
+    mem.enterEnvironment();
+    mem.addElement("child", "Child", null);
     UFieldAccess field = new UFieldAccess(elem, _client);
     String result = field.askChristophe(mem);
     assertEquals("get hasTreatment", "Treatment", result);
@@ -121,8 +121,8 @@ public class RdfTests {
         add("birthdate");
       }
     };
-    mem.addAndEnterNewEnvironment();
-    mem.addElement("child", "Child", new ArrayList<String>());
+    mem.enterEnvironment();
+    mem.addElement("child", "Child", null);
     UFieldAccess field = new UFieldAccess(elem, _client);
     String result = field.askChristophe(mem);
     assertEquals("get birthdate", "<xsd:date>", result);

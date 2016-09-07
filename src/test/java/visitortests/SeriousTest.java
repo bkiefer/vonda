@@ -18,9 +18,9 @@ import static org.junit.Assert.*;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class SeriousTests {
+public class SeriousTest {
 
-  public SeriousTests() {
+  public SeriousTest() {
   }
 
   @BeforeClass

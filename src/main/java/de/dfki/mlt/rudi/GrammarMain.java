@@ -8,6 +8,8 @@ package de.dfki.mlt.rudi;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.log4j.BasicConfigurator;
+
 /**
  * the main class of rudimant
  *
@@ -39,6 +41,8 @@ public class GrammarMain {
    * @throws Exception
    */
   public static void main(String[] args) throws IOException {
+    // BasicConfigurator.resetConfiguration();
+    // BasicConfigurator.configure();
 
     int i = 0;
     if (args.length == 0 || args[0].equals("-help")) {

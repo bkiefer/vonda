@@ -7,12 +7,17 @@ package de.dfki.mlt.rudi;
 
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * this is rudimants memory, used for type checking
  *
  * @author Anna Welker
  */
 public class Mem {
+
+  private static Logger logger = LoggerFactory.getLogger(Mem.class);
 
   // to remember those labels that get an own method
   public int ruleNumber = 1;
@@ -135,6 +140,7 @@ public class Mem {
    * @return
    */
   public boolean addElement(String variable, String type, String origin) {
+    logger.debug("Add var {}:{} [{}]", environment.size(), variable, type);
     if (current.containsKey(variable)) {
       return false;
     }
@@ -183,14 +189,17 @@ public class Mem {
    *
    * @return the position in memory where the environment is stored
    */
-  public void  addAndEnterNewEnvironment() {
+  public void  enterEnvironment() {
     current = current == null ? new Environment() : current.deepCopy();
     environment.push(current);
+    logger.trace("Enter level {}", environment.size());
   }
 
   public void leaveEnvironment() {
+    logger.trace("Leave level {}", environment.size());
     // restore the values in actual that we changed
     environment.pop();
+    current = environment.peekLast();
   }
 
   /**

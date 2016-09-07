@@ -188,7 +188,7 @@ public class RudimantCompiler {
     out = Files.newBufferedWriter(outputFile.toPath());
 
     File inputFile = getInputFile();
-    logger.info("parsing: " + inputFile.getName() + " to " + outputFile);
+    logger.info("parsing " + inputFile.getName() + " to " + outputFile);
 
     // initialise the context magic
     // context = new TestContext(log);
@@ -237,7 +237,7 @@ public class RudimantCompiler {
       throw new UnsupportedOperationException("There is sth going very,very wrong...");
     }
 
-    logger.info("Done parsing" + inputFile.getName());
+    logger.info("Done parsing " + inputFile.getName());
   }
 
   /**

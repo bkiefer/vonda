@@ -15,12 +15,15 @@
 
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
-
-    <scala.binary.version>2.11</scala.binary.version>
-    <scala.version>${scala.binary.version}.7</scala.version>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>net.sf.jopt-simple</groupId>
+      <artifactId>jopt-simple</artifactId>
+      <version>5.0.2</version>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -34,34 +37,6 @@
       <version>4.5.1-1</version>
     </dependency>
 
-    <!--
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>${scala.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_${scala.binary.version}</artifactId>
-      <version>2.2.5</version>
-      <scope>test</scope>
-      <exclusions>
-        < ScalaTest depends on scala-library-2.11.2. Maven doesn't know that 2.11.x are
-             all binary compatible. >
-        <exclusion>
-          <groupId>org.scala-lang</groupId>
-          <artifactId>scala-library</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.antlr</groupId>
-      <artifactId>antlr-runtime</artifactId>
-      <version>3.1.3</version>
-      <type>jar</type>
-      </dependency>
-      -->
     <dependency>
       <groupId>de.dfki.lt.hfc</groupId>
       <artifactId>hfc-db</artifactId>
@@ -70,26 +45,7 @@
     </dependency>
   </dependencies>
 
-
   <build>
-
-    <!--
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>net.alchim31.maven</groupId>
-          <artifactId>scala-maven-plugin</artifactId>
-          <version>3.2.2</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.1</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-    -->
-
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -137,48 +93,17 @@
         </executions>
       </plugin>
 
-      <!--
-      <plugin>
-         <groupId>net.alchim31.maven</groupId>
-        <artifactId>scala-maven-plugin</artifactId>
-        <version>3.2.2</version>
-<!
-        <configuration>
-          <recompileMode>incremental</recompileMode>
-        </configuration>
->
-        <executions>
-          <execution>
-            <id>scala-compile-first</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>add-source</goal>
-              <goal>compile</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>scala-test-compile</id>
-            <phase>process-test-resources</phase>
-            <goals>
-              <goal>testCompile</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-          </execution>
-        </executions>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <systemPropertyVariables>
+            <log4j.configuration>file:${project.build.testSourceDirectory}/../testfiles/log4j.properties</log4j.configuration>
+          </systemPropertyVariables>
+        </configuration>
       </plugin>
--->
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
@@ -193,23 +118,6 @@
           </execution>
         </executions>
       </plugin>
-
-      <!--
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.13</version>
-        <configuration>
-          <useFile>false</useFile>
-          <disableXmlReport>true</disableXmlReport>
-          <includes>
-            <include>**/*Test.*</include>
-            <include>**/*Spec.*</include>
-            <include>**/*Suite.*</include>
-          </includes>
-        </configuration>
-      </plugin>
-      -->
     </plugins>
 
   </build>
