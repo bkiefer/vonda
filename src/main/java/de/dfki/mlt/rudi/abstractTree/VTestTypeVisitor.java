@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.thrift.TException;
+import org.slf4j.LoggerFactory;
 
 /**
  * this visitor calculates the types of nodes and checks whether the types are
@@ -19,6 +20,8 @@ import org.apache.thrift.TException;
  * @author Anna Welker, anna.welker@dfki.de
  */
 public class VTestTypeVisitor implements RudiVisitor {
+
+  public static org.slf4j.Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
   private RudimantCompiler rudi;
   private Mem mem;
@@ -48,8 +51,7 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpAssignment node) {
-    // TODO: think about this, it doesn't seem to make a lot of sense
-    //System.out.println("Testing an assignment");
+    logger.trace("Testing an assignment");
     node.right.visit(this);
     if (node.declaration) {
       boolean worked = mem.addElement(node.left.toString(),

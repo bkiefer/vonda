@@ -8,6 +8,8 @@ package de.dfki.mlt.rudi.abstractTree;
 import de.dfki.mlt.rudi.*;
 import java.io.IOException;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * this visitor generates the java code
@@ -15,6 +17,8 @@ import java.util.Set;
  * @author Anna Welker, anna.welker@dfki.de
  */
 public class VGenerationVisitor implements RudiVisitor {
+  
+  public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
   private RudimantCompiler out;
   private Mem mem;
@@ -258,6 +262,7 @@ public class VGenerationVisitor implements RudiVisitor {
         i++;
       }
       out.append("){\n");
+      out.append(node.label + ":\n");
       //mem.enterNextEnvironment();
       node.comment.visit(this);
       node.ifstat.visit(this);
@@ -383,7 +388,7 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatImport node) {
-    System.out.println("Processing import " + node.text);
+    logger.info("Processing import " + node.text);
     try {
       RudimantCompiler.getEmbedded(out).process(node.text);
     } catch (IOException ex) {
@@ -444,7 +449,7 @@ public class VGenerationVisitor implements RudiVisitor {
         return;
       }
       out.append("returnTo = returnTo | return_" + node.lit + ";\n");
-      out.append("break " + node.curRuleLabel + ";\n");
+      out.append("break " + node.lit + ";\n");
       return;
 
     } else if (node.toRet == null) {

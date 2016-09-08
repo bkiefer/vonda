@@ -217,6 +217,7 @@ public class RudimantCompiler {
     // do the type checking
     VTestTypeVisitor ttv = new VTestTypeVisitor(this);
     ttv.visitNode(myTree);
+    logger.info("Done testing types of " + inputFile.getName());
 
     // generate the output
     VGenerationVisitor gv = new VGenerationVisitor(this);
