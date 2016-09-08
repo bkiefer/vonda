@@ -91,10 +91,9 @@ public class GrammarMain {
     //System.out.println("test");
     if(outputDirectory != null){
         rc.process(dir, outputDirectory);
-    }
-
+    } else {
     rc.process(dir);
-
+    }
   }
 
   private static void usage(String message) {

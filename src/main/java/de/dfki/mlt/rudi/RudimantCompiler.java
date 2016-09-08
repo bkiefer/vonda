@@ -239,6 +239,7 @@ public class RudimantCompiler {
     }
 
     logger.info("Done parsing " + inputFile.getName());
+    
   }
 
   /**

@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author Anna Welker, anna.welker@dfki.de
  */
 public class VGenerationVisitor implements RudiVisitor {
-  
+
   public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
   private RudimantCompiler out;
@@ -242,7 +242,7 @@ public class VGenerationVisitor implements RudiVisitor {
     }
     out.append("}\n");
     mem.leaveClass(oldname, oldrule, oldTrule);
-    out.flush();
+    //out.flush();
     // mem.leaveEnvironment();
   }
 
