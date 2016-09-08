@@ -37,7 +37,7 @@ public class RdfTest {
   private HfcDbClient client;
   private HfcDbService.Client _client;
 
-  private Mem mem;
+  private Mem mem = new Mem();
 
   // alternative PORTS
   private static final int SERVER_PORT = 8996;
