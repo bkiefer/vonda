@@ -6,11 +6,11 @@ LabelA:
   if (true){
     String d = "adf";
     LabelB:
-      if(false){
+      if("bla" && true){
         //kljljlj
       } else {
         LabelC:
-          if(1 == 1){
+          if(1){
             return LabelA;
           }
       }
@@ -28,5 +28,5 @@ LabelA:
               }
           }
       }
-      return LabelA;
+      return;
   }

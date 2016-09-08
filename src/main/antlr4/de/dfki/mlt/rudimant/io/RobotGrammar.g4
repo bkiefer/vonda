@@ -117,8 +117,6 @@ field_access
 exp
   : comment
   (LPAR exp RPAR
-  | boolean_exp
-  | NOT boolean_exp
   | field_access
   | funccall_on_object
   | assignment
@@ -133,6 +131,8 @@ exp
     | TRUE
     | NULL
     )
+  | boolean_exp
+  | NOT boolean_exp
   )
   comment
   ;

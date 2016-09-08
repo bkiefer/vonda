@@ -328,7 +328,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitSimple_b_exp(RobotGrammarParser.Simple_b_expContext ctx) {
     // simple_exp (boolean_op2 exp)?
     if (ctx.getChildCount() == 1) {
-      return this.visit(ctx.getChild(0));
+      if(ctx.getText().equals("true") || ctx.getText().equals("false")){
+        return new UnaryBoolean(ctx.getText());
+      }
+      return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
+          null, null, false);
     } else {
       return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
               (RTExpression) this.visit(ctx.getChild(2)),
@@ -340,7 +344,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitBoolean_exp(RobotGrammarParser.Boolean_expContext ctx) {
     // simple_b_exp boolean_op1 boolean_exp | simple_b_exp
     if (ctx.getChildCount() == 1) {
-      return this.visit(ctx.getChild(0));
+      if(ctx.getText().equals("true") || ctx.getText().equals("false")){
+        return new UnaryBoolean(ctx.getText());
+      }
+      return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
+          null, null, false);
     }
 //    ExpBoolean arit = new ExpBoolean(
 //            (RTExpression) this.visit(ctx.getChild(ctx.getChildCount() - 1)),

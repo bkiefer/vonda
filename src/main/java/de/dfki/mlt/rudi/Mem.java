@@ -154,6 +154,10 @@ public class Mem {
     return (current.containsKey(variable));
   }
 
+  public boolean isRdf(String variable){
+    return current.isRdf(variable);
+  }
+
   /**
    * get the class the given variable is located
    *

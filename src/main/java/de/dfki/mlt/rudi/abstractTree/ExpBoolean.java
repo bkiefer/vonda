@@ -22,6 +22,10 @@ public class ExpBoolean implements RTExpression {
   String type;
 
   String fullexp;
+  // if the boolexp is no boolexp, type visitor should set this to the correct
+  // way of testing the existance of boolexp
+  String isTrue;
+  boolean testIsEmpty = false;
 
   /**
    * if the expression consists of only one part, set right and operator to null

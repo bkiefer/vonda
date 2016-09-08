@@ -56,4 +56,8 @@ public class Environment {
   public String getOrigin(String k){
     return this.variableOrigin.get(k);
   }
+
+  public boolean isRdf(String variable){
+    return this.rdfs.contains(variable);
+  }
 }
