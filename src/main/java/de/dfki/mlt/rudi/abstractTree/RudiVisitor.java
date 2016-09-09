@@ -49,6 +49,8 @@ public interface RudiVisitor {
 
   void visitNode(StatImport node);
 
+  void visitNode(StatListCreation node);
+
   void visitNode(StatMethodDeclaration node);
 
   void visitNode(StatPropose node);

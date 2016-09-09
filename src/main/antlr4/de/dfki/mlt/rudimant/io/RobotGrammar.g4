@@ -39,6 +39,7 @@ label
 statement
   :
     ( exp SEMICOLON
+    | list_creation
     | statement_block
     | grammar_rule
     | set_operation SEMICOLON
@@ -85,7 +86,7 @@ statement_block
   ;
 
 loop_statement_block
-  : comment LBRACE comment (statement | (CONTINUE | BREAK) SEMICOLON)* RBRACE
+  : comment LBRACE comment (statement | ((CONTINUE | BREAK) SEMICOLON))* RBRACE
   ;
 
 loop_propose_statement
@@ -238,6 +239,12 @@ var_def
 fun_def
   : type_spec VARIABLE LPAR
     ( type_spec VARIABLE (COMMA type_spec VARIABLE)* )? RPAR SEMICOLON
+  ;
+
+list_creation
+  : VARIABLE ASSIGN LBRACE ((VARIABLE | STRING | INT | FLOAT)
+                            (COMMA (VARIABLE | STRING | INT | FLOAT))*)? 
+    RBRACE SEMICOLON
   ;
 
 set_operation

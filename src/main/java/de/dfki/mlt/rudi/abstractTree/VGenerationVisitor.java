@@ -128,11 +128,13 @@ public class VGenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-       if (mem.variableExists(parts[1])) {
+      {
+        if (mem.variableExists(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
+      }
     }
     out.append(")\")");
   }
@@ -414,6 +416,17 @@ public class VGenerationVisitor implements RudiVisitor {
   }
 
   @Override
+  public void visitNode(StatListCreation node) {
+    System.out.println("Rudi was here");
+    out.append("List<" + node.listType + "> " + node.variableName + " = new ArrayList<>();");
+    for (RTExpression e : node.objects) {
+      out.append(node.variableName + ".add(");
+      this.visitNode(e);
+      out.append(");\n");
+    }
+  }
+
+  @Override
   public void visitNode(StatMethodDeclaration node) {
     //mem.enterNextEnvironment();
     String ret = node.visibility + " " + node.return_type + " " + node.name + "(";
@@ -444,7 +457,7 @@ public class VGenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatReturn node) {
     if (out.rm.isExistingRule(node.lit)) {
-      if (out.rm.isToplevel(node.curRuleLabel)){
+      if (out.rm.isToplevel(node.curRuleLabel)) {
         out.append("return;\n");
         return;
       }
@@ -572,7 +585,7 @@ public class VGenerationVisitor implements RudiVisitor {
     out.append(node.content);
   }
 
-  private void conditionHandling(ExpBoolean node){
+  private void conditionHandling(ExpBoolean node) {
     out.append(node.isTrue);
   }
 }

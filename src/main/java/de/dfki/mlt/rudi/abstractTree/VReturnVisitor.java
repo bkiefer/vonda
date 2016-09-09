@@ -125,6 +125,11 @@ public class VReturnVisitor implements RudiVisitor {
   }
 
   @Override
+  public void visitNode(StatListCreation node) {
+    // nothing to do
+  }
+
+  @Override
   public void visitNode(StatMethodDeclaration node ) {
     node.block.visit(this);
   }

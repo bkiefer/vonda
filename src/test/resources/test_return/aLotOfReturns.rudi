@@ -4,6 +4,7 @@ boolean equals(String b);
 
 LabelA:
   if (true){
+    infoslots = {"Hobby", "Age"};
     String d = "adf";
     LabelB:
       if("bla" && true){

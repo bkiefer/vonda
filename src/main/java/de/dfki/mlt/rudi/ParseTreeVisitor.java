@@ -328,11 +328,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitSimple_b_exp(RobotGrammarParser.Simple_b_expContext ctx) {
     // simple_exp (boolean_op2 exp)?
     if (ctx.getChildCount() == 1) {
-      if(ctx.getText().equals("true") || ctx.getText().equals("false")){
+      if (ctx.getText().equals("true") || ctx.getText().equals("false")) {
         return new UnaryBoolean(ctx.getText());
       }
       return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
-          null, null, false);
+              null, null, false);
     } else {
       return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
               (RTExpression) this.visit(ctx.getChild(2)),
@@ -344,11 +344,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitBoolean_exp(RobotGrammarParser.Boolean_expContext ctx) {
     // simple_b_exp boolean_op1 boolean_exp | simple_b_exp
     if (ctx.getChildCount() == 1) {
-      if(ctx.getText().equals("true") || ctx.getText().equals("false")){
+      if (ctx.getText().equals("true") || ctx.getText().equals("false")) {
         return new UnaryBoolean(ctx.getText());
       }
       return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
-          null, null, false);
+              null, null, false);
     }
 //    ExpBoolean arit = new ExpBoolean(
 //            (RTExpression) this.visit(ctx.getChild(ctx.getChildCount() - 1)),
@@ -657,6 +657,18 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitErrorNode(ErrorNode en) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public RudiTree visitList_creation(RobotGrammarParser.List_creationContext ctx) {
+    // VARIABLE ASSIGN LBRACE (VARIABLE (COMMA VARIABLE)*)? SEMICOLON
+// get all the elements to be added to the list
+    ArrayList<RTExpression> elements = new ArrayList();
+    for (int i = 3; i <= ctx.getChildCount() - 2;) {
+      elements.add((RTExpression)this.visit(ctx.getChild(i)));
+      i += 2;
+    }
+    return new StatListCreation(ctx.getChild(0).getText(), elements, currentClass);
   }
 
 }

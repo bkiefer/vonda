@@ -229,6 +229,7 @@ public class RudimantCompiler {
       if(this.parent != null){
         out.append("import " + this.parent.className + ";\n");
       }
+      //  System.out.println(out);
       try {
         gv.visitNode(myTree);
       } catch (InOutException e) {
@@ -239,7 +240,8 @@ public class RudimantCompiler {
     }
 
     logger.info("Done parsing " + inputFile.getName());
-    
+    out.flush();
+
   }
 
   /**

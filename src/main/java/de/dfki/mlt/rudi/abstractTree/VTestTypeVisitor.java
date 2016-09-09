@@ -228,6 +228,19 @@ public class VTestTypeVisitor implements RudiVisitor {
   }
 
   @Override
+  public void visitNode(StatListCreation node) {
+    mem.addElement(node.variableName, "List", node.origin);
+    if(! (node.objects == null)){
+    for(RTExpression e : node.objects){
+      this.visitNode(e);
+    }
+    node.listType = node.objects.get(0).getType();
+    } else{
+      node.listType = "Object";
+    }
+  }
+
+  @Override
   public void visitNode(StatMethodDeclaration node) {
     mem.addFunction(node.name, node.return_type, node.partypes, node.position);
     mem.enterEnvironment();
