@@ -128,13 +128,11 @@ public class VGenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-      {
-        if (mem.variableExists(parts[1])) {
+       if (mem.variableExists(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
-      }
     }
     out.append(")\")");
   }
@@ -175,12 +173,12 @@ public class VGenerationVisitor implements RudiVisitor {
 //        mem.needsClass(out.className, n);
 //      }
 //    }
-    out.append("public class " + node.classname + "{\n"
-            + "\tprivate int returnTo = 0;\n");
+    out.append("public class " + node.classname + "{\n");
+    //        + "\tprivate int returnTo = 0;\n");
     // initialize all return markers
-    for (String k : out.rm.getMarkers()) {
-      out.append("int return_" + k + " = " + out.rm.getMarker(k) + ";\n");
-    }
+//    for (String k : out.rm.getMarkers()) {
+//      out.append("int return_" + k + " = " + out.rm.getMarker(k) + ";\n");
+//    }
     // initialize all class attributes before the main process method
     for (RudiTree r : node.rules) {
       if (r instanceof StatAbstractBlock) {
@@ -269,29 +267,27 @@ public class VGenerationVisitor implements RudiVisitor {
       node.comment.visit(this);
       node.ifstat.visit(this);
       //mem.leaveEnvironment();
+      out.append("}\n");
     } else {
       // this is a sublevel rule and will get an if to determine whether it should be executed
       out.append("//Rule " + node.label + "\n");
       out.append(node.label + ":\n");
-      if (out.rm.shouldAddReturnto(node.label) != null) {
-        out.append("if ((returnTo | (");
-        int i = 0;
-        for (String r : out.rm.shouldAddReturnto(node.label)) {
-          if (i != 0) {
-            out.append(" | return_" + r);
-          } else {
-            out.append("return_" + r);
-          }
-          i++;
-        }
-        out.append(")) == 0) {\n");
-      } else {
-        out.append("{\n");
-      }
+//      if (out.rm.shouldAddReturnto(node.label) != null) {
+//        out.append("if ((returnTo | (");
+//        int i = 0;
+//        for (String r : out.rm.shouldAddReturnto(node.label)) {
+//          if (i != 0) {
+//            out.append(" | return_" + r);
+//          } else {
+//            out.append("return_" + r);
+//          }
+//          i++;
+//        }
+//        out.append(")) == 0) {\n");
+//      }
       node.comment.visit(this);
       node.ifstat.visit(this);
     }
-    out.append("}\n");
   }
 
   @Override
@@ -461,7 +457,7 @@ public class VGenerationVisitor implements RudiVisitor {
         out.append("return;\n");
         return;
       }
-      out.append("returnTo = returnTo | return_" + node.lit + ";\n");
+      //out.append("returnTo = returnTo | return_" + node.lit + ";\n");
       out.append("break " + node.lit + ";\n");
       return;
 
