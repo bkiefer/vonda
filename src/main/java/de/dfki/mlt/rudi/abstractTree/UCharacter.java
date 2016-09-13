@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import java.util.Objects;
+
 /**
  * class representing a character
  *
@@ -27,4 +29,31 @@ public class UCharacter extends RTLeaf {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+
+  @Override
+  public int hashCode() {
+    int hash = 5;
+    hash = 47 * hash + Objects.hashCode(this.content);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final UCharacter other = (UCharacter) obj;
+    if (!Objects.equals(this.content, other.content)) {
+      return false;
+    }
+    return true;
+  }
+
+  
 }

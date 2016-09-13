@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import java.util.Objects;
+
 /**
  * this is either an int or a float
  *
@@ -32,4 +34,31 @@ public class UNumber extends RTLeaf{
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+
+  @Override
+  public int hashCode() {
+    int hash = 5;
+    hash = 47 * hash + Objects.hashCode(this.value);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final UNumber other = (UNumber) obj;
+    if (!Objects.equals(this.value, other.value)) {
+      return false;
+    }
+    return true;
+  }
+
+  
 }

@@ -21,4 +21,5 @@ public class UNull extends RTLeaf {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+
 }

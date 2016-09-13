@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import java.util.Objects;
+
 /**
  * a String
  *
@@ -27,4 +29,31 @@ public class UString extends RTLeaf {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 17 * hash + Objects.hashCode(this.content);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final UString other = (UString) obj;
+    if (!Objects.equals(this.content, other.content)) {
+      return false;
+    }
+    return true;
+  }
+
+  
 }

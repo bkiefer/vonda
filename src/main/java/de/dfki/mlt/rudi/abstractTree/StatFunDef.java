@@ -6,6 +6,7 @@
 package de.dfki.mlt.rudi.abstractTree;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * type_spec VARIABLE LPAR
@@ -35,4 +36,43 @@ public class StatFunDef implements RTStatement, RudiTree{
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 19 * hash + Objects.hashCode(this.funcname);
+    hash = 19 * hash + Objects.hashCode(this.type);
+    hash = 19 * hash + Objects.hashCode(this.parameters);
+    hash = 19 * hash + Objects.hashCode(this.parameterTypes);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final StatFunDef other = (StatFunDef) obj;
+    if (!Objects.equals(this.funcname, other.funcname)) {
+      return false;
+    }
+    if (!Objects.equals(this.type, other.type)) {
+      return false;
+    }
+    if (!Objects.equals(this.parameters, other.parameters)) {
+      return false;
+    }
+    if (!Objects.equals(this.parameterTypes, other.parameterTypes)) {
+      return false;
+    }
+    return true;
+  }
+
+  
 }

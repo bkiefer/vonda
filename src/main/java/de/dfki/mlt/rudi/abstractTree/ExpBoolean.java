@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import java.util.Objects;
+
 /**
  * this is a boolean expression; might also be a subsumes relation (but will
  * in sum always be a boolean)
@@ -54,5 +56,30 @@ public class ExpBoolean implements RTExpression {
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
+  }
+
+    @Override
+  public int hashCode() {
+    int hash = 3;
+    hash = 97 * hash + Objects.hashCode(this.fullexp);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final ExpBoolean other = (ExpBoolean) obj;
+    if (!Objects.equals(this.fullexp, other.fullexp)) {
+      return false;
+    }
+    return true;
   }
 }

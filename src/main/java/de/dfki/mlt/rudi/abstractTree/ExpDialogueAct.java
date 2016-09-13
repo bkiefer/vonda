@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import java.util.Objects;
+
 /**
  * this class represents dialogue acts
  *
@@ -33,4 +35,34 @@ public class ExpDialogueAct implements RudiTree, RTExpression{
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 89 * hash + Objects.hashCode(this.litGraph);
+    hash = 89 * hash + Objects.hashCode(this.rest);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final ExpDialogueAct other = (ExpDialogueAct) obj;
+    if (!Objects.equals(this.litGraph, other.litGraph)) {
+      return false;
+    }
+    if (!Objects.equals(this.rest, other.rest)) {
+      return false;
+    }
+    return true;
+  }
+  
 }

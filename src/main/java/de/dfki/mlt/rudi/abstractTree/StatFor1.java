@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import java.util.Objects;
+
 /**
  * FOR LPAR assignment SEMICOLON exp SEMICOLON exp? RPAR loop_statement_block
  * = a 'normal' for statement containing three ;
@@ -17,7 +19,7 @@ public class StatFor1 implements RTStatement, RudiTree {
   ExpBoolean condition;
   RTExpression arithmetic;
   StatAbstractBlock statblock;
-  
+
   String currentRule;
 
   public StatFor1(ExpAssignment assignment, ExpBoolean condition,
@@ -54,4 +56,43 @@ public class StatFor1 implements RTStatement, RudiTree {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+
+  @Override
+  public int hashCode() {
+    int hash = 3;
+    hash = 97 * hash + Objects.hashCode(this.assignment);
+    hash = 97 * hash + Objects.hashCode(this.condition);
+    hash = 97 * hash + Objects.hashCode(this.arithmetic);
+    hash = 97 * hash + Objects.hashCode(this.statblock);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final StatFor1 other = (StatFor1) obj;
+    if (!Objects.equals(this.assignment, other.assignment)) {
+      return false;
+    }
+    if (!Objects.equals(this.condition, other.condition)) {
+      return false;
+    }
+    if (!Objects.equals(this.arithmetic, other.arithmetic)) {
+      return false;
+    }
+    if (!Objects.equals(this.statblock, other.statblock)) {
+      return false;
+    }
+    return true;
+  }
+
+  
 }

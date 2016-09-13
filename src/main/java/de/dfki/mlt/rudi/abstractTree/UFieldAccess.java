@@ -9,6 +9,7 @@ import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.mlt.rudi.Mem;
 import java.util.ArrayList;
 import de.dfki.lt.hfc.db.rdfProxy.*;
+import java.util.Objects;
 import org.apache.thrift.TException;
 
 /**
@@ -69,4 +70,31 @@ public class UFieldAccess extends RTLeaf {
   public String getType() {
     return this.type;
   }
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 59 * hash + Objects.hashCode(this.representation);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final UFieldAccess other = (UFieldAccess) obj;
+    if (!Objects.equals(this.representation, other.representation)) {
+      return false;
+    }
+    return true;
+  }
+
+  
 }

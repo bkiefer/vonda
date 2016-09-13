@@ -6,6 +6,7 @@
 package de.dfki.mlt.rudi.abstractTree;
 
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -25,4 +26,31 @@ public class UCommentBlock implements RTStatement {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+
+  @Override
+  public int hashCode() {
+    int hash = 3;
+    hash = 53 * hash + Objects.hashCode(this.comments);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final UCommentBlock other = (UCommentBlock) obj;
+    if (!Objects.equals(this.comments, other.comments)) {
+      return false;
+    }
+    return true;
+  }
+
+  
 }

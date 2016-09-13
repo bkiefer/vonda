@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import java.util.Objects;
+
 /**
  * just to be able to deal with lambda expressions if someone should use them,
  * but there is nothing like type checking implemented yet
@@ -29,4 +31,31 @@ public class ExpLambda implements RudiTree, RTExpression {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 29 * hash + Objects.hashCode(this.exp);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final ExpLambda other = (ExpLambda) obj;
+    if (!Objects.equals(this.exp, other.exp)) {
+      return false;
+    }
+    return true;
+  }
+
+  
 }

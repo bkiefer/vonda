@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import java.util.Objects;
+
 /**
  * class that handles comments, please don't use this as one side in an expression!
  * @author Anna Welker
@@ -36,4 +38,35 @@ public class UComment extends RTLeaf implements RTStatement {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 29 * hash + Objects.hashCode(this.comment);
+    hash = 29 * hash + (this.containsClassName ? 1 : 0);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final UComment other = (UComment) obj;
+    if (this.containsClassName != other.containsClassName) {
+      return false;
+    }
+    if (!Objects.equals(this.comment, other.comment)) {
+      return false;
+    }
+    return true;
+  }
+
+  
 }

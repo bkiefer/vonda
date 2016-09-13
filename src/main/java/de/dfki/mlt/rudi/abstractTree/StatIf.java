@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import java.util.Objects;
+
 /**
  *
  * @author anna
@@ -22,9 +24,11 @@ public class StatIf implements RTStatement, RudiTree{
 
   /**
    * if there is no else case, set statblockElse to null
+   * @param conditionString
    * @param condition the condition
    * @param statblockIf the if block
    * @param statblockElse  the else block if existing
+   * @param position
    */
   public StatIf(String conditionString, RTExpression condition, StatAbstractBlock statblockIf,
           StatAbstractBlock statblockElse, String position) {
@@ -60,4 +64,39 @@ public class StatIf implements RTStatement, RudiTree{
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 67 * hash + Objects.hashCode(this.statblockIf);
+    hash = 67 * hash + Objects.hashCode(this.statblockElse);
+    hash = 67 * hash + Objects.hashCode(this.conditionString);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final StatIf other = (StatIf) obj;
+    if (!Objects.equals(this.conditionString, other.conditionString)) {
+      return false;
+    }
+    if (!Objects.equals(this.statblockIf, other.statblockIf)) {
+      return false;
+    }
+    if (!Objects.equals(this.statblockElse, other.statblockElse)) {
+      return false;
+    }
+    return true;
+  }
+
+
 }

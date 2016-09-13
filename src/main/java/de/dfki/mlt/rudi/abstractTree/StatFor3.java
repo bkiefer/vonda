@@ -6,6 +6,7 @@
 package de.dfki.mlt.rudi.abstractTree;
 
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -34,4 +35,39 @@ public class StatFor3 implements RTStatement, RudiTree {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 47 * hash + Objects.hashCode(this.variables);
+    hash = 47 * hash + Objects.hashCode(this.exp);
+    hash = 47 * hash + Objects.hashCode(this.statblock);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final StatFor3 other = (StatFor3) obj;
+    if (!Objects.equals(this.variables, other.variables)) {
+      return false;
+    }
+    if (!Objects.equals(this.exp, other.exp)) {
+      return false;
+    }
+    if (!Objects.equals(this.statblock, other.statblock)) {
+      return false;
+    }
+    return true;
+  }
+
+  
 }

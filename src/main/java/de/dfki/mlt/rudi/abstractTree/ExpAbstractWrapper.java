@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import java.util.Objects;
+
 /**
  * major intent of this class is to be able to deal with comments in every
  * position
@@ -31,5 +33,35 @@ public class ExpAbstractWrapper implements RudiTree, RTExpression{
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 3;
+    hash = 37 * hash + Objects.hashCode(this.commentbefore);
+    hash = 37 * hash + Objects.hashCode(this.exp);
+    hash = 37 * hash + Objects.hashCode(this.commentafter);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final ExpAbstractWrapper other = (ExpAbstractWrapper) obj;
+    if (!Objects.equals(this.commentbefore, other.commentbefore)) {
+      return false;
+    }
+    if (!Objects.equals(this.exp, other.exp)) {
+      return false;
+    }
+    return Objects.equals(this.commentafter, other.commentafter);
   }
 }

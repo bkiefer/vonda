@@ -9,6 +9,7 @@ import de.dfki.mlt.rudi.Mem;
 import de.dfki.mlt.rudi.RudimantCompiler;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Objects;
 
 /**
  * this is either a variable declaration, or an assignment of a variable to a
@@ -110,6 +111,39 @@ public class ExpAssignment implements RudiTree, RTExpression {
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 5;
+    hash = 79 * hash + Objects.hashCode(this.left);
+    hash = 79 * hash + Objects.hashCode(this.right);
+    hash = 79 * hash + (this.declaration ? 1 : 0);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final ExpAssignment other = (ExpAssignment) obj;
+    if (this.declaration != other.declaration) {
+      return false;
+    }
+    if (!Objects.equals(this.left, other.left)) {
+      return false;
+    }
+    if (!Objects.equals(this.right, other.right)) {
+      return false;
+    }
+    return true;
   }
 
 }
