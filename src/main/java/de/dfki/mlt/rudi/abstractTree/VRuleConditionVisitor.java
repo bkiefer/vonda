@@ -11,12 +11,12 @@ import de.dfki.mlt.rudi.RuleConditionLog;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class RuleConditionVisitor implements RudiVisitor {
+public class VRuleConditionVisitor implements RudiVisitor {
 
   private RuleConditionLog ll;
   private String currentRule;
 
-  public RuleConditionVisitor(RuleConditionLog ll) {
+  public VRuleConditionVisitor(RuleConditionLog ll) {
     this.ll = ll;
   }
 
@@ -86,7 +86,10 @@ public class RuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(GrammarFile node) {
-    // nothing to do here
+    // nothing to do here, but visit the children
+    for (RudiTree t : node.rules) {
+      t.visit(this);
+    }
   }
 
   @Override
@@ -140,7 +143,9 @@ public class RuleConditionVisitor implements RudiVisitor {
     currentRule = null;
     node.statblockIf.visit(this);
     // normally, should there be an else block?
-    node.statblockElse.visit(this);
+    if (node.statblockElse != null) {
+      node.statblockElse.visit(this);
+    }
   }
 
   @Override

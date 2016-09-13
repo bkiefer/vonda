@@ -128,13 +128,11 @@ public class VGenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-      {
-        if (mem.variableExists(parts[1])) {
+       if (mem.variableExists(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
-      }
     }
     out.append(")\")");
   }
@@ -176,6 +174,8 @@ public class VGenerationVisitor implements RudiVisitor {
 //      }
 //    }
     out.append("public class " + node.classname + "{\n");
+    out.append("public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);\n");
+    out.append("private Set<String> rulesToLog;");
     //        + "\tprivate int returnTo = 0;\n");
     // initialize all return markers
 //    for (String k : out.rm.getMarkers()) {
@@ -242,6 +242,11 @@ public class VGenerationVisitor implements RudiVisitor {
         r.visit(this);
       }
     }
+    // add all the logger methods
+    for (String l : out.ll.getLogRules()) {
+      System.out.println("lokking");
+      this.printRuleLogger(l, out.ll.getCond2log(l));
+    }
     out.append("}\n");
     mem.leaveClass(oldname, oldrule, oldTrule);
     //out.flush();
@@ -264,6 +269,7 @@ public class VGenerationVisitor implements RudiVisitor {
         i++;
       }
       out.append("){\n");
+      this.printCall2RuleLogger(node.label);
       out.append(node.label + ":\n");
       //mem.enterNextEnvironment();
       node.comment.visit(this);
@@ -273,6 +279,7 @@ public class VGenerationVisitor implements RudiVisitor {
     } else {
       // this is a sublevel rule and will get an if to determine whether it should be executed
       out.append("//Rule " + node.label + "\n");
+      this.printCall2RuleLogger(node.label);
       out.append(node.label + ":\n");
 //      if (out.rm.shouldAddReturnto(node.label) != null) {
 //        out.append("if ((returnTo | (");
@@ -586,4 +593,77 @@ public class VGenerationVisitor implements RudiVisitor {
   private void conditionHandling(ExpBoolean node) {
     out.append(node.isTrue);
   }
+
+  /**
+   * creates and prints the funccall for the logging method of the given rule
+   *
+   * @param rule
+   */
+  private void printCall2RuleLogger(String rule) {
+    out.append(rule + "Logger(");
+    if (!(out.ll.getVarAndType2log(rule) == null)) {
+      int i = 0;
+      for (String[] var2type : out.ll.getVarAndType2log(rule)) {
+        if (i < 1) {
+          out.append(var2type[0]);
+        } else {
+          out.append(", " + var2type[0]);
+        }
+      }
+    }
+    out.append(");");
+  }
+
+  /**
+   * creates and prints the logging method of the given rule
+   *
+   * @param rule
+   */
+  private void printRuleLogger(String rule, RudiTree bool_exp) {
+    if (rule == null) {
+//      if (bool_exp instanceof ExpAbstractWrapper) {
+//        printRuleLogger(null, ((ExpAbstractWrapper) bool_exp).exp);
+//      } else if (bool_exp instanceof ExpBoolean) {
+//        out.append("logger.info(\"" + ((ExpBoolean)bool_exp).fullexp
+//                + ((ExpBoolean)bool_exp).isTrue + " was \" + "
+//                + ((ExpBoolean)bool_exp).isTrue + ((ExpBoolean)bool_exp).fullexp);
+//        if(!(((ExpBoolean)bool_exp).isSubsumed | ((ExpBoolean)bool_exp).doesSubsume)){
+//          printRuleLogger(null, ((ExpBoolean)bool_exp).left);
+//          if(((ExpBoolean)bool_exp).right != null){
+//            printRuleLogger(null, ((ExpBoolean)bool_exp).right);
+//          }
+//        }
+        out.append("logger.info(\"");
+        this.visitNode(bool_exp);
+        out.append(" was \" + ");
+        this.visitNode(bool_exp);
+        out.append(");");
+//      } else if (bool_exp instanceof ExpArithmetic) {
+//
+//      } else if (bool_exp instanceof UVariable) {
+//
+//      } else if (bool_exp instanceof ExpDialogueAct) {
+//
+//      } else { // it should be sth simple like String, Number, Variable, UnaryBoolean, ...
+//
+//      }
+      return;
+    }
+    out.append("public void " + rule + "Logger(");
+    if (!out.ll.getVarAndType2log(rule).isEmpty()) {
+      int i = 0;
+      for (String[] var2type : out.ll.getVarAndType2log(rule)) {
+        if (i < 1) {
+          out.append(var2type[1] + " " + var2type[0]);
+        } else {
+          out.append(", " + var2type[1] + " " + var2type[0]);
+        }
+      }
+    }
+    out.append(") {\n if (rulesToLog.contains(\"" + rule + "\")){\n");
+    // do all that logging
+    printRuleLogger(null, bool_exp);
+    out.append("}\n}\n");
+  }
+
 }

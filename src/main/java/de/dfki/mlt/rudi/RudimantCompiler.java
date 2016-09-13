@@ -4,7 +4,7 @@ import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.mlt.rudi.abstractTree.VGenerationVisitor;
 import de.dfki.mlt.rudi.abstractTree.GrammarFile;
 import de.dfki.mlt.rudi.abstractTree.RudiTree;
-import de.dfki.mlt.rudi.abstractTree.RuleConditionVisitor;
+import de.dfki.mlt.rudi.abstractTree.VRuleConditionVisitor;
 import de.dfki.mlt.rudi.abstractTree.VTestTypeVisitor;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
@@ -219,7 +219,7 @@ public class RudimantCompiler {
 
     // now, collect all those rule-ifs that you should be able to log
     ll = new RuleConditionLog();
-    RuleConditionVisitor llv = new RuleConditionVisitor(ll);
+    VRuleConditionVisitor llv = new VRuleConditionVisitor(ll);
     llv.visitNode(myTree);
     
     // generate the output

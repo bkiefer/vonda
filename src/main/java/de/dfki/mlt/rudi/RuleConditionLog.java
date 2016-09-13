@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -61,10 +62,15 @@ public class RuleConditionLog {
 
   /**
    * get the variables + their types that the logging of this rule will require
+   * (first element = variable, second = type)
    * @param rule
    * @return
    */
   public List<String[]> getVarAndType2log(String rule){
     return rule2conditionArgs.get(rule);
+  }
+
+  public Set<String> getLogRules(){
+    return this.rule2condition.keySet();
   }
 }

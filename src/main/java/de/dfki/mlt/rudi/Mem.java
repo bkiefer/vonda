@@ -253,6 +253,6 @@ public class Mem {
   }
 
   public boolean isExistingRule(String rule) {
-    return ruleNums.containsKey(rule);
+    return ruleNums.get(this.curClass).containsKey(rule);
   }
 }
