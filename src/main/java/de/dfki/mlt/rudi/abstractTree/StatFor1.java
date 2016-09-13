@@ -17,6 +17,7 @@ public class StatFor1 implements RTStatement, RudiTree {
   ExpBoolean condition;
   RTExpression arithmetic;
   StatAbstractBlock statblock;
+  
   String currentRule;
 
   public StatFor1(ExpAssignment assignment, ExpBoolean condition,

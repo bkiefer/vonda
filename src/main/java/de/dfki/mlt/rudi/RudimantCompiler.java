@@ -4,6 +4,7 @@ import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.mlt.rudi.abstractTree.VGenerationVisitor;
 import de.dfki.mlt.rudi.abstractTree.GrammarFile;
 import de.dfki.mlt.rudi.abstractTree.RudiTree;
+import de.dfki.mlt.rudi.abstractTree.VLabelLogVisitor;
 import de.dfki.mlt.rudi.abstractTree.VTestTypeVisitor;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
@@ -22,7 +23,6 @@ public class RudimantCompiler {
 
   public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
-
   private boolean log;
   private boolean throwExceptions = true;
   private boolean typeCheck = true;
@@ -39,7 +39,7 @@ public class RudimantCompiler {
 
   private Mem mem;
 
-  public ReturnManagement rm;
+  public LabelsToLog ll;
 
   public List<String> subPackage = new ArrayList<>();
 
@@ -48,7 +48,7 @@ public class RudimantCompiler {
   private RudimantCompiler parent;
 
   private RudimantCompiler(Mem m) {
-      mem = m;
+    mem = m;
   }
 
   public RudimantCompiler() {
@@ -115,7 +115,7 @@ public class RudimantCompiler {
    */
   private File getOutputDirectory() {
     File result = outputDirectory;
-    for (String s : subPackage){
+    for (String s : subPackage) {
       result = new File(result, s);
     }
     return result;
@@ -217,6 +217,11 @@ public class RudimantCompiler {
     ttv.visitNode(myTree);
     logger.info("Done testing types of " + inputFile.getName());
 
+    // now, collect all those rule-ifs that you should be able to log
+    ll = new LabelsToLog();
+    VLabelLogVisitor llv = new VLabelLogVisitor(ll);
+    llv.visitNode(myTree);
+    
     // generate the output
     VGenerationVisitor gv = new VGenerationVisitor(this);
 
@@ -224,7 +229,7 @@ public class RudimantCompiler {
       // tell the file its name (for class definition)
       ((GrammarFile) myTree).setClassName(className);
       // maybe we need to import the class that imported us to use its variables
-      if(this.parent != null){
+      if (this.parent != null) {
         out.append("import " + this.parent.className + ";\n");
       }
       //  System.out.println(out);
@@ -245,10 +250,11 @@ public class RudimantCompiler {
   /**
    * use this to report a type checking error; it will be handled according to
    * the set typeCheck parameter
+   *
    * @param errorMessage
    */
-  public void handleTypeError(String errorMessage){
-    if(this.typeCheck){
+  public void handleTypeError(String errorMessage) {
+    if (this.typeCheck) {
       // throw a real Exception
       throw new TypeException(errorMessage);
     } else {
