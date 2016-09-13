@@ -128,11 +128,13 @@ public class VGenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-       if (mem.variableExists(parts[1])) {
+      {
+        if (mem.variableExists(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
+      }
     }
     out.append(")\")");
   }
@@ -452,8 +454,8 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatReturn node) {
-    if (out.rm.isExistingRule(node.lit)) {
-      if (out.rm.isToplevel(node.curRuleLabel)) {
+    if (mem.isExistingRule(node.lit)) {
+      if (mem.getTopLevelRules(mem.getClassName()).contains(node.curRuleLabel)) {
         out.append("return;\n");
         return;
       }

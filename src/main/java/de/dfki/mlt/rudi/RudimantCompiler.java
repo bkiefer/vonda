@@ -3,7 +3,6 @@ package de.dfki.mlt.rudi;
 import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.mlt.rudi.abstractTree.VGenerationVisitor;
 import de.dfki.mlt.rudi.abstractTree.GrammarFile;
-import de.dfki.mlt.rudi.abstractTree.VReturnVisitor;
 import de.dfki.mlt.rudi.abstractTree.RudiTree;
 import de.dfki.mlt.rudi.abstractTree.VTestTypeVisitor;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
@@ -13,7 +12,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -208,11 +206,11 @@ public class RudimantCompiler {
     // walk the parse tree
     RudiTree myTree = visitor.visit(tree);
 
-    // walk the rudi tree
-    // look for returns
-    rm = new ReturnManagement(className);
-    VReturnVisitor vret = new VReturnVisitor(rm);
-    vret.visitNode(myTree);
+//    // walk the rudi tree
+//    // look for returns
+//    rm = new ReturnManagement(className);
+//    VReturnVisitor vret = new VReturnVisitor(rm);
+//    vret.visitNode(myTree);
 
     // do the type checking
     VTestTypeVisitor ttv = new VTestTypeVisitor(this);

@@ -5,8 +5,6 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import de.dfki.mlt.rudi.ReturnManagement;
-
 /**
  * a return statement; returns can be used with labels to return to the
  * corresponding point in execution
