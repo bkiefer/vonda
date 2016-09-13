@@ -23,6 +23,9 @@ public class VGenerationVisitor implements RudiVisitor {
   private RudimantCompiler out;
   private Mem mem;
 
+  // activate this bool to get double escaped String literals
+  private boolean escape = false;
+
   public VGenerationVisitor(RudimantCompiler out) {
     this.out = out;
     this.mem = out.getMem();
@@ -98,15 +101,19 @@ public class VGenerationVisitor implements RudiVisitor {
     if (node.right != null) {
       out.append("(");
       node.left.visit(this);
+      out.append(" ");
       out.append(node.operator);
+      out.append(" ");
       node.right.visit(this);
       out.append(")");
       //out.context.doLog(
       //        "\"" + ret.replace('"', ' ') +  " _ resulted to \" + " + ret);
       return;
     }
+      out.append("(");
     node.left.visit(this);
     this.conditionHandling(node);
+      out.append(")");
     //out.context.doLog("\"" + ret.replace('"', ' ') +  " resulted to \" + ("
     //        + ret + ")");
   }
@@ -173,8 +180,14 @@ public class VGenerationVisitor implements RudiVisitor {
 //        mem.needsClass(out.className, n);
 //      }
 //    }
+    out.append("import java.util.ArrayList;\n"
+            + "import java.util.List;\n"
+            + "import java.util.Set;\n"
+            + "import org.slf4j.Logger;\n"
+            + "import org.slf4j.LoggerFactory;\n\n");
     out.append("public class " + node.classname + "{\n");
-    out.append("public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);\n");
+    out.append("public static Logger logger = LoggerFactory.getLogger("
+            + mem.getClassName() + ".class);\n");
     out.append("private Set<String> rulesToLog;");
     //        + "\tprivate int returnTo = 0;\n");
     // initialize all return markers
@@ -471,7 +484,11 @@ public class VGenerationVisitor implements RudiVisitor {
       return;
 
     } else if (node.toRet == null) {
-      out.append("break " + node.curRuleLabel + ";\n");
+      if(mem.getCurrentRule().equals(mem.getClassName())){
+        out.append("return;\n");
+        return;
+      }
+      out.append("break " + mem.getCurrentRule() + ";\n");
       return;
     }
     out.append("return ");
@@ -518,12 +535,12 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UCharacter node) {
-    out.append("\'" + node.content + "\'");
+    out.append("\'" + node.content + "\'" + " ");
   }
 
   @Override
   public void visitNode(UComment node) {
-    out.append(node.comment);
+    out.append(node.comment + " ");
   }
 
   @Override
@@ -539,7 +556,7 @@ public class VGenerationVisitor implements RudiVisitor {
     // TODO: tell me how the client is named!!!
     out.append(node.representation.get(0));
     for (int i = 1; i < node.representation.size(); i++) {
-      out.append(".getValue(" + node.representation.get(i) + ", client)");
+      out.append(".getValue(" + node.representation.get(i) + ", client)" + " ");
     }
   }
 
@@ -552,12 +569,12 @@ public class VGenerationVisitor implements RudiVisitor {
         out.append(", ");
       }
     }
-    out.append(")");
+    out.append(")" + " ");
   }
 
   @Override
   public void visitNode(UNull node) {
-    out.append("null");
+    out.append("null" + " ");
   }
 
   @Override
@@ -567,31 +584,35 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UString node) {
-    out.append(node.content);
+    if (this.escape) {
+      out.append("\\" + node.content.substring(0, node.content.length() - 1) + "\\\"" + " ");
+    } else {
+      out.append(node.content + " ");
+    }
   }
 
   @Override
   public void visitNode(UVariable node) {
     // if the variable is not in the memory,
     if (node.realOrigin != null) {
-      out.append(node.realOrigin.toLowerCase() + "." + node.representation);
+      out.append(node.realOrigin.toLowerCase() + "." + node.representation + " ");
       return;
     }
-    out.append(node.representation);
+    out.append(node.representation + " ");
   }
 
   @Override
   public void visitNode(UWildcard node) {
-    out.append("this.wildcard");   // wildcard is a local variable in resulting class
+    out.append("this.wildcard" + " ");   // wildcard is a local variable in resulting class
   }
 
   @Override
   public void visitNode(UnaryBoolean node) {
-    out.append(node.content);
+    out.append(node.content + " ");
   }
 
   private void conditionHandling(ExpBoolean node) {
-    out.append(node.isTrue);
+    out.append(node.isTrue + " ");
   }
 
   /**
@@ -633,11 +654,13 @@ public class VGenerationVisitor implements RudiVisitor {
 //            printRuleLogger(null, ((ExpBoolean)bool_exp).right);
 //          }
 //        }
-        out.append("logger.info(\"");
-        this.visitNode(bool_exp);
-        out.append(" was \" + ");
-        this.visitNode(bool_exp);
-        out.append(");");
+      out.append("logger.info(\"");
+      this.escape = true;
+      this.visitNode(bool_exp);
+      this.escape = false;
+      out.append(" was \" + (");
+      this.visitNode(bool_exp);
+      out.append("));");
 //      } else if (bool_exp instanceof ExpArithmetic) {
 //
 //      } else if (bool_exp instanceof UVariable) {

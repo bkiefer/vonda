@@ -63,6 +63,8 @@ public class VTestTypeVisitor implements RudiVisitor {
       // do not forget to tell the variable what type we find out it is
       ((UVariable) node.left).type = node.actualType;
       node.testTypeDecl(rudi);
+      node.position = mem.getCurrentTopRule();
+//      node.left.visit(this);
     } else {
       // we have to visit the left part, too, because if this is no declaration
       // that visit method will find out the variable type for us
@@ -105,6 +107,7 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpFuncOnObject node) {
+    node.on.visit(this);
     node.funccall.visit(this);
   }
 
@@ -151,9 +154,9 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(GrammarRule node) {
     mem.addRule(node.label, node.toplevel);
-    mem.enterEnvironment();
+//    mem.enterEnvironment();
     node.ifstat.visit(this);
-    mem.leaveEnvironment();
+//    mem.leaveEnvironment();
   }
 
   @Override

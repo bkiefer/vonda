@@ -55,5 +55,5 @@ public class UString extends RTLeaf {
     return true;
   }
 
-  
+
 }

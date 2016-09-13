@@ -195,7 +195,7 @@ public class Mem {
    */
   public void  enterEnvironment() {
     current = current == null ? new Environment() : current.deepCopy();
-    environment.push(current);
+    environment.add(current);
     logger.trace("Enter level {}", environment.size());
   }
 
