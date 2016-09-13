@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -17,12 +18,12 @@ public class ExpDialogueAct implements RudiTree, RTExpression{
   // comment LITERAL_OR_GRAPH LPAR ( exp (COMMA exp)*)? RPAR comment
 
   String litGraph;
-  //private List<AbstractExpression> exps;
+  List<RTExpression> exps;
   String rest;
 
-  public ExpDialogueAct(String litGraph, String rest){ // List<AbstractExpression> exps) {
+  public ExpDialogueAct(String litGraph, String rest, List<RTExpression> exps) {
     this.litGraph = litGraph.substring(1, litGraph.length());
-    //this.exps = exps;
+    this.exps = exps;
     this.rest = rest;
   }
 
@@ -64,5 +65,5 @@ public class ExpDialogueAct implements RudiTree, RTExpression{
     }
     return true;
   }
-  
+
 }

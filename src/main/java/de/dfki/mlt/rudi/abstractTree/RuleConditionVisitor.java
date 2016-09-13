@@ -5,18 +5,18 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import de.dfki.mlt.rudi.LabelsToLog;
+import de.dfki.mlt.rudi.RuleConditionLog;
 
 /**
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class VLabelLogVisitor implements RudiVisitor {
+public class RuleConditionVisitor implements RudiVisitor {
 
-  private LabelsToLog ll;
+  private RuleConditionLog ll;
   private String currentRule;
 
-  public VLabelLogVisitor(LabelsToLog ll) {
+  public RuleConditionVisitor(RuleConditionLog ll) {
     this.ll = ll;
   }
 
@@ -55,14 +55,17 @@ public class VLabelLogVisitor implements RudiVisitor {
   public void visitNode(ExpDialogueAct node) {
     // this could be used in a condition; we need to collect all those arguments
     // that are variables!!!
-    throw new UnsupportedOperationException("Not supported yet.");
+    for (RTExpression e : node.exps) {
+      e.visit(this);
+    }
   }
 
   @Override
   public void visitNode(ExpFuncOnObject node) {
     // this, again, could be used in a condition; collect the variable the function
     // is called on as well as any possible arguments
-    throw new UnsupportedOperationException("Not supported yet.");
+    node.on.visit(this);
+    node.funccall.visit(this);
   }
 
   @Override
@@ -83,147 +86,170 @@ public class VLabelLogVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(GrammarFile node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do here
   }
 
   @Override
   public void visitNode(GrammarRule node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    currentRule = node.label;
+    node.ifstat.visit(this);
+    currentRule = null;
   }
 
   @Override
   public void visitNode(StatAbstractBlock node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    for (RudiTree t : node.statblock) {
+      t.visit(this);
+    }
   }
 
   @Override
   public void visitNode(StatDoWhile node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // do we even need to do this?
+    node.statblock.visit(this);
   }
 
   @Override
   public void visitNode(StatFor1 node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // do we even need to do this?
+    node.statblock.visit(this);
   }
 
   @Override
   public void visitNode(StatFor2 node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // do we even need to do this?
+    node.statblock.visit(this);
   }
 
   @Override
   public void visitNode(StatFor3 node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // do we even need to do this?
+    node.statblock.visit(this);
   }
 
   @Override
   public void visitNode(StatFunDef node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do
   }
 
   @Override
   public void visitNode(StatIf node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    ll.addRule2condition(currentRule, node.condition);
+    node.condition.visit(this);
+    // we are done with the rule-if, so reset the flag
+    currentRule = null;
+    node.statblockIf.visit(this);
+    // normally, should there be an else block?
+    node.statblockElse.visit(this);
   }
 
   @Override
   public void visitNode(StatImport node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do
   }
 
   @Override
   public void visitNode(StatListCreation node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // this won't happen in a condition
   }
 
   @Override
   public void visitNode(StatMethodDeclaration node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (currentRule != null) {
+      throw new UnsupportedOperationException("Not supported yet.");
+    }
+    node.block.visit(this);
   }
 
   @Override
   public void visitNode(StatPropose node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do (?)
   }
 
   @Override
   public void visitNode(StatReturn node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do
   }
 
   @Override
   public void visitNode(StatSetOperation node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do
   }
 
   @Override
   public void visitNode(StatTimeout node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do
   }
 
   @Override
   public void visitNode(StatVarDef node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do
   }
 
   @Override
   public void visitNode(StatWhile node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    node.statblock.visit(this);
   }
 
   @Override
   public void visitNode(UCharacter node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // this is no variable, everything okay
   }
 
   @Override
   public void visitNode(UComment node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // we are not interested in comments
   }
 
   @Override
   public void visitNode(UCommentBlock node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // we are not interested in comments
   }
 
   @Override
   public void visitNode(UFieldAccess node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // TODO: what to do here? nothing?
   }
 
   @Override
   public void visitNode(UFuncCall node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // we might need those arguments
+    for (RudiTree t : node.exps) {
+      t.visit(this);
+    }
   }
 
   @Override
   public void visitNode(UNull node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do
   }
 
   @Override
   public void visitNode(UNumber node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // this is no variable, everything okay
   }
 
   @Override
   public void visitNode(UString node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // this is no variable, everything okay
   }
 
   @Override
   public void visitNode(UVariable node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // we might need to tell the logger method it needs this variable
+    if (currentRule != null) {
+      ll.addRule2conditionArgs(currentRule, node.representation, node.type);
+    }
   }
 
   @Override
   public void visitNode(UWildcard node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do
   }
 
   @Override
   public void visitNode(UnaryBoolean node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    // nothing to do
   }
 
 }

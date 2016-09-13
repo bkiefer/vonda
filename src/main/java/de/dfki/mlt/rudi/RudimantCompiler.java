@@ -4,7 +4,7 @@ import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.mlt.rudi.abstractTree.VGenerationVisitor;
 import de.dfki.mlt.rudi.abstractTree.GrammarFile;
 import de.dfki.mlt.rudi.abstractTree.RudiTree;
-import de.dfki.mlt.rudi.abstractTree.VLabelLogVisitor;
+import de.dfki.mlt.rudi.abstractTree.RuleConditionVisitor;
 import de.dfki.mlt.rudi.abstractTree.VTestTypeVisitor;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
@@ -39,7 +39,7 @@ public class RudimantCompiler {
 
   private Mem mem;
 
-  public LabelsToLog ll;
+  public RuleConditionLog ll;
 
   public List<String> subPackage = new ArrayList<>();
 
@@ -218,8 +218,8 @@ public class RudimantCompiler {
     logger.info("Done testing types of " + inputFile.getName());
 
     // now, collect all those rule-ifs that you should be able to log
-    ll = new LabelsToLog();
-    VLabelLogVisitor llv = new VLabelLogVisitor(ll);
+    ll = new RuleConditionLog();
+    RuleConditionVisitor llv = new RuleConditionVisitor(ll);
     llv.visitNode(myTree);
     
     // generate the output

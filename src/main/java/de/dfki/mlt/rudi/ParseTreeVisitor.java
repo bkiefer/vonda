@@ -292,19 +292,18 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitLiteral_or_graph_exp(RobotGrammarParser.Literal_or_graph_expContext ctx) {
     // LITERAL_OR_GRAPH LPAR ( exp (COMMA exp)*)? RPAR
-//    ArrayList<AbstractExpression> expList = new ArrayList<AbstractExpression> ();
-//    this.in_graph = true;
-//    for (int i = 2; i < ctx.getChildCount() - 1;){
-//      expList.add((RTExpression)this.visit(ctx.getChild(i)));
-//      i += 2;   // because we aren't interested in commas
-//    }
+    ArrayList<RTExpression> expList = new ArrayList<RTExpression> ();
+    for (int i = 2; i < ctx.getChildCount() - 1;){
+      expList.add((RTExpression)this.visit(ctx.getChild(i)));
+      i += 2;   // because we aren't interested in commas
+    }
 //    this.in_graph = false;
 //    return new ExpDialogueAct(ctx.getChild(0).getText(), expList);
     String rest = "";
     for (int i = 2; i < ctx.getChildCount() - 1; i++) {  // we don't need the parenthesis
       rest += ctx.getChild(i).getText();
     }
-    return new ExpDialogueAct(ctx.getChild(0).getText(), rest);
+    return new ExpDialogueAct(ctx.getChild(0).getText(), rest, expList);
   }
 
   @Override
