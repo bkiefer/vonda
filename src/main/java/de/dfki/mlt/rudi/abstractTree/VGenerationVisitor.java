@@ -198,8 +198,14 @@ public class VGenerationVisitor implements RudiVisitor {
     for (RudiTree r : node.rules) {
       if (r instanceof StatAbstractBlock) {
         for (RudiTree e : ((StatAbstractBlock) r).statblock) {
-          if (e instanceof ExpAbstractWrapper && ((ExpAbstractWrapper) e).exp instanceof ExpAbstractWrapper
-                  && ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp instanceof ExpAssignment) {
+          if (e instanceof ExpAbstractWrapper && (((ExpAbstractWrapper) e).exp instanceof ExpAssignment)){
+            if (((ExpAssignment) ((ExpAbstractWrapper) e).exp).declaration) {
+              ((ExpAbstractWrapper) e).exp.visit(this);
+              out.append(";");
+            }
+          } else if (e instanceof ExpAbstractWrapper &&
+                  (((ExpAbstractWrapper) e).exp instanceof ExpAbstractWrapper
+                  && ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp instanceof ExpAssignment)) {
             // then it is a class attribute and we want it to be defined outside
             // of the process method
             if (((ExpAssignment) ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp).declaration) {
@@ -247,6 +253,10 @@ public class VGenerationVisitor implements RudiVisitor {
             if (((ExpAssignment) ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp).declaration) {
               continue;
             }
+          } else if (e instanceof ExpAbstractWrapper && (((ExpAbstractWrapper) e).exp instanceof ExpAssignment)){
+            if (((ExpAssignment) ((ExpAbstractWrapper) e).exp).declaration) {
+              continue;
+            }
           }
           e.visit(this);
 
@@ -257,7 +267,6 @@ public class VGenerationVisitor implements RudiVisitor {
     }
     // add all the logger methods
     for (String l : out.ll.getLogRules()) {
-      System.out.println("lokking");
       this.printRuleLogger(l, out.ll.getCond2log(l));
     }
     out.append("}\n");

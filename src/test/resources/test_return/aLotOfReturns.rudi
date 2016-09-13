@@ -17,7 +17,6 @@ LabelA:
       }
     LabelD:
       if(d.equals("adf")){
-      //if(true){
         int s = 0;
       } else {
         LabelE:
@@ -28,7 +27,11 @@ LabelA:
                 return LabelD;
               }
           }
-      }
+        }
       return;
   }
-}
+
+LabelZ:
+  if(true) {
+    String f = "this is a test";
+  }
