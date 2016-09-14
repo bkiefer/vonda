@@ -75,8 +75,12 @@ public class VRuleConditionVisitor implements RudiVisitor {
               (node.operator != null) ? node.operator : ""
                       + left + node.operator + right);
     } else {
+      String e = node.fullexp;
+      if (e.startsWith("\"")){
+        e = "(" + e + " != null)";
+      }
       this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool, node.fullexp);
+      this.compiledLook.put(this.lastbool, e);
     }
     this.realLook.put(this.lastbool, node.fullexp);
   }
