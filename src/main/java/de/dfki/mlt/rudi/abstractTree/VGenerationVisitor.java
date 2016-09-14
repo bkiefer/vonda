@@ -142,11 +142,13 @@ public class VGenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-       if (mem.variableExists(parts[1])) {
+      {
+        if (mem.variableExists(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
+      }
     }
     out.append(")\")");
   }
@@ -191,6 +193,7 @@ public class VGenerationVisitor implements RudiVisitor {
             + "import java.util.List;\n"
             + "import java.util.Set;\n"
             + "import java.util.HashSet;\n"
+            + "import java.util.HashMap;\n"
             + "import org.slf4j.Logger;\n"
             + "import org.slf4j.LoggerFactory;\n\n");
     out.append("public class " + node.classname + "{\n");
@@ -322,7 +325,7 @@ public class VGenerationVisitor implements RudiVisitor {
         i++;
       }
       out.append("){\n");
-      this.printRuleLogger(node.label, node.ifstat);
+      this.printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
       //mem.enterNextEnvironment();
       node.comment.visit(this);
@@ -332,7 +335,7 @@ public class VGenerationVisitor implements RudiVisitor {
     } else {
       // this is a sublevel rule and will get an if to determine whether it should be executed
       out.append("//Rule " + node.label + "\n");
-      this.printRuleLogger(node.label, node.ifstat);
+      this.printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
 //      if (out.rm.shouldAddReturnto(node.label) != null) {
 //        out.append("if ((returnTo | (");
@@ -481,7 +484,7 @@ public class VGenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatListCreation node) {
     System.out.println("Rudi was here");
-    out.append("List<" + node.listType + "> " + node.variableName + " = new ArrayList<>();");
+    out.append(node.listType + " " + node.variableName + " = new ArrayList<>();");
     for (RTExpression e : node.objects) {
       out.append(node.variableName + ".add(");
       this.visitNode(e);
@@ -665,23 +668,38 @@ public class VGenerationVisitor implements RudiVisitor {
    *
    * @param rule
    */
-  private void printRuleLogger(String rule, ExpBoolean bool_exp) {
+  private void printRuleLogger(String rule, RTExpression bool_exp) {
+    if (bool_exp instanceof UnaryBoolean) {
+      // there isnt much we could log
+      out.append("wholeCondition = " + ((UnaryBoolean) bool_exp).content + ";\n");
+      return;
+    }
+    ExpBoolean bool = (ExpBoolean) bool_exp;
     if (rule != null) {
       out.append("if (rulesToLog.contains(\"" + rule + "\")){\n");
       // do all that logging
-      printRuleLogger(null, bool_exp);
+      printRuleLogger(null, bool);
       out.append("}\n");
     } else {
-      // Neuen Visitor erzeugen, der condition ablaufen kann, kriegt als info die CurrentRule aus Mem (die zur Generierung der Zwischenspeichervariablen
-      // benutzt wird), eine Linked HashMap, in die er einträgt <Zwischenspeicher als String, <urspr. Ausdruck als String, boolean Ergebnis>>
-      LinkedHashMap<String,<String,Boolean>> condLog = new LinkedHashMap<>();
-      condV.renewMap(bool_exp.rule, condLog);
-      condV.visitNode(bool_exp);
+      // remembers how the expressions should be realized by rudimant
+      LinkedHashMap<String, String> compiledLook = new LinkedHashMap<>();
 
-      // Danach ablaufen, im Visitor hinschreiben was zu loggen ist
+      // remembers how the expressions looked (for logging)
+      LinkedHashMap<String, String> realLook = new LinkedHashMap<>();
+      condV.renewMap(bool.rule, realLook, compiledLook);
+      condV.visitNode(bool);
+
+      // Danach ablaufen, alle Variablen initialisieren &  der Logfunktion die Map geben
+      out.append("Map<String, String> " + bool.rule + " = new HashMap<>();\n");
+      for (String var : compiledLook.keySet()) {
+        out.append("boolean " + var + " = " + compiledLook.get(var) + ";");
+        out.append(bool.rule + ".put(\"" + var + "\", \"" + realLook.get(var) + "\");\n");
+      }
 
       // Variable wholeCondition wird dann auf das letzte Element der Keylist der Map gesetzt
-      out.append("wholeCondition = " + condV.getBiggestExp() + ";\n");
+      out.append("wholeCondition = " + condV.getLastBool() + ";\n");
+      out.append("LoggerFunction(" + bool.rule + ", \"" + bool.rule + "\", \""
+              + mem.getClassName() + "\");\n");
     }
 //    out.append(rule + "Logger(");
 //    if (!(out.ll.getVarAndType2log(rule) == null)) {
@@ -697,7 +715,7 @@ public class VGenerationVisitor implements RudiVisitor {
 //    out.append(");");
   }
 
-  public void dummyLoggingMethod(String rule, String className, Map toLog){
+  public void dummyLoggingMethod(String rule, String className, Map toLog) {
     // log this very extensive
   }
 
@@ -754,5 +772,4 @@ public class VGenerationVisitor implements RudiVisitor {
 //    printRuleLogger(null, bool_exp);
 //    out.append("}\n}\n");
 //  }
-
 }

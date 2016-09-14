@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
@@ -14,17 +15,18 @@ import java.util.LinkedHashMap;
 public class VRuleConditionVisitor implements RudiVisitor {
 
   private String currentRule;
-  private LinkedHashMap<String, <String,Boolean>> condLog;
-  private String biggestExp;
+  // map the new variables to what they represent
+  private LinkedHashMap<String, String> realLook;
+  // map the new variables to how they should be calculated
+  private LinkedHashMap<String, String> compiledLook;
+  private int counter;
 
-  public String getBiggestExp() {
-    return biggestExp;
-  }
-
-  public void renewMap(String rule, LinkedHashMap<String, <String,Boolean
-    >> condLog){
-    this.condLog = condLog;
+  public void renewMap(String rule, LinkedHashMap<String, String> condLog,
+          LinkedHashMap<String, String> compiledLook) {
+    this.realLook = condLog;
+    this.compiledLook = compiledLook;
     this.currentRule = rule;
+    this.counter = 0;
   }
 
   @Override
@@ -34,12 +36,15 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpAbstractWrapper node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    node.exp.visit(this);
   }
 
   @Override
   public void visitNode(ExpArithmetic node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    node.left.visit(this);
+    if (node.right != null) {
+      node.right.visit(this);
+    }
   }
 
   @Override
@@ -47,9 +52,33 @@ public class VRuleConditionVisitor implements RudiVisitor {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
+  private String lastbool;
+
+  public String getLastBool() {
+    return this.lastbool;
+  }
+
   @Override
   public void visitNode(ExpBoolean node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (node.right != null) {
+      node.left.visit(this);
+      String left = this.compiledLook.get(lastbool);
+      String right = "";
+      if (node.right instanceof UnaryBoolean) {
+        right = ((UnaryBoolean) node.right).content;
+      } else {
+        node.right.visit(this);
+        right = this.compiledLook.get(lastbool);
+      }
+      this.lastbool = this.currentRule + this.counter++;
+      this.compiledLook.put(this.lastbool,
+              (node.operator != null) ? node.operator : ""
+                      + left + node.operator + right);
+    } else {
+      this.lastbool = this.currentRule + this.counter++;
+      this.compiledLook.put(this.lastbool, node.fullexp);
+    }
+    this.realLook.put(this.lastbool, node.fullexp);
   }
 
   @Override

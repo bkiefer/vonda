@@ -383,6 +383,11 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   private void conditionHandling(ExpBoolean node) {
     String t = node.left.getType();
+    if(t == null){
+      // lets assume it is an unrecognized rdf object
+      node.isTrue = " != null";
+      return;
+    }
     if (!t.equals("boolean")) {
       // tell the expression how it should handle its condition
       if (t.equals("int") || t.equals("float")) {
