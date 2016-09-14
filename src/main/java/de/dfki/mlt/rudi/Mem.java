@@ -39,9 +39,13 @@ public class Mem {
   private String curTopRule;
   private HashMap<String, HashSet<String>> neededClasses = new HashMap<>();
 
+  // remember the toplevel rules and imports in the correct order
+  private Map<String,List<String>> rulesAndImports;
+
   public Mem() {
     environment = new ArrayDeque<>();
     current = null;
+    rulesAndImports = new HashMap<>();
   }
 
   /**
@@ -56,8 +60,8 @@ public class Mem {
     if (ruleNums.get(classname) == null) {
       this.ruleNums.put(classname, new HashMap<String, Integer>());
       this.neededClasses.put(classname, new HashSet<String>());
+    this.rulesAndImports.put(classname, new ArrayList<String>());
     }
-
   }
 
   /**
@@ -209,10 +213,12 @@ public class Mem {
   /**
    * add the rule to the memory
    * @param rule
+   * @param toplevel
    * @return the rule's number, to be used in bitwise if markers
    */
   public void addRule(String rule, boolean toplevel) {
     if (toplevel) {
+      this.rulesAndImports.get(this.curClass).add(rule);
       this.ruleNumber = 1;
       curTopRule = rule;
     } else {
@@ -221,6 +227,19 @@ public class Mem {
     this.ruleNums.get(curClass).put(rule, ruleNumber);
     curRule = rule;
     this.neededClasses.put(rule, new HashSet<String>());
+  }
+
+  public void addImport(String importName){
+    this.rulesAndImports.get(this.curClass).add(importName + ".process(");
+  }
+
+  /**
+   * not only toplevel rules, but also import calls
+   * @param classname
+   * @return
+   */
+  public List<String> getToplevelCalls(String classname){
+    return this.rulesAndImports.get(this.curClass);
   }
 
   /**

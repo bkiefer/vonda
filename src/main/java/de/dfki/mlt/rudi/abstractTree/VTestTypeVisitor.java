@@ -228,6 +228,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatImport node) {
     // nothing to test; what to do with the memory???
+    mem.addImport(node.name);
   }
 
   @Override

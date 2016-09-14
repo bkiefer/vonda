@@ -110,10 +110,10 @@ public class VGenerationVisitor implements RudiVisitor {
       //        "\"" + ret.replace('"', ' ') +  " _ resulted to \" + " + ret);
       return;
     }
-      out.append("(");
+    out.append("(");
     node.left.visit(this);
     this.conditionHandling(node);
-      out.append(")");
+    out.append(")");
     //out.context.doLog("\"" + ret.replace('"', ' ') +  " resulted to \" + ("
     //        + ret + ")");
   }
@@ -135,11 +135,13 @@ public class VGenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-       if (mem.variableExists(parts[1])) {
+      {
+        if (mem.variableExists(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
+      }
     }
     out.append(")\")");
   }
@@ -188,7 +190,8 @@ public class VGenerationVisitor implements RudiVisitor {
     out.append("public class " + node.classname + "{\n");
     out.append("public static Logger logger = LoggerFactory.getLogger("
             + mem.getClassName() + ".class);\n");
-    out.append("private Set<String> rulesToLog;");
+    out.append("// add to this set the name of all rules you want to be logged\n");
+    out.append("private Set<String> rulesToLog;\n\n");
     //        + "\tprivate int returnTo = 0;\n");
     // initialize all return markers
 //    for (String k : out.rm.getMarkers()) {
@@ -198,13 +201,13 @@ public class VGenerationVisitor implements RudiVisitor {
     for (RudiTree r : node.rules) {
       if (r instanceof StatAbstractBlock) {
         for (RudiTree e : ((StatAbstractBlock) r).statblock) {
-          if (e instanceof ExpAbstractWrapper && (((ExpAbstractWrapper) e).exp instanceof ExpAssignment)){
+          if (e instanceof ExpAbstractWrapper && (((ExpAbstractWrapper) e).exp instanceof ExpAssignment)) {
             if (((ExpAssignment) ((ExpAbstractWrapper) e).exp).declaration) {
               ((ExpAbstractWrapper) e).exp.visit(this);
               out.append(";");
             }
-          } else if (e instanceof ExpAbstractWrapper &&
-                  (((ExpAbstractWrapper) e).exp instanceof ExpAbstractWrapper
+          } else if (e instanceof ExpAbstractWrapper
+                  && (((ExpAbstractWrapper) e).exp instanceof ExpAbstractWrapper
                   && ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp instanceof ExpAssignment)) {
             // then it is a class attribute and we want it to be defined outside
             // of the process method
@@ -229,7 +232,27 @@ public class VGenerationVisitor implements RudiVisitor {
     }
     out.append("){\n");
     // use all methods created from rules in this file
-    for (String toplevel : mem.getTopLevelRules(out.className)) {
+    for (String toplevel : mem.getToplevelCalls(out.className)) {
+      if (toplevel.contains("(")) {
+        out.append(toplevel);
+        Set<String> ncs = mem.getNeededClasses(toplevel.substring(0, toplevel.indexOf(".")));
+        if (ncs != null) {
+          i = 0;
+          for (String c : ncs) {
+            if (c.equals(out.className)) {
+              c = "this";
+            }
+            if (i == 0) {
+              out.append(c.toLowerCase());
+            } else {
+              out.append(", " + c.toLowerCase());
+            }
+            i++;
+          }
+        }
+        out.append(");\n");
+        continue;
+      }
       out.append(toplevel + "(");
       // don't forget the needed class instances here
       i = 0;
@@ -253,7 +276,7 @@ public class VGenerationVisitor implements RudiVisitor {
             if (((ExpAssignment) ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp).declaration) {
               continue;
             }
-          } else if (e instanceof ExpAbstractWrapper && (((ExpAbstractWrapper) e).exp instanceof ExpAssignment)){
+          } else if (e instanceof ExpAbstractWrapper && (((ExpAbstractWrapper) e).exp instanceof ExpAssignment)) {
             if (((ExpAssignment) ((ExpAbstractWrapper) e).exp).declaration) {
               continue;
             }
@@ -423,23 +446,23 @@ public class VGenerationVisitor implements RudiVisitor {
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     }
-    out.append(node.text + ".process(");
-    Set<String> ncs = mem.getNeededClasses(node.name);
-    if (ncs != null) {
-      int i = 0;
-      for (String c : ncs) {
-        if (c.equals(out.className)) {
-          c = "this";
-        }
-        if (i == 0) {
-          out.append(c.toLowerCase());
-        } else {
-          out.append(", " + c.toLowerCase());
-        }
-        i++;
-      }
-    }
-    out.append(");\n");
+//    out.append(node.text + ".process(");
+//    Set<String> ncs = mem.getNeededClasses(node.name);
+//    if (ncs != null) {
+//      int i = 0;
+//      for (String c : ncs) {
+//        if (c.equals(out.className)) {
+//          c = "this";
+//        }
+//        if (i == 0) {
+//          out.append(c.toLowerCase());
+//        } else {
+//          out.append(", " + c.toLowerCase());
+//        }
+//        i++;
+//      }
+//    }
+//    out.append(");\n");
   }
 
   @Override
@@ -493,7 +516,7 @@ public class VGenerationVisitor implements RudiVisitor {
       return;
 
     } else if (node.toRet == null) {
-      if(mem.getCurrentRule().equals(mem.getClassName())){
+      if (mem.getCurrentRule().equals(mem.getClassName())) {
         out.append("return;\n");
         return;
       }
