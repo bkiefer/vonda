@@ -53,36 +53,18 @@ public class VRuleConditionVisitor implements RudiVisitor {
   }
 
   private String lastbool;
-
-  public String getLastBool() {
-    return this.lastbool;
-  }
+  private String isTrue;
 
   @Override
   public void visitNode(ExpBoolean node) {
     if (node.right != null) {
       node.left.visit(this);
-      String left = this.compiledLook.get(lastbool);
-      String right = "";
-      if (node.right instanceof UnaryBoolean) {
-        right = ((UnaryBoolean) node.right).content;
-      } else {
-        node.right.visit(this);
-        right = this.compiledLook.get(lastbool);
-      }
-      this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool,
-              (node.operator != null) ? node.operator : ""
-                      + left + node.operator + right);
+      node.right.visit(this);
     } else {
-      String e = node.fullexp;
-      if (e.startsWith("\"")){
-        e = "(" + e + " != null)";
-      }
-      this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool, e);
+      isTrue = node.isTrue + " ";
+      node.left.visit(this);
     }
-    this.realLook.put(this.lastbool, node.fullexp);
+    //System.out.println("bool number " + this.compiledLook.keySet().size());
   }
 
   @Override
@@ -92,7 +74,10 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpFuncOnObject node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    this.lastbool = this.currentRule + this.counter++;
+    this.compiledLook.put(this.lastbool, node.look + isTrue +  " ");
+    this.realLook.put(lastbool, node.look + isTrue + " ");
+    isTrue = "";
   }
 
   @Override
@@ -197,7 +182,10 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UCharacter node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    this.lastbool = this.currentRule + this.counter++;
+    this.compiledLook.put(this.lastbool, "\'" + node.content + "\'"  + isTrue+ " ");
+    this.realLook.put(lastbool, node.content + isTrue);
+    isTrue = "";
   }
 
   @Override
@@ -212,42 +200,85 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UFieldAccess node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    this.lastbool = this.currentRule + this.counter++;
+    // TODO: tell me how the client is named!!!
+    String t = (node.representation.get(0));
+    for (int i = 1; i < node.representation.size(); i++) {
+      t += (".getValue(" + node.representation.get(i) + ", client)" + " ");
+    }
+    this.compiledLook.put(this.lastbool, t + isTrue);
+    this.realLook.put(lastbool, t + isTrue);
+    isTrue = "";
   }
 
   @Override
   public void visitNode(UFuncCall node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    this.lastbool = this.currentRule + this.counter++;
+    String t = (node.representation + "(");
+    for (int i = 0; i < node.exps.size(); i++) {
+      node.exps.get(i).visit(this);
+      if (i != node.exps.size() - 1) {
+        t += (", ");
+      }
+    }
+    t += (")" + " ");
+    this.compiledLook.put(this.lastbool, t + isTrue);
+    this.realLook.put(lastbool, t + isTrue);
+    isTrue = "";
   }
 
   @Override
   public void visitNode(UNull node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    this.lastbool = this.currentRule + this.counter++;
+    this.compiledLook.put(this.lastbool, "null " + isTrue);
+    this.realLook.put(lastbool, "null " + isTrue);
+    isTrue = "";
   }
 
   @Override
   public void visitNode(UNumber node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    this.lastbool = this.currentRule + this.counter++;
+    this.compiledLook.put(this.lastbool, node.value + isTrue);
+    this.realLook.put(lastbool, node.value + isTrue);
+    isTrue = "";
   }
 
   @Override
   public void visitNode(UString node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    this.lastbool = this.currentRule + this.counter++;
+    this.compiledLook.put(this.lastbool, node.content + " " + isTrue);
+      this.realLook.put(lastbool, node.content + " " + isTrue);
+      isTrue = "";
   }
 
   @Override
   public void visitNode(UVariable node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    this.lastbool = this.currentRule + this.counter++;
+    // if the variable is not in the memory,
+    if (node.realOrigin != null) {
+      this.compiledLook.put(this.lastbool,
+              node.realOrigin.toLowerCase() + "." + node.representation + " " + isTrue);
+      this.realLook.put(lastbool, node.representation + " " + isTrue);
+      return;
+    }
+    this.compiledLook.put(this.lastbool, node.representation + " " + isTrue);
+      this.realLook.put(lastbool, node.representation + " " + isTrue);
+      isTrue = "";
   }
 
   @Override
   public void visitNode(UWildcard node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    this.lastbool = this.currentRule + this.counter++;
+    this.compiledLook.put(this.lastbool, "this.wildcard" + " " + isTrue);
+      this.realLook.put(lastbool, " _ " + isTrue);
+      isTrue = "";
   }
 
   @Override
   public void visitNode(UnaryBoolean node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    this.lastbool = this.currentRule + this.counter++;
+    this.compiledLook.put(this.lastbool, node.content + " " + isTrue);
+      this.realLook.put(lastbool, node.content + " " + isTrue);
+      isTrue = "";
   }
-
 }

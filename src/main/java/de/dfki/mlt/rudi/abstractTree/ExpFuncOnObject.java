@@ -16,6 +16,7 @@ public class ExpFuncOnObject implements RTExpression{
 
   RTExpression on;
   RTExpression funccall;
+  String look;
 
   /**
    *
@@ -23,9 +24,10 @@ public class ExpFuncOnObject implements RTExpression{
    * @param representation the name of the function as a string
    * @param exps a list of the given arguments
    */
-  public ExpFuncOnObject(RTExpression on, RTExpression funccall) {
+  public ExpFuncOnObject(RTExpression on, RTExpression funccall, String look) {
     this.on = on;
     this.funccall = funccall;
+    this.look = look;
   }
   @Override
   public String getType() {

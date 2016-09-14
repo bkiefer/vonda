@@ -525,7 +525,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // VARIABLE DOT function_call
     //throw new UnsupportedOperationException("Yay, I found a function: ");
     return new ExpFuncOnObject((RTExpression) this.visit(ctx.getChild(0)),
-            (RTExpression) this.visit(ctx.getChild(2)));
+            (RTExpression) this.visit(ctx.getChild(2)), ctx.getText());
   }
 
   @Override
