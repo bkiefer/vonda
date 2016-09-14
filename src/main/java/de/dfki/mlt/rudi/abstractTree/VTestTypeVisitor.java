@@ -75,6 +75,7 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpBoolean node) {
+    node.rule = mem.getCurrentRule();
     node.left.visit(this);
     if (node.right == null) {
       this.conditionHandling(node);

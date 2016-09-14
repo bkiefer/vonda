@@ -7,6 +7,8 @@ package de.dfki.mlt.rudi.abstractTree;
 
 import de.dfki.mlt.rudi.*;
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,7 @@ public class VGenerationVisitor implements RudiVisitor {
 
   private RudimantCompiler out;
   private Mem mem;
+  private VRuleConditionVisitor condV;
 
   // activate this bool to get double escaped String literals
   private boolean escape = false;
@@ -32,6 +35,7 @@ public class VGenerationVisitor implements RudiVisitor {
   public VGenerationVisitor(RudimantCompiler out) {
     this.out = out;
     this.mem = out.getMem();
+    condV = new VRuleConditionVisitor();
   }
 
   @Override
@@ -291,10 +295,10 @@ public class VGenerationVisitor implements RudiVisitor {
         r.visit(this);
       }
     }
-    // add all the logger methods
-    for (String l : out.ll.getLogRules()) {
-      this.printRuleLogger(l, out.ll.getCond2log(l));
-    }
+//    // add all the logger methods
+//    for (String l : out.ll.getLogRules()) {
+//      this.printRuleLogger(l, out.ll.getCond2log(l));
+//    }
     out.append("}\n");
     mem.leaveClass(oldname, oldrule, oldTrule);
     //out.flush();
@@ -661,7 +665,7 @@ public class VGenerationVisitor implements RudiVisitor {
    *
    * @param rule
    */
-  private void printRuleLogger(String rule, RudiTree bool_exp) {
+  private void printRuleLogger(String rule, ExpBoolean bool_exp) {
     if (rule != null) {
       out.append("if (rulesToLog.contains(\"" + rule + "\")){\n");
       // do all that logging
@@ -670,9 +674,14 @@ public class VGenerationVisitor implements RudiVisitor {
     } else {
       // Neuen Visitor erzeugen, der condition ablaufen kann, kriegt als info die CurrentRule aus Mem (die zur Generierung der Zwischenspeichervariablen
       // benutzt wird), eine Linked HashMap, in die er einträgt <Zwischenspeicher als String, <urspr. Ausdruck als String, boolean Ergebnis>>
-      // Danach ablaufen, hier hinschreiben was zu loggen ist
+      LinkedHashMap<String,<String,Boolean>> condLog = new LinkedHashMap<>();
+      condV.renewMap(bool_exp.rule, condLog);
+      condV.visitNode(bool_exp);
+
+      // Danach ablaufen, im Visitor hinschreiben was zu loggen ist
+
       // Variable wholeCondition wird dann auf das letzte Element der Keylist der Map gesetzt
-      
+      out.append("wholeCondition = " + condV.getBiggestExp() + ";\n");
     }
 //    out.append(rule + "Logger(");
 //    if (!(out.ll.getVarAndType2log(rule) == null)) {
@@ -686,6 +695,10 @@ public class VGenerationVisitor implements RudiVisitor {
 //      }
 //    }
 //    out.append(");");
+  }
+
+  public void dummyLoggingMethod(String rule, String className, Map toLog){
+    // log this very extensive
   }
 
 //  /**
