@@ -61,5 +61,5 @@ public class StatListCreation implements RudiTree, RTStatement{
     return true;
   }
 
-  
+
 }

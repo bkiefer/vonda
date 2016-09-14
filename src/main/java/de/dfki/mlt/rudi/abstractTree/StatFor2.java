@@ -17,11 +17,11 @@ public class StatFor2 implements RTStatement, RudiTree {
 
   String varType;
   UVariable var;
-  RudiTree exp;
+  RTExpression exp;
   StatAbstractBlock statblock;
   String position;
 
-  public StatFor2(UVariable var, RudiTree exp, StatAbstractBlock statblock,
+  public StatFor2(UVariable var, RTExpression exp, StatAbstractBlock statblock,
           String position) {
     this.var = var;
     this.exp = exp;
@@ -30,7 +30,7 @@ public class StatFor2 implements RTStatement, RudiTree {
     this.position = position;
   }
 
-  public StatFor2(String varType, UVariable var, RudiTree exp,
+  public StatFor2(String varType, UVariable var, RTExpression exp,
           StatAbstractBlock statblock, String position) {
     this.var = var;
     this.exp = exp;
@@ -81,5 +81,5 @@ public class StatFor2 implements RTStatement, RudiTree {
     return true;
   }
 
-  
+
 }

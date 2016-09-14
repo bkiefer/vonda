@@ -485,7 +485,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       // FOR LPAR  VARIABLE COLON exp RPAR loop_statement_block
       // TODO: or should we check here that the type of the variable in assignment
       // is the type the iterable in exp returns? How?
-      RudiTree exp = this.visit(ctx.getChild(4));
+      RTExpression exp = (RTExpression) this.visit(ctx.getChild(4));
       return new StatFor2(new UVariable(ctx.getChild(2).getText(), currentClass,
               currentTRule), exp,
               (StatAbstractBlock) this.visit(ctx.getChild(6)), currentClass);
@@ -493,7 +493,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       // FOR LPAR (DEC_VAR | VARIABLE) VARIABLE COLON exp RPAR loop_statement_block
       return new StatFor2(ctx.getChild(2).getText(),
               new UVariable(ctx.getChild(3).getText(), currentClass, currentTRule),
-              this.visit(ctx.getChild(5)),
+              (RTExpression) this.visit(ctx.getChild(5)),
               (StatAbstractBlock) this.visit(ctx.getChild(7)), currentClass);
     } else if (ctx.getChildCount() == 8) {
       // statement looks like "FOR LPAR assignment SEMICOLON exp SEMICOLON RPAR loop_statement_block"

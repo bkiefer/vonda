@@ -193,6 +193,12 @@ public class VTestTypeVisitor implements RudiVisitor {
   public void visitNode(StatFor2 node) {
     // TODO: this is a bit more complicated; remember the types of the variables
     // that were declared in the condition
+    if (node.varType == null) {
+      String et = node.exp.getType();
+      if (et.contains("<")) {
+        node.varType = et.substring(et.indexOf("<"), et.indexOf(">"));
+      }
+    }
     mem.addElement(node.var.toString(), node.varType, node.position);
   }
 
@@ -233,13 +239,13 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatListCreation node) {
-    mem.addElement(node.variableName, "List", node.origin);
-    if(! (node.objects == null)){
-    for(RTExpression e : node.objects){
-      this.visitNode(e);
-    }
-    node.listType = node.objects.get(0).getType();
-    } else{
+    if (!(node.objects == null)) {
+      for (RTExpression e : node.objects) {
+        this.visitNode(e);
+      }
+      node.listType = "List<" + node.objects.get(0).getType() + ">";
+      mem.addElement(node.variableName, node.listType, node.origin);
+    } else {
       node.listType = "Object";
     }
   }
