@@ -1,0 +1,26 @@
+* Dialogue Acts
+  - hierarchy of DAs and Frames from the ontology with access functions
+  - functionality: integrate jtfs for subsumption etc.
+
+* java functions
+  - implement everything that is in greet_user.rudi
+  - code /defs
+
+* processor / abstract processor
+  - event-loop (independent of communication infrastructure, e.g., TECS)
+  - Agent code
+  - timeouts
+  - behaviour sync with optional delays
+
+* Application examples
+  - PAL system
+  - Robo demo
+  - HySociaTea SB demo
+
+* Softwarepraktikum
+** usability questionnaires / templates
+   - which tools
+   - how to debug
+   - what works
+   - what is awkward
+   - report bugs
