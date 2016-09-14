@@ -41,7 +41,7 @@ if (saidInSession(#Greeting(Meeting))
 
     ask_user_preference:
       if (! user.getLiking.slot
-          && ! saidInSession(Request(Liking, theme=slot))) {
+          && ! saidInSession(#Request(Liking, theme=slot))) {
         propose("ask_for_preference_" + slot) {
           emitDA(#Request(Liking, theme=slot));
         }
@@ -49,9 +49,9 @@ if (saidInSession(#Greeting(Meeting))
 
     confirm_user_preference:
       if (user.getLiking.slot
-          && saidInSession(Request(Liking, theme=slot))
+          && saidInSession(#Request(Liking, theme=slot))
           // TODO find a nice way to express the disjunction (supertype?)
-          && ! saidInSession((Confirm|Disconfirm)(Liking, theme=slot))) {
+          && ! saidInSession(#(Confirm|Disconfirm)(Liking, theme=slot))) {
         // Nao says he also likes the hobby/color
         // TODO: Check whether Nao shares the hobby / likes the color.
 
@@ -66,13 +66,13 @@ if (saidInSession(#Greeting(Meeting))
 
   ask_user_birthdate:
     // TODO: GET LIST FROM THE PROPERTIES OF A USER
-    String[] infoslots = {Birthdate};
+    infoslots = {Birthdate};
     // TODO: USE SAME LABELS IN GRAMMAR AND IN DATABASE
-    String[] mapped = {"Age"};
+    mapped = {"Age"};
     int i = 0;
     for (String slot : infoslots) {
       // SLOT unknown: ask for slot
-      final String daLabel = mapped[i];
+      String daLabel = mapped[i];
       if (! user.slot
           && !saidInSession(#Request(^daLabel))) {
         propose("ask_for_" + daLabel) { // slot.toLowerCase()
