@@ -133,7 +133,6 @@ exp
     | NULL
     )
   | boolean_exp
-  | NOT boolean_exp
   )
   comment
   ;
@@ -154,18 +153,19 @@ simple_exp
     | TRUE
     | NULL
     )
-  | NOT boolean_exp
   )
   comment
   ;
 
 simple_b_exp
-    : simple_exp (boolean_op2 exp)?
-    ;
+  : simple_exp boolean_op2 exp
+  | simple_exp
+  ;
 
 boolean_exp
-  : simple_b_exp boolean_op1 boolean_exp
-  //| simple_b_exp boolean_op2 exp
+  : NOT simple_b_exp boolean_op1 boolean_exp
+  | simple_b_exp boolean_op1 exp
+  | NOT simple_b_exp
   | simple_b_exp
   ;
 

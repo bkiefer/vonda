@@ -16,7 +16,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-
 /**
  *
  * @author anna
@@ -292,9 +291,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitLiteral_or_graph_exp(RobotGrammarParser.Literal_or_graph_expContext ctx) {
     // LITERAL_OR_GRAPH LPAR ( exp (COMMA exp)*)? RPAR
-    ArrayList<RTExpression> expList = new ArrayList<RTExpression> ();
-    for (int i = 2; i < ctx.getChildCount() - 1;){
-      expList.add((RTExpression)this.visit(ctx.getChild(i)));
+    ArrayList<RTExpression> expList = new ArrayList<RTExpression>();
+    for (int i = 2; i < ctx.getChildCount() - 1;) {
+      expList.add((RTExpression) this.visit(ctx.getChild(i)));
       i += 2;   // because we aren't interested in commas
     }
 //    this.in_graph = false;
@@ -342,25 +341,29 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitBoolean_exp(RobotGrammarParser.Boolean_expContext ctx) {
-    // simple_b_exp boolean_op1 boolean_exp | simple_b_exp
+    // NOT? simple_b_exp boolean_op1 boolean_exp | NOT? simple_b_exp
     if (ctx.getChildCount() == 1) {
       if (ctx.getText().equals("true") || ctx.getText().equals("false")) {
         return new UnaryBoolean(ctx.getText());
       }
+      if (ctx.getChild(0) instanceof RobotGrammarParser.Simple_b_expContext
+              || ctx.getChild(0) instanceof RobotGrammarParser.Simple_expContext
+              || ctx.getChild(0) instanceof RobotGrammarParser.ExpContext) {
+        return this.visit(ctx.getChild(0));
+      }
       return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
               null, null, false);
+    } else if (ctx.getChildCount() == 2) {
+      return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(1)),
+              null, null, true);
+    } else if (ctx.getChildCount() == 3) {
+          return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
+                  (RTExpression) this.visit(ctx.getChild(2)), ctx.getChild(1).getText(), false);
+    } else if (ctx.getChildCount() == 4) {
+          return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(1)),
+                  (RTExpression) this.visit(ctx.getChild(3)), ctx.getChild(2).getText(), true);
     }
-//    ExpBoolean arit = new ExpBoolean(
-//            (RTExpression) this.visit(ctx.getChild(ctx.getChildCount() - 1)),
-//            null, null, false);
-    RudiTree arit = this.visit(ctx.getChild(ctx.getChildCount() - 1));
-    for (int i = ctx.getChildCount() - 2; i >= 0; i--) {
-      if (i % 2 == 1) {
-        arit = new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(i - 1)),
-                (RTExpression) arit, ctx.getChild(i).getText(), false);
-      }
-    }
-    return arit;
+    return null;
   }
 
   @Override
@@ -665,7 +668,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 // get all the elements to be added to the list
     ArrayList<RTExpression> elements = new ArrayList();
     for (int i = 3; i <= ctx.getChildCount() - 2;) {
-      elements.add((RTExpression)this.visit(ctx.getChild(i)));
+      elements.add((RTExpression) this.visit(ctx.getChild(i)));
       i += 2;
     }
     return new StatListCreation(ctx.getChild(0).getText(), elements, currentClass);

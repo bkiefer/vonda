@@ -688,7 +688,7 @@ public class VGenerationVisitor implements RudiVisitor {
     // Danach ablaufen, alle Variablen initialisieren &  der Logfunktion die Map geben
     out.append("HashMap<String, Boolean> " + rule + " = new HashMap<>();\n");
     for (String var : compiledLook.keySet()) {
-      out.append("boolean " + var + " = " + compiledLook.get(var) + ";");
+      out.append("boolean " + var + " = " + compiledLook.get(var) + ";\n");
       out.append(rule + ".put(\"" + var + "\", " + var + ");\n");
     }
 

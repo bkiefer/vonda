@@ -65,10 +65,13 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpBoolean node) {
-    String all = "";
+    String n = "";
+    if (node.not) {
+      n = "!";
+    }
     if (node.isSubsumed) {
       this.lastbool = this.currentRule + this.counter++;
-      collectDAs = "";
+      collectDAs = n;
       collectDAs += ("isSubsumed(");
       node.left.visit(this);
       collectDAs += (", ");
@@ -81,7 +84,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
       return;
     } else if (node.doesSubsume) {
       this.lastbool = this.currentRule + this.counter++;
-      collectDAs = "";
+      collectDAs = n;
       collectDAs += ("isSubsumed(");
       node.right.visit(this);
       collectDAs += (", ");
@@ -95,20 +98,31 @@ public class VRuleConditionVisitor implements RudiVisitor {
     if (node.right != null) {
       if (node.left.getType() == null // then this is probably an rdf
               || !node.left.getType().equals("boolean")) {
-        collectElements = "(";
+        collectElements = n + "(";
         node.left.visit(this);
         collectElements += " " + node.operator + " ";
         node.right.visit(this);
+        this.lastbool = this.currentRule + this.counter++;
         this.compiledLook.put(this.lastbool, collectElements + ")");
         this.realLook.put(lastbool, collectElements + ")");
         collectElements = null;
         return;
       }
+
       node.left.visit(this);
+      String l = this.lastbool;
       node.right.visit(this);
+      String r = this.lastbool;
+      this.lastbool = this.currentRule + this.counter++;
+      this.compiledLook.put(this.lastbool, n + l + node.operator + r);
+      this.realLook.put(lastbool, n + l + node.operator + r);
     } else {
       isTrue = node.isTrue + " ";
       node.left.visit(this);
+      String l = this.lastbool;
+      this.lastbool = this.currentRule + this.counter++;
+      this.compiledLook.put(this.lastbool, n + l);
+      this.realLook.put(lastbool, n + l);
     }
     //System.out.println("bool number " + this.compiledLook.keySet().size());
   }
@@ -142,6 +156,9 @@ public class VRuleConditionVisitor implements RudiVisitor {
     result += (")\")");
     if (collectDAs != null) {
       this.collectDAs += result;
+      return;
+    } else if (!funcargs.equals("")) {
+      this.funcargs += result;
       return;
     } else if (collectElements != null) {
       this.collectElements += result;
@@ -269,6 +286,9 @@ public class VRuleConditionVisitor implements RudiVisitor {
     if (collectElements != null) {
       this.collectElements += node.content;
       return;
+    } else if (!funcargs.equals("")) {
+      this.funcargs += node.content;
+      return;
     }
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, "\'" + node.content + "\'" + isTrue + " ");
@@ -296,25 +316,8 @@ public class VRuleConditionVisitor implements RudiVisitor {
     if (collectElements != null) {
       this.collectElements += t + isTrue;
       return;
-    }
-    this.lastbool = this.currentRule + this.counter++;
-    this.compiledLook.put(this.lastbool, t + isTrue);
-    this.realLook.put(lastbool, t + isTrue);
-    isTrue = "";
-  }
-
-  @Override
-  public void visitNode(UFuncCall node) {
-    String t = (node.representation + "(");
-    for (int i = 0; i < node.exps.size(); i++) {
-      node.exps.get(i).visit(this);
-      if (i != node.exps.size() - 1) {
-        t += (", ");
-      }
-    }
-    t += (")" + " ");
-    if (collectElements != null) {
-      this.collectElements += t + isTrue;
+    } else if (!funcargs.equals("")) {
+      funcargs += t;
       return;
     }
     this.lastbool = this.currentRule + this.counter++;
@@ -323,10 +326,41 @@ public class VRuleConditionVisitor implements RudiVisitor {
     isTrue = "";
   }
 
+  private String funcargs = "";
+
+  @Override
+  public void visitNode(UFuncCall node) {
+    String m = "";
+    if (!funcargs.equals("")) {
+      m = funcargs;
+      funcargs = "";
+    }
+    funcargs = (node.representation + "(");
+    for (int i = 0; i < node.exps.size(); i++) {
+      node.exps.get(i).visit(this);
+      if (i != node.exps.size() - 1) {
+        funcargs += (", ");
+      }
+    }
+    funcargs += (")" + " ");
+    if (collectElements != null) {
+      this.collectElements += funcargs + isTrue;
+      return;
+    }
+    this.lastbool = this.currentRule + this.counter++;
+    this.compiledLook.put(this.lastbool, funcargs + isTrue);
+    this.realLook.put(lastbool, funcargs + isTrue);
+    funcargs = m;
+    isTrue = "";
+  }
+
   @Override
   public void visitNode(UNull node) {
     if (collectElements != null) {
       this.collectElements += "null";
+      return;
+    } else if (!funcargs.equals("")) {
+      funcargs += "null";
       return;
     }
     this.lastbool = this.currentRule + this.counter++;
@@ -340,6 +374,9 @@ public class VRuleConditionVisitor implements RudiVisitor {
     if (collectElements != null) {
       this.collectElements += node.value + isTrue;
       return;
+    } else if (!funcargs.equals("")) {
+      funcargs += node.value + isTrue;
+      return;
     }
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, node.value + isTrue);
@@ -351,6 +388,10 @@ public class VRuleConditionVisitor implements RudiVisitor {
   public void visitNode(UString node) {
     if (collectElements != null) {
       this.collectElements += node.content.substring(0, node.content.length() - 1)
+              + "\"" + " " + isTrue;
+      return;
+    } else if (!funcargs.equals("")) {
+      this.funcargs += node.content.substring(0, node.content.length() - 1)
               + "\"" + " " + isTrue;
       return;
     }
@@ -371,6 +412,9 @@ public class VRuleConditionVisitor implements RudiVisitor {
       if (collectElements != null) {
         this.collectElements += node.realOrigin.toLowerCase() + "." + node.representation;
         return;
+      } else if (!funcargs.equals("")) {
+        this.funcargs += node.realOrigin.toLowerCase() + "." + node.representation;
+        return;
       }
       if (node.representation.equals("magic") || mem.isRdf(node.representation)) {
         this.collectDAs += node.realOrigin.toLowerCase() + "." + node.representation;
@@ -384,6 +428,9 @@ public class VRuleConditionVisitor implements RudiVisitor {
     } else {
       if (collectElements != null) {
         this.collectElements += node.representation;
+        return;
+      } else if (!funcargs.equals("")) {
+        this.funcargs += node.representation;
         return;
       }
       if (node.type.equals("magic") || mem.isRdf(node.representation)) {
@@ -402,6 +449,9 @@ public class VRuleConditionVisitor implements RudiVisitor {
     if (collectElements != null) {
       this.collectElements += "this.wildcard";
       return;
+    } else if (!funcargs.equals("")) {
+      this.funcargs += "this.wildcard";
+      return;
     }
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, "this.wildcard" + " " + isTrue);
@@ -413,6 +463,9 @@ public class VRuleConditionVisitor implements RudiVisitor {
   public void visitNode(UnaryBoolean node) {
     if (collectElements != null) {
       this.collectElements += node.content + " " + isTrue;
+      return;
+    } else if (!funcargs.equals("")) {
+      this.funcargs += node.content + " " + isTrue;
       return;
     }
     this.lastbool = this.currentRule + this.counter++;
