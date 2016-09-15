@@ -2,7 +2,7 @@ magic activity;
 magic Introduction;
 
 introduction:
-if (! activity <= Introduction) return;
+if (! (activity <= Introduction)) return;
 
 
 // new session: greet user

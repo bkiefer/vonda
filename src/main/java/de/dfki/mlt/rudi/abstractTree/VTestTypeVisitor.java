@@ -44,7 +44,9 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(ExpArithmetic node) {
     node.left.visit(this);
-    node.right.visit(this);
+    if (node.right != null) {
+      node.right.visit(this);
+    }
     // ?
     // assert (node.right.getType().equals(node.left.getType()));
   }
@@ -384,7 +386,7 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   private void conditionHandling(ExpBoolean node) {
     String t = node.left.getType();
-    if(t == null){
+    if (t == null) {
       // lets assume it is an unrecognized rdf object
       node.isTrue = " != null";
       return;

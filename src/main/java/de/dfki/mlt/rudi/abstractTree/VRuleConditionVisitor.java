@@ -72,6 +72,9 @@ public class VRuleConditionVisitor implements RudiVisitor {
     if (node.isSubsumed) {
       this.lastbool = this.currentRule + this.counter++;
       collectDAs = n;
+      if(node.notIfSubsume){
+        collectDAs += "!";
+      }
       collectDAs += ("isSubsumed(");
       node.left.visit(this);
       collectDAs += (", ");
@@ -85,6 +88,9 @@ public class VRuleConditionVisitor implements RudiVisitor {
     } else if (node.doesSubsume) {
       this.lastbool = this.currentRule + this.counter++;
       collectDAs = n;
+      if(node.notIfSubsume){
+        collectDAs += "!";
+      }
       collectDAs += ("isSubsumed(");
       node.right.visit(this);
       collectDAs += (", ");
@@ -96,7 +102,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
       return;
     }
     if (node.right != null) {
-      if(!(node.operator.equals("||") || node.operator.equals("&&"))){
+      if (!(node.operator.equals("||") || node.operator.equals("&&"))) {
 //      if (node.left.getType() == null // then this is probably an rdf
 //              || !node.left.getType().equals("boolean")) {
         collectElements = n + "(";
@@ -121,9 +127,11 @@ public class VRuleConditionVisitor implements RudiVisitor {
       isTrue = node.isTrue + " ";
       node.left.visit(this);
       String l = this.lastbool;
-      this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool, n + l);
-      this.realLook.put(lastbool, n + l);
+//      if (node.not) {
+        this.lastbool = this.currentRule + this.counter++;
+        this.compiledLook.put(this.lastbool, n + l);
+        this.realLook.put(lastbool, n + l);
+//      }
     }
     //System.out.println("bool number " + this.compiledLook.keySet().size());
   }

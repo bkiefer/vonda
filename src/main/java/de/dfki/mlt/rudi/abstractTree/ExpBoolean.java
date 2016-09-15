@@ -18,6 +18,7 @@ public class ExpBoolean implements RTExpression {
   RTExpression left;
   RTExpression right;
   boolean not;
+  boolean notIfSubsume;
   boolean isSubsumed = false;   // <- magic part!!!
   boolean doesSubsume = false;   // <- magic part!!!
   String operator;
@@ -41,13 +42,14 @@ public class ExpBoolean implements RTExpression {
    * @param not set true if there is a ! in front of the expression
    */
   public ExpBoolean(String fullexp, RTExpression left,
-          RTExpression right, String operator, boolean not) {
+          RTExpression right, String operator, boolean not, boolean notIfSubsume) {
     this.left = left;
     this.right = right;
     this.operator = operator;
     this.not = not;
     this.type = "boolean";
     this.fullexp = fullexp;
+    this.notIfSubsume = notIfSubsume;
   }
 
   @Override

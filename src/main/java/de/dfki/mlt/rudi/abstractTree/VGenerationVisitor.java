@@ -686,9 +686,9 @@ public class VGenerationVisitor implements RudiVisitor {
     condV2.visitNode(bool_exp);
     
     out.append(condV2.getBoolCreation().toString());
-//    for (String var : compiledLook.keySet()) {
-//      out.append("boolean " + var + " = " + compiledLook.get(var) + ";\n");
-//    }
+    for (String var : compiledLook.keySet()) {
+      out.append("//boolean " + var + " = " + compiledLook.get(var) + ";\n");
+    }
 
     out.append("if (rulesToLog.contains(\"" + rule + "\")){\n");
     // do all that logging

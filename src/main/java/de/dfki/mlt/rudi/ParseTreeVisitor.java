@@ -275,7 +275,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // comment exp comment
     if (ctx.getChildCount() == 4) { // exp of kind comment NOT boolean_exp comment
       return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
-              new ExpBoolean(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)), null, null, true),
+              new ExpBoolean(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)), null, null, true, true),
               (UCommentBlock) this.visit(ctx.getChild(3)));
     }
     if (ctx.getChildCount() == 5) { // exp of kind comment LPAR exp RPAR comment
@@ -310,7 +310,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // comment exp comment
     if (ctx.getChildCount() == 4) { // exp of kind comment NOT boolean_exp comment
       return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
-              new ExpBoolean(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)), null, null, true),
+              new ExpBoolean(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)), null, null, true, true),
               (UCommentBlock) this.visit(ctx.getChild(3)));
     }
     if (ctx.getChildCount() == 5) { // exp of kind comment LPAR exp RPAR comment
@@ -331,17 +331,17 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
         return new UnaryBoolean(ctx.getText());
       }
       return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
-              null, null, false);
+              null, null, false, false);
     } else {
       return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
               (RTExpression) this.visit(ctx.getChild(2)),
-              ctx.getChild(1).getText(), false);
+              ctx.getChild(1).getText(), false, false);
     }
   }
 
   @Override
   public RudiTree visitBoolean_exp(RobotGrammarParser.Boolean_expContext ctx) {
-    // NOT? simple_b_exp boolean_op1 boolean_exp | NOT? simple_b_exp
+    //  simple_b_exp boolean_op1 boolean_exp |  simple_b_exp
     if (ctx.getChildCount() == 1) {
       if (ctx.getText().equals("true") || ctx.getText().equals("false")) {
         return new UnaryBoolean(ctx.getText());
@@ -352,16 +352,30 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
         return this.visit(ctx.getChild(0));
       }
       return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
-              null, null, false);
-    } else if (ctx.getChildCount() == 2) {
-      return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(1)),
-              null, null, true);
+              null, null, false, false);
+//    } else if (ctx.getChildCount() == 2) {
+//      return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(1)),
+//              null, null, true, false);
     } else if (ctx.getChildCount() == 3) {
-          return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
-                  (RTExpression) this.visit(ctx.getChild(2)), ctx.getChild(1).getText(), false);
-    } else if (ctx.getChildCount() == 4) {
-          return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(1)),
-                  (RTExpression) this.visit(ctx.getChild(3)), ctx.getChild(2).getText(), true);
+      ExpBoolean arit = new ExpBoolean(ctx.getChild(2).getText(),
+              (RTExpression) this.visit(ctx.getChild(2)),
+              null, null, false, false);
+      arit = new ExpBoolean(ctx.getText(),
+              //              new ExpBoolean(ctx.getChild(0).getText(),
+              (RTExpression) this.visit(ctx.getChild(0)),
+              //                      null, null, false),
+              arit, ctx.getChild(1).getText(), false, true);
+      return arit;
+//    } else if (ctx.getChildCount() == 4) {
+//      ExpBoolean arit = new ExpBoolean(ctx.getChild(3).getText(),
+//              (RTExpression) this.visit(ctx.getChild(3)),
+//              null, null, false, false);
+//      arit = new ExpBoolean(ctx.getText(),
+//              //              new ExpBoolean(ctx.getChild(1).getText(),
+//              (RTExpression) this.visit(ctx.getChild(1)),
+//              //                      null, null, true),
+//              arit, ctx.getChild(2).getText(), false, true);
+//      return arit;
     }
     return null;
   }
