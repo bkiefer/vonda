@@ -682,17 +682,17 @@ public class VGenerationVisitor implements RudiVisitor {
 
     // remembers how the expressions looked (for logging)
     LinkedHashMap<String, String> realLook = new LinkedHashMap<>();
-    condV.renewMap(bool.rule, realLook, compiledLook, this.mem);
+    condV.renewMap(rule, realLook, compiledLook, this.mem);
     condV.visitNode(bool);
 
     // Danach ablaufen, alle Variablen initialisieren &  der Logfunktion die Map geben
-    out.append("HashMap<String, Boolean> " + bool.rule + " = new HashMap<>();\n");
+    out.append("HashMap<String, Boolean> " + rule + " = new HashMap<>();\n");
     for (String var : compiledLook.keySet()) {
       out.append("boolean " + var + " = " + compiledLook.get(var) + ";");
-      out.append(bool.rule + ".put(\"" + var + "\", " + var + ");\n");
+      out.append(rule + ".put(\"" + var + "\", " + var + ");\n");
     }
 
-    out.append("LoggerFunction(" + bool.rule + ", \"" + bool.rule + "\", \""
+    out.append("LoggerFunction(" +rule + ", \"" + rule + "\", \""
             + mem.getClassName() + "\");\n");
 
     // now create a condition from those things

@@ -51,13 +51,25 @@ public class VConditionCreatorVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpBoolean node) {
-    this.condition.append("(");
-    this.visitNode(node.left);
+    System.out.println(node.fullexp);
+    if (node.doesSubsume || node.isSubsumed) {
+      this.condition.append(expNames[counter++]);
+      return;
+    }
     if (node.right != null) {
+      if (node.left.getType() == null // then this is probably an rdf
+              || !node.left.getType().equals("boolean")) {
+        this.condition.append(expNames[counter++]);
+        return;
+      }
+      this.condition.append("(");
+      this.visitNode(node.left);
       condition.append(node.operator);
       this.visitNode(node.right);
+      this.condition.append(")");
+    } else {
+      this.visitNode(node.left);
     }
-    this.condition.append(")");
   }
 
   @Override
@@ -213,6 +225,8 @@ public class VConditionCreatorVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UVariable node) {
+    System.out.println(counter + " listlenght " + expNames.length + " ["
+            + node.representation + "]");
     condition.append(expNames[counter++]);
   }
 

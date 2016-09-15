@@ -28,7 +28,7 @@ public class ExpBoolean implements RTExpression {
   String fullexp;
   // if the boolexp is no boolexp, type visitor should set this to the correct
   // way of testing the existance of boolexp
-  String isTrue;
+  String isTrue = "";
   boolean testIsEmpty = false;
 
   /**

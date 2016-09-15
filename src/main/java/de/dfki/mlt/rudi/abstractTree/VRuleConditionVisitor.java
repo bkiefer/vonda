@@ -57,14 +57,17 @@ public class VRuleConditionVisitor implements RudiVisitor {
   }
 
   private String lastbool;
-  private String isTrue;
+  private String isTrue = "";
 
   private String collectDAs;
+
+  private String collectElements;
 
   @Override
   public void visitNode(ExpBoolean node) {
     String all = "";
     if (node.isSubsumed) {
+      this.lastbool = this.currentRule + this.counter++;
       collectDAs = "";
       collectDAs += ("isSubsumed(");
       node.left.visit(this);
@@ -77,6 +80,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
       collectDAs = null;
       return;
     } else if (node.doesSubsume) {
+      this.lastbool = this.currentRule + this.counter++;
       collectDAs = "";
       collectDAs += ("isSubsumed(");
       node.right.visit(this);
@@ -89,6 +93,17 @@ public class VRuleConditionVisitor implements RudiVisitor {
       return;
     }
     if (node.right != null) {
+      if (node.left.getType() == null // then this is probably an rdf
+              || !node.left.getType().equals("boolean")) {
+        collectElements = "(";
+        node.left.visit(this);
+        collectElements += " " + node.operator + " ";
+        node.right.visit(this);
+        this.compiledLook.put(this.lastbool, collectElements + ")");
+        this.realLook.put(lastbool, collectElements + ")");
+        collectElements = null;
+        return;
+      }
       node.left.visit(this);
       node.right.visit(this);
     } else {
@@ -128,6 +143,9 @@ public class VRuleConditionVisitor implements RudiVisitor {
     if (collectDAs != null) {
       this.collectDAs += result;
       return;
+    } else if (collectElements != null) {
+      this.collectElements += result;
+      return;
     }
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, result);
@@ -136,6 +154,10 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpFuncOnObject node) {
+    if (collectElements != null) {
+      this.collectElements += node.look + isTrue + " ";
+      return;
+    }
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, node.look + isTrue + " ");
     this.realLook.put(lastbool, node.look + isTrue + " ");
@@ -244,6 +266,10 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UCharacter node) {
+    if (collectElements != null) {
+      this.collectElements += node.content;
+      return;
+    }
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, "\'" + node.content + "\'" + isTrue + " ");
     this.realLook.put(lastbool, node.content + isTrue);
@@ -262,12 +288,16 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UFieldAccess node) {
-    this.lastbool = this.currentRule + this.counter++;
     // TODO: tell me how the client is named!!!
     String t = (node.representation.get(0));
     for (int i = 1; i < node.representation.size(); i++) {
       t += (".getValue(" + node.representation.get(i) + ", client)" + " ");
     }
+    if (collectElements != null) {
+      this.collectElements += t + isTrue;
+      return;
+    }
+    this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, t + isTrue);
     this.realLook.put(lastbool, t + isTrue);
     isTrue = "";
@@ -275,7 +305,6 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UFuncCall node) {
-    this.lastbool = this.currentRule + this.counter++;
     String t = (node.representation + "(");
     for (int i = 0; i < node.exps.size(); i++) {
       node.exps.get(i).visit(this);
@@ -284,6 +313,11 @@ public class VRuleConditionVisitor implements RudiVisitor {
       }
     }
     t += (")" + " ");
+    if (collectElements != null) {
+      this.collectElements += t + isTrue;
+      return;
+    }
+    this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, t + isTrue);
     this.realLook.put(lastbool, t + isTrue);
     isTrue = "";
@@ -291,6 +325,10 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UNull node) {
+    if (collectElements != null) {
+      this.collectElements += "null";
+      return;
+    }
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, "null " + isTrue);
     this.realLook.put(lastbool, "null " + isTrue);
@@ -299,6 +337,10 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UNumber node) {
+    if (collectElements != null) {
+      this.collectElements += node.value + isTrue;
+      return;
+    }
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, node.value + isTrue);
     this.realLook.put(lastbool, node.value + isTrue);
@@ -307,6 +349,11 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UString node) {
+    if (collectElements != null) {
+      this.collectElements += node.content.substring(0, node.content.length() - 1)
+              + "\"" + " " + isTrue;
+      return;
+    }
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool,
             node.content.substring(0, node.content.length() - 1)
@@ -321,29 +368,41 @@ public class VRuleConditionVisitor implements RudiVisitor {
   public void visitNode(UVariable node) {
     // if the variable is not in the memory,
     if (node.realOrigin != null) {
-      if(node.representation.equals("magic") || mem.isRdf(node.representation)){
+      if (collectElements != null) {
+        this.collectElements += node.realOrigin.toLowerCase() + "." + node.representation;
+        return;
+      }
+      if (node.representation.equals("magic") || mem.isRdf(node.representation)) {
         this.collectDAs += node.realOrigin.toLowerCase() + "." + node.representation;
         return;
       }
-    this.lastbool = this.currentRule + this.counter++;
+      this.lastbool = this.currentRule + this.counter++;
       this.compiledLook.put(this.lastbool,
               node.realOrigin.toLowerCase() + "." + node.representation + " " + isTrue);
       this.realLook.put(lastbool, node.representation + " " + isTrue);
       return;
-    }
-    if (node.realOrigin != null) {
-      if(node.representation.equals("magic") || mem.isRdf(node.representation)){
+    } else {
+      if (collectElements != null) {
+        this.collectElements += node.representation;
+        return;
+      }
+      if (node.type.equals("magic") || mem.isRdf(node.representation)) {
         this.collectDAs += node.representation;
         return;
       }
-    this.lastbool = this.currentRule + this.counter++;
-    this.compiledLook.put(this.lastbool, node.representation + " " + isTrue);
-    this.realLook.put(lastbool, node.representation + " " + isTrue);
-    isTrue = "";
+      this.lastbool = this.currentRule + this.counter++;
+      this.compiledLook.put(this.lastbool, node.representation + " " + isTrue);
+      this.realLook.put(lastbool, node.representation + " " + isTrue);
+      isTrue = "";
+    }
   }
 
   @Override
   public void visitNode(UWildcard node) {
+    if (collectElements != null) {
+      this.collectElements += "this.wildcard";
+      return;
+    }
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, "this.wildcard" + " " + isTrue);
     this.realLook.put(lastbool, " _ " + isTrue);
@@ -352,6 +411,10 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UnaryBoolean node) {
+    if (collectElements != null) {
+      this.collectElements += node.content + " " + isTrue;
+      return;
+    }
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, node.content + " " + isTrue);
     this.realLook.put(lastbool, node.content + " " + isTrue);
