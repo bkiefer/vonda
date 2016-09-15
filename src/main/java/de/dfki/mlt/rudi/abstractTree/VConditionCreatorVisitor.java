@@ -51,11 +51,13 @@ public class VConditionCreatorVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpBoolean node) {
+    this.condition.append("(");
     this.visitNode(node.left);
     if (node.right != null) {
       condition.append(node.operator);
       this.visitNode(node.right);
     }
+    this.condition.append(")");
   }
 
   @Override

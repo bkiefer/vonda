@@ -246,8 +246,12 @@ public class VRuleConditionVisitor implements RudiVisitor {
   @Override
   public void visitNode(UString node) {
     this.lastbool = this.currentRule + this.counter++;
-    this.compiledLook.put(this.lastbool, node.content + " " + isTrue);
-      this.realLook.put(lastbool, node.content + " " + isTrue);
+    this.compiledLook.put(this.lastbool, 
+            node.content.substring(0, node.content.length() - 1) +
+            "\"" + " " + isTrue);
+      this.realLook.put(lastbool,
+              node.content.substring(0, node.content.length() - 1) + 
+              "\"" + " " + isTrue);
       isTrue = "";
   }
 

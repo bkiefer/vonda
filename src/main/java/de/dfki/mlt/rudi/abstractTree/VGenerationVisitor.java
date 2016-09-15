@@ -31,8 +31,8 @@ public class VGenerationVisitor implements RudiVisitor {
   private boolean escape = false;
 
   // flag to tell the if if it is a real rule if
-  private String ruleIf = null;
-
+  private boolean ruleIf = false;
+  
   public VGenerationVisitor(RudimantCompiler out) {
     this.out = out;
     this.mem = out.getMem();
@@ -144,13 +144,11 @@ public class VGenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-      {
-        if (mem.variableExists(parts[1])) {
+       if (mem.variableExists(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
-      }
     }
     out.append(")\")");
   }
@@ -326,7 +324,8 @@ public class VGenerationVisitor implements RudiVisitor {
         i++;
       }
       out.append("){\n");
-      this.ruleIf = this.printRuleLogger(node.label, node.ifstat.condition);
+      this.ruleIf = true;
+      this.printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
       //mem.enterNextEnvironment();
       node.comment.visit(this);
@@ -336,7 +335,8 @@ public class VGenerationVisitor implements RudiVisitor {
     } else {
       // this is a sublevel rule and will get an if to determine whether it should be executed
       out.append("//Rule " + node.label + "\n");
-      this.ruleIf = this.printRuleLogger(node.label, node.ifstat.condition);
+      this.ruleIf = true;
+      this.printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
 //      if (out.rm.shouldAddReturnto(node.label) != null) {
 //        out.append("if ((returnTo | (");
@@ -443,12 +443,11 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append("else");
       node.statblockElse.visit(this);
     } else {
-      if (this.ruleIf != null) {
-        out.append("if (rulesToLog.contains(\"" + node.currentRule + "\") ? ("
-                + ruleIf + ") : ");
-        ruleIf = null;
+      if (this.ruleIf) {
+        out.append("if (rulesToLog.contains(\"" + node.currentRule + "\") ? wholeCondition : ");
+        ruleIf = false;
       } else {
-        out.append("if (");
+      out.append("if (");
       }
       node.condition.visit(this);
       out.append(") ");
@@ -673,8 +672,8 @@ public class VGenerationVisitor implements RudiVisitor {
   private String printRuleLogger(String rule, RTExpression bool_exp) {
     if (bool_exp instanceof UnaryBoolean) {
       // there isnt much we could log
-//      out.append("wholeCondition = " + ((UnaryBoolean) bool_exp).content + ";\n");
-      return ((UnaryBoolean) bool_exp).content;
+      out.append("wholeCondition = " + ((UnaryBoolean) bool_exp).content + ";\n");
+     return ((UnaryBoolean) bool_exp).content;
     }
     ExpBoolean bool = (ExpBoolean) bool_exp;
     if (rule != null) {
@@ -693,19 +692,20 @@ public class VGenerationVisitor implements RudiVisitor {
       condV.visitNode(bool);
 
       // Danach ablaufen, alle Variablen initialisieren &  der Logfunktion die Map geben
-      out.append("HashMap<String, String> " + bool.rule + " = new HashMap<>();\n");
+      out.append("HashMap<String, Boolean> " + bool.rule + " = new HashMap<>();\n");
       for (String var : compiledLook.keySet()) {
         out.append("boolean " + var + " = " + compiledLook.get(var) + ";");
-        out.append(bool.rule + ".put(\"" + var + "\", \"" + realLook.get(var) + "\");\n");
+        out.append(bool.rule + ".put(\"" + var + "\", " + var + ");\n");
       }
-      
+
       out.append("LoggerFunction(" + bool.rule + ", \"" + bool.rule + "\", \""
               + mem.getClassName() + "\");\n");
-      
+
       // now create a condition from those things
       //System.out.println(realLook.keySet().size());
       condV2.newMap(realLook.keySet().toArray());
       condV2.visitNode(bool_exp);
+      out.append("wholeCondition = " + condV2.getCondition().toString() + ";\n");
       return condV2.getCondition().toString();
     }
 //    out.append(rule + "Logger(");
