@@ -221,6 +221,7 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatIf node) {
+    node.currentRule = mem.getCurrentRule();
     node.condition.visit(this);
     /*if (!node.condition.getType().equals("boolean")) {
       rudi.handleTypeError("This is an if statement where the condition: "

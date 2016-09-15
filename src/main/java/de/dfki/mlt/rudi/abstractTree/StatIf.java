@@ -31,11 +31,10 @@ public class StatIf implements RTStatement, RudiTree{
    * @param position
    */
   public StatIf(String conditionString, RTExpression condition, StatAbstractBlock statblockIf,
-          StatAbstractBlock statblockElse, String position) {
+          StatAbstractBlock statblockElse) {
     this.condition = condition;
     this.statblockIf = statblockIf;
     this.statblockElse = statblockElse;
-    this.currentRule = position;
     this.conditionString = conditionString;
   }
 

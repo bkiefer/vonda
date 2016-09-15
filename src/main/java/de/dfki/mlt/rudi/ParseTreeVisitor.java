@@ -450,12 +450,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // IF LPAR boolean_exp RPAR statement (ELSE statement)?
     if (ctx.getChildCount() == 5) {   // no else
       return new StatIf(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)),
-              (StatAbstractBlock) this.visit(ctx.getChild(4)), null, currentClass);
+              (StatAbstractBlock) this.visit(ctx.getChild(4)), null);
     }
     // if there is an else
     return new StatIf(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)),
             (StatAbstractBlock) this.visit(ctx.getChild(4)),
-            (StatAbstractBlock) this.visit(ctx.getChild(6)), currentClass);
+            (StatAbstractBlock) this.visit(ctx.getChild(6)));
   }
 
   @Override
@@ -463,12 +463,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // IF LPAR boolean_exp RPAR statement (ELSE statement)?
     if (ctx.getChildCount() == 5) {   // no else
       return new StatIf(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)),
-              (StatAbstractBlock) this.visit(ctx.getChild(4)), null, currentClass);
+              (StatAbstractBlock) this.visit(ctx.getChild(4)), null);
     }
     // if there is an else
     return new StatIf(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)),
             (StatAbstractBlock) this.visit(ctx.getChild(4)),
-            (StatAbstractBlock) this.visit(ctx.getChild(6)), currentClass);
+            (StatAbstractBlock) this.visit(ctx.getChild(6)));
   }
 
   @Override

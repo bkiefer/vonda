@@ -32,7 +32,7 @@ public class VGenerationVisitor implements RudiVisitor {
 
   // flag to tell the if if it is a real rule if
   private boolean ruleIf = false;
-  
+
   public VGenerationVisitor(RudimantCompiler out) {
     this.out = out;
     this.mem = out.getMem();
@@ -144,11 +144,13 @@ public class VGenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-       if (mem.variableExists(parts[1])) {
+      {
+        if (mem.variableExists(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
+      }
     }
     out.append(")\")");
   }
@@ -435,23 +437,18 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatIf node) {
-    if (node.statblockElse != null) {
-      out.append("if (");
-      node.condition.visit(this);
-      out.append(") ");
-      node.statblockIf.visit(this);
-      out.append("else");
-      node.statblockElse.visit(this);
-    } else {
       if (this.ruleIf) {
         out.append("if (rulesToLog.contains(\"" + node.currentRule + "\") ? wholeCondition : ");
         ruleIf = false;
       } else {
-      out.append("if (");
+        out.append("if (");
       }
       node.condition.visit(this);
       out.append(") ");
       node.statblockIf.visit(this);
+    if (node.statblockElse != null) {
+      out.append("else");
+      node.statblockElse.visit(this);
     }
   }
 
@@ -669,45 +666,43 @@ public class VGenerationVisitor implements RudiVisitor {
    *
    * @param rule
    */
-  private String printRuleLogger(String rule, RTExpression bool_exp) {
+  private void printRuleLogger(String rule, RTExpression bool_exp) {
     if (bool_exp instanceof UnaryBoolean) {
       // there isnt much we could log
       out.append("wholeCondition = " + ((UnaryBoolean) bool_exp).content + ";\n");
-     return ((UnaryBoolean) bool_exp).content;
+//     return ((UnaryBoolean) bool_exp).content;
+      return;
     }
     ExpBoolean bool = (ExpBoolean) bool_exp;
-    if (rule != null) {
-      out.append("if (rulesToLog.contains(\"" + rule + "\")){\n");
-      // do all that logging
-      String ret = printRuleLogger(null, bool);
-      out.append("}\n");
-      return ret;
-    } else {
-      // remembers how the expressions should be realized by rudimant
-      LinkedHashMap<String, String> compiledLook = new LinkedHashMap<>();
+    out.append("if (rulesToLog.contains(\"" + rule + "\")){\n");
+    // do all that logging
 
-      // remembers how the expressions looked (for logging)
-      LinkedHashMap<String, String> realLook = new LinkedHashMap<>();
-      condV.renewMap(bool.rule, realLook, compiledLook);
-      condV.visitNode(bool);
+    // remembers how the expressions should be realized by rudimant
+    LinkedHashMap<String, String> compiledLook = new LinkedHashMap<>();
 
-      // Danach ablaufen, alle Variablen initialisieren &  der Logfunktion die Map geben
-      out.append("HashMap<String, Boolean> " + bool.rule + " = new HashMap<>();\n");
-      for (String var : compiledLook.keySet()) {
-        out.append("boolean " + var + " = " + compiledLook.get(var) + ";");
-        out.append(bool.rule + ".put(\"" + var + "\", " + var + ");\n");
-      }
+    // remembers how the expressions looked (for logging)
+    LinkedHashMap<String, String> realLook = new LinkedHashMap<>();
+    condV.renewMap(bool.rule, realLook, compiledLook);
+    condV.visitNode(bool);
 
-      out.append("LoggerFunction(" + bool.rule + ", \"" + bool.rule + "\", \""
-              + mem.getClassName() + "\");\n");
-
-      // now create a condition from those things
-      //System.out.println(realLook.keySet().size());
-      condV2.newMap(realLook.keySet().toArray());
-      condV2.visitNode(bool_exp);
-      out.append("wholeCondition = " + condV2.getCondition().toString() + ";\n");
-      return condV2.getCondition().toString();
+    // Danach ablaufen, alle Variablen initialisieren &  der Logfunktion die Map geben
+    out.append("HashMap<String, Boolean> " + bool.rule + " = new HashMap<>();\n");
+    for (String var : compiledLook.keySet()) {
+      out.append("boolean " + var + " = " + compiledLook.get(var) + ";");
+      out.append(bool.rule + ".put(\"" + var + "\", " + var + ");\n");
     }
+
+    out.append("LoggerFunction(" + bool.rule + ", \"" + bool.rule + "\", \""
+            + mem.getClassName() + "\");\n");
+
+    // now create a condition from those things
+    //System.out.println(realLook.keySet().size());
+    condV2.newMap(realLook.keySet().toArray());
+    condV2.visitNode(bool_exp);
+    out.append("wholeCondition = " + condV2.getCondition().toString() + ";\n");
+    out.append("}\n");
+//      return condV2.getCondition().toString();
+
 //    out.append(rule + "Logger(");
 //    if (!(out.ll.getVarAndType2log(rule) == null)) {
 //      int i = 0;
