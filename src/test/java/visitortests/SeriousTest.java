@@ -53,7 +53,7 @@ public class SeriousTest {
   @Test
   public void FirstRuleTest() throws Exception {
     String[] strings = new String[]{"src/test/resources/FirstRule.rudi",
-      "target/test/testfiles", "-d"};
+      "-o=target/test/testfiles", "-d"};
     GrammarMain.main(strings);
   }
 }

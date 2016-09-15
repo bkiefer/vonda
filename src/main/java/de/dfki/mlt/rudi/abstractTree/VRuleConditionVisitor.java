@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import de.dfki.mlt.rudi.Mem;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -21,12 +22,15 @@ public class VRuleConditionVisitor implements RudiVisitor {
   private LinkedHashMap<String, String> compiledLook;
   private int counter;
 
+  private Mem mem;
+
   public void renewMap(String rule, LinkedHashMap<String, String> condLog,
-          LinkedHashMap<String, String> compiledLook) {
+          LinkedHashMap<String, String> compiledLook, Mem mem) {
     this.realLook = condLog;
     this.compiledLook = compiledLook;
     this.currentRule = rule;
     this.counter = 0;
+    this.mem = mem;
   }
 
   @Override
@@ -55,8 +59,35 @@ public class VRuleConditionVisitor implements RudiVisitor {
   private String lastbool;
   private String isTrue;
 
+  private String collectDAs;
+
   @Override
   public void visitNode(ExpBoolean node) {
+    String all = "";
+    if (node.isSubsumed) {
+      collectDAs = "";
+      collectDAs += ("isSubsumed(");
+      node.left.visit(this);
+      collectDAs += (", ");
+      node.right.visit(this);
+      collectDAs += (")");
+
+      this.compiledLook.put(this.lastbool, collectDAs);
+      this.realLook.put(lastbool, collectDAs);
+      collectDAs = null;
+      return;
+    } else if (node.doesSubsume) {
+      collectDAs = "";
+      collectDAs += ("isSubsumed(");
+      node.right.visit(this);
+      collectDAs += (", ");
+      node.left.visit(this);
+      collectDAs += (")");
+      this.compiledLook.put(this.lastbool, collectDAs);
+      this.realLook.put(lastbool, collectDAs);
+      collectDAs = null;
+      return;
+    }
     if (node.right != null) {
       node.left.visit(this);
       node.right.visit(this);
@@ -69,13 +100,44 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpDialogueAct node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    String result = "";
+    result += ("new DialogueAct(\"" + node.litGraph + "(");
+    String[] parameters = node.rest.split(",");
+    // the first argument will never need to be more than a String
+    result += (parameters[0]);
+    for (int i = 1; i < parameters.length; i++) {
+      String[] parts = parameters[i].split("=");
+      if (parts.length == 1) {
+        // then this argument is a variable that is passed and should be found somewhere
+        if (mem.variableExists(parts[0])) {
+          result += (", \" + " + parts[0] + " + \"");
+        } else {
+          // TODO: or throw an error here?
+          result += (", " + parts[0]);
+        }
+      } else // this argument is of kind x = y, look if y is a variable we know
+      {
+        if (mem.variableExists(parts[1])) {
+          result += (", " + parts[0] + " = \" + " + parts[1] + " + \"");
+        } else {
+          result += (", " + parts[0] + " = " + parts[1]);
+        }
+      }
+    }
+    result += (")\")");
+    if (collectDAs != null) {
+      this.collectDAs += result;
+      return;
+    }
+    this.lastbool = this.currentRule + this.counter++;
+    this.compiledLook.put(this.lastbool, result);
+    this.realLook.put(lastbool, result);
   }
 
   @Override
   public void visitNode(ExpFuncOnObject node) {
     this.lastbool = this.currentRule + this.counter++;
-    this.compiledLook.put(this.lastbool, node.look + isTrue +  " ");
+    this.compiledLook.put(this.lastbool, node.look + isTrue + " ");
     this.realLook.put(lastbool, node.look + isTrue + " ");
     isTrue = "";
   }
@@ -183,7 +245,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
   @Override
   public void visitNode(UCharacter node) {
     this.lastbool = this.currentRule + this.counter++;
-    this.compiledLook.put(this.lastbool, "\'" + node.content + "\'"  + isTrue+ " ");
+    this.compiledLook.put(this.lastbool, "\'" + node.content + "\'" + isTrue + " ");
     this.realLook.put(lastbool, node.content + isTrue);
     isTrue = "";
   }
@@ -246,43 +308,53 @@ public class VRuleConditionVisitor implements RudiVisitor {
   @Override
   public void visitNode(UString node) {
     this.lastbool = this.currentRule + this.counter++;
-    this.compiledLook.put(this.lastbool, 
-            node.content.substring(0, node.content.length() - 1) +
-            "\"" + " " + isTrue);
-      this.realLook.put(lastbool,
-              node.content.substring(0, node.content.length() - 1) + 
-              "\"" + " " + isTrue);
-      isTrue = "";
+    this.compiledLook.put(this.lastbool,
+            node.content.substring(0, node.content.length() - 1)
+            + "\"" + " " + isTrue);
+    this.realLook.put(lastbool,
+            node.content.substring(0, node.content.length() - 1)
+            + "\"" + " " + isTrue);
+    isTrue = "";
   }
 
   @Override
   public void visitNode(UVariable node) {
-    this.lastbool = this.currentRule + this.counter++;
     // if the variable is not in the memory,
     if (node.realOrigin != null) {
+      if(node.representation.equals("magic") || mem.isRdf(node.representation)){
+        this.collectDAs += node.realOrigin.toLowerCase() + "." + node.representation;
+        return;
+      }
+    this.lastbool = this.currentRule + this.counter++;
       this.compiledLook.put(this.lastbool,
               node.realOrigin.toLowerCase() + "." + node.representation + " " + isTrue);
       this.realLook.put(lastbool, node.representation + " " + isTrue);
       return;
     }
+    if (node.realOrigin != null) {
+      if(node.representation.equals("magic") || mem.isRdf(node.representation)){
+        this.collectDAs += node.representation;
+        return;
+      }
+    this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, node.representation + " " + isTrue);
-      this.realLook.put(lastbool, node.representation + " " + isTrue);
-      isTrue = "";
+    this.realLook.put(lastbool, node.representation + " " + isTrue);
+    isTrue = "";
   }
 
   @Override
   public void visitNode(UWildcard node) {
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, "this.wildcard" + " " + isTrue);
-      this.realLook.put(lastbool, " _ " + isTrue);
-      isTrue = "";
+    this.realLook.put(lastbool, " _ " + isTrue);
+    isTrue = "";
   }
 
   @Override
   public void visitNode(UnaryBoolean node) {
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, node.content + " " + isTrue);
-      this.realLook.put(lastbool, node.content + " " + isTrue);
-      isTrue = "";
+    this.realLook.put(lastbool, node.content + " " + isTrue);
+    isTrue = "";
   }
 }
