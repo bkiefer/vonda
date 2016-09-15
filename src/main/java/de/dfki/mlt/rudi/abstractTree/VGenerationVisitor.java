@@ -30,8 +30,8 @@ public class VGenerationVisitor implements RudiVisitor {
   // activate this bool to get double escaped String literals
   private boolean escape = false;
 
-  // flag to tell the if if it is a real rule if
-  private boolean ruleIf = false;
+  // flag to tell the if if is a real rule if (contains the condition that was calculated)
+  private String ruleIf = null;
 
   public VGenerationVisitor(RudimantCompiler out) {
     this.out = out;
@@ -144,13 +144,11 @@ public class VGenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-      {
-        if (mem.variableExists(parts[1])) {
+       if (mem.variableExists(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
-      }
     }
     out.append(")\")");
   }
@@ -326,8 +324,7 @@ public class VGenerationVisitor implements RudiVisitor {
         i++;
       }
       out.append("){\n");
-      this.ruleIf = true;
-      this.printRuleLogger(node.label, node.ifstat.condition);
+      this.ruleIf = this.printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
       //mem.enterNextEnvironment();
       node.comment.visit(this);
@@ -337,8 +334,7 @@ public class VGenerationVisitor implements RudiVisitor {
     } else {
       // this is a sublevel rule and will get an if to determine whether it should be executed
       out.append("//Rule " + node.label + "\n");
-      this.ruleIf = true;
-      this.printRuleLogger(node.label, node.ifstat.condition);
+      this.ruleIf = this.printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
 //      if (out.rm.shouldAddReturnto(node.label) != null) {
 //        out.append("if ((returnTo | (");
@@ -437,15 +433,16 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatIf node) {
-      if (this.ruleIf) {
-        out.append("if (rulesToLog.contains(\"" + node.currentRule + "\") ? wholeCondition : ");
-        ruleIf = false;
-      } else {
-        out.append("if (");
-      }
-      node.condition.visit(this);
-      out.append(") ");
-      node.statblockIf.visit(this);
+    if (this.ruleIf != null) {
+      out.append("if (" + ruleIf + ") ");
+//      out.append("if (rulesToLog.contains(\"" + node.currentRule + "\") ? wholeCondition : ");
+      ruleIf = null;
+    } else {
+      out.append("if (");
+    node.condition.visit(this);
+    out.append(") ");
+    }
+    node.statblockIf.visit(this);
     if (node.statblockElse != null) {
       out.append("else");
       node.statblockElse.visit(this);
@@ -666,16 +663,14 @@ public class VGenerationVisitor implements RudiVisitor {
    *
    * @param rule
    */
-  private void printRuleLogger(String rule, RTExpression bool_exp) {
+  private String printRuleLogger(String rule, RTExpression bool_exp) {
     if (bool_exp instanceof UnaryBoolean) {
       // there isnt much we could log
-      out.append("wholeCondition = " + ((UnaryBoolean) bool_exp).content + ";\n");
-//     return ((UnaryBoolean) bool_exp).content;
-      return;
+//      out.append("wholeCondition = " + ((UnaryBoolean) bool_exp).content + ";\n");
+      return ((UnaryBoolean) bool_exp).content + ";\n";
+//      return;
     }
     ExpBoolean bool = (ExpBoolean) bool_exp;
-    out.append("if (rulesToLog.contains(\"" + rule + "\")){\n");
-    // do all that logging
 
     // remembers how the expressions should be realized by rudimant
     LinkedHashMap<String, String> compiledLook = new LinkedHashMap<>();
@@ -685,23 +680,30 @@ public class VGenerationVisitor implements RudiVisitor {
     condV.renewMap(rule, realLook, compiledLook, this.mem);
     condV.visitNode(bool);
 
-    // Danach ablaufen, alle Variablen initialisieren &  der Logfunktion die Map geben
-    out.append("HashMap<String, Boolean> " + rule + " = new HashMap<>();\n");
-    for (String var : compiledLook.keySet()) {
-      out.append("boolean " + var + " = " + compiledLook.get(var) + ";\n");
-      out.append(rule + ".put(\"" + var + "\", " + var + ");\n");
-    }
-
-    out.append("LoggerFunction(" +rule + ", \"" + rule + "\", \""
-            + mem.getClassName() + "\");\n");
-
     // now create a condition from those things
     //System.out.println(realLook.keySet().size());
-    condV2.newMap(realLook.keySet().toArray());
+    condV2.newMap(realLook.keySet().toArray(), compiledLook);
     condV2.visitNode(bool_exp);
-    out.append("wholeCondition = " + condV2.getCondition().toString() + ";\n");
+    
+    out.append(condV2.getBoolCreation().toString());
+//    for (String var : compiledLook.keySet()) {
+//      out.append("boolean " + var + " = " + compiledLook.get(var) + ";\n");
+//    }
+
+    out.append("if (rulesToLog.contains(\"" + rule + "\")){\n");
+    // do all that logging
+
+    out.append("HashMap<String, Boolean> " + rule + " = new HashMap<>();\n");
+    for (String var : realLook.keySet()) {
+      out.append(rule + ".put(\"" + realLook.get(var) + "\", " + var + ");\n");
+    }
+
+    out.append("LoggerFunction(" + rule + ", \"" + rule + "\", \""
+            + mem.getClassName() + "\");\n");
+
     out.append("}\n");
-//      return condV2.getCondition().toString();
+//    out.append("wholeCondition = " + condV2.getCondition().toString() + ";\n");
+    return condV2.getCondition().toString();
 
 //    out.append(rule + "Logger(");
 //    if (!(out.ll.getVarAndType2log(rule) == null)) {

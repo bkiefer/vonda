@@ -96,8 +96,9 @@ public class VRuleConditionVisitor implements RudiVisitor {
       return;
     }
     if (node.right != null) {
-      if (node.left.getType() == null // then this is probably an rdf
-              || !node.left.getType().equals("boolean")) {
+      if(!(node.operator.equals("||") || node.operator.equals("&&"))){
+//      if (node.left.getType() == null // then this is probably an rdf
+//              || !node.left.getType().equals("boolean")) {
         collectElements = n + "(";
         node.left.visit(this);
         collectElements += " " + node.operator + " ";
