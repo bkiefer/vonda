@@ -689,16 +689,16 @@ public class VGenerationVisitor implements RudiVisitor {
     condV2.visitNode(bool_exp);
     
     out.append(condV2.getBoolCreation().toString());
-    for (String var : compiledLook.keySet()) {
-      out.append("//boolean " + var + " = " + compiledLook.get(var) + ";\n");
-    }
+//    for (String var : compiledLook.keySet()) {
+//      out.append("//boolean " + var + " = " + compiledLook.get(var) + ";\n");
+//    }
 
     out.append("if (rulesToLog.contains(\"" + rule + "\")){\n");
     // do all that logging
 
     out.append("HashMap<String, Boolean> " + rule + " = new HashMap<>();\n");
     for (String var : realLook.keySet()) {
-      out.append(rule + ".put(\"" + realLook.get(var) + "\", " + var + ");\n");
+      out.append(rule + ".put(\"" + realLook.get(var).replaceAll("\\\"", "\\\\\"") + "\", " + var + ");\n");
     }
 
     out.append("LoggerFunction(" + rule + ", \"" + rule + "\", \""

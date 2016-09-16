@@ -43,7 +43,7 @@ public class ExpBoolean implements RTExpression {
    */
   public ExpBoolean(String fullexp, RTExpression left,
           RTExpression right, String operator, boolean not, boolean notIfSubsume) {
-    System.out.println("Created B exp " + fullexp);
+//    System.out.println("Created B exp " + fullexp);
     this.left = left;
     this.right = right;
     this.operator = operator;

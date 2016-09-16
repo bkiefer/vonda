@@ -107,7 +107,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
 //              || !node.left.getType().equals("boolean")) {
         collectElements = n + "(";
         node.left.visit(this);
-        collectElements += " " + node.operator + " ";
+        collectElements += node.operator + " ";
         node.right.visit(this);
         this.lastbool = this.currentRule + this.counter++;
         this.compiledLook.put(this.lastbool, collectElements + ")");

@@ -309,7 +309,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitSimple_exp(RobotGrammarParser.Simple_expContext ctx) {
     // comment exp comment
     if (ctx.getChildCount() == 4) { // exp of kind comment NOT boolean_exp comment
-      System.out.println("simple exp");
+//      System.out.println("simple exp");
       return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
               new ExpBoolean(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)), null, null, true, true),
               (UCommentBlock) this.visit(ctx.getChild(3)));
@@ -334,11 +334,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       if (ctx.getChild(0) instanceof RobotGrammarParser.Simple_b_expContext) {
         return this.visit(ctx.getChild(0));
       }
-      System.out.println("simple b exp 1");
+//      System.out.println("simple b exp 1");
       return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
               null, null, false, false);
     } else {
-      System.out.println("simple b exp 2");
+//      System.out.println("simple b exp 2");
       return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
               (RTExpression) this.visit(ctx.getChild(2)),
               ctx.getChild(1).getText(), false, false);
@@ -355,14 +355,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       if (ctx.getChild(0) instanceof RobotGrammarParser.Simple_b_expContext) {
         return this.visit(ctx.getChild(0));
       }
-      System.out.println("b exp 1");
+//      System.out.println("b exp 1");
       return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
               null, null, false, false);
 //    } else if (ctx.getChildCount() == 2) {
 //      return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(1)),
 //              null, null, true, false);
     } else if (ctx.getChildCount() == 3) {
-      System.out.println("b exp 3");
+//      System.out.println("b exp 3");
       ExpBoolean arit = new ExpBoolean(ctx.getChild(2).getText(),
               (RTExpression) this.visit(ctx.getChild(2)),
               null, null, false, false);

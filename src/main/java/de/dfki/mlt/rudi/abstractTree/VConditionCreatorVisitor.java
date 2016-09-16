@@ -60,6 +60,8 @@ public class VConditionCreatorVisitor implements RudiVisitor {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
+  private boolean bCreated = false;
+
   @Override
   public void visitNode(ExpBoolean node) {
     System.out.println(node.fullexp);
@@ -70,10 +72,15 @@ public class VConditionCreatorVisitor implements RudiVisitor {
     }
     if (node.doesSubsume || node.isSubsumed) {
       String subnot = "";
-      if(node.notIfSubsume){
+      if (node.notIfSubsume) {
         subnot = "!";
       }
       this.condition.append(subnot + n + expNames[counter]);
+      if (bCreated) {
+        this.creation.append(expNames[counter] + " = " + subnot + n
+                + compiledLook.get(expNames[counter++]) + ";\n");
+        return;
+      }
       this.creation.append("boolean " + expNames[counter] + " = " + subnot + n
               + compiledLook.get(expNames[counter]) + ";\n");
       counter++;
@@ -87,20 +94,26 @@ public class VConditionCreatorVisitor implements RudiVisitor {
 //      }
       if (!(node.operator.equals("||") || node.operator.equals("&&"))) {
         // we do not go deeper
-        this.creation.append("boolean " + expNames[counter] + " = " + n
-                + compiledLook.get(expNames[counter]) + ";\n");
+        if (bCreated) {
+          this.creation.append(expNames[counter] + " = " + n
+                  + compiledLook.get(expNames[counter]) + ";\n");
+        } else {
+          this.creation.append("boolean " + expNames[counter] + " = " + n
+                  + compiledLook.get(expNames[counter]) + ";\n");
+        }
         this.condition.append(expNames[counter++]);
         return;
       } // else
       if (node.operator.equals("||")) {
         this.condition.append("(");
         this.visitNode(node.left);
+        this.creation.append("boolean " + expNames[counter] + " = false;\n");
         this.creation.append("if (!" + expNames[counter - 1] + "){\n");
         condition.append(node.operator);
+        bCreated = true;
         this.visitNode(node.right);
+        bCreated = false;
         this.condition.append(")");
-        this.creation.append("} else {\n");
-        this.creation.append("boolean " + expNames[counter-1] + " = false;\n");
         this.creation.append("}\n");
         this.creation.append("boolean " + expNames[counter] + " = " + n
                 + compiledLook.get(expNames[counter++]) + ";\n");
@@ -109,12 +122,13 @@ public class VConditionCreatorVisitor implements RudiVisitor {
       } else if (node.operator.equals("&&")) {
         this.condition.append("(");
         this.visitNode(node.left);
-        this.creation.append("if (" + expNames[counter-1] + "){\n");
+        this.creation.append("boolean " + expNames[counter] + " = false;\n");
+        this.creation.append("if (" + expNames[counter - 1] + "){\n");
         condition.append(node.operator);
+        bCreated = true;
         this.visitNode(node.right);
+        bCreated = false;
         this.condition.append(")");
-        this.creation.append("} else {\n");
-        this.creation.append("boolean " + expNames[counter-1] + " = false;\n");
         this.creation.append("}\n");
         this.creation.append("boolean " + expNames[counter] + " = " + n
                 + compiledLook.get(expNames[counter++]) + ";\n");
@@ -137,7 +151,7 @@ public class VConditionCreatorVisitor implements RudiVisitor {
         this.creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter++]) + ";\n");
         return;
       }
-      
+
       this.visitNode(node.left);
     }
   }
@@ -149,13 +163,21 @@ public class VConditionCreatorVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpFuncOnObject node) {
-    creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    if (bCreated) {
+      creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    } else {
+      creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    }
     condition.append(expNames[counter++]);
   }
 
   @Override
   public void visitNode(ExpIf node) {
-    creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    if (bCreated) {
+      creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    } else {
+      creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    }
     condition.append(expNames[counter++]);
   }
 
@@ -256,7 +278,11 @@ public class VConditionCreatorVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UCharacter node) {
-    creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    if (bCreated) {
+      creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    } else {
+      creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    }
     condition.append(expNames[counter++]);
   }
 
@@ -272,52 +298,89 @@ public class VConditionCreatorVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UFieldAccess node) {
-    creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    if (bCreated) {
+      creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    } else {
+      creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    }
     condition.append(expNames[counter++]);
   }
 
   @Override
   public void visitNode(UFuncCall node) {
-    creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    if (bCreated) {
+      creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+
+    } else {
+      creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    }
     condition.append(expNames[counter++]);
   }
 
   @Override
   public void visitNode(UNull node) {
-    creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    if (bCreated) {
+      creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+
+    } else {
+      creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    }
     condition.append(expNames[counter++]);
   }
 
   @Override
   public void visitNode(UNumber node) {
-    creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    if (bCreated) {
+      creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+
+    } else {
+      creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    }
     condition.append(expNames[counter++]);
   }
 
   @Override
   public void visitNode(UString node) {
-    creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    if (bCreated) {
+      creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+
+    } else {
+      creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    }
     System.out.println(counter + " listlenght " + expNames.length);
     condition.append(expNames[counter++]);
   }
 
   @Override
   public void visitNode(UVariable node) {
-    creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
-    System.out.println(counter + " listlenght " + expNames.length + " ["
-            + node.representation + "]");
+    if (bCreated) {
+      creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+
+    } else {
+      creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    }
+//    System.out.println(counter + " listlenght " + expNames.length + " ["
+//            + node.representation + "]");
     condition.append(expNames[counter++]);
   }
 
   @Override
   public void visitNode(UWildcard node) {
-    creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    if (bCreated) {
+      creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    } else {
+      creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    }
     condition.append(expNames[counter++]);
   }
 
   @Override
   public void visitNode(UnaryBoolean node) {
-    creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    if (bCreated) {
+      creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    } else {
+      creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+    }
     condition.append(expNames[counter++]);
   }
 
