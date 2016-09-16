@@ -65,7 +65,7 @@ public class PrintTest {
     @Test
   public void ReturnTest() throws Exception {
     String[] strings = new String[]{"src/test/resources/test_return/aLotOfReturns.rudi",
-      "-o=target/test/testfiles"};
+      "-o=target/test/testfiles", "-d"};
     GrammarMain.main(strings);
     //assertFail(GrammarMain.main(strings2));
   }

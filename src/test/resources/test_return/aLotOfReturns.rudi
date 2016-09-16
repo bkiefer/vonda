@@ -5,6 +5,7 @@ boolean equals(String b);
 LabelA:
   if (true){
     infoslots = {"Hobby", "Age"};
+    Object x = ^bla.schwafel.dingsbums;
     String d = "adf";
     LabelB:
       if("bla" && true){
@@ -16,7 +17,7 @@ LabelA:
           }
       }
     LabelD:
-      if(d.equals("adf")){
+      if(^d.equals("adf")){
         int s = 0;
       } else {
         LabelE:

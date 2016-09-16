@@ -545,14 +545,19 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitFunccall_on_object(RobotGrammarParser.Funccall_on_objectContext ctx) {
-    // VARIABLE DOT function_call
+    // variable DOT function_call
     //throw new UnsupportedOperationException("Yay, I found a function: ");
     return new ExpFuncOnObject((RTExpression) this.visit(ctx.getChild(0)),
-            (RTExpression) this.visit(ctx.getChild(2)), ctx.getText());
+            (RTExpression) this.visit(ctx.getChild(2)), ctx.getText().replace("^", ""));
   }
 
   @Override
   public RudiTree visitField_access(RobotGrammarParser.Field_accessContext ctx) {
+    if (ctx.getText().contains("^")) {
+      String t = ctx.getText().replace("^", "");
+//    System.out.println(t);
+      return new UVariable(t, currentClass, currentTRule);
+    }
     ArrayList<String> parts = new ArrayList<String>();
     for (int i = 0; i < ctx.getChildCount(); i += 2) {
       parts.add(ctx.getChild(i).getText());
@@ -650,9 +655,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       case 48:  //token is wildcard
         return new UWildcard();
       case 58:  // token is variable
-        String text = tn.getText();
+        String t = tn.getText().replace("^", "");
         //System.out.println(currentClass);
-        return new UVariable(text, currentClass, currentTRule);
+        return new UVariable(t, currentClass, currentTRule);
       /*if (Mem.existsVariable(text)) {
           String origin = "";
           if (context.getCurrentRule().equals(Mem.getVariableOrigin(text))) {
@@ -697,10 +702,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitVariable(RobotGrammarParser.VariableContext ctx) {
     // VARIABLE | VARIABLE_MARKER field_access | VARIABLE_MARKER VARIABLE
-    if (ctx.getChildCount() == 1) {
-      return new UVariable(ctx.getChild(0).getText(), currentClass, currentTRule);
-    } // else: there was a marker
-    return new UVariable(ctx.getChild(1).getText(), currentClass, currentTRule);
+    String t = ctx.getText().replace("^", "");
+//    System.out.println(t);
+    return new UVariable(t, currentClass, currentTRule);
   }
 
 }

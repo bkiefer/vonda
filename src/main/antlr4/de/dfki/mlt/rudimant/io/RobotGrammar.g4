@@ -116,14 +116,15 @@ field_access
   ;
 
 variable
-  : VARIABLE 
-  | VARIABLE_MARKER field_access
+  : VARIABLE_MARKER VARIABLE ( ( DOT VARIABLE ) )+
   | VARIABLE_MARKER VARIABLE
+  | VARIABLE 
   ;
 
 exp
   : comment
   (LPAR exp RPAR
+    | variable
   | field_access
   | funccall_on_object
   | assignment
@@ -133,7 +134,6 @@ exp
   | literal_or_graph_exp
   | ( STRING
     | WILDCARD
-    | variable
     | FALSE
     | TRUE
     | NULL
@@ -146,6 +146,7 @@ exp
 simple_exp
   : comment
   (LPAR exp RPAR
+    | variable
   | arithmetic
   | function_call
   | literal_or_graph_exp
@@ -154,7 +155,6 @@ simple_exp
   | assignment
   | ( STRING
     | WILDCARD
-    | variable
     | FALSE
     | TRUE
     | NULL

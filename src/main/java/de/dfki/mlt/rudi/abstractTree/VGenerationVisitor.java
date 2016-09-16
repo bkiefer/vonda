@@ -670,7 +670,7 @@ public class VGenerationVisitor implements RudiVisitor {
     if (bool_exp instanceof UnaryBoolean) {
       // there isnt much we could log
 //      out.append("wholeCondition = " + ((UnaryBoolean) bool_exp).content + ";\n");
-      return ((UnaryBoolean) bool_exp).content + ";\n";
+      return ((UnaryBoolean) bool_exp).content;
 //      return;
     }
     ExpBoolean bool = (ExpBoolean) bool_exp;
