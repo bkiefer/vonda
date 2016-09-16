@@ -664,6 +664,9 @@ public class VGenerationVisitor implements RudiVisitor {
    * @param rule
    */
   private String printRuleLogger(String rule, RTExpression bool_exp) {
+    if (bool_exp instanceof ExpAbstractWrapper){
+      bool_exp = (RTExpression)((ExpAbstractWrapper)bool_exp).exp;
+    }
     if (bool_exp instanceof UnaryBoolean) {
       // there isnt much we could log
 //      out.append("wholeCondition = " + ((UnaryBoolean) bool_exp).content + ";\n");

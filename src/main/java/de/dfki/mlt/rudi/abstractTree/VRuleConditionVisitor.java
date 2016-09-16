@@ -127,11 +127,11 @@ public class VRuleConditionVisitor implements RudiVisitor {
       isTrue = node.isTrue + " ";
       node.left.visit(this);
       String l = this.lastbool;
-//      if (node.not) {
+      if (node.not) {
         this.lastbool = this.currentRule + this.counter++;
         this.compiledLook.put(this.lastbool, n + l);
         this.realLook.put(lastbool, n + l);
-//      }
+      }
     }
     //System.out.println("bool number " + this.compiledLook.keySet().size());
   }

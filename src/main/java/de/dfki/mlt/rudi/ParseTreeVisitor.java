@@ -273,11 +273,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitExp(RobotGrammarParser.ExpContext ctx) {
     // comment exp comment
-    if (ctx.getChildCount() == 4) { // exp of kind comment NOT boolean_exp comment
-      return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
-              new ExpBoolean(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)), null, null, true, true),
-              (UCommentBlock) this.visit(ctx.getChild(3)));
-    }
+//    if (ctx.getChildCount() == 4) { // exp of kind comment NOT boolean_exp comment
+//      return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
+//              new ExpBoolean(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)), null, null, true, true),
+//              (UCommentBlock) this.visit(ctx.getChild(3)));
+//    }
     if (ctx.getChildCount() == 5) { // exp of kind comment LPAR exp RPAR comment
       return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
               this.visit(ctx.getChild(2)),
@@ -309,6 +309,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitSimple_exp(RobotGrammarParser.Simple_expContext ctx) {
     // comment exp comment
     if (ctx.getChildCount() == 4) { // exp of kind comment NOT boolean_exp comment
+      System.out.println("simple exp");
       return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
               new ExpBoolean(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)), null, null, true, true),
               (UCommentBlock) this.visit(ctx.getChild(3)));
@@ -330,9 +331,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       if (ctx.getText().equals("true") || ctx.getText().equals("false")) {
         return new UnaryBoolean(ctx.getText());
       }
+      if (ctx.getChild(0) instanceof RobotGrammarParser.Simple_b_expContext) {
+        return this.visit(ctx.getChild(0));
+      }
+      System.out.println("simple b exp 1");
       return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
               null, null, false, false);
     } else {
+      System.out.println("simple b exp 2");
       return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
               (RTExpression) this.visit(ctx.getChild(2)),
               ctx.getChild(1).getText(), false, false);
@@ -346,17 +352,17 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       if (ctx.getText().equals("true") || ctx.getText().equals("false")) {
         return new UnaryBoolean(ctx.getText());
       }
-      if (ctx.getChild(0) instanceof RobotGrammarParser.Simple_b_expContext
-              || ctx.getChild(0) instanceof RobotGrammarParser.Simple_expContext
-              || ctx.getChild(0) instanceof RobotGrammarParser.ExpContext) {
+      if (ctx.getChild(0) instanceof RobotGrammarParser.Simple_b_expContext) {
         return this.visit(ctx.getChild(0));
       }
+      System.out.println("b exp 1");
       return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
               null, null, false, false);
 //    } else if (ctx.getChildCount() == 2) {
 //      return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(1)),
 //              null, null, true, false);
     } else if (ctx.getChildCount() == 3) {
+      System.out.println("b exp 3");
       ExpBoolean arit = new ExpBoolean(ctx.getChild(2).getText(),
               (RTExpression) this.visit(ctx.getChild(2)),
               null, null, false, false);

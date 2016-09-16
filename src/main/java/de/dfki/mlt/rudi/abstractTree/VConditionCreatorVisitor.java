@@ -103,13 +103,13 @@ public class VConditionCreatorVisitor implements RudiVisitor {
         this.creation.append("boolean " + expNames[counter-1] + " = false;\n");
         this.creation.append("}\n");
         this.creation.append("boolean " + expNames[counter] + " = " + n
-                + compiledLook.get(expNames[counter]) + ";\n");
+                + compiledLook.get(expNames[counter++]) + ";\n");
 //        this.condition.append(expNames[counter++]);
         return;
       } else if (node.operator.equals("&&")) {
         this.condition.append("(");
         this.visitNode(node.left);
-        this.creation.append("if (" + expNames[counter - 1] + "){\n");
+        this.creation.append("if (" + expNames[counter-1] + "){\n");
         condition.append(node.operator);
         this.visitNode(node.right);
         this.condition.append(")");
@@ -117,7 +117,7 @@ public class VConditionCreatorVisitor implements RudiVisitor {
         this.creation.append("boolean " + expNames[counter-1] + " = false;\n");
         this.creation.append("}\n");
         this.creation.append("boolean " + expNames[counter] + " = " + n
-                + compiledLook.get(expNames[counter]) + ";\n");
+                + compiledLook.get(expNames[counter++]) + ";\n");
 //        this.condition.append(expNames[counter++]);
         return;
       } else {
@@ -134,7 +134,7 @@ public class VConditionCreatorVisitor implements RudiVisitor {
       if (node.not) {
 //        this.condition.append("!");
         this.visitNode(node.left);
-        this.creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+        this.creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter++]) + ";\n");
         return;
       }
       
