@@ -107,12 +107,18 @@ function_call
   ;
 
 funccall_on_object
-  : VARIABLE DOT function_call
+  : variable DOT function_call
   ;
 
 field_access
   : VARIABLE
     ( ( DOT VARIABLE ) )+
+  ;
+
+variable
+  : VARIABLE 
+  | VARIABLE_MARKER field_access
+  | VARIABLE_MARKER VARIABLE
   ;
 
 exp
@@ -127,7 +133,7 @@ exp
   | literal_or_graph_exp
   | ( STRING
     | WILDCARD
-    //| VARIABLE
+    | variable
     | FALSE
     | TRUE
     | NULL
@@ -148,7 +154,7 @@ simple_exp
   | assignment
   | ( STRING
     | WILDCARD
-    //| VARIABLE
+    | variable
     | FALSE
     | TRUE
     | NULL
@@ -198,11 +204,11 @@ propose_block
   ;*/
 
 string_expression
-  : ( ( STRING | VARIABLE )
+  : ( ( STRING | variable )
     | field_access
     )
     ( PLUS
-      ( ( STRING | VARIABLE )
+      ( ( STRING | variable )
       | field_access
       )
     )*
@@ -222,7 +228,7 @@ literal_or_graph_exp
   ;
 
 assignment
-  : ( ( DEC_VAR | type_spec)? VARIABLE
+  : ( ( DEC_VAR | type_spec)? variable
       | field_access
     )
     ASSIGN exp
@@ -234,22 +240,22 @@ type_spec
   ;
 
 var_def
-  : type_spec VARIABLE SEMICOLON
+  : type_spec variable SEMICOLON
   ;
 
 fun_def
-  : type_spec VARIABLE LPAR
+  : type_spec variable LPAR
     ( type_spec VARIABLE (COMMA type_spec VARIABLE)* )? RPAR SEMICOLON
   ;
 
 list_creation
-  : VARIABLE ASSIGN LBRACE ((VARIABLE | STRING | INT | FLOAT)
-                            (COMMA (VARIABLE | STRING | INT | FLOAT))*)? 
+  : variable ASSIGN LBRACE ((variable | STRING | INT | FLOAT)
+                            (COMMA (variable | STRING | INT | FLOAT))*)? 
     RBRACE SEMICOLON
   ;
 
 set_operation
-  : (VARIABLE | field_access) (ADD | REMOVE) number
+  : (variable | field_access) (ADD | REMOVE) number
   ;
 
 number
@@ -373,6 +379,7 @@ LITERAL_OR_GRAPH: '#'( '0'..'9'|'A'..'z'|'_' )+;
 PROPOSE: 'propose';
 DEC_VAR: 'var';
 TIMEOUT: 'timeout';
+VARIABLE_MARKER: '^';
 
 /// comments (starting with /* or //):
 JAVA_CODE: '/*@'.*?'@*/';//-> channel(HIDDEN);

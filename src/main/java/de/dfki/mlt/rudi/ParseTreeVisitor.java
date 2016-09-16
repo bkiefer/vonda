@@ -649,7 +649,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
         return new UString(tn.getText() + "\n");
       case 48:  //token is wildcard
         return new UWildcard();
-      case 57:  // token is variable
+      case 58:  // token is variable
         String text = tn.getText();
         //System.out.println(currentClass);
         return new UVariable(text, currentClass, currentTRule);
@@ -668,9 +668,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
           throw new UnsupportedOperationException("This variable isn't declared "
                   + "anywhere: " + text);
         }*/
-      case 58:  // token is int
+      case 59:  // token is int
         return new UNumber(tn.getText());
-      case 59:  // token is float
+      case 60:  // token is float
         return new UNumber(tn.getText());
     }
     throw new UnsupportedOperationException("The terminal node for " + tn.getText()
@@ -692,6 +692,15 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       i += 2;
     }
     return new StatListCreation(ctx.getChild(0).getText(), elements, currentClass);
+  }
+
+  @Override
+  public RudiTree visitVariable(RobotGrammarParser.VariableContext ctx) {
+    // VARIABLE | VARIABLE_MARKER field_access | VARIABLE_MARKER VARIABLE
+    if (ctx.getChildCount() == 1) {
+      return new UVariable(ctx.getChild(0).getText(), currentClass, currentTRule);
+    } // else: there was a marker
+    return new UVariable(ctx.getChild(1).getText(), currentClass, currentTRule);
   }
 
 }
