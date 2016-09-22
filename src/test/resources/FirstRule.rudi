@@ -8,7 +8,7 @@ if (! (activity <= Introduction)) return;
 // new session: greet user
 // TODO: ADD INFO FUNCTION TO GENERATION SO IT CAN CAPTURE USER NAME ETC.
 initial_greeting:
-if (user.id) {
+if (user) {
   if (! myLastDA()) {
     propose("greeting") {
       salutation = firstEncounter() ? InitialGreeting : ReturnGreeting;
