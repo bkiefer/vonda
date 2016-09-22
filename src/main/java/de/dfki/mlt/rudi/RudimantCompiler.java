@@ -43,17 +43,25 @@ public class RudimantCompiler {
   public String className;
 
   private RudimantCompiler parent;
+  
+  // the class that should be extended by the rudi files to fill them into a project
+  private final String wrapperClass;
 
-  private RudimantCompiler(Mem m) {
+  public String getWrapperClass() {
+    return wrapperClass;
+  }
+
+  private RudimantCompiler(Mem m, String wrapperClass) {
+    this.wrapperClass = wrapperClass;
     mem = m;
   }
 
-  public RudimantCompiler() {
-    this(new Mem());
+  public RudimantCompiler(String wrapperClass) {
+    this(new Mem(), wrapperClass);
   }
 
   public static RudimantCompiler getEmbedded(RudimantCompiler parent) {
-    RudimantCompiler result = new RudimantCompiler(parent.mem);
+    RudimantCompiler result = new RudimantCompiler(parent.mem, parent.getWrapperClass());
     result.parent = parent;
     return result;
   }

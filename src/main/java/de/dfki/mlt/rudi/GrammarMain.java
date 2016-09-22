@@ -6,8 +6,10 @@
 package de.dfki.mlt.rudi;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -49,6 +51,13 @@ public class GrammarMain {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
+    Properties configs = new Properties();
+    FileInputStream in = new FileInputStream(GrammarMain.class.
+            getProtectionDomain().getCodeSource().getLocation().getPath()
+            + "/../../rudi.config");
+    configs.load(in);
+    in.close();
+
     OptionParser parser = new OptionParser("hledo:");
     parser.accepts("help");
     OptionSet options = null;
@@ -74,7 +83,7 @@ public class GrammarMain {
       System.out.println(help);
       System.exit(0);
     }
-    RudimantCompiler rc = new RudimantCompiler();
+    RudimantCompiler rc = new RudimantCompiler(configs.getProperty("wrapperClass"));
     if (options.has("l")) {
       rc.setLog(true);
     }
@@ -86,13 +95,16 @@ public class GrammarMain {
     }
     if (options.has("o")) {
       outputDirectory = new File((String) options.valueOf("o"));
-    }
+    }    
 
     //System.out.println("test");
-    if(outputDirectory != null){
-        rc.process(dir, outputDirectory);
+    if (outputDirectory != null) {
+      rc.process(dir, outputDirectory);
     } else {
-    rc.process(dir);
+      if(configs.get("outputDirectory") != null){
+        rc.process(dir, new File((String) configs.get("outputDirectory")));
+      }
+      rc.process(dir);
     }
   }
 

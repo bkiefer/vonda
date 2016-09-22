@@ -196,7 +196,8 @@ public class VGenerationVisitor implements RudiVisitor {
             + "import java.util.HashMap;\n"
             + "import org.slf4j.Logger;\n"
             + "import org.slf4j.LoggerFactory;\n\n");
-    out.append("public class " + node.classname + "{\n");
+    out.append("public class " + node.classname + " extends " +
+            out.getWrapperClass() + "{\n");
     out.append("public static Logger logger = LoggerFactory.getLogger("
             + mem.getClassName() + ".class);\n");
     out.append("// add to this set the name of all rules you want to be logged\n");
