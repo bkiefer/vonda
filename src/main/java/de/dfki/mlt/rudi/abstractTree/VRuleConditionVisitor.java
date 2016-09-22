@@ -72,7 +72,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
     if (node.isSubsumed) {
       this.lastbool = this.currentRule + this.counter++;
       collectDAs = n;
-      if(node.notIfSubsume){
+      if (node.notIfSubsume) {
         collectDAs += "!";
       }
       collectDAs += ("isSubsumed(");
@@ -88,7 +88,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
     } else if (node.doesSubsume) {
       this.lastbool = this.currentRule + this.counter++;
       collectDAs = n;
-      if(node.notIfSubsume){
+      if (node.notIfSubsume) {
         collectDAs += "!";
       }
       collectDAs += ("isSubsumed(");
@@ -416,6 +416,12 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UVariable node) {
+    if (node.isRdfClass) {
+      this.lastbool = this.currentRule + this.counter++;
+      this.compiledLook.put(this.lastbool, "\"" + node.representation + "\"");
+      this.realLook.put(this.lastbool, "\"" + node.representation + "\"");
+      return;
+    }
     // if the variable is not in the memory,
     if (node.realOrigin != null) {
       if (collectElements != null) {

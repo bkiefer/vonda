@@ -637,6 +637,9 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UVariable node) {
+    if(node.isRdfClass){
+      out.append("\"" + node.representation + "\"");
+    }
     // if the variable is not in the memory,
     if (node.realOrigin != null) {
       out.append(node.realOrigin.toLowerCase() + "." + node.representation + " ");
