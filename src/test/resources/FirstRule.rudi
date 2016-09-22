@@ -1,5 +1,3 @@
-magic activity;
-magic Introduction;
 
 introduction:
 if (! (activity <= Introduction)) return;
@@ -12,7 +10,7 @@ if (user) {
   if (! myLastDA()) {
     propose("greeting") {
       salutation = firstEncounter() ? InitialGreeting : ReturnGreeting;
-      DialogueAct da = emitDA(#salutation(Meeting));
+      DialogueAct da = emitDA(#^salutation(Meeting));
 
     ask_user_name:
       if (! user.GivenName && saidInSession(#Request(Name)) < 0) {

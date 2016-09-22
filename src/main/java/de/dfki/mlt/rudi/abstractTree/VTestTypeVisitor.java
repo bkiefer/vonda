@@ -361,6 +361,10 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(UVariable node) {
     node.type = mem.getVariableType(node.representation);
+    if(node.type == null){
+      // this variable wasnt declared, so it doesnt exist or is an rdf type
+      
+    }
     String o = mem.getVariableOriginClass(node.representation);
     if (o == null) {
       rudi.handleTypeError("The variable " + node.representation
