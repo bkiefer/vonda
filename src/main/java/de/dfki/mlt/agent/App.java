@@ -1,15 +1,10 @@
 package de.dfki.mlt.agent;
 
-import static pal.Constants.TECSDB_SERVER_IP_PROP;
-import static pal.Constants.TECSDB_SERVER_PORT_PROP;
-
 import java.io.IOException;
 import java.net.UnknownHostException;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import pal.Utils;
 
 /**
  * Hello world!

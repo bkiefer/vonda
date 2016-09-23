@@ -1,8 +1,5 @@
 package de.dfki.mlt.agent;
 
-import pal.TECS.EventHandler;
-import pal.TECS.Intention;
-
 public class IntentionHandler implements EventHandler<Intention> {
 
   private Agent agent;

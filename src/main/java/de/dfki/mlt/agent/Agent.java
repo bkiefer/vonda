@@ -1,17 +1,17 @@
 package de.dfki.mlt.agent;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.mlt.agent.nlg.Pair;
-import de.dfki.mlt.agent.rdf.DialogueAct;
 import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.lt.tr.dialogue.cplan.DagEdge;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
-import de.dfki.tecs.Event;
+import de.dfki.mlt.agent.nlg.Pair;
+import de.dfki.mlt.agent.rdf.DialogueAct;
 import de.dfki.tecs.rpc.RPCFactory;
 
 /**
@@ -20,9 +20,9 @@ import de.dfki.tecs.rpc.RPCFactory;
  */
 public abstract class Agent  {
 
-  public CommunicationSystem comSys;
-
-  public final Logger logger;
+  public static final String EVENT_PACKAGE_NAME = "de.dfki.mlt.agent.events";
+  
+  public static Logger logger;
 
   public static int PERCEPTION_LATENCY = 2000; // in milliseconds
 
@@ -49,6 +49,10 @@ public abstract class Agent  {
   public double proposedRobotMood = 0;
 
   protected Random random = new Random(System.currentTimeMillis());
+
+  protected String _clientName;
+  
+  protected CommunicationSystem comSys;
 
   protected abstract class Proposal implements Runnable {
 
@@ -118,10 +122,26 @@ public abstract class Agent  {
 
   /**
    * Are we waiting for a proposal to be selected? In this case, put all
-   * incoming events into the event queue
+   * incoming events into the event queues
    */
   protected boolean proposalsSent;
+  
+  /** All Event types that can be processed */
+  protected Map<String, List<EventHandler<? extends Event>>> subscribedEvents;
 
+  /** Subscribe to an event time, and add the handler */
+  @SuppressWarnings("rawtypes")
+  public void subscribe(String eventType,
+      EventHandler<? extends Event> handler) {
+    List<EventHandler<? extends Event>> handlers =
+        subscribedEvents.get(eventType);
+    if (handlers == null) {
+      handlers = new ArrayList<EventHandler<? extends Event>>();
+      subscribedEvents.put(eventType, handlers);
+    }
+    handlers.add(handler);
+  }
+  
   // TODO: Why does this already resetted to LinkedList before Deque was removed?
   protected void reset() {
     myLastDAs = new LinkedList<DialogueAct>();
@@ -163,6 +183,7 @@ public abstract class Agent  {
   // Constructors ************************************************************
   public Agent(String hostIP, String id, int port) {
     logger = LoggerFactory.getLogger(id);
+    _clientName = id;
     /* TODO: DO RECOGNITION
     subscribe("SpeechActEvent", new EventHandler<SpeechActEvent>() {
       @Override
@@ -263,11 +284,8 @@ public abstract class Agent  {
       logger.debug("No fitting subsume relation for App? " + da.toString());
     }
 
-    /**/
-    b.setType(type);
-    b.setMood(proposedRobotMood);
     // send a behaviour (motion, textToSay) to the robot
-    send(b);
+    comSys.sendBehaviour(b);
     return da;
   }
 
@@ -405,31 +423,30 @@ public abstract class Agent  {
    * added and send the final set to the decision process. After that, the flag
    * signalling that new data arrived is reset
    */
-//  protected void actOnNewData() {
-//    //if (pendingProposals.size() > 0) return;
-//    int oldSize = 0;
-//    do {
-//      oldSize = pendingProposals.size();
-//      processRules();
-//    } while (pendingProposals.size() != oldSize);
-//    if (oldSize > 0) {
-//      sendIntentions(pendingProposals.keySet());
-//    }
-//    newData = false;
-//  }
-//
-//  /**
-//   * Send the list of possible intentions to Hammer
-//   */
-//  void sendIntentions(Set<String> strings) {
-//    IntentionList il = new IntentionList();
-//    String message = putTogether(';', strings);
-//    logger.info("Intentions: {}", message);
-//    il.setContent(message);
-//    il.setId(generateId());
-//    send(il);
-//  }
-//
+  protected void actOnNewData() {
+    //if (pendingProposals.size() > 0) return;
+    int oldSize = 0;
+    do {
+      oldSize = pendingProposals.size();
+      processRules();
+    } while (pendingProposals.size() != oldSize);
+    if (oldSize > 0) {
+      sendIntentions(pendingProposals.keySet());
+    }
+    newData = false;
+  }
+
+  /**
+   * Send the list of possible intentions to Hammer
+   */
+  void sendIntentions(Set<String> strings) {
+    List<String> il = new ArrayList<>();
+    il.addAll(strings);
+    String message = putTogether(';', strings);
+    logger.info("Intentions: {}", message);
+    comSys.sendIntentions(il);
+  }
+
 //  /**
 //   * Interpret what he's saying and create the proper reaction
 //   * @param fromAsr a SpeechActEvent coming from the ASR
@@ -501,13 +518,43 @@ public abstract class Agent  {
     }
     reset();
   }
+  
+  
+  /** Common event handling for all agents */
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  protected void onEvent(Event event) {
 
+    String eventType = event.getType();
+    if (subscribedEvents.containsKey(eventType)) {
+      Object o;
+      try {
+        String className = EVENT_PACKAGE_NAME + "." + eventType;
+        o = Class.forName(className).getConstructor().newInstance();
+      } catch (InstantiationException | IllegalAccessException
+          | IllegalArgumentException | InvocationTargetException
+          | NoSuchMethodException | SecurityException
+          | ClassNotFoundException e) {
+        e.printStackTrace();
+        return;
+      }
+
+      // do not handle message send by yourself
+      if (!event.getSource().equals(_clientName)) {
+        // System.out.println(
+        // "source " + event.getHeader().source + ", I am " + _clientName);
+        for (EventHandler h : subscribedEvents.get(eventType)) {
+          h.handleEvent((Event)o);
+        }
+      }
+    }
+  }
+  
   private void runReceiveSendCyle() {
     while (comSys.isOnline()) {
       boolean emptyRun = true;
       while (comSys.canReceive()) {
         Event event = comSys.receive();
-        if (proposalsSent && !event.getEtype().equals("Intention")) {
+        if (proposalsSent && !event.getType().equals("Intention")) {
           pendingEvents.addFirst(event);
         } else {
           onEvent(event);
