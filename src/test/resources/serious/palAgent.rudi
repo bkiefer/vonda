@@ -1,7 +1,7 @@
 
-activity;
-user;
-intro;
+Rdf activity;
+Rdf user;
+Rdf intro;
 
 DialogueAct myLastDA();
 DialogueAct emitDA(DialogueAct da);
