@@ -43,6 +43,27 @@
       <version>1.0-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
+
+    <dependency>
+      <groupId>com.ibm.icu</groupId>
+      <artifactId>icu4j</artifactId>
+      <version>55.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.dfki.mlt</groupId>
+      <artifactId>cplan-ccg</artifactId>
+      <version>0.9-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>de.dfki.mlt</groupId>
+      <artifactId>cplan-core</artifactId>
+      <version>0.9-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+
   </dependencies>
 
   <build>
