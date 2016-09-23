@@ -92,15 +92,22 @@ public class VGenerationVisitor implements RudiVisitor {
     if (node.not) {
       out.append("!");
     }
+    
+    String function = "";
+    if(node.rdf){
+      function = "RdfClass.isSubclassOf(";
+    } else {
+      function = "isSubsumed(";
+    }
     if (node.isSubsumed) {
-      out.append("isSubsumed(");
+      out.append(function);
       node.left.visit(this);
       out.append(", ");
       node.right.visit(this);
       out.append(")");
       return;
     } else if (node.doesSubsume) {
-      out.append("isSubsumed(");
+      out.append(function);
       node.right.visit(this);
       out.append(", ");
       node.left.visit(this);
@@ -144,11 +151,13 @@ public class VGenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-       if (mem.variableExists(parts[1])) {
+      {
+        if (mem.variableExists(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
+      }
     }
     out.append(")\")");
   }
@@ -196,8 +205,8 @@ public class VGenerationVisitor implements RudiVisitor {
             + "import java.util.HashMap;\n"
             + "import org.slf4j.Logger;\n"
             + "import org.slf4j.LoggerFactory;\n\n");
-    out.append("public class " + node.classname + " extends " +
-            out.getWrapperClass() + "{\n");
+    out.append("public class " + node.classname + " extends "
+            + out.getWrapperClass() + "{\n");
     out.append("public static Logger logger = LoggerFactory.getLogger("
             + mem.getClassName() + ".class);\n");
     out.append("// add to this set the name of all rules you want to be logged\n");
@@ -440,8 +449,8 @@ public class VGenerationVisitor implements RudiVisitor {
       ruleIf = null;
     } else {
       out.append("if (");
-    node.condition.visit(this);
-    out.append(") ");
+      node.condition.visit(this);
+      out.append(") ");
     }
     node.statblockIf.visit(this);
     if (node.statblockElse != null) {
@@ -637,7 +646,7 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UVariable node) {
-    if(node.isRdfClass){
+    if (node.isRdfClass) {
       out.append("\"" + node.representation + "\"");
     }
     // if the variable is not in the memory,
@@ -668,8 +677,8 @@ public class VGenerationVisitor implements RudiVisitor {
    * @param rule
    */
   private String printRuleLogger(String rule, RTExpression bool_exp) {
-    if (bool_exp instanceof ExpAbstractWrapper){
-      bool_exp = (RTExpression)((ExpAbstractWrapper)bool_exp).exp;
+    if (bool_exp instanceof ExpAbstractWrapper) {
+      bool_exp = (RTExpression) ((ExpAbstractWrapper) bool_exp).exp;
     }
     if (bool_exp instanceof UnaryBoolean) {
       // there isnt much we could log
@@ -691,7 +700,7 @@ public class VGenerationVisitor implements RudiVisitor {
     //System.out.println(realLook.keySet().size());
     condV2.newMap(realLook.keySet().toArray(), compiledLook);
     condV2.visitNode(bool_exp);
-    
+
     out.append(condV2.getBoolCreation().toString());
 //    for (String var : compiledLook.keySet()) {
 //      out.append("//boolean " + var + " = " + compiledLook.get(var) + ";\n");

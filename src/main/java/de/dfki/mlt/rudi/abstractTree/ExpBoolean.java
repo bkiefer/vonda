@@ -31,6 +31,9 @@ public class ExpBoolean implements RTExpression {
   // way of testing the existance of boolexp
   String isTrue = "";
   boolean testIsEmpty = false;
+  
+  // tell me whether this is not really subsumes, but rdf isSubclassOf
+  boolean rdf = false;
 
   /**
    * if the expression consists of only one part, set right and operator to null
