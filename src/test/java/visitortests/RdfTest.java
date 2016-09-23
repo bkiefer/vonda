@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author anna
+ * @author Christophe Biwer, christophe.biwer@dfki.de
  */
 public class RdfTest {
 
