@@ -97,6 +97,7 @@ public class NaoAgent extends Agent {
     return new RdfList<Quiz>(this);
   }
    */
+  
   void setUser(String childUri, String location) {
     user = new Child(this, childUri);
     //user.put(CHILD_NAME, "Jan");
@@ -245,6 +246,7 @@ public class NaoAgent extends Agent {
     agent.logger.info("<- Quiz Stop {}", System.currentTimeMillis());
   }
 
+  /*
   protected void endQuiz(Quiz quiz, String reason) {
     if (!isMyLastDA("Inform", "AssessingPerformance")
         && !isMyLastDA("ReturnGoodbye", "Meeting")
@@ -254,7 +256,7 @@ public class NaoAgent extends Agent {
       quiz.put(QUIZ_STATUS, "wait_for_assessment");
     }
   }
-
+*/
   protected void assessQuizSession(Quiz quiz, String whose) {
     if (whose != null) {
       // Get the amount of questions answered, and the number of correct answers
@@ -423,6 +425,7 @@ public class NaoAgent extends Agent {
       --> Set the activity to a new Game, and possibly extract all
           relevant data? or lazy?
    */
+  /*
   protected void processIncomingSpeechActs() {
     // TODO: ALL THESE RULES DEFINITELY LOOK AT AN !!UNPROCESSED!!
     // INCOMING DIALOGUE ACT
@@ -458,6 +461,7 @@ public class NaoAgent extends Agent {
        - if asked for role: accept,
          otherwise accept or reject (current roles stay)
      */
+  /*
     if (isLastDA("Request", "AssigningRole")
             || isLastDA("AcceptRequest", "AssigningRole")
             || isLastDA("RejectRequest", "AssigningRole")) {
@@ -488,6 +492,7 @@ public class NaoAgent extends Agent {
         emitDA("Inform", "Instructing", "theme", theme,
                 "agent", agent, "purpose", "Asking");
         */
+  /*
         if (! childAtHome()) {
           // THIS IS ONLY THE COMMUNICATION WITH THE QUIZ LOGIC
           // this is sending a QuizCommand(start_hospital, whereas in the home
@@ -530,7 +535,7 @@ public class NaoAgent extends Agent {
     }
 
   }
-
+*/
   boolean waitingForResponse() {
     // if my last DA was a request or a question, and there is no newer incoming
     // da, i'm waiting for an answer.
@@ -558,6 +563,7 @@ public class NaoAgent extends Agent {
    *   - if hobby given that NAO shares: inform about it
    *   - if only hobby given : ask about other hobbies
    * ********************************************************************* */
+  /*
   protected void processRulesIntroduction() {
     if (activity == null || !(activity instanceof Introduction)) {
       return;
@@ -672,6 +678,7 @@ public class NaoAgent extends Agent {
   /* **********************************************************************
    * The rule section : Quiz
    * ********************************************************************* */
+  /*
   protected void processRulesQuiz() {
     if (activity == null || !(activity instanceof Quiz)) {
       return;
@@ -692,6 +699,7 @@ public class NaoAgent extends Agent {
          - if asked for role: accept,
            otherwise accept or reject (current roles stay)
      */
+  /*
     if (quiz.isEqual(QUIZ_STATUS, "started")) {
       logger.info("Quiz started {}", System.currentTimeMillis());
       int lastInfo = lastOccurenceOfMyDA("Inform", "Instructing", "theme", "Quiz");
@@ -794,6 +802,7 @@ public class NaoAgent extends Agent {
 
     - [explanation_offered] & accepted --> /present_explanation/
    */
+  /*
   protected void processRulesQuizRunning(Quiz quiz) {
 
     // TODO: THIS IS ONLY A TEMPORARY SOLUTION TO FIX ISSUE dialogmanager:#10
@@ -863,6 +872,7 @@ public class NaoAgent extends Agent {
           });
         }
          */
+/*      
       } //      }
       else // tablet orientation is OK, question will be posed by robot or child
       {
@@ -994,6 +1004,7 @@ public class NaoAgent extends Agent {
       });
        */
       // TODO FIX THIS, ONLY FOR TESTING !!!!!
+  /*
       if (true || quiz.getNumberOfTurns() < 5) {
         propose("continue_quiz", new Proposal() {
           public void run() {
@@ -1080,5 +1091,5 @@ public class NaoAgent extends Agent {
       });
     }
   }
-
+*/
 }
