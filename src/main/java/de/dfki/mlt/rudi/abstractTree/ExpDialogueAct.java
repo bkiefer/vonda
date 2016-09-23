@@ -29,7 +29,7 @@ public class ExpDialogueAct implements RudiTree, RTExpression{
 
   @Override
   public String getType() {
-    return "magic";
+    return "DialogueAct";
   }
 
   @Override

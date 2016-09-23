@@ -1,0 +1,20 @@
+
+activity;
+user;
+intro;
+
+DialogueAct myLastDA();
+DialogueAct emitDA(DialogueAct da);
+int saidInSession(DialogueAct da);
+void introduceDADelay(int d);
+int receivedInSession(DialogueAct da);
+boolean waitingForResponse();
+void propose(String s, Proposal p);
+
+
+? intro.has(INTRODUCTION_GAMEPROPOSED)
+? allProperties(user.getRange(getLiking))
+? slot = Hobby
+? user.getLiking.slot
+
+import greet_user;

@@ -85,7 +85,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       return;
     }
     node.right.visit(this);
-    if (node.operator != null && node.left.getType().equals("magic")) {
+    if (node.operator != null && node.left.getType().equals("DialogueAct")) {
       if (node.left.getType().equals(node.right.getType())) {
         if (node.operator.equals("<=")) {
           node.isSubsumed = true;

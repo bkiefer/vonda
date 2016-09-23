@@ -5,6 +5,7 @@ boolean equals(String b);
 LabelA:
   if (true){
     infoslots = {"Hobby", "Age"};
+    String x = infoslots[1];
     Object x = ^bla.schwafel.dingsbums;
     String d = "adf";
     LabelB:

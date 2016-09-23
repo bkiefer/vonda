@@ -431,7 +431,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
         this.funcargs += node.realOrigin.toLowerCase() + "." + node.representation;
         return;
       }
-      if (node.representation.equals("magic") || mem.isRdf(node.representation)) {
+      if (node.representation.equals("DialogueAct") || mem.isRdf(node.representation)) {
         this.collectDAs += node.realOrigin.toLowerCase() + "." + node.representation;
         return;
       }
@@ -448,7 +448,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
         this.funcargs += node.representation;
         return;
       }
-      if (node.type.equals("magic") || mem.isRdf(node.representation)) {
+      if (node.type.equals("DialogueAct") || mem.isRdf(node.representation)) {
         this.collectDAs += node.representation;
         return;
       }
