@@ -17,6 +17,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.google.googlejavaformat.java.Formatter;
+import com.google.googlejavaformat.java.FormatterException;
 
 public class RudimantCompiler {
 
@@ -32,7 +34,8 @@ public class RudimantCompiler {
   // we don't want to crash in that case by turning it to uppercase and then trying to read it
   private String inputRealName;
 
-  private Writer out;
+  private StringBuffer out;
+  private Writer toFile;
 
   private HfcDbService.Client _client;
 
@@ -43,7 +46,7 @@ public class RudimantCompiler {
   public String className;
 
   private RudimantCompiler parent;
-  
+
   // the class that should be extended by the rudi files to fill them into a project
   private final String wrapperClass;
 
@@ -75,7 +78,7 @@ public class RudimantCompiler {
     return result;
   }
 
-  public void process(File topLevel, File outputdir) throws IOException {
+  public void process(File topLevel, File outputdir) throws IOException, FormatterException {
     inputDirectory = topLevel.getParentFile();
     outputDirectory = outputdir;
     className = getClassName(topLevel);
@@ -84,11 +87,11 @@ public class RudimantCompiler {
     processForReal(outputdir);
   }
 
-  public void process(File topLevel) throws IOException {
+  public void process(File topLevel) throws IOException, FormatterException {
     process(topLevel, topLevel.getParentFile());
   }
 
-  public void process(String importSpec) throws IOException {
+  public void process(String importSpec) throws IOException, FormatterException {
     inputDirectory = parent.inputDirectory;
     outputDirectory = parent.outputDirectory;
 
@@ -152,26 +155,19 @@ public class RudimantCompiler {
   }
 
   public RudimantCompiler append(char c) {
-    try {
-      out.append(c);
-    } catch (IOException ex) {
-      throw new InOutException(ex);
-    }
+    out.append(c);
     return this;
   }
 
   public RudimantCompiler append(CharSequence c) {
-    try {
-      out.append(c);
-    } catch (IOException ex) {
-      throw new InOutException(ex);
-    }
+    out.append(c);
     return this;
   }
 
-  public void flush() {
+  public void flush() throws FormatterException {
     try {
-      out.flush();
+      String formattedSource = new Formatter().formatSource(out.toString());
+      toFile.write(formattedSource);
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     }
@@ -191,13 +187,14 @@ public class RudimantCompiler {
     return classname;
   }
 
-  private void processForReal(File outputdir) throws IOException {
+  private void processForReal(File outputdir) throws IOException, FormatterException {
     if (!outputdir.isDirectory()) {
       Files.createDirectories(outputdir.toPath());
       // throw new IOException(outputdir + " is not a directory");
     }
     File outputFile = new File(outputdir, className + ".java");
-    out = Files.newBufferedWriter(outputFile.toPath());
+    toFile = Files.newBufferedWriter(outputFile.toPath());
+    out = new StringBuffer();
 
     File inputFile = getInputFile();
     logger.info("parsing " + inputFile.getName() + " to " + outputFile);
@@ -252,7 +249,7 @@ public class RudimantCompiler {
     }
 
     logger.info("Done parsing " + inputFile.getName());
-    out.flush();
+    this.flush();
 
   }
 
