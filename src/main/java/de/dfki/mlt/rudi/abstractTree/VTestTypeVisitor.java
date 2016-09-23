@@ -85,12 +85,16 @@ public class VTestTypeVisitor implements RudiVisitor {
       return;
     }
     node.right.visit(this);
-    if (node.operator != null && node.left.getType().equals("DialogueAct")) {
+    if (node.operator != null && (node.left.getType().equals("DialogueAct") ||
+            node.left.getType().contains("Rdf"))) {
       if (node.left.getType().equals(node.right.getType())) {
         if (node.operator.equals("<=")) {
           node.isSubsumed = true;
         } else if (node.operator.equals("=>")) {
           node.doesSubsume = true;
+        }
+        if(node.left.getType().contains("Rdf")){
+          node.rdf = true;
         }
       }
     } else if (node.operator != null) {
@@ -325,6 +329,11 @@ public class VTestTypeVisitor implements RudiVisitor {
       node.type = node.askChristophe(mem);
     } catch (TException ex) {
       Logger.getLogger(UFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    for (int i = 1; i < node.representation.size(); i++) {
+      if(!mem.variableExists(node.representation.get(i))){
+        node.representation.set(i, "\"" + node.representation.get(i) + "\"");
+      }
     }
   }
 

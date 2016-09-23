@@ -64,6 +64,11 @@
       <type>jar</type>
     </dependency>
 
+    <dependency>
+      <groupId>com.google.googlejavaformat</groupId>
+      <artifactId>google-java-format</artifactId>
+      <version>1.0</version>
+    </dependency>
   </dependencies>
 
   <build>

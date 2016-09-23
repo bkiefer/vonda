@@ -69,13 +69,19 @@ public class VRuleConditionVisitor implements RudiVisitor {
     if (node.not) {
       n = "!";
     }
+    String function = "";
+    if(node.rdf){
+      function = "RdfClass.isSubclassOf(";
+    } else {
+      function = "isSubsumed(";
+    }
     if (node.isSubsumed) {
       this.lastbool = this.currentRule + this.counter++;
       collectDAs = n;
       if (node.notIfSubsume) {
         collectDAs += "!";
       }
-      collectDAs += ("isSubsumed(");
+      collectDAs += (function);
       node.left.visit(this);
       collectDAs += (", ");
       node.right.visit(this);
@@ -91,7 +97,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
       if (node.notIfSubsume) {
         collectDAs += "!";
       }
-      collectDAs += ("isSubsumed(");
+      collectDAs += (function);
       node.right.visit(this);
       collectDAs += (", ");
       node.left.visit(this);
