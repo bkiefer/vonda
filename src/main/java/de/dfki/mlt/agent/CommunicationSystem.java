@@ -23,5 +23,7 @@ interface CommunicationSystem {
   public void sendIntentions(List<String> il);
 
   public void sendBehaviour(Behaviour b);
+
+  public void sendEvent(Event c);
   
 }

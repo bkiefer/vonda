@@ -65,26 +65,20 @@ public abstract class Agent  {
     }
   }
 
-  /**
-   * The RDF storage and reasoner
-   */
+  /** The RDF storage and reasoner */
   public HfcDbService.Client _client;
 
-  /**
-   * A class that cares about ASR events and interpretation
-   */
+  /** A class that cares about ASR events and interpretation */
   AsrTts asr;
 
-  /**
-   * The DAs I emitted, newest first
-   */
+  /** The DAs I emitted, newest first */
   protected LinkedList<DialogueAct> myLastDAs;
 
-  /**
-   * The DAs I received, newest first
-   */
+  /** The DAs I received, newest first */
   private LinkedList<DialogueAct> lastDAs;
-
+  
+  protected LinkedList<Event> itemsToSend = new LinkedList<Event>();
+  
   protected Timeouts timeouts = new Timeouts();
 
   /**
@@ -574,10 +568,9 @@ public abstract class Agent  {
         }
       }
       synchronized (itemsToSend) {
-        MessageContainer c = itemsToSend.peekFirst();
+        Event c = itemsToSend.peekFirst();
         if (c != null
-                && (c.getMessage() instanceof Behaviour
-                || c.getMessage() instanceof QuizCommand)) {
+                && (c instanceof Behaviour)) {
           long currentTime = System.currentTimeMillis();
           if (currentTime < behaviourNotBefore) {
             c = null;
@@ -589,7 +582,7 @@ public abstract class Agent  {
         if (c != null) {
           itemsToSend.removeFirst();
           logger.debug("Send message via TECS {}", c);
-          sendThis(c);
+          comSys.sendEvent(c);
           emptyRun = false;
         }
       }
