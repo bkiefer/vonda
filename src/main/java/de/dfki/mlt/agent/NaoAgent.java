@@ -21,7 +21,7 @@ import de.dfki.mlt.agent.rdf.RdfList;
 import de.dfki.mlt.agent.rdf.Session;
 import de.dfki.mlt.agent.rdf.Turn;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
-import pal.TECS.*;
+
 
 public class NaoAgent extends Agent {
 

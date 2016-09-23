@@ -1,7 +1,6 @@
 package de.dfki.mlt.agent;
 
-import pal.TECS.EventHandler;
-import pal.TECS.LowLevelNaoCommand;
+import de.dfki.mlt.agent.events.LowLevelNaoCommand;
 
 public class LowLevelNaoCommandHandler implements EventHandler<LowLevelNaoCommand> {
 
