@@ -118,6 +118,7 @@ field_access
 variable
   : VARIABLE_MARKER VARIABLE ( ( DOT VARIABLE ) )+
   | VARIABLE_MARKER VARIABLE
+  | VARIABLE LBRACK (VARIABLE | INT) RBRACK
   | VARIABLE 
   ;
 
@@ -343,6 +344,8 @@ LPAR: '(';
 RPAR: ')';
 LBRACE: '{';
 RBRACE: '}';
+LBRACK: '[';
+RBRACK: ']';
 SEMICOLON: ';';
 COMMA: ',';
 DOT: '.';

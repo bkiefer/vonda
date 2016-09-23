@@ -300,9 +300,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 //    return new ExpDialogueAct(ctx.getChild(0).getText(), expList);
     String rest = "";
     for (int i = 2; i < ctx.getChildCount() - 1; i++) {  // we don't need the parenthesis
-      rest += ctx.getChild(i).getText();
+      rest += ctx.getChild(i).getText().replace("^", "");
     }
-    return new ExpDialogueAct(ctx.getChild(0).getText(), rest, expList);
+    if (ctx.getChild(0).getText().contains("^")) {
+      return new ExpDialogueAct(ctx.getChild(0).getText().substring(2), rest, expList);
+    }
+    return new ExpDialogueAct("\"" + ctx.getChild(0).getText().substring(1) + "\"", rest, expList);
   }
 
   @Override
@@ -652,10 +655,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
         return new UString(tn.getText());
       case 20:  // token is an annotation
         return new UString(tn.getText() + "\n");
-      case 48:  //token is wildcard
+      case 50:  //token is wildcard
         return new UWildcard();
-      case 58:  // token is variable
-        String t = tn.getText().replace("^", "");
+      case 60:  // token is variable
+        String t = tn.getText();
+        t = t.replace("^", "");
         //System.out.println(currentClass);
         return new UVariable(t, currentClass, currentTRule);
       /*if (Mem.existsVariable(text)) {
@@ -673,9 +677,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
           throw new UnsupportedOperationException("This variable isn't declared "
                   + "anywhere: " + text);
         }*/
-      case 59:  // token is int
+      case 61:  // token is int
         return new UNumber(tn.getText());
-      case 60:  // token is float
+      case 62:  // token is float
         return new UNumber(tn.getText());
     }
     throw new UnsupportedOperationException("The terminal node for " + tn.getText()

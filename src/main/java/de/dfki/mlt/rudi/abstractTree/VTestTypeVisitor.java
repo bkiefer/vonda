@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.mlt.rudi.Mem;
 import de.dfki.mlt.rudi.RudimantCompiler;
 import java.util.ArrayList;
@@ -84,12 +85,16 @@ public class VTestTypeVisitor implements RudiVisitor {
       return;
     }
     node.right.visit(this);
-    if (node.operator != null && node.left.getType().equals("magic")) {
+    if (node.operator != null && (node.left.getType().equals("DialogueAct") ||
+            node.left.getType().contains("Rdf"))) {
       if (node.left.getType().equals(node.right.getType())) {
         if (node.operator.equals("<=")) {
           node.isSubsumed = true;
         } else if (node.operator.equals("=>")) {
           node.doesSubsume = true;
+        }
+        if(node.left.getType().contains("Rdf")){
+          node.rdf = true;
         }
       }
     } else if (node.operator != null) {
@@ -325,6 +330,11 @@ public class VTestTypeVisitor implements RudiVisitor {
     } catch (TException ex) {
       Logger.getLogger(UFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
     }
+    for (int i = 1; i < node.representation.size(); i++) {
+      if(!mem.variableExists(node.representation.get(i))){
+        node.representation.set(i, "\"" + node.representation.get(i) + "\"");
+      }
+    }
   }
 
   @Override
@@ -363,6 +373,13 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.type = mem.getVariableType(node.representation);
     String o = mem.getVariableOriginClass(node.representation);
     if (o == null) {
+      if (node.type == null) {
+        // this variable wasnt declared, so it doesnt exist or is an rdf type
+        if (RdfClass.classExists(node.representation, rudi.getClient())) {
+          node.isRdfClass = true;
+          return;
+        }
+      }
       rudi.handleTypeError("The variable " + node.representation
               + " is used but was not declared");
       node.type = "Object";

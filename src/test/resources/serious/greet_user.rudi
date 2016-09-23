@@ -9,7 +9,7 @@ if (user) {
   if (! myLastDA()) {
     propose("greeting") {
       salutation = firstEncounter() ? InitialGreeting : ReturnGreeting;
-      DialogueAct da = emitDA(#salutation(Meeting));
+      DialogueAct da = emitDA(#^salutation(Meeting));
 
     ask_user_name:
       if (! user.GivenName && saidInSession(#Request(Name)) < 0) {
@@ -32,16 +32,15 @@ if (saidInSession(#Greeting(Meeting))
   // TODO: we need a better introduction end criterion
   if (!intro.has(INTRODUCTION_GAMEPROPOSED)) {
     // TODO: GET LIST FROM THE PROPERTIES OF A USER
-    slots = allProperties(user.getRange(getLiking));
-    //for (slot : slots) {
+    List<RdfProperty> slots = { Hobby, Color };
+    for (RdfProperty slot : slots) {
     {
-      slot = Hobby;
       // SLOT unknown: ask for slot
       // Ask for favorite hobby and color
 
     ask_user_preference:
       if (! user.getLiking.slot
-          && ! saidInSession(#Request(Liking, theme=slot))) {
+          && ! saidInSession(#Request(Liking, theme=^slot))) {
         propose("ask_for_preference_" + slot) {
           emitDA(#Request(Liking, theme=slot));
         }
@@ -51,7 +50,7 @@ if (saidInSession(#Greeting(Meeting))
       if (user.getLiking.slot
           && saidInSession(#Request(Liking, theme=slot))
           // TODO find a nice way to express the disjunction (supertype?)
-          && ! saidInSession(#(Confirm|Disconfirm)(Liking, theme=slot))) {
+          && ! saidInSession(#(Confirm|Disconfirm)(Liking, theme=^slot))) {
         // Nao says he also likes the hobby/color
         // TODO: Check whether Nao shares the hobby / likes the color.
 

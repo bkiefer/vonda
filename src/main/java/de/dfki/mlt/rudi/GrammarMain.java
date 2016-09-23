@@ -5,8 +5,13 @@
  */
 package de.dfki.mlt.rudi;
 
+import de.dfki.lt.hfc.WrongFormatException;
+import de.dfki.lt.hfc.db.HfcDbService;
+import de.dfki.lt.hfc.db.client.HfcDbClient;
+import de.dfki.lt.hfc.db.server.HfcDbServer;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
@@ -14,7 +19,8 @@ import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
-import org.apache.log4j.BasicConfigurator;
+import org.apache.thrift.TException;
+import org.apache.thrift.transport.TTransportException;
 
 /**
  * the main class of rudimant
@@ -34,29 +40,28 @@ public class GrammarMain {
           + "\n\nPlease use this tool as follows:\n"
           + "java rudimant <directory_to_be_searched/> [output_directory/] OPTIONS\n"
           + "-o=DIRECTORY\tSpecify DIRECTORY as the output directory";
-
-  // RDF functionality
-  private static final String RESOURCE_DIR = "../hfc-database/src/test/resources/";
-
-  // alternative PORTS
-  private static final int SERVER_PORT = 8996;
-  private static final int WEBSERVER_PORT = 8995;
+  
+  private static Properties configs;
 
   /**
    *
    * @param args: the file that should be parsed without ending (in args[0])
    * @throws Exception
    */
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws IOException, TTransportException, FileNotFoundException, WrongFormatException, TException {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
-    Properties configs = new Properties();
+    configs = new Properties();
     FileInputStream in = new FileInputStream(GrammarMain.class.
             getProtectionDomain().getCodeSource().getLocation().getPath()
             + "/../../rudi.config");
     configs.load(in);
     in.close();
+    
+    serverConfigs();
+    startServer();
+    startClient();
 
     OptionParser parser = new OptionParser("hledo:");
     parser.accepts("help");
@@ -97,6 +102,7 @@ public class GrammarMain {
       outputDirectory = new File((String) options.valueOf("o"));
     }    
 
+    rc.setClient(_client);
     //System.out.println("test");
     if (outputDirectory != null) {
       rc.process(dir, outputDirectory);
@@ -106,6 +112,54 @@ public class GrammarMain {
       }
       rc.process(dir);
     }
+    shutdownServer();
+  }
+  
+  // rdf functionality
+  
+  private static String RESOURCE_DIR;
+
+  private static HfcDbServer server;
+
+  private static HfcDbClient client;
+  private static HfcDbService.Client _client;
+
+  // alternative PORTS
+  private static int SERVER_PORT;
+  private static int WEBSERVER_PORT;
+
+  /**
+   *
+   * @throws TTransportException
+   * @throws FileNotFoundException
+   * @throws IOException
+   * @throws WrongFormatException
+   */
+  private static void startServer() throws TTransportException, FileNotFoundException, IOException, WrongFormatException {
+    File config = new File(RESOURCE_DIR + "ontos/pal.ini");
+    server = new HfcDbServer(SERVER_PORT);
+    server.readConfig(config);
+    server.runServer();
+    server.runHttpService(WEBSERVER_PORT);
+  }
+  
+  private static void startClient()
+      throws IOException, WrongFormatException, TException {
+    client = new HfcDbClient();
+    client.init("localhost", SERVER_PORT);
+    client.readConfig(new File(RESOURCE_DIR + "rifca/rifca.ini"));
+    client.readConfig(new File(RESOURCE_DIR + "ontos/pal.ini"));
+    _client = client._client;
+  }
+
+  private static void shutdownServer() {
+    server.shutdown();
+  }
+  
+  private static void serverConfigs(){
+    RESOURCE_DIR = configs.getProperty("resourceDir");
+    SERVER_PORT = Integer.parseInt(configs.getProperty("serverPort"));
+    WEBSERVER_PORT = Integer.parseInt(configs.getProperty("webserverPort"));
   }
 
   private static void usage(String message) {

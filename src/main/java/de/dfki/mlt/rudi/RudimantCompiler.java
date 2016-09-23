@@ -34,7 +34,7 @@ public class RudimantCompiler {
 
   private Writer out;
 
-  protected HfcDbService.Client _client;
+  private HfcDbService.Client _client;
 
   private Mem mem;
 
@@ -46,6 +46,14 @@ public class RudimantCompiler {
   
   // the class that should be extended by the rudi files to fill them into a project
   private final String wrapperClass;
+
+  public void setClient(HfcDbService.Client _client) {
+    this._client = _client;
+  }
+
+  public HfcDbService.Client getClient() {
+    return _client;
+  }
 
   public String getWrapperClass() {
     return wrapperClass;
@@ -63,6 +71,7 @@ public class RudimantCompiler {
   public static RudimantCompiler getEmbedded(RudimantCompiler parent) {
     RudimantCompiler result = new RudimantCompiler(parent.mem, parent.getWrapperClass());
     result.parent = parent;
+    result.setClient(parent.getClient());
     return result;
   }
 
