@@ -22,7 +22,7 @@ public class ExpDialogueAct implements RudiTree, RTExpression{
   String rest;
 
   public ExpDialogueAct(String litGraph, String rest, List<RTExpression> exps) {
-    this.litGraph = litGraph.substring(1, litGraph.length());
+    this.litGraph = litGraph;
     this.exps = exps;
     this.rest = rest;
   }

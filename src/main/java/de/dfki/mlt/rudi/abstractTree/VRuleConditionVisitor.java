@@ -139,7 +139,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
   @Override
   public void visitNode(ExpDialogueAct node) {
     String result = "";
-    result += ("new DialogueAct(\"" + node.litGraph + "(");
+    result += ("new DialogueAct(" + node.litGraph + " + \"(");
     String[] parameters = node.rest.split(",");
     // the first argument will never need to be more than a String
     result += (parameters[0]);

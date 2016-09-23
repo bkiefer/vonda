@@ -129,7 +129,7 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpDialogueAct node) {
-    out.append("new DialogueAct(\"" + node.litGraph + "(");
+    out.append("new DialogueAct(" + node.litGraph + " + \"(");
     String[] parameters = node.rest.split(",");
     // the first argument will never need to be more than a String
     out.append(parameters[0]);

@@ -302,7 +302,10 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     for (int i = 2; i < ctx.getChildCount() - 1; i++) {  // we don't need the parenthesis
       rest += ctx.getChild(i).getText().replace("^", "");
     }
-    return new ExpDialogueAct(ctx.getChild(0).getText(), rest, expList);
+    if(ctx.getChild(0).getText().contains("^")){
+      return new ExpDialogueAct(ctx.getChild(0).getText().substring(2), rest, expList);
+    }
+    return new ExpDialogueAct("\"" + ctx.getChild(0).getText().substring(1) + "\"", rest, expList);
   }
 
   @Override
