@@ -230,7 +230,9 @@ public class Mem {
   }
 
   public void addImport(String importName){
-    this.rulesAndImports.get(this.curClass).add(importName + ".process(");
+    String importClassName = importName.substring(0, 1).toUpperCase() + importName.substring(1);
+    this.rulesAndImports.get(this.curClass).add(importClassName +
+                    importName + " = new " + importClassName + ";\n"+ importName + ".process(");
   }
 
   /**
