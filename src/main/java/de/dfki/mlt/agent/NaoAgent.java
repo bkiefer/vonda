@@ -1,6 +1,5 @@
 package de.dfki.mlt.agent;
 
-import de.dfki.mlt.agent.events.QuizCommand;
 import static de.dfki.mlt.agent.rdf.Child.*;
 import static de.dfki.mlt.agent.rdf.Closing.CLOSING_PROPOSED;
 import static de.dfki.mlt.agent.rdf.Introduction.*;
@@ -22,6 +21,10 @@ import de.dfki.mlt.agent.rdf.RdfList;
 import de.dfki.mlt.agent.rdf.Session;
 import de.dfki.mlt.agent.rdf.Turn;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
+
+import de.dfki.mlt.agent.events.QuizCommand;
+import de.dfki.mlt.agent.events.SystemInfo;
+import de.dfki.mlt.agent.events.QuizQuestion;
 
 
 public class NaoAgent extends Agent {

@@ -15,5 +15,9 @@ public class LowLevelNaoCommand implements Event {
     // TODO Auto-generated method stub
     return null;
   }
+  
+  public String getCommand(){
+    return null;
+  }
 
 }

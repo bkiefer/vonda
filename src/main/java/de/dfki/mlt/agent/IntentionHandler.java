@@ -1,5 +1,7 @@
 package de.dfki.mlt.agent;
 
+import de.dfki.mlt.agent.events.Intention;
+
 public class IntentionHandler implements EventHandler<Intention> {
 
   private Agent agent;

@@ -1,6 +1,7 @@
 package de.dfki.mlt.agent;
 
 import de.dfki.mlt.agent.events.UserTextFeedback;
+import de.dfki.mlt.agent.events.QuizQuestion;
 import static de.dfki.mlt.agent.rdf.Child.CHILD_BIRTHDATE;
 import static de.dfki.mlt.agent.rdf.Child.CHILD_NAME;
 import static de.dfki.mlt.agent.rdf.Introduction.INTRODUCTION_GREETINGRECEIVED;

@@ -5,8 +5,7 @@ import static de.dfki.mlt.agent.rdf.Quiz.QUIZ_TABLETORIENTATION;
 
 import de.dfki.mlt.agent.rdf.Activity;
 import de.dfki.mlt.agent.rdf.Quiz;
-import pal.TECS.EventHandler;
-import pal.TECS.SystemInfo;
+import de.dfki.mlt.agent.events.SystemInfo;
 
 public class SystemInfoHandler implements EventHandler<SystemInfo> {
 

@@ -25,7 +25,7 @@ public class Timeouts {
     long started;
   }
 
-  public void newTimeout(final String id, int millis, Proposal p) {
+  public void newTimeout(final String id, int millis, final Proposal p) {
     MyTimer t = pendingTimeouts.get(id);
     int timeToFire = millis;
     if (t == null) {

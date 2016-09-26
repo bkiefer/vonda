@@ -5,8 +5,7 @@ import static de.dfki.mlt.agent.rdf.Turn.*;
 
 import de.dfki.mlt.agent.rdf.Quiz;
 import de.dfki.mlt.agent.rdf.Turn;
-import pal.TECS.EventHandler;
-import pal.TECS.QuizQuestion;
+import de.dfki.mlt.agent.events.QuizQuestion;
 
 public class QuizQuestionHandler implements EventHandler<QuizQuestion> {
 
