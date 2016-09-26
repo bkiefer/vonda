@@ -251,6 +251,8 @@ public class VGenerationVisitor implements RudiVisitor {
       i++;
     }
     out.append("){\n");
+    // initialize me according to the super class init
+    out.append("this.init();\n");
     // use all methods created from rules in this file
     for (String toplevel : mem.getToplevelCalls(out.className)) {
       if (toplevel.contains("(")) {
