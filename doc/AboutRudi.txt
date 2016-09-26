@@ -1,0 +1,65 @@
+About the architecture of rudimant
+-----------------------------------
+
+1) Steps during compile time
+-----------------------------
+  The system expects a .rudi file as input that may import and thus initialize
+  the compilation of several other .rudi files.
+  The main method of rudimant lies in GrammarMain, which handles the received
+  command line switches and reads in the properties file. The class responsable
+  for processing is RudimantCompiler, everything to do with doing sth to the
+  parse tree or the output happens there.
+
+  The given file is parsed using Antlr3, creating a tree representation of the
+  file that is walked by the ParseTreeVisitor.
+  The ParseTreeVisitor then creates a simplified representation of that tree,
+  consisting of RudiTree nodes. This RudiTree is returned to the
+  RudimantCompiler so it can be walked by arbitrary visitors implementing the
+  RudiVisitor interface.
+
+  Currently, the following visitors are implemented and should walk the tree in
+  exactly this order:
+    - The VTestTypeVisitor does not only do the type checking, but also type
+      resolution. It tells the RudiTree nodes of which type they are so it can
+      be used lateron.
+    - The VGenerationVisitor fills the StringBuffer that contains everything that
+      should be written to the output file. It knows how to convert rudi to java
+      code for every type of node. To enable the rule condition checking, in
+      each rule the VGenerationVisitor uses two other visitors designed to make
+      correct and safe logging possible:
+        - The VRuleConditionVisitor walks the rule's condition's subtree
+          carrying two maps. Each subnode gets a new variable, for which one map
+          saves the rudi form and the other saves the java form of the subnode.
+        - The VConditionCreatorVisitor uses the map containing the java version
+          of the nodes to create a seperate boolean for each subnode and then
+          put them together to a condition, so the value of each subnode can be
+          logged.
+      To log the conditions, VGenerationVisitor relies on the framework for the
+      output to provide a logger function that takes a Map <String, Boolean>.
+
+  After VGenerationVisitor finished, the accumulated String is formatted using
+  the googleJavaFormat Formatter and written to the output file.
+
+2) Steps required to extend rudimant functionality
+---------------------------------------------------
+  To extend what rudimant can do, the following must be done:
+  - Add a rule, and, if needed, a lexeme to the antlr3 grammar and fit it into
+    the existing rules (e.g., add it to the statement or expression list)
+  - mvn install rudimant. It will crash because now ParseTreeVisitor does not
+    longer implement visit methods for all rules. Implement the missing rules.
+    If necessary, create new RudiTree classes to represent your nodes.If you
+    added a lexeme, fix visitTerminal; in GeneratedSources > RobotGrammarLexer
+    you can see the number given to your new lexeme. The case of every lexeme
+    that has a higher number should be increased by 1.
+  - If you added a new RudiTree class in the preceding step:
+      - Add a visitNode method for that class to the RudiVisitor interface; this
+        will force you to add the visit to every visitor class.
+      - Implement those visit methods; remember that after VTypeCheckVisitor,
+        the expressions should know their type, and that VRuleConditionVisitor
+        should produce the exact same code to represent your node as
+        VGenerationVisitor. In VRuleConditionVisitor and
+        VConditionCreatorVisitor, you only need to implement visit methods for
+        nodes that could possibly be subnodes of a condition; the other methods
+        will never be used.
+  - Test it.
+
