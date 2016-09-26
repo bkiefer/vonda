@@ -1,9 +1,7 @@
 package de.dfki.mlt.agent;
 
-import de.dfki.mlt.agent.rdf.Idle;
 import de.dfki.mlt.agent.rdf.Quiz;
-import pal.TECS.EventHandler;
-import pal.TECS.QuizCommand;
+import de.dfki.mlt.agent.events.QuizCommand;
 
 public class QuizCommandHandler implements EventHandler<QuizCommand> {
 

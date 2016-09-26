@@ -1,5 +1,6 @@
 package de.dfki.mlt.agent;
 
+import de.dfki.mlt.agent.events.QuizCommand;
 import static de.dfki.mlt.agent.rdf.Child.*;
 import static de.dfki.mlt.agent.rdf.Closing.CLOSING_PROPOSED;
 import static de.dfki.mlt.agent.rdf.Introduction.*;

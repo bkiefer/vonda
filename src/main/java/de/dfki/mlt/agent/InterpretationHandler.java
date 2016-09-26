@@ -1,5 +1,6 @@
 package de.dfki.mlt.agent;
 
+import de.dfki.mlt.agent.events.UserTextFeedback;
 import static de.dfki.mlt.agent.rdf.Child.CHILD_BIRTHDATE;
 import static de.dfki.mlt.agent.rdf.Child.CHILD_NAME;
 import static de.dfki.mlt.agent.rdf.Introduction.INTRODUCTION_GREETINGRECEIVED;
@@ -8,9 +9,6 @@ import static de.dfki.mlt.agent.rdf.Turn.*;
 
 import de.dfki.mlt.agent.rdf.*;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
-import pal.TECS.EventHandler;
-import pal.TECS.QuizQuestion;
-import pal.TECS.UserTextFeedback;
 
 
 public class InterpretationHandler implements EventHandler<UserTextFeedback> {
@@ -55,9 +53,9 @@ public class InterpretationHandler implements EventHandler<UserTextFeedback> {
         DialogueAct da =
             addLastDA("Inform", "Liking", "theme", theme, "value", chunks[1]);
         agent.user.setLiking(theme, chunks[1]);
-        
-//        logger.info(theme + " was introduced with value: " + chunks[1] );        
-        
+
+//        logger.info(theme + " was introduced with value: " + chunks[1] );
+
         if (! intro.has(INTRODUCTION_GREETINGRECEIVED))
           intro.put(INTRODUCTION_GREETINGRECEIVED, da);
       } else {
@@ -92,7 +90,7 @@ public class InterpretationHandler implements EventHandler<UserTextFeedback> {
       return;
     }
 
-    if (agent.isMyLastDA("InitialGreeting", "Meeting") 
+    if (agent.isMyLastDA("InitialGreeting", "Meeting")
         || agent.isMyLastDA("ReturnGreeting", "Meeting")) {
       String dialogueAct = Agent.getDialogueAct(agent.getMyLastDA());
       if (agent.activity instanceof Introduction) {
