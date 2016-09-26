@@ -316,7 +316,7 @@ public abstract class Agent  {
     return lastOccurenceOfMyDA(type, "top");
   }
 
-  DialogueAct getLastDA() {
+  public DialogueAct getLastDA() {
     DialogueAct last = lastDAs.peekFirst();
     // TODO: THIS IS NOT QUITE RIGHT. I SHOULD MARK SINGLE INCOMING DA'S AS
     // PROCESSED
@@ -326,12 +326,12 @@ public abstract class Agent  {
     return last;
   }
 
-  DialogueAct addLastDA(String type, String prop, String... keyVal) {
+  public DialogueAct addLastDA(String type, String prop, String... keyVal) {
     DialogueAct newDA = daFromVals(type, prop, keyVal);
     return addLastDA(newDA);
   }
 
-  DialogueAct addLastDA(DialogueAct newDA) {
+  public DialogueAct addLastDA(DialogueAct newDA) {
     try {
       if (newDA == null) {
         throw new IllegalArgumentException("NULL dialogueact");
@@ -345,7 +345,7 @@ public abstract class Agent  {
     return newDA;
   }
 
-  boolean isLastDA(String type, String prop, String... keyVal) {
+  public boolean isLastDA(String type, String prop, String... keyVal) {
     if (getLastDA() == null) {
       return false;
     }
@@ -356,7 +356,7 @@ public abstract class Agent  {
     lastDAprocessed = System.currentTimeMillis();
   }
 
-  static String getSlot(DialogueAct diaAct, String feature) {
+  public static String getSlot(DialogueAct diaAct, String feature) {
     DagNode da = diaAct.dag;
     DagEdge e = da.getEdge(DagNode.getFeatureId(feature));
     if (e == null) {
