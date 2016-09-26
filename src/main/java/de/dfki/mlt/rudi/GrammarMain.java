@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudi;
 
+import com.google.googlejavaformat.java.FormatterException;
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.lt.hfc.db.client.HfcDbClient;
@@ -48,7 +49,7 @@ public class GrammarMain {
    * @param args: the file that should be parsed without ending (in args[0])
    * @throws Exception
    */
-  public static void main(String[] args) throws IOException, TTransportException, FileNotFoundException, WrongFormatException, TException {
+  public static void main(String[] args) throws IOException, TTransportException, FileNotFoundException, WrongFormatException, TException, FormatterException {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
