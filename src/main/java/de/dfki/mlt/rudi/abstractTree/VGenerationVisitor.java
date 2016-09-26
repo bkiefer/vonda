@@ -5,11 +5,13 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
+import com.google.googlejavaformat.java.FormatterException;
 import de.dfki.mlt.rudi.*;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -468,6 +470,8 @@ public class VGenerationVisitor implements RudiVisitor {
       RudimantCompiler.getEmbedded(out).process(node.text);
     } catch (IOException ex) {
       throw new RuntimeException(ex);
+    } catch (FormatterException ex) {
+      java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
     }
 //    out.append(node.text + ".process(");
 //    Set<String> ncs = mem.getNeededClasses(node.name);
