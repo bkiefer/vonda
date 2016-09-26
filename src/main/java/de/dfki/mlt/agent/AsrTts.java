@@ -16,7 +16,7 @@ public class AsrTts {
   /** The language generation engine */
   private LanguageGenerator _generator;
 
-  public void loadGrammar(String language, NaoAgent agent) throws IOException {
+  public void loadGrammar(String language, Agent agent) throws IOException {
 
     //language = "english";
     _generator = LanguageGenerator.getGenerator(language);
@@ -36,7 +36,7 @@ public class AsrTts {
     }
     return in;
   }
-  
+
   public static String toRawSpeechAct(String dialogueAct, String proposition,
       String ... args) {
     StringBuilder sb = new StringBuilder();

@@ -21,7 +21,7 @@ import de.dfki.tecs.rpc.RPCFactory;
 public abstract class Agent  {
 
   public static final String EVENT_PACKAGE_NAME = "de.dfki.mlt.agent.events";
-  
+
   public static Logger logger;
 
   public static int PERCEPTION_LATENCY = 2000; // in milliseconds
@@ -51,7 +51,7 @@ public abstract class Agent  {
   protected Random random = new Random(System.currentTimeMillis());
 
   protected String _clientName;
-  
+
   protected CommunicationSystem comSys;
 
   protected abstract class Proposal implements Runnable {
@@ -76,9 +76,9 @@ public abstract class Agent  {
 
   /** The DAs I received, newest first */
   private LinkedList<DialogueAct> lastDAs;
-  
+
   protected LinkedList<Event> itemsToSend = new LinkedList<Event>();
-  
+
   protected Timeouts timeouts = new Timeouts();
 
   /**
@@ -119,7 +119,7 @@ public abstract class Agent  {
    * incoming events into the event queues
    */
   protected boolean proposalsSent;
-  
+
   /** All Event types that can be processed */
   protected Map<String, List<EventHandler<? extends Event>>> subscribedEvents;
 
@@ -135,7 +135,7 @@ public abstract class Agent  {
     }
     handlers.add(handler);
   }
-  
+
   // TODO: Why does this already resetted to LinkedList before Deque was removed?
   protected void reset() {
     myLastDAs = new LinkedList<DialogueAct>();
@@ -504,16 +504,18 @@ public abstract class Agent  {
 
     _language = language;
     asr = new AsrTts();
+    /*
     try {
-      asr.loadGrammar(language, (NaoAgent) this);
+      asr.loadGrammar(language, (Agent) this);
     } catch (IOException ex) {
       logger.error("Error loading grammar: {}", ex);
       System.exit(1);
     }
+    */
     reset();
   }
-  
-  
+
+
   /** Common event handling for all agents */
   @SuppressWarnings({ "unchecked", "rawtypes" })
   protected void onEvent(Event event) {
@@ -542,7 +544,7 @@ public abstract class Agent  {
       }
     }
   }
-  
+
   private void runReceiveSendCyle() {
     while (comSys.isOnline()) {
       boolean emptyRun = true;
