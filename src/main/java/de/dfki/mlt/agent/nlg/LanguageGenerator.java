@@ -19,9 +19,6 @@
 
 package de.dfki.mlt.agent.nlg;
 
-import static pal.Utils.getProperty;
-import static pal.Utils.getResource;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;

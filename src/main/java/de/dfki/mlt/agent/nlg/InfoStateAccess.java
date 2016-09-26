@@ -1,16 +1,16 @@
 package de.dfki.mlt.agent.nlg;
 
-import de.dfki.mlt.agent.NaoAgent;
+import de.dfki.mlt.agent.Agent;
 
 public class InfoStateAccess implements BaseInfoStateAccess {
 
-  private NaoAgent _agent;
+  private Agent _agent;
 
   private String ROBOT_NAME= "Nao";
 
   private String ROBOT_GENDER = "masc";
 
-  public InfoStateAccess(NaoAgent agent) {
+  public InfoStateAccess(Agent agent) {
     _agent = agent;
   }
 
@@ -19,7 +19,8 @@ public class InfoStateAccess implements BaseInfoStateAccess {
    * @param name the name of the variable to retrieve
    * @return
    */
-  public Object getInfoVar(String name) {
+  public Object getInfoVar(String name) { return null; }
+  /*
     String result = null;
     switch(name) {
     case "robotName": result = ROBOT_NAME; break;
@@ -81,8 +82,8 @@ public class InfoStateAccess implements BaseInfoStateAccess {
       return activityData.getActivityName().toLowerCase();
 
     return activityData.getValue(name);
-    */
+    *
     // _agent.logger.debug("Asked for {}, returned {}", name, result);
     return result;
-  }
+  }*/
 }
