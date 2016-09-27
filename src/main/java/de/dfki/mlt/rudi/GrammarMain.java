@@ -14,11 +14,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Properties;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import org.yaml.snakeyaml.Yaml;
+
 
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TTransportException;
@@ -41,8 +43,10 @@ public class GrammarMain {
           + "\n\nPlease use this tool as follows:\n"
           + "java rudimant <directory_to_be_searched/> [output_directory/] OPTIONS\n"
           + "-o=DIRECTORY\tSpecify DIRECTORY as the output directory";
-  
-  private static Properties configs;
+
+  private static LinkedHashMap<String, String> configs;
+
+  public static Yaml yaml;
 
   /**
    *
@@ -53,13 +57,9 @@ public class GrammarMain {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
-    configs = new Properties();
-    FileInputStream in = new FileInputStream(GrammarMain.class.
-            getProtectionDomain().getCodeSource().getLocation().getPath()
-            + "/../../rudi.config");
-    configs.load(in);
-    in.close();
-    
+    configs = (LinkedHashMap<String, String>)
+        yaml.load(new FileInputStream("/../../rudi.config.yaml"));
+
     serverConfigs();
     startServer();
     startClient();
@@ -89,7 +89,7 @@ public class GrammarMain {
       System.out.println(help);
       System.exit(0);
     }
-    RudimantCompiler rc = new RudimantCompiler(configs.getProperty("wrapperClass"));
+    RudimantCompiler rc = new RudimantCompiler(configs.get("wrapperClass"));
     if (options.has("l")) {
       rc.setLog(true);
     }
@@ -101,7 +101,7 @@ public class GrammarMain {
     }
     if (options.has("o")) {
       outputDirectory = new File((String) options.valueOf("o"));
-    }    
+    }
 
     rc.setClient(_client);
     //System.out.println("test");
@@ -115,9 +115,9 @@ public class GrammarMain {
     }
     shutdownServer();
   }
-  
+
   // rdf functionality
-  
+
   private static String RESOURCE_DIR;
 
   private static HfcDbServer server;
@@ -143,7 +143,7 @@ public class GrammarMain {
     server.runServer();
     server.runHttpService(WEBSERVER_PORT);
   }
-  
+
   private static void startClient()
       throws IOException, WrongFormatException, TException {
     client = new HfcDbClient();
@@ -156,11 +156,11 @@ public class GrammarMain {
   private static void shutdownServer() {
     server.shutdown();
   }
-  
+
   private static void serverConfigs(){
-    RESOURCE_DIR = configs.getProperty("resourceDir");
-    SERVER_PORT = Integer.parseInt(configs.getProperty("serverPort"));
-    WEBSERVER_PORT = Integer.parseInt(configs.getProperty("webserverPort"));
+    RESOURCE_DIR = configs.get("resourceDir");
+    SERVER_PORT = Integer.parseInt(configs.get("serverPort"));
+    WEBSERVER_PORT = Integer.parseInt(configs.get("webserverPort"));
   }
 
   private static void usage(String message) {
