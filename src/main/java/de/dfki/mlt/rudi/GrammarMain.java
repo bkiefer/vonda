@@ -58,7 +58,7 @@ public class GrammarMain {
     // BasicConfigurator.configure();
 
     configs = (LinkedHashMap<String, String>)
-        yaml.load(new FileInputStream("/../../rudi.config.yaml"));
+        yaml.load(new FileInputStream("/../../rudi.config.yml"));
 
     serverConfigs();
     startServer();
