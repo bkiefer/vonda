@@ -170,6 +170,7 @@ public class RudimantCompiler {
     try {
       String formattedSource = new Formatter().formatSource(out.toString());
       toFile.write(formattedSource);
+      toFile.flush();
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     }
