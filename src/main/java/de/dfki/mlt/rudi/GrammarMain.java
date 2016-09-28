@@ -42,7 +42,7 @@ public class GrammarMain {
           + "-e\tDo not crash if there are .rudi files that cannot be translated\n"
           + "-d\tDo not try to do type checking while translating\n"
           + "\n\nPlease use this tool as follows:\n"
-          + "java rudimant <directory_to_be_searched/> [output_directory/] OPTIONS\n"
+          + "java rudimant <directory_to_be_searched/> <paht_of_config_file/> OPTIONS\n"
           + "-o=DIRECTORY\tSpecify DIRECTORY as the output directory";
 
   private static LinkedHashMap<String, String> configs;
@@ -52,14 +52,18 @@ public class GrammarMain {
   /**
    *
    * @param args: the file that should be parsed without ending (in args[0])
+   *             + the complete path of the configfile
    * @throws Exception
    */
   public static void main(String[] args) throws IOException, TTransportException, FileNotFoundException, WrongFormatException, TException, FormatterException {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
+    if(!args[1].contains("config")){
+      throw new IOException("There was no config file specified; aborting");
+    }
     configs = (LinkedHashMap<String, String>)
-        yaml.load(new FileInputStream("/../../rudi.config.yml"));
+        yaml.load(new FileInputStream(args[1]));
 
     serverConfigs();
     startServer();

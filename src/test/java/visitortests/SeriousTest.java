@@ -26,7 +26,7 @@ public class SeriousTest {
   @BeforeClass
   public static void setUpClass() {
     File outDir = new File("target/test/testfiles");
-    if(!outDir.exists()){
+    if (!outDir.exists()) {
       outDir.mkdirs();
     }
   }
@@ -49,11 +49,10 @@ public class SeriousTest {
 //      "target/test/testfiles", "-nt"};
 //    GrammarMain.main(strings);
 //  }
-
   @Test
   public void FirstRuleTest() throws Exception {
     String[] strings = new String[]{"src/test/resources/FirstRule.rudi",
-      "-o=target/test/testfiles", "-d"};
+      "/../../rudi.config.yml", "-o=target/test/testfiles", "-d"};
     GrammarMain.main(strings);
   }
 }
