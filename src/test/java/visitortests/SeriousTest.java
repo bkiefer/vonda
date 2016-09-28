@@ -5,7 +5,7 @@
  */
 package visitortests;
 
-import de.dfki.mlt.rudi.GrammarMain;
+import de.dfki.mlt.rudimant.GrammarMain;
 import java.io.File;
 import org.junit.After;
 import org.junit.AfterClass;

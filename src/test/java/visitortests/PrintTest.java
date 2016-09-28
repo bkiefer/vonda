@@ -11,8 +11,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.dfki.mlt.rudi.GrammarMain;
-import de.dfki.mlt.rudi.TypeException;
+import de.dfki.mlt.rudimant.GrammarMain;
+import de.dfki.mlt.rudimant.TypeException;
 import java.io.File;
 
 import static org.junit.Assert.*;
