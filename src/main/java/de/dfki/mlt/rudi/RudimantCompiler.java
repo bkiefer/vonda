@@ -249,8 +249,13 @@ public class RudimantCompiler {
     }
 
     logger.info("Done parsing " + inputFile.getName());
-    this.flush();
-
+    try {
+      this.flush();
+    } catch (FormatterException ex) {
+      logger.warn("Could not autoformat the output; syntax may be broken");
+      toFile.write(out.toString());
+      toFile.flush();
+    }
   }
 
   /**
