@@ -565,7 +565,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     for (int i = 0; i < ctx.getChildCount(); i += 2) {
       parts.add(ctx.getChild(i).getText());
     }
-    return new UFieldAccess(parts, _client);
+    return new UFieldAccess(parts);
   }
 
   @Override

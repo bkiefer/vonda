@@ -12,6 +12,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+
+import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,7 +96,7 @@ public class VGenerationVisitor implements RudiVisitor {
     if (node.not) {
       out.append("!");
     }
-    
+
     String function = "";
     if(node.rdf){
       function = "RdfClass.isSubclassOf(";
@@ -490,6 +492,9 @@ public class VGenerationVisitor implements RudiVisitor {
 //      }
 //    }
 //    out.append(");\n");
+    catch (TException ex) {
+      throw new RuntimeException(ex);
+    }
   }
 
   @Override

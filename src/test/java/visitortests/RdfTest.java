@@ -97,8 +97,8 @@ public class RdfTest {
     };
     mem.enterEnvironment();
     mem.addElement("child", "Child", null);
-    UFieldAccess field = new UFieldAccess(elem, _proxy);
-    String result = field.askChristophe(mem);
+    UFieldAccess field = new UFieldAccess(elem);
+    String result = field.getPredicateType(_proxy, mem);
     assertEquals("get forename", "String", result);
   }
 
@@ -112,8 +112,8 @@ public class RdfTest {
     };
     mem.enterEnvironment();
     mem.addElement("child", "Child", null);
-    UFieldAccess field = new UFieldAccess(elem, _proxy);
-    String result = field.askChristophe(mem);
+    UFieldAccess field = new UFieldAccess(elem);
+    String result = field.getPredicateType(_proxy, mem);
     assertEquals("get hasTreatment", "Treatment", result);
   }
 
@@ -127,8 +127,8 @@ public class RdfTest {
     };
     mem.enterEnvironment();
     mem.addElement("child", "Child", null);
-    UFieldAccess field = new UFieldAccess(elem, _proxy);
-    String result = field.askChristophe(mem);
+    UFieldAccess field = new UFieldAccess(elem);
+    String result = field.getPredicateType(_proxy, mem);
     assertEquals("get birthdate", "<xsd:date>", result);
   }
 }

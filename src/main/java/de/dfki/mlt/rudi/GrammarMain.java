@@ -9,6 +9,7 @@ import com.google.googlejavaformat.java.FormatterException;
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.lt.hfc.db.client.HfcDbClient;
+import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.hfc.db.server.HfcDbServer;
 import java.io.File;
 import java.io.FileInputStream;
@@ -89,7 +90,7 @@ public class GrammarMain {
       System.out.println(help);
       System.exit(0);
     }
-    RudimantCompiler rc = new RudimantCompiler(configs.get("wrapperClass"));
+    RudimantCompiler rc = new RudimantCompiler(configs.get("wrapperClass"), new RdfProxy(_client));
     if (options.has("l")) {
       rc.setLog(true);
     }
@@ -103,7 +104,6 @@ public class GrammarMain {
       outputDirectory = new File((String) options.valueOf("o"));
     }
 
-    rc.setClient(_client);
     //System.out.println("test");
     if (outputDirectory != null) {
       rc.process(dir, outputDirectory);
