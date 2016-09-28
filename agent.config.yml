@@ -1,5 +1,24 @@
-mapper_project_prop:    mapper.project
 
+resource.dir:     resource.dir
+grammar.dir:      grammars/cplanner/
 
-nl_generation_project_prop:     generation.project
-nl_analysis_project_prop:     analysis.project
+config.quiz:      share/quiz.properties
+mapper.project:    grammars/cplanner/mapper/allrules-integrated
+
+dut: {
+    generation.project.dut:     grammars/cplanner/dutch/allrules
+    analysis.project:     analysis.project
+}
+eng: {
+    generation.project.eng:     grammars/cplanner/english/allrules
+    analysis.project:     analysis.project
+}
+ita: {
+    generation.project.ita:     grammars/cplanner/italianLF/allrules_lf
+    analysis.project:     analysis.project
+}
+de: {
+    generation.project.de:     grammars/cplanner/german/allrules
+    analysis.project:     analysis.project
+}
+

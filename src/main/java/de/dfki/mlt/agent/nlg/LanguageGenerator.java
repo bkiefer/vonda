@@ -36,24 +36,11 @@ import de.dfki.lt.tr.dialogue.cplan.functions.FunctionFactory;
 import java.util.LinkedHashMap;
 
 public class LanguageGenerator {
-  /**
-   * The property name for the project file containing the mapper rules
-   */
-  public static String MAPPER_PROJECT_PROP = "mapper.project";
+
 
   /* *************************************************************
    * NL processing constants
    * ************************************************************ */
-
-  /**
-   * The property name for the project file containing the language generation
-   * and analysis rules. To this property, a dot and the language to generate
-   * must be appended to get the usable property.
-   */
-  public static String NL_GENERATION_PROJECT_PROP = "generation.project";
-  public static String NL_ANALYSIS_PROJECT_PROP = "analysis.project";
-
-
 
   private static Logger logger =
       LoggerFactory.getLogger(LanguageGenerator.class);
@@ -107,8 +94,8 @@ public class LanguageGenerator {
       // so that all random calls to generation can be recorded, too
       // don't know if this is strictly necessary
       // FunctionFactory.register(new RecordableRandomFunction(), _ruleMapper);
-      File foo = new File(configs.get("resource_dir"),
-          configs.get("mapper_projject_prop"));
+      File foo = new File(configs.get("resource.dir"),
+          configs.get("mapper.project"));
       _ruleMapper.readProjectFile(foo);
     } catch (FileNotFoundException e) {
       logger.error("mapper rules not found: " + e);
@@ -126,7 +113,7 @@ public class LanguageGenerator {
     lang = lang.toLowerCase().substring(0, 3);
     cplanner =
         new CPlannerNlg(
-            new File(configs.get("resource_dir"),
+            new File(configs.get("resource.dir"),
             configs.get("generation.project" + "." + lang)), lang);
   }
 
@@ -199,8 +186,5 @@ public class LanguageGenerator {
    */
   public void initConfig(LinkedHashMap<String, String> configs){
     this.configs = configs;
-    MAPPER_PROJECT_PROP = configs.get("mapper_project_prop");
-    NL_GENERATION_PROJECT_PROP = configs.get("generation.project");
-    NL_ANALYSIS_PROJECT_PROP = configs.get("analysis.project");
   }
 }
