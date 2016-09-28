@@ -11,7 +11,6 @@ import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.lt.tr.dialogue.cplan.DagEdge;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.mlt.agent.nlg.Pair;
-import de.dfki.mlt.agent.rdf.DialogueAct;
 import de.dfki.tecs.rpc.RPCFactory;
 
 /**
@@ -207,7 +206,7 @@ public abstract class Agent  {
     assert ((args.length & 1) == 0);
 
     String dialogueAct = AsrTts.toRawSpeechAct(diaActType, proposition, args);
-    DialogueAct da = new DialogueAct(this);
+    DialogueAct da = new DialogueAct();
     da.dag = asr.toDag(dialogueAct);
     return da;
   }
@@ -217,7 +216,7 @@ public abstract class Agent  {
     if (moreSpecific == null) {
       return false;
     }
-    DialogueAct general = new DialogueAct(this);
+    DialogueAct general = new DialogueAct();
     general.dag = asr.toDag(AsrTts.toRawSpeechAct(type, prop, keyVal));
     return general.dag.subsumes(moreSpecific.dag);
   }
@@ -228,7 +227,7 @@ public abstract class Agent  {
   protected DialogueAct createEmitDA(String diaActType, String proposition,
           String ... args) {
     String dialogueAct = AsrTts.toRawSpeechAct(diaActType, proposition, args);
-    DialogueAct da = new DialogueAct(this);
+    DialogueAct da = new DialogueAct();
     da.dag = asr.toDag(dialogueAct);
     myLastDAs.addFirst(da);
 

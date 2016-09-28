@@ -137,20 +137,24 @@ public class GrammarMain {
    * @throws WrongFormatException
    */
   private static void startServer() throws TTransportException, FileNotFoundException, IOException, WrongFormatException {
-    File config = new File(RESOURCE_DIR + "ontos/pal.ini");
-    server = new HfcDbServer(SERVER_PORT);
-    server.readConfig(config);
-    server.runServer();
-    server.runHttpService(WEBSERVER_PORT);
+    if (server == null) {
+      File config = new File(RESOURCE_DIR + "ontos/pal.ini");
+      server = new HfcDbServer(SERVER_PORT);
+      server.readConfig(config);
+      server.runServer();
+      server.runHttpService(WEBSERVER_PORT);
+    }
   }
 
   private static void startClient()
       throws IOException, WrongFormatException, TException {
-    client = new HfcDbClient();
-    client.init("localhost", SERVER_PORT);
-    client.readConfig(new File(RESOURCE_DIR + "rifca/rifca.ini"));
-    client.readConfig(new File(RESOURCE_DIR + "ontos/pal.ini"));
-    _client = client._client;
+    if (client == null) {
+      client = new HfcDbClient();
+      client.init("localhost", SERVER_PORT);
+      client.readConfig(new File(RESOURCE_DIR + "rifca/rifca.ini"));
+      client.readConfig(new File(RESOURCE_DIR + "ontos/pal.ini"));
+      _client = client._client;
+    }
   }
 
   private static void shutdownServer() {
