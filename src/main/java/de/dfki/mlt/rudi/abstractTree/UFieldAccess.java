@@ -5,10 +5,10 @@
  */
 package de.dfki.mlt.rudi.abstractTree;
 
-import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.mlt.rudi.Mem;
 import java.util.ArrayList;
 import de.dfki.lt.hfc.db.rdfProxy.*;
+import java.util.List;
 import java.util.Objects;
 import org.apache.thrift.TException;
 
@@ -24,15 +24,15 @@ public class UFieldAccess extends RTLeaf {
    * Client-field, taken from client/HfcDbClient.java, more information under
    * server/HfcDbService.Client.java
    */
-  HfcDbService.Client _client;
+  RdfProxy _proxy;
 
   String type;
   ArrayList<String> representation;
   boolean asked = false;
 
-  public UFieldAccess(ArrayList<String> representation, HfcDbService.Client client) {
+  public UFieldAccess(ArrayList<String> representation, RdfProxy proxy) {
     this.representation = representation;
-    this._client = client;
+    this._proxy = proxy;
   }
 
   public String getType(Mem mem) {
@@ -42,22 +42,23 @@ public class UFieldAccess extends RTLeaf {
   /**
    * ask the ontology about the type of this object
    *
-   * @param rudi
+   * @param mem
    * @return the type of this object
    * @throws org.apache.thrift.TException
    */
   public String askChristophe(Mem mem) throws TException {
     asked = true;
-    if(_client == null){
+    if(_proxy == null){
       return "Object";
     }
     // first element of representation is type
     // everything else specifies the wanted predicate information
     String typ = mem.getVariableType(representation.get(0));
-    String result = RdfClass.getPredicateType(typ,
-            representation.subList(1, representation.size()), _client);
-    // TODO: result = <xsd:string>
-    return result;
+    RdfClass clazz = _proxy.fetchRdfClass(typ);
+    List<String> predicatesBaseName =
+        representation.subList(1, representation.size());
+    List<String> predicatesURI = clazz.getPredicateType(predicatesBaseName);
+    return predicatesURI.get(predicatesURI.size()-1);
 
   }
 
@@ -96,5 +97,5 @@ public class UFieldAccess extends RTLeaf {
     return true;
   }
 
-  
+
 }
