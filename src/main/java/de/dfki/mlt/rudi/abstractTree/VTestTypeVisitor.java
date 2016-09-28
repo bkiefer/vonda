@@ -326,7 +326,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(UFieldAccess node) {
     try {
-      node.type = node.askChristophe(mem);
+      node.type = node.getPredicateType(rudi.getProxy(), mem);
     } catch (TException ex) {
       Logger.getLogger(UFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
     }
@@ -375,9 +375,14 @@ public class VTestTypeVisitor implements RudiVisitor {
     if (o == null) {
       if (node.type == null) {
         // this variable wasnt declared, so it doesnt exist or is an rdf type
-        if (RdfClass.classExists(node.representation, rudi.getClient())) {
-          node.isRdfClass = true;
-          return;
+        try {
+          if (rudi.getProxy().fetchRdfClass(node.representation) != null) {
+            node.isRdfClass = true;
+            return;
+          }
+        } catch (TException e) {
+          logger.error("Problem accessing database : {}", e.getMessage());
+          throw new RuntimeException(e);
         }
       }
       rudi.handleTypeError("The variable " + node.representation

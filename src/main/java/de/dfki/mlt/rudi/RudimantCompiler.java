@@ -1,6 +1,7 @@
 package de.dfki.mlt.rudi;
 
 import de.dfki.lt.hfc.db.HfcDbService;
+import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudi.abstractTree.VGenerationVisitor;
 import de.dfki.mlt.rudi.abstractTree.GrammarFile;
 import de.dfki.mlt.rudi.abstractTree.RudiTree;
@@ -15,6 +16,7 @@ import java.util.List;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.googlejavaformat.java.Formatter;
@@ -38,6 +40,7 @@ public class RudimantCompiler {
   private Writer toFile;
 
   private HfcDbService.Client _client;
+  private RdfProxy _proxy;
 
   private Mem mem;
 
@@ -50,31 +53,30 @@ public class RudimantCompiler {
   // the class that should be extended by the rudi files to fill them into a project
   private final String wrapperClass;
 
-  public void setClient(HfcDbService.Client _client) {
-    this._client = _client;
-  }
-
-  public HfcDbService.Client getClient() {
-    return _client;
+  public RdfProxy getProxy() {
+    return _proxy;
   }
 
   public String getWrapperClass() {
     return wrapperClass;
   }
 
-  private RudimantCompiler(Mem m, String wrapperClass) {
+  private RudimantCompiler(RudimantCompiler parentCompiler) {
+    wrapperClass = parent.getWrapperClass();
+    mem = parent.mem;
+    _proxy = parent._proxy;
+    parent = parentCompiler;
+  }
+
+  public RudimantCompiler(String wrapperClass, RdfProxy proxy) {
+    mem = new Mem();
     this.wrapperClass = wrapperClass;
-    mem = m;
+    this._proxy =proxy;
+    parent = null;
   }
 
-  public RudimantCompiler(String wrapperClass) {
-    this(new Mem(), wrapperClass);
-  }
-
-  public static RudimantCompiler getEmbedded(RudimantCompiler parent) {
-    RudimantCompiler result = new RudimantCompiler(parent.mem, parent.getWrapperClass());
-    result.parent = parent;
-    result.setClient(parent.getClient());
+  public static RudimantCompiler getEmbedded(RudimantCompiler parent) throws TException {
+    RudimantCompiler result = new RudimantCompiler(parent);
     return result;
   }
 

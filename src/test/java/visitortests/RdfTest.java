@@ -8,6 +8,7 @@ package visitortests;
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.lt.hfc.db.client.HfcDbClient;
+import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.hfc.db.server.HfcDbServer;
 import de.dfki.mlt.rudi.Mem;
 import de.dfki.mlt.rudi.abstractTree.UFieldAccess;
@@ -36,6 +37,8 @@ public class RdfTest {
 
   private HfcDbClient client;
   private HfcDbService.Client _client;
+
+  private RdfProxy _proxy;
 
   private Mem mem = new Mem();
 
@@ -76,6 +79,7 @@ public class RdfTest {
     client.readConfig(new File(RESOURCE_DIR + "rifca/rifca.ini"));
     client.readConfig(new File(RESOURCE_DIR + "ontos/pal.ini"));
     _client = client._client;
+    _proxy = new RdfProxy(_client);
   }
 
   @After
@@ -93,8 +97,8 @@ public class RdfTest {
     };
     mem.enterEnvironment();
     mem.addElement("child", "Child", null);
-    UFieldAccess field = new UFieldAccess(elem, _client);
-    String result = field.askChristophe(mem);
+    UFieldAccess field = new UFieldAccess(elem);
+    String result = field.getPredicateType(_proxy, mem);
     assertEquals("get forename", "String", result);
   }
 
@@ -108,8 +112,8 @@ public class RdfTest {
     };
     mem.enterEnvironment();
     mem.addElement("child", "Child", null);
-    UFieldAccess field = new UFieldAccess(elem, _client);
-    String result = field.askChristophe(mem);
+    UFieldAccess field = new UFieldAccess(elem);
+    String result = field.getPredicateType(_proxy, mem);
     assertEquals("get hasTreatment", "Treatment", result);
   }
 
@@ -123,8 +127,8 @@ public class RdfTest {
     };
     mem.enterEnvironment();
     mem.addElement("child", "Child", null);
-    UFieldAccess field = new UFieldAccess(elem, _client);
-    String result = field.askChristophe(mem);
+    UFieldAccess field = new UFieldAccess(elem);
+    String result = field.getPredicateType(_proxy, mem);
     assertEquals("get birthdate", "<xsd:date>", result);
   }
 }
