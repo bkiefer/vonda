@@ -45,9 +45,9 @@ public class GrammarMain {
           + "java rudimant <directory_to_be_searched/> <paht_of_config_file/> OPTIONS\n"
           + "-o=DIRECTORY\tSpecify DIRECTORY as the output directory";
 
-  private static LinkedHashMap<String, String> configs;
+  private static LinkedHashMap<String, Object> configs;
 
-  public static Yaml yaml;
+  public static Yaml yaml = new Yaml();
 
   /**
    *
@@ -62,7 +62,8 @@ public class GrammarMain {
     if(!args[1].contains("config")){
       throw new NoConfigException("There was no config file specified; aborting");
     }
-    configs = (LinkedHashMap<String, String>)
+//    System.out.println((new File(args[1])).exists());
+    configs = (LinkedHashMap<String, Object>)
         yaml.load(new FileInputStream(args[1]));
 
     serverConfigs();
@@ -94,7 +95,7 @@ public class GrammarMain {
       System.out.println(help);
       System.exit(0);
     }
-    RudimantCompiler rc = new RudimantCompiler(configs.get("wrapperClass"), new RdfProxy(_client));
+    RudimantCompiler rc = new RudimantCompiler((String)configs.get("wrapperClass"), new RdfProxy(_client));
     if (options.has("l")) {
       rc.setLog(true);
     }
@@ -166,9 +167,9 @@ public class GrammarMain {
   }
 
   private static void serverConfigs(){
-    RESOURCE_DIR = configs.get("resourceDir");
-    SERVER_PORT = Integer.parseInt(configs.get("serverPort"));
-    WEBSERVER_PORT = Integer.parseInt(configs.get("webserverPort"));
+    RESOURCE_DIR = (String)configs.get("resourceDir");
+    SERVER_PORT = (int)configs.get("serverPort");
+    WEBSERVER_PORT = (int)configs.get("webserverPort");
   }
 
   private static void usage(String message) {
