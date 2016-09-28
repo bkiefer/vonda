@@ -67,7 +67,7 @@ public class GrammarMain {
         yaml.load(new FileInputStream(args[1]));
 
     serverConfigs();
-    startServer();
+//    startServer();
     startClient();
 
     OptionParser parser = new OptionParser("hledo:");
@@ -118,14 +118,14 @@ public class GrammarMain {
       }
       rc.process(dir);
     }
-    shutdownServer();
+//    shutdownServer();
   }
 
   // rdf functionality
 
   private static String RESOURCE_DIR;
 
-  private static HfcDbServer server;
+//  private static HfcDbServer server;
 
   private static HfcDbClient client;
   private static HfcDbService.Client _client;
@@ -134,22 +134,22 @@ public class GrammarMain {
   private static int SERVER_PORT;
   private static int WEBSERVER_PORT;
 
-  /**
-   *
-   * @throws TTransportException
-   * @throws FileNotFoundException
-   * @throws IOException
-   * @throws WrongFormatException
-   */
-  private static void startServer() throws TTransportException, FileNotFoundException, IOException, WrongFormatException {
-    if (server == null) {
-      File config = new File(RESOURCE_DIR + "ontos/pal.ini");
-      server = new HfcDbServer(SERVER_PORT);
-      server.readConfig(config);
-      server.runServer();
-      server.runHttpService(WEBSERVER_PORT);
-    }
-  }
+//  /**
+//   *
+//   * @throws TTransportException
+//   * @throws FileNotFoundException
+//   * @throws IOException
+//   * @throws WrongFormatException
+//   */
+//  private static void startServer() throws TTransportException, FileNotFoundException, IOException, WrongFormatException {
+//    if (server == null) {
+//      File config = new File(RESOURCE_DIR + "ontos/pal.ini");
+//      server = new HfcDbServer(SERVER_PORT);
+//      server.readConfig(config);
+//      server.runServer();
+//      server.runHttpService(WEBSERVER_PORT);
+//    }
+//  }
 
   private static void startClient()
       throws IOException, WrongFormatException, TException {
@@ -162,9 +162,9 @@ public class GrammarMain {
     }
   }
 
-  private static void shutdownServer() {
-    server.shutdown();
-  }
+//  private static void shutdownServer() {
+//    server.shutdown();
+//  }
 
   private static void serverConfigs(){
     RESOURCE_DIR = (String)configs.get("resourceDir");
