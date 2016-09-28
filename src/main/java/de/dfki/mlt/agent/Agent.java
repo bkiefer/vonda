@@ -660,6 +660,6 @@ public abstract class Agent  {
    */
   public void init() throws FileNotFoundException{
         configs = (LinkedHashMap<String, String>)
-        yaml.load(new FileInputStream("/../../rudi.config.yml"));
+        yaml.load(new FileInputStream("/../../agent.config.yml"));
   }
 }

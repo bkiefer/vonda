@@ -36,13 +36,10 @@ import de.dfki.lt.tr.dialogue.cplan.functions.FunctionFactory;
 import java.util.LinkedHashMap;
 
 public class LanguageGenerator {
-
-  public static final String MOD_PATH = "./";
-
   /**
    * The property name for the project file containing the mapper rules
    */
-  public static final String MAPPER_PROJECT_PROP = "mapper.project";
+  public static String MAPPER_PROJECT_PROP = "mapper.project";
 
   /* *************************************************************
    * NL processing constants
@@ -53,8 +50,8 @@ public class LanguageGenerator {
    * and analysis rules. To this property, a dot and the language to generate
    * must be appended to get the usable property.
    */
-  public static final String NL_GENERATION_PROJECT_PROP = "generation.project";
-  public static final String NL_ANALYSIS_PROJECT_PROP = "analysis.project";
+  public static String NL_GENERATION_PROJECT_PROP = "generation.project";
+  public static String NL_ANALYSIS_PROJECT_PROP = "analysis.project";
 
 
 
@@ -110,8 +107,8 @@ public class LanguageGenerator {
       // so that all random calls to generation can be recorded, too
       // don't know if this is strictly necessary
       // FunctionFactory.register(new RecordableRandomFunction(), _ruleMapper);
-      File foo = new File(getProperty("resource.dir", "Resource dir"),
-          getProperty(MAPPER_PROJECT_PROP, "Mapper rules"));
+      File foo = new File(configs.get("resource_dir"),
+          configs.get("mapper_projject_prop"));
       _ruleMapper.readProjectFile(foo);
     } catch (FileNotFoundException e) {
       logger.error("mapper rules not found: " + e);
@@ -129,9 +126,8 @@ public class LanguageGenerator {
     lang = lang.toLowerCase().substring(0, 3);
     cplanner =
         new CPlannerNlg(
-            new File(getProperty("resource.dir", "local Resources"),
-            getProperty(NL_GENERATION_PROJECT_PROP + "." + lang,
-                "language generation rules for " + lang)), lang);
+            new File(configs.get("resource_dir"),
+            configs.get("generation.project" + "." + lang)), lang);
   }
 
   public void registerAccess(String what, BaseInfoStateAccess access) {
@@ -195,10 +191,16 @@ public class LanguageGenerator {
     return result;
   }
   
+    private LinkedHashMap<String, String> configs;
+  
   /**
    * takes a configuration and sets all properties to those specified in it
+   * @param configs
    */
   public void initConfig(LinkedHashMap<String, String> configs){
-    
+    this.configs = configs;
+    MAPPER_PROJECT_PROP = configs.get("mapper_project_prop");
+    NL_GENERATION_PROJECT_PROP = configs.get("generation.project");
+    NL_ANALYSIS_PROJECT_PROP = configs.get("analysis.project");
   }
 }
