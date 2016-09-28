@@ -12,6 +12,9 @@ import de.dfki.lt.tr.dialogue.cplan.DagEdge;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.mlt.agent.nlg.Pair;
 import de.dfki.tecs.rpc.RPCFactory;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import org.yaml.snakeyaml.Yaml;
 
 /**
  *
@@ -646,5 +649,17 @@ public abstract class Agent  {
     if (currentTime < behaviourNotBefore) {
       behaviourNotBefore = currentTime + MIN_PAUSE_FOR_FINISHED_BEHAVIOURS;
     }
+  }
+  
+  private static LinkedHashMap<String, String> configs;
+
+  public static Yaml yaml;
+  
+  /**
+   * A method to initialize the configuration
+   */
+  public void init() throws FileNotFoundException{
+        configs = (LinkedHashMap<String, String>)
+        yaml.load(new FileInputStream("/../../rudi.config.yml"));
   }
 }

@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.lt.tr.dialogue.cplan.UtterancePlanner;
 import de.dfki.lt.tr.dialogue.cplan.functions.FunctionFactory;
+import java.util.LinkedHashMap;
 
 public class LanguageGenerator {
 
@@ -192,5 +193,12 @@ public class LanguageGenerator {
       e.printStackTrace();
     }
     return result;
+  }
+  
+  /**
+   * takes a configuration and sets all properties to those specified in it
+   */
+  public void initConfig(LinkedHashMap<String, String> configs){
+    
   }
 }
