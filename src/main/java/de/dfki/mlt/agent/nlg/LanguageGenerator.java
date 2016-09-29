@@ -177,9 +177,9 @@ public class LanguageGenerator {
     }
     return result;
   }
-  
+
     private LinkedHashMap<String, String> configs;
-  
+
   /**
    * takes a configuration and sets all properties to those specified in it
    * @param configs
