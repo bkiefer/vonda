@@ -252,9 +252,16 @@ public class VTestTypeVisitor implements RudiVisitor {
       for (RTExpression e : node.objects) {
         this.visitNode(e);
       }
+      if (node.listType != null){
+        if (!(node.listType.substring(node.listType.indexOf("<"),
+                node.listType.indexOf(">")).equals(node.objects.get(0)))){
+      rudi.handleTypeError("Found a list creation where the list type doesn't fit"
+              + " its objects' type");
+        }
+      }
       node.listType = "List<" + node.objects.get(0).getType() + ">";
       mem.addElement(node.variableName, node.listType, node.origin);
-    } else {
+    } else if (node.listType == null){
       node.listType = "Object";
     }
   }

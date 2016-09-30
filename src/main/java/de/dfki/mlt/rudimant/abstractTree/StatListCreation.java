@@ -26,6 +26,14 @@ public class StatListCreation implements RudiTree, RTStatement{
     this.origin = origin;
     this.variableName = variableName;
   }
+  
+    public StatListCreation (String variableName, ArrayList<RTExpression> objects,
+          String origin, String listType){
+    this.objects = objects;
+    this.origin = origin;
+    this.variableName = variableName;
+    this.listType = listType;
+  }
 
   @Override
   public void visit(RudiVisitor v) {

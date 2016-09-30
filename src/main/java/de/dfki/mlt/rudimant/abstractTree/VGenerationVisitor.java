@@ -341,10 +341,11 @@ public class VGenerationVisitor implements RudiVisitor {
         i++;
       }
       out.append("){\n");
+      node.commentb.visit(this);
       this.ruleIf = this.printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
       //mem.enterNextEnvironment();
-      node.comment.visit(this);
+      node.commenta.visit(this);
       node.ifstat.visit(this);
       //mem.leaveEnvironment();
       out.append("}\n");
@@ -353,6 +354,7 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append("//Rule " + node.label + "\n");
       this.ruleIf = this.printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
+      node.commentb.visit(this);
 //      if (out.rm.shouldAddReturnto(node.label) != null) {
 //        out.append("if ((returnTo | (");
 //        int i = 0;
@@ -366,7 +368,7 @@ public class VGenerationVisitor implements RudiVisitor {
 //        }
 //        out.append(")) == 0) {\n");
 //      }
-      node.comment.visit(this);
+      node.commenta.visit(this);
       node.ifstat.visit(this);
     }
   }

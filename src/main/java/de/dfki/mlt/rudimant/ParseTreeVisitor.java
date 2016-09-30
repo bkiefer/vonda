@@ -145,8 +145,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
-    // label comment if_statement
-    String ruleName = ctx.getChild(0).getText().substring(0, ctx.getChild(0).getText().length() - 1);
+    // comment label comment if_statement
+    String ruleName = ctx.getChild(1).getText().substring(0, ctx.getChild(1).getText().length() - 1);
     boolean toplevel = false;
     if (curDepth == 0) {
       // then this is a toplevel rule
@@ -154,9 +154,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       toplevel = true;
     }
     curDepth++;
-    return new GrammarRule(ruleName,
-            (UCommentBlock) this.visit(ctx.getChild(1)),
-            (StatIf) this.visit(ctx.getChild(2)), toplevel);
+    return new GrammarRule((UCommentBlock) this.visit(ctx.getChild(0)), ruleName,
+            (UCommentBlock) this.visit(ctx.getChild(2)),
+            (StatIf) this.visit(ctx.getChild(3)), toplevel);
   }
 
   @Override
@@ -731,14 +731,26 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitList_creation(RobotGrammarParser.List_creationContext ctx) {
-    // VARIABLE ASSIGN LBRACE (VARIABLE (COMMA VARIABLE)*)? SEMICOLON
+    // (VARIABLE SMALLER VARIABLE GREATER)? variable ASSIGN LBRACE (VARIABLE (COMMA VARIABLE)*)? SEMICOLON
+    if (ctx.getChild(1).getText().equals("=")) {
 // get all the elements to be added to the list
-    ArrayList<RTExpression> elements = new ArrayList();
-    for (int i = 3; i <= ctx.getChildCount() - 2;) {
-      elements.add((RTExpression) this.visit(ctx.getChild(i)));
-      i += 2;
+      ArrayList<RTExpression> elements = new ArrayList();
+      for (int i = 3; i <= ctx.getChildCount() - 2;) {
+        elements.add((RTExpression) this.visit(ctx.getChild(i)));
+        i += 2;
+      }
+      return new StatListCreation(ctx.getChild(0).getText(), elements, currentClass);
+    } else {
+// get all the elements to be added to the list
+      ArrayList<RTExpression> elements = new ArrayList();
+      for (int i = 7; i <= ctx.getChildCount() - 2;) {
+        elements.add((RTExpression) this.visit(ctx.getChild(i)));
+        i += 2;
+      }
+      return new StatListCreation(ctx.getChild(4).getText(), elements, 
+              currentClass, ctx.getChild(0).getText() + "<" +
+                      ctx.getChild(2).getText() + ">");
     }
-    return new StatListCreation(ctx.getChild(0).getText(), elements, currentClass);
   }
 
   @Override

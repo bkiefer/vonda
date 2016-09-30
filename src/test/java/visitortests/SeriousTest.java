@@ -76,12 +76,13 @@ public class SeriousTest {
   public void tearDown() {
   }
 
-//  @Test
-//  public void TestGreetUser() throws Exception {
-//    String[] strings = new String[]{"src/test/resources/serious/greet_user.rudi",
-//      "target/test/testfiles", "-nt"};
-//    GrammarMain.main(strings);
-//  }
+  @Test
+  public void TestGreetUser() throws Exception {
+    String[] strings = new String[]{"src/test/resources/serious/greet_user.rudi",
+      "rudi.config.yml", "o=target/test/testfiles", "-nt"};
+    GrammarMain.main(strings);
+  }
+  
   @Test
   public void FirstRuleTest() throws Exception {
     String[] strings = new String[]{"src/test/resources/FirstRule.rudi",

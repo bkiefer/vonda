@@ -28,7 +28,7 @@ method_declaration
     RPAR statement_block;
 
 grammar_rule
-  : label comment if_statement
+  : comment label comment if_statement
   ;
 
 label
@@ -250,7 +250,7 @@ fun_def
   ;
 
 list_creation
-  : variable ASSIGN LBRACE ((variable | STRING | INT | FLOAT)
+  : (VARIABLE SMALLER VARIABLE GREATER)? variable ASSIGN LBRACE ((variable | STRING | INT | FLOAT)
                             (COMMA (variable | STRING | INT | FLOAT))*)? 
     RBRACE SEMICOLON
   ;
