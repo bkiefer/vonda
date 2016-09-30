@@ -65,6 +65,8 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpBoolean node) {
+    
+    System.out.println(node.fullexp + "\n" + counter);
     String n = "";
     if (node.not) {
       n = "!";

@@ -701,6 +701,7 @@ public class VGenerationVisitor implements RudiVisitor {
 //      return;
     }
     ExpBoolean bool = (ExpBoolean) bool_exp;
+    System.out.println("=========================================\n");
 
     // remembers how the expressions should be realized by rudimant
     LinkedHashMap<String, String> compiledLook = new LinkedHashMap<>();
@@ -709,7 +710,7 @@ public class VGenerationVisitor implements RudiVisitor {
     LinkedHashMap<String, String> realLook = new LinkedHashMap<>();
     condV.renewMap(rule, realLook, compiledLook, this.mem);
     condV.visitNode(bool);
-
+    System.out.println("---------------------------------------------");
     // now create a condition from those things
     //System.out.println(realLook.keySet().size());
     condV2.newMap(realLook.keySet().toArray(), compiledLook);

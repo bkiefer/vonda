@@ -1,0 +1,15 @@
+test:if(true){
+List<RdfProperty> slots = { Hobby, Color };
+    for (RdfProperty slot : slots) {
+      // SLOT unknown: ask for slot
+      // Ask for favorite hobby and color
+
+    ask_user_preference:
+      if (! user.getLiking.slot
+          && ! saidInSession(#Request(Liking, theme=^slot))) {
+        propose("ask_for_preference_" + slot) {
+          emitDA(#Request(Liking, theme=slot));
+        }
+      }
+}
+}

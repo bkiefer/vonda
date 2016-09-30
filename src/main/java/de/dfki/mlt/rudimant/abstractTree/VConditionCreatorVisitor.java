@@ -64,7 +64,7 @@ public class VConditionCreatorVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpBoolean node) {
-//    System.out.println(node.fullexp);
+    System.out.println(node.fullexp + "\n" + counter);
     String n = "";
     if (node.not) {
       this.condition.append("!");
@@ -151,7 +151,6 @@ public class VConditionCreatorVisitor implements RudiVisitor {
         this.creation.append("boolean " + expNames[counter] + " = " + compiledLook.get(expNames[counter++]) + ";\n");
         return;
       }
-
       this.visitNode(node.left);
     }
   }
