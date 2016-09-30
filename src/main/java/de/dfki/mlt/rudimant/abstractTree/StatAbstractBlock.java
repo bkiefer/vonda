@@ -8,7 +8,6 @@ package de.dfki.mlt.rudimant.abstractTree;
 import java.util.List;
 import java.util.Objects;
 
-
 /**
  * a class to represent a set of statements, might have curly braces or just be
  * an abstract object for grouping (without showing that grouping in the output)
@@ -59,5 +58,4 @@ public class StatAbstractBlock implements RTStatement, RudiTree {
     return true;
   }
 
-  
 }

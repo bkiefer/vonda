@@ -46,10 +46,10 @@ public class UFieldAccess extends RTLeaf {
     // everything else specifies the wanted predicate information
     String typ = mem.getVariableType(representation.get(0));
     RdfClass clazz = proxy.fetchRdfClass(typ);
-    List<String> predicatesBaseName =
-        representation.subList(1, representation.size());
+    List<String> predicatesBaseName
+            = representation.subList(1, representation.size());
     List<String> predicatesURI = clazz.getPredicateType(predicatesBaseName);
-    return predicatesURI.get(predicatesURI.size()-1);
+    return predicatesURI.get(predicatesURI.size() - 1);
 
   }
 
@@ -88,5 +88,8 @@ public class UFieldAccess extends RTLeaf {
     return true;
   }
 
-
+  @Override
+  public void setType(String to) {
+    this.type = to;
+  }
 }

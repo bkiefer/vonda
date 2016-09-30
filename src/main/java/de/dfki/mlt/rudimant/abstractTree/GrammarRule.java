@@ -8,14 +8,14 @@ package de.dfki.mlt.rudimant.abstractTree;
 import java.util.Objects;
 
 /**
- * represents a single grammar rule located in the .rudi file; each rule
- * will be transformed in a separate .java class (i.e., a separate .java file)
+ * represents a single grammar rule located in the .rudi file; each rule will be
+ * transformed in a separate .java class (i.e., a separate .java file)
+ *
  * @author Anna Welker
  */
-public class GrammarRule implements RudiTree{
+public class GrammarRule implements RudiTree {
 
   // comment label comment if_statement
-
   UCommentBlock commentb;
   String label;
   UCommentBlock commenta;
@@ -70,5 +70,4 @@ public class GrammarRule implements RudiTree{
     return true;
   }
 
-  
 }

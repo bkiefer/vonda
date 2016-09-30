@@ -12,6 +12,7 @@ import java.util.Objects;
 /**
  * class that allows the implementation of methods in a .rudi file; we are not
  * sure whether this should still be possible
+ *
  * @author Anna Welker
  */
 public class StatMethodDeclaration implements RudiTree {
@@ -86,5 +87,4 @@ public class StatMethodDeclaration implements RudiTree {
     return true;
   }
 
-  
 }

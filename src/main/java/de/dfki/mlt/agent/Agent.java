@@ -20,7 +20,7 @@ import org.yaml.snakeyaml.Yaml;
  *
  * @author chbu02, Bernd Kiefer
  */
-public abstract class Agent  {
+public abstract class Agent {
 
   public static final String EVENT_PACKAGE_NAME = "de.dfki.mlt.agent.events";
 
@@ -67,16 +67,24 @@ public abstract class Agent  {
     }
   }
 
-  /** The RDF storage and reasoner */
+  /**
+   * The RDF storage and reasoner
+   */
   public HfcDbService.Client _client;
 
-  /** A class that cares about ASR events and interpretation */
+  /**
+   * A class that cares about ASR events and interpretation
+   */
   AsrTts asr;
 
-  /** The DAs I emitted, newest first */
+  /**
+   * The DAs I emitted, newest first
+   */
   protected LinkedList<DialogueAct> myLastDAs;
 
-  /** The DAs I received, newest first */
+  /**
+   * The DAs I received, newest first
+   */
   private LinkedList<DialogueAct> lastDAs;
 
   protected LinkedList<Event> itemsToSend = new LinkedList<Event>();
@@ -122,15 +130,19 @@ public abstract class Agent  {
    */
   protected boolean proposalsSent;
 
-  /** All Event types that can be processed */
+  /**
+   * All Event types that can be processed
+   */
   protected Map<String, List<EventHandler<? extends Event>>> subscribedEvents;
 
-  /** Subscribe to an event time, and add the handler */
+  /**
+   * Subscribe to an event time, and add the handler
+   */
   @SuppressWarnings("rawtypes")
   public void subscribe(String eventType,
-      EventHandler<? extends Event> handler) {
-    List<EventHandler<? extends Event>> handlers =
-        subscribedEvents.get(eventType);
+          EventHandler<? extends Event> handler) {
+    List<EventHandler<? extends Event>> handlers
+            = subscribedEvents.get(eventType);
     if (handlers == null) {
       handlers = new ArrayList<EventHandler<? extends Event>>();
       subscribedEvents.put(eventType, handlers);
@@ -228,7 +240,7 @@ public abstract class Agent  {
    * Generate DialogueAct from a raw speech act representation
    */
   protected DialogueAct createEmitDA(String diaActType, String proposition,
-          String ... args) {
+          String... args) {
     String dialogueAct = AsrTts.toRawSpeechAct(diaActType, proposition, args);
     DialogueAct da = new DialogueAct();
     da.dag = asr.toDag(dialogueAct);
@@ -262,7 +274,7 @@ public abstract class Agent  {
             || subsumes(da, "InitialGoodbye", "Meeting")
             || subsumes(da, "ReturnGoodbye", "Meeting")
             || subsumes(da, "Accept", "AssigningRole")
-//            || subsumes(da, "Stalling", "Answering")
+            //            || subsumes(da, "Stalling", "Answering")
             || subsumes(da, "Inform", "AssessingPerformance")
             || subsumes(da, "Breaking", "Playing")
             || subsumes(da, "Inform", "GivingSolution")) {
@@ -275,8 +287,7 @@ public abstract class Agent  {
             || subsumes(da, "Request", "Liking")
             || subsumes(da, "Request", "Age")) {
       type = "whquestion";
-    }
-    else {
+    } else {
       logger.debug("No fitting subsume relation for App? " + da.toString());
     }
 
@@ -284,7 +295,6 @@ public abstract class Agent  {
     comSys.sendBehaviour(b);
     return da;
   }
-
 
   protected DialogueAct getMyLastDA() {
     return myLastDAs.peekFirst();
@@ -497,7 +507,6 @@ public abstract class Agent  {
 //    logger.info(fromAsr);
 //    comSys.send(".*", "SpeechActEvent", fromAsr);
 //  }
-
   protected abstract void processRules();
 
   public void init(String dbHost, int dbPort, String language) {
@@ -513,13 +522,14 @@ public abstract class Agent  {
       logger.error("Error loading grammar: {}", ex);
       System.exit(1);
     }
-    */
+     */
     reset();
   }
 
-
-  /** Common event handling for all agents */
-  @SuppressWarnings({ "unchecked", "rawtypes" })
+  /**
+   * Common event handling for all agents
+   */
+  @SuppressWarnings({"unchecked", "rawtypes"})
   protected void onEvent(Event event) {
 
     String eventType = event.getType();
@@ -528,10 +538,7 @@ public abstract class Agent  {
       try {
         String className = EVENT_PACKAGE_NAME + "." + eventType;
         o = Class.forName(className).getConstructor().newInstance();
-      } catch (InstantiationException | IllegalAccessException
-          | IllegalArgumentException | InvocationTargetException
-          | NoSuchMethodException | SecurityException
-          | ClassNotFoundException e) {
+      } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
         e.printStackTrace();
         return;
       }
@@ -541,7 +548,7 @@ public abstract class Agent  {
         // System.out.println(
         // "source " + event.getHeader().source + ", I am " + _clientName);
         for (EventHandler h : subscribedEvents.get(eventType)) {
-          h.handleEvent((Event)o);
+          h.handleEvent((Event) o);
         }
       }
     }
@@ -650,16 +657,15 @@ public abstract class Agent  {
       behaviourNotBefore = currentTime + MIN_PAUSE_FOR_FINISHED_BEHAVIOURS;
     }
   }
-  
+
   private static LinkedHashMap<String, String> configs;
 
   public static Yaml yaml;
-  
+
   /**
    * A method to initialize the configuration
    */
-  public void init() throws FileNotFoundException{
-        configs = (LinkedHashMap<String, String>)
-        yaml.load(new FileInputStream("/../../agent.config.yml"));
+  public void init() throws FileNotFoundException {
+    configs = (LinkedHashMap<String, String>) yaml.load(new FileInputStream("/../../agent.config.yml"));
   }
 }

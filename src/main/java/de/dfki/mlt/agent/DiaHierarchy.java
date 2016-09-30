@@ -19,18 +19,20 @@ public class DiaHierarchy extends RdfHierarchy implements Hierarchy {
 
   @Override
   public short getFeatureId(String name) {
-    if (nameToFeature.contains(name))
+    if (nameToFeature.contains(name)) {
       return nameToFeature.getId(name);
-    else
+    } else {
       return nameToFeature.register(name);
+    }
   }
 
   @Override
   public String getFeatureName(short feature) {
-    if (feature >= 0)
+    if (feature >= 0) {
       return nameToFeature.fromId(feature);
-    else
+    } else {
       return "ILL";
+    }
   }
 
   @Override

@@ -8,7 +8,9 @@ public class IntentionHandler implements EventHandler<Intention> {
 
   private Agent agent;
 
-  public IntentionHandler(Agent a) { agent = a; }
+  public IntentionHandler(Agent a) {
+    agent = a;
+  }
 
   @Override
   public void handleEvent(Intention intention) {

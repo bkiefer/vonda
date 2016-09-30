@@ -9,21 +9,22 @@ import java.util.Objects;
 
 /**
  * represents an import statement; each import statement will cause the imported
- * .rudi file to be parsed and translated. While parsing the imported file, rudimant
- * will remember the variables from the original file, but the namespace of the
- * imported file will not be visible from the original file thereafter.
+ * .rudi file to be parsed and translated. While parsing the imported file,
+ * rudimant will remember the variables from the original file, but the
+ * namespace of the imported file will not be visible from the original file
+ * thereafter.
+ *
  * @author Anna Welker
  */
-public class StatImport implements RudiTree{
+public class StatImport implements RudiTree {
 
   // IMPORT VARIABLE SEMICOLON
-
   String text;
   String name;
 
-  public StatImport(String text){
+  public StatImport(String text) {
     this.text = text;
-    if(text.contains(".")){
+    if (text.contains(".")) {
       name = text.substring(text.lastIndexOf("."));
     } else {
       name = text;
@@ -60,5 +61,4 @@ public class StatImport implements RudiTree{
     return true;
   }
 
-  
 }

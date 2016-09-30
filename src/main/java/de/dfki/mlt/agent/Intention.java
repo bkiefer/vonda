@@ -13,15 +13,19 @@ import de.dfki.mlt.agent.Event;
  */
 public class Intention implements Event {
 
-  public String getType() { return null; }
+  public String getType() {
+    return null;
+  }
 
-  public Object getSource() { return null; }
-  
+  public Object getSource() {
+    return null;
+  }
+
   public String getContent() {
     return null;
   }
-  
-  public double getMood(){
+
+  public double getMood() {
     return 0;
   }
 }

@@ -61,5 +61,4 @@ public class StatWhile implements RTStatement, RudiTree {
     return true;
   }
 
-  
 }

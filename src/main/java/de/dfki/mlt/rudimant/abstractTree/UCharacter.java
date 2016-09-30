@@ -15,6 +15,7 @@ import java.util.Objects;
 public class UCharacter extends RTLeaf {
 
   String content;
+  String type;
 
   public UCharacter(String content) {
     this.content = content;
@@ -55,5 +56,8 @@ public class UCharacter extends RTLeaf {
     return true;
   }
 
-  
+  @Override
+  public void setType(String to) {
+    this.type = to;
+  }
 }

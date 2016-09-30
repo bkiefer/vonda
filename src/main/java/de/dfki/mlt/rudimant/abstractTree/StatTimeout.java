@@ -62,5 +62,4 @@ public class StatTimeout implements RTStatement, RudiTree {
     return true;
   }
 
-  
 }

@@ -71,7 +71,7 @@ public class RudimantCompiler {
   public RudimantCompiler(String wrapperClass, RdfProxy proxy) {
     mem = new Mem();
     this.wrapperClass = wrapperClass;
-    this._proxy =proxy;
+    this._proxy = proxy;
     parent = null;
   }
 
@@ -225,7 +225,6 @@ public class RudimantCompiler {
 //    rm = new ReturnManagement(className);
 //    VReturnVisitor vret = new VReturnVisitor(rm);
 //    vret.visitNode(myTree);
-
     // do the type checking
     VTestTypeVisitor ttv = new VTestTypeVisitor(this);
     ttv.visitNode(myTree);

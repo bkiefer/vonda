@@ -6,7 +6,7 @@ public class InfoStateAccess implements BaseInfoStateAccess {
 
   private Agent _agent;
 
-  private String ROBOT_NAME= "Nao";
+  private String ROBOT_NAME = "Nao";
 
   private String ROBOT_GENDER = "masc";
 
@@ -14,12 +14,16 @@ public class InfoStateAccess implements BaseInfoStateAccess {
     _agent = agent;
   }
 
-  /** This method gives mapping rules for proto LFs access to information state
-   *  variables coming from the user model or the game move generator
+  /**
+   * This method gives mapping rules for proto LFs access to information state
+   * variables coming from the user model or the game move generator
+   *
    * @param name the name of the variable to retrieve
    * @return
    */
-  public Object getInfoVar(String name) { return null; }
+  public Object getInfoVar(String name) {
+    return null;
+  }
   /*
     String result = null;
     switch(name) {

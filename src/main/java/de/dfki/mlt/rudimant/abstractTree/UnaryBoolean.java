@@ -10,10 +10,11 @@ package de.dfki.mlt.rudimant.abstractTree;
  *
  * @author Anna Welker
  */
-public class UnaryBoolean extends RTLeaf{
+public class UnaryBoolean extends RTLeaf {
 
   // true or false
   String content;
+  String type;
 
   public UnaryBoolean(String content) {
     this.content = content;
@@ -27,5 +28,10 @@ public class UnaryBoolean extends RTLeaf{
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
+  }
+
+  @Override
+  public void setType(String to) {
+    this.type = to;
   }
 }

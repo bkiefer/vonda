@@ -16,7 +16,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 // =================================================================
-
 package de.dfki.mlt.agent.nlg;
 
 import java.io.File;
@@ -41,9 +40,8 @@ public class LanguageGenerator {
   /* *************************************************************
    * NL processing constants
    * ************************************************************ */
-
-  private static Logger logger =
-      LoggerFactory.getLogger(LanguageGenerator.class);
+  private static Logger logger
+          = LoggerFactory.getLogger(LanguageGenerator.class);
 
   private CPlannerNlg cplanner;
 
@@ -51,14 +49,16 @@ public class LanguageGenerator {
 
   private InfoStateFunction _infoState;
 
-
   public static String langCodeToLangName(String langCode) {
-    switch(langCode) {
-    case "ita": return "italian";
-    case "eng": return "english";
-    case "dut": return "dutch";
-    default:
-      throw new IllegalArgumentException("Unknown lang code: " + langCode);
+    switch (langCode) {
+      case "ita":
+        return "italian";
+      case "eng":
+        return "english";
+      case "dut":
+        return "dutch";
+      default:
+        throw new IllegalArgumentException("Unknown lang code: " + langCode);
     }
   }
 
@@ -66,8 +66,8 @@ public class LanguageGenerator {
     return new UtterancePlanner();
   }
 
-  private static Map<String, LanguageGenerator> _generators =
-      new HashMap<String, LanguageGenerator>();
+  private static Map<String, LanguageGenerator> _generators
+          = new HashMap<String, LanguageGenerator>();
 
   public static LanguageGenerator getGenerator(String currentLang) {
     LanguageGenerator singleton = _generators.get(currentLang);
@@ -81,9 +81,8 @@ public class LanguageGenerator {
   /**
    * Implement this as a singleton
    *
-   * @param lang
-   *          a three-character ISO language code for the number conversion
-   *          functionality
+   * @param lang a three-character ISO language code for the number conversion
+   * functionality
    */
   private LanguageGenerator(String lang) {
     try {
@@ -95,7 +94,7 @@ public class LanguageGenerator {
       // don't know if this is strictly necessary
       // FunctionFactory.register(new RecordableRandomFunction(), _ruleMapper);
       File foo = new File(configs.get("resource.dir"),
-          configs.get("mapper.project"));
+              configs.get("mapper.project"));
       _ruleMapper.readProjectFile(foo);
     } catch (FileNotFoundException e) {
       logger.error("mapper rules not found: " + e);
@@ -104,17 +103,19 @@ public class LanguageGenerator {
     }
   }
 
-  /** Currently, to switch the language, you will create a new (cached)
-   *  {@link LanguageGenerator}
+  /**
+   * Currently, to switch the language, you will create a new (cached)
+   * {@link LanguageGenerator}
+   *
    * @param lang
    * @throws IOException
    */
   private void setLanguage(String lang) throws IOException {
     lang = lang.toLowerCase().substring(0, 3);
-    cplanner =
-        new CPlannerNlg(
-            new File(configs.get("resource.dir"),
-            configs.get("generation.project" + "." + lang)), lang);
+    cplanner
+            = new CPlannerNlg(
+                    new File(configs.get("resource.dir"),
+                            configs.get("generation.project" + "." + lang)), lang);
   }
 
   public void registerAccess(String what, BaseInfoStateAccess access) {
@@ -134,10 +135,10 @@ public class LanguageGenerator {
    *
    * @param genericDialogueAct
    * @return (optionally) a motion action and a surface string to be uttered by
-   *         the TTS
+   * the TTS
    */
   public Pair<String, String>
-      getSurfaceFormExtendedLf(String genericDialogueAct) {
+          getSurfaceFormExtendedLf(String genericDialogueAct) {
     DagNode rawInput = toDag(genericDialogueAct);
     if (rawInput == null) {
       logger.error("Non-wellformed schema LF: " + genericDialogueAct);
@@ -147,7 +148,7 @@ public class LanguageGenerator {
   }
 
   public Pair<String, String>
-  getSurfaceFormExtendedLf(DagNode rawInput) {
+          getSurfaceFormExtendedLf(DagNode rawInput) {
     // obsolete
     // _ruleMapper.schemaLfStringToLfString(genericDialogueAct));
     logger.info("Before mapping: " + rawInput);
@@ -178,13 +179,14 @@ public class LanguageGenerator {
     return result;
   }
 
-    private LinkedHashMap<String, String> configs;
+  private LinkedHashMap<String, String> configs;
 
   /**
    * takes a configuration and sets all properties to those specified in it
+   *
    * @param configs
    */
-  public void initConfig(LinkedHashMap<String, String> configs){
+  public void initConfig(LinkedHashMap<String, String> configs) {
     this.configs = configs;
   }
 }

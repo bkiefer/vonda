@@ -12,7 +12,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class StatDoWhile implements RTStatement, RudiTree{
+public class StatDoWhile implements RTStatement, RudiTree {
 
   RTExpression condition;
   StatAbstractBlock statblock;
@@ -27,7 +27,7 @@ public class StatDoWhile implements RTStatement, RudiTree{
     this.currentRule = position;
   }
 
-    /*String ret0 = "if(this.whatToLog.get(\"" + this.currentRule +
+  /*String ret0 = "if(this.whatToLog.get(\"" + this.currentRule +
             "\").contains(" + this.currentBool + ")){";
     String ret1 = "do " + statblock;
     String log = "boolLogger.info(\"------------------------------------------------\\n\");\n" +
@@ -36,8 +36,6 @@ public class StatDoWhile implements RTStatement, RudiTree{
     String ret2 = "while (" + condition + ");\n";
     // remember to insert the log to log the condition
     return ret1.substring(0, ret1.length() - 2) + ret0 + log + "}}" + ret2;*/
-
-
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
@@ -72,5 +70,4 @@ public class StatDoWhile implements RTStatement, RudiTree{
     return true;
   }
 
-  
 }

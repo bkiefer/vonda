@@ -12,9 +12,10 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class UNumber extends RTLeaf{
+public class UNumber extends RTLeaf {
 
   String value;
+  String type;
 
   public UNumber(String value) {
     this.value = value;
@@ -23,7 +24,7 @@ public class UNumber extends RTLeaf{
   @Override
   public String getType() {
     // for the moment, we assume we don't get longs or doubles here
-    if(this.value.contains(".")){
+    if (this.value.contains(".")) {
       return "float";
     } else {
       return "int";
@@ -60,5 +61,8 @@ public class UNumber extends RTLeaf{
     return true;
   }
 
-  
+  @Override
+  public void setType(String to) {
+    this.type = to;
+  }
 }

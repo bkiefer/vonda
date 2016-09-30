@@ -8,26 +8,28 @@ package de.dfki.mlt.rudimant.abstractTree;
 import java.util.Objects;
 
 /**
- * class that handles comments, please don't use this as one side in an expression!
+ * class that handles comments, please don't use this as one side in an
+ * expression!
+ *
  * @author Anna Welker
  */
 public class UComment extends RTLeaf implements RTStatement {
 
   String comment;
   boolean containsClassName;
+  String type;
 
   public UComment(String comment) {
     containsClassName = false;
-    if(comment.contains("public class ")){
+    if (comment.contains("public class ")) {
       containsClassName = true;
     }
     this.comment = comment;
   }
 
-  public boolean containsClassName(){
+  public boolean containsClassName() {
     return this.containsClassName;
   }
-
 
   @Override
   public String getType() {
@@ -68,5 +70,8 @@ public class UComment extends RTLeaf implements RTStatement {
     return true;
   }
 
-  
+  @Override
+  public void setType(String to) {
+    this.type = to;
+  }
 }

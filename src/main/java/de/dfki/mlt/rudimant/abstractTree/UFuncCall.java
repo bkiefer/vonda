@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * this is a call to a function; as field accesses are considered to be retrieving
- * sth from the ontology, we define that there will never be functions used in
- * a .rudi file that would need to be accessed via multiple other classes
+ * this is a call to a function; as field accesses are considered to be
+ * retrieving sth from the ontology, we define that there will never be
+ * functions used in a .rudi file that would need to be accessed via multiple
+ * other classes
  *
  * @author Anna Welker
  */
-public class UFuncCall extends RTLeaf{
+public class UFuncCall extends RTLeaf {
 
   String type;
   String representation;
@@ -65,5 +66,8 @@ public class UFuncCall extends RTLeaf{
     return true;
   }
 
-  
+  @Override
+  public void setType(String to) {
+    this.type = to;
+  }
 }

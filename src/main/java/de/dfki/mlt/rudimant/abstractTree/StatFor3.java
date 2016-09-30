@@ -8,11 +8,10 @@ package de.dfki.mlt.rudimant.abstractTree;
 import java.util.List;
 import java.util.Objects;
 
-
 /**
  * FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR
- * loop_statement_block
- * = a special for statement allowing tuples of arbitrary size
+ * loop_statement_block = a special for statement allowing tuples of arbitrary
+ * size
  *
  * @author Anna Welker
  */
@@ -69,5 +68,4 @@ public class StatFor3 implements RTStatement, RudiTree {
     return true;
   }
 
-  
 }

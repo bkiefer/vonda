@@ -13,13 +13,13 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class ExpAbstractWrapper implements RudiTree, RTExpression{
+public class ExpAbstractWrapper implements RudiTree, RTExpression {
 
   UCommentBlock commentbefore;
-  RudiTree exp;
+  RTExpression exp;
   UCommentBlock commentafter;
 
-  public ExpAbstractWrapper(UCommentBlock commentbefore, RudiTree exp, UCommentBlock commentafter) {
+  public ExpAbstractWrapper(UCommentBlock commentbefore, RTExpression exp, UCommentBlock commentafter) {
     this.commentbefore = commentbefore;
     this.exp = exp;
     this.commentafter = commentafter;
@@ -64,4 +64,10 @@ public class ExpAbstractWrapper implements RudiTree, RTExpression{
     }
     return Objects.equals(this.commentafter, other.commentafter);
   }
+
+  @Override
+  public void setType(String to) {
+    this.exp.setType(to);
+  }
+
 }

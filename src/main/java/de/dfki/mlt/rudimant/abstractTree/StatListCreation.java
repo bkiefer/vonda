@@ -12,7 +12,7 @@ import java.util.Objects;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class StatListCreation implements RudiTree, RTStatement{
+public class StatListCreation implements RudiTree, RTStatement {
 
   //RTExpression left;
   ArrayList<RTExpression> objects;
@@ -20,15 +20,15 @@ public class StatListCreation implements RudiTree, RTStatement{
   String variableName;
   String listType;
 
-  public StatListCreation (String variableName, ArrayList<RTExpression> objects,
-          String origin){
+  public StatListCreation(String variableName, ArrayList<RTExpression> objects,
+          String origin) {
     this.objects = objects;
     this.origin = origin;
     this.variableName = variableName;
   }
-  
-    public StatListCreation (String variableName, ArrayList<RTExpression> objects,
-          String origin, String listType){
+
+  public StatListCreation(String variableName, ArrayList<RTExpression> objects,
+          String origin, String listType) {
     this.objects = objects;
     this.origin = origin;
     this.variableName = variableName;
@@ -68,6 +68,5 @@ public class StatListCreation implements RudiTree, RTStatement{
     }
     return true;
   }
-
 
 }

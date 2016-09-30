@@ -8,7 +8,6 @@ package de.dfki.mlt.rudimant.abstractTree;
 import java.util.List;
 import java.util.Objects;
 
-
 /**
  * this is used to represent a set of comments
  *
@@ -52,5 +51,4 @@ public class UCommentBlock implements RTStatement {
     return true;
   }
 
-  
 }

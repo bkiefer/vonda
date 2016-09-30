@@ -9,8 +9,9 @@ package de.dfki.mlt.rudimant;
  *
  * @author pal
  */
-public class NoConfigException extends RuntimeException{
-  public NoConfigException(String message){
+public class NoConfigException extends RuntimeException {
+
+  public NoConfigException(String message) {
     super(message);
   }
 }

@@ -63,5 +63,4 @@ public class StatSetOperation implements RTStatement, RudiTree {
     return true;
   }
 
-  
 }

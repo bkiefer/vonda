@@ -7,8 +7,9 @@ package de.dfki.mlt.rudimant.abstractTree;
 
 /**
  * this is a marker for statement nodes
+ *
  * @author Anna Welker
  */
-public interface RTStatement extends RudiTree{
+public interface RTStatement extends RudiTree {
 
 }

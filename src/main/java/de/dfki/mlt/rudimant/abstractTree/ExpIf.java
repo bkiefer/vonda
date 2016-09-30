@@ -12,16 +12,17 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class ExpIf implements RudiTree, RTExpression{
+public class ExpIf implements RudiTree, RTExpression {
 
   RTExpression boolexp;
   RTExpression thenexp;
   RTExpression elseexp;
+  String type;
 
   String fullexp;
 
   public ExpIf(String fullexp, RTExpression bool, RTExpression thenexp,
-          RTExpression elseexp){
+          RTExpression elseexp) {
     this.boolexp = bool;
     this.thenexp = thenexp;
     this.elseexp = elseexp;
@@ -63,5 +64,8 @@ public class ExpIf implements RudiTree, RTExpression{
     return true;
   }
 
-  
+  @Override
+  public void setType(String to) {
+    this.type = to;
+  }
 }

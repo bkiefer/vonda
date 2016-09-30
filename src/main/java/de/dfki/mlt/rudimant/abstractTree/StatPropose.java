@@ -56,5 +56,4 @@ public class StatPropose implements RTStatement, RudiTree {
     return true;
   }
 
-  
 }

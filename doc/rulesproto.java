@@ -58,8 +58,8 @@ if (currentSA.hasTheme <= pronoun) {
  */
 ack_declined_offer:
 if (currentSA.type == DeclineOffer) {
-  sa = @Agreement(Frame, sender=currentSA.addressee,
-                  addressee=currentSA.sender, refersTo=currentSA.id);
+  sa = @Agreement(Frame, sender = currentSA.addressee,
+        addressee = currentSA.sender, refersTo = currentSA.id);
   // sa.frame = ( Bringing, Holding ); // multiple assingment
   // sa.frame += Bringing; // add one, could also add multiple
   emitSA(sa);
@@ -70,7 +70,7 @@ if (currentSA.type == DeclineOffer) {
  */
 execute_accepted_offer:
 if (currentSA.type == AcceptOffer) {
-  if (offer == lastMatchingSA(@Offer(_, sender=currentSA.addressee))) {
+  if (offer == lastMatchingSA(@Offer(_, sender = currentSA.addressee))) {
     createAction(offer.Frame, offer.getArguments(), _something);
   } else {
     propose("clarify") {
@@ -86,8 +86,8 @@ if (currentSA.type == AcceptOffer) {
 ask_alternative:
 if (currentSA.type == Disconfirm) {
   propose("ask-alternative") {
-    emitSA(@WHQuestion(currentSA.Frame, refersTo=currentSA.id,
-                       currentSA.getArguments()));
+    emitSA(@WHQuestion(currentSA.Frame, refersTo = currentSA.id,
+        currentSA.getArguments()));
   }
 }
 
@@ -120,7 +120,7 @@ if ((currentSA.type == Inform || currnetSA.type == Confirm)
  TODO: CURRENTLY NOT IN SYNTAX: SUBSUMPTION + BINDING VARIABLES
  */
 assign_task:
-if (currentSA <= @Inform(Activity, hasActivity=?activity, sender=?sender)) {
+if (currentSA <= @Inform(Activity, hasActivity =  ? activity, sender =  ? sender)) {
   tasknum = getTaskNum(taskName); // get task no from: task_\([0-9]+\)
   emitBBTask(BBTask.TakeTask, tasknum, sender);
 }
@@ -128,7 +128,7 @@ if (currentSA <= @Inform(Activity, hasActivity=?activity, sender=?sender)) {
 
 /** A person issues a request to bring sth. to Gloria */
 process_bring_request:
-if (currentSA <= @Request(Bringing, hasTheme=_, sender=_)) {
+if (currentSA <= @Request(Bringing, hasTheme = _, sender = _)) {
   var sender = currentSA.sender;
   var theme = currentSA.hasTheme;
   // getLocationOf is a SPARQL query
@@ -144,15 +144,15 @@ if (currentSA <= @Request(Bringing, hasTheme=_, sender=_)) {
     if (prefBox == NULL || _lastIncomingSA <= @Decline(Removing)) { // removed three dots behind "Removing" (cannot be parsed)
       propose("ask-box") {
         // which box should i take away?
-        emitSA(@WHQuestion(Removing, hasTheme="box", refersTo=currentSA.id));
+        emitSA(@WHQuestion(Removing, hasTheme = "box", refersTo = currentSA.id));
       }
     } else { // should i take away the glue?
       propose("take-away") {
         // getContentInBox() could be a SPARQL query
         var content = getContentInBox(prefBox);
-        emitSA(@YNQuestion(Removing, hasTheme=content,
-                           hasAgent=currentSA.addressee,
-                           refersTo=currentSA.id));
+        emitSA(@YNQuestion(Removing, hasTheme = content,
+        hasAgent = currentSA.addressee,
+        refersTo = currentSA.id));
       }
     }
     // the third arg is where to bring the thing from toSlot

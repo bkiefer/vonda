@@ -8,8 +8,8 @@ package de.dfki.mlt.rudimant.abstractTree;
 import java.util.Objects;
 
 /**
- * FOR LPAR assignment SEMICOLON exp SEMICOLON exp? RPAR loop_statement_block
- * = a 'normal' for statement containing three ;
+ * FOR LPAR assignment SEMICOLON exp SEMICOLON exp? RPAR loop_statement_block =
+ * a 'normal' for statement containing three ;
  *
  * @author Anna Welker
  */
@@ -31,7 +31,7 @@ public class StatFor1 implements RTStatement, RudiTree {
     this.currentRule = position;
   }
 
-    /*String ret0 = "if(this.whatToLog.get(\"" + this.currentRule +
+  /*String ret0 = "if(this.whatToLog.get(\"" + this.currentRule +
             "\").contains(" + this.currentBool + ")){";
     if (arithmetic != null) {
       String ret1 = "for (" + assignment + "; " + condition + "; " + arithmetic
@@ -51,7 +51,6 @@ public class StatFor1 implements RTStatement, RudiTree {
     String ret2 = statblock.generate(null).substring(1);
     return ret0 + "if(!(" + this.condition + ")){" + log + "}}" +
             ret1 + "{" + ret0 + log + "}" + ret2;*/
-
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
@@ -94,5 +93,4 @@ public class StatFor1 implements RTStatement, RudiTree {
     return true;
   }
 
-  
 }

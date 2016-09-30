@@ -21,27 +21,27 @@ import org.slf4j.LoggerFactory;
  * @author Anna Welker, anna.welker@dfki.de
  */
 public class VTestTypeVisitor implements RudiVisitor {
-
+  
   public static org.slf4j.Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
-
+  
   private RudimantCompiler rudi;
   private Mem mem;
-
+  
   public VTestTypeVisitor(RudimantCompiler rudi) {
     this.rudi = rudi;
     this.mem = rudi.getMem();
   }
-
+  
   @Override
   public void visitNode(RudiTree node) {
     node.visit(this);
   }
-
+  
   @Override
   public void visitNode(ExpAbstractWrapper node) {
     node.exp.visit(this);
   }
-
+  
   @Override
   public void visitNode(ExpArithmetic node) {
     node.left.visit(this);
@@ -51,7 +51,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     // ?
     // assert (node.right.getType().equals(node.left.getType()));
   }
-
+  
   @Override
   public void visitNode(ExpAssignment node) {
     logger.trace("Testing an assignment");
@@ -75,7 +75,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       node.testType(rudi);
     }
   }
-
+  
   @Override
   public void visitNode(ExpBoolean node) {
     node.rule = mem.getCurrentRule();
@@ -85,15 +85,15 @@ public class VTestTypeVisitor implements RudiVisitor {
       return;
     }
     node.right.visit(this);
-    if (node.operator != null && (node.left.getType().equals("DialogueAct") ||
-            node.left.getType().contains("Rdf"))) {
+    if (node.operator != null && (node.left.getType().equals("DialogueAct")
+            || node.left.getType().contains("Rdf"))) {
       if (node.left.getType().equals(node.right.getType())) {
         if (node.operator.equals("<=")) {
           node.isSubsumed = true;
         } else if (node.operator.equals("=>")) {
           node.doesSubsume = true;
         }
-        if(node.left.getType().contains("Rdf")){
+        if (node.left.getType().contains("Rdf")) {
           node.rdf = true;
         }
       }
@@ -107,18 +107,18 @@ public class VTestTypeVisitor implements RudiVisitor {
       }
     }
   }
-
+  
   @Override
   public void visitNode(ExpDialogueAct node) {
     // no type testing needed (?)
   }
-
+  
   @Override
   public void visitNode(ExpFuncOnObject node) {
     node.on.visit(this);
     node.funccall.visit(this);
   }
-
+  
   @Override
   public void visitNode(ExpIf node) {
     node.boolexp.visit(this);
@@ -133,12 +133,12 @@ public class VTestTypeVisitor implements RudiVisitor {
               + node.elseexp.getType() + " on right)");
     }
   }
-
+  
   @Override
   public void visitNode(ExpLambda node) {
     // nothing to do
   }
-
+  
   @Override
   public void visitNode(GrammarFile node) {
     mem.enterEnvironment();
@@ -158,7 +158,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     //mem.leaveEnvironment();
     mem.leaveClass(oldname, oldrule, oldTrule);
   }
-
+  
   @Override
   public void visitNode(GrammarRule node) {
     mem.addRule(node.label, node.toplevel);
@@ -166,7 +166,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.ifstat.visit(this);
 //    mem.leaveEnvironment();
   }
-
+  
   @Override
   public void visitNode(StatAbstractBlock node) {
     if (node.braces) {
@@ -179,7 +179,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       mem.leaveEnvironment();
     }
   }
-
+  
   @Override
   public void visitNode(StatDoWhile node) {
     node.condition.visit(this);
@@ -189,14 +189,14 @@ public class VTestTypeVisitor implements RudiVisitor {
     }*/
     node.statblock.visit(this);
   }
-
+  
   @Override
   public void visitNode(StatFor1 node) {
     // TODO: this is a bit more complicated; remember the types of the variables
     // that were declared in the condition
     // the assignment will add the variable to the memory
   }
-
+  
   @Override
   public void visitNode(StatFor2 node) {
     // TODO: this is a bit more complicated; remember the types of the variables
@@ -209,7 +209,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
     mem.addElement(node.var.toString(), node.varType, node.position);
   }
-
+  
   @Override
   public void visitNode(StatFor3 node) {
     // TODO: this is a bit more complicated; remember the types of the variables
@@ -218,14 +218,14 @@ public class VTestTypeVisitor implements RudiVisitor {
       mem.addElement(s, "Object", node.position);
     }
   }
-
+  
   @Override
   public void visitNode(StatFunDef node) {
     // these are not tested, just added to the memory
     mem.addFunction(node.funcname, node.type,
             node.parameterTypes, node.position);
   }
-
+  
   @Override
   public void visitNode(StatIf node) {
     node.currentRule = mem.getCurrentRule();
@@ -239,33 +239,33 @@ public class VTestTypeVisitor implements RudiVisitor {
       node.statblockElse.visit(this);
     }
   }
-
+  
   @Override
   public void visitNode(StatImport node) {
     // nothing to test; what to do with the memory???
     mem.addImport(node.name);
   }
-
+  
   @Override
   public void visitNode(StatListCreation node) {
     if (!(node.objects == null)) {
       for (RTExpression e : node.objects) {
         this.visitNode(e);
       }
-      if (node.listType != null){
+      if (node.listType != null) {
         if (!(node.listType.substring(node.listType.indexOf("<"),
-                node.listType.indexOf(">")).equals(node.objects.get(0)))){
-      rudi.handleTypeError("Found a list creation where the list type doesn't fit"
-              + " its objects' type");
+                node.listType.indexOf(">")).equals(node.objects.get(0)))) {
+          rudi.handleTypeError("Found a list creation where the list type doesn't fit"
+                  + " its objects' type");
         }
       }
       node.listType = "List<" + node.objects.get(0).getType() + ">";
       mem.addElement(node.variableName, node.listType, node.origin);
-    } else if (node.listType == null){
+    } else if (node.listType == null) {
       node.listType = "Object";
     }
   }
-
+  
   @Override
   public void visitNode(StatMethodDeclaration node) {
     mem.addFunction(node.name, node.return_type, node.partypes, node.position);
@@ -279,32 +279,32 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.block.visit(this);
     mem.leaveEnvironment();
   }
-
+  
   @Override
   public void visitNode(StatPropose node) {
     // nothing to do (?)
   }
-
+  
   @Override
   public void visitNode(StatReturn node) {
     // nothing to do (?)
   }
-
+  
   @Override
   public void visitNode(StatSetOperation node) {
     // TODO: test whether the set accepts variables of this type??
   }
-
+  
   @Override
   public void visitNode(StatTimeout node) {
     // nothing to do
   }
-
+  
   @Override
   public void visitNode(StatVarDef node) {
     mem.addElement(node.variable, node.type, node.position);
   }
-
+  
   @Override
   public void visitNode(StatWhile node) {
     node.condition.visit(this);
@@ -314,22 +314,22 @@ public class VTestTypeVisitor implements RudiVisitor {
     }*/
     node.statblock.visit(this);
   }
-
+  
   @Override
   public void visitNode(UCharacter node) {
     // everything okay
   }
-
+  
   @Override
   public void visitNode(UComment node) {
     // everything okay
   }
-
+  
   @Override
   public void visitNode(UCommentBlock node) {
     // everything okay
   }
-
+  
   @Override
   public void visitNode(UFieldAccess node) {
     try {
@@ -338,12 +338,12 @@ public class VTestTypeVisitor implements RudiVisitor {
       Logger.getLogger(UFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
     }
     for (int i = 1; i < node.representation.size(); i++) {
-      if(!mem.variableExists(node.representation.get(i))){
+      if (!mem.variableExists(node.representation.get(i))) {
         node.representation.set(i, "\"" + node.representation.get(i) + "\"");
       }
     }
   }
-
+  
   @Override
   public void visitNode(UFuncCall node) {
     if (node.type == null) {
@@ -359,22 +359,22 @@ public class VTestTypeVisitor implements RudiVisitor {
               + " to a function that wasn't declared");
     }
   }
-
+  
   @Override
   public void visitNode(UNull node) {
     // nothing to do
   }
-
+  
   @Override
   public void visitNode(UNumber node) {
     // nothing to do
   }
-
+  
   @Override
   public void visitNode(UString node) {
     // nothing to do
   }
-
+  
   @Override
   public void visitNode(UVariable node) {
     node.type = mem.getVariableType(node.representation);
@@ -402,17 +402,17 @@ public class VTestTypeVisitor implements RudiVisitor {
       node.realOrigin = o;
     }
   }
-
+  
   @Override
   public void visitNode(UWildcard node) {
     // nothing to do
   }
-
+  
   @Override
   public void visitNode(UnaryBoolean node) {
     // nothing to do
   }
-
+  
   private void conditionHandling(ExpBoolean node) {
     String t = node.left.getType();
     if (t == null) {
@@ -432,6 +432,7 @@ public class VTestTypeVisitor implements RudiVisitor {
           node.testIsEmpty = true;
         }
       }
+      node.left.setType("boolean");
     } else {
       node.isTrue = "";
     }

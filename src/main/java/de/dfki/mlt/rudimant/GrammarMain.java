@@ -22,7 +22,6 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.yaml.snakeyaml.Yaml;
 
-
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TTransportException;
 
@@ -51,20 +50,19 @@ public class GrammarMain {
 
   /**
    *
-   * @param args: the file that should be parsed without ending (in args[0])
-   *             + the complete path of the configfile
+   * @param args: the file that should be parsed without ending (in args[0]) +
+   * the complete path of the configfile
    * @throws Exception
    */
   public static void main(String[] args) throws IOException, TTransportException, FileNotFoundException, WrongFormatException, TException, FormatterException {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
-    if(!args[1].contains("config")){
+    if (!args[1].contains("config")) {
       throw new NoConfigException("There was no config file specified; aborting");
     }
 //    System.out.println((new File(args[1])).exists());
-    configs = (LinkedHashMap<String, Object>)
-        yaml.load(new FileInputStream(args[1]));
+    configs = (LinkedHashMap<String, Object>) yaml.load(new FileInputStream(args[1]));
 
     serverConfigs();
 //    startServer();
@@ -95,7 +93,7 @@ public class GrammarMain {
       System.out.println(help);
       System.exit(0);
     }
-    RudimantCompiler rc = new RudimantCompiler((String)configs.get("wrapperClass"), new RdfProxy(_client));
+    RudimantCompiler rc = new RudimantCompiler((String) configs.get("wrapperClass"), new RdfProxy(_client));
     if (options.has("l")) {
       rc.setLog(true);
     }
@@ -113,7 +111,7 @@ public class GrammarMain {
     if (outputDirectory != null) {
       rc.process(dir, outputDirectory);
     } else {
-      if(configs.get("outputDirectory") != null){
+      if (configs.get("outputDirectory") != null) {
         rc.process(dir, new File((String) configs.get("outputDirectory")));
       }
       rc.process(dir);
@@ -122,11 +120,9 @@ public class GrammarMain {
   }
 
   // rdf functionality
-
   private static String RESOURCE_DIR;
 
 //  private static HfcDbServer server;
-
   private static HfcDbClient client;
   private static HfcDbService.Client _client;
 
@@ -150,9 +146,8 @@ public class GrammarMain {
 //      server.runHttpService(WEBSERVER_PORT);
 //    }
 //  }
-
   private static void startClient()
-      throws IOException, WrongFormatException, TException {
+          throws IOException, WrongFormatException, TException {
     if (client == null) {
       client = new HfcDbClient();
       client.init("localhost", SERVER_PORT);
@@ -165,11 +160,10 @@ public class GrammarMain {
 //  private static void shutdownServer() {
 //    server.shutdown();
 //  }
-
-  private static void serverConfigs(){
-    RESOURCE_DIR = (String)configs.get("resourceDir");
-    SERVER_PORT = (int)configs.get("serverPort");
-    WEBSERVER_PORT = (int)configs.get("webserverPort");
+  private static void serverConfigs() {
+    RESOURCE_DIR = (String) configs.get("resourceDir");
+    SERVER_PORT = (int) configs.get("serverPort");
+    WEBSERVER_PORT = (int) configs.get("webserverPort");
   }
 
   private static void usage(String message) {

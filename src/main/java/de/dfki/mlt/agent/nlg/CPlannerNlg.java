@@ -19,8 +19,6 @@ import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.lt.tr.dialogue.cplan.functions.FunctionFactory;
 import org.apache.log4j.Logger;
 
-
-
 public class CPlannerNlg {
 
   CcgUtterancePlanner _planner;
@@ -29,22 +27,22 @@ public class CPlannerNlg {
 
   public RuleBasedNumberFormat numberFormatter;
 
-  /** Constructor: get a new natural language generation component with built-in
-   *  content planner.
-   *  @param pluginDirectory a File object that must point to a directory. Jar
-   *         files in this directory will be loaded, Function implementations
-   *         in these files will be registered for use in the grammar of the
-   *         content planner. Will throw an IllegalArgumentException if it does
-   *         not point to a directory
-   *  @param projectFile a File object that points to a content planner project
-   *         file, containing all information on how to load the grammar for
-   *         the content planner. This may also contain a setting that loads
-   *         additional plug-ins.
-   *  @param language a valid three character language identifier to initialize
-   *         a number to text converter
+  /**
+   * Constructor: get a new natural language generation component with built-in
+   * content planner.
+   *
+   * @param pluginDirectory a File object that must point to a directory. Jar
+   * files in this directory will be loaded, Function implementations in these
+   * files will be registered for use in the grammar of the content planner.
+   * Will throw an IllegalArgumentException if it does not point to a directory
+   * @param projectFile a File object that points to a content planner project
+   * file, containing all information on how to load the grammar for the content
+   * planner. This may also contain a setting that loads additional plug-ins.
+   * @param language a valid three character language identifier to initialize a
+   * number to text converter
    */
   public CPlannerNlg(File pluginDirectory, File projectFile, String language)
-  throws FileNotFoundException, IOException {
+          throws FileNotFoundException, IOException {
     _planner = new CcgUtterancePlanner();
     _planner.readProjectFile(projectFile);
 
@@ -52,35 +50,37 @@ public class CPlannerNlg {
       FunctionFactory.registerPlugins(pluginDirectory, _planner);
     }
     numberFormatter = new RuleBasedNumberFormat(new Locale(language),
-        RuleBasedNumberFormat.SPELLOUT);
+            RuleBasedNumberFormat.SPELLOUT);
   }
 
-  /** Constructor: get a new natural language generation component with built-in
-   *  content planner.
-   *  @param projectFile a File object that points to a content planner project
-   *         file, containing all information on how to load the grammar for
-   *         the content planner. This may also contain a setting that loads
-   *         additional plug-ins.
-   *  @param language a valid three character language identifier to initialize
-   *         a number to text converter
+  /**
+   * Constructor: get a new natural language generation component with built-in
+   * content planner.
+   *
+   * @param projectFile a File object that points to a content planner project
+   * file, containing all information on how to load the grammar for the content
+   * planner. This may also contain a setting that loads additional plug-ins.
+   * @param language a valid three character language identifier to initialize a
+   * number to text converter
    */
   public CPlannerNlg(File projectFile, String language)
-  throws FileNotFoundException, IOException {
+          throws FileNotFoundException, IOException {
     this(null, projectFile, language);
   }
 
-  private static final Pattern punctRegex =
-    Pattern.compile("\\s*(?:[;:,.?]\\s*)*([;:,.?])");
+  private static final Pattern punctRegex
+          = Pattern.compile("\\s*(?:[;:,.?]\\s*)*([;:,.?])");
 
-  /** Replace multiple punctuation characters, possibly separated by
-   *  whitespace, by only the rightmost in the sequence
+  /**
+   * Replace multiple punctuation characters, possibly separated by whitespace,
+   * by only the rightmost in the sequence
    */
   public static String fixPunctuation(String text) {
     return punctRegex.matcher(text).replaceAll("$1");
   }
 
-  private static final Pattern numberRegex =
-      Pattern.compile("(\\A|\\s)(\\d+)(\\Z|\\s|\\.(?:\\D|\\Z)|[;:,?])");
+  private static final Pattern numberRegex
+          = Pattern.compile("(\\A|\\s)(\\d+)(\\Z|\\s|\\.(?:\\D|\\Z)|[;:,?])");
 
   private static String numbersToText(String in, RuleBasedNumberFormat formatter) {
     Matcher m = numberRegex.matcher(in);
@@ -94,18 +94,21 @@ public class CPlannerNlg {
     return result.replaceAll("\u00ad", "");
   }
 
-  /** Replace numbers in input string by text using icu4j functionality
-   *  @param in the string containing numbers to convert
-   *  @param language a valid three character language identifier to initialize
-   *         a number to text converter
+  /**
+   * Replace numbers in input string by text using icu4j functionality
+   *
+   * @param in the string containing numbers to convert
+   * @param language a valid three character language identifier to initialize a
+   * number to text converter
    */
   public static String numbersToText(String in, String language) {
     return numbersToText(in, new RuleBasedNumberFormat(new Locale(language),
-        RuleBasedNumberFormat.SPELLOUT));
+            RuleBasedNumberFormat.SPELLOUT));
   }
 
-  /** Replace numbers in input string by text using icu4j functionality in the
-   *  language of this interface
+  /**
+   * Replace numbers in input string by text using icu4j functionality in the
+   * language of this interface
    */
   public String numbersToText(String in) {
     return numbersToText(in, numberFormatter);
@@ -115,10 +118,10 @@ public class CPlannerNlg {
 
   public ProtoLf toDag(String stringRepresentation) {
     DagNode input = _planner.parseLfString(stringRepresentation);
-    if (input == null ||
-        ! _planner.parseLfString(input.toString()).equals(input)) {
+    if (input == null
+            || !_planner.parseLfString(input.toString()).equals(input)) {
       logger.error("String representation differs from parsed : ["
-          + stringRepresentation + "] [" + input + "]");
+              + stringRepresentation + "] [" + input + "]");
     }
     return new ProtoLf(input);
   }
@@ -128,10 +131,10 @@ public class CPlannerNlg {
     DagNode input = plf.getDag();
     if (input == null) {
       input = _planner.parseLfString(plf.toString());
-      if (input == null ||
-          ! _planner.parseLfString(input.toString()).equals(input)) {
+      if (input == null
+              || !_planner.parseLfString(input.toString()).equals(input)) {
         logger.error("String representation differs from parsed : ["
-            + plf + "] [" + input + "]");
+                + plf + "] [" + input + "]");
       }
     }
     logger.trace("Input to content planning: " + input);
@@ -140,42 +143,40 @@ public class CPlannerNlg {
     logger.trace("Output of content planning: " + cplanOutput);
     DagEdge edge = cplanOutput.getEdge(DagNode.TYPE_FEAT_ID);
     String result = "";
-    if (edge != null && edge.getValue().getTypeName().equals("canned")){
+    if (edge != null && edge.getValue().getTypeName().equals("canned")) {
       edge = cplanOutput
-      .getEdge(DagNode.getFeatureId("string"))
-      .getValue().getEdge(DagNode.PROP_FEAT_ID);
+              .getEdge(DagNode.getFeatureId("string"))
+              .getValue().getEdge(DagNode.PROP_FEAT_ID);
       result = edge.getValue().getTypeName();
       result = numbersToText(fixPunctuation(result)).trim();
       if ("<empty>".equals(result)) {
         result = "";
-      } else {
-        if (result == null || result.isEmpty()) {
-          if (! emptyRealizations.contains(input)) {
-            emptyRealizations.add(input);
-            logger.warn("empty realization (canned): i[" + plf + "] o[" +
-                cplanOutput + "]");
-          }
-        } else {
-          logger.trace("Canned text: " + result);
+      } else if (result == null || result.isEmpty()) {
+        if (!emptyRealizations.contains(input)) {
+          emptyRealizations.add(input);
+          logger.warn("empty realization (canned): i[" + plf + "] o["
+                  + cplanOutput + "]");
         }
+      } else {
+        logger.trace("Canned text: " + result);
       }
     } else {
       result = _planner.realize(cplanOutput).trim();
       if (result == null || result.isEmpty()) {
-        if (! emptyRealizations.contains(input)) {
+        if (!emptyRealizations.contains(input)) {
           emptyRealizations.add(input);
         }
-        logger.warn("empty realization: i[" + plf + "] o[" +
-            cplanOutput + "]");
+        logger.warn("empty realization: i[" + plf + "] o["
+                + cplanOutput + "]");
       } else {
         logger.trace("Output of realization proper: " + result);
       }
     }
-    return result ;
+    return result;
   }
 
   public BatchTest batchProcess(File file, BatchType generation)
-      throws IOException {
+          throws IOException {
     return _planner.batchProcess(file, generation);
   }
 

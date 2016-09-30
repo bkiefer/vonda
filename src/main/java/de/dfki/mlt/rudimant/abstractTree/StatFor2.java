@@ -8,8 +8,8 @@ package de.dfki.mlt.rudimant.abstractTree;
 import java.util.Objects;
 
 /**
- * FOR LPAR VARIABLE COLON exp RPAR loop_statement_block
- * a 'modern' for statement
+ * FOR LPAR VARIABLE COLON exp RPAR loop_statement_block a 'modern' for
+ * statement
  *
  * @author Anna Welker
  */
@@ -80,6 +80,5 @@ public class StatFor2 implements RTStatement, RudiTree {
     }
     return true;
   }
-
 
 }

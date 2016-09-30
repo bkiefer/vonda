@@ -59,5 +59,4 @@ public class StatVarDef implements RTStatement, RudiTree {
     return true;
   }
 
-  
 }

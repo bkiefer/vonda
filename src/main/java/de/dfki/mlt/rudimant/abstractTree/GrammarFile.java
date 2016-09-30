@@ -33,7 +33,7 @@ public class GrammarFile implements RudiTree {
     this.rules = rules;
   }
 
-  public void setClassName(String name){
+  public void setClassName(String name) {
     this.classname = name;
   }
 
@@ -71,5 +71,4 @@ public class GrammarFile implements RudiTree {
     return true;
   }
 
-  
 }

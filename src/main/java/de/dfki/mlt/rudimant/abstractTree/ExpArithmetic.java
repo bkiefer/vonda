@@ -83,4 +83,9 @@ public class ExpArithmetic implements RTExpression {
     return Objects.equals(this.right, other.right);
   }
 
+  @Override
+  public void setType(String to) {
+    this.type = to;
+  }
+
 }

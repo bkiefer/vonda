@@ -31,6 +31,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
     this.currentRule = rule;
     this.counter = 0;
     this.mem = mem;
+    this.funcargs = "";
   }
 
   @Override
@@ -65,14 +66,14 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpBoolean node) {
-    
+
     System.out.println(node.fullexp + "\n" + counter);
     String n = "";
     if (node.not) {
       n = "!";
     }
     String function = "";
-    if(node.rdf){
+    if (node.rdf) {
       function = "RdfClass.isSubclassOf(";
     } else {
       function = "isSubsumed(";
@@ -162,13 +163,11 @@ public class VRuleConditionVisitor implements RudiVisitor {
           result += (", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-      {
-        if (mem.variableExists(parts[1])) {
+       if (mem.variableExists(parts[1])) {
           result += (", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           result += (", " + parts[0] + " = " + parts[1]);
         }
-      }
     }
     result += (")\")");
     if (collectDAs != null) {

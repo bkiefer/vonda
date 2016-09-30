@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  */
 public class RdfTest {
 
- private static final String RESOURCE_DIR = "../hfc-database/src/test/resources/";
+  private static final String RESOURCE_DIR = "../hfc-database/src/test/resources/";
 
   private static HfcDbServer server;
 
@@ -61,7 +61,7 @@ public class RdfTest {
     server.runServer();
     server.runHttpService(WEBSERVER_PORT);
     File outDir = new File("target/test/testfiles");
-    if(!outDir.exists()){
+    if (!outDir.exists()) {
       outDir.mkdirs();
     }
   }
@@ -73,7 +73,7 @@ public class RdfTest {
 
   @Before
   public void setUp()
-      throws IOException, WrongFormatException, TException {
+          throws IOException, WrongFormatException, TException {
     client = new HfcDbClient();
     client.init("localhost", SERVER_PORT);
     client.readConfig(new File(RESOURCE_DIR + "rifca/rifca.ini"));

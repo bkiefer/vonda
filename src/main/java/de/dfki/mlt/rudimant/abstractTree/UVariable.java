@@ -9,7 +9,6 @@ import de.dfki.mlt.rudimant.Mem;
 import java.util.Objects;
 
 // TODO: test whether variable exists?
-
 /**
  * representation of a variable
  *
@@ -24,9 +23,8 @@ public class UVariable extends RTLeaf {
   // is declared in originClass
   String realOrigin;
   boolean isRdfClass;
-  
 
-  public UVariable(String type, String representation, String originClass, 
+  public UVariable(String type, String representation, String originClass,
           String originTRule) {
     this.type = type;
     this.representation = representation;
@@ -34,14 +32,14 @@ public class UVariable extends RTLeaf {
   }
 
   public UVariable(String representation, String originClass, String originTRule
-          ) {
+  ) {
     //this.type = "Object";
     this.representation = representation;
     this.originClass = originClass;
   }
 
   @Override
-  public String toString(){
+  public String toString() {
     return this.representation;
   }
 
@@ -80,5 +78,8 @@ public class UVariable extends RTLeaf {
     return true;
   }
 
-  
+  @Override
+  public void setType(String to) {
+    this.type = to;
+  }
 }

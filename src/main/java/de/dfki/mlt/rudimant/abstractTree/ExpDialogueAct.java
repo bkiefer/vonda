@@ -13,13 +13,13 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class ExpDialogueAct implements RudiTree, RTExpression{
+public class ExpDialogueAct implements RudiTree, RTExpression {
 
   // comment LITERAL_OR_GRAPH LPAR ( exp (COMMA exp)*)? RPAR comment
-
   String litGraph;
   List<RTExpression> exps;
   String rest;
+  String type;
 
   public ExpDialogueAct(String litGraph, String rest, List<RTExpression> exps) {
     this.litGraph = litGraph;
@@ -64,6 +64,11 @@ public class ExpDialogueAct implements RudiTree, RTExpression{
       return false;
     }
     return true;
+  }
+
+  @Override
+  public void setType(String to) {
+    this.type = to;
   }
 
 }

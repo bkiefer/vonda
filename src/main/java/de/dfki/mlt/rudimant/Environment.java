@@ -11,6 +11,7 @@ import java.util.Map;
 
 /**
  * represents a namespace (to be used by the memory=
+ *
  * @author Anna Welker
  */
 public class Environment {
@@ -19,7 +20,7 @@ public class Environment {
   private Map<String, String> variableOrigin;
   private HashSet<String> rdfs;
 
-  public Environment(){
+  public Environment() {
     this.variableToType = new HashMap<>();
     this.variableOrigin = new HashMap<>();
     this.rdfs = new HashSet<>();
@@ -32,32 +33,35 @@ public class Environment {
     return newEnv;
   }
 
-  public void put(String v, String t, boolean isRdf){
-    if (isRdf) rdfs.add(v);
+  public void put(String v, String t, boolean isRdf) {
+    if (isRdf) {
+      rdfs.add(v);
+    }
     this.variableToType.put(v, t);
   }
 
-  public void put(String v, String t, boolean isRdf, String o){
+  public void put(String v, String t, boolean isRdf, String o) {
     put(v, t, isRdf);
     this.variableOrigin.put(v, o);
   }
 
-  public boolean containsKey(String k){
+  public boolean containsKey(String k) {
     return this.variableToType.containsKey(k);
   }
 
-  public String get(String k){
+  public String get(String k) {
     return this.variableToType.get(k);
   }
 
-  /** May return null, either because variable does not exist or is not from
-   *  the top level, in which case the origin is not of our concern
+  /**
+   * May return null, either because variable does not exist or is not from the
+   * top level, in which case the origin is not of our concern
    */
-  public String getOrigin(String k){
+  public String getOrigin(String k) {
     return this.variableOrigin.get(k);
   }
 
-  public boolean isRdf(String variable){
+  public boolean isRdf(String variable) {
     return this.rdfs.contains(variable);
   }
 }

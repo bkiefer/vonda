@@ -318,11 +318,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 //    }
     if (ctx.getChildCount() == 5) { // exp of kind comment LPAR exp RPAR comment
       return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
-              this.visit(ctx.getChild(2)),
+              (RTExpression) this.visit(ctx.getChild(2)),
               (UCommentBlock) this.visit(ctx.getChild(4)));
     }
     return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
-            this.visit(ctx.getChild(1)),
+            (RTExpression) this.visit(ctx.getChild(1)),
             (UCommentBlock) this.visit(ctx.getChild(2)));
   }
 
@@ -357,11 +357,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     }
     if (ctx.getChildCount() == 5) { // exp of kind comment LPAR exp RPAR comment
       return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
-              this.visit(ctx.getChild(2)),
+              (RTExpression) this.visit(ctx.getChild(2)),
               (UCommentBlock) this.visit(ctx.getChild(4)));
     }
     return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
-            this.visit(ctx.getChild(1)),
+            (RTExpression) this.visit(ctx.getChild(1)),
             (UCommentBlock) this.visit(ctx.getChild(2)));
   }
 
@@ -747,9 +747,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
         elements.add((RTExpression) this.visit(ctx.getChild(i)));
         i += 2;
       }
-      return new StatListCreation(ctx.getChild(4).getText(), elements, 
-              currentClass, ctx.getChild(0).getText() + "<" +
-                      ctx.getChild(2).getText() + ">");
+      return new StatListCreation(ctx.getChild(4).getText(), elements,
+              currentClass, ctx.getChild(0).getText() + "<"
+              + ctx.getChild(2).getText() + ">");
     }
   }
 

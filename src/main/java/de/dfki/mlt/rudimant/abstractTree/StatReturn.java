@@ -24,8 +24,9 @@ public class StatReturn implements RTStatement, RudiTree {
   }
 
   /**
-   * give me the expression after 'return' as well as the String it is, so if this
-   * is a return to a rule I can transform accordingly
+   * give me the expression after 'return' as well as the String it is, so if
+   * this is a return to a rule I can transform accordingly
+   *
    * @param exp
    * @param lit
    */
@@ -68,5 +69,4 @@ public class StatReturn implements RTStatement, RudiTree {
     return true;
   }
 
-  
 }

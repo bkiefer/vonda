@@ -99,7 +99,7 @@ public class VGenerationVisitor implements RudiVisitor {
     }
 
     String function = "";
-    if(node.rdf){
+    if (node.rdf) {
       function = "RdfClass.isSubclassOf(";
     } else {
       function = "isSubsumed(";
@@ -156,13 +156,11 @@ public class VGenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-      {
-        if (mem.variableExists(parts[1])) {
+       if (mem.variableExists(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
-      }
     }
     out.append(")\")");
   }
@@ -477,24 +475,23 @@ public class VGenerationVisitor implements RudiVisitor {
       throw new RuntimeException(ex);
     } catch (FormatterException ex) {
       java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
-    }
-//    out.append(node.text + ".process(");
-//    Set<String> ncs = mem.getNeededClasses(node.name);
-//    if (ncs != null) {
-//      int i = 0;
-//      for (String c : ncs) {
-//        if (c.equals(out.className)) {
-//          c = "this";
-//        }
-//        if (i == 0) {
-//          out.append(c.toLowerCase());
-//        } else {
-//          out.append(", " + c.toLowerCase());
-//        }
-//        i++;
-//      }
-//    }
-//    out.append(");\n");
+    } //    out.append(node.text + ".process(");
+    //    Set<String> ncs = mem.getNeededClasses(node.name);
+    //    if (ncs != null) {
+    //      int i = 0;
+    //      for (String c : ncs) {
+    //        if (c.equals(out.className)) {
+    //          c = "this";
+    //        }
+    //        if (i == 0) {
+    //          out.append(c.toLowerCase());
+    //        } else {
+    //          out.append(", " + c.toLowerCase());
+    //        }
+    //        i++;
+    //      }
+    //    }
+    //    out.append(");\n");
     catch (TException ex) {
       throw new RuntimeException(ex);
     }

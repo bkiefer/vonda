@@ -8,8 +8,8 @@ package de.dfki.mlt.rudimant.abstractTree;
 import java.util.Objects;
 
 /**
- * this is a boolean expression; might also be a subsumes relation (but will
- * in sum always be a boolean)
+ * this is a boolean expression; might also be a subsumes relation (but will in
+ * sum always be a boolean)
  *
  * @author Anna Welker
  */
@@ -31,7 +31,7 @@ public class ExpBoolean implements RTExpression {
   // way of testing the existance of boolexp
   String isTrue = "";
   boolean testIsEmpty = false;
-  
+
   // tell me whether this is not really subsumes, but rdf isSubclassOf
   boolean rdf = false;
 
@@ -66,7 +66,7 @@ public class ExpBoolean implements RTExpression {
     v.visitNode(this);
   }
 
-    @Override
+  @Override
   public int hashCode() {
     int hash = 3;
     hash = 97 * hash + Objects.hashCode(this.fullexp);
@@ -89,5 +89,10 @@ public class ExpBoolean implements RTExpression {
       return false;
     }
     return true;
+  }
+
+  @Override
+  public void setType(String to) {
+    this.type = to;
   }
 }

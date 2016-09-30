@@ -16,6 +16,7 @@ import java.util.Objects;
 public class ExpLambda implements RudiTree, RTExpression {
 
   String exp;
+  String type;
 
   public ExpLambda(String exp) {
     this.exp = exp;
@@ -57,5 +58,8 @@ public class ExpLambda implements RudiTree, RTExpression {
     return true;
   }
 
-  
+  @Override
+  public void setType(String to) {
+    this.type = to;
+  }
 }

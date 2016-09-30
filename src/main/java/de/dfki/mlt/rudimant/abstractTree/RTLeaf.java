@@ -7,6 +7,7 @@ package de.dfki.mlt.rudimant.abstractTree;
 
 /**
  * the lowest, simplest nodes in the AbstractTree
+ *
  * @author Anna Welker
  */
 public abstract class RTLeaf implements RTExpression {
@@ -15,7 +16,6 @@ public abstract class RTLeaf implements RTExpression {
    * the leaf's type
    */
   String type = "Object";
-
 
   public abstract String getType();
 }

@@ -11,7 +11,7 @@ import java.util.Objects;
  *
  * @author anna
  */
-public class StatIf implements RTStatement, RudiTree{
+public class StatIf implements RTStatement, RudiTree {
 
   RTExpression condition;
   StatAbstractBlock statblockIf;
@@ -24,10 +24,11 @@ public class StatIf implements RTStatement, RudiTree{
 
   /**
    * if there is no else case, set statblockElse to null
+   *
    * @param conditionString
    * @param condition the condition
    * @param statblockIf the if block
-   * @param statblockElse  the else block if existing
+   * @param statblockElse the else block if existing
    * @param position
    */
   public StatIf(String conditionString, RTExpression condition, StatAbstractBlock statblockIf,
@@ -75,6 +76,5 @@ public class StatIf implements RTStatement, RudiTree{
     }
     return true;
   }
-
 
 }

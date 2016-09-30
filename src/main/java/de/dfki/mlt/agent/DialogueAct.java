@@ -12,5 +12,7 @@ public class DialogueAct {
     timeStamp = System.currentTimeMillis();
   }
 
-  public String toString() { return dag.toString(); }
+  public String toString() {
+    return dag.toString();
+  }
 }

@@ -10,13 +10,15 @@ import java.util.Objects;
 
 /**
  * represents an application of a function like in a.equals(b)
+ *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class ExpFuncOnObject implements RTExpression{
+public class ExpFuncOnObject implements RTExpression {
 
   RTExpression on;
   RTExpression funccall;
   String look;
+  String type;
 
   /**
    *
@@ -29,6 +31,7 @@ public class ExpFuncOnObject implements RTExpression{
     this.funccall = funccall;
     this.look = look;
   }
+
   @Override
   public String getType() {
     return this.funccall.getType();
@@ -68,4 +71,8 @@ public class ExpFuncOnObject implements RTExpression{
     return true;
   }
 
+  @Override
+  public void setType(String to) {
+    this.type = to;
+  }
 }

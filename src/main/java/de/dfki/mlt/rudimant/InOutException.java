@@ -8,10 +8,12 @@ package de.dfki.mlt.rudimant;
 import java.io.IOException;
 
 /**
- * to catch an ioexception, recatch and throw it without catching other runnables
+ * to catch an ioexception, recatch and throw it without catching other
+ * runnables
+ *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class InOutException extends RuntimeException{
+public class InOutException extends RuntimeException {
 
   InOutException(IOException ex) {
     super(ex);

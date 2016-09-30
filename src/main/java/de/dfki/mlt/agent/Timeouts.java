@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import de.dfki.mlt.agent.Agent.Proposal;
 
 public class Timeouts {
+
   private static final Logger logger = LoggerFactory.getLogger(Timeouts.class);
 
   private Map<String, MyTimer> pendingTimeouts = new HashMap<>();
@@ -21,6 +22,7 @@ public class Timeouts {
   private boolean timeoutOccured = false;
 
   private class MyTimer {
+
     Timer timer;
     long started;
   }

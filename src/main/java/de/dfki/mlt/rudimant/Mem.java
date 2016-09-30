@@ -40,7 +40,7 @@ public class Mem {
   private HashMap<String, HashSet<String>> neededClasses = new HashMap<>();
 
   // remember the toplevel rules and imports in the correct order
-  private Map<String,List<String>> rulesAndImports;
+  private Map<String, List<String>> rulesAndImports;
 
   public Mem() {
     environment = new ArrayDeque<>();
@@ -49,9 +49,10 @@ public class Mem {
   }
 
   /**
-   * enter a new (imported) class. please store the old values of getcurrentClass()
-   * and getCurrentRule in your visitor and use leaveClass() to give them back to the memory
-   * after the new class has been handled
+   * enter a new (imported) class. please store the old values of
+   * getcurrentClass() and getCurrentRule in your visitor and use leaveClass()
+   * to give them back to the memory after the new class has been handled
+   *
    * @param classname of the new class
    */
   public void enterClass(String classname) {
@@ -60,12 +61,13 @@ public class Mem {
     if (ruleNums.get(classname) == null) {
       this.ruleNums.put(classname, new HashMap<String, Integer>());
       this.neededClasses.put(classname, new HashSet<String>());
-    this.rulesAndImports.put(classname, new ArrayList<String>());
+      this.rulesAndImports.put(classname, new ArrayList<String>());
     }
   }
 
   /**
    * get the name of the current class
+   *
    * @return
    */
   public String getClassName() {
@@ -74,6 +76,7 @@ public class Mem {
 
   /**
    * get the name of the current rule
+   *
    * @return
    */
   public String getCurrentRule() {
@@ -158,7 +161,7 @@ public class Mem {
     return (current.containsKey(variable));
   }
 
-  public boolean isRdf(String variable){
+  public boolean isRdf(String variable) {
     return current.isRdf(variable);
   }
 
@@ -178,10 +181,9 @@ public class Mem {
    * @param variable a variable
    * @return the toplevel rule it came from
    *
-  public String getVariableOriginTRule(String variable) {
-    return variableOrigin.get(variable).get(1);
-  }*/
-
+   * public String getVariableOriginTRule(String variable) { return
+   * variableOrigin.get(variable).get(1); }
+   */
   /**
    * get the type of the given variable
    *
@@ -197,7 +199,7 @@ public class Mem {
    *
    * @return the position in memory where the environment is stored
    */
-  public void  enterEnvironment() {
+  public void enterEnvironment() {
     current = current == null ? new Environment() : current.deepCopy();
     environment.add(current);
     logger.trace("Enter level {}", environment.size());
@@ -212,6 +214,7 @@ public class Mem {
 
   /**
    * add the rule to the memory
+   *
    * @param rule
    * @param toplevel
    * @return the rule's number, to be used in bitwise if markers
@@ -229,23 +232,25 @@ public class Mem {
     this.neededClasses.put(rule, new HashSet<String>());
   }
 
-  public void addImport(String importName){
+  public void addImport(String importName) {
     String importClassName = importName.substring(0, 1).toUpperCase() + importName.substring(1);
-    this.rulesAndImports.get(this.curClass).add(importClassName +
-                    importName + " = new " + importClassName + "();\n"+ importName + ".process(");
+    this.rulesAndImports.get(this.curClass).add(importClassName
+            + importName + " = new " + importClassName + "();\n" + importName + ".process(");
   }
 
   /**
    * not only toplevel rules, but also import calls
+   *
    * @param classname
    * @return
    */
-  public List<String> getToplevelCalls(String classname){
+  public List<String> getToplevelCalls(String classname) {
     return this.rulesAndImports.get(this.curClass);
   }
 
   /**
    * return all toplevel rules contained in the given class
+   *
    * @param classname
    * @return
    */
@@ -260,7 +265,9 @@ public class Mem {
   }
 
   /**
-   * tell the memory to remember that the given rule/class needs an instance of the given class
+   * tell the memory to remember that the given rule/class needs an instance of
+   * the given class
+   *
    * @param rule a rule or class
    * @param ruleclass the class needed
    */

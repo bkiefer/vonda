@@ -9,13 +9,12 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- * type_spec VARIABLE LPAR
-    ( type_spec VARIABLE (COMMA type_spec VARIABLE)* )? RPAR SEMICOLON
- * = only to get the types of this function into memory
+ * type_spec VARIABLE LPAR ( type_spec VARIABLE (COMMA type_spec VARIABLE)* )?
+ * RPAR SEMICOLON = only to get the types of this function into memory
  *
  * @author Anna Welker
  */
-public class StatFunDef implements RTStatement, RudiTree{
+public class StatFunDef implements RTStatement, RudiTree {
 
   String funcname;
   String type;
@@ -24,7 +23,7 @@ public class StatFunDef implements RTStatement, RudiTree{
   String position;
 
   public StatFunDef(String type, String funcname, ArrayList<String> parameters,
-          ArrayList<String> parameterTypes, String position){
+          ArrayList<String> parameterTypes, String position) {
     this.type = type;
     this.funcname = funcname;
     this.position = position;
@@ -74,5 +73,4 @@ public class StatFunDef implements RTStatement, RudiTree{
     return true;
   }
 
-  
 }

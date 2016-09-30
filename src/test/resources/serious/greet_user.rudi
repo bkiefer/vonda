@@ -49,7 +49,7 @@ if (saidInSession(#Greeting(Meeting))
       if (user.getLiking.slot
           && saidInSession(#Request(Liking, theme=slot))
           // TODO find a nice way to express the disjunction (supertype?)
-          && ! saidInSession(#Somefirm(Liking, theme=^slot))) {
+          && ! saidInSession(#Answer(Liking, theme=^slot))) {
         // Nao says he also likes the hobby/color
         // TODO: Check whether Nao shares the hobby / likes the color.
 

@@ -1,6 +1,7 @@
 package de.dfki.mlt.agent.nlg;
 
 public class Pair<KEYTYPE, VALUETYPE> {
+
   public KEYTYPE first;
   public VALUETYPE second;
 
@@ -8,8 +9,8 @@ public class Pair<KEYTYPE, VALUETYPE> {
     first = theFirst;
     second = theSecond;
   }
-  
+
   public String toString() {
-    return "<"+first+"|"+second+">";
+    return "<" + first + "|" + second + ">";
   }
 }

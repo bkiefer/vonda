@@ -12,6 +12,8 @@ package de.dfki.mlt.rudimant.abstractTree;
  */
 public class UNull extends RTLeaf {
 
+  String type;
+
   @Override
   public String getType() {
     return "Object";   // for you can assign null to anything
@@ -22,4 +24,8 @@ public class UNull extends RTLeaf {
     v.visitNode(this);
   }
 
+  @Override
+  public void setType(String to) {
+    this.type = to;
+  }
 }
