@@ -661,11 +661,12 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append("\"" + node.representation + "\"");
     }
     // if the variable is not in the memory,
-    if (node.realOrigin != null) {
+    else if (node.realOrigin != null) {
       out.append(node.realOrigin.toLowerCase() + "." + node.representation + " ");
       return;
-    }
+    } else {
     out.append(node.representation + " ");
+    }
   }
 
   @Override
@@ -698,7 +699,6 @@ public class VGenerationVisitor implements RudiVisitor {
 //      return;
     }
     ExpBoolean bool = (ExpBoolean) bool_exp;
-    System.out.println("=========================================\n");
 
     // remembers how the expressions should be realized by rudimant
     LinkedHashMap<String, String> compiledLook = new LinkedHashMap<>();
@@ -707,7 +707,6 @@ public class VGenerationVisitor implements RudiVisitor {
     LinkedHashMap<String, String> realLook = new LinkedHashMap<>();
     condV.renewMap(rule, realLook, compiledLook, this.mem);
     condV.visitNode(bool);
-    System.out.println("---------------------------------------------");
     // now create a condition from those things
     //System.out.println(realLook.keySet().size());
     condV2.newMap(realLook.keySet().toArray(), compiledLook);
