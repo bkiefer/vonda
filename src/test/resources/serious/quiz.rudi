@@ -1,5 +1,5 @@
 process_rules_quiz:
-    if (activity == null || ! (activity instanceof Quiz)) //! wie letzte Regel: instanceof
+    if (activity == null || ! (activity <= Quiz)) //! wie letzte Regel: instanceOf
       return;
 
     Quiz quiz = (Quiz) activity;
@@ -155,7 +155,7 @@ process_rules_quiz_running:
     }
 
 process_rules_closing:
-    if (! (activity instanceof Closing)) return; //! Wieder instanceof
+    if (! (activity <= Closing)) return; //! Wieder <=
     Closing closing = (Closing)activity;
 
     if (! closing.has(CLOSING_PROPOSED)) {
