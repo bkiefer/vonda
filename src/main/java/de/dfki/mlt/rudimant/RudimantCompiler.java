@@ -66,6 +66,9 @@ public class RudimantCompiler {
     mem = parentCompiler.mem;
     _proxy = parentCompiler._proxy;
     parent = parentCompiler;
+    this.log = parentCompiler.log;
+    this.throwExceptions = parentCompiler.throwExceptions;
+    this.typeCheck = parentCompiler.typeCheck;
   }
 
   public RudimantCompiler(String wrapperClass, RdfProxy proxy) {

@@ -1,3 +1,5 @@
+DialogueAct activity;
+DialogueAct Introduction;
 
 introduction:
 if (! (activity <= Introduction)) return;
