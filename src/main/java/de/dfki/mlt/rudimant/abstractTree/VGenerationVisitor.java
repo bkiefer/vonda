@@ -156,13 +156,11 @@ public class VGenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-      {
-        if (mem.variableExists(parts[1])) {
+       if (mem.variableExists(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
-      }
     }
     out.append(")\")");
   }
@@ -216,7 +214,7 @@ public class VGenerationVisitor implements RudiVisitor {
             + mem.getClassName() + ".class);\n");
     out.append("// add to this set the name of all rules you want to be logged\n");
     out.append("private Set<String> rulesToLog = new HashSet<>();\n");
-    out.append("private Boolean wholeCondition = null;\n\n");
+//    out.append("private Boolean wholeCondition = null;\n\n");
     //        + "\tprivate int returnTo = 0;\n");
     // initialize all return markers
 //    for (String k : out.rm.getMarkers()) {
@@ -272,7 +270,9 @@ public class VGenerationVisitor implements RudiVisitor {
         if (ncs != null) {
           i = 0;
           for (String c : ncs) {
-            if (c.equals(out.className)) {
+            if (c.equals(out.className)
+                    || (c.substring(0, 1).toUpperCase()
+                    + c.substring(1)).equals(out.className)) {
               c = "this";
             }
             if (i == 0) {
