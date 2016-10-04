@@ -110,11 +110,14 @@ public class GrammarMain {
     //System.out.println("test");
     if (outputDirectory != null) {
       rc.process(dir, outputDirectory);
+      return;
     } else {
       if (configs.get("outputDirectory") != null) {
         rc.process(dir, new File((String) configs.get("outputDirectory")));
+        return;
       }
       rc.process(dir);
+      return;
     }
 //    shutdownServer();
   }

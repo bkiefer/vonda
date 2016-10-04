@@ -32,8 +32,8 @@ if (isMyLastDA(#Inform(AssessingPerformance))) {
     // aufzuteilen?
       DialogueAct close = #_dialogueAct(Meeting, theme="Quiz");
       stopQuiz(q, NaoAgent.this);
-      /*@ activity = newActivity(new Closing(NaoAgent.this)); @*/
-      closeSession((Closing) activity, close);
+      /*@ activity = newActivity(new Closing(NaoAgent.this));
+      closeSession((Closing) activity, close); @*/
     }
   }
 }
@@ -44,7 +44,8 @@ user_reads_question:
 // BK: braucht es auch nicht, das wird ein RdfProxy objekt, das sieht dann
 // sowieso ganz anders aus. Nur wie ist das mit dem Typ, siehe naechste
 // Anmerkung
-    Quiz quiz = (Quiz) activity;
+if(true){
+/*@   Quiz quiz = (Quiz) activity; @*/
 // BK TODO: hier stellt sich eher die Frage: Wie kann man RdfProxies um
 // eigene Methoden erweitern? Subklassieren von RdfProxy???
     Turn currentTurn = quiz.getCurrentTurn();
@@ -57,18 +58,19 @@ user_reads_question:
         addLastDA(#Inform(Answering, ^getAnswerArgs(q)));
       }
     }
-
+}
 // BK: siehe oben.
 robot_answers:
 //! wieder Casting // BK: siehe oben.
+if (true) {
     Quiz quiz = activity;
-    emitDA(#Inform(Answer, id=^Integer.toString(number + 1),
-                   ^("string"+Integer.toString(number + 1))=^answerString));
+//??    emitDA(#Inform(Answer, id=^Integer.toString(number + 1),
+//??                   ^("string"+Integer.toString(number + 1))=^answerString));
     quiz.status= "answer_given";
     Turn current = quiz.getCurrentTurn();
 /*@    current.put("AnswerCorrect", new Boolean(correct)); @*/
     lastDAprocessed();
-
+}
 //! newActivity: auch hier: verschieben?
 // BK: vielleicht ein Makro
 
@@ -81,18 +83,18 @@ if (user == null) {
   // Schluss
   return;
 }
-
 if (! currentSession) {
 /*@      currentSession = new Session(this); @*/
   currentSession.child = user;
   if (! activity) {
-    if (user.location != "Hospital")) {
+    if (user.location != "Hospital") {
 /*@          newActivity(new Introduction(this)); @*/
   } else {
     initQuiz();
   }
  }
 }
+
 
 //BK: wird viel mehr.
 process_timeouts:
@@ -133,7 +135,7 @@ if ((lastDA <= #AcceptRequest(Playing) || lastDA <= #Confirm(Playing))
   lastDAprocessed();
 }
 
-robots_accepts_game_reject:
+robot_accepts_game_reject:
 if ((lastDA <= #RejectRequest(Playing) || lastDA <= #Disconfirm(Playing))
     && activity && !(activity <= Quiz) && !(activity <= Closing)) {
   // OK, maybe next time
@@ -146,18 +148,19 @@ robot_accepts_role:
 if (lastDA <= #Request(AssigningRole)) { // BK subclass
   //  || lastDA <= #AcceptRequest(AssigningRole))
   //        || lastDA <= #RejectRequest(AssigningRole))) {
-  if (!activity || !(activity <= Quiz)) // TODO: clarification dialogue??
-    {
+  if (!activity || !(activity <= Quiz))
+    { // TODO: clarification dialogue??
       return;
     }
   String theme = lastDA.theme;
   String agent = lastDA.agent;
   if (null == theme) {
     agent = "user";
-  } else // turn agent around
+  } else { // turn agent around
     if (lastDA <= #RejectRequest(AssigningRole)) {
       agent = "user".equals(agent) ? "robot" : "user";
     }
+  }
   String currentAgent = mapAgentToUri(agent);
 
   // TODO check if theme matches current activity (e.g. quiz game)
@@ -165,8 +168,8 @@ if (lastDA <= #Request(AssigningRole)) { // BK subclass
   // BK: fishy, RdfProxy problem
   Turn t = quiz.newTurn();
   // BK: fishy, RdfProxy problem
-  t.setAsker(currentAgent,
-          (currentAgent.equals(I_ROBOT) ? (String) user.get("id") : I_ROBOT));
+  /*@ t.setAsker(currentAgent,
+          (currentAgent.equals(I_ROBOT) ? (String) user.get("id") : I_ROBOT)); @*/
   // THIS IS ONLY THE COMMUNICATION WITH THE QUIZ LOGIC
   // Todo: see above, not yet implemented, always accept
   if (true) {
@@ -181,17 +184,19 @@ if (lastDA <= #Request(AssigningRole)) { // BK subclass
   lastDAprocessed();
 }
 
+// ! hier kommt: waitingForResponse; hat returns
+
 // The child has read question and answers, now the robot has to give an
 // answer
 robot_gives_answer:
 if (lastDA <= #Inform(Answering)) {
   // BK: solche timeouts fliegen raus.
-  newTimeout("RobotSeeksAnswer", 600) {
+  timeout("RobotSeeksAnswer", 600) {
     //Quiz quiz = (Quiz) activity;
     quiz = activity;
     Turn currentTurn = quiz.getCurrentTurn();
     // siehe oben
-    QuizQuestion q = (QuizQuestion) currentTurn.get("QuestionId");
+    /*@ QuizQuestion q = (QuizQuestion) currentTurn.get("QuestionId"); @*/
     int correct = q.getWhichCorrect();
     // Answers were read by child, give an answer
     emitDA(#Stalling(Answering));
@@ -209,5 +214,3 @@ if (lastDA <= #Inform(Answering)) {
     lastDAprocessed();
   }
 }
-
-//! hier kommt: waitingForResponse; hat returns

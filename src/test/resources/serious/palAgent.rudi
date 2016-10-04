@@ -20,3 +20,4 @@ boolean waitingForResponse();
 */
 
 import greet_user;
+import game_logic;

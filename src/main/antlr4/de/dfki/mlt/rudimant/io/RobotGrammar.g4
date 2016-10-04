@@ -63,7 +63,7 @@ comment
   ;
 
 if_statement
-  : IF LPAR boolean_exp RPAR statement (ELSE statement)?
+  : IF LPAR boolean_exp RPAR (statement_block | statement) (ELSE (statement_block | statement))?
   ;
 
 if_exp
@@ -107,12 +107,12 @@ function_call
   ;
 
 funccall_on_object
-  : variable DOT function_call
+  : (variable | string_expression) DOT function_call
   ;
 
 field_access
   : VARIABLE
-    ( ( DOT VARIABLE ) )+
+    ( ( DOT (VARIABLE | function_call)) )+
   ;
 
 variable
