@@ -76,12 +76,12 @@ public class SeriousTest {
   public void tearDown() {
   }
 
-    @Test
-  public void TestAllRules() throws Exception {
-    String[] strings = new String[]{"src/test/resources/serious/palAgent.rudi",
-      "rudi.config.yml", "o=target/test/testfiles", "-d"};
-    GrammarMain.main(strings);
-  }
+//    @Test
+//  public void TestAllRules() throws Exception {
+//    String[] strings = new String[]{"src/test/resources/serious/palAgent.rudi",
+//      "rudi.config.yml", "o=target/test/testfiles", "-d"};
+//    GrammarMain.main(strings);
+//  }
   
 //  @Test
 //  public void TestGreetUser() throws Exception {
@@ -89,6 +89,14 @@ public class SeriousTest {
 //      "rudi.config.yml", "o=target/test/testfiles", "-d"};
 //    GrammarMain.main(strings);
 //  }
+  
+  @Test
+  public void TestGameLogic() throws Exception {
+      String[] strings = new String[]{"src/test/resources/serious/game_logic.rudi",
+      "rudi.config.yml", "o=target/test/testfiles", "-d"};
+    GrammarMain.main(strings);
+  }
+  
 //
 //  @Test
 //  public void FirstRuleTest() throws Exception {

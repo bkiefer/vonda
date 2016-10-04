@@ -91,6 +91,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     for (int i = 0; i < ctx.getChildCount(); i++) {
       curDepth = 0;
       rules.add(this.visit(ctx.getChild(i)));
+//      System.out.println("============================================\n" + 
+//              ctx.getChild(i).getText());
+//      System.out.println("next one ");
     }
     return new GrammarFile(rules);
   }
@@ -146,6 +149,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
     // comment label comment if_statement
+    System.out.println("hi, i found rule " + ctx.getChild(1).getText());
     String ruleName = ctx.getChild(1).getText().substring(0, ctx.getChild(1).getText().length() - 1);
     boolean toplevel = false;
     if (curDepth == 0) {
