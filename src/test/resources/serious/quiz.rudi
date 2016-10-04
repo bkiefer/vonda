@@ -1,0 +1,169 @@
+process_rules_quiz:
+    if (activity == null || ! (activity instanceof Quiz)) //! wie letzte Regel: instanceof
+      return;
+
+    Quiz quiz = (Quiz) activity;
+    logger.info("Quiz status: {}, Asker: {}", quiz.get(QUIZ_STATUS),
+        quiz.getCurrentAsker());
+
+    if (quiz.isEqual(QUIZ_STATUS, "started")) {
+      logger.info("Quiz started {}", System.currentTimeMillis());
+      int lastInfo = lastOccurenceOfMyDA(#Inform("Instructing", "theme", "Quiz"));
+      if (! user.hasPlayedQuiz() && lastInfo < 0) {
+        propose("inform_gamerules") {
+            emitDA(#Inform("Instructing", "theme", "Quiz"));
+          }
+      }
+
+      if ((user.hasPlayedQuiz()
+           || lastOccurenceOfMyDA(#Inform("Instructing", "theme", "Quiz")) >= 0)
+          && quiz.getCurrentAsker() == null
+          && ! waitingForResponse()
+          ) {
+        propose("ask_for_user_starts") {
+            emitDA(#Request("AssigningRole", "theme", "Quiz", "agent", "user"));
+            // TODO: ADD: RE-ASK WHEN NO REACTION: MAYBE DO IT MORE GENERAL
+            // timeouts.newTimeout("ask_for_role", 10000);
+          }
+        propose("ask_for_robot_starts") {
+            emitDA(#Request("AssigningRole", "theme", "Quiz", "agent", "robot"));
+            // TODO: ADD: RE-ASK WHEN NO REACTION: MAYBE DO IT MORE GENERAL
+            // timeouts.newTimeout("ask_for_role", 10000);
+          }
+      }
+    }
+
+    if (quiz.oneOf(QUIZ_STATUS,
+        "running", "wait_for_question", "wait_for_question_read",
+        "wait_for_tablet", "wait_for_answer", "answer_given",
+        "wait_for_continue")) {
+      processRulesQuizRunning(quiz);
+    }
+
+process_rules_quiz_running:
+    // Question asked already??
+    if (! quiz.getCurrentTurn().has(TURN_QUESTIONID)
+        && ! quiz.isEqual(QUIZ_STATUS, "wait_for_question")
+        && ! quiz.isEqual(QUIZ_STATUS, "wait_for_continue")) {
+
+      logger.info("REQUEST NEW QUESTION, THE CURRENT ASKER IS {}, THE CURRENT RESPONDER IS {}",
+          quiz.getCurrentAsker(),
+          quiz.getCurrentAsker().equals(I_ROBOT) ? user.get("id") : I_ROBOT);
+
+      // retrieve question/answer from quizdb
+      requestNextQuestion(this);
+      quiz.put(QUIZ_STATUS, "wait_for_question");
+      // TODO: ADD A CONTINOUS TIMER THAT RETRIES SEVERAL TIMES IF NO QUESTION
+      // COMES, AND AFTER TWO RETRIES COMES BACK TO THE USER AND TELLS HER/HIM
+      // THERE ARE TECHNICAL PROBLEMS
+
+    } else if (quiz.isEqual(QUIZ_STATUS, "wait_for_tablet")) {
+      // CurrentAsker has the correct value now, a question arrived
+      if (! quiz.isEqual(QUIZ_TABLETORIENTATION,
+          quiz.getCurrentAsker().equals(I_ROBOT) ? "robot" : "child" )) {
+        if (! isMyLastDA(#Request("Turning"))) {
+          propose("request_turn_tablet") {
+              emitDA(#Request("Turning", "theme", "Tablet"));
+              // maybe introduce a timeout to ask again
+            }
+        }
+      } else {
+        // tablet orientation is OK, question will be posed by robot or child
+        if (quiz.getCurrentAsker().equals(I_ROBOT)) {
+          // The robot reads the question and answers
+          propose("give_next_question") {
+              Turn current = quiz.getCurrentTurn();
+              QuizQuestion q = (QuizQuestion) current.get(Turn.TURN_QUESTIONID);
+              String[] answerArgs = new String[2 * q.getAnswers().size()];
+              int i = 0;
+              for (String answer : q.getAnswers()) {
+                answerArgs[i] = "string" + (1 + i/2);
+                answerArgs[i+1] = answer;
+                i += 2;
+              }
+              // Generate next question / answers
+              // This needs to know the number of questions that was asked
+              // by this agent, done by infoState
+              emitDA(#Inform("Asking",
+                  "string", q.getQuestionText(),
+                  "id", Integer.toString(1 + getNumberOfQuestionsCurrentAsker())));
+              emitDA(#Inform("Answering", answerArgs));
+
+              // turn tablet
+              emitDA(#Inform("Turning", "theme", "Tablet", "manner", "silent"));
+
+              // change status
+              quiz.put(QUIZ_STATUS, "wait_for_answer");
+            }
+        } else {
+          // The user is the asker, wait for the user to finish reading
+          // the question and answers, if we have a real robot
+          quiz.put(QUIZ_STATUS, "wait_for_question_read");
+        }
+      }
+    } else if (quiz.isEqual(QUIZ_STATUS, "answer_given")) {
+      // TODO: IF THE ROBOT SHOULD SAY WHAT THE RIGHT SOLUTION WAS:
+      //  @raw:Inform(GivingSolution ^ <string3>"this is the solution" ^ <id>3)
+
+      Turn current = quiz.getCurrentTurn();
+
+//! Wieder das Problem: sollte rudimant Casten vertragen? Würde wahrscheinlich Probleme im entstehenden Javacode vorbeugen, wenn rudimant nicht zu Object greifen muss weil es durch das Casten ja Hinweise kriegt
+      Boolean correct = (Boolean) current.get(TURN_ANSWERCORRECT);
+      String responder = ((String) current.get(TURN_RESPONDER)).equals(I_ROBOT)
+          ? "robot" : "user";
+      String proposal = "feedback_" + (correct ? "correct_" : "wrong_")
+          + responder;
+      // give feedback to my or the user's success
+      propose(proposal) {
+          if (responder.equals("robot")) {
+//! Hier wieder das Problem: String concatenation geht nicht mehr wenn wir #Confirm schreiben wollen
+//! oder: das als archaische Herangehensweise erlauben? Dazu muss rudimant emitDA erkennen und reagieren, je nachdem, ob da " oder # kommt
+            emitDA("Allo" + (correct ? "Positive" : "Negative"),
+                "BeingSuccessful", "theme", "Quiz");
+          } else {
+            emitDA((correct ? "Confirm" : "Disconfirm"), "BeingCorrect",
+                "theme", "Quiz", "agent", "user");
+          }
+        }
+
+      // since currently one proposal is always taken, we just propose also
+      // a continue_quiz
+      // TODO: adapt once that changes
+
+      quiz.put(QUIZ_STATUS, "wait_for_continue");
+    }
+
+    if (quiz.isEqual(QUIZ_STATUS, "wait_for_continue")) {
+      propose("continue_quiz") {
+          Turn last = quiz.getCurrentTurn();
+          Turn t = quiz.newTurn();
+          // Switch roles after each turn
+          t.setAsker((String)last.get(TURN_RESPONDER),
+              (String)last.get(TURN_ASKER));
+          quiz.put(QUIZ_STATUS, "running");
+        }
+
+      propose("quiz_game_ends_max_time") {
+          emitDA(#provide("playStop", "Reason", "technical"));
+          activity = newActivity(new Closing(NaoAgent.this));
+        }
+
+      propose("quiz_game_ends_max_rounds") {
+          emitDA(#provide("playStop", "Reason", "time"));
+          activity = new Closing(NaoAgent.this);
+        }
+    }
+
+process_rules_closing:
+    if (! (activity instanceof Closing)) return; //! Wieder instanceof
+    Closing closing = (Closing)activity;
+
+    if (! closing.has(CLOSING_PROPOSED)) {
+      closing.put(CLOSING_PROPOSED, "null");
+      propose("closing") {
+          closing.put(CLOSING_PROPOSED, emitDA(#salutation("closing")));
+          user.addToList(CHILD_SESSIONS, currentSession);
+          reset();
+        }
+    }
+
