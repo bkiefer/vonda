@@ -37,7 +37,7 @@ label
 
 
 statement
-  :
+  : comment
     ( exp SEMICOLON
     | list_creation
     | statement_block
