@@ -340,7 +340,9 @@ public class VTestTypeVisitor implements RudiVisitor {
       Logger.getLogger(UFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
     }
     for (int i = 1; i < node.representation.size(); i++) {
-      if (!mem.variableExists(node.representation.get(i))) {
+      if (node.representation.get(i).contains("(")){
+        continue;
+      } else if (!mem.variableExists(node.representation.get(i))) {
         node.representation.set(i, "\"" + node.representation.get(i) + "\"");
       }
     }

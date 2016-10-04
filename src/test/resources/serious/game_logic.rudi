@@ -201,7 +201,7 @@ if (lastDA <= #Inform(Answering)) {
     // Answers were read by child, give an answer
     emitDA(#Stalling(Answering));
     propose("give_correct_answer") {
-      robotAnswers(q.getAnswers().get(correct), correct, true);
+   /*@   robotAnswers(q.getAnswers().get(correct), correct, true); @*/
       // maybe invalidate the lastDAs, also below
     }
 
@@ -209,7 +209,7 @@ if (lastDA <= #Inform(Answering)) {
       int number = 0;
       while ((number = random.nextInt(q.getAnswersSize())) == correct) {
       }
-      robotAnswers(q.getAnswers().get(number), number, false);
+   /*@      robotAnswers(q.getAnswers().get(number), number, false); @*/
     }
     lastDAprocessed();
   }

@@ -149,7 +149,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
     // comment label comment if_statement
-    System.out.println("hi, i found rule " + ctx.getChild(1).getText());
+//    System.out.println("hi, i found rule " + ctx.getChild(1).getText());
     String ruleName = ctx.getChild(1).getText().substring(0, ctx.getChild(1).getText().length() - 1);
     boolean toplevel = false;
     if (curDepth == 0) {
