@@ -1,8 +1,3 @@
-Activity activity;
-Child user;
-Introduction intro;
-Session currentSession;
-
 
 assess_performance:
 if (! (myLastDA <= #Inform(AssessingPerformance))

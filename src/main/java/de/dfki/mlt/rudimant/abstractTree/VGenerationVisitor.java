@@ -261,9 +261,9 @@ public class VGenerationVisitor implements RudiVisitor {
     int i = 0;
     for (String n : mem.getNeededClasses(out.className)) {
       if (i == 0) {
-        out.append(n + " " + n.toLowerCase());
+        out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " " + n);
       } else {
-        out.append(", " + n + " " + n.toLowerCase());
+        out.append(", " + n.substring(0, 1).toUpperCase() + n.substring(1) + " " + n);
       }
       i++;
     }
@@ -341,8 +341,7 @@ public class VGenerationVisitor implements RudiVisitor {
 //    }
     out.append("}\n");
     mem.leaveClass(oldname, oldrule, oldTrule);
-    //out.flush();
-    // mem.leaveEnvironment();
+    mem.leaveEnvironment();
   }
 
   @Override
@@ -355,9 +354,9 @@ public class VGenerationVisitor implements RudiVisitor {
       int i = 0;
       for (String n : mem.getNeededClasses(node.label)) {
         if (i == 0) {
-          out.append(n + " " + n.toLowerCase());
+          out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " " + n);
         } else {
-          out.append(", " + n + " " + n.toLowerCase());
+          out.append(", " + n.substring(0, 1).toUpperCase() + n.substring(1) + " " + n);
         }
         i++;
       }

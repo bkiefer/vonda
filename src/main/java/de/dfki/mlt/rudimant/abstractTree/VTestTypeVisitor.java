@@ -154,17 +154,22 @@ public class VTestTypeVisitor implements RudiVisitor {
         mem.needsClass(rudi.className, n);
       }
     }
-    // do not leave the environment, we are still in it!
-    //mem.leaveEnvironment();
+    // do not leave the environment, we are still in it! (but remember to leave it
+    // once the generation is done)
+//    mem.leaveEnvironment();
     mem.leaveClass(oldname, oldrule, oldTrule);
   }
 
   @Override
   public void visitNode(GrammarRule node) {
     mem.addRule(node.label, node.toplevel);
-//    mem.enterEnvironment();
+    if (node.toplevel) {
+      mem.enterEnvironment();
+    }
     node.ifstat.visit(this);
-//    mem.leaveEnvironment();
+    if (node.toplevel) {
+      mem.leaveEnvironment();
+    }
   }
 
   @Override
@@ -340,7 +345,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       Logger.getLogger(UFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
     }
     for (int i = 1; i < node.representation.size(); i++) {
-      if (node.representation.get(i).contains("(")){
+      if (node.representation.get(i).contains("(")) {
         continue;
       } else if (!mem.variableExists(node.representation.get(i))) {
         node.representation.set(i, "\"" + node.representation.get(i) + "\"");

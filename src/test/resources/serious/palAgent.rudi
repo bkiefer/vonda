@@ -3,6 +3,8 @@ Activity activity;
 Child user;
 Introduction intro;
 Session currentSession;
+DialogueAct activity;
+DialogueAct Introduction;
 
 DialogueAct myLastDA();
 DialogueAct emitDA(DialogueAct da);
