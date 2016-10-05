@@ -98,8 +98,8 @@ loop_propose_statement
   ;*/
 
 loop_if_statement
-  : IF LPAR boolean_exp RPAR (statement | (CONTINUE | BREAK) SEMICOLON)
-    ( ELSE (statement | (CONTINUE | BREAK) SEMICOLON) )?
+  : IF LPAR boolean_exp RPAR (statement_block | statement | (CONTINUE | BREAK) SEMICOLON)
+    ( ELSE (statement_block | statement | (CONTINUE | BREAK) SEMICOLON) )?
   ;
 
 function_call

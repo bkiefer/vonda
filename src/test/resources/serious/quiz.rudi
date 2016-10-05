@@ -1,8 +1,10 @@
 process_rules_quiz:
+    if(true){
     if (activity == null || ! (activity <= Quiz)) //! wie letzte Regel: instanceOf
       return;
 
-    Quiz quiz = (Quiz) activity;
+    //Quiz quiz = (Quiz) activity;
+    Quiz quiz = activity;
     logger.info("Quiz status: {}, Asker: {}", quiz.get(QUIZ_STATUS),
         quiz.getCurrentAsker());
 
@@ -39,10 +41,11 @@ process_rules_quiz:
         "wait_for_continue")) {
       processRulesQuizRunning(quiz);
     }
+  }
 
 process_rules_quiz_running:
     // Question asked already??
-    if (! quiz.getCurrentTurn().has(TURN_QUESTIONID)
+    if (! quiz.currentTurn.has(TURN_QUESTIONID)
         && ! quiz.isEqual(QUIZ_STATUS, "wait_for_question")
         && ! quiz.isEqual(QUIZ_STATUS, "wait_for_continue")) {
 
@@ -57,7 +60,8 @@ process_rules_quiz_running:
       // COMES, AND AFTER TWO RETRIES COMES BACK TO THE USER AND TELLS HER/HIM
       // THERE ARE TECHNICAL PROBLEMS
 
-    } else if (quiz.isEqual(QUIZ_STATUS, "wait_for_tablet")) {
+    } else {
+     if (quiz.isEqual(QUIZ_STATUS, "wait_for_tablet")) {
       // CurrentAsker has the correct value now, a question arrived
       if (! quiz.isEqual(QUIZ_TABLETORIENTATION,
           quiz.getCurrentAsker().equals(I_ROBOT) ? "robot" : "child" )) {
@@ -72,7 +76,7 @@ process_rules_quiz_running:
         if (quiz.getCurrentAsker().equals(I_ROBOT)) {
           // The robot reads the question and answers
           propose("give_next_question") {
-              Turn current = quiz.getCurrentTurn();
+              Turn current = quiz.currentTurn;
               QuizQuestion q = (QuizQuestion) current.get(Turn.TURN_QUESTIONID);
               String[] answerArgs = new String[2 * q.getAnswers().size()];
               int i = 0;
@@ -101,11 +105,12 @@ process_rules_quiz_running:
           quiz.put(QUIZ_STATUS, "wait_for_question_read");
         }
       }
-    } else if (quiz.isEqual(QUIZ_STATUS, "answer_given")) {
+    } else {
+     if (quiz.isEqual(QUIZ_STATUS, "answer_given")) {
       // TODO: IF THE ROBOT SHOULD SAY WHAT THE RIGHT SOLUTION WAS:
       //  @raw:Inform(GivingSolution ^ <string3>"this is the solution" ^ <id>3)
 
-      Turn current = quiz.getCurrentTurn();
+      Turn current = quiz.currentTurn;
 
 //! Wieder das Problem: sollte rudimant Casten vertragen? Würde wahrscheinlich Probleme im entstehenden Javacode vorbeugen, wenn rudimant nicht zu Object greifen muss weil es durch das Casten ja Hinweise kriegt
       Boolean correct = (Boolean) current.get(TURN_ANSWERCORRECT);
@@ -132,10 +137,11 @@ process_rules_quiz_running:
 
       quiz.put(QUIZ_STATUS, "wait_for_continue");
     }
-
+   }
+  }
     if (quiz.isEqual(QUIZ_STATUS, "wait_for_continue")) {
       propose("continue_quiz") {
-          Turn last = quiz.getCurrentTurn();
+          Turn last = quiz.currentTurn;
           Turn t = quiz.newTurn();
           // Switch roles after each turn
           t.setAsker((String)last.get(TURN_RESPONDER),
