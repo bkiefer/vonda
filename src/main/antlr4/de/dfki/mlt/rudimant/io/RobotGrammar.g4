@@ -63,7 +63,7 @@ comment
   ;
 
 if_statement
-  : IF LPAR boolean_exp RPAR (statement_block | statement) (ELSE (statement_block | statement))?
+  : IF LPAR boolean_exp RPAR (statement) (ELSE (statement))?
   ;
 
 if_exp
@@ -98,8 +98,8 @@ loop_propose_statement
   ;*/
 
 loop_if_statement
-  : IF LPAR boolean_exp RPAR (statement_block | statement | (CONTINUE | BREAK) SEMICOLON)
-    ( ELSE (statement_block | statement | (CONTINUE | BREAK) SEMICOLON) )?
+  : IF LPAR boolean_exp RPAR (statement | (CONTINUE | BREAK) SEMICOLON)
+    ( ELSE (statement | (CONTINUE | BREAK) SEMICOLON) )?
   ;
 
 function_call
@@ -107,7 +107,7 @@ function_call
   ;
 
 funccall_on_object
-  : (variable | string_expression) DOT function_call
+  : (variable | LPAR exp RPAR) DOT function_call
   ;
 
 field_access
@@ -125,7 +125,7 @@ variable
 exp
   : comment
   (LPAR exp RPAR
-    | variable
+  | variable
   | field_access
   | funccall_on_object
   | assignment
@@ -140,6 +140,7 @@ exp
     | NULL
     )
   | boolean_exp
+  | string_expression
   )
   comment
   ;
@@ -147,7 +148,7 @@ exp
 simple_exp
   : comment
   (LPAR exp RPAR
-    | variable
+  | variable
   | arithmetic
   | function_call
   | literal_or_graph_exp
@@ -205,14 +206,16 @@ propose_block
   ;*/
 
 string_expression
-  : ( ( STRING | variable )
-    | field_access
-    )
-    ( PLUS
-      ( ( STRING | variable )
-      | field_access
-      )
-    )*
+  : simple_exp
+    ( PLUS exp)*
+  //| ( ( STRING | variable )
+  //  | field_access | string_expression
+  //  )
+  //  ( PLUS
+  //    ( ( STRING | variable )
+  //    | field_access | string_expression
+  //    )
+  //  )*
   ;
 
 propose_arg

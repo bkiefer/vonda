@@ -45,6 +45,7 @@ process_rules_quiz:
 
 process_rules_quiz_running:
     // Question asked already??
+if (true){
     if (! quiz.currentTurn.has(TURN_QUESTIONID)
         && ! quiz.isEqual(QUIZ_STATUS, "wait_for_question")
         && ! quiz.isEqual(QUIZ_STATUS, "wait_for_continue")) {
@@ -77,12 +78,14 @@ process_rules_quiz_running:
           // The robot reads the question and answers
           propose("give_next_question") {
               Turn current = quiz.currentTurn;
-              QuizQuestion q = (QuizQuestion) current.get(Turn.TURN_QUESTIONID);
-              String[] answerArgs = new String[2 * q.getAnswers().size()];
+              /*@ QuizQuestion q = (QuizQuestion) current.get(Turn.TURN_QUESTIONID); @*/
+              QuizQuestion q;
+              String[] answerArgs;
+              /*@ String[] answerArgs = new String[2 * q.getAnswers().size()]; @*/
               int i = 0;
               for (String answer : q.getAnswers()) {
-                answerArgs[i] = "string" + (1 + i/2);
-                answerArgs[i+1] = answer;
+              /*@  answerArgs[i] = "string" + (1 + i/2); @*/
+              /*@  answerArgs[i+1] = answer; @*/
                 i += 2;
               }
               // Generate next question / answers
@@ -113,9 +116,11 @@ process_rules_quiz_running:
       Turn current = quiz.currentTurn;
 
 //! Wieder das Problem: sollte rudimant Casten vertragen? Würde wahrscheinlich Probleme im entstehenden Javacode vorbeugen, wenn rudimant nicht zu Object greifen muss weil es durch das Casten ja Hinweise kriegt
-      Boolean correct = (Boolean) current.get(TURN_ANSWERCORRECT);
-      String responder = ((String) current.get(TURN_RESPONDER)).equals(I_ROBOT)
-          ? "robot" : "user";
+      /*@ Boolean correct = (Boolean) current.get(TURN_ANSWERCORRECT); @*/
+      boolean correct;
+      /*@ String responder = ((String) current.get(TURN_RESPONDER)).equals
+              String[] answerArgs(I_ROBOT)
+          ? "robot" : "user"; @*/
       String proposal = "feedback_" + (correct ? "correct_" : "wrong_")
           + responder;
       // give feedback to my or the user's success
@@ -144,25 +149,28 @@ process_rules_quiz_running:
           Turn last = quiz.currentTurn;
           Turn t = quiz.newTurn();
           // Switch roles after each turn
-          t.setAsker((String)last.get(TURN_RESPONDER),
-              (String)last.get(TURN_ASKER));
+          /*@ t.setAsker((String)last.get(TURN_RESPONDER),
+              (String)last.get(TURN_ASKER)); @*/
           quiz.put(QUIZ_STATUS, "running");
         }
 
       propose("quiz_game_ends_max_time") {
           emitDA(#provide("playStop", "Reason", "technical"));
-          activity = newActivity(new Closing(NaoAgent.this));
+          /*@ activity = newActivity(new Closing(NaoAgent.this)); @*/
         }
 
       propose("quiz_game_ends_max_rounds") {
           emitDA(#provide("playStop", "Reason", "time"));
-          activity = new Closing(NaoAgent.this);
+          /*@ activity = new Closing(NaoAgent.this); @*/
         }
     }
+}
 
 process_rules_closing:
-    if (! (activity <= Closing)) return; //! Wieder <=
-    Closing closing = (Closing)activity;
+  if (true){
+    if (! (activity <= Closing)) return;
+    Closing closing;
+    /*@ Closing closing = (Closing)activity; @*/
 
     if (! closing.has(CLOSING_PROPOSED)) {
       closing.put(CLOSING_PROPOSED, "null");
@@ -172,4 +180,4 @@ process_rules_closing:
           reset();
         }
     }
-
+  }
