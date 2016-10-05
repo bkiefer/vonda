@@ -14,7 +14,8 @@ grammar RobotGrammar;
 grammar_file
   : imports*
     (comment
-    (grammar_rule | method_declaration | statement | LBRACE statement RBRACE | ANNOTATION))*
+    (grammar_rule | method_declaration | statement 
+    | LBRACE statement RBRACE | ANNOTATION | imports))*
     comment
   ;
 
@@ -44,7 +45,6 @@ statement
     | grammar_rule
     | set_operation SEMICOLON
     | return_statement
-    | imports
     | propose_statement
     | timeout_statement
     | if_statement
@@ -107,7 +107,7 @@ function_call
   ;
 
 funccall_on_object
-  : (variable | LPAR exp RPAR) DOT function_call
+  : (variable | STRING | LPAR exp RPAR) DOT function_call
   ;
 
 field_access

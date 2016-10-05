@@ -13,6 +13,7 @@ void introduceDADelay(int d);
 int receivedInSession(DialogueAct da);
 // void propose(String s, Proposal p);
 boolean waitingForResponse();
+int lastOccurenceOfMyDA(DialogueAct da);
 
 /*
 ? intro.has(INTRODUCTION_GAMEPROPOSED)

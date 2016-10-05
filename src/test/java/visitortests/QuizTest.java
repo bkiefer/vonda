@@ -77,7 +77,7 @@ public class QuizTest {
   }
 
     @Test
-  public void TestAllRules() throws Exception {
+  public void TestQuiz() throws Exception {
     String[] strings = new String[]{"src/test/resources/serious/quiz.rudi",
       "rudi.config.yml", "o=target/test/testfiles", "-d"};
     GrammarMain.main(strings);

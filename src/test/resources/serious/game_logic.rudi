@@ -76,6 +76,7 @@ if (true) {
 // BK: vielleicht ein Makro
 
 process_rules:
+if (true){
 if (user == null) {
   //! rudimant kann return, aber wahrscheinlich ist das hier trotzdem
   //! Quatsch!
@@ -88,14 +89,14 @@ if (! currentSession) {
 /*@      currentSession = new Session(this); @*/
   currentSession.child = user;
   if (! activity) {
-    if (user.location != "Hospital") {
+    if ("Hospital".equals(user.location)) {
 /*@          newActivity(new Introduction(this)); @*/
   } else {
     initQuiz();
   }
  }
 }
-
+}
 
 //BK: wird viel mehr.
 process_timeouts:

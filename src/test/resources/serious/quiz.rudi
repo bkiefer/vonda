@@ -1,3 +1,18 @@
+Activity activity;
+Child user;
+Introduction intro;
+Session currentSession;
+DialogueAct activity;
+DialogueAct Introduction;
+DialogueAct myLastDA();
+DialogueAct emitDA(DialogueAct da);
+int saidInSession(DialogueAct da);
+void introduceDADelay(int d);
+int receivedInSession(DialogueAct da);
+// void propose(String s, Proposal p);
+boolean waitingForResponse();
+int lastOccurenceOfMyDA(DialogueAct da);
+
 process_rules_quiz:
     if(true){
     if (activity == null || ! (activity <= Quiz)) //! wie letzte Regel: instanceOf
@@ -6,20 +21,21 @@ process_rules_quiz:
     //Quiz quiz = (Quiz) activity;
     Quiz quiz = activity;
     logger.info("Quiz status: {}, Asker: {}", quiz.get(QUIZ_STATUS),
-        quiz.getCurrentAsker());
+        quiz.currentAsker);
 
-    if (quiz.isEqual(QUIZ_STATUS, "started")) {
+    // if (quiz.isEqual(QUIZ_STATUS, "started")) {
+    if ("started".equals(quiz.status)) {
       logger.info("Quiz started {}", System.currentTimeMillis());
       int lastInfo = lastOccurenceOfMyDA(#Inform("Instructing", "theme", "Quiz"));
-      if (! user.hasPlayedQuiz() && lastInfo < 0) {
+      if (! user.hasPlayedQuiz && lastInfo < 0) {
         propose("inform_gamerules") {
             emitDA(#Inform("Instructing", "theme", "Quiz"));
           }
       }
 
-      if ((user.hasPlayedQuiz()
+      if ((user.hasPlayedQuiz
            || lastOccurenceOfMyDA(#Inform("Instructing", "theme", "Quiz")) >= 0)
-          && quiz.getCurrentAsker() == null
+          && quiz.currentAsker == null
           && ! waitingForResponse()
           ) {
         propose("ask_for_user_starts") {
@@ -35,10 +51,14 @@ process_rules_quiz:
       }
     }
 
-    if (quiz.oneOf(QUIZ_STATUS,
+    /* if (quiz.oneOf(QUIZ_STATUS,
         "running", "wait_for_question", "wait_for_question_read",
         "wait_for_tablet", "wait_for_answer", "answer_given",
-        "wait_for_continue")) {
+        "wait_for_continue")) { */
+    possibleStates = {"running", "wait_for_question", "wait_for_question_read",
+        "wait_for_tablet", "wait_for_answer", "answer_given",
+        "wait_for_continue"};
+    if (possibleStates.contains(quiz.status)) {
       processRulesQuizRunning(quiz);
     }
   }
@@ -46,26 +66,31 @@ process_rules_quiz:
 process_rules_quiz_running:
     // Question asked already??
 if (true){
-    if (! quiz.currentTurn.has(TURN_QUESTIONID)
+    /* if (! quiz.currentTurn.has(TURN_QUESTIONID)
         && ! quiz.isEqual(QUIZ_STATUS, "wait_for_question")
-        && ! quiz.isEqual(QUIZ_STATUS, "wait_for_continue")) {
+        && ! quiz.isEqual(QUIZ_STATUS, "wait_for_continue")) { */
+      if (! quiz.currentTurn.questionId
+        && ! "wait_for_question".equals(quiz.status)
+        && ! "wait_for_continue".equals(quiz.status)) {
 
       logger.info("REQUEST NEW QUESTION, THE CURRENT ASKER IS {}, THE CURRENT RESPONDER IS {}",
-          quiz.getCurrentAsker(),
-          quiz.getCurrentAsker().equals(I_ROBOT) ? user.get("id") : I_ROBOT);
+          quiz.currentAsker,
+          quiz.currentAsker.equals(I_ROBOT) ? user.id : I_ROBOT);
 
       // retrieve question/answer from quizdb
       requestNextQuestion(this);
-      quiz.put(QUIZ_STATUS, "wait_for_question");
+      //quiz.put(QUIZ_STATUS, "wait_for_question");
+      quiz.status = "wait_for_question";
       // TODO: ADD A CONTINOUS TIMER THAT RETRIES SEVERAL TIMES IF NO QUESTION
       // COMES, AND AFTER TWO RETRIES COMES BACK TO THE USER AND TELLS HER/HIM
       // THERE ARE TECHNICAL PROBLEMS
 
     } else {
-     if (quiz.isEqual(QUIZ_STATUS, "wait_for_tablet")) {
+     if ("wait_for_tablet".equals(quiz.status)) {
       // CurrentAsker has the correct value now, a question arrived
-      if (! quiz.isEqual(QUIZ_TABLETORIENTATION,
-          quiz.getCurrentAsker().equals(I_ROBOT) ? "robot" : "child" )) {
+      // if (! quiz.isEqual(QUIZ_TABLETORIENTATION,
+      //     quiz.currentAsker.equals(I_ROBOT) ? "robot" : "child" )) {
+       if(! quiz.currentAsker.equals(quiz.tabletorientation)) {
         if (! isMyLastDA(#Request("Turning"))) {
           propose("request_turn_tablet") {
               emitDA(#Request("Turning", "theme", "Tablet"));
@@ -74,7 +99,7 @@ if (true){
         }
       } else {
         // tablet orientation is OK, question will be posed by robot or child
-        if (quiz.getCurrentAsker().equals(I_ROBOT)) {
+        if (quiz.currentAsker.equals(I_ROBOT)) {
           // The robot reads the question and answers
           propose("give_next_question") {
               Turn current = quiz.currentTurn;
@@ -109,7 +134,7 @@ if (true){
         }
       }
     } else {
-     if (quiz.isEqual(QUIZ_STATUS, "answer_given")) {
+     if ("answer_given".equals(quiz.status)) {
       // TODO: IF THE ROBOT SHOULD SAY WHAT THE RIGHT SOLUTION WAS:
       //  @raw:Inform(GivingSolution ^ <string3>"this is the solution" ^ <id>3)
 
@@ -121,6 +146,7 @@ if (true){
       /*@ String responder = ((String) current.get(TURN_RESPONDER)).equals
               String[] answerArgs(I_ROBOT)
           ? "robot" : "user"; @*/
+      String responder;
       String proposal = "feedback_" + (correct ? "correct_" : "wrong_")
           + responder;
       // give feedback to my or the user's success
@@ -144,14 +170,14 @@ if (true){
     }
    }
   }
-    if (quiz.isEqual(QUIZ_STATUS, "wait_for_continue")) {
+    if ("wait_for_continue".equals(quiz.status)) {
       propose("continue_quiz") {
           Turn last = quiz.currentTurn;
           Turn t = quiz.newTurn();
           // Switch roles after each turn
           /*@ t.setAsker((String)last.get(TURN_RESPONDER),
               (String)last.get(TURN_ASKER)); @*/
-          quiz.put(QUIZ_STATUS, "running");
+          quiz.status = "running";
         }
 
       propose("quiz_game_ends_max_time") {
