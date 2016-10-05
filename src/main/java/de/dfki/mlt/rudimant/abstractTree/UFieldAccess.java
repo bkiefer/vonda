@@ -46,6 +46,7 @@ public class UFieldAccess extends RTLeaf {
     String typ = mem.getVariableType(representation.get(0));
     RdfClass clazz = proxy.fetchRdfClass(typ);
     if(clazz == null){
+      // then this is no rdf type; just assume/hope that it is a valid access to sth else
       return null;
     }
     List<String> predicatesBaseName

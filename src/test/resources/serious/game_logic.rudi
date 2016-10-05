@@ -1,3 +1,9 @@
+Activity activity;
+Child user;
+Introduction intro;
+Session currentSession;
+
+
 assess_performance:
 if (! (myLastDA <= #Inform(AssessingPerformance))
     && ! (myLastDA <= #Goodbye(Meeting))  // wenn subtype /supertyp funktioniert
@@ -48,7 +54,7 @@ if(true){
 /*@   Quiz quiz = (Quiz) activity; @*/
 // BK TODO: hier stellt sich eher die Frage: Wie kann man RdfProxies um
 // eigene Methoden erweitern? Subklassieren von RdfProxy???
-    Turn currentTurn = quiz.getCurrentTurn();
+    Turn currentTurn = quiz.currentTurn;
     if (currentTurn != null) {
       QuizQuestion q = getQuizQuestion(currentTurn.QuestionId);
       if (q != null) {
@@ -67,7 +73,7 @@ if (true) {
 //??    emitDA(#Inform(Answer, id=^Integer.toString(number + 1),
 //??                   ^("string"+Integer.toString(number + 1))=^answerString));
     quiz.status= "answer_given";
-    Turn current = quiz.getCurrentTurn();
+    Turn current = quiz.currentTurn;
 /*@    current.put("AnswerCorrect", new Boolean(correct)); @*/
     lastDAprocessed();
 }
@@ -102,6 +108,7 @@ if (isTimedout("start")) {
   removeTimeout("start");
 }
 
+Quiz quiz;
 init_quiz:
 /*@    Quiz quiz = newActivity(new Quiz(this)); @*/
 if (quiz.status == "none" || !quiz.status) {
@@ -166,7 +173,8 @@ if (lastDA <= #Request(AssigningRole)) { // BK subclass
   // TODO check if theme matches current activity (e.g. quiz game)
   Quiz quiz = activity;
   // BK: fishy, RdfProxy problem
-  Turn t = quiz.newTurn();
+  /*@ Turn t = quiz.newTurn(); @*/
+  Turn t;
   // BK: fishy, RdfProxy problem
   /*@ t.setAsker(currentAgent,
           (currentAgent.equals(I_ROBOT) ? (String) user.get("id") : I_ROBOT)); @*/
@@ -194,7 +202,7 @@ if (lastDA <= #Inform(Answering)) {
   timeout("RobotSeeksAnswer", 600) {
     //Quiz quiz = (Quiz) activity;
     quiz = activity;
-    Turn currentTurn = quiz.getCurrentTurn();
+    Turn currentTurn = quiz.currentTurn;
     // siehe oben
     /*@ QuizQuestion q = (QuizQuestion) currentTurn.get("QuestionId"); @*/
     int correct = q.getWhichCorrect();

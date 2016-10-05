@@ -156,11 +156,13 @@ public class VGenerationVisitor implements RudiVisitor {
           out.append(", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
-       if (mem.variableExists(parts[1])) {
+      {
+        if (mem.variableExists(parts[1])) {
           out.append(", " + parts[0] + " = \" + " + parts[1] + " + \"");
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
+      }
     }
     out.append(")\")");
   }
@@ -221,7 +223,8 @@ public class VGenerationVisitor implements RudiVisitor {
 //      out.append("int return_" + k + " = " + out.rm.getMarker(k) + ";\n");
 //    }
     // initialize all class attributes before the main process method,
-    // do all those import things now
+    // do all those import things now - but before that, we have to know about
+    // all the variables declared here
     for (RudiTree r : node.rules) {
       if (r instanceof StatAbstractBlock) {
         for (RudiTree e : ((StatAbstractBlock) r).statblock) {
@@ -239,7 +242,15 @@ public class VGenerationVisitor implements RudiVisitor {
               ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp.visit(this);
               out.append(";");
             }
-          } else if (e instanceof StatImport) {
+          } else if (e instanceof StatVarDef || e instanceof StatFunDef){
+            e.visit(this);
+          }
+        }
+      }
+    }
+    for (RudiTree r : node.rules) {
+      if (r instanceof StatAbstractBlock) {
+        for (RudiTree e : ((StatAbstractBlock) r).statblock) {if (e instanceof StatImport) {
             r.visit(this);
           }
         }
@@ -314,6 +325,8 @@ public class VGenerationVisitor implements RudiVisitor {
               continue;
             }
           } else if (e instanceof StatImport) {
+            continue;
+          } else if (e instanceof StatVarDef || e instanceof StatFunDef){
             continue;
           }
           e.visit(this);
