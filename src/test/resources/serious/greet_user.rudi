@@ -14,7 +14,7 @@ if (user) {
       DialogueAct da = emitDA(#^salutation(Meeting));
 
     ask_user_name:
-      if (! user.GivenName && saidInSession(#Request(Name)) < 0) {
+      if (! user.forename && saidInSession(#Request(Name)) < 0) {
         // TODO: USE SAME LABELS IN GRAMMAR AND DATABASE
         // Max: ERROR? TODO: there is no Request(Name) DA!
         // make sure the next DA is send only send out after 900ms pause
