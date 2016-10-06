@@ -59,6 +59,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     if (node.declaration || (node.left instanceof UVariable
             && !mem.variableExists(node.left.toString()))) {
       if (node.actualType == null) {
+        node.declaration = true;
         String t = node.right.getType();
         boolean worked = mem.addElement(node.left.toString(),
                 t, node.position);
@@ -68,6 +69,8 @@ public class VTestTypeVisitor implements RudiVisitor {
         }
         // do not forget to tell the variable what type we find out it is
         ((UVariable) node.left).type = t;
+        node.actualType = t;
+        node.typeRight = t;
         node.testTypeDecl(rudi);
         node.position = mem.getCurrentTopRule();
         return;

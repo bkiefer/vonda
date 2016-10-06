@@ -163,7 +163,7 @@ public class VGenerationVisitor implements RudiVisitor {
         }
       }
     }
-    out.append(")\")");
+    out.append("\")");
   }
 
   @Override

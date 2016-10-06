@@ -10,7 +10,7 @@ initial_greeting:
 if (user) {
   if (! myLastDA()) {
     propose("greeting") {
-      salutation = firstEncounter() ? InitialGreeting : ReturnGreeting;
+      salutation = firstEncounter() ? "InitialGreeting" : "ReturnGreeting";
       DialogueAct da = emitDA(#^salutation(Meeting));
 
     ask_user_name:
