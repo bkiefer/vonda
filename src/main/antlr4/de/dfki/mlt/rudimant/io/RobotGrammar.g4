@@ -14,7 +14,8 @@ grammar RobotGrammar;
 grammar_file
   : imports*
     (comment
-    (grammar_rule | method_declaration | statement | LBRACE statement RBRACE | ANNOTATION))*
+    (grammar_rule | method_declaration | statement 
+    | LBRACE statement RBRACE | ANNOTATION | imports))*
     comment
   ;
 
@@ -44,7 +45,6 @@ statement
     | grammar_rule
     | set_operation SEMICOLON
     | return_statement
-    | imports
     | propose_statement
     | timeout_statement
     | if_statement
@@ -63,7 +63,7 @@ comment
   ;
 
 if_statement
-  : IF LPAR boolean_exp RPAR (statement_block | statement) (ELSE (statement_block | statement))?
+  : IF LPAR boolean_exp RPAR (statement) (ELSE (statement))?
   ;
 
 if_exp
@@ -107,12 +107,12 @@ function_call
   ;
 
 funccall_on_object
-  : (variable | string_expression) DOT function_call
+  : (variable | field_access | STRING | LPAR exp RPAR) DOT function_call
   ;
 
 field_access
   : VARIABLE
-    ( ( DOT (VARIABLE | function_call)) )+
+    ( ( DOT VARIABLE) )+
   ;
 
 variable
@@ -125,7 +125,7 @@ variable
 exp
   : comment
   (LPAR exp RPAR
-    | variable
+  | variable
   | field_access
   | funccall_on_object
   | assignment
@@ -140,6 +140,7 @@ exp
     | NULL
     )
   | boolean_exp
+  | string_expression
   )
   comment
   ;
@@ -147,7 +148,7 @@ exp
 simple_exp
   : comment
   (LPAR exp RPAR
-    | variable
+  | variable
   | arithmetic
   | function_call
   | literal_or_graph_exp
@@ -205,14 +206,16 @@ propose_block
   ;*/
 
 string_expression
-  : ( ( STRING | variable )
-    | field_access
-    )
-    ( PLUS
-      ( ( STRING | variable )
-      | field_access
-      )
-    )*
+  : simple_exp
+    ( PLUS exp)*
+  //| ( ( STRING | variable )
+  //  | field_access | string_expression
+  //  )
+  //  ( PLUS
+  //    ( ( STRING | variable )
+  //    | field_access | string_expression
+  //    )
+  //  )*
   ;
 
 propose_arg

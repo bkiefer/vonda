@@ -3,6 +3,9 @@ Activity activity;
 Child user;
 Introduction intro;
 Session currentSession;
+DialogueAct activity;
+DialogueAct Introduction;
+Math Math;
 
 DialogueAct myLastDA();
 DialogueAct emitDA(DialogueAct da);
@@ -11,6 +14,8 @@ void introduceDADelay(int d);
 int receivedInSession(DialogueAct da);
 // void propose(String s, Proposal p);
 boolean waitingForResponse();
+int lastOccurenceOfMyDA(DialogueAct da);
+int random();
 
 /*
 ? intro.has(INTRODUCTION_GAMEPROPOSED)

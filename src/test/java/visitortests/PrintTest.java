@@ -93,7 +93,7 @@ public class PrintTest {
     String[] strings = new String[]{"src/test/resources/test_import/Test.rudi",
       "rudi.config.yml", "-o=target/test/testfiles"};
     GrammarMain.main(strings);
-    //assertFail(GrammarMain.main(strings2));
+//    assertFail(GrammarMain.main(strings));
   }
 
   @Test

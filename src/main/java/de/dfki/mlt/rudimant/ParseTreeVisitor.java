@@ -149,7 +149,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
     // comment label comment if_statement
-    System.out.println("hi, i found rule " + ctx.getChild(1).getText());
+//    System.out.println("hi, i found rule " + ctx.getChild(1).getText());
     String ruleName = ctx.getChild(1).getText().substring(0, ctx.getChild(1).getText().length() - 1);
     boolean toplevel = false;
     if (curDepth == 0) {
@@ -165,7 +165,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitStatement_block(RobotGrammarParser.Statement_blockContext ctx) {
-    // comment LBRACE comment (statement  | grammar_rule)* RBRACE
+    // comment (LBRACE comment (statement)* RBRACE)
     List<RudiTree> statblock = new ArrayList<RudiTree>();
     statblock.add(this.visit(ctx.getChild(0)));
     for (int i = 2; i < ctx.getChildCount() - 1; i++) {
@@ -176,16 +176,17 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitStatement(RobotGrammarParser.StatementContext ctx) {
-    // (some_statement | exp SEMICOLON) comment
+    // comment (some_statement | exp SEMICOLON) comment
     List<RudiTree> statblock = new ArrayList<RudiTree>();
     statblock.add(this.visit(ctx.getChild(0)));
+    statblock.add(this.visit(ctx.getChild(1)));
     statblock.add(this.visit(ctx.getChild(ctx.getChildCount() - 1)));
     return new StatAbstractBlock(statblock, false);
   }
 
   @Override
   public RudiTree visitLoop_statement_block(RobotGrammarParser.Loop_statement_blockContext ctx) {
-    // comment LBRACE comment ( statement  | grammar_rule)* RBRACE
+    // comment LBRACE comment (statement | ((CONTINUE | BREAK) SEMICOLON))* RBRACE
     // when entering a statement block, we need to create a new local environment
     List<RudiTree> statblock = new ArrayList<RudiTree>();
     statblock.add(this.visit(ctx.getChild(0)));
