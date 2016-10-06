@@ -1,4 +1,4 @@
-
+/* old, replaced by assessQuizSession
 assess_performance:
 if (! (myLastDA <= #Inform(AssessingPerformance))
     && ! (myLastDA <= #Goodbye(Meeting))  // wenn subtype /supertyp funktioniert
@@ -17,27 +17,28 @@ if (! (myLastDA <= #Inform(AssessingPerformance))
                    total="5", correct="0"));
   }
   endQuiz(q, reason);
-}
+} */
+
+assess_quiz_session:
+  if(whose) {
+// Get the amount of questions answered, and the number of correct answers
+      int[] results = quiz.getAssessment(I_ROBOT);
+      int index = whose.equals("robot") ? 0 : 2;
+
+      emitDA(#Inform"("AssessingPerformance", "theme", "Answer",
+          "agent", whose, "total", Integer.toString(results[index]),
+          "correct", Integer.toString(results[index + 1])));
+    }
+    quiz.status = "wait_for_ending";
 
 end_quiz:
-if (isMyLastDA(#Inform(AssessingPerformance))) {
-  propose("endQuiz") {
-    logger.info("we are in endQuiz");
-    if (myLastDA <= #Inform(AssessingPerformance)) {
-      String dialogueAct = firstEncounter() ? "InitialGoodbye" : "ReturnGoodbye";
-      if (user.isEqual(CHILD_LOCATION, "Home")) {
-        dialogueAct = "ReturnGoodbye";
-      }
-    // TODO: Übergeben von #ReturnGoodbye als String wird nicht funktionieren,
-    // gibt es hier eine andere Möglichkeit als das Ganze in drei Emits
-    // aufzuteilen?
-      DialogueAct close = #_dialogueAct(Meeting, theme="Quiz");
-      stopQuiz(q, NaoAgent.this);
-      /*@ activity = newActivity(new Closing(NaoAgent.this));
-      closeSession((Closing) activity, close); @*/
-    }
+  if (!isMyLastDA(#Inform("AssessingPerformance"))
+        && !isMyLastDA(#ReturnGoodbye("Meeting"))
+        && !isMyLastDA(#InitialGoodbye("Meeting"))) {
+      emitDA(#Breaking("Playing", "Reason", reason));
+
+      quiz.status = "wait_for_assessment";
   }
-}
 
 // BK TODO: Mal wieder so ein Makro / Methode ...
 user_reads_question:
@@ -60,10 +61,15 @@ if(true){
       }
     }
 }
+
 // BK: siehe oben.
 robot_answers:
 //! wieder Casting // BK: siehe oben.
 if (true) {
+  if (Math.random() > 0.5) {
+      // Robot thinks about the anser
+      emitDA(#Stalling("Answering"));
+    }
     Quiz quiz = activity;
 //??    emitDA(#Inform(Answer, id=^Integer.toString(number + 1),
 //??                   ^("string"+Integer.toString(number + 1))=^answerString));
@@ -72,6 +78,7 @@ if (true) {
 /*@    current.put("AnswerCorrect", new Boolean(correct)); @*/
     lastDAprocessed();
 }
+
 //! newActivity: auch hier: verschieben?
 // BK: vielleicht ein Makro
 
@@ -89,11 +96,14 @@ if (! currentSession) {
 /*@      currentSession = new Session(this); @*/
   currentSession.child = user;
   if (! activity) {
-    if ("Hospital".equals(user.location)) {
 /*@          newActivity(new Introduction(this)); @*/
+/*
+    if ("Hospital".equals(user.location)) {
   } else {
+       // This has to be done as reaction to a QuizCommand coming from the
+       // MyPalHomeApp
     initQuiz();
-  }
+  } */
  }
 }
 }
@@ -149,15 +159,15 @@ if ((lastDA <= #RejectRequest(Playing) || lastDA <= #Disconfirm(Playing))
 
 robot_accepts_role:
 if (lastDA <= #Request(AssigningRole)) { // BK subclass
-  //  || lastDA <= #AcceptRequest(AssigningRole))
-  //        || lastDA <= #RejectRequest(AssigningRole))) {
+    || lastDA <= #AcceptRequest(AssigningRole))
+        || lastDA <= #RejectRequest(AssigningRole))) {
   if (!activity || !(activity <= Quiz))
     { // TODO: clarification dialogue??
       return;
     }
   String theme = lastDA.theme;
   String agent = lastDA.agent;
-  if (null == theme) {
+  if (null == agent) {
     agent = "user";
   } else { // turn agent around
     if (lastDA <= #RejectRequest(AssigningRole)) {
@@ -176,12 +186,13 @@ if (lastDA <= #Request(AssigningRole)) { // BK subclass
           (currentAgent.equals(I_ROBOT) ? (String) user.get("id") : I_ROBOT)); @*/
   // THIS IS ONLY THE COMMUNICATION WITH THE QUIZ LOGIC
   // Todo: see above, not yet implemented, always accept
-  if (true) {
+  if (true) { // accept role
     emitDA(#Accept(AssigningRole, theme=^theme, agent=^agent));
+        /* This is more or less a duplication of the above
     emitDA(#Inform(Instructing, theme=^theme,
-                   agent=^agent, purpose="Asking"));
+                   agent=^agent, purpose="Asking")); */
     startQuiz(quiz, this);
-    if (quiz.status == "started") {
+    if ("started".equals(quiz.status)) {
       quiz.status = "running";
     }
   }
@@ -195,7 +206,7 @@ if (lastDA <= #Request(AssigningRole)) { // BK subclass
 robot_gives_answer:
 if (lastDA <= #Inform(Answering)) {
   // BK: solche timeouts fliegen raus.
-  timeout("RobotSeeksAnswer", 600) {
+  // timeout("RobotSeeksAnswer", 600) {
     //Quiz quiz = (Quiz) activity;
     quiz = activity;
     Turn currentTurn = quiz.currentTurn;
@@ -203,12 +214,11 @@ if (lastDA <= #Inform(Answering)) {
     /*@ QuizQuestion q = (QuizQuestion) currentTurn.get("QuestionId"); @*/
     int correct = q.getWhichCorrect();
     // Answers were read by child, give an answer
-    emitDA(#Stalling(Answering));
+    /// old emitDA(#Stalling(Answering));
     propose("give_correct_answer") {
    /*@   robotAnswers(q.getAnswers().get(correct), correct, true); @*/
       // maybe invalidate the lastDAs, also below
     }
-
     propose("give_wrong_answer") {
       int number = 0;
       while ((number = random.nextInt(q.getAnswersSize())) == correct) {
@@ -216,5 +226,5 @@ if (lastDA <= #Inform(Answering)) {
    /*@      robotAnswers(q.getAnswers().get(number), number, false); @*/
     }
     lastDAprocessed();
-  }
+//  }
 }

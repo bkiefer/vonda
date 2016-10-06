@@ -55,10 +55,39 @@ process_rules_quiz:
         "running", "wait_for_question", "wait_for_question_read",
         "wait_for_tablet", "wait_for_answer", "answer_given",
         "wait_for_continue")) { */
-    possibleStates = {"running", "wait_for_question", "wait_for_question_read",
+    /* old  possibleStates = {"running", "wait_for_question", "wait_for_question_read",
         "wait_for_tablet", "wait_for_answer", "answer_given",
         "wait_for_continue"};
     if (possibleStates.contains(quiz.status)) {
+      processRulesQuizRunning(quiz);
+    } */
+   
+    if ("wait_for_ending".equals(quiz.status)
+        || "ended_by_user".equals(quiz.status)) {
+      logger.info("we are in endQuiz");
+      propose("endQuiz") {
+          String dialogueAct = firstEncounter() ? "InitialGoodbye" : "ReturnGoodbye";
+          if (childAtHome()) {
+            // TODO this is not really necessary/right, since if it is the first
+            // time, the robot should use the initial goodbye, which will never
+            // occur in our setup.
+            dialogueAct = "ReturnGoodbye";
+          }
+          DialogueAct close = emitDA(#dialogueAct("Meeting", "theme", "Quiz"));
+          if ("wait_for_ending".equals(quiz.status)) {
+            // otherwise this comes from the user / app
+            stopQuiz(quiz, NaoAgent.this);
+          }
+          /*@ newActivity(new Closing(NaoAgent.this)); @*/
+          /*@ closeSession((Closing) activity, close); @*/
+        }
+      }
+    }
+
+    // TAKE CARE THAT YOU PROPERLY UPDATE THIS METHOD WHEN ADDING A NEW QUIZ
+    // STATUS
+    // This should comprise all rules that need a valid asker / turn
+    if (quiz.isRunning()) {
       processRulesQuizRunning(quiz);
     }
   }
@@ -66,6 +95,42 @@ process_rules_quiz:
 process_rules_quiz_running:
     // Question asked already??
 if (true){
+
+    // TODO: THIS IS ONLY A TEMPORARY SOLUTION TO FIX ISSUE dialogmanager:#10
+    if ("running".equals(quiz.status)) {
+      boolean askerRobot = quiz.currentAsker.equals(I_ROBOT);
+      if (askerRobot && !"robot".equals(quiz.tabletorientation) {
+        if (childAtHome()) {
+          quiz.tabletorientation = "robot";
+          logger.info("Turn tablet to robot in home version here.");
+          userReadsQuestion();
+        } else {
+          newTimeout("TurnTabletToRobot", 10000, new Proposal() {
+            @Override
+            public void run() {
+              if (!(activity <= Quiz)) {
+                return;
+              }
+              /*@ Quiz q = (Quiz) activity; @*/
+              Quiz q;
+              boolean askerRobotNow = q.currentAsker.equals(I_ROBOT);
+              if ("wait_for_question_read".equals(quiz.status))
+                  && !askerRobotNow
+                  && "child".equals(quiz.tabletorientation)) {
+                // Change the tablet orientation automatically in the home version.
+                propose("request_turn_tablet") {
+                    emitDA(#Request("Turning", "theme", "Tablet"));
+                    // maybe introduce a timeout to ask again
+                  }
+                }
+              }
+            }
+          });
+        }
+      }
+    }
+
+
     /* if (! quiz.currentTurn.has(TURN_QUESTIONID)
         && ! quiz.isEqual(QUIZ_STATUS, "wait_for_question")
         && ! quiz.isEqual(QUIZ_STATUS, "wait_for_continue")) { */
@@ -134,9 +199,25 @@ if (true){
         }
       }
     } else {
-     if ("answer_given".equals(quiz.status)) {
-      // TODO: IF THE ROBOT SHOULD SAY WHAT THE RIGHT SOLUTION WAS:
-      //  @raw:Inform(GivingSolution ^ <string3>"this is the solution" ^ <id>3)
+     if ("answer_given".equals(quiz.status)
+            && !isMyLastDA(#Request("BeingCorrect", "agent", "user", "theme", "Quiz"))) {
+      Turn current = quiz.currentTurn;
+        /*@ String responder = ((String) current.get(TURN_RESPONDER)).equals(I_ROBOT)
+               ? "robot" : "user"; @*/
+        String responder;
+        if (responder.equals("robot")) {
+         // TODO listen for the user to tell the robot whether his answer was 
+         // right or wrong.
+//         newTimeout("UserTellsRobotRightOrWrong", 4000);
+         propose("request_beingcorrect"){
+             emitDA(#Request("BeingCorrect", "agent", "user", "theme", "Quiz");
+           }
+        } else {
+         quiz.status = "feedback_given";
+        }
+      } 
+}
+     if ("feedback_given".equals(quiz.status)) {
 
       Turn current = quiz.currentTurn;
 
@@ -159,18 +240,30 @@ if (true){
           } else {
             emitDA((correct ? "Confirm" : "Disconfirm"), "BeingCorrect",
                 "theme", "Quiz", "agent", "user");
+            quiz.status = "wait_for_continue";
+            if (!correct) {
+              /*@ QuizQuestion q = (QuizQuestion) current.get(Turn.TURN_QUESTIONID); @*/
+              QuizQuestion q;
+              String solutionNo = Integer.toString(q.getWhichCorrect() + 1);
+              emitDA(#Inform("GivingSolution",
+                      "string" + solutionNo, q.answers.get(q.getWhichCorrect()),
+                      "id", solutionNo));
+            }
+            quiz.status = "wait_for_continue";
           }
         }
 
+    }
+   }
       // since currently one proposal is always taken, we just propose also
       // a continue_quiz
       // TODO: adapt once that changes
-
-      quiz.put(QUIZ_STATUS, "wait_for_continue");
-    }
-   }
+      logger.info("TODO this quiz_status");
+      quiz.status = "wait_for_something";
   }
     if ("wait_for_continue".equals(quiz.status)) {
+      // TODO FIX THIS, ONLY FOR TESTING !!!!!
+      if (true || quiz.getNumberOfTurns() < 5) {
       propose("continue_quiz") {
           Turn last = quiz.currentTurn;
           Turn t = quiz.newTurn();
@@ -179,16 +272,42 @@ if (true){
               (String)last.get(TURN_ASKER)); @*/
           quiz.status = "running";
         }
+      }
 
       propose("quiz_game_ends_max_time") {
-          emitDA(#provide("playStop", "Reason", "technical"));
-          /*@ activity = newActivity(new Closing(NaoAgent.this)); @*/
+          //old   emitDA(#provide("playStop", "Reason", "technical"));
+          //old   /*@ activity = newActivity(new Closing(NaoAgent.this)); @*/
+          endQuiz(quiz, technical);
         }
 
       propose("quiz_game_ends_max_rounds") {
-          emitDA(#provide("playStop", "Reason", "time"));
-          /*@ activity = new Closing(NaoAgent.this); @*/
+          //old   emitDA(#provide("playStop", "Reason", "time"));
+          //old   /*@ activity = new Closing(NaoAgent.this); @*/
+          endQuiz(quiz, time);
         }
+    }
+
+    if ("wait_for_assessment".equals(quiz.status)) {
+
+      logger.info("AssessingPerformance");
+
+      propose("AssessUserPerformance") {
+        // seems strange, but is correct, this must be "user" and vice versa
+          assessQuizSession(quiz, "robot");
+        }
+      propose("AssessRobotPerformance") {
+          assessQuizSession(quiz, "user");
+        }
+      propose("NoAssessment") {
+          assessQuizSession(quiz, null);
+        }
+    }
+
+    if (childAtHome()
+        && isMyLastDA(#Inform"("Turning", "theme", "Tablet", "sender", I_ROBOT))
+        && ! "child".equals(quiz.tabletorientation)) {
+      quiz.tabletorientation = "child";
+      logger.info("Turn tablet to child here in Home version.");
     }
 }
 
@@ -200,10 +319,23 @@ process_rules_closing:
 
     if (! closing.has(CLOSING_PROPOSED)) {
       closing.put(CLOSING_PROPOSED, "null");
-      propose("closing") {
+      propose("closing){
+         logger.info("When does this happen?");
+
+          String dialogueAct = firstEncounter() ? "InitialGoodbye" : "ReturnGoodbye";
+          logger.info("emitDA ReturnGoodby in method processRulesClosing()");
+
+          if (! childAtHome()) {
+            NaoAgent.this.closeSession(closing, emitDA(dialogueAct, "Meeting"));
+          } else {
+            NaoAgent.this.closeSession(closing, emitDA(#ReturnGoodbye"("Meeting")));
+          }
+        }
+      }
+      /*old   propose("closing") {
           closing.put(CLOSING_PROPOSED, emitDA(#salutation("closing")));
           user.addToList(CHILD_SESSIONS, currentSession);
           reset();
-        }
+        } */
     }
   }

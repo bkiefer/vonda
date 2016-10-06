@@ -30,6 +30,10 @@ greetings_exchanged:
 if (saidInSession(#Greeting(Meeting))
     && receivedInSession(#Greeting(Meeting))
     && ! waitingForResponse()) {
+        if (childAtHome()) {
+        /*@  newActivity(new Idle(this)); @*/
+          return;
+        }
 
   // TODO: we need a better introduction end criterion
   if (!intro.has(INTRODUCTION_GAMEPROPOSED)) {
