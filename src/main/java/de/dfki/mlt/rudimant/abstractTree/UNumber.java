@@ -18,7 +18,8 @@ public class UNumber extends RTLeaf {
   String type;
 
   public UNumber(String value) {
-    if (this.value.contains(".")) {
+    this.value = value;
+    if (value.contains(".")) {
       type = "float";
     } else {
       type = "int";
