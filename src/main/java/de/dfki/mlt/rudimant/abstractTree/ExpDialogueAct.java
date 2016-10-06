@@ -18,10 +18,10 @@ public class ExpDialogueAct implements RudiTree, RTExpression {
   // comment LITERAL_OR_GRAPH LPAR ( exp (COMMA exp)*)? RPAR comment
   String litGraph;
   List<RTExpression> exps;
-  String rest;
+  List <String> rest;
   String type;
 
-  public ExpDialogueAct(String litGraph, String rest, List<RTExpression> exps) {
+  public ExpDialogueAct(String litGraph, List <String> rest, List<RTExpression> exps) {
     this.litGraph = litGraph;
     this.exps = exps;
     this.rest = rest;

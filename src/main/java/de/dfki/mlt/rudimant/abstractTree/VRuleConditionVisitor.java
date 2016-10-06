@@ -148,11 +148,10 @@ public class VRuleConditionVisitor implements RudiVisitor {
   public void visitNode(ExpDialogueAct node) {
     String result = "";
     result += ("new DialogueAct(" + node.litGraph + " + \"(");
-    String[] parameters = node.rest.split(",");
     // the first argument will never need to be more than a String
-    result += (parameters[0]);
-    for (int i = 1; i < parameters.length; i++) {
-      String[] parts = parameters[i].split("=");
+    result += "\"" + node.rest.get(0) + "\"";
+    for (int i = 1; i < node.rest.size(); i++) {
+      String[] parts = node.rest.get(i).split("=");
       if (parts.length == 1) {
         // then this argument is a variable that is passed and should be found somewhere
         if (mem.variableExists(parts[0])) {
@@ -430,20 +429,21 @@ public class VRuleConditionVisitor implements RudiVisitor {
     }
     // if the variable is not in the memory,
     if (node.realOrigin != null) {
+      String t = node.realOrigin;
       if (collectElements != null) {
-        this.collectElements += node.realOrigin.toLowerCase() + "." + node.representation;
+        this.collectElements += t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation;
         return;
       } else if (!funcargs.equals("")) {
-        this.funcargs += node.realOrigin.toLowerCase() + "." + node.representation;
+        this.funcargs += t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation;
         return;
       }
       if (node.representation.equals("DialogueAct") || mem.isRdf(node.representation)) {
-        this.collectDAs += node.realOrigin.toLowerCase() + "." + node.representation;
+        this.collectDAs += t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation;
         return;
       }
       this.lastbool = this.currentRule + this.counter++;
       this.compiledLook.put(this.lastbool,
-              node.realOrigin.toLowerCase() + "." + node.representation + " " + isTrue);
+              t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation + " " + isTrue);
       this.realLook.put(lastbool, node.representation + " " + isTrue);
       return;
     } else {

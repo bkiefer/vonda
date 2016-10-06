@@ -56,7 +56,22 @@ public class VTestTypeVisitor implements RudiVisitor {
   public void visitNode(ExpAssignment node) {
     logger.trace("Testing an assignment");
     node.right.visit(this);
-    if (node.declaration) {
+    if (node.declaration || (node.left instanceof UVariable
+            && !mem.variableExists(node.left.toString()))) {
+      if (node.actualType == null) {
+        String t = node.right.getType();
+        boolean worked = mem.addElement(node.left.toString(),
+                t, node.position);
+        if (!worked) {
+          rudi.handleTypeError("You are trying to re-declare the variable "
+                  + node.left.toString() + ", you really shouldn't do this");
+        }
+        // do not forget to tell the variable what type we find out it is
+        ((UVariable) node.left).type = t;
+        node.testTypeDecl(rudi);
+        node.position = mem.getCurrentTopRule();
+        return;
+      }
       boolean worked = mem.addElement(node.left.toString(),
               node.actualType, node.position);
       if (!worked) {
@@ -84,7 +99,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       this.conditionHandling(node);
       return;
     }
-    if(node.left.getType() == null){
+    if (node.left.getType() == null) {
       rudi.handleTypeError("expression " + node.fullexp + " could not be resolved to a type");
       node.left.setType("Object");
     }
@@ -136,6 +151,7 @@ public class VTestTypeVisitor implements RudiVisitor {
               + "comparing types " + node.thenexp.getType() + " on left and "
               + node.elseexp.getType() + " on right)");
     }
+    node.type = node.thenexp.getType();
   }
 
   @Override

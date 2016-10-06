@@ -81,28 +81,28 @@ public class PrintTest {
   public void tearDown() {
   }
 
-  @Test(expected = TypeException.class)
-  public void ImportFailTest() throws Exception {
-    String[] strings2 = new String[]{"src/test/resources/test_import/Test2.rudi",
-      "rudi.config.yml", "-o=target/test/testfiles"};
-    GrammarMain.main(strings2);
-  }
-
-  @Test
-  public void ImportTest() throws Exception {
-    String[] strings = new String[]{"src/test/resources/test_import/Test.rudi",
-      "rudi.config.yml", "-o=target/test/testfiles"};
-    GrammarMain.main(strings);
-//    assertFail(GrammarMain.main(strings));
-  }
-
-  @Test
-  public void ReturnTest() throws Exception {
-    String[] strings = new String[]{"src/test/resources/test_return/aLotOfReturns.rudi",
-      "rudi.config.yml", "-o=target/test/testfiles", "-d"};
-    GrammarMain.main(strings);
-    //assertFail(GrammarMain.main(strings2));
-  }
+//  @Test(expected = TypeException.class)
+//  public void ImportFailTest() throws Exception {
+//    String[] strings2 = new String[]{"src/test/resources/test_import/Test2.rudi",
+//      "rudi.config.yml", "-o=target/test/testfiles"};
+//    GrammarMain.main(strings2);
+//  }
+//
+//  @Test
+//  public void ImportTest() throws Exception {
+//    String[] strings = new String[]{"src/test/resources/test_import/Test.rudi",
+//      "rudi.config.yml", "-o=target/test/testfiles"};
+//    GrammarMain.main(strings);
+////    assertFail(GrammarMain.main(strings));
+//  }
+//
+//  @Test
+//  public void ReturnTest() throws Exception {
+//    String[] strings = new String[]{"src/test/resources/test_return/aLotOfReturns.rudi",
+//      "rudi.config.yml", "-o=target/test/testfiles", "-d"};
+//    GrammarMain.main(strings);
+//    //assertFail(GrammarMain.main(strings2));
+//  }
   
   @Test
   public void miniTest() throws Exception {

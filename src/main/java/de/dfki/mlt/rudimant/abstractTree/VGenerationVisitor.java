@@ -141,12 +141,11 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpDialogueAct node) {
-    out.append("new DialogueAct(" + node.litGraph + " + \"(");
-    String[] parameters = node.rest.split(",");
+    out.append("new DialogueAct(" + node.litGraph + ", ");
     // the first argument will never need to be more than a String
-    out.append(parameters[0]);
-    for (int i = 1; i < parameters.length; i++) {
-      String[] parts = parameters[i].split("=");
+    out.append("\"" + node.rest.get(0) + "\"");
+    for (int i = 1; i < node.rest.size(); i++) {
+      String[] parts = node.rest.get(i).split("=");
       if (parts.length == 1) {
         // then this argument is a variable that is passed and should be found somewhere
         if (mem.variableExists(parts[0])) {
@@ -287,9 +286,11 @@ public class VGenerationVisitor implements RudiVisitor {
               c = "this";
             }
             if (i == 0) {
-              out.append(c.toLowerCase());
+              out.append(c.substring(0, 1).toLowerCase()
+                    + c.substring(1));
             } else {
-              out.append(", " + c.toLowerCase());
+              out.append(", " + c.substring(0, 1).toLowerCase()
+                    + c.substring(1));
             }
             i++;
           }
@@ -301,9 +302,11 @@ public class VGenerationVisitor implements RudiVisitor {
         i = 0;
         for (String n : mem.getNeededClasses(toplevel)) {
           if (i == 0) {
-            out.append(n.toLowerCase());
+            out.append(n.substring(0, 1).toLowerCase()
+                    + n.substring(1));
           } else {
-            out.append(", " + n.toLowerCase());
+            out.append(", " + n.substring(0, 1).toLowerCase()
+                    + n.substring(1));
           }
           i++;
         }
@@ -683,7 +686,8 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append("\"" + node.representation + "\"");
     } // if the variable is not in the memory,
     else if (node.realOrigin != null) {
-      out.append(node.realOrigin.toLowerCase() + "." + node.representation + " ");
+      String t = node.realOrigin;
+      out.append(t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation + " ");
       return;
     } else {
       out.append(node.representation + " ");

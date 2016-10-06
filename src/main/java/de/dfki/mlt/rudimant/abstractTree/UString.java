@@ -15,7 +15,7 @@ import java.util.Objects;
 public class UString extends RTLeaf {
 
   String content;
-  String type;
+  String type = "String";
 
   public UString(String content) {
     this.content = content;

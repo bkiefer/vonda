@@ -18,17 +18,17 @@ public class UNumber extends RTLeaf {
   String type;
 
   public UNumber(String value) {
-    this.value = value;
+    if (this.value.contains(".")) {
+      type = "float";
+    } else {
+      type = "int";
+    }
   }
 
   @Override
   public String getType() {
     // for the moment, we assume we don't get longs or doubles here
-    if (this.value.contains(".")) {
-      return "float";
-    } else {
-      return "int";
-    }
+    return this.type;
   }
 
   @Override
