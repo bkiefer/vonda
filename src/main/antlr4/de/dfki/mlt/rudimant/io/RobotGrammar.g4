@@ -107,12 +107,12 @@ function_call
   ;
 
 funccall_on_object
-  : (variable | STRING | LPAR exp RPAR) DOT function_call
+  : (variable | field_access | STRING | LPAR exp RPAR) DOT function_call
   ;
 
 field_access
   : VARIABLE
-    ( ( DOT (VARIABLE | function_call)) )+
+    ( ( DOT VARIABLE) )+
   ;
 
 variable

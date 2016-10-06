@@ -40,7 +40,11 @@ public class UFieldAccess extends RTLeaf {
    * @throws org.apache.thrift.TException
    */
   public String getPredicateType(RdfProxy proxy, Mem mem) throws TException {
-    System.out.println(this.representation.get(0) + "." + this.representation.get(1));
+    String s = (this.representation.get(0) + "." + this.representation.get(1));
+    for (int i = 2; i < this.representation.size(); i++){
+      s += "." + this.representation.get(i);
+    }
+    System.out.println(s);
     asked = true;
     // first element of representation is type
     // everything else specifies the wanted predicate information

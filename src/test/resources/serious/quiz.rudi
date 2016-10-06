@@ -86,7 +86,7 @@ process_rules_quiz:
     // TAKE CARE THAT YOU PROPERLY UPDATE THIS METHOD WHEN ADDING A NEW QUIZ
     // STATUS
     // This should comprise all rules that need a valid asker / turn
-    if (quiz.isRunning()) {
+    if (quiz.running) {
       processRulesQuizRunning(quiz);
     }
   }
@@ -185,12 +185,12 @@ if (true){
               emitDA(#Inform("Turning", "theme", "Tablet", "manner", "silent"));
 
               // change status
-              quiz.put(QUIZ_STATUS, "wait_for_answer");
+              quiz.status = "wait_for_answer";
             }
         } else {
           // The user is the asker, wait for the user to finish reading
           // the question and answers, if we have a real robot
-          quiz.put(QUIZ_STATUS, "wait_for_question_read");
+          quiz.status = "wait_for_question_read";
         }
       }
     } else {
