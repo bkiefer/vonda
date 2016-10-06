@@ -114,7 +114,7 @@ public class RdfTest {
     mem.addElement("child", "Child", null);
     UFieldAccess field = new UFieldAccess(elem);
     String result = field.getPredicateType(_proxy, mem);
-    assertEquals("get hasTreatment", "Treatment", result);
+    assertEquals("get hasTreatment", "<dom:Treatment>", result);
   }
 
   @Test
