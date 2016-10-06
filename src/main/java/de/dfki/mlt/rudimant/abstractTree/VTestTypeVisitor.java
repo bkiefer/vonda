@@ -108,8 +108,10 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
     node.right.visit(this);
     if (node.operator != null && (node.left.getType().equals("DialogueAct")
-            || node.left.getType().contains("Rdf"))) {
-      if (node.left.getType().equals(node.right.getType())) {
+            || node.left.getType().contains("Rdf")
+            || node.right.getType().equals("DialogueAct"))) {
+      // TODO: then this should always produce a subsumes, shouldn't it?
+//      if (node.left.getType().equals(node.right.getType())) {
         if (node.operator.equals("<=")) {
           node.isSubsumed = true;
         } else if (node.operator.equals("=>")) {
@@ -118,7 +120,7 @@ public class VTestTypeVisitor implements RudiVisitor {
         if (node.left.getType().contains("Rdf")) {
           node.rdf = true;
         }
-      }
+//      }
     } else if (node.operator != null) {
       if (!node.left.getType().equals(node.right.getType())) {
         rudi.handleTypeError(node.fullexp + " s a boolean expression with type "

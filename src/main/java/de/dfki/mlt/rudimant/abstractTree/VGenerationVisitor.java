@@ -648,7 +648,11 @@ public class VGenerationVisitor implements RudiVisitor {
     // TODO: tell me how the client is named!!!
     out.append(node.representation.get(0));
     for (int i = 1; i < node.representation.size(); i++) {
-      out.append(".getValue(" + node.representation.get(i) + ", client)" + " ");
+      String r = node.representation.get(i);
+      if(!r.contains("\"")){
+        r = "\"" + r + "\"";
+      }
+      out.append(".getValue(" + r + ", client)" + " ");
     }
   }
   

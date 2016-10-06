@@ -20,6 +20,7 @@ if (! (myLastDA <= #Inform(AssessingPerformance))
 } */
 
 assess_quiz_session:
+if(true){
   if(whose) {
 // Get the amount of questions answered, and the number of correct answers
       int[] results = quiz.getAssessment(I_ROBOT);
@@ -31,6 +32,7 @@ assess_quiz_session:
           "correct", i));
     }
     quiz.status = "wait_for_ending";
+}
 
 end_quiz:
   if (!isMyLastDA(#Inform("AssessingPerformance"))

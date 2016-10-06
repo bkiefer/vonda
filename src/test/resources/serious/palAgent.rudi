@@ -16,6 +16,7 @@ int receivedInSession(DialogueAct da);
 boolean waitingForResponse();
 int lastOccurenceOfMyDA(DialogueAct da);
 int random();
+boolean isMyLastDA(DialogueAct da);
 
 /*
 ? intro.has(INTRODUCTION_GAMEPROPOSED)
