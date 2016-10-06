@@ -1,4 +1,6 @@
 test:
 if(true){
+Child c;
+c.hasFather.hasGender;
  salutation = (firstEncounter()) ? "InitialGreeting" : "ReturnGreeting";
 }

@@ -312,7 +312,8 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatPropose node) {
-    // nothing to do (?)
+    node.arg.visit(this);
+    node.block.visit(this);
   }
 
   @Override

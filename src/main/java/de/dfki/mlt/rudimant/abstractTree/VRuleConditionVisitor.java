@@ -147,7 +147,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
   @Override
   public void visitNode(ExpDialogueAct node) {
     String result = "";
-    result += ("new DialogueAct(" + node.litGraph + " + \"");
+    result += ("new DialogueAct(" + node.litGraph + ",");
     // the first argument will never need to be more than a String
     result += "\"" + node.rest.get(0) + "\"";
     for (int i = 1; i < node.rest.size(); i++) {
@@ -155,19 +155,19 @@ public class VRuleConditionVisitor implements RudiVisitor {
       if (parts.length == 1) {
         // then this argument is a variable that is passed and should be found somewhere
         if (mem.variableExists(parts[0])) {
-          result += (", \" + " + parts[0] + " + \"");
+          result += (", \" " + parts[0] + "\"");
         } else {
           // TODO: or throw an error here?
           result += (", " + parts[0]);
         }
       } else // this argument is of kind x = y, look if y is a variable we know
        if (mem.variableExists(parts[1])) {
-          result += (", " + parts[0] + " = \" + " + parts[1] + " + \"");
+          result += (", " + parts[0] + " = \" " + parts[1] + "\"");
         } else {
           result += (", " + parts[0] + " = " + parts[1]);
         }
     }
-    result += ("\")");
+    result += (")");
     if (collectDAs != null) {
       this.collectDAs += result;
       return;
