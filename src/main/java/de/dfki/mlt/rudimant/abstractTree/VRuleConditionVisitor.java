@@ -149,7 +149,11 @@ public class VRuleConditionVisitor implements RudiVisitor {
     String result = "";
     result += ("new DialogueAct(" + node.litGraph + ",");
     // the first argument will never need to be more than a String
-    result += "\"" + node.rest.get(0) + "\"";
+    if (!node.rest.get(0).contains("\"")) {
+      result += ("\"" + node.rest.get(0) + "\"");
+    } else {
+      result += (node.rest.get(0));
+    }
     for (int i = 1; i < node.rest.size(); i++) {
       String[] parts = node.rest.get(i).split("=");
       if (parts.length == 1) {
