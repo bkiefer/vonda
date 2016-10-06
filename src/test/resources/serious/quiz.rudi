@@ -2,7 +2,7 @@ process_rules_quiz:
     if (activity == null || ! (activity <= Quiz)) //! wie letzte Regel: instanceOf
       return;
 
-    Quiz quiz = (Quiz) activity;
+    Quiz quiz = /*@(Quiz) activity;@*/
     logger.info("Quiz status: {}, Asker: {}", quiz.get(QUIZ_STATUS),
         quiz.getCurrentAsker());
 
