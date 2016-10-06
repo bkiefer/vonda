@@ -114,7 +114,7 @@ public class RdfTest {
     mem.addElement("child", "Child", null);
     UFieldAccess field = new UFieldAccess(elem);
     String result = field.getPredicateType(_proxy, mem);
-    assertEquals("get hasTreatment", "Treatment", result);
+    assertEquals("get hasTreatment", "<dom:Treatment>", result);
   }
 
   @Test
@@ -130,5 +130,21 @@ public class RdfTest {
     UFieldAccess field = new UFieldAccess(elem);
     String result = field.getPredicateType(_proxy, mem);
     assertEquals("get birthdate", "<xsd:date>", result);
+  }
+
+    @Test
+  public void testgetType4() throws TException {
+    ArrayList<String> elem = new ArrayList<String>() {
+      {
+        add("child");
+        add("hasFather");
+        add("hasGender");
+      }
+    };
+    mem.enterEnvironment();
+    mem.addElement("child", "Child", null);
+    UFieldAccess field = new UFieldAccess(elem);
+    String result = field.getPredicateType(_proxy, mem);
+    assertEquals("get childs fathers gender", "<dom:Gender>", result);
   }
 }
