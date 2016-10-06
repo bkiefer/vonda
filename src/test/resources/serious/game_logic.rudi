@@ -24,10 +24,11 @@ assess_quiz_session:
 // Get the amount of questions answered, and the number of correct answers
       int[] results = quiz.getAssessment(I_ROBOT);
       int index = whose.equals("robot") ? 0 : 2;
-
-      emitDA(#Inform"("AssessingPerformance", "theme", "Answer",
+      String i;
+      /*@ String i = Integer.toString(results[index + 1]); @*/
+      emitDA(#Inform("AssessingPerformance", "theme", "Answer",
           "agent", whose, "total", Integer.toString(results[index]),
-          "correct", Integer.toString(results[index + 1])));
+          "correct", i));
     }
     quiz.status = "wait_for_ending";
 
@@ -158,9 +159,9 @@ if ((lastDA <= #RejectRequest(Playing) || lastDA <= #Disconfirm(Playing))
 }
 
 robot_accepts_role:
-if (lastDA <= #Request(AssigningRole)) { // BK subclass
-    || lastDA <= #AcceptRequest(AssigningRole))
-        || lastDA <= #RejectRequest(AssigningRole))) {
+if (lastDA <= #Request(AssigningRole) // BK subclass
+    || lastDA <= #AcceptRequest(AssigningRole)
+        || lastDA <= #RejectRequest(AssigningRole)) {
   if (!activity || !(activity <= Quiz))
     { // TODO: clarification dialogue??
       return;

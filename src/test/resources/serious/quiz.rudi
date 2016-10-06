@@ -49,7 +49,6 @@ process_rules_quiz:
             // timeouts.newTimeout("ask_for_role", 10000);
           }
       }
-    }
 
     /* if (quiz.oneOf(QUIZ_STATUS,
         "running", "wait_for_question", "wait_for_question_read",
@@ -99,22 +98,21 @@ if (true){
     // TODO: THIS IS ONLY A TEMPORARY SOLUTION TO FIX ISSUE dialogmanager:#10
     if ("running".equals(quiz.status)) {
       boolean askerRobot = quiz.currentAsker.equals(I_ROBOT);
-      if (askerRobot && !"robot".equals(quiz.tabletorientation) {
+      if (askerRobot && !"robot".equals(quiz.tabletorientation)) {
         if (childAtHome()) {
           quiz.tabletorientation = "robot";
           logger.info("Turn tablet to robot in home version here.");
           userReadsQuestion();
         } else {
-          newTimeout("TurnTabletToRobot", 10000, new Proposal() {
-            @Override
-            public void run() {
+          // rudi cant do that   newTimeout("TurnTabletToRobot", 10000, new Proposal() {
+            propose("TurnTabletToRobot"){
               if (!(activity <= Quiz)) {
                 return;
               }
               /*@ Quiz q = (Quiz) activity; @*/
               Quiz q;
               boolean askerRobotNow = q.currentAsker.equals(I_ROBOT);
-              if ("wait_for_question_read".equals(quiz.status))
+              if ("wait_for_question_read".equals(quiz.status)
                   && !askerRobotNow
                   && "child".equals(quiz.tabletorientation)) {
                 // Change the tablet orientation automatically in the home version.
@@ -125,11 +123,8 @@ if (true){
                 }
               }
             }
-          });
         }
       }
-    }
-
 
     /* if (! quiz.currentTurn.has(TURN_QUESTIONID)
         && ! quiz.isEqual(QUIZ_STATUS, "wait_for_question")
@@ -210,7 +205,7 @@ if (true){
          // right or wrong.
 //         newTimeout("UserTellsRobotRightOrWrong", 4000);
          propose("request_beingcorrect"){
-             emitDA(#Request("BeingCorrect", "agent", "user", "theme", "Quiz");
+             emitDA(#Request("BeingCorrect", "agent", "user", "theme", "Quiz"));
            }
         } else {
          quiz.status = "feedback_given";
@@ -260,7 +255,7 @@ if (true){
       // TODO: adapt once that changes
       logger.info("TODO this quiz_status");
       quiz.status = "wait_for_something";
-  }
+
     if ("wait_for_continue".equals(quiz.status)) {
       // TODO FIX THIS, ONLY FOR TESTING !!!!!
       if (true || quiz.getNumberOfTurns() < 5) {
@@ -304,12 +299,13 @@ if (true){
     }
 
     if (childAtHome()
-        && isMyLastDA(#Inform"("Turning", "theme", "Tablet", "sender", I_ROBOT))
+        && isMyLastDA(#Inform("Turning", "theme", "Tablet", "sender", I_ROBOT))
         && ! "child".equals(quiz.tabletorientation)) {
       quiz.tabletorientation = "child";
       logger.info("Turn tablet to child here in Home version.");
     }
 }
+
 
 process_rules_closing:
   if (true){
@@ -319,7 +315,7 @@ process_rules_closing:
 
     if (! closing.has(CLOSING_PROPOSED)) {
       closing.put(CLOSING_PROPOSED, "null");
-      propose("closing){
+      propose("closing"){
          logger.info("When does this happen?");
 
           String dialogueAct = firstEncounter() ? "InitialGoodbye" : "ReturnGoodbye";
@@ -328,7 +324,7 @@ process_rules_closing:
           if (! childAtHome()) {
             NaoAgent.this.closeSession(closing, emitDA(dialogueAct, "Meeting"));
           } else {
-            NaoAgent.this.closeSession(closing, emitDA(#ReturnGoodbye"("Meeting")));
+            NaoAgent.this.closeSession(closing, emitDA(#ReturnGoodbye("Meeting")));
           }
         }
       }
@@ -338,4 +334,4 @@ process_rules_closing:
           reset();
         } */
     }
-  }
+  
