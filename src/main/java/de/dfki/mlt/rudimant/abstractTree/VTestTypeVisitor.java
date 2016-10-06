@@ -84,6 +84,10 @@ public class VTestTypeVisitor implements RudiVisitor {
       this.conditionHandling(node);
       return;
     }
+    if(node.left.getType() == null){
+      rudi.handleTypeError("expression " + node.fullexp + " could not be resolved to a type");
+      node.left.setType("Object");
+    }
     node.right.visit(this);
     if (node.operator != null && (node.left.getType().equals("DialogueAct")
             || node.left.getType().contains("Rdf"))) {

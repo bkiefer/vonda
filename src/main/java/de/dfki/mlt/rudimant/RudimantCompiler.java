@@ -47,11 +47,21 @@ public class RudimantCompiler {
   public List<String> subPackage = new ArrayList<>();
 
   public String className;
+  
+  private String packageName;
 
   private RudimantCompiler parent;
 
   // the class that should be extended by the rudi files to fill them into a project
   private final String wrapperClass;
+  
+  public void setPackageName(String name){
+    this.packageName = name;
+  }
+  
+  public String getPackageName(){
+    return this.packageName;
+  }
 
   public RdfProxy getProxy() {
     return _proxy;
@@ -69,6 +79,7 @@ public class RudimantCompiler {
     this.log = parentCompiler.log;
     this.throwExceptions = parentCompiler.throwExceptions;
     this.typeCheck = parentCompiler.typeCheck;
+    this.setPackageName(parent.getPackageName());
   }
 
   public RudimantCompiler(String wrapperClass, RdfProxy proxy) {
@@ -239,9 +250,11 @@ public class RudimantCompiler {
     if (myTree instanceof GrammarFile) {
       // tell the file its name (for class definition)
       ((GrammarFile) myTree).setClassName(className);
+      // tell the file in which package it lies
+      out.append("package " + this.packageName + ";\n");
       // maybe we need to import the class that imported us to use its variables
       if (this.parent != null) {
-        out.append("import " + this.parent.className + ";\n");
+        out.append("import " + this.packageName + "." + this.parent.className + ";\n");
       }
       //  System.out.println(out);
       try {
