@@ -4,3 +4,4 @@ serverPort:         8996
 webserverPort:      8995
 resourceDir:        ../hfc-database/src/test/resources/
 outputPackage:      de.dfki.dialogue.naoagent
+targetConstructor:  String hostIP, int port

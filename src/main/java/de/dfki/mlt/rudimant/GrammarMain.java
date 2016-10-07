@@ -93,7 +93,8 @@ public class GrammarMain {
       System.out.println(help);
       System.exit(0);
     }
-    RudimantCompiler rc = new RudimantCompiler((String) configs.get("wrapperClass"), new RdfProxy(_client));
+    RudimantCompiler rc = new RudimantCompiler((String) configs.get("wrapperClass"),
+            (String) configs.get("targetConstructor"), new RdfProxy(_client));
     rc.setPackageName(configs.get("outputPackage").toString());
     if (options.has("l")) {
       rc.setLog(true);

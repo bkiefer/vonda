@@ -9,7 +9,9 @@ import de.dfki.mlt.rudimant.RudimantCompiler;
 import de.dfki.mlt.rudimant.Mem;
 import com.google.googlejavaformat.java.FormatterException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -258,9 +260,25 @@ public class VGenerationVisitor implements RudiVisitor {
         }
       }
     }
+    // now, we should add a constructor, including constructor parameters if
+    // specified in configs
+    String conargs = "";
+    int i = 0;
+    for(String a : out.getConstructorArgs().split(",")){
+      if(i > 0){
+        conargs += ", ";
+      }
+      conargs += a.trim().split(" ")[1];
+      i++;
+    }
+    out.append("public " + out.className + "(" + out.getConstructorArgs() + ") {\n"
+            + "super(" + conargs + ");\n}\n");
+    
+    // finally, the main processing method that will call all rules and imports
+    // declared in this file
     out.append("\tpublic void process(");
     // get all those classes the toplevel rules need
-    int i = 0;
+    i = 0;
     for (String n : mem.getNeededClasses(out.className)) {
       if (i == 0) {
         out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " " + n);

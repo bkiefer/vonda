@@ -55,6 +55,9 @@ public class RudimantCompiler {
   // the class that should be extended by the rudi files to fill them into a project
   private final String wrapperClass;
   
+  // ... and its constructor arguments, if any
+  private final String constructorArgs;
+  
   public void setPackageName(String name){
     this.packageName = name;
   }
@@ -71,22 +74,28 @@ public class RudimantCompiler {
     return wrapperClass;
   }
 
+  public String getConstructorArgs() {
+    return constructorArgs;
+  }
+
   private RudimantCompiler(RudimantCompiler parentCompiler) {
     wrapperClass = parentCompiler.getWrapperClass();
+    constructorArgs = parentCompiler.getConstructorArgs();
     mem = parentCompiler.mem;
     _proxy = parentCompiler._proxy;
     parent = parentCompiler;
     this.log = parentCompiler.log;
     this.throwExceptions = parentCompiler.throwExceptions;
     this.typeCheck = parentCompiler.typeCheck;
-    this.setPackageName(parent.getPackageName());
+    this.packageName = (parent.getPackageName());
   }
 
-  public RudimantCompiler(String wrapperClass, RdfProxy proxy) {
+  public RudimantCompiler(String wrapperClass, String constructorArgs, RdfProxy proxy) {
     mem = new Mem();
     this.wrapperClass = wrapperClass;
     this._proxy = proxy;
     parent = null;
+    this.constructorArgs = constructorArgs;
   }
 
   public static RudimantCompiler getEmbedded(RudimantCompiler parent) throws TException {
