@@ -271,7 +271,7 @@ public class VGenerationVisitor implements RudiVisitor {
         conargs += ", ";
       }
       String s = a.trim().split(" ")[1];
-      out.append("public " + a + ";\n");
+      out.append("private final " + a + ";\n");
       declare += s + " = " + s + ";\n";
       conargs += a.trim().split(" ")[1];
       i++;
