@@ -77,7 +77,7 @@ if (saidInSession(#Greeting(Meeting))
     int i = 0;
     for (String slot : infoslots) {
       // SLOT unknown: ask for slot
-      String daLabel = mapped[i];
+      String daLabel = mapped.get(i);
       if (! user.slot
           && !saidInSession(#Request(^daLabel))) {
         propose("ask_for_" + daLabel) { // slot.toLowerCase()
