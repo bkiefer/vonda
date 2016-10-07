@@ -154,7 +154,22 @@ public class RdfTest {
       {
         add("quiz");
         add("currentTurn");
-        add("questionId");
+      }
+    };
+    mem.enterEnvironment();
+    mem.addElement("quiz", "Quiz", null);
+    UFieldAccess field = new UFieldAccess(elem);
+    String result = field.getPredicateType(_proxy, mem);
+    assertEquals("get quiz's currentTurn", "<dom:Turn>", result);
+  }
+
+  @Test
+  public void testgetType6() throws TException {
+    ArrayList<String> elem = new ArrayList<String>() {
+      {
+        add("quiz");
+        add("currentTurn");
+        add("turnQuestionId");
       }
     };
     mem.enterEnvironment();
@@ -162,5 +177,22 @@ public class RdfTest {
     UFieldAccess field = new UFieldAccess(elem);
     String result = field.getPredicateType(_proxy, mem);
     assertEquals("get quiz's currentTurn's questionId", "String", result);
+  }
+
+  @Test
+  public void testgetType7() throws TException {
+    ArrayList<String> elem = new ArrayList<String>() {
+      {
+        add("child");
+        add("hasFather");
+        add("forename");
+        add("hasGender");
+      }
+    };
+    mem.enterEnvironment();
+    mem.addElement("child", "Child", null);
+    UFieldAccess field = new UFieldAccess(elem);
+    String result = field.getPredicateType(_proxy, mem);
+    assertEquals("get Gender of forename", null, result);
   }
 }
