@@ -132,7 +132,7 @@ public class RdfTest {
     assertEquals("get birthdate", "<xsd:date>", result);
   }
 
-    @Test
+  @Test
   public void testgetType4() throws TException {
     ArrayList<String> elem = new ArrayList<String>() {
       {
@@ -145,23 +145,22 @@ public class RdfTest {
     mem.addElement("child", "Child", null);
     UFieldAccess field = new UFieldAccess(elem);
     String result = field.getPredicateType(_proxy, mem);
-    assertEquals("get childs fathers gender", "<dom:Gender>", result);
+    assertEquals("get child's father's gender", "<dom:Gender>", result);
   }
-  
-      @Test
+
+  @Test
   public void testgetType5() throws TException {
     ArrayList<String> elem = new ArrayList<String>() {
       {
         add("quiz");
         add("currentTurn");
-        add("turnQuestionId");
+        add("questionId");
       }
     };
     mem.enterEnvironment();
     mem.addElement("quiz", "Quiz", null);
     UFieldAccess field = new UFieldAccess(elem);
     String result = field.getPredicateType(_proxy, mem);
-    assertEquals("get the id of the question of the current turn",
-            "<xsd:string>", result);
+    assertEquals("get quiz's currentTurn's questionId", "String", result);
   }
 }
