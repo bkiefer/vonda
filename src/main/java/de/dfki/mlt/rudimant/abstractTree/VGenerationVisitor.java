@@ -262,17 +262,22 @@ public class VGenerationVisitor implements RudiVisitor {
     }
     // now, we should add a constructor, including constructor parameters if
     // specified in configs
+    // also, to use them for imports, declare those parameters class attributes
     String conargs = "";
     int i = 0;
+    String declare = "";
     for(String a : out.getConstructorArgs().split(",")){
       if(i > 0){
         conargs += ", ";
       }
+      String s = a.trim().split(" ")[1];
+      out.append("public " + a + ";\n");
+      declare += s + " = " + s + ";\n";
       conargs += a.trim().split(" ")[1];
       i++;
     }
     out.append("public " + out.className + "(" + out.getConstructorArgs() + ") {\n"
-            + "super(" + conargs + ");\n}\n");
+            + "super(" + conargs + ");\n" + declare + "}\n");
     
     // finally, the main processing method that will call all rules and imports
     // declared in this file

@@ -277,8 +277,16 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatImport node) {
-    // nothing to test; what to do with the memory???
-    mem.addImport(node.name);
+     String conargs = "";
+    int i = 0;
+    for(String a : rudi.getConstructorArgs().split(",")){
+      if(i > 0){
+        conargs += ", ";
+      }
+      conargs += a.trim().split(" ")[1];
+      i++;
+    }
+    mem.addImport(node.name, conargs);
   }
 
   @Override
