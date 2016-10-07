@@ -58,6 +58,8 @@ public class UFieldAccess extends RTLeaf {
             = representation.subList(1, representation.size());
     List<String> predicatesURI = clazz.getPredicateType(predicatesBaseName);
     System.out.println(predicatesURI);
+    if (predicatesURI == null)
+      return null;
     return predicatesURI.get(predicatesURI.size() - 1);
   }
 
