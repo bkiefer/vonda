@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.dfki.mlt.agent;
+package de.dfki.mlt.rudimant.agent;
 
-import de.dfki.mlt.agent.Event;
+import de.dfki.mlt.rudimant.agent.Event;
 
 /**
  *

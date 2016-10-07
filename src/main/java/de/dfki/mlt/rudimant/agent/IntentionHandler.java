@@ -1,8 +1,8 @@
-package de.dfki.mlt.agent;
+package de.dfki.mlt.rudimant.agent;
 
-import de.dfki.mlt.agent.Intention;
-import de.dfki.mlt.agent.Agent;
-import de.dfki.mlt.agent.EventHandler;
+import de.dfki.mlt.rudimant.agent.Intention;
+import de.dfki.mlt.rudimant.agent.Agent;
+import de.dfki.mlt.rudimant.agent.EventHandler;
 
 public class IntentionHandler implements EventHandler<Intention> {
 

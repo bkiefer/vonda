@@ -1,6 +1,6 @@
-package de.dfki.mlt.agent.nlg;
+package de.dfki.mlt.rudimant.agent.nlg;
 
-import de.dfki.mlt.agent.Agent;
+import de.dfki.mlt.rudimant.agent.Agent;
 
 public class InfoStateAccess implements BaseInfoStateAccess {
 

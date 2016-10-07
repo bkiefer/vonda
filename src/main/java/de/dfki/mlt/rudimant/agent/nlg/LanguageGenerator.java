@@ -16,7 +16,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 // =================================================================
-package de.dfki.mlt.agent.nlg;
+package de.dfki.mlt.rudimant.agent.nlg;
 
 import java.io.File;
 import java.io.FileNotFoundException;

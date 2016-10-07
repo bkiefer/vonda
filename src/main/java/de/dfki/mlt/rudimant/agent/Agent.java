@@ -1,4 +1,4 @@
-package de.dfki.mlt.agent;
+package de.dfki.mlt.rudimant.agent;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -10,10 +10,11 @@ import org.slf4j.LoggerFactory;
 import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.lt.tr.dialogue.cplan.DagEdge;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
-import de.dfki.mlt.agent.nlg.Pair;
+import de.dfki.mlt.rudimant.agent.nlg.Pair;
 import de.dfki.tecs.rpc.RPCFactory;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import org.apache.thrift.TBase;
 import org.yaml.snakeyaml.Yaml;
 
 /**
@@ -296,11 +297,11 @@ public abstract class Agent {
     return da;
   }
 
-  protected DialogueAct getMyLastDA() {
+  public DialogueAct getMyLastDA() {
     return myLastDAs.peekFirst();
   }
 
-  protected boolean isMyLastDA(String type, String prop, String... keyVal) {
+  public boolean isMyLastDA(String type, String prop, String... keyVal) {
     return subsumes(getMyLastDA(), type, prop, keyVal);
   }
 
@@ -364,7 +365,7 @@ public abstract class Agent {
     return subsumes(getLastDA(), type, prop, keyVal);
   }
 
-  void lastDAprocessed() {
+  public void lastDAprocessed() {
     lastDAprocessed = System.currentTimeMillis();
   }
 
@@ -385,7 +386,7 @@ public abstract class Agent {
     return node.getTypeName();
   }
 
-  static String getDialogueAct(DialogueAct diaAct) {
+  public static String getDialogueAct(DialogueAct diaAct) {
     DagNode da = diaAct.dag;
     DagEdge e = da.getEdge(DagNode.TYPE_FEAT_ID);
     String result = e.getValue().getTypeName();
@@ -667,5 +668,28 @@ public abstract class Agent {
    */
   public void init() throws FileNotFoundException {
     configs = (LinkedHashMap<String, String>) yaml.load(new FileInputStream("/../../agent.config.yml"));
+  }
+  
+    /*
+   * SEND part. Message to be send can originate from different threads. But the
+   * sending is not "thread-safe" So each message to be send is put into a queue
+   * And there a thread is started to do the actual sending
+   */
+  @SuppressWarnings("rawtypes")
+  public void send(TBase event) {
+    send(".*", event);
+  }
+  
+  // queue to hold messages to be send
+  protected LinkedList<MessageContainer> messagesToSend = new LinkedList<MessageContainer>();
+  // to prevent "multi-use" of the queue
+  private Object messagesToSendLock = new Object();
+  
+  @SuppressWarnings("rawtypes")
+  public void send(final String toWhom, final TBase toSend) {
+    synchronized (messagesToSendLock) {
+      MessageContainer mc = new MessageContainer(toWhom, toSend);
+      messagesToSend.add(mc);
+    }
   }
 }

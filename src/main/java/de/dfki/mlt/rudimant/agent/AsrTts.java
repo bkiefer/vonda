@@ -1,11 +1,11 @@
-package de.dfki.mlt.agent;
+package de.dfki.mlt.rudimant.agent;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-import de.dfki.mlt.agent.nlg.InfoStateAccess;
-import de.dfki.mlt.agent.nlg.LanguageGenerator;
-import de.dfki.mlt.agent.nlg.Pair;
+import de.dfki.mlt.rudimant.agent.nlg.InfoStateAccess;
+import de.dfki.mlt.rudimant.agent.nlg.LanguageGenerator;
+import de.dfki.mlt.rudimant.agent.nlg.Pair;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 
 public class AsrTts {

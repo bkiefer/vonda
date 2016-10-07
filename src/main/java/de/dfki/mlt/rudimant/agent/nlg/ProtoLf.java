@@ -1,4 +1,4 @@
-package de.dfki.mlt.agent.nlg;
+package de.dfki.mlt.rudimant.agent.nlg;
 
 import de.dfki.lt.tr.dialogue.cplan.DagEdge;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;

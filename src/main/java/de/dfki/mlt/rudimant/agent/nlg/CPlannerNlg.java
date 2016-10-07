@@ -1,4 +1,4 @@
-package de.dfki.mlt.agent.nlg;
+package de.dfki.mlt.rudimant.agent.nlg;
 
 import java.io.File;
 import java.io.FileNotFoundException;

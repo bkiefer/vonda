@@ -1,4 +1,4 @@
-package de.dfki.mlt.agent;
+package de.dfki.mlt.rudimant.agent;
 
 import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.lt.hfc.db.rdfProxy.RdfHierarchy;

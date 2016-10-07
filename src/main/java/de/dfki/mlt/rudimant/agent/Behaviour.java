@@ -1,4 +1,4 @@
-package de.dfki.mlt.agent;
+package de.dfki.mlt.rudimant.agent;
 
 /**
  *
