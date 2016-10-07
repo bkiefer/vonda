@@ -4,7 +4,7 @@ DialogueAct Introduction;
 
 test:
 if((activity <= Introduction)){
-activity <= Introduction;
+//activity <= Introduction;
 Child c;
 c.hasFather.hasGender;
  salutation = (firstEncounter()) ? "InitialGreeting" : "ReturnGreeting";

@@ -426,6 +426,11 @@ public class VRuleConditionVisitor implements RudiVisitor {
   @Override
   public void visitNode(UVariable node) {
     if (node.isRdfClass) {
+      //if (node.getType().equals("DialogueAct") || mem.isRdf(node.representation)) {
+      if(collectDAs != null){
+        this.collectDAs += "\"" + node.representation + "\"";
+        return;
+      }
       this.lastbool = this.currentRule + this.counter++;
       this.compiledLook.put(this.lastbool, "\"" + node.representation + "\"");
       this.realLook.put(this.lastbool, "\"" + node.representation + "\"");
@@ -441,7 +446,8 @@ public class VRuleConditionVisitor implements RudiVisitor {
         this.funcargs += t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation;
         return;
       }
-      if (node.representation.equals("DialogueAct") || mem.isRdf(node.representation)) {
+      //if (node.getType().equals("DialogueAct") || mem.isRdf(node.representation)) {
+      if(collectDAs != null){
         this.collectDAs += t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation;
         return;
       }
@@ -458,7 +464,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
         this.funcargs += node.representation;
         return;
       }
-      if (node.type.equals("DialogueAct") || mem.isRdf(node.representation)) {
+      if (collectDAs != null) {
         this.collectDAs += node.representation;
         return;
       }

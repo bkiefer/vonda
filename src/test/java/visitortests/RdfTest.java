@@ -147,4 +147,21 @@ public class RdfTest {
     String result = field.getPredicateType(_proxy, mem);
     assertEquals("get childs fathers gender", "<dom:Gender>", result);
   }
+  
+      @Test
+  public void testgetType5() throws TException {
+    ArrayList<String> elem = new ArrayList<String>() {
+      {
+        add("quiz");
+        add("currentTurn");
+        add("turnQuestionId");
+      }
+    };
+    mem.enterEnvironment();
+    mem.addElement("quiz", "Quiz", null);
+    UFieldAccess field = new UFieldAccess(elem);
+    String result = field.getPredicateType(_proxy, mem);
+    assertEquals("get the id of the question of the current turn",
+            "<xsd:string>", result);
+  }
 }

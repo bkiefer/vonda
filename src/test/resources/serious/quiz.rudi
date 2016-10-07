@@ -129,7 +129,7 @@ if (true){
     /* if (! quiz.currentTurn.has(TURN_QUESTIONID)
         && ! quiz.isEqual(QUIZ_STATUS, "wait_for_question")
         && ! quiz.isEqual(QUIZ_STATUS, "wait_for_continue")) { */
-      if (! quiz.currentTurn.questionId
+      if (! quiz.currentTurn.turnQuestionId
         && ! "wait_for_question".equals(quiz.status)
         && ! "wait_for_continue".equals(quiz.status)) {
 

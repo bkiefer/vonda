@@ -96,6 +96,7 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpBoolean node) {
+    //System.out.println(node.fullexp);
     node.rule = mem.getCurrentRule();
     node.left.visit(this);
     if (node.right == null) {
@@ -107,6 +108,10 @@ public class VTestTypeVisitor implements RudiVisitor {
       node.left.setType("Object");
     }
     node.right.visit(this);
+    if (node.right.getType() == null) {
+      rudi.handleTypeError("expression " + node.fullexp + " could not be resolved to a type");
+      node.right.setType("Object");
+    }
     if (node.operator != null && (node.left.getType().equals("DialogueAct")
             || node.left.getType().contains("Rdf")
             || node.right.getType().equals("DialogueAct"))) {

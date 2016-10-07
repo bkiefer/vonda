@@ -1,5 +1,5 @@
 
-Activity activity;
+Rdf activity;
 Child user;
 Introduction intro;
 Session currentSession;
