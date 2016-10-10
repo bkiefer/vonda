@@ -1,17 +1,4 @@
-Activity activity;
-Child user;
-Introduction intro;
-Session currentSession;
-DialogueAct activity;
-DialogueAct Introduction;
-DialogueAct myLastDA();
-DialogueAct emitDA(DialogueAct da);
-int saidInSession(DialogueAct da);
-void introduceDADelay(int d);
-int receivedInSession(DialogueAct da);
-// void propose(String s, Proposal p);
-boolean waitingForResponse();
-int lastOccurenceOfMyDA(DialogueAct da);
+
 
 process_rules_quiz:
     if(true){
@@ -26,7 +13,7 @@ process_rules_quiz:
     // if (quiz.isEqual(QUIZ_STATUS, "started")) {
     if ("started".equals(quiz.status)) {
       logger.info("Quiz started {}", System.currentTimeMillis());
-      int lastInfo = lastOccurenceOfMyDA(#Inform("Instructing", "theme", "Quiz"));
+      int lastInfo = lastOccurenceOfMyDA(#Inform(Instructing, theme=Quiz));
       if (! user.hasPlayedQuiz && lastInfo < 0) {
         propose("inform_gamerules") {
             emitDA(#Inform("Instructing", "theme", "Quiz"));

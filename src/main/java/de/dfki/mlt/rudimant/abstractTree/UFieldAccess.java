@@ -40,11 +40,6 @@ public class UFieldAccess extends RTLeaf {
    * @throws org.apache.thrift.TException
    */
   public String getPredicateType(RdfProxy proxy, Mem mem) throws TException {
-    String s = (this.representation.get(0) + "." + this.representation.get(1));
-    for (int i = 2; i < this.representation.size(); i++){
-      s += "." + this.representation.get(i);
-    }
-    System.out.println(s);
     asked = true;
     // first element of representation is type
     // everything else specifies the wanted predicate information
@@ -52,12 +47,12 @@ public class UFieldAccess extends RTLeaf {
     RdfClass clazz = proxy.fetchRdfClass(typ);
     if(clazz == null){
       // then this is no rdf type; just assume/hope that it is a valid access to sth else
-      return null;
+      // TODO: we should probably crash if we do not recognize this combination
+      return "Object";
     }
     List<String> predicatesBaseName
             = representation.subList(1, representation.size());
     List<String> predicatesURI = clazz.getPredicateType(predicatesBaseName);
-    System.out.println(predicatesURI);
     if (predicatesURI == null)
       return null;
     return predicatesURI.get(predicatesURI.size() - 1);

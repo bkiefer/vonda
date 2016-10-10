@@ -435,7 +435,9 @@ public abstract class Agent {
     int oldSize = 0;
     do {
       oldSize = pendingProposals.size();
-      processRules();
+      try {
+        processRules();
+      } catch (StopProcessingException ex) { }
     } while (pendingProposals.size() != oldSize);
     if (oldSize > 0) {
       sendIntentions(pendingProposals.keySet());
@@ -669,8 +671,8 @@ public abstract class Agent {
   public void init() throws FileNotFoundException {
     configs = (LinkedHashMap<String, String>) yaml.load(new FileInputStream("/../../agent.config.yml"));
   }
-  
-    /*
+
+  /*
    * SEND part. Message to be send can originate from different threads. But the
    * sending is not "thread-safe" So each message to be send is put into a queue
    * And there a thread is started to do the actual sending
@@ -679,17 +681,21 @@ public abstract class Agent {
   public void send(TBase event) {
     send(".*", event);
   }
-  
+
   // queue to hold messages to be send
   protected LinkedList<MessageContainer> messagesToSend = new LinkedList<MessageContainer>();
   // to prevent "multi-use" of the queue
   private Object messagesToSendLock = new Object();
-  
+
   @SuppressWarnings("rawtypes")
   public void send(final String toWhom, final TBase toSend) {
     synchronized (messagesToSendLock) {
       MessageContainer mc = new MessageContainer(toWhom, toSend);
       messagesToSend.add(mc);
     }
+  }
+  
+  public void stopProcessing(){
+    throw new StopProcessingException();
   }
 }

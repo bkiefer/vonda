@@ -34,7 +34,10 @@ public class ExpFuncOnObject implements RTExpression {
 
   @Override
   public String getType() {
-    return this.funccall.getType();
+    if (this.type == null) {
+      this.type = this.funccall.getType();
+    }
+    return type;
   }
 
   @Override

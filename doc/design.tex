@@ -90,7 +90,10 @@ if ( XXXX ) {
 } // a: ends
 \end{verbatim}
 
-
+\section{Writing to Rudi (with care)}
+If you are in a state where you want to immediately stop processing and leave all
+rules, use a call to the method Agent.stopProcessing() to jump out of the topmost
+rule file.
 
 %%% Local Variables:
 %%% mode: latex
