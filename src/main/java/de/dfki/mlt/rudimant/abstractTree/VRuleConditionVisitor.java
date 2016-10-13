@@ -155,7 +155,8 @@ public class VRuleConditionVisitor implements RudiVisitor {
       result += (node.rest.get(0));
     }
     for (int i = 1; i < node.rest.size(); i++) {
-      String[] parts = node.rest.get(i).split("=");
+      result += (", " + node.rest.get(i));
+      /*String[] parts = node.rest.get(i).split("=");
       if (parts.length == 1) {
         // then this argument is a variable that is passed and should be found somewhere
         if (mem.variableExists(parts[0])) {
@@ -170,6 +171,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
         } else {
           result += (", " + parts[0] + " = " + parts[1]);
         }
+*/
     }
     result += (")");
     if (collectDAs != null) {

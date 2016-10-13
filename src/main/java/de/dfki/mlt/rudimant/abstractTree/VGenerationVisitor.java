@@ -151,6 +151,8 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append(node.rest.get(0));
     }
     for (int i = 1; i < node.rest.size(); i++) {
+      out.append(", " + node.rest.get(i));
+      /*
       String[] parts = node.rest.get(i).split("=");
       if (parts.length == 1) {
         // then this argument is a variable that is passed and should be found somewhere
@@ -166,6 +168,7 @@ public class VGenerationVisitor implements RudiVisitor {
         } else {
           out.append(", " + parts[0] + " = " + parts[1]);
         }
+      */
     }
     out.append(")");
   }
