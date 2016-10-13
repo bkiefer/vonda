@@ -38,11 +38,11 @@ label
 
 
 statement
-  : comment
-    ( exp SEMICOLON
+  : (statement_block
+    | (comment
+    (exp SEMICOLON
     | list_creation
-    | statement_block
-    | grammar_rule
+    |  grammar_rule
     | set_operation SEMICOLON
     | return_statement
     | propose_statement
@@ -53,7 +53,7 @@ statement
     | var_def
     | fun_def
     //| SEMICOLON   <- we don't really need it, and it's a pain to find in parser
-    ) comment
+    ))) comment
  ;
 
 return_statement: RETURN exp? SEMICOLON;
@@ -82,7 +82,7 @@ for_statement
   ;
 
 statement_block
-  : comment (LBRACE comment (statement)* RBRACE)
+  : comment LBRACE comment statement* RBRACE
   ;
 
 loop_statement_block

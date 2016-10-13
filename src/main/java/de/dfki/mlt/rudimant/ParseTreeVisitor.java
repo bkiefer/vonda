@@ -176,11 +176,13 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitStatement(RobotGrammarParser.StatementContext ctx) {
-    // comment (some_statement | exp SEMICOLON) comment
+    // (statement_block | (comment (some_statement | exp SEMICOLON))) comment
     List<RudiTree> statblock = new ArrayList<RudiTree>();
     statblock.add(this.visit(ctx.getChild(0)));
     statblock.add(this.visit(ctx.getChild(1)));
-    statblock.add(this.visit(ctx.getChild(ctx.getChildCount() - 1)));
+    if (ctx.getChildCount() > 2) {
+      statblock.add(this.visit(ctx.getChild(ctx.getChildCount() - 1)));
+    }
     return new StatAbstractBlock(statblock, false);
   }
 
@@ -342,7 +344,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 //    this.in_graph = false;
 //    return new ExpDialogueAct(ctx.getChild(0).getText(), expList);
     List<String> rest = new ArrayList<String>();
-    for (int i = 2; i < ctx.getChildCount() - 1; i+=2) {  // we don't need the parenthesis
+    for (int i = 2; i < ctx.getChildCount() - 1; i += 2) {  // we don't need the parenthesis
       rest.add("\"" + ctx.getChild(i).getText()
               .replaceAll("\\^([A-z]+)", "\" + $1 + \"").replace("^", "") + "\"");
     }
