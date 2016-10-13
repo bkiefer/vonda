@@ -5,103 +5,47 @@
  */
 package visitortests;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.thrift.transport.TTransportException;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.server.HfcDbServer;
 import de.dfki.mlt.rudimant.GrammarMain;
-import static de.dfki.mlt.rudimant.GrammarMain.yaml;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import org.apache.thrift.transport.TTransportException;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.yaml.snakeyaml.Yaml;
 
 /**
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
 public class SeriousTest {
+  static HfcDbServer server;
 
-  private static LinkedHashMap<String, Object> configs;
-
-  public static Yaml yaml = new Yaml();
-
-  public SeriousTest() {
-  }
-
-  private static String RESOURCE_DIR;
-
-  private static HfcDbServer server;
-  // alternative PORTS
-  private static int SERVER_PORT;
-  private static int WEBSERVER_PORT;
+  static final int SERVER_PORT = 8996;
 
   @BeforeClass
-  public static void setUpClass() throws TTransportException, IOException, FileNotFoundException, WrongFormatException {
-    configs = (LinkedHashMap<String, Object>) yaml.load(new FileInputStream("rudi.config.yml"));
-    serverConfigs();
-    File config = new File(RESOURCE_DIR + "ontos/pal.ini");
+  public static void setUpClass()
+      throws TTransportException, IOException, WrongFormatException {
+    // start the HFC server
     server = new HfcDbServer(SERVER_PORT);
-    server.readConfig(config);
+    server.readConfig(new File("src/test/resources/ontos/pal.ini"));
     server.runServer();
-    server.runHttpService(WEBSERVER_PORT);
-    File outDir = new File("target/test/testfiles");
-    if (!outDir.exists()) {
-      outDir.mkdirs();
-    }
-  }
-
-  private static void serverConfigs() {
-    RESOURCE_DIR = (String) configs.get("resourceDir");
-    SERVER_PORT = (int) configs.get("serverPort");
-    WEBSERVER_PORT = (int) configs.get("webserverPort");
   }
 
   @AfterClass
   public static void tearDownClass() {
+    server.shutdown();
   }
 
-  @Before
-  public void setUp() {
-  }
-
-  @After
-  public void tearDown() {
-  }
-
-    @Test
-  public void TestAllRules() throws Exception {
-    String[] strings = new String[]{"src/test/resources/serious/palAgent.rudi",
-      "rudi.config.yml", "o=target/test/testfiles", "-d"};
+  @Test
+  public void PalAgentTest() throws Exception {
+    String[] strings = new String[]{
+        "-c", "rudi.config.yml",
+        "-o", "target/test/testfiles", "-d",
+        "src/test/resources/serious/palAgent.rudi"};
     GrammarMain.main(strings);
   }
-  
-//  @Test
-//  public void TestGreetUser() throws Exception {
-//    String[] strings = new String[]{"src/test/resources/serious/greet_user.rudi",
-//      "rudi.config.yml", "o=target/test/testfiles", "-d"};
-//    GrammarMain.main(strings);
-//  }
-  
-//  @Test
-//  public void TestGameLogic() throws Exception {
-//      String[] strings = new String[]{"src/test/resources/serious/game_logic.rudi",
-//      "rudi.config.yml", "o=target/test/testfiles", "-d"};
-//    GrammarMain.main(strings);
-//  }
-  
-//
-//  @Test
-//  public void FirstRuleTest() throws Exception {
-//    String[] strings = new String[]{"src/test/resources/FirstRule.rudi",
-//      "rudi.config.yml", "-o=target/test/testfiles", "-d"};
-//    GrammarMain.main(strings);
-//  }
 }

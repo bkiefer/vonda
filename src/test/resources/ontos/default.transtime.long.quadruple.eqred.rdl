@@ -1,0 +1,354 @@
+#
+# this simulates OWLIM's owl-horst_partialRDFS_builtin.pie rule file that builds
+# on the rule semantics for OWL as published by ter Horst in his papers which is
+# based on the axiomatization of RDF Schema by Patrick Hayes;
+# a more "modern" version is furthermore avalable for OWL 2 (not part of _this_
+# axiomatization);
+# I have split up rule $owl_FunctProp into $owl_FunctPropObject and
+# $owl_FunctPropDatatype, since the nature of the object of the triple either
+# leads to a owl:sameAs statement or to the bottom type owl:Nothing;
+#
+# this file is the transaction time extension of default.rdl in that relation
+# instances from the ABox get extended by one further arguments, denoting the
+# transaction time, i.e., the time when the atemporal triple (the relational
+# fluent) is entered into the database;
+#
+# NOTE -- IMPORTANT
+#   this rule file should only be used if equivalence class reduction in HFC is
+#   _switched on_
+#
+# @author Hans-Ulrich Krieger
+# @version Thu Mar 10 16:12:08 GMT 2016
+#
+
+
+# NOTE: $rdf1_rdfs4a_4b (= rdf1 & rdfs4a & rdfs4b) modified;
+# not interested that ?s, ?p, and ?o are all of rdf:type rdfs:Resource;
+# only add that ?p is of rdf:type rdf:Property
+$rdf1_rdfs4a_4b+time
+?_s ?p ?_o ?_time
+->
+?p <rdf:type> <rdf:Property>
+
+
+# still keep the triple version, since rules might be applicable to information
+# from the TBox
+$rdf1_rdfs4a_4b
+?_s ?p ?_o
+->
+?p <rdf:type> <rdf:Property>
+
+
+# this version TAKES OVER the time from the antecedent to the consequent;
+# on optional version would interpret the time of the consequent triple as the
+# time when it is being instantiated (i.e., when the closure computation is called);
+# once this interpretation is chosen, this should be consistent with the time-tagged
+# rules below!
+$rdfs2+time
+?s ?p ?_o ?time
+?p <rdfs:domain> ?dom
+->
+?s <rdf:type> ?dom ?time
+@test
+?p != <rdf:type>
+
+
+# added second clause -- do not want to time-tag XSD type values
+$rdfs3+time
+?_s ?p ?o ?time
+?p <rdf:type> <owl:ObjectProperty>
+?p <rdfs:range> ?rng
+->
+?o <rdf:type> ?rng ?time
+
+
+# NOTE: no longer redundant rule, since generalization using owl:TransitiveProperty
+#       is now extended by temporal information and solely used for transitive
+#       non-builtin properties
+$rdfs5
+?p <rdfs:subPropertyOf> ?q
+?q <rdfs:subPropertyOf> ?r
+->
+?p <rdfs:subPropertyOf> ?r
+@test
+?p != ?q
+?p != ?r
+?q != ?r
+
+
+$rdfs6
+?p <rdf:type> <rdf:Property>
+->
+?p <rdfs:subPropertyOf> ?p
+
+
+$rdfs7+time
+?s ?p ?o ?time
+?p <rdfs:subPropertyOf> ?q
+->
+?s ?q ?o ?time
+@test
+?p != ?q
+
+
+# replaced rdfs:Class by owl:Class;
+# or we add a further axiom that owl:Class is a subclass of rdfs:Class as it is
+# enforced for OWL Lite and OWL DL
+# NOTE: this rule only implements rdfs10 (not that ?c is a subclass of rdfs:Resource)
+$rdfs8_10
+?c <rdf:type> <owl:Class>
+->
+?c <rdfs:subClassOf> ?c
+
+
+# universal instantiation
+$rdfs9+time
+?i <rdf:type> ?c ?time
+?c <rdfs:subClassOf> ?d
+->
+?i <rdf:type> ?d ?time
+@test
+?c != ?d
+
+
+# NOTE: no longer redundant rule, since generalization using owl:TransitiveProperty
+#       is now extended by temporal information and solely used for transitive
+#       custom properties
+$rdfs11
+?c <rdfs:subClassOf> ?d
+?d <rdfs:subClassOf> ?e
+->
+?c <rdfs:subClassOf> ?e
+@test
+?c != ?d
+?c != ?e
+?d != ?e
+
+
+# NOTE: $rdfs12 omitted -- deals with rdfs:member
+# will not fire for our OWL ontologies
+
+
+# NOTE: $rdfs13 omitted -- deals with rdfs:Literal
+# will not fire for our OWL ontologies
+
+
+$owl_invOf+time
+?s ?p ?o ?time
+?p <owl:inverseOf> ?q
+->
+?o ?q ?s ?time
+
+
+$owl_invOfBySymProp
+?p <rdf:type> <owl:SymmetricProperty>
+->
+?p <owl:inverseOf> ?p
+
+
+$owl_SymPropByInverse
+?p <owl:inverseOf> ?p
+->
+?p <rdf:type> <owl:SymmetricProperty>
+
+
+# original rule name is: rdfp3;
+# rule was _not_ part of the OWLIM definition (why?)
+$owl_SymmetricProperty+time
+?p <rdf:type> <owl:SymmetricProperty>
+?s ?p ?o ?time
+->
+?o ?p ?s ?time
+
+
+# this rule is totally different from the version implemented for valid time;
+# the rule is made a bit redundant in order _not_ to have 2 rules;
+# OWL-like punning (time:Undefined) is used in the NoValueInBetween
+$owl_TransProp+time
+?p <rdf:type> <owl:TransitiveProperty>
+?x ?p ?y ?time1
+?y ?p ?z ?time2
+->
+?x ?p ?z ?time
+@test
+?x != ?y
+?y != ?z
+NoValueInBetween ?x ?p <time:Undefined> ?time1 ?time2
+NoValueInBetween ?y ?p <time:Undefined> ?time1 ?time2
+@action
+?time = LMax2 ?time1 ?time2
+
+
+# from a single observation, we derive the identity of ?y and ?z;
+# this sameAs ABox assertion is the _only_ one which does _not_
+# get extended by a temporal dimension
+$owl_FunctPropObject
+?p <rdf:type> <owl:FunctionalProperty>
+?p <rdf:type> <owl:ObjectProperty>
+?x ?p ?y ?time1
+?x ?p ?z ?time2
+->
+?y <owl:sameAs> ?z
+@test
+?y != ?z
+?p != <rdf:type>
+LIntersectionNotEmpty ?start1 ?end1 ?start2 ?end2
+
+
+# not part of the original rule set, a kind of integrity constraint, deriving
+# that an individual is of type Nothing;
+# the behavior differs from the above rule in that the consequent is equipped with
+# temporal information: ?x is of type Nothing only for the intersection of both
+# intervals;
+# use IntersectionNotEmpty test to guarantee that the temporal duration is NOT "negative"
+# no analogue to this rule in ter Horst's papers, but is derived from rule rdfp1
+# above
+$owl_FunctPropDatatype
+?p <rdf:type> <owl:FunctionalProperty>
+?p <rdf:type> <owl:DatatypeProperty>
+?x ?p ?y ?start1 ?end1
+?x ?p ?z ?start2 ?end2
+->
+?x <rdf:type> <owl:Nothing> ?start ?end
+@test
+?y != ?z
+?p != <rdf:type>
+LIntersectionNotEmpty ?start1 ?end1 ?start2 ?end2
+@action
+?start = LMax2 ?start1 ?start2
+?end = LMin2 ?end1 ?end2
+
+
+# holds for both datatype and object properties (see also $owl_FunctPropObject above);
+# rule was originally called rdfp2
+$owl_InvFunctProp
+?p <rdf:type> <owl:InverseFunctionalProperty>
+?y ?p ?x ?start1 ?end1
+?z ?p ?x ?start2 ?end2
+->
+?y <owl:sameAs> ?z
+@test
+?y != ?z
+?p != <rdf:type>
+LIntersectionNotEmpty ?start1 ?end1 ?start2 ?end2
+
+
+$owl_EquivClassBySubClass
+?x <rdfs:subClassOf> ?y
+?y <rdfs:subClassOf> ?x
+->
+?x <owl:equivalentClass> ?y
+@test
+?x != ?y
+
+
+$owl_EquivPropBySubProp
+?p <rdfs:subPropertyOf> ?q
+?q <rdfs:subPropertyOf> ?p
+->
+?p <owl:equivalentProperty> ?q
+@test
+?p != ?q
+
+
+# example (abstract DL syntax)
+#   Human \equiv Biped \sqcap
+#                \forall hasLivingParent Human \sqcap
+#                <= 2 hasLivingParent
+# entails
+#   Human \sqsubseteq \forall hasLivingParent Human
+# entails
+#   (ABox) individual of type Human is also of type
+#   \forall hasLivingParent Human
+# instantiation in RDF for second RHS clause
+#   person hasLivingParent parent
+#   restr owl:onProperty hasLivingParent
+#   restr owl:allValuesFrom Human
+#   person rdf:type restr
+#   ->
+#   parent rdf:type Human
+#
+$owl_typeByAllVal
+?x <owl:onProperty> ?p
+?u <rdf:type> ?x ?start1 ?end1
+?x <owl:allValuesFrom> ?y
+?u ?p ?v ?start2 ?end2
+->
+?v <rdf:type> ?y ?start ?end
+@test
+LIntersectionNotEmpty ?start1 ?end1 ?start2 ?end2
+@action
+?start = LMax2 ?start1 ?start2
+?end = LMin2 ?end1 ?end2
+
+
+# rdfp14a
+$owl_typeByHasVal
+?r <owl:onProperty> ?p
+?r <owl:hasValue> ?v
+?i ?p ?v ?start ?end
+->
+?i <rdf:type> ?r ?start ?end
+
+
+# rdfp14bx
+$owl_AttrByHasVal
+?x <owl:hasValue> ?y
+?x <owl:onProperty> ?p
+?u <rdf:type> ?x ?start ?end
+->
+?u ?p ?y ?start ?end
+
+
+$owl_typeBySomeVal
+?q <rdf:type> ?c ?start1 ?end1
+?r <owl:onProperty> ?p
+?r <owl:someValuesFrom> ?c
+?i ?p ?q ?start2 ?end2
+->
+?i <rdf:type> ?r ?start ?end
+@test
+LIntersectionNotEmpty ?start1 ?end1 ?start2 ?end2
+@action
+?start = LMax2 ?start1 ?start2
+?end = LMin2 ?end1 ?end2
+
+
+$owl_subClassByInters1
+?c <owl:intersectionOf> ?x
+?x <rdf:first> ?y
+->
+?c <rdfs:subClassOf> ?x
+?c <rdfs:subClassOf> ?y
+
+
+$owl_subClassByInters2
+?x <rdf:rest> ?y
+?c <owl:intersectionOf> ?x
+->
+?x <owl:intersectionOf> ?y
+@test
+?y != <rdf:nil>
+
+
+$owl_typeByIntersect_1
+?b <rdf:first> ?c
+?b <rdf:rest> <rdf:nil>
+?z <owl:intersectionOf> ?b
+?i <rdf:type> ?c ?start ?end
+->
+?i <rdf:type> ?b ?start ?end
+
+
+$owl_typeByIntersect_2
+?b <rdf:first> ?c
+?i <rdf:type> ?c ?start1 ?end1
+?i <rdf:type> ?b ?start2 ?end2
+?n <owl:intersectionOf> ?b
+->
+?i <rdf:type> ?n ?start ?end
+@test
+LIntersectionNotEmpty ?start1 ?end1 ?start2 ?end2
+@action
+?start = LMax2 ?start1 ?start2
+?end = LMin2 ?end1 ?end2

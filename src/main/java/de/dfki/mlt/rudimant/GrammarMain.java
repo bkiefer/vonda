@@ -5,25 +5,28 @@
  */
 package de.dfki.mlt.rudimant;
 
-import com.google.googlejavaformat.java.FormatterException;
-import de.dfki.lt.hfc.WrongFormatException;
-import de.dfki.lt.hfc.db.HfcDbService;
-import de.dfki.lt.hfc.db.client.HfcDbClient;
-import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.lt.hfc.db.server.HfcDbServer;
+import static de.dfki.mlt.rudimant.Constants.*;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
-import joptsimple.OptionException;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import org.yaml.snakeyaml.Yaml;
+import java.util.Map;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TTransportException;
+import org.yaml.snakeyaml.Yaml;
+
+import com.google.googlejavaformat.java.FormatterException;
+
+import de.dfki.lt.hfc.WrongFormatException;
+import de.dfki.lt.hfc.db.client.HfcDbClient;
+import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import joptsimple.OptionException;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
 
 /**
  * the main class of rudimant
@@ -44,137 +47,201 @@ public class GrammarMain {
           + "java rudimant <directory_to_be_searched/> <paht_of_config_file/> OPTIONS\n"
           + "-o=DIRECTORY\tSpecify DIRECTORY as the output directory";
 
-  private static LinkedHashMap<String, Object> configs;
+  private Map<String, Object> configs;
 
-  public static Yaml yaml = new Yaml();
+  private RudimantCompiler rc;
+  // rdf functionality
+
+  private RdfProxy startClient()
+      throws IOException, WrongFormatException, TException {
+    HfcDbClient client = new HfcDbClient();
+    client.init((String) configs.get(CFG_SERVER_HOST),
+        (int) configs.get(CFG_SERVER_PORT));
+    /*
+    String ontoFileName = (String) configs.get(CFG_ONTOLOGY_FILE);
+    if (ontoFileName == null) {
+      throw new IOException("Ontology file is missing.");
+    }
+    client.readConfig(new File(ontoFileName));
+    */
+    return new RdfProxy(client._client);
+  }
+
+  public void initCompiler()
+      throws IOException, WrongFormatException, TException {
+    rc = new RudimantCompiler((String)configs.get(CFG_WRAPPER_CLASS),
+        (String)configs.get(CFG_TARGET_CONSTRUCTOR),
+        startClient());
+    rc.setLog((boolean)
+        (configs.get(CFG_LOG) == null ? false : configs.get(CFG_LOG)));
+    rc.setThrowExceptions((boolean)configs.get(CFG_TYPE_ERROR_FATAL));
+    rc.setTypeCheck((boolean)configs.get(CFG_TYPE_CHECK));
+  }
+
+  public void process(List files, File outputDirectory)
+      throws IOException, FormatterException, WrongFormatException, TException {
+    if (! outputDirectory.exists()) {
+      if (! outputDirectory.mkdirs()) {
+        throw new IOException("Output directory could not be created: "
+            + outputDirectory.getAbsolutePath());
+      }
+    } else {
+      if (! outputDirectory.isDirectory()) {
+        throw new IOException("Output directory is not a directory: "
+            + outputDirectory.getAbsolutePath());
+      }
+    }
+    for (Object file : files) {
+      rc.process(new File((String) file), outputDirectory);
+    }
+  }
+
+  /** For unit tests */
+  public void setConfig(Map<String, Object> conf) {
+    configs = conf;
+  }
+
+  final static Object [][] defaults = {
+    { CFG_SERVER_HOST, "localhost" , "s"},
+    { CFG_SERVER_PORT, 9000 , null },
+    { CFG_LOG, false , "l"},
+    { CFG_TYPE_ERROR_FATAL, true, "e" },
+    { CFG_TYPE_CHECK, true , "d" },
+    { CFG_TARGET_CONSTRUCTOR, "", "CA" }
+  };
+
+  public Map<String, Object> defaultConfig() {
+    configs = new LinkedHashMap<String, Object>();
+    for (Object[] pair : defaults) {
+      configs.put((String)pair[0], pair[1]);
+    }
+    return configs;
+  }
+
+  static Object getDefault(String key) {
+    Object result = null;
+    for (Object[] pair : defaults) {
+      if (key.equals(pair[0])) {
+        result = pair[1];
+        break;
+      }
+    }
+    return result;
+  }
+
+  static void setDefault(String key, Map<String, Object> configs) {
+    if (! configs.containsKey(key)) {
+      configs.put(key, getDefault(key));
+    }
+  }
+
+  static void setValue(String key, String option, Object def,
+      Map<String, Object> configs, OptionSet options) {
+    if (options.has(option)) {
+      if (options.valueOf(option) == null) {
+        configs.put(key, ! (boolean) def);
+      } else {
+        configs.put(key, (String) options.valueOf(option));
+      }
+    } else if (! configs.containsKey(key)) {
+      configs.put(key, def);
+    }
+  }
 
   /**
    *
-   * @param args: the file that should be parsed without ending (in args[0]) +
-   * the complete path of the configfile
+   * @param args: the file that should be parsed without ending (in args[0])
+   *             + the complete path of the configfile
    * @throws Exception
    */
-  public static void main(String[] args) throws IOException, TTransportException, FileNotFoundException, WrongFormatException, TException, FormatterException {
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  public static void main(String[] args)
+      throws IOException, TTransportException, FileNotFoundException,
+      WrongFormatException, TException, FormatterException {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
-    if (!args[1].contains("config")) {
-      throw new NoConfigException("There was no config file specified; aborting");
-    }
-//    System.out.println((new File(args[1])).exists());
-    configs = (LinkedHashMap<String, Object>) yaml.load(new FileInputStream(args[1]));
-
-    serverConfigs();
-//    startServer();
-    startClient();
-
-    OptionParser parser = new OptionParser("hledo:");
+    OptionParser parser = new OptionParser("hleds:r:w:c:p:o:");
     parser.accepts("help");
     OptionSet options = null;
 
+    GrammarMain main = new GrammarMain();
+    Map<String, Object> configs;
+    int port = (Integer)getDefault(CFG_SERVER_PORT);
+    File outputDirectory = null;
+    List files = null;
+
     try {
       options = parser.parse(args);
+      files = options.nonOptionArguments();
+
+      if (files.isEmpty()) {
+        usage("Input file is missing");
+      }
+
+      outputDirectory = new File((String)files.get(0)).getParentFile();
+
+      if (options.has("help") || options.has("h")) {
+        System.out.println(help);
+        System.exit(0);
+      }
+      if (options.has("c")) {
+        Yaml yaml = new Yaml();
+        configs = (Map<String, Object>)
+            yaml.load(new FileReader((String)options.valueOf("c")));
+      } else {
+        configs = main.defaultConfig();
+      }
+
+      for (Object[] val : defaults) {
+        if (val[2] != null) {
+          setValue((String)val[0], (String)val[2], val[1], configs, options);
+        }
+      }
+
+      if (options.has("w")) {
+        configs.put(CFG_WRAPPER_CLASS, options.valueOf("w"));
+      }
+      if (options.has("r")) {
+        configs.put(CFG_ONTOLOGY_FILE, options.valueOf("r"));
+      }
+      if (options.has("o")) {
+        configs.put(CFG_OUTPUT_DIRECTORY, options.valueOf("o"));
+      }
+      if (options.has("p")) {
+        port = Integer.parseInt((String)options.valueOf("p"));
+      } else {
+        if (configs.containsKey(CFG_SERVER_PORT)) {
+          Object p = configs.get(CFG_SERVER_PORT);
+          if (p instanceof Integer) {
+            port = (Integer)p;
+          } else if (p instanceof String) {
+            port = Integer.parseInt((String) p);
+          }
+        }
+      }
+      configs.put(CFG_SERVER_PORT, port);
+      if (configs.containsKey(CFG_OUTPUT_DIRECTORY)) {
+        outputDirectory = new File((String)configs.get(CFG_OUTPUT_DIRECTORY));
+      }
+      main.setConfig(configs);
     } catch (OptionException ex) {
       usage("Error parsing options: " + ex.getLocalizedMessage());
+      System.exit(1);
     } catch (NumberFormatException nex) {
       usage("Argument of -p (port) must be a number");
+      System.exit(1);
     }
 
-    List things = options.nonOptionArguments();
-
-    if (things.isEmpty()) {
-      usage("");
-    }
-
-    File outputDirectory = null;
-    File dir = new File((String) things.get(0));
-
-    if (options.has("help") || options.has("h")) {
-      System.out.println(help);
-      System.exit(0);
-    }
-    RudimantCompiler rc = new RudimantCompiler((String) configs.get("wrapperClass"),
-            (String) configs.get("targetConstructor"), new RdfProxy(_client));
-    rc.setPackageName(configs.get("outputPackage").toString());
-    if (options.has("l")) {
-      rc.setLog(true);
-    }
-    if (options.has("e")) {
-      rc.setThrowExceptions(false);
-    }
-    if (options.has("d")) {
-      rc.setTypeCheck(false);
-    }
-    if (options.has("o")) {
-      outputDirectory = new File((String) options.valueOf("o"));
-    }
-
-    //System.out.println("test");
-    if (outputDirectory != null) {
-      rc.process(dir, outputDirectory);
-      return;
-    } else {
-      if (configs.get("outputDirectory") != null) {
-        rc.process(dir, new File((String) configs.get("outputDirectory")));
-        return;
-      }
-      rc.process(dir);
-      return;
-    }
-//    shutdownServer();
-  }
-
-  // rdf functionality
-  private static String RESOURCE_DIR;
-
-//  private static HfcDbServer server;
-  private static HfcDbClient client;
-  private static HfcDbService.Client _client;
-
-  // alternative PORTS
-  private static int SERVER_PORT;
-  private static int WEBSERVER_PORT;
-
-//  /**
-//   *
-//   * @throws TTransportException
-//   * @throws FileNotFoundException
-//   * @throws IOException
-//   * @throws WrongFormatException
-//   */
-//  private static void startServer() throws TTransportException, FileNotFoundException, IOException, WrongFormatException {
-//    if (server == null) {
-//      File config = new File(RESOURCE_DIR + "ontos/pal.ini");
-//      server = new HfcDbServer(SERVER_PORT);
-//      server.readConfig(config);
-//      server.runServer();
-//      server.runHttpService(WEBSERVER_PORT);
-//    }
-//  }
-  private static void startClient()
-          throws IOException, WrongFormatException, TException {
-    if (client == null) {
-      client = new HfcDbClient();
-      client.init("localhost", SERVER_PORT);
-      client.readConfig(new File(RESOURCE_DIR + "rifca/rifca.ini"));
-      client.readConfig(new File(RESOURCE_DIR + "ontos/pal.ini"));
-      _client = client._client;
-    }
-  }
-
-//  private static void shutdownServer() {
-//    server.shutdown();
-//  }
-  private static void serverConfigs() {
-    RESOURCE_DIR = (String) configs.get("resourceDir");
-    SERVER_PORT = (int) configs.get("serverPort");
-    WEBSERVER_PORT = (int) configs.get("webserverPort");
+    main.initCompiler();
+    main.process(files, outputDirectory);
   }
 
   private static void usage(String message) {
     System.out.println(message);
-    System.out.println("Please use this tool as follows: java rudimant <directory_to_be_searched/> <output_directory/>? OPTIONS\n"
-            + "For help see rumdimant -help\n");
+    System.out.println("Please use this tool as follows: "
+        + "java rudimant <directory_to_be_searched/> <output_directory/>? OPTIONS\n"
+        + "For help see rumdimant -help\n");
     System.exit(-1);
   }
 

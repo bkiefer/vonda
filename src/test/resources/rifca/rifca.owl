@@ -1,0 +1,213 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rifca="http://www.dfki.de/lt/onto/pal/rifca.owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+    xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:dom="http://www.dfki.de/lt/onto/pal/domain.owl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xml:base="http://www.dfki.de/lt/onto/pal/rifca.owl">
+  <owl:Ontology rdf:about="">
+    <owl:imports rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl"/>
+  </owl:Ontology>
+  <dom:Child rdf:ID="Child_8">
+    <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#male"/>
+    <dom:hasMother>
+      <dom:Mother rdf:ID="Mother_11">
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#female"/>
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Bea</dom:forename>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Visser</dom:surname>
+      </dom:Mother>
+    </dom:hasMother>
+    <dom:useDevice rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#pen"/>
+    <dom:hasEducation rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#link3"/>
+    <dom:hasFather>
+      <dom:Father rdf:ID="Father_9">
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Visser</dom:surname>
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Willem</dom:forename>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#male"/>
+      </dom:Father>
+    </dom:hasFather>
+    <dom:hasSister>
+      <dom:Sister rdf:ID="Sister_13">
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Visser</dom:surname>
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Sofie</dom:forename>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#female"/>
+      </dom:Sister>
+    </dom:hasSister>
+    <dom:image rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+    ></dom:image>
+    <dom:hasBrother>
+      <dom:Brother rdf:ID="Brother_12">
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#male"/>
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Lucas</dom:forename>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Visser</dom:surname>
+      </dom:Brother>
+    </dom:hasBrother>
+    <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Visser</dom:surname>
+    <dom:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Sem</dom:name>
+    <dom:hasRelative rdf:resource="#Father_9"/>
+    <dom:hasPreference>
+      <dom:Preference rdf:ID="Preference_10">
+        <dom:hasSport rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#handball"/>
+        <dom:hasHobby rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#youtube"/>
+        <dom:hasColor rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#green"/>
+      </dom:Preference>
+    </dom:hasPreference>
+    <dom:birthdate rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+    >2006-04-12</dom:birthdate>
+  </dom:Child>
+  <dom:Child rdf:ID="Child_0">
+    <dom:hasBrother>
+      <dom:Brother rdf:ID="brother_3">
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Flipje</dom:forename>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Jansen</dom:surname>
+      </dom:Brother>
+    </dom:hasBrother>
+    <dom:hasFather>
+      <dom:Father rdf:ID="father_2">
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Jansen</dom:surname>
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Jan</dom:forename>
+      </dom:Father>
+    </dom:hasFather>
+    <dom:hasEducation rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#link1"/>
+    <dom:hasMother>
+      <dom:Mother rdf:ID="mother_1">
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Mier</dom:forename>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Truus</dom:surname>
+      </dom:Mother>
+    </dom:hasMother>
+    <dom:useDevice rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#pump"/>
+    <dom:hasEducation rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#link2"/>
+    <dom:age rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+    >6</dom:age>
+    <dom:hasPreference>
+      <dom:Preference rdf:ID="Preference_for_henk_jansen">
+        <dom:hasSport rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#football"/>
+        <dom:hasColor rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#blue"/>
+        <dom:hasHobby rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#minecraft"/>
+      </dom:Preference>
+    </dom:hasPreference>
+    <dom:image rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+    >images/henk.png</dom:image>
+    <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Henk</dom:forename>
+    <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Jansen</dom:surname>
+    <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#male"/>
+    <dom:birthdate rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+    >2010-03-09</dom:birthdate>
+  </dom:Child>
+  <dom:Child rdf:ID="Child_1">
+    <dom:hasEducation rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#link2"/>
+    <dom:hasSister>
+      <dom:Sister rdf:ID="Sister_6">
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#female"/>
+        <dom:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Lotte</dom:name>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >de Wit</dom:surname>
+      </dom:Sister>
+    </dom:hasSister>
+    <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >de Wit</dom:surname>
+    <dom:hasEducation rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#link3"/>
+    <dom:hasRelative>
+      <dom:Mother rdf:ID="Mother_3">
+        <dom:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Bea</dom:name>
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Bea</dom:forename>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >de Wit</dom:surname>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#female"/>
+      </dom:Mother>
+    </dom:hasRelative>
+    <dom:hasFather>
+      <dom:Father rdf:ID="Father_4">
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Willem</dom:forename>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >de Wit</dom:surname>
+        <dom:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        ></dom:name>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#male"/>
+      </dom:Father>
+    </dom:hasFather>
+    <dom:hasPreference>
+      <dom:Preference rdf:ID="Preference_2_For_Emma">
+        <dom:hasHobby rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#theatre"/>
+        <dom:hasColor rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#purple"/>
+        <dom:hasSport rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#gymnastics"/>
+      </dom:Preference>
+    </dom:hasPreference>
+    <dom:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Emma</dom:name>
+    <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#female"/>
+    <dom:image rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+    >images/child1.png</dom:image>
+    <dom:birthdate rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+    >2005-01-20</dom:birthdate>
+    <dom:useDevice rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#pump"/>
+    <dom:hasSister>
+      <dom:Sister rdf:ID="Sister_7">
+        <dom:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Tess</dom:name>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#female"/>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >de Wit</dom:surname>
+      </dom:Sister>
+    </dom:hasSister>
+    <dom:hasMother rdf:resource="#Mother_3"/>
+  </dom:Child>
+  <dom:Color rdf:ID="color"/>
+  <dom:Hobby rdf:ID="Hobby_3"/>
+  <dom:Child rdf:ID="Child_14">
+    <dom:hasTreatment>
+      <dom:Treatment rdf:ID="Treatment_15">
+        <dom:hasGoal>
+          <dom:Goal rdf:ID="Goal_16">
+            <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >&lt;p style="margin-top: 0"&gt;&#xD;
+      Links to dmgoal?&#xD;
+    &lt;/p&gt;</rdfs:comment>
+            <dom:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >AN1</dom:name>
+          </dom:Goal>
+        </dom:hasGoal>
+      </dom:Treatment>
+    </dom:hasTreatment>
+    <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Iets</dom:surname>
+    <dom:image rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+    >images/child3.png</dom:image>
+    <dom:useDevice rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#pen"/>
+    <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#female"/>
+    <dom:birthdate rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+    >2008-04-15</dom:birthdate>
+    <dom:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Sofia</dom:name>
+  </dom:Child>
+</rdf:RDF>
+
+<!-- Created with Protege (with OWL Plugin 3.5, Build 663)  http://protege.stanford.edu -->

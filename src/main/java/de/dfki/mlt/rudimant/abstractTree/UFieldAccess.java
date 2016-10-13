@@ -5,12 +5,14 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import de.dfki.mlt.rudimant.Mem;
-import java.util.ArrayList;
-import de.dfki.lt.hfc.db.rdfProxy.*;
 import java.util.List;
 import java.util.Objects;
+
 import org.apache.thrift.TException;
+
+import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
+import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import de.dfki.mlt.rudimant.Mem;
 
 /**
  * this represents an access to the ontology (will result in an rdf object in
@@ -21,10 +23,10 @@ import org.apache.thrift.TException;
 public class UFieldAccess extends RTLeaf {
 
   String type;
-  ArrayList<String> representation;
+  List<String> representation;
   boolean asked = false;
 
-  public UFieldAccess(ArrayList<String> representation) {
+  public UFieldAccess(List<String> representation) {
     this.representation = representation;
   }
 

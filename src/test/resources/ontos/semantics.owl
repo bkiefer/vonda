@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+    xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:sem="http://www.dfki.de/lt/onto/pal/semantics.owl#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xml:base="http://www.dfki.de/lt/onto/pal/semantics.owl">
+  <owl:Ontology rdf:about="">
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >v0.9.1</owl:versionInfo>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >author(s): Hans-Ulrich Krieger</rdfs:comment>
+  </owl:Ontology>
+  <owl:Class rdf:ID="Frame"/>
+  <owl:Class rdf:ID="AssessingPerformance">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="GivingSolution">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="AssigningRole">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Manner">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="Entity"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="Continuing">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Asking">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="HavingDelight">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="BeingCorrect">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Turning">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Location">
+    <rdfs:subClassOf rdf:resource="#Entity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Abstract">
+    <rdfs:subClassOf rdf:resource="#Entity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="HavingFun">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="BeingSuccessful">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Answering">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Playing">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Liking">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="TryingAgain">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Explaining">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Instructing">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Repeating">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Object">
+    <rdfs:subClassOf rdf:resource="#Entity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Actor">
+    <rdfs:subClassOf rdf:resource="#Entity"/>
+  </owl:Class>
+  <owl:ObjectProperty rdf:ID="agent">
+    <rdfs:range rdf:resource="#Actor"/>
+    <rdfs:domain rdf:resource="#Frame"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="purpose">
+    <rdfs:range rdf:resource="#Frame"/>
+    <rdfs:domain rdf:resource="#AssigningRole"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="theme">
+    <rdfs:domain rdf:resource="#Frame"/>
+    <rdfs:range rdf:resource="#Entity"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="manner">
+    <rdfs:range rdf:resource="#Manner"/>
+    <rdfs:domain rdf:resource="#Frame"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="patient">
+    <rdfs:range rdf:resource="#Actor"/>
+    <rdfs:domain rdf:resource="#Frame"/>
+  </owl:ObjectProperty>
+</rdf:RDF>
+
+<!-- Created with Protege (with OWL Plugin 3.5, Build 663)  http://protege.stanford.edu -->

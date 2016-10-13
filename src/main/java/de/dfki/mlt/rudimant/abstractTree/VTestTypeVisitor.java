@@ -96,7 +96,7 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpBoolean node) {
-    System.out.println(node.fullexp);
+    // System.out.println(node.fullexp);
     node.rule = mem.getCurrentRule();
     node.left.visit(this);
     if (node.right == null) {
@@ -277,14 +277,17 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatImport node) {
-     String conargs = "";
-    int i = 0;
-    for(String a : rudi.getConstructorArgs().split(",")){
-      if(i > 0){
-        conargs += ", ";
+    String conargs = "";
+    if (null != rudi.getConstructorArgs()
+        && ! rudi.getConstructorArgs().isEmpty()) {
+      int i = 0;
+      for(String a : rudi.getConstructorArgs().split(",")){
+        if(i > 0){
+          conargs += ", ";
+        }
+        conargs += a.trim().split(" ")[1];
+        i++;
       }
-      conargs += a.trim().split(" ")[1];
-      i++;
     }
     mem.addImport(node.name, conargs);
   }

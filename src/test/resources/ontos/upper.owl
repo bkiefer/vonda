@@ -1,0 +1,327 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+    xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:time="http://www.dfki.de/lt/onto/common/time.owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:upper="http://www.dfki.de/lt/onto/common/upper.owl#"
+  xml:base="http://www.dfki.de/lt/onto/common/upper.owl">
+  <owl:Ontology rdf:about="">
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >v0.9.2</owl:versionInfo>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >author(s): Hans-Ulrich Krieger</rdfs:comment>
+    <owl:imports rdf:resource="http://www.dfki.de/lt/onto/common/time.owl"/>
+  </owl:Ontology>
+  <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#point"/>
+  <owl:Class rdf:ID="Group">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="Agent"/>
+    </rdfs:subClassOf>
+    <owl:disjointWith>
+      <owl:Class rdf:ID="Single"/>
+    </owl:disjointWith>
+  </owl:Class>
+  <owl:Class rdf:about="#Single">
+    <owl:disjointWith rdf:resource="#Group"/>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Agent"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="Event">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Events allow us to encode simple processes through the distinguished properties startsWith, continuesWith, and endsWith; _loops_ can be implemented by mentioning a Happening at a later point again and _choices_ by having several Happenings at the same time, as the three distinguished properties ar _relational_</rdfs:comment>
+    <owl:disjointWith>
+      <owl:Class rdf:ID="Situation"/>
+    </owl:disjointWith>
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="Happening"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="Ability">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="Abstract"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ability is a container to group capabilities of animated objects (= agents), e.g., able to lift 100kg or is allowed to drive a truck, and should NOT refer to individual physical properties (e.g., size = 1.82m or weight = 75kg)</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="#Agent">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Agent makes a fundamental distinction between Singles and Groups of Agents</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="Physical"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#Happening">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="Entity"/>
+    </rdfs:subClassOf>
+    <owl:disjointWith>
+      <owl:Class rdf:about="#Abstract"/>
+    </owl:disjointWith>
+    <owl:disjointWith>
+      <owl:Class rdf:about="#Physical"/>
+    </owl:disjointWith>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Happenings are either atomic Situations or decomposable Events</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Plan">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Abstract"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >a placeholder for an abstract plan</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="SpatialDescription">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Abstract"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >a placeholder for spatial descriptions that depict places in the real world</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="TemporalDescription">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Abstract"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >a placeholder for temporal descriptions that depict happenings in the real world</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Place">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Physical"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Place refers to places in the real world; they might be refered to by (i) a SpacialDescription, (ii) a (natural language) name, (iii) a 2D/3D point, or (iv) a coordinate, consisting of a latitude and a longitude</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Object">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Physical"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    ></rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="#Situation">
+    <rdfs:subClassOf rdf:resource="#Happening"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Situations are atomic, i.e., can not be depomposed any further</rdfs:comment>
+    <owl:disjointWith rdf:resource="#Event"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Physical">
+    <owl:disjointWith>
+      <owl:Class rdf:about="#Abstract"/>
+    </owl:disjointWith>
+    <owl:disjointWith rdf:resource="#Happening"/>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Entity"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >we destinguish between conscious, self-aware agaent (singles and groups), places in the real world, and everything else (Object)</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="#Entity">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >a tri-partite structure: Abstract, Happening, and Physical</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Action">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >actions manifest in real-world happenings</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Abstract"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#Abstract">
+    <rdfs:subClassOf rdf:resource="#Entity"/>
+    <owl:disjointWith rdf:resource="#Happening"/>
+    <owl:disjointWith rdf:resource="#Physical"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    ></rdfs:comment>
+  </owl:Class>
+  <owl:ObjectProperty rdf:ID="spatiallyDescribes">
+    <rdfs:domain rdf:resource="#SpatialDescription"/>
+    <rdfs:range rdf:resource="#Place"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="temporallyDescribes">
+    <rdfs:range rdf:resource="#Happening"/>
+    <rdfs:domain rdf:resource="#TemporalDescription"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="hasLocation">
+    <rdfs:range rdf:resource="#SpatialDescription"/>
+    <rdfs:domain rdf:resource="#Place"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="hasAbility">
+    <rdfs:range rdf:resource="#Ability"/>
+    <rdfs:domain rdf:resource="#Agent"/>
+  </owl:ObjectProperty>
+  <owl:SymmetricProperty rdf:about="http://www.w3.org/2002/07/owl#disjointObjectProperty">
+    <rdfs:domain rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    <owl:inverseOf rdf:resource="http://www.w3.org/2002/07/owl#disjointObjectProperty"/>
+    <rdf:type>
+      <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#ObjectProperty">
+        <owl:disjointWith>
+          <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#DatatypeProperty">
+            <owl:disjointWith rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+          </rdf:Description>
+        </owl:disjointWith>
+      </rdf:Description>
+    </rdf:type>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+  </owl:SymmetricProperty>
+  <time:SynchronicProperty rdf:ID="endsWith">
+    <rdfs:domain rdf:resource="#Event"/>
+    <rdfs:range rdf:resource="#Happening"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >this is a synchronic property, since events are unique in time; endsWith needs not to be functional, as events might end with several happenings at the same time (say, a world-wide event ending at several places/continents)</rdfs:comment>
+  </time:SynchronicProperty>
+  <time:SynchronicProperty rdf:ID="longitude">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    <rdfs:domain rdf:resource="#Place"/>
+  </time:SynchronicProperty>
+  <time:SynchronicProperty rdf:ID="happensAt">
+    <rdfs:range rdf:resource="#Place"/>
+    <rdfs:domain rdf:resource="#Happening"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >an event happens at (a) physical location(s); might be several ones;
+this is a synchronic property, since happenings are unique in time</rdfs:comment>
+  </time:SynchronicProperty>
+  <time:DiachronicProperty rdf:ID="hasSuperior">
+    <rdfs:range rdf:resource="#Single"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >is there a missing/hidden third argument ?</rdfs:comment>
+    <rdfs:domain rdf:resource="#Single"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </time:DiachronicProperty>
+  <time:SynchronicProperty rdf:ID="continuesWith">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >this is a synchronic property, since events are unique in time</rdfs:comment>
+    <rdfs:range rdf:resource="#Happening"/>
+    <rdfs:domain rdf:resource="#Event"/>
+  </time:SynchronicProperty>
+  <time:SynchronicProperty rdf:ID="startsWith">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:domain rdf:resource="#Event"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >this is a synchronic property, since events are unique in time; events need not to be functional, as they might start with several happenings at the same time (say, a world-wide event happening at several places/continents)</rdfs:comment>
+    <rdfs:range rdf:resource="#Happening"/>
+  </time:SynchronicProperty>
+  <time:DiachronicProperty rdf:ID="hasMember">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >a group might have subgroups, but in the end, we end up in concrete members, viz., people</rdfs:comment>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:range rdf:resource="#Single"/>
+    <rdfs:domain rdf:resource="#Group"/>
+  </time:DiachronicProperty>
+  <time:DiachronicProperty rdf:ID="worksOn">
+    <rdfs:domain rdf:resource="#Agent"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:range rdf:resource="#Entity"/>
+  </time:DiachronicProperty>
+  <time:SynchronicProperty rdf:ID="latitude">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:domain rdf:resource="#Place"/>
+  </time:SynchronicProperty>
+  <time:SynchronicProperty rdf:ID="starts">
+    <rdfs:domain rdf:resource="#Happening"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#long"/>
+  </time:SynchronicProperty>
+  <time:SynchronicProperty rdf:ID="ends">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#long"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:domain rdf:resource="#Happening"/>
+  </time:SynchronicProperty>
+  <time:DiachronicProperty rdf:ID="worksFor">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:range rdf:resource="#Agent"/>
+    <rdfs:domain rdf:resource="#Agent"/>
+  </time:DiachronicProperty>
+  <time:DiachronicProperty rdf:ID="worksIn">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >we make this a diachronic property (contrary to placeOfBirth),
+where the fourth and fifth argument express the temporal extent
+in which the person grew up at that location</rdfs:comment>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:range rdf:resource="#Place"/>
+    <rdfs:domain rdf:resource="#Agent"/>
+  </time:DiachronicProperty>
+  <time:SynchronicProperty rdf:ID="basedOn">
+    <rdfs:range rdf:resource="#Entity"/>
+    <rdfs:domain rdf:resource="#Happening"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >events can be based on specific prerequisites (can be nearly everything); use this to encode pre-conditions;
+this is a synchronic property, since happenings are unique in time</rdfs:comment>
+  </time:SynchronicProperty>
+  <time:SynchronicProperty rdf:ID="leadsTo">
+    <rdfs:domain rdf:resource="#Happening"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >an event can lead to many things: happenings and abstract or concrete things; use this to ecode post-conditions</rdfs:comment>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:range rdf:resource="#Entity"/>
+  </time:SynchronicProperty>
+  <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Thing">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    ></rdfs:comment>
+  </rdf:Description>
+  <time:DiachronicProperty rdf:ID="hasSubgroup">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+    <rdfs:range rdf:resource="#Group"/>
+    <rdfs:domain rdf:resource="#Group"/>
+  </time:DiachronicProperty>
+  <time:DiachronicProperty rdf:ID="isAwareOf">
+    <rdfs:range rdf:resource="#Happening"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >agents are aware of Happenings, but this awareness might turn into oblivion (when using additional temporal arguments), thus isAwareOf is a diachronic property; awareness is either established when being present at the happening or through, e.g., story-telling, reading a newspaper, watching TV, etc.</rdfs:comment>
+    <rdfs:domain rdf:resource="#Agent"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </time:DiachronicProperty>
+  <time:SynchronicProperty rdf:ID="name">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:domain rdf:resource="#Entity"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </time:SynchronicProperty>
+  <time:DiachronicProperty rdf:ID="manifestsIn">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >actions can manifest in happenings</rdfs:comment>
+    <rdfs:range rdf:resource="#Happening"/>
+    <rdfs:domain rdf:resource="#Action"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </time:DiachronicProperty>
+  <time:SynchronicProperty rdf:ID="center">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#point"/>
+    <rdfs:domain rdf:resource="#Place"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </time:SynchronicProperty>
+  <time:DiachronicProperty rdf:ID="involvedIn">
+    <owl:inverseOf>
+      <time:SynchronicProperty rdf:ID="involves">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <rdfs:domain rdf:resource="#Happening"/>
+        <rdfs:range rdf:resource="#Agent"/>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >events involve agents, typically people (Person);
+separate this from property "basedOn" in that "involves" does not encode pre-conditions</rdfs:comment>
+        <owl:inverseOf rdf:resource="#involvedIn"/>
+      </time:SynchronicProperty>
+    </owl:inverseOf>
+    <rdfs:range rdf:resource="#Happening"/>
+    <rdfs:domain rdf:resource="#Agent"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </time:DiachronicProperty>
+</rdf:RDF>
+
+<!-- Created with Protege (with OWL Plugin 3.5, Build 663)  http://protege.stanford.edu -->

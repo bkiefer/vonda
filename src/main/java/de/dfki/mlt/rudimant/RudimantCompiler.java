@@ -1,5 +1,7 @@
 package de.dfki.mlt.rudimant;
 
+import static de.dfki.mlt.rudimant.Constants.*;
+
 import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudimant.abstractTree.VGenerationVisitor;
@@ -144,9 +146,9 @@ public class RudimantCompiler {
       }
     }
     if (inputRealName != null) {
-      return new File(result, inputRealName + ".rudi");
+      return new File(result, inputRealName + RULES_FILE_EXTENSION);
     } else {
-      return new File(result, className + ".rudi");
+      return new File(result, className + RULES_FILE_EXTENSION);
     }
   }
 
@@ -202,11 +204,11 @@ public class RudimantCompiler {
   public String getClassName(File inputFile) {
     // remember the real name, without upper case transformation, so getInputFile()
     // won't crash
-    this.inputRealName = inputFile.getName().replace(".rudi", "");
+    this.inputRealName = inputFile.getName().replace(RULES_FILE_EXTENSION, "");
     String classname = null;
     try {
-      classname = inputFile.getName().substring(0, 1).toUpperCase()
-              + inputFile.getName().substring(1, inputFile.getName().indexOf("."));
+      classname = inputRealName.substring(0, 1).toUpperCase()
+          + inputRealName.substring(1);
     } catch (StringIndexOutOfBoundsException e) {
       logger.error("Could not find class name " + inputFile.getName());
     }
@@ -272,7 +274,7 @@ public class RudimantCompiler {
         throw new IOException(e);
       }
     } else {
-      throw new UnsupportedOperationException("There is sth going very,very wrong...");
+      throw new UnsupportedOperationException("There is sth going very, very wrong...");
     }
 
     logger.info("Done parsing " + inputFile.getName());
