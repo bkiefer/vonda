@@ -1,0 +1,53 @@
+
+# author(s): Hans-Ulrich Krieger
+# version: Tue Feb  2 14:45:57 CET 2016
+
+
+# anamnesis at time 4711: we use xsd:long integers (think of Unix epoch time)
+
+# is rdf:type a diachronic property? Yes! people are aging (does this matter here?)
+<pal:lisa> <rdf:type> <dom:Child> "4711"^^<xsd:long> .
+
+# her name might change (new step mother/father, marriage, etc.)
+<pal:lisa> <dom:name> "Lisa Lebowski" "4711"^^<xsd:long> .
+
+# her birthdate is functional and will never change (birthdate is synchronic);
+# nevertheless, we go for quadruples here to always have a uniform representation
+<pal:lisa> <dom:birthdate> "2007-12-12"^^<xsd:date> "4711"^^<xsd:long> .
+
+# physician makes an "emotional guess" at anamnesis time
+<pal:lisa> <dom:hasEmotionalState> <pal:emostate42> "4711"^^<xsd:long> .
+<pal:emostate42> <rdf:type> <dom:EmotionalState> "4711"^^<xsd:long> .
+<pal:emostate42> <dom:hasMood> <dom:anxious> "4711"^^<xsd:long> .
+
+# anamnesis taken at the hospital
+
+<pal:lisa> <dom:locatedAt> <pal:quenmarryhospital>  "4711"^^<xsd:long> .
+<pal:quenmarryhospital> <rdf:type> <dom:Hospital> "4711"^^<xsd:long> .
+...
+
+# father here means biological father -> synchronic functional object property
+# hasFather; again, uniform representation is quadruple
+<pal:lisa> <dom:hasFather> <pal:thedude> "4711"^^<xsd:long> .
+
+<pal:thedude> <dom:name> "The Dude" "4711"^^<xsd:long> .
+<pal:thedude> <dom:name> "Jeffrey Lebowski" "4711"^^<xsd:long> .
+<pal:thedude> <dom:name> "Jeff Letrotski" "4711"^^<xsd:long> .
+
+# time passes by ...
+
+# first lab values taken at time = 5544 (Lisa is now 9 years old)
+<pal:lisa> <dom:hasLabValue> <pal:labval22> "4744"^^<xsd:long> .
+<pal:labval22> <dom:height> "133"^^<xsd:cm> "4744"^^<xsd:long> .
+<pal:labval22> <dom:weight> "28.2"^^<xsd:kg> "4744"^^<xsd:long> .
+<pal:labval22> <dom:bmi> "15.9"^^<xsd:kg_m2> "4744"^^<xsd:long> .
+<pal:labval22> <dom:hr> "75.0"^^<xsd:min-1> "4744"^^<xsd:long> .
+# important to associate BSL with time; what is missing, however here, is the
+# amount of food/calories taken (how long in advance)
+<pal:labval22> <dom:bsl> "162.0"^^<xsd:mg_dL> "4744"^^<xsd:long> .
+
+# new lab value at time = 5577, only weight and blood sugar level (different unit)
+<pal:lisa> <dom:hasLabValue> <pal:labval22> "4777"^^<xsd:long> .
+<pal:labval33> <dom:weight> "28.6"^^<xsd:kg> "4777"^^<xsd:long> .
+# bsl measured using a different unit, viz., mmol/L
+<pal:labval33> <dom:bsl> "9.2"^^<xsd:mmol_L> "4777"^^<xsd:long> .

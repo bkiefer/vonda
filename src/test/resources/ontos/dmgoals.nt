@@ -1,0 +1,844 @@
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Ontology> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl> <http://www.w3.org/2002/07/owl#versionInfo> "v1.0.1"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl> <http://www.w3.org/2000/01/rdf-schema#comment> "author: Rifca Peters (with contributions from her PAL pals)"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl> <http://www.w3.org/2002/07/owl#imports> <http://www.dfki.de/lt/onto/common/upper.owl> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterAllMeals> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterAllMeals> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Aggiungere tutti i pasti principali (colazione, pranzo, cena) alla \r\n      timeline in 1 giorno\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterAllMeals> <http://www.w3.org/2000/01/rdf-schema#comment> "Add all main meals (breakfast, lunch and dinner) to the timeline in 1 day"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterAllMeals> <http://www.w3.org/2000/01/rdf-schema#comment> "Voeg op 1 dag alle hoofdmaaltijden (ontbijt, lunch, avondeten) toe aan de timeline"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterAllMeals> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN6MasterFood> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN6MasterFood> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN6MasterFood> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN6MasterFood> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N15kApplyKnowledge> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN6MasterFood> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#N15kApplyKnowledge> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN6MasterFood> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Esperto di nutrizione: Conoscenze approfondite e capacit&#224; sulla \r\n      nutrizione\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN6MasterFood> <http://www.w3.org/2000/01/rdf-schema#comment> "Food Master: all knowledge and skills obtained"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN6MasterFood> <http://www.w3.org/2000/01/rdf-schema#comment> "Food Master: verkrijg alle kennis en vaardigheden"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kbWhatEat> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kbWhatEat> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      SApere cosa mangiare, grazie all'aiuto dei genitori\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kbWhatEat> <http://www.w3.org/2000/01/rdf-schema#comment> "Knows what to eat, possible with a reminder of an adult"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kbWhatEat> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet wat te eten, eventueel met hulp van een volwassene die hen helpt herinneren"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kbWhatEat> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kbWhatEat> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN2> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kbWhatEat> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N1kNutritionAmount> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N1kNutritionAmount> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere quanto mangiare a scuola e altrove\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N1kNutritionAmount> <http://www.w3.org/2000/01/rdf-schema#comment> "Knows how much to eat at school or somewhere else"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N1kNutritionAmount> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet hoe vaak te eten op school of ergens anders"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N1kNutritionAmount> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN1> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N1kNutritionAmount> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N1kNutritionAmount> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kaWhenEat> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN2> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kaWhenEat> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN2> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kbWhatEat> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN2> <http://www.w3.org/2000/01/rdf-schema#comment> "Correctly answer all quiz questions with topic 'Nutrition' and goal 'N2'"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN2> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG5> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G5kMeasurmentTime> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG5> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#G5kMeasurmentTime> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG5> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD6> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D6kNotContagious> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD6> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D6kNotContagious> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD6> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH5> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH5> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H5kLowValue> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH5> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H5kLowValue> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H7sCorrectHypo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SkillGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H7sCorrectHypo> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SkillGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AH4RegulateHypo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H7sCorrectHypo> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AH4RegulateHypo> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H7sCorrectHypo> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Correggere la glicemia con zucchero\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H7sCorrectHypo> <http://www.w3.org/2000/01/rdf-schema#comment> "Can correct for a low blood sugar by taking dextrose pills or lemonade"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H7sCorrectHypo> <http://www.w3.org/2000/01/rdf-schema#comment> "Kan een lage bloedglucose corrigeren door dextrosetabletten of limonade te nemen"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H5kLowValue> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H7sCorrectHypo> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H5kLowValue> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H7sCorrectHypo> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD2BasicDiabetes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD3GeneralDiabetes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD2BasicDiabetes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD3GeneralDiabetes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD2BasicDiabetes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI1NoviceInsulin> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD2BasicDiabetes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI1NoviceInsulin> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D10kWhyMeasure> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD2BasicDiabetes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D10kWhyMeasure> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD2BasicDiabetes> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD2BasicDiabetes> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Livello base: Nozioni generali sul diabete (livello 2)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD2BasicDiabetes> <http://www.w3.org/2000/01/rdf-schema#comment> "Basic diabetes knowledge: all diabetes knowledge obtained at level 2"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD2BasicDiabetes> <http://www.w3.org/2000/01/rdf-schema#comment> "Basic diabetes knowledge: verkrijg alle kennis over diabetes op level 2"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerI8> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I8kInsulineStorage> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerI8> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#I8kInsulineStorage> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerI8> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4kResponse> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG4> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4kResponse> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG4> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4kResponse> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4kResponse> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4kResponse> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4kResponse> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere come agire in base al valore di glicemia\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4kResponse> <http://www.w3.org/2000/01/rdf-schema#comment> "Know how to act accordingly based on glucose value"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4kResponse> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet wat te doen bij een hoge en lage bloedglucose"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterThreeMeasuresADay> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterThreeMeasuresADay> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Aggiungere i valori di glicemia alla timeline in 1 giorno (24 ore)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterThreeMeasuresADay> <http://www.w3.org/2000/01/rdf-schema#comment> "Op een dag (24 uur) 3 bloed glucose metingen toegevoegd aan de timeline"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterThreeMeasuresADay> <http://www.w3.org/2000/01/rdf-schema#comment> "Add three glyceamic measures to the timeline in 1 day (24 hours)"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterThreeMeasuresADay> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterMeasurement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterThreeMeasuresADay> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterMeasurement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D7kCauseUnknown> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D7kCauseUnknown> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD7> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D7kCauseUnknown> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD7> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D7kCauseUnknown> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere che non tutti conoscono il perch&#233; qualcuno ha il diabete e \r\n      qualcun'altro no\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D7kCauseUnknown> <http://www.w3.org/2000/01/rdf-schema#comment> "Knows that nobody knows why some get diabetes and others do not"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D7kCauseUnknown> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet dat niemand zeker weet waarom de een wel diabetes krijgt en de ander niet"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D7kCauseUnknown> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD5> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D5kChronicDisease> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD5> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D5kChronicDisease> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD5> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD5> <http://www.w3.org/2000/01/rdf-schema#comment> "Correctly answer al quiz questions for topic 'Diabetes' with goal D5"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SkillGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMLearningGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SkillGoal> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMLearningGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G14kKnowSymtoms> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G14kKnowSymtoms> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG5ExpertGlucose> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G14kKnowSymtoms> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG5ExpertGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G14kKnowSymtoms> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Riconoscere i sintomi e sapere come prevenire e trattare la glicemia \r\n      alta o bassa\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G14kKnowSymtoms> <http://www.w3.org/2000/01/rdf-schema#comment> "Know (recognize) the symptoms and knows how to prevent and treat high or low blood glucose"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G14kKnowSymtoms> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet de oorzaken en verschijnselen van de hoge en lage bloedglucose"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AH4RegulateHypo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AH4RegulateHypo> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G11sResponsible> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AH4RegulateHypo> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#G11sResponsible> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AH4RegulateHypo> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AH4RegulateHypo> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AH4RegulateHypo> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H7sCorrectHypo> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AH4RegulateHypo> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Gestione dell'ipoglicemia: acquisire le conoscenze e le capacit&#224; per \r\n      gestire l'ipoglicemia (livello 4)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AH4RegulateHypo> <http://www.w3.org/2000/01/rdf-schema#comment> "Regulate Hypo: obtain all knowledge and skills to regulate a hypo (level 4)"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AH4RegulateHypo> <http://www.w3.org/2000/01/rdf-schema#comment> "Regulate Hypo: weet en kan alles om een hypo te reguleren (level 4)"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1AssistantMeasure> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1AssistantMeasure> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1AssistantMeasure> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1AssistantMeasure> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Assistente di misura: capacit&#224; di aiutare a misurare la glicemia \r\n      (livello 1)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1AssistantMeasure> <http://www.w3.org/2000/01/rdf-schema#comment> "Assistant Measure: all skills to assist with blood glucose measurement obtained at level 1"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1AssistantMeasure> <http://www.w3.org/2000/01/rdf-schema#comment> "Assistant Measure: kan alles om te helpen bij het meten van bloedglucose (level 1)"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G1sPrepareMeter> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1AssistantMeasure> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#G1sPrepareMeter> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1NoviceGlucose> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1NoviceGlucose> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Livello principiante glicemia: conoscenza generale sulla glicemia, \r\n      ipoglicemia e iperglicemia (livello 1)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1NoviceGlucose> <http://www.w3.org/2000/01/rdf-schema#comment> "Novice Glucose: all knowledge on glucose, hypo and hyper obtained at level 1"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1NoviceGlucose> <http://www.w3.org/2000/01/rdf-schema#comment> "Novice Glucose: weet alles over glucose, hypo en hyper op level 1"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D10kWhyMeasure> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1NoviceGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D10kWhyMeasure> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H2kCorrectHypo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1NoviceGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H2kCorrectHypo> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1NoviceGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1NoviceGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1NoviceGlucose> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG6> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG6> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G6kWhenMeasure> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG6> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#G6kWhenMeasure> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#WinTenTimes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#WinTenTimes> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#WinQuiz> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#WinTenTimes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#WinQuiz> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#WinTenTimes> <http://www.w3.org/2000/01/rdf-schema#comment> "Win (80% correct) the quiz ten times in a row"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN1> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#N1kNutritionAmount> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN1> <http://www.w3.org/2000/01/rdf-schema#comment> "Correctly answer all quiz questions with topic' Nutrition' and goal 'N1'"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN1> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#LoginSevenDays> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#LoginOnce> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#LoginSevenDays> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#LoginOnce> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#LoginSevenDays> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#LoginSevenDays> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Accesso per 7 giorni consecutivi\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#LoginSevenDays> <http://www.w3.org/2000/01/rdf-schema#comment> "Login 7 consecuitive days"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#LoginSevenDays> <http://www.w3.org/2000/01/rdf-schema#comment> "Log 7 dagen achter elkaar in"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D8kNoBlame> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D8kNoBlame> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere che nessuno ha colpa per il fatto di avere il diabete\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D8kNoBlame> <http://www.w3.org/2000/01/rdf-schema#comment> "Know that not he/she, nor anybody else, is to blame that he/she has diabetes"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D8kNoBlame> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet dat het kind of iemand anders geen schuld heeft waarom hij of zij diabetes heeft gekregen"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD8> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D8kNoBlame> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD8> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D8kNoBlame> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D8kNoBlame> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH6> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H6kHypoCause> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH6> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H6kHypoCause> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH6> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G1sPrepareMeter> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G1sPrepareMeter> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Aiutare i genitori nel misurare la glicemia preparando il glucometro\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G1sPrepareMeter> <http://www.w3.org/2000/01/rdf-schema#comment> "Can assist parents with measuring glucose by getting the meter ready"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G1sPrepareMeter> <http://www.w3.org/2000/01/rdf-schema#comment> "Kan helpen met het klaarleggen of klaarmaken van de bloedglucosemeter"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G1sPrepareMeter> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1AssistantMeasure> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G1sPrepareMeter> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SkillGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI1NoviceInsulin> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI1NoviceInsulin> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D3kInsulinIntake> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI1NoviceInsulin> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D3kInsulinIntake> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI1NoviceInsulin> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD2BasicDiabetes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI1NoviceInsulin> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I5sInsulinInjection> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI1NoviceInsulin> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#I5sInsulinInjection> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI1NoviceInsulin> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Insulina livello principiante: conoscenze generali sull 'insulina \r\n      (livello 1)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D9kInsulinLocation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI1NoviceInsulin> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D9kInsulinLocation> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI1NoviceInsulin> <http://www.w3.org/2000/01/rdf-schema#comment> "Novice Insulin: all knowledge on insulin obtained at level 1"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI1NoviceInsulin> <http://www.w3.org/2000/01/rdf-schema#comment> "Novice Insulin: weet alles over insuline op level 1"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerI7> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I7kWhenNeeded> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerI7> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#I7kWhenNeeded> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerI7> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N15kApplyKnowledge> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N15kApplyKnowledge> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN6MasterFood> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N15kApplyKnowledge> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere applicare le proprie conoscenze sulla nutrizione tutti i giorni, \r\n      durante lo sport, la scuola, le feste e nei fast-food\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N15kApplyKnowledge> <http://www.w3.org/2000/01/rdf-schema#comment> "Know how to apply their knowledge on nutrition to daily situations, sports, school, party's and eating fast-food"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N15kApplyKnowledge> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet de kennis over voeding toe te passen op dagelijkse situaties, zoals sporten, school, feestje en het eten van fastfood"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N15kApplyKnowledge> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N15kApplyKnowledge> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI5ManageInslulin> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI5ManageInslulin> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Gestione dell'insulina: conoscenze generali e capacit&#224; per regolare \r\n      l'intake di insulina (livello 5)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI5ManageInslulin> <http://www.w3.org/2000/01/rdf-schema#comment> "Manage Insulin: all knowledge and skills to regulate insulin intake obtained at level 5"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI5ManageInslulin> <http://www.w3.org/2000/01/rdf-schema#comment> "Manage Insulin: weet en kan alles om insuline inname te reguleren (level 5)"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI5ManageInslulin> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI5ManageInslulin> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I12sOperatePump> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI5ManageInslulin> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#I12sOperatePump> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I5sInsulinInjection> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI5ManageInslulin> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#I5sInsulinInjection> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI5ManageInslulin> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterDinner> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterDinner> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H5kLowValue> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H5kLowValue> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H5kLowValue> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere al di sotto di quale valore la glicemia &#232; troppo bassa\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H5kLowValue> <http://www.w3.org/2000/01/rdf-schema#comment> "Know at which value a blood sugar is too low"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H5kLowValue> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet bij welke waarde een bloedglucose te laag is"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H5kLowValue> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH5> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H5kLowValue> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H6kHypoCause> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H5kLowValue> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H6kHypoCause> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H5kLowValue> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H7sCorrectHypo> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#PlayQuiz> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#WinQuiz> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#PlayQuiz> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#WinQuiz> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#PlayQuiz> <http://www.w3.org/2000/01/rdf-schema#comment> "Play a quiz for the first time"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#PlayQuiz> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterMeasurement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterMeasurement> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterMeasurement> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterThreeMeasuresADay> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterMeasurement> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Inserisci il primo valore di glicemia alla timeline\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterMeasurement> <http://www.w3.org/2000/01/rdf-schema#comment> "Enter the first Glycemic value to the timeline"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterMeasurement> <http://www.w3.org/2000/01/rdf-schema#comment> "Eerste bloedglucose meeting aan de timeline toegevoegd"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#PalObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#Goal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#PalObjective> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#Goal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G11sResponsible> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G11sResponsible> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AH4RegulateHypo> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G11sResponsible> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      &#232; responsabile della misura e dell'interpretazione della propria glicemia\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G11sResponsible> <http://www.w3.org/2000/01/rdf-schema#comment> "Is responsible for measuring and interpreting own blood glucose"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G11sResponsible> <http://www.w3.org/2000/01/rdf-schema#comment> "Is verantwoordelijk voor het meten van de bloedglucosewaarde"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG6RegulateIndependent> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G11sResponsible> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG6RegulateIndependent> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G11sResponsible> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SkillGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG5ExpertGlucose> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG5ExpertGlucose> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Esperto di glicemia: Conoscenza generale sulla glicemia, ipoglicemia e \r\n      iperglicemia (livello 5)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG5ExpertGlucose> <http://www.w3.org/2000/01/rdf-schema#comment> "Expert Glucose: all knowledge on glucose, hypo and hyper obtained at level 5"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG5ExpertGlucose> <http://www.w3.org/2000/01/rdf-schema#comment> "Expert Glucose: weet alles over glucose, hypo en hyper op level 5"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG5ExpertGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG5ExpertGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#G14kKnowSymtoms> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG6RegulateIndependent> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG5ExpertGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG6RegulateIndependent> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG5ExpertGlucose> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD8> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD8> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD8> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D8kNoBlame> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD3GeneralDiabetes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD3GeneralDiabetes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD2BasicDiabetes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2kFoodAndActivity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD3GeneralDiabetes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2kFoodAndActivity> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2sTakePrecautions> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD3GeneralDiabetes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2sTakePrecautions> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD3GeneralDiabetes> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Diabete in generale: Nozioni generali sul diabete (livello 3)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD3GeneralDiabetes> <http://www.w3.org/2000/01/rdf-schema#comment> "General Diabetes: all knowledge on diabetes obtained at level 3"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD3GeneralDiabetes> <http://www.w3.org/2000/01/rdf-schema#comment> "General Diabetes: weet alles over diabetes op level 3"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD4AdvancedDiabetes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD3GeneralDiabetes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD4AdvancedDiabetes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD3GeneralDiabetes> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterBreakfast> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterBreakfast> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#LoginOnce> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#LoginOnce> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#LoginSevenDays> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#LoginOnce> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Primo accesso\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#LoginOnce> <http://www.w3.org/2000/01/rdf-schema#comment> "First Login"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#LoginOnce> <http://www.w3.org/2000/01/rdf-schema#comment> "Eerste keer inloggen"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#LoginOnce> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N5kAmountCarbs> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N5kAmountCarbs> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N5kAmountCarbs> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN5> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N5kAmountCarbs> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN5> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N5kAmountCarbs> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere la quantit&#224; di carboidrati negli alimenti\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N5kAmountCarbs> <http://www.w3.org/2000/01/rdf-schema#comment> "Know what products contain a lot or a little carbohydrates"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N5kAmountCarbs> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet welke producten veel en in welke producten weinig of geen koolhydraten bevatten"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG2> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG2> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMLearningGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMLearningGoal> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMLearningGoal> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      All T1DM self-management learning goals based on the Dutch 'Weet &amp; Doe \r\n      Doelen' (Knowledge and skill goals). Can be obtained either by \r\n      completion of related SupportingObjectives or by manual entery in the \r\n      PAL Control.\r\n    </p>"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D5kChronicDisease> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D5kChronicDisease> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D5kChronicDisease> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere che il diabete &#232; una patologia cronica e non sar&#224; curata\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D5kChronicDisease> <http://www.w3.org/2000/01/rdf-schema#comment> "Know that diabetes is a chronic disease and will not go away"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D5kChronicDisease> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet dat diabetes een chronische aandoening is en dus niet overgaat"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D5kChronicDisease> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D5kChronicDisease> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD5> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG6RegulateIndependent> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG6RegulateIndependent> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Valore di glicemia: conoscenza generale e capacit&#224; di gestire la \r\n      glicemia in autonomia (livello 6)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG6RegulateIndependent> <http://www.w3.org/2000/01/rdf-schema#comment> "Regulate Glucose: all knowledge and skills obtained to regulate blood glucose independently (level 6)"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG6RegulateIndependent> <http://www.w3.org/2000/01/rdf-schema#comment> "Regulate Glucose: weet en kan alles om zelfstandig bloedglucose te reguleren (level 6)"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG6RegulateIndependent> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG6RegulateIndependent> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG6RegulateIndependent> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG6RegulateIndependent> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#G11sResponsible> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG6RegulateIndependent> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG5ExpertGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G5kMeasurmentTime> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G5kMeasurmentTime> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG5> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G5kMeasurmentTime> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G5kMeasurmentTime> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere ogni quanto misurare la glicemia\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G5kMeasurmentTime> <http://www.w3.org/2000/01/rdf-schema#comment> "Know at which (regular) times glucose needs to be measured "@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G5kMeasurmentTime> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet op welke (reguliere) tijdstippen hun bloedglucose gemeten moet worden"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G5kMeasurmentTime> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D10kWhyMeasure> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D10kWhyMeasure> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere perch&#233; &#232; necessario misurare la glicemia\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D10kWhyMeasure> <http://www.w3.org/2000/01/rdf-schema#comment> "Know why blood glucose needs to be pricked"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D10kWhyMeasure> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet waarom een bloedglucose moet worden geprikt"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD10> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D10kWhyMeasure> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD10> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D10kWhyMeasure> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D10kWhyMeasure> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD2BasicDiabetes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D10kWhyMeasure> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1NoviceGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I12sOperatePump> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I12sOperatePump> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I12sOperatePump> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SkillGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I12sOperatePump> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Usare in autonomia il microinfusore\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I12sOperatePump> <http://www.w3.org/2000/01/rdf-schema#comment> "Can independently operate the insulin pump"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I12sOperatePump> <http://www.w3.org/2000/01/rdf-schema#comment> "Kan zelfstandig de insulinepomp bedienen"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I12sOperatePump> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI5ManageInslulin> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Glicemia in generale: Conoscenza generale sulla glicemia, ipoglicemia e \r\n      iperglicemia (livello 3)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G6kWhenMeasure> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#G6kWhenMeasure> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> <http://www.w3.org/2000/01/rdf-schema#comment> "General Glucose: all knowledge on glucose, hypo and hyper obtained at level 3"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG5ExpertGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#G5kMeasurmentTime> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AH4RegulateHypo> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H6kHypoCause> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H6kHypoCause> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> <http://www.w3.org/2000/01/rdf-schema#comment> "General Glucose: weet alles over glucose, hypo en hyper op level 3"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2kFoodAndActivity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerA2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2kFoodAndActivity> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerA2> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2kFoodAndActivity> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2kFoodAndActivity> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2kFoodAndActivity> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere la relazione tra insulina, nutrizione e attivit&#224; fisica\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2kFoodAndActivity> <http://www.w3.org/2000/01/rdf-schema#comment> "Know the relationship between insulin, nutrition and physical activity"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2kFoodAndActivity> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet de relatie tussen insuline, beweging en voeding"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2kFoodAndActivity> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD3GeneralDiabetes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD7> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD7> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D7kCauseUnknown> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD7> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG4> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG4> <http://www.w3.org/2000/01/rdf-schema#comment> "Correctly answer all questions on topic 'Blood Glucose' with goal G4"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG4> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4kResponse> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG4> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD4AdvancedDiabetes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD4AdvancedDiabetes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD3GeneralDiabetes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D17kImpactDaily> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD4AdvancedDiabetes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D17kImpactDaily> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD4AdvancedDiabetes> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Diabete livello avanzato: Nozioni generali sul diabete (livello 4)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD4AdvancedDiabetes> <http://www.w3.org/2000/01/rdf-schema#comment> "Advanced Diabetes: all knowledge on diabetes obtained at level 4"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD4AdvancedDiabetes> <http://www.w3.org/2000/01/rdf-schema#comment> "Advanced Diabetes: weet alles over diabetes op level 4"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD4AdvancedDiabetes> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD4AdvancedDiabetes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH8> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH8> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H8kSymtomsIrriliable> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH8> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H8kSymtomsIrriliable> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4kResponse> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> <http://www.w3.org/2000/01/rdf-schema#comment> "Basic Glucose: weet alles over glucose, hypo en hyper op level 2"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H3kSymtomsHypo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H3kSymtomsHypo> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H7sCorrectHypo> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Livello Base: conoscenza generale sulla glicemia, ipoglicemia e \r\n      iperglicemia (livello 2 )\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H4kAmountGlucose> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H4kAmountGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> <http://www.w3.org/2000/01/rdf-schema#comment> "Basic Glucose: all knowledge on glucose, hypo and hyper obtained at level 2"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1NoviceGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I8kInsulineStorage> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I8kInsulineStorage> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere come conservare l'insulina\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I8kInsulineStorage> <http://www.w3.org/2000/01/rdf-schema#comment> "Know how to preserve insulin"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I8kInsulineStorage> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet hoe insuline te bewaren"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I8kInsulineStorage> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I8kInsulineStorage> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerI8> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I8kInsulineStorage> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D17kImpactDaily> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D17kImpactDaily> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D17kImpactDaily> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Capire cosa &#232; il fiabete e il suo impatto sulla vita di tutti i giorni\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D17kImpactDaily> <http://www.w3.org/2000/01/rdf-schema#comment> "Understand what diabetes is and it's impact on daily life"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D17kImpactDaily> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet wat diabetes is en wat de invloed hiervan is op het dagelijkse leven"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D17kImpactDaily> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD4AdvancedDiabetes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I7kWhenNeeded> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I7kWhenNeeded> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerI7> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I6kInsulinTypes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I7kWhenNeeded> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#I6kInsulinTypes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I7kWhenNeeded> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I7kWhenNeeded> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere quale insulina fare nel momento giusto\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I7kWhenNeeded> <http://www.w3.org/2000/01/rdf-schema#comment> "Know when they need which kind of insulin"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I7kWhenNeeded> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet wanneer welke insuline nodig is"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I7kWhenNeeded> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH4> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H4kAmountGlucose> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH4> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H4kAmountGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH4> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H3kSymtomsHypo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H3kSymtomsHypo> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Conoscere i sintomi dell'ipoglicemia\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H3kSymtomsHypo> <http://www.w3.org/2000/01/rdf-schema#comment> "Know the symptoms of low blood sugar"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H3kSymtomsHypo> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet de verschijnselen van een lage bloedglucose"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H3kSymtomsHypo> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH3> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H3kSymtomsHypo> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H8kSymtomsIrriliable> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H3kSymtomsHypo> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H8kSymtomsIrriliable> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H3kSymtomsHypo> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N6kWhenCandy> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#N6kWhenCandy> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN6MasterFood> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#N5kAmountCarbs> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#N15kApplyKnowledge> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> <http://www.w3.org/2000/01/rdf-schema#comment> "Basic Nutrition: all knowledge on nutrition obtained at level 2"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> <http://www.w3.org/2000/01/rdf-schema#comment> "Basic Nutrition: weet alles over voeding op level 2"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Nutrizione livello base: Conoscenze generali sulla nutrizione (livello 2)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerA2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerA2> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerA2> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2kFoodAndActivity> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerA2> <http://www.w3.org/2000/01/rdf-schema#comment> "Correctly answer all quiz questions with topic 'Activity' and goal 'A2'"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#WinQuiz> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#WinQuiz> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#WinTenTimes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#WinQuiz> <http://www.w3.org/2000/01/rdf-schema#comment> "Correctly answer 80% of the questions in a single quiz"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#WinQuiz> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#PlayQuiz> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#WinQuiz> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D9kInsulinLocation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D9kInsulinLocation> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere che l'insulina raggiunge il corpo tramite l'iniezione sulle \r\n      cosce, sulla pancia o sulle natiche \r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D9kInsulinLocation> <http://www.w3.org/2000/01/rdf-schema#comment> "Know that the insuline reaches his/her body through a insuline pen or pump in his/her leg, belly or butt "@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D9kInsulinLocation> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet de insuline met insulinepen of insulinepomp via hun been, bil of buik hun lichaam in komt"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D9kInsulinLocation> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI1NoviceInsulin> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD9> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D9kInsulinLocation> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD9> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D3kInsulinIntake> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D9kInsulinLocation> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D3kInsulinIntake> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D9kInsulinLocation> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN6> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN6> <http://www.w3.org/2000/01/rdf-schema#comment> "Correctly answer questions on topic 'Nutrition' with goal 'N6'"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N6kWhenCandy> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN6> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#N6kWhenCandy> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN6> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A3sAdaptFoodActivity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A3sAdaptFoodActivity> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Scegliere cosa mangiare e quanta insulina fare, in autonomia, in base \r\n      allo sport da fare\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A3sAdaptFoodActivity> <http://www.w3.org/2000/01/rdf-schema#comment> "Can independently adapt nutrition and insulin to the amount of physical activity"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A3sAdaptFoodActivity> <http://www.w3.org/2000/01/rdf-schema#comment> "Kan zelfstandig de voeding en insuline aan te passen aan de hoeveelheid lichaamsbeweging"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A3sAdaptFoodActivity> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SkillGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#Goal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#Goal> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Event> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#Goal> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/2002/07/owl#Thing> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Self-Management: Conoscenze e capacit&#224; per gestire il diabete in \r\n      autonomia\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> <http://www.w3.org/2000/01/rdf-schema#comment> "Self-Management: all knowledge and skills obtained to manage diabetes independently"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> <http://www.w3.org/2000/01/rdf-schema#comment> "Self-Management: weet en kan alles om diabetes zelfstandig te reguleren"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN6MasterFood> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI5ManageInslulin> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG6RegulateIndependent> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SelfManagement> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD4AdvancedDiabetes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I5sInsulinInjection> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I5sInsulinInjection> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Fare in autonomia l'iniezione di insulina\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I5sInsulinInjection> <http://www.w3.org/2000/01/rdf-schema#comment> "Can self-administer a insulin injection"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I5sInsulinInjection> <http://www.w3.org/2000/01/rdf-schema#comment> "Kan zichzelf zelfstandig een insuline-injectie geven"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I5sInsulinInjection> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI5ManageInslulin> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I5sInsulinInjection> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SkillGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I5sInsulinInjection> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI1NoviceInsulin> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4sPrick> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4sPrick> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4sPrick> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SkillGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4sPrick> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Fare la glicemia in autonomia\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4sPrick> <http://www.w3.org/2000/01/rdf-schema#comment> "Can prick glucose value by him/herself"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4sPrick> <http://www.w3.org/2000/01/rdf-schema#comment> "Kan zelfstandig een bloedglucose prikken"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      PAL System objectives that do not contribute (directly) to a T1DM \r\n      self-management learning goal, but do however, contribute to the child \r\n      using the PAL system and thereby learning.These objectives are shown in \r\n      the MyPAL Application only.\r\n    </p>"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#PalObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH3> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H3kSymtomsHypo> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH3> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD10> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD10> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D10kWhyMeasure> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD10> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H8kSymtomsIrriliable> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H8kSymtomsIrriliable> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere che la glicemia non va misurata sempre quando si avvertono dei \r\n      sintomi perch&#233; si pu&#242; avere un'ipoglicemia anche senza avvertirla\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H8kSymtomsIrriliable> <http://www.w3.org/2000/01/rdf-schema#comment> "Know that he/she can't always depend on the symptoms of a hypo and therefore should always, if possible, measure his/her blood sugar"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H8kSymtomsIrriliable> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet dat ze niet altijd op hun hypoverschijnselen kunnen vertrouwen en dat, als het kan, een bloedglucose moet worden gemeten"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H8kSymtomsIrriliable> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH8> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H8kSymtomsIrriliable> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H3kSymtomsHypo> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H8kSymtomsIrriliable> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G6kWhenMeasure> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G6kWhenMeasure> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere quando misurare la glicemia\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G6kWhenMeasure> <http://www.w3.org/2000/01/rdf-schema#comment> "Know when to measure glucose in between"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G6kWhenMeasure> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet wanneer tussendoor bloedglucose te meten"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G6kWhenMeasure> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG6> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G6kWhenMeasure> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G6kWhenMeasure> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI1NoviceInsulin> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Insulina in generale: Conoscenze generali sull'insulina (livello3)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI5ManageInslulin> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2kFoodAndActivity> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#I12sOperatePump> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.w3.org/2000/01/rdf-schema#comment> "General Insulin: weet alles over insuline op level 3"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#I8kInsulineStorage> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.w3.org/2000/01/rdf-schema#comment> "General Insulin: all knowledge on insulin obtained at level 3"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI3GeneralInsulin> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#I7kWhenNeeded> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN5> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN5> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN5> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#N5kAmountCarbs> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2sTakePrecautions> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2sTakePrecautions> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Prendere precauzioni con qualche adulto prima di fare sport\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2sTakePrecautions> <http://www.w3.org/2000/01/rdf-schema#comment> "Can take precautions with adults when exercising"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2sTakePrecautions> <http://www.w3.org/2000/01/rdf-schema#comment> "Kan samen met hun ouders voorzorgsmaatregelen nemen als ze gaan sporten of bewegen"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2sTakePrecautions> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SkillGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#A2sTakePrecautions> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD3GeneralDiabetes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD9> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD9> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD9> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D9kInsulinLocation> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kaWhenEat> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kaWhenEat> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kaWhenEat> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere quando mangiare\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kaWhenEat> <http://www.w3.org/2000/01/rdf-schema#comment> "Know when to eat"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kaWhenEat> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet wanneer moet worden gegeten"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kaWhenEat> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kaWhenEat> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN2> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#N1kNutritionAmount> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kaWhenEat> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#N2kbWhatEat> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Nutrizione livello principiante: Conoscenze generali sulla nutrizione \r\n      (livello 1)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> <http://www.w3.org/2000/01/rdf-schema#comment> "Novice Nutrition: all knowledge on nutrition obtained at level 1"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> <http://www.w3.org/2000/01/rdf-schema#comment> "Novice Nutrition: weet alles over voeding op level 1"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN1NoviceNutrition> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerI6> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerI6> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I6kInsulinTypes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerI6> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#I6kInsulinTypes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Misurare la glicemia in autonomia: Conoscenza generale e capacit&#224; per \r\n      misurare in autonomia la glicemia (livello 2)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> <http://www.w3.org/2000/01/rdf-schema#comment> "Independent Measure: all knowledge and skills obtained to measure blood glucose independently (level 2)"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> <http://www.w3.org/2000/01/rdf-schema#comment> "Independent Measure: weet en kan alles om zelfstandig bloedglucose te meten (level 2)"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1AssistantMeasure> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4sPrick> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AH4RegulateHypo> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2IndependentMeasure> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG6RegulateIndependent> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D6kNotContagious> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D6kNotContagious> <http://www.w3.org/2000/01/rdf-schema#comment> "Know that diabetes is not contagious"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D6kNotContagious> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AI1NoviceInsulin> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D6kNotContagious> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D6kNotContagious> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD3> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D6kNotContagious> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D9kInsulinLocation> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D6kNotContagious> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D6kNotContagious> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere che il diabete non &#232; contagioso\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D6kNotContagious> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet dat diabetes niet besmettelijk is"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D6kNotContagious> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD6> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D3kInsulinIntake> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D3kInsulinIntake> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere che l'insulina &#232; rilasciata da una penna o da un microinfusore\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D3kInsulinIntake> <http://www.w3.org/2000/01/rdf-schema#comment> "Know that insuline is being given with a insulin pen/pump"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D3kInsulinIntake> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet dat de insuline met een insulinepen of insulinepomp in het lichaam komt"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D3kInsulinIntake> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD3> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D3kInsulinIntake> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D9kInsulinLocation> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#D3kInsulinIntake> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H2kCorrectHypo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH2> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H2kCorrectHypo> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH2> <http://www.w3.org/2000/01/rdf-schema#comment> "Correctly answer questions on topic 'Low Blood and High Glucose' with \r\n      goal 'H2'"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH2> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterActivity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterActivity> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Inserire la prima attivit&#224; nella timelina\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterActivity> <http://www.w3.org/2000/01/rdf-schema#comment> "Enter the first activity to the timeline"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterActivity> <http://www.w3.org/2000/01/rdf-schema#comment> "Eerste activiteit op de timeline toegevoegd"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterActivity> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#Child> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Umbrella for all (knowledge and/or skill) learning goals on a specific \r\n      topic for a specific level. Will be achieved by completing all learning \r\n      goals directly preceding the achievement and directly preceding \r\n      achievement on the same topic at a lower level.\r\n    </p>"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D6kNotContagious> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD2BasicDiabetes> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> <http://www.w3.org/2000/01/rdf-schema#comment> "Novice Diabetes: all general knowledge on diabetes obtained at level 1"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D7kCauseUnknown> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D5kChronicDisease> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> <http://www.w3.org/2000/01/rdf-schema#comment> "Novice Diabetes: weet alles over diabetes in het algemeen op level 1"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Principiante: Nozioni generali sul diabete (livello 1)\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AD1NoviceDiabetes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D8kNoBlame> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I6kInsulinTypes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I6kInsulinTypes> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I6kInsulinTypes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerI6> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I6kInsulinTypes> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere la differenza tra i diversi tipi di insulina\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I6kInsulinTypes> <http://www.w3.org/2000/01/rdf-schema#comment> "Know the difference between different kinds of insulin"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I6kInsulinTypes> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet het verschil tussen de verschillende soorten insuline"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#I6kInsulinTypes> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#I7kWhenNeeded> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#PalObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Each supporting objective directly contributes to (at least 1) T1DM \r\n      learning goal. Supporting objects with the format Answer&lt;letter&gt;&lt;number&gt; \r\n      are obtained by answering all quiz questions annotated with goal code \r\n      &lt;letter&gt;&lt;number&gt; and contribute to a knowledge goal with the same \r\n      letter-number code. Check the learning goal to see if there are more \r\n      requirements needed to obtain this learning goal. For example AnswerN1 \r\n      is obtained by correctly answering all questions on topic Nutrition goal \r\n      N1 (Know how much to eat), completing AnswerN1 will also contribute to \r\n      completion of N1kNutritionAmount.\r\n    </p>"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterSnack> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterSnack> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N6kWhenCandy> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N6kWhenCandy> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AN2BasicNutrition> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N6kWhenCandy> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerN6> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N6kWhenCandy> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere quando e euante caramelle mangiare\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N6kWhenCandy> <http://www.w3.org/2000/01/rdf-schema#comment> "Know when and how much candy they can have"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N6kWhenCandy> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet wanneer en hoeveel gesnoept mag worden"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#N6kWhenCandy> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterMeal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterMeal> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H4kAmountGlucose> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H4kAmountGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG2BasicGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H4kAmountGlucose> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H4kAmountGlucose> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere quanto zucchero prendere per correggere l'ipoglicemia\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H4kAmountGlucose> <http://www.w3.org/2000/01/rdf-schema#comment> "Know how many glucose pills of lemonade they need to get their blood sugar at a normal level"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H4kAmountGlucose> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet hoeveel glucosetabletten of limonadesiroop nodig is om de bloedglucose weer naar een normale waarde te krijgen"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H4kAmountGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH4> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H2kCorrectHypo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H4kAmountGlucose> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H2kCorrectHypo> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Capire il significato del numero di glicemia sul glucometro\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> <http://www.w3.org/2000/01/rdf-schema#comment> "Understand the number on the glucose meter means"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet wat het getal op de meter betekent"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerG2> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1NoviceGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#G4kResponse> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#G2kUnderstandMeasureValue> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H5kLowValue> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H2kCorrectHypo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H2kCorrectHypo> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H2kCorrectHypo> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH2> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H2kCorrectHypo> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H4kAmountGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H2kCorrectHypo> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG1NoviceGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H2kCorrectHypo> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Sapere di dovere prendere dello zucchero per correggere la glicemia\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H2kCorrectHypo> <http://www.w3.org/2000/01/rdf-schema#comment> "Know to take glucose pills or lemonade when he/she has low blood sugar"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H2kCorrectHypo> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet dat een lage bloedglucose corrigeren is door dextrosetabletten of limonade te nemen "@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD3> <http://www.w3.org/2000/01/rdf-schema#comment> "Correctly answer al quiz questions for topic 'Diabetes' with goal D3"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD3> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#D3kInsulinIntake> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerD3> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMGoal> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#Goal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H6kHypoCause> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H6kHypoCause> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Conoscere le possibili cause dell'ipoglicemia\r\n    </p>"@it .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H6kHypoCause> <http://www.w3.org/2000/01/rdf-schema#comment> "Know the possible causes of a low blood sugar"@en .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H6kHypoCause> <http://www.w3.org/2000/01/rdf-schema#comment> "Weet wat de mogelijke oorzaken zijn van een lage bloedglucose"@nl .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H6kHypoCause> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H6kHypoCause> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AnswerH6> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H6kHypoCause> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#H5kLowValue> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#H6kHypoCause> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#AG3GeneralGlucose> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterLunch> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#EnterLunch> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#MotivationalObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#KnowledgeGoal> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMLearningGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.w3.org/2002/07/owl#inverseOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#hasActiveGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#hasActiveGoal> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#Child> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#hasActiveGoal> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#Goal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#contributesTo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#contributesTo> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#contributesTo> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMLearningGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#contributesTo> <http://www.w3.org/2000/01/rdf-schema#subPropertyOf> <http://www.dfki.de/lt/onto/common/upper.owl#leadsTo> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.w3.org/2002/07/owl#inverseOf> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#requiresAsClass> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#neededForAsClass> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#isAchivedBy> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#isAchivedBy> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMAchievement> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#isAchivedBy> <http://www.w3.org/2000/01/rdf-schema#subPropertyOf> <http://www.dfki.de/lt/onto/common/upper.owl#leadsTo> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#isAchivedBy> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#T1DMLearningGoal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#hasProgress> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#hasProgress> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#hasProgress> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      Percentage of completion\r\n    </p>"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#hasProgress> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#float> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#hasProgress> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#Goal> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#numOfQuestions> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#numOfQuestions> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#int> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#numOfQuestions> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmgoals.owl#SupportingObjective> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#numOfQuestions> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#hasLevel> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+_:genid1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DataRange> .
+_:genid3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "2"^^<http://www.w3.org/2001/XMLSchema#int> .
+_:genid4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "3"^^<http://www.w3.org/2001/XMLSchema#int> .
+_:genid6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "5"^^<http://www.w3.org/2001/XMLSchema#int> .
+_:genid7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:genid7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "6"^^<http://www.w3.org/2001/XMLSchema#int> .
+_:genid6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid7 .
+_:genid5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid6 .
+_:genid5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "4"^^<http://www.w3.org/2001/XMLSchema#int> .
+_:genid4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid5 .
+_:genid3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid4 .
+_:genid2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid3 .
+_:genid2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "1"^^<http://www.w3.org/2001/XMLSchema#int> .
+_:genid1 <http://www.w3.org/2002/07/owl#oneOf> _:genid2 .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#hasLevel> <http://www.w3.org/2000/01/rdf-schema#range> _:genid1 .
+<http://www.dfki.de/lt/onto/pal/dmgoals.owl#hasLevel> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .

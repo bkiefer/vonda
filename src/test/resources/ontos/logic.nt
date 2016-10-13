@@ -1,0 +1,42 @@
+<http://www.dfki.de/lt/onto/common/logic.owl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Ontology> .
+<http://www.dfki.de/lt/onto/common/logic.owl> <http://www.w3.org/2002/07/owl#versionInfo> "v0.9.0"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/logic.owl> <http://www.w3.org/2000/01/rdf-schema#comment> "author(s): Hans-Ulrich Krieger"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/logic.owl#True> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/logic.owl#DontKnow> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/logic.owl#True> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/logic.owl#DontKnow> .
+<http://www.dfki.de/lt/onto/common/logic.owl#Error> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/logic.owl#Error> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/logic.owl#True> .
+<http://www.dfki.de/lt/onto/common/logic.owl#False> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/logic.owl#Error> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/logic.owl#False> .
+<http://www.dfki.de/lt/onto/common/logic.owl#Proposition> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/logic.owl#Proposition> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\n      a reified version of the quintuple &lt;polarity, subject, predicate, \n      object, transactiontime&gt; that can be easily interfaced with \n      Event/Situation classes, if needed\n    </p>"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/logic.owl#False> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/logic.owl#False> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/logic.owl#DontKnow> .
+<http://www.dfki.de/lt/onto/common/logic.owl#predicate> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/common/logic.owl#predicate> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#anyURI> .
+<http://www.dfki.de/lt/onto/common/logic.owl#predicate> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/logic.owl#Proposition> .
+<http://www.dfki.de/lt/onto/common/logic.owl#predicate> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/common/logic.owl#object> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/common/logic.owl#object> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#anyURI> .
+<http://www.dfki.de/lt/onto/common/logic.owl#object> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/common/logic.owl#object> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/logic.owl#Proposition> .
+<http://www.dfki.de/lt/onto/common/logic.owl#polarity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/common/logic.owl#polarity> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/logic.owl#Proposition> .
+<http://www.dfki.de/lt/onto/common/logic.owl#polarity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/logic.owl#polarity> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/logic.owl#DontKnow> .
+<http://www.dfki.de/lt/onto/common/logic.owl#ttime> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/common/logic.owl#ttime> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/logic.owl#Proposition> .
+<http://www.dfki.de/lt/onto/common/logic.owl#ttime> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#long> .
+<http://www.dfki.de/lt/onto/common/logic.owl#ttime> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/common/logic.owl#subject> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/common/logic.owl#subject> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/common/logic.owl#subject> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/logic.owl#Proposition> .
+<http://www.dfki.de/lt/onto/common/logic.owl#subject> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#anyURI> .
+<http://www.dfki.de/lt/onto/common/logic.owl#false> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/logic.owl#False> .
+<http://www.dfki.de/lt/onto/common/logic.owl#false> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\n      always use this singleton instance\n    </p>"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/logic.owl#error> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/logic.owl#Error> .
+<http://www.dfki.de/lt/onto/common/logic.owl#error> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\n      always use this singleton instance\n    </p>"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/logic.owl#true> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/logic.owl#True> .
+<http://www.dfki.de/lt/onto/common/logic.owl#true> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\n      always use this singleton instance\n    </p>"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/logic.owl#dontknow> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/logic.owl#DontKnow> .
+<http://www.dfki.de/lt/onto/common/logic.owl#dontknow> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\n      always use this singleton instance\n    </p>"^^<http://www.w3.org/2001/XMLSchema#string> .

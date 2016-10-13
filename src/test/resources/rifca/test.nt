@@ -1,0 +1,5 @@
+<http://www.dfki.de/lt/onto/pal/domain.owl> <rdf:type> <http://www.w3.org/2002/07/owl#Ontology> .
+<http://www.dfki.de/lt/onto/pal/domain.owl> <http://www.w3.org/2002/07/owl#imports> <http://www.dfki.de/lt/onto/pal/domain.owl> .
+<dom:child_1> <dom:forename> "Piet"^^<xsd:string> .
+<dom:child_1> <dom:surname> "de Wit"^^<xsd:string> .
+<dom:child_1> <dom:useDevice> <dom:pen> .

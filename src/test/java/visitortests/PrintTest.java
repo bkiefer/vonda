@@ -16,7 +16,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.dfki.mlt.rudimant.GrammarMain;
-import static de.dfki.mlt.rudimant.GrammarMain.yaml;
 import de.dfki.mlt.rudimant.TypeException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,43 +33,18 @@ import org.yaml.snakeyaml.Yaml;
  */
 public class PrintTest {
 
-  private static LinkedHashMap<String, Object> configs;
-
-  public static Yaml yaml = new Yaml();
-
-  public PrintTest() {
-  }
-
-  private static String RESOURCE_DIR;
 
   private static HfcDbServer server;
-  // alternative PORTS
-  private static int SERVER_PORT;
-  private static int WEBSERVER_PORT;
 
   @BeforeClass
-  public static void setUpClass() throws TTransportException, IOException, FileNotFoundException, WrongFormatException {
-    configs = (LinkedHashMap<String, Object>) yaml.load(new FileInputStream("rudi.config.yml"));
-    serverConfigs();
-    File config = new File(RESOURCE_DIR + "ontos/pal.ini");
-    server = new HfcDbServer(SERVER_PORT);
-    server.readConfig(config);
-    server.runServer();
-    server.runHttpService(WEBSERVER_PORT);
-    File outDir = new File("target/test/testfiles");
-    if (!outDir.exists()) {
-      outDir.mkdirs();
-    }
-  }
-
-  private static void serverConfigs() {
-    RESOURCE_DIR = (String) configs.get("resourceDir");
-    SERVER_PORT = (int) configs.get("serverPort");
-    WEBSERVER_PORT = (int) configs.get("webserverPort");
+  public static void setUpClass()
+      throws TTransportException, IOException, WrongFormatException {
+    SeriousTest.setUpClass();
   }
 
   @AfterClass
   public static void tearDownClass() {
+    SeriousTest.tearDownClass();
   }
 
   @Before
@@ -83,23 +57,28 @@ public class PrintTest {
 
   @Test(expected = TypeException.class)
   public void ImportFailTest() throws Exception {
-    String[] strings2 = new String[]{"src/test/resources/test_import/Test2.rudi",
-      "rudi.config.yml", "-o=target/test/testfiles"};
+    String[] strings2 = new String[]{
+      "-c=src/test/resources/rudi.config.yml",
+      "-o=target/test/testfiles",
+      "src/test/resources/test_import/Test2.rudi"};
     GrammarMain.main(strings2);
   }
 
   @Test
   public void ImportTest() throws Exception {
-    String[] strings = new String[]{"src/test/resources/test_import/Test.rudi",
-      "rudi.config.yml", "-o=target/test/testfiles"};
+    String[] strings = new String[]{
+      "-c=src/test/resources/rudi.config.yml", "-o=target/test/testfiles",
+      "src/test/resources/test_import/Test.rudi"};
     GrammarMain.main(strings);
     //assertFail(GrammarMain.main(strings2));
   }
 
   @Test
   public void ReturnTest() throws Exception {
-    String[] strings = new String[]{"src/test/resources/test_return/aLotOfReturns.rudi",
-      "rudi.config.yml", "-o=target/test/testfiles", "-d"};
+    String[] strings = new String[]{
+      "-c", "src/test/resources/rudi.config.yml",
+      "-o=target/test/testfiles", "-d",
+      "src/test/resources/test_return/aLotOfReturns.rudi"};
     GrammarMain.main(strings);
     //assertFail(GrammarMain.main(strings2));
   }

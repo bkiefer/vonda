@@ -5,25 +5,28 @@
  */
 package visitortests;
 
-import de.dfki.lt.hfc.WrongFormatException;
-import de.dfki.lt.hfc.db.HfcDbService;
-import de.dfki.lt.hfc.db.client.HfcDbClient;
-import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.lt.hfc.db.server.HfcDbServer;
-import de.dfki.mlt.rudimant.Mem;
-import de.dfki.mlt.rudimant.abstractTree.UFieldAccess;
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.thrift.TException;
-import org.apache.thrift.transport.TTransportException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import de.dfki.lt.hfc.WrongFormatException;
+import de.dfki.lt.hfc.db.client.HfcDbClient;
+import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import de.dfki.mlt.rudimant.Mem;
+import de.dfki.mlt.rudimant.abstractTree.UFieldAccess;
 
 /**
  *
@@ -31,44 +34,35 @@ import static org.junit.Assert.*;
  */
 public class RdfTest {
 
- private static final String RESOURCE_DIR = "../hfc-database/src/test/resources/";
+  private static final String RESOURCE_DIR = "src/test/resources/";
 
-  private static HfcDbServer server;
-
-  private HfcDbClient client;
-  private HfcDbService.Client _client;
-
+  HfcDbClient client;
   private RdfProxy _proxy;
-
-  private Mem mem = new Mem();
 
   // alternative PORTS
   private static final int SERVER_PORT = 8996;
-  private static final int WEBSERVER_PORT = 8995;
 
   /**
    *
-   * @throws TTransportException
    * @throws FileNotFoundException
    * @throws IOException
    * @throws WrongFormatException
+   * @throws TException
    */
   @BeforeClass
-  public static void startServer() throws TTransportException, FileNotFoundException, IOException, WrongFormatException {
-    File config = new File(RESOURCE_DIR + "ontos/pal.ini");
-    server = new HfcDbServer(SERVER_PORT);
-    server.readConfig(config);
-    server.runServer();
-    server.runHttpService(WEBSERVER_PORT);
-    File outDir = new File("target/test/testfiles");
-    if(!outDir.exists()){
-      outDir.mkdirs();
-    }
+  public static void startServer()
+      throws FileNotFoundException, IOException, WrongFormatException, TException {
+    SeriousTest.setUpClass();
+
+    HfcDbClient client = new HfcDbClient();
+    client.init("localhost", SERVER_PORT);
+    client.readConfig(new File(RESOURCE_DIR + "rifca/rifca.ini"));
+    client.shutdown();
   }
 
   @AfterClass
   public static void shutdownServer() {
-    server.shutdown();
+    SeriousTest.tearDownClass();
   }
 
   @Before
@@ -76,10 +70,10 @@ public class RdfTest {
       throws IOException, WrongFormatException, TException {
     client = new HfcDbClient();
     client.init("localhost", SERVER_PORT);
-    client.readConfig(new File(RESOURCE_DIR + "rifca/rifca.ini"));
-    client.readConfig(new File(RESOURCE_DIR + "ontos/pal.ini"));
-    _client = client._client;
-    _proxy = new RdfProxy(_client);
+    _proxy = new RdfProxy(client._client);
+    Map<String, String> resolv = new HashMap<>();
+    resolv.put("Child", "<dom:Child>");
+    _proxy.setBaseToUri(resolv);
   }
 
   @After
@@ -89,12 +83,8 @@ public class RdfTest {
 
   @Test
   public void testgetType1() throws TException {
-    ArrayList<String> elem = new ArrayList<String>() {
-      {
-        add("child");
-        add("forename");
-      }
-    };
+    List<String> elem = Arrays.asList(new String[] { "child", "forename" });
+    Mem mem = new Mem();
     mem.enterEnvironment();
     mem.addElement("child", "Child", null);
     UFieldAccess field = new UFieldAccess(elem);
@@ -104,27 +94,19 @@ public class RdfTest {
 
   @Test
   public void testgetType2() throws TException {
-    ArrayList<String> elem = new ArrayList<String>() {
-      {
-        add("child");
-        add("hasTreatment");
-      }
-    };
+    List<String> elem = Arrays.asList(new String[] { "child", "hasTreatment" });
+    Mem mem = new Mem();
     mem.enterEnvironment();
     mem.addElement("child", "Child", null);
     UFieldAccess field = new UFieldAccess(elem);
     String result = field.getPredicateType(_proxy, mem);
-    assertEquals("get hasTreatment", "Treatment", result);
+    assertEquals("get hasTreatment", "<dom:Treatment>", result);
   }
 
   @Test
   public void testgetType3() throws TException {
-    ArrayList<String> elem = new ArrayList<String>() {
-      {
-        add("child");
-        add("birthdate");
-      }
-    };
+    List<String> elem = Arrays.asList(new String[] { "child", "birthdate" });
+    Mem mem = new Mem();
     mem.enterEnvironment();
     mem.addElement("child", "Child", null);
     UFieldAccess field = new UFieldAccess(elem);

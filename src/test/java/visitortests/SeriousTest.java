@@ -5,75 +5,41 @@
  */
 package visitortests;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+
+import org.apache.thrift.transport.TTransportException;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.yaml.snakeyaml.Yaml;
+
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.server.HfcDbServer;
 import de.dfki.mlt.rudimant.GrammarMain;
-import static de.dfki.mlt.rudimant.GrammarMain.yaml;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import org.apache.thrift.transport.TTransportException;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.yaml.snakeyaml.Yaml;
 
 /**
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
 public class SeriousTest {
-
-  private static LinkedHashMap<String, Object> configs;
-
-  public static Yaml yaml = new Yaml();
-
-  public SeriousTest() {
-  }
-
-  private static String RESOURCE_DIR;
-
-  private static HfcDbServer server;
-  // alternative PORTS
-  private static int SERVER_PORT;
-  private static int WEBSERVER_PORT;
+  static HfcDbServer server;
 
   @BeforeClass
-  public static void setUpClass() throws TTransportException, IOException, FileNotFoundException, WrongFormatException {
-    configs = (LinkedHashMap<String, Object>) yaml.load(new FileInputStream("rudi.config.yml"));
-    serverConfigs();
-    File config = new File(RESOURCE_DIR + "ontos/pal.ini");
-    server = new HfcDbServer(SERVER_PORT);
-    server.readConfig(config);
+  public static void setUpClass()
+      throws TTransportException, IOException, WrongFormatException {
+    // start the HFC server
+    server = new HfcDbServer(8996);
+    server.readConfig(new File("src/test/resources/ontos/pal.ini"));
     server.runServer();
-    server.runHttpService(WEBSERVER_PORT);
-    File outDir = new File("target/test/testfiles");
-    if (!outDir.exists()) {
-      outDir.mkdirs();
-    }
-  }
-
-  private static void serverConfigs() {
-    RESOURCE_DIR = (String) configs.get("resourceDir");
-    SERVER_PORT = (int) configs.get("serverPort");
-    WEBSERVER_PORT = (int) configs.get("webserverPort");
   }
 
   @AfterClass
   public static void tearDownClass() {
-  }
-
-  @Before
-  public void setUp() {
-  }
-
-  @After
-  public void tearDown() {
+    server.shutdown();
   }
 
 //  @Test
@@ -84,8 +50,14 @@ public class SeriousTest {
 //  }
   @Test
   public void FirstRuleTest() throws Exception {
-    String[] strings = new String[]{"src/test/resources/FirstRule.rudi",
-      "rudi.config.yml", "-o=target/test/testfiles", "-d"};
-    GrammarMain.main(strings);
+    String[] strings = new String[]{"-c", "rudi.config.yml", "-o", "target/test/testfiles", "-d",
+        "src/test/resources/FirstRule.rudi"};
+    GrammarMain main = new GrammarMain();
+    Yaml yaml = new Yaml();
+    main.setConfig((LinkedHashMap<String, Object>)
+        yaml.load(new FileReader("src/test/resources/rudi.config.yml")));
+    main.initCompiler();
+    String[] inFiles = { "src/test/resources/FirstRule.rudi" };
+    main.process(Arrays.asList(inFiles), new File("target/test/testfiles/"));
   }
 }
