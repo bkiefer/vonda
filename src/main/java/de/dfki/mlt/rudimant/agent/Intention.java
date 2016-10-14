@@ -1,31 +1,26 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+
  */
 package de.dfki.mlt.rudimant.agent;
-
-import de.dfki.mlt.rudimant.agent.Event;
 
 /**
  *
  * @author pal
  */
-public class Intention implements Event {
+public class Intention {
+  private String _content;
+  private double _mood;
 
-  public String getType() {
-    return null;
+  public Intention(String content, double mood) {
+    _content = content;
+    _mood = mood;
   }
 
-  public Object getSource() {
-    return null;
-  }
+  // public String getType() { return null; }
 
-  public String getContent() {
-    return null;
-  }
+  // public Object getSource() { return null; }
 
-  public double getMood() {
-    return 0;
-  }
+  public String getContent() { return _content; }
+
+  public double getMood() { return _mood; }
 }

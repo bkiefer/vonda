@@ -76,6 +76,9 @@ public class GrammarMain {
         (configs.get(CFG_LOG) == null ? false : configs.get(CFG_LOG)));
     rc.setThrowExceptions((boolean)configs.get(CFG_TYPE_ERROR_FATAL));
     rc.setTypeCheck((boolean)configs.get(CFG_TYPE_CHECK));
+    if (configs.containsKey(CFG_PACKAGE)) {
+      rc.setPackageName((String) configs.get(CFG_PACKAGE));
+    }
   }
 
   public void process(List files, File outputDirectory)

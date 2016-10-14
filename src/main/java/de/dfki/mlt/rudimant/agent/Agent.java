@@ -1,21 +1,16 @@
 package de.dfki.mlt.rudimant.agent;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.lt.hfc.db.HfcDbService;
+import de.dfki.mlt.rudimant.agent.nlg.Pair;
+import de.dfki.mlt.rudimant.agent.DialogueAct;
+import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.tr.dialogue.cplan.DagEdge;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
-import de.dfki.mlt.rudimant.agent.nlg.Pair;
-import de.dfki.tecs.rpc.RPCFactory;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import org.apache.thrift.TBase;
-import org.yaml.snakeyaml.Yaml;
 
 /**
  *
@@ -23,22 +18,8 @@ import org.yaml.snakeyaml.Yaml;
  */
 public abstract class Agent {
 
-  public static final String EVENT_PACKAGE_NAME = "de.dfki.mlt.agent.events";
+  public static final Logger logger = LoggerFactory.getLogger(Agent.class);
 
-  public static Logger logger;
-
-  public static int PERCEPTION_LATENCY = 2000; // in milliseconds
-
-  /**
-   * How much time in milliseconds must pass between two behaviours (al least)
-   */
-  public static long MIN_TIME_BETWEEN_BEHAVIOURS = 10000;
-
-  public static long MIN_PAUSE_FOR_FINISHED_BEHAVIOURS = 500;
-
-  //public static final Voice AILA_VOICE = new Voice("Aila", 20227);
-  //public static final Voice ARTEMIS_VOICE = new Voice("Artemis", 20226);
-  // private static final String TBS_HOST = TBS_SERVER_HOST;
   static final String RESOURCE_DIR = "src/main/resources/";
 
   protected String executedLast = null;
@@ -53,11 +34,7 @@ public abstract class Agent {
 
   protected Random random = new Random(System.currentTimeMillis());
 
-  protected String _clientName;
-
-  protected CommunicationSystem comSys;
-
-  protected abstract class Proposal implements Runnable {
+  public abstract class Proposal implements Runnable {
 
     public String name;
 
@@ -68,87 +45,37 @@ public abstract class Agent {
     }
   }
 
-  /**
-   * The RDF storage and reasoner
-   */
-  public HfcDbService.Client _client;
+  /** The RDF access object */
+  public RdfProxy _proxy;
 
-  /**
-   * A class that cares about ASR events and interpretation
-   */
-  AsrTts asr;
+  /** The object that is responsible for outgoing communication */
+  protected CommunicationHub _hub;
 
-  /**
-   * The DAs I emitted, newest first
-   */
-  protected LinkedList<DialogueAct> myLastDAs;
+  /** A class that cares about ASR events and interpretation */
+  protected AsrTts asr;
 
-  /**
-   * The DAs I received, newest first
-   */
-  private LinkedList<DialogueAct> lastDAs;
+  /** The DAs I emitted, newest first */
+  protected Deque<DialogueAct> myLastDAs;
 
-  protected LinkedList<Event> itemsToSend = new LinkedList<Event>();
+  /** The DAs I received, newest first */
+  private Deque<DialogueAct> lastDAs;
 
   protected Timeouts timeouts = new Timeouts();
 
-  /**
-   * Is new data in the repository
-   */
+  /** Is new data in the repository */
   private boolean newData = false;
 
+  /** The set of all proposals generated in one (fixpoint) run of the rules */
   public Map<String, Proposal> pendingProposals = new HashMap<>();
 
-  protected static int _generatorCounter = 0;
-
-  /**
-   * Generate a unique id for the speech acts
-   */
-  public static int generateId() {
-    return (int) (System.currentTimeMillis() + _generatorCounter++);
-  }
-
-  /**
-   *
-   */
-  private long behaviourNotBefore = 0;
-
-  /**
-   * the current time, to be attached to chunks of information, and to separate
-   * old from new information
-   */
-  protected long _time;
-
-  /**
-   * In this queue, incoming events are stored for later processing when
-   * proposals have been sent out but no answer was received up to now.
-   */
-  protected Deque<Event> pendingEvents = new ArrayDeque<>();
-
-  /**
-   * Are we waiting for a proposal to be selected? In this case, put all
-   * incoming events into the event queues
+  /** Are we waiting for a proposal to be selected? In this case, put all
+   *  incoming events into the event queue
    */
   protected boolean proposalsSent;
 
-  /**
-   * All Event types that can be processed
-   */
-  protected Map<String, List<EventHandler<? extends Event>>> subscribedEvents;
-
-  /**
-   * Subscribe to an event time, and add the handler
-   */
-  @SuppressWarnings("rawtypes")
-  public void subscribe(String eventType,
-          EventHandler<? extends Event> handler) {
-    List<EventHandler<? extends Event>> handlers
-            = subscribedEvents.get(eventType);
-    if (handlers == null) {
-      handlers = new ArrayList<EventHandler<? extends Event>>();
-      subscribedEvents.put(eventType, handlers);
-    }
-    handlers.add(handler);
+  /** Send something out to the world */
+  protected void sendBehaviour(Object obj) {
+    // TODO implement it, possibly with a Listener.
   }
 
   // TODO: Why does this already resetted to LinkedList before Deque was removed?
@@ -190,28 +117,8 @@ public abstract class Agent {
   }
 
   // Constructors ************************************************************
-  public Agent(String hostIP, String id, int port) {
-    logger = LoggerFactory.getLogger(id);
-    _clientName = id;
-    /* TODO: DO RECOGNITION
-    subscribe("SpeechActEvent", new EventHandler<SpeechActEvent>() {
-      @Override
-      public void handleEvent(SpeechActEvent saEvent) {
-        //String lastPercept = fc.addRdfSpeechact(saEvent);
-        lastSpeechActs.add(saEvent);
-      }});
-    subscribe("SpeechActEvent", (id.equals("Malte"))
-        ? new EventHandler<SpeechActEvent>() {
-            @Override
-            public void handleEvent(SpeechActEvent saEvent) {
-              logger.info(saEvent.getSender() + " sez: " +
-                  AsrTts.toRawSpeechAct(saEvent));
-              // Agent.this.fc.addRdfSpeechact(saEvent);
-            }
-          }
-        : new SpeechActToTtsHandler(this));
-     */
-  }
+  // public Agent() {}
+
 
   // **********************************************************************
   // DialogueAct functions
@@ -227,8 +134,8 @@ public abstract class Agent {
     return da;
   }
 
-  private boolean subsumes(DialogueAct moreSpecific,
-          String type, String prop, String... keyVal) {
+  public boolean subsumes(DialogueAct moreSpecific,
+      String type, String prop, String... keyVal) {
     if (moreSpecific == null) {
       return false;
     }
@@ -241,7 +148,7 @@ public abstract class Agent {
    * Generate DialogueAct from a raw speech act representation
    */
   protected DialogueAct createEmitDA(String diaActType, String proposition,
-          String... args) {
+          String ... args) {
     String dialogueAct = AsrTts.toRawSpeechAct(diaActType, proposition, args);
     DialogueAct da = new DialogueAct();
     da.dag = asr.toDag(dialogueAct);
@@ -256,44 +163,10 @@ public abstract class Agent {
    * to the Behaviourmanager
    */
   protected DialogueAct emitDA(String diaActType, String proposition,
-          String... args) {
-    Integer delay = null;  // TODO: Where does delay come from?
+          String ... args) {
     DialogueAct da = createEmitDA(diaActType, proposition, args);
     Pair<String, String> toSay = asr.generate(da.dag);
-    Behaviour b = new Behaviour(toSay.first, toSay.second, delay);
-    // String type = da.dag.toString();
-    /**/
-    // TODO: fix this once we have the final generation in place
-    // TODO: maybe exclude (Dis)Confirm(BeingCorrect & AlloPos/Neg(BeingSuccessful
-    String type = "";
-    if (subsumes(da, "Request", "Turning")
-            || subsumes(da, "Disconfirm", "top")
-            || subsumes(da, "AlloPositive", "top")
-            || subsumes(da, "AlloNegative", "top")
-            || subsumes(da, "Confirm", "top")
-            || subsumes(da, "Inform", "Instructing")
-            || subsumes(da, "InitialGoodbye", "Meeting")
-            || subsumes(da, "ReturnGoodbye", "Meeting")
-            || subsumes(da, "Accept", "AssigningRole")
-            //            || subsumes(da, "Stalling", "Answering")
-            || subsumes(da, "Inform", "AssessingPerformance")
-            || subsumes(da, "Breaking", "Playing")
-            || subsumes(da, "Inform", "GivingSolution")) {
-      type = "inform";
-    } else if (subsumes(da, "Request", "AssigningRole")
-            || subsumes(da, "Request", "Playing")) {
-      type = "ynquestion";
-    } else if (subsumes(da, "InitialGreeting", "Meeting")
-            || subsumes(da, "ReturnGreeting", "Meeting")
-            || subsumes(da, "Request", "Liking")
-            || subsumes(da, "Request", "Age")) {
-      type = "whquestion";
-    } else {
-      logger.debug("No fitting subsume relation for App? " + da.toString());
-    }
-
-    // send a behaviour (motion, textToSay) to the robot
-    comSys.sendBehaviour(b);
+    _hub.sendBehaviour(new Behaviour(toSay.first, toSay.second));
     return da;
   }
 
@@ -425,36 +298,36 @@ public abstract class Agent {
     return _language;
   }
 
+  public boolean waitForIntention() {
+    return proposalsSent;
+  }
+
   /**
    * If new data arrived, start the rules processing until no new proposals are
    * added and send the final set to the decision process. After that, the flag
    * signalling that new data arrived is reset
    */
-  protected void actOnNewData() {
-    //if (pendingProposals.size() > 0) return;
-    int oldSize = 0;
-    do {
-      oldSize = pendingProposals.size();
-      try {
+  public void actOnNewData() {
+    if (newData || timeouts.timeoutOccured()) {
+      int oldSize = 0;
+      do {
+        oldSize = pendingProposals.size();
         processRules();
-      } catch (StopProcessingException ex) { }
-    } while (pendingProposals.size() != oldSize);
-    if (oldSize > 0) {
-      sendIntentions(pendingProposals.keySet());
+      } while (pendingProposals.size() != oldSize);
+      if (oldSize > 0) {
+        sendIntentions(pendingProposals.keySet());
+      }
+      newData = false;
     }
-    newData = false;
   }
 
-  /**
-   * Send the list of possible intentions to Hammer
-   */
+  /** Send the list of possible intentions to the communication hub */
   void sendIntentions(Set<String> strings) {
-    List<String> il = new ArrayList<>();
-    il.addAll(strings);
-    String message = putTogether(';', strings);
-    logger.info("Intentions: {}", message);
-    comSys.sendIntentions(il);
+    // TODO: implement it, maybe using a listener
+
+    proposalsSent = true;
   }
+
 
 //  /**
 //   * Interpret what he's saying and create the proper reaction
@@ -512,120 +385,16 @@ public abstract class Agent {
 //  }
   protected abstract void processRules();
 
-  public void init(String dbHost, int dbPort, String language) {
-    _client = RPCFactory.createSyncClient(HfcDbService.Client.class,
-            dbHost, dbPort);
-
+  public void init(String language) {
     _language = language;
     asr = new AsrTts();
-    /*
     try {
-      asr.loadGrammar(language, (Agent) this);
+      asr.loadGrammar(language, this);
     } catch (IOException ex) {
       logger.error("Error loading grammar: {}", ex);
       System.exit(1);
     }
-     */
     reset();
-  }
-
-  /**
-   * Common event handling for all agents
-   */
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  protected void onEvent(Event event) {
-
-    String eventType = event.getType();
-    if (subscribedEvents.containsKey(eventType)) {
-      Object o;
-      try {
-        String className = EVENT_PACKAGE_NAME + "." + eventType;
-        o = Class.forName(className).getConstructor().newInstance();
-      } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-        e.printStackTrace();
-        return;
-      }
-
-      // do not handle message send by yourself
-      if (!event.getSource().equals(_clientName)) {
-        // System.out.println(
-        // "source " + event.getHeader().source + ", I am " + _clientName);
-        for (EventHandler h : subscribedEvents.get(eventType)) {
-          h.handleEvent((Event) o);
-        }
-      }
-    }
-  }
-
-  private void runReceiveSendCyle() {
-    while (comSys.isOnline()) {
-      boolean emptyRun = true;
-      while (comSys.canReceive()) {
-        Event event = comSys.receive();
-        if (proposalsSent && !event.getType().equals("Intention")) {
-          pendingEvents.addFirst(event);
-        } else {
-          onEvent(event);
-        }
-        emptyRun = false;
-      }
-      // if a proposal was executed, handle pending events now
-      if (!proposalsSent) {
-        // handle any pending events
-        while (!pendingEvents.isEmpty()) {
-          onEvent(pendingEvents.removeLast());
-        }
-      }
-      synchronized (this) {
-        if (newData || timeouts.timeoutOccured()) {
-          actOnNewData();
-        }
-      }
-      synchronized (itemsToSend) {
-        Event c = itemsToSend.peekFirst();
-        if (c != null
-                && (c instanceof Behaviour)) {
-          long currentTime = System.currentTimeMillis();
-          if (currentTime < behaviourNotBefore) {
-            c = null;
-          } else {
-            //TODO: Use handleEvent from LowLevelNaoCommandHandler?
-            behaviourNotBefore = currentTime + MIN_TIME_BETWEEN_BEHAVIOURS;
-          }
-        }
-        if (c != null) {
-          itemsToSend.removeFirst();
-          logger.debug("Send message via TECS {}", c);
-          comSys.sendEvent(c);
-          emptyRun = false;
-        }
-      }
-      if (emptyRun) {
-        try {
-          Thread.sleep(100);
-        } catch (InterruptedException ex) {
-          comSys.disconnect();
-        }
-      }
-    }
-  }
-
-//  @Override
-  public void startListening() {
-    for (String event : subscribedEvents.keySet()) {
-      comSys.subscribe(event);
-    }
-    comSys.connect();
-
-    newTimeout("start", 2000);
-
-    Thread listenToClient = new Thread() {
-      @Override
-      public void run() {
-        Agent.this.runReceiveSendCyle();
-      }
-    };
-    listenToClient.start();
   }
 
   protected void propose(String name, Proposal p) {
@@ -637,7 +406,8 @@ public abstract class Agent {
     }
   }
 
-  protected void executeProposal(String continuationName) {
+  public void executeProposal(Intention intention) {
+    String continuationName = intention.getContent();
     Proposal p = pendingProposals.get(continuationName);
     if (p != null) {
       logger.info("Execute intention: {}", continuationName);
@@ -645,57 +415,6 @@ public abstract class Agent {
     } else {
       logger.error("Inactive intention: {}", continuationName);
     }
-  }
-
-  /**
-   * A low level NAO command (or a timeout) signalled that the NAO finished
-   * speaking / moving
-   *
-   * If event sending was blocked while waiting for this signal, unblock it now.
-   */
-  public void setBehaviourFinished() {
-    long currentTime = System.currentTimeMillis();
-    logger.info("curr: {}, bnb:{}", currentTime, behaviourNotBefore);
-    if (currentTime < behaviourNotBefore) {
-      behaviourNotBefore = currentTime + MIN_PAUSE_FOR_FINISHED_BEHAVIOURS;
-    }
-  }
-
-  private static LinkedHashMap<String, String> configs;
-
-  public static Yaml yaml;
-
-  /**
-   * A method to initialize the configuration
-   */
-  public void init() throws FileNotFoundException {
-    configs = (LinkedHashMap<String, String>) yaml.load(new FileInputStream("/../../agent.config.yml"));
-  }
-
-  /*
-   * SEND part. Message to be send can originate from different threads. But the
-   * sending is not "thread-safe" So each message to be send is put into a queue
-   * And there a thread is started to do the actual sending
-   */
-  @SuppressWarnings("rawtypes")
-  public void send(TBase event) {
-    send(".*", event);
-  }
-
-  // queue to hold messages to be send
-  protected LinkedList<MessageContainer> messagesToSend = new LinkedList<MessageContainer>();
-  // to prevent "multi-use" of the queue
-  private Object messagesToSendLock = new Object();
-
-  @SuppressWarnings("rawtypes")
-  public void send(final String toWhom, final TBase toSend) {
-    synchronized (messagesToSendLock) {
-      MessageContainer mc = new MessageContainer(toWhom, toSend);
-      messagesToSend.add(mc);
-    }
-  }
-  
-  public void stopProcessing(){
-    throw new StopProcessingException();
+    proposalsSent = false;
   }
 }

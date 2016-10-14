@@ -203,6 +203,22 @@ public class VGenerationVisitor implements RudiVisitor {
     mem.enterClass(out.className);
     //mem.enterNextEnvironment();
 
+    // tell the file in which package it lies
+    String pkg = out.getPackageName();
+    if (pkg == null) {
+      pkg = "";
+    } else {
+      out.append("package " + pkg + ";\n");
+      pkg += ".";
+    }
+    // maybe we need to import the class that imported us to use its variables
+    out.append("import ");
+    if (out.getParent() != null) {
+      out.append(pkg + out.getParent().className);
+    } else {
+      out.append(out.getWrapperClass());
+    }
+    out.append(";\n");
     // moved to typevisitor where it belongs
 //    for (String s : mem.getTopLevelRules(out.className)) {
 //      for (String n : mem.getNeededClasses(s)) {

@@ -47,23 +47,24 @@ public class RudimantCompiler {
   private Mem mem;
 
   public List<String> subPackage = new ArrayList<>();
+  int rootLevel = 0;
 
   public String className;
-  
+
   private String packageName;
 
   private RudimantCompiler parent;
 
   // the class that should be extended by the rudi files to fill them into a project
   private final String wrapperClass;
-  
+
   // ... and its constructor arguments, if any
   private final String constructorArgs;
-  
+
   public void setPackageName(String name){
     this.packageName = name;
   }
-  
+
   public String getPackageName(){
     return this.packageName;
   }
@@ -89,7 +90,8 @@ public class RudimantCompiler {
     this.log = parentCompiler.log;
     this.throwExceptions = parentCompiler.throwExceptions;
     this.typeCheck = parentCompiler.typeCheck;
-    this.packageName = (parent.getPackageName());
+    this.packageName = parent.getPackageName();
+    this.rootLevel = parent.rootLevel;
   }
 
   public RudimantCompiler(String wrapperClass, String constructorArgs, RdfProxy proxy) {
@@ -111,7 +113,11 @@ public class RudimantCompiler {
     className = getClassName(topLevel);
     // subPackage.add(className);
 
-    processForReal(outputdir);
+    if (packageName != null && ! packageName.isEmpty()) {
+      subPackage.addAll(Arrays.asList(packageName.split("\\.")));
+      rootLevel = subPackage.size() - 1;
+    }
+    processForReal(getOutputDirectory());
   }
 
   public void process(File topLevel) throws IOException, FormatterException {
@@ -141,7 +147,7 @@ public class RudimantCompiler {
   private File getInputFile() {
     File result = inputDirectory;
     if (!subPackage.isEmpty()) {
-      for (String s : subPackage.subList(0, subPackage.size() - 1)) {
+      for (String s : subPackage.subList(rootLevel, subPackage.size() - 1)) {
         result = new File(result, s);
       }
     }
@@ -179,6 +185,10 @@ public class RudimantCompiler {
 
   public Mem getMem() {
     return mem;
+  }
+
+  public RudimantCompiler getParent() {
+    return parent;
   }
 
   public RudimantCompiler append(char c) {
@@ -261,13 +271,6 @@ public class RudimantCompiler {
     if (myTree instanceof GrammarFile) {
       // tell the file its name (for class definition)
       ((GrammarFile) myTree).setClassName(className);
-      // tell the file in which package it lies
-      out.append("package " + this.packageName + ";\n");
-      // maybe we need to import the class that imported us to use its variables
-      if (this.parent != null) {
-        out.append("import " + this.packageName + "." + this.parent.className + ";\n");
-      }
-      //  System.out.println(out);
       try {
         gv.visitNode(myTree);
       } catch (InOutException e) {
