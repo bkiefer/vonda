@@ -2,14 +2,15 @@ package de.dfki.mlt.rudimant.agent;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Timer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.dfki.mlt.rudimant.agent.Agent.Proposal;
 
 public class Timeouts {
 
@@ -27,7 +28,7 @@ public class Timeouts {
     long started;
   }
 
-  public void newTimeout(final String id, int millis, final Proposal p) {
+  public void newTimeout(final String id, int millis) {
     MyTimer t = pendingTimeouts.get(id);
     int timeToFire = millis;
     if (t == null) {
@@ -49,9 +50,6 @@ public class Timeouts {
           pendingTimeouts.remove(id);
           occuredTimeouts.add(id);
           logger.info("timeout fired: " + id);
-          // TODO clean this up. This is certainly not doing the exact same
-          // thing as go, but run may be not enough.
-          p.run();
           timeoutOccured = true;
         }
       }

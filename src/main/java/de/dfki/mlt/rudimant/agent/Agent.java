@@ -1,16 +1,23 @@
 package de.dfki.mlt.rudimant.agent;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
+import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.mlt.rudimant.agent.nlg.Pair;
-import de.dfki.mlt.rudimant.agent.DialogueAct;
+import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.tr.dialogue.cplan.DagEdge;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
+import de.dfki.mlt.rudimant.agent.nlg.Pair;
 
 /**
  *
@@ -34,11 +41,13 @@ public abstract class Agent {
 
   protected Random random = new Random(System.currentTimeMillis());
 
-  public abstract class Proposal implements Runnable {
+  public abstract class Proposal {
+
+    public abstract void run() throws Exception;
 
     public String name;
 
-    public void go() {
+    public void go() throws Exception {
       executedLast = name;
       pendingProposals.clear();
       run();
@@ -60,7 +69,7 @@ public abstract class Agent {
   /** The DAs I received, newest first */
   private Deque<DialogueAct> lastDAs;
 
-  protected Timeouts timeouts = new Timeouts();
+  private Timeouts timeouts = new Timeouts();
 
   /** Is new data in the repository */
   private boolean newData = false;
@@ -275,11 +284,7 @@ public abstract class Agent {
   };
 
   protected void newTimeout(String name, int millis) {
-    timeouts.newTimeout(name, millis, emptyProposal);
-  }
-
-  protected void newTimeout(String name, int millis, Proposal p) {
-    timeouts.newTimeout(name, millis, p);
+    timeouts.newTimeout(name, millis);
   }
 
   protected boolean isTimedout(String name) {
@@ -301,6 +306,15 @@ public abstract class Agent {
   public boolean waitForIntention() {
     return proposalsSent;
   }
+
+  /* *************************************************************************
+   Rdf shortcuts
+   ************************************************************************* */
+
+  //public boolean isSubclassOf(Rdf sub, String clz) throws TException {
+  //  return sub.getClazz().isSubclassOf(_proxy.fetchRdfClass(clz));
+  //}
+
 
   /**
    * If new data arrived, start the rules processing until no new proposals are
@@ -406,15 +420,19 @@ public abstract class Agent {
     }
   }
 
-  public void executeProposal(Intention intention) {
+  public void executeProposal(Intention intention) throws Exception {
     String continuationName = intention.getContent();
     Proposal p = pendingProposals.get(continuationName);
-    if (p != null) {
-      logger.info("Execute intention: {}", continuationName);
-      p.go();
-    } else {
-      logger.error("Inactive intention: {}", continuationName);
+    try {
+      if (p != null) {
+        logger.info("Execute intention: {}", continuationName);
+        p.go();
+      } else {
+        logger.error("Inactive intention: {}", continuationName);
+      }
     }
-    proposalsSent = false;
+    finally {
+      proposalsSent = false;
+    }
   }
 }
