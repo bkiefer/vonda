@@ -117,9 +117,9 @@ public class CPlannerNlg {
   List<DagNode> emptyRealizations = new ArrayList<DagNode>();
 
   public ProtoLf toDag(String stringRepresentation) {
-    DagNode input = _planner.parseLfString(stringRepresentation);
+    DagNode input = DagNode.parseLfString(stringRepresentation);
     if (input == null
-            || !_planner.parseLfString(input.toString()).equals(input)) {
+            || !DagNode.parseLfString(input.toString()).equals(input)) {
       logger.error("String representation differs from parsed : ["
               + stringRepresentation + "] [" + input + "]");
     }
@@ -130,9 +130,9 @@ public class CPlannerNlg {
     logger.trace("Input to LF parsing: " + plf);
     DagNode input = plf.getDag();
     if (input == null) {
-      input = _planner.parseLfString(plf.toString());
+      input = DagNode.parseLfString(plf.toString());
       if (input == null
-              || !_planner.parseLfString(input.toString()).equals(input)) {
+              || !DagNode.parseLfString(input.toString()).equals(input)) {
         logger.error("String representation differs from parsed : ["
                 + plf + "] [" + input + "]");
       }

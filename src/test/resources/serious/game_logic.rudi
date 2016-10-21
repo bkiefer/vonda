@@ -27,9 +27,9 @@ if(true){
       int index = whose.equals("robot") ? 0 : 2;
       String i;
       /*@ String i = Integer.toString(results[index + 1]); @*/
-      emitDA(#Inform("AssessingPerformance", "theme", "Answer",
-          "agent", whose, "total", Integer.toString(results[index]),
-          "correct", i));
+      emitDA(#Inform(AssessingPerformance, theme=Answer,
+          agent=^whose, total=^Integer.toString(results[index]),
+          correct=^i));
     }
     quiz.status = "wait_for_ending";
 }
@@ -38,7 +38,7 @@ end_quiz:
   if (!isMyLastDA(#Inform("AssessingPerformance"))
         && !isMyLastDA(#ReturnGoodbye("Meeting"))
         && !isMyLastDA(#InitialGoodbye("Meeting"))) {
-      emitDA(#Breaking("Playing", "Reason", reason));
+      emitDA(#Breaking(Playing, Reason="reason"));
 
       quiz.status = "wait_for_assessment";
   }
@@ -59,8 +59,8 @@ if(true){
       if (q != null) {
         // Generate next question / answers
         // BK: evtl markieren mit ^ zum "einspleissen"?
-        addLastDA(#Inform(Asking, ^getQuestionArgs(q, currentTurn)));
-        addLastDA(#Inform(Answering, ^getAnswerArgs(q)));
+        //addLastDA(#Inform(Asking, ^getQuestionArgs(q, currentTurn)));
+        //addLastDA(#Inform(Answering, ^getAnswerArgs(q)));
       }
     }
 }
@@ -74,8 +74,8 @@ if (true) {
       emitDA(#Stalling("Answering"));
     }
     Quiz quiz = activity;
-//??    emitDA(#Inform(Answer, id=^Integer.toString(number + 1),
-//??                   ^("string"+Integer.toString(number + 1))=^answerString));
+    emitDA(#Inform(Answer, id=^Integer.toString(number + 1),
+                   ^("string"+Integer.toString(number + 1))=^answerString));
     quiz.status= "answer_given";
     Turn current = quiz.currentTurn;
 /*@    current.put("AnswerCorrect", new Boolean(correct)); @*/

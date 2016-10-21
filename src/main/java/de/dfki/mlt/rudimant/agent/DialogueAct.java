@@ -12,7 +12,33 @@ public class DialogueAct {
     timeStamp = System.currentTimeMillis();
   }
 
+  public DialogueAct(String s) {
+    this();
+    dag = DagNode.parseLfString(s);
+  }
+
   public String toString() {
     return dag.toString();
   }
+
+  public boolean isSubsumedBy(DialogueAct moreGeneral) {
+    return this.dag.isSubsumedBy(moreGeneral.dag);
+  }
+
+  public boolean subsumes(DialogueAct moreGeneral) {
+    return this.dag.subsumes(moreGeneral.dag);
+  }
+
+  // TODO
+  public static DialogueAct fromRdf(String uri) {
+    return null;
+  }
+
+  // TODO
+  public void toRdf() {
+
+  }
+
+
 }
+

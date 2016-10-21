@@ -24,8 +24,8 @@ imports
   ;
 
 method_declaration
-  : (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | VARIABLE) VARIABLE LPAR
-    ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*)?
+  : (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | type_spec) VARIABLE LPAR
+    ((type_spec | DEC_VAR) VARIABLE (COMMA (type_spec | DEC_VAR) VARIABLE)*)?
     RPAR statement_block;
 
 grammar_rule
@@ -77,7 +77,7 @@ while_statement
 
 for_statement
   : FOR LPAR assignment SEMICOLON exp SEMICOLON exp? RPAR loop_statement_block
-  | FOR LPAR (DEC_VAR | VARIABLE)? VARIABLE COLON exp RPAR loop_statement_block
+  | FOR LPAR (DEC_VAR | type_spec)? VARIABLE COLON exp RPAR loop_statement_block
   | FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block
   ;
 
@@ -107,18 +107,22 @@ function_call
   ;
 
 funccall_on_object
-  : (variable | field_access | STRING | LPAR exp RPAR) DOT function_call
+  : (variable | function_call | field_access | STRING | LPAR exp RPAR) DOT function_call
   ;
 
 field_access
-  : VARIABLE
+  : (VARIABLE | function_call)
     ( ( DOT VARIABLE) )+
   ;
 
-variable
-  : VARIABLE_MARKER VARIABLE ( ( DOT VARIABLE ) )+
-  | VARIABLE_MARKER VARIABLE
-  | VARIABLE LBRACK (VARIABLE | INT) RBRACK
+type_spec 
+    : VARIABLE LBRACK RBRACK
+    | VARIABLE SMALLER type_spec GREATER
+    | VARIABLE
+    ;
+
+variable 
+  : VARIABLE LBRACK ((VARIABLE | INT) | arithmetic) RBRACK
   | VARIABLE 
   ;
 
@@ -223,24 +227,25 @@ propose_arg
   ;
 
 literal_or_graph_exp
-  :  LITERAL_OR_GRAPH LPAR ( ( exp /*| mysterious_binding_exp */)
+  :  HASH da_token LPAR ( da_token 
                              ( COMMA
-                               ( exp /*| mysterious_binding_exp */)
+                               ( da_token ASSIGN da_token)
                              )*
-                           )?
+                           )
      RPAR
   ;
+
+da_token
+    : VARIABLE_MARKER exp
+    | VARIABLE
+    | STRING
+    ;
 
 assignment
   : ( ( DEC_VAR | type_spec)? variable
       | field_access
     )
     ASSIGN exp
-  ;
-
-type_spec
-  : VARIABLE
-    | VARIABLE SMALLER VARIABLE GREATER
   ;
 
 var_def
@@ -253,7 +258,7 @@ fun_def
   ;
 
 list_creation
-  : (VARIABLE SMALLER VARIABLE GREATER)? variable ASSIGN LBRACE ((variable | STRING | INT | FLOAT)
+  : (VARIABLE SMALLER type_spec GREATER)? variable ASSIGN LBRACE ((variable | STRING | INT | FLOAT)
                             (COMMA (variable | STRING | INT | FLOAT))*)? 
     RBRACE SEMICOLON
   ;
@@ -381,7 +386,7 @@ COLON: ':';
 
 /// special for dialogue grammar:
 WILDCARD: '_';
-LITERAL_OR_GRAPH: '#'( '0'..'9'|'A'..'z'|'_' )+;
+HASH: '#';
 PROPOSE: 'propose';
 DEC_VAR: 'var';
 TIMEOUT: 'timeout';
@@ -396,8 +401,8 @@ MULTI_L_COMMENT: '/*'.*?'*/' ;//-> channel(HIDDEN);
 WS: ( ' ' | '\t' | '\r' | '\n' ) -> channel(HIDDEN);
 
 /// identifiers (starting with "java letter"):
-VARIABLE: ('A'..'z'|'_')('0'..'9'|'A'..'z'|'_'|'$')*;
+VARIABLE: ('A'..'Z'|'a'..'z'|'_')('0'..'9'|'A'..'Z'|'a'..'z'|'_'|'$')*;
 
-/// numeric literal (starting with number):
+/// numeric literal (starting with - or number):
 INT: ('-')?('1'..'9')?('0'..'9')+;
 FLOAT: ('-')?('0'('.'('0'..'9')+) | ('1'..'9')('0'..'9')*('.'('0'..'9')+));

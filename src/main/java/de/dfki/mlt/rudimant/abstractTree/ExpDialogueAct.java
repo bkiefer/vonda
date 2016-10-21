@@ -16,15 +16,16 @@ import java.util.Objects;
 public class ExpDialogueAct implements RudiTree, RTExpression {
 
   // comment LITERAL_OR_GRAPH LPAR ( exp (COMMA exp)*)? RPAR comment
-  String litGraph;
+  RTExpression daType;
+  RTExpression proposition;
   List<RTExpression> exps;
-  List <String> rest;
   String type;
 
-  public ExpDialogueAct(String litGraph, List <String> rest, List<RTExpression> exps) {
-    this.litGraph = litGraph;
+  public ExpDialogueAct(RTExpression daType, RTExpression proposition,
+      List<RTExpression> exps) {
+    this.daType = daType;
+    this.proposition = proposition;
     this.exps = exps;
-    this.rest = rest;
   }
 
   @Override
@@ -40,8 +41,7 @@ public class ExpDialogueAct implements RudiTree, RTExpression {
   @Override
   public int hashCode() {
     int hash = 7;
-    hash = 89 * hash + Objects.hashCode(this.litGraph);
-    hash = 89 * hash + Objects.hashCode(this.rest);
+    hash = 89 * hash + Objects.hashCode(this.daType);
     return hash;
   }
 
@@ -57,10 +57,7 @@ public class ExpDialogueAct implements RudiTree, RTExpression {
       return false;
     }
     final ExpDialogueAct other = (ExpDialogueAct) obj;
-    if (!Objects.equals(this.litGraph, other.litGraph)) {
-      return false;
-    }
-    if (!Objects.equals(this.rest, other.rest)) {
+    if (!Objects.equals(this.daType, other.daType)) {
       return false;
     }
     return true;

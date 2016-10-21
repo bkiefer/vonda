@@ -1,3 +1,4 @@
+
 // this is a file to test whether the return to label - functionality works as it is supposed to
 
 boolean equals(String b);
@@ -6,7 +7,7 @@ LabelA:
   if (true){
     infoslots = {"Hobby", "Age"};
     String x = infoslots[1];
-    Object x = ^bla.schwafel.dingsbums;
+    Object x = bla.schwafel.dingsbums;
     String d = "adf";
     LabelB:
       if("bla" && true){
@@ -18,7 +19,7 @@ LabelA:
           }
       }
     LabelD:
-      if(^d.equals("adf")){
+      if(d.equals("adf")){
         int s = 0;
       } else {
         LabelE:

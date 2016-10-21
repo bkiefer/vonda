@@ -9,6 +9,7 @@ import de.dfki.mlt.rudimant.RudimantCompiler;
 import de.dfki.mlt.rudimant.Mem;
 import com.google.googlejavaformat.java.FormatterException;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,7 +30,9 @@ public class VGenerationVisitor implements RudiVisitor {
 
   public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
+
   private RudimantCompiler out;
+  private RudimantCompiler rudi;
   private Mem mem;
   private VRuleConditionVisitor condV;
   private VConditionCreatorVisitor condV2;
@@ -40,9 +43,10 @@ public class VGenerationVisitor implements RudiVisitor {
   // flag to tell the if if is a real rule if (contains the condition that was calculated)
   private String ruleIf = null;
 
-  public VGenerationVisitor(RudimantCompiler out) {
-    this.out = out;
-    this.mem = out.getMem();
+  public VGenerationVisitor(RudimantCompiler r) {
+    this.rudi = r;
+    this.out = r;
+    this.mem = rudi.getMem();
     condV = new VRuleConditionVisitor();
     condV2 = new VConditionCreatorVisitor();
   }
@@ -141,34 +145,31 @@ public class VGenerationVisitor implements RudiVisitor {
     //        + ret + ")");
   }
 
+
+  public void visitDaToken(RTExpression exp) {
+    if (exp instanceof UVariable) {
+      out.append(((UVariable)exp).representation);
+    } else if (exp instanceof UString) {
+      String s = ((UString)exp).content;
+      out.append("\\\"").append(s.substring(1, s.length() -1)).append("\\\"");
+    } else {
+      out.append("\" + ");
+      this.visitNode(exp);
+      out.append(" + \"");
+    }
+  }
+
   @Override
   public void visitNode(ExpDialogueAct node) {
-    out.append("new DialogueAct(" + node.litGraph + ", ");
-    // the first argument will never need to be more than a String
-    if (!node.rest.get(0).contains("\"")) {
-      out.append("\"" + node.rest.get(0) + "\"");
-    } else {
-      out.append(node.rest.get(0));
-    }
-    for (int i = 1; i < node.rest.size(); i++) {
-      out.append(", " + node.rest.get(i));
-      /*
-      String[] parts = node.rest.get(i).split("=");
-      if (parts.length == 1) {
-        // then this argument is a variable that is passed and should be found somewhere
-        if (mem.variableExists(parts[0])) {
-          out.append(", \"" + parts[0] + "\"");
-        } else {
-          // TODO: or throw an error here?
-          out.append(", " + parts[0]);
-        }
-      } else // this argument is of kind x = y, look if y is a variable we know
-       if (mem.variableExists(parts[1])) {
-          out.append(", " + parts[0] + " = \" " + parts[1] + " \"");
-        } else {
-          out.append(", " + parts[0] + " = " + parts[1]);
-        }
-      */
+    out.append("new DialogueAct(");
+    visitDaToken(node.daType);
+    out.append('(');
+    visitDaToken(node.proposition);
+    for (int i = 0; i < node.exps.size(); i += 2) {
+      out.append(", ");
+      visitDaToken(node.exps.get(i));
+      out.append(" = ");
+      visitDaToken(node.exps.get(i + 1));
     }
     out.append(")");
   }
@@ -200,11 +201,11 @@ public class VGenerationVisitor implements RudiVisitor {
     String oldname = mem.getClassName();
     String oldrule = mem.getCurrentRule();
     String oldTrule = mem.getCurrentTopRule();
-    mem.enterClass(out.className);
+    mem.enterClass(rudi.className);
     //mem.enterNextEnvironment();
 
     // tell the file in which package it lies
-    String pkg = out.getPackageName();
+    String pkg = rudi.getPackageName();
     if (pkg == null) {
       pkg = "";
     } else {
@@ -213,10 +214,10 @@ public class VGenerationVisitor implements RudiVisitor {
     }
     // maybe we need to import the class that imported us to use its variables
     out.append("import ");
-    if (out.getParent() != null) {
-      out.append(pkg + out.getParent().className);
+    if (rudi.getParent() != null) {
+      out.append(pkg + rudi.getParent().className);
     } else {
-      out.append(out.getWrapperClass());
+      out.append(rudi.getWrapperClass());
     }
     out.append(";\n");
     // moved to typevisitor where it belongs
@@ -233,7 +234,7 @@ public class VGenerationVisitor implements RudiVisitor {
             + "import org.slf4j.Logger;\n"
             + "import org.slf4j.LoggerFactory;\n\n");
     out.append("public class " + node.classname + " extends "
-            + out.getWrapperClass() + "{\n");
+            + rudi.getWrapperClass() + "{\n");
     out.append("public static Logger logger = LoggerFactory.getLogger("
             + mem.getClassName() + ".class);\n");
     out.append("// add to this set the name of all rules you want to be logged\n");
@@ -284,10 +285,10 @@ public class VGenerationVisitor implements RudiVisitor {
     // also, to use them for imports, declare those parameters class attributes
     String conargs = "";
     String declare = "";
-    if (null != out.getConstructorArgs()
-        && ! out.getConstructorArgs().isEmpty()) {
+    if (null != rudi.getConstructorArgs()
+        && ! rudi.getConstructorArgs().isEmpty()) {
       int i = 0;
-      for(String a : out.getConstructorArgs().split(",")){
+      for(String a : rudi.getConstructorArgs().split(",")){
         if(i > 0){
           conargs += ", ";
         }
@@ -298,7 +299,7 @@ public class VGenerationVisitor implements RudiVisitor {
         i++;
       }
     }
-    out.append("public " + out.className + "(" + out.getConstructorArgs() + ") {\n"
+    out.append("public " + rudi.className + "(" + rudi.getConstructorArgs() + ") {\n"
             + "super(" + conargs + ");\n" + declare + "}\n");
 
     // finally, the main processing method that will call all rules and imports
@@ -306,7 +307,7 @@ public class VGenerationVisitor implements RudiVisitor {
     out.append("\tpublic void process(");
     // get all those classes the toplevel rules need
     int i = 0;
-    for (String n : mem.getNeededClasses(out.className)) {
+    for (String n : mem.getNeededClasses(rudi.className)) {
       if (i == 0) {
         out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " " + n);
       } else {
@@ -318,7 +319,7 @@ public class VGenerationVisitor implements RudiVisitor {
     // initialize me according to the super class init
     out.append("this.init();\n");
     // use all methods created from rules in this file
-    for (String toplevel : mem.getToplevelCalls(out.className)) {
+    for (String toplevel : mem.getToplevelCalls(rudi.className)) {
       if (toplevel.contains("(")) {
         out.append(toplevel);
 
@@ -328,9 +329,9 @@ public class VGenerationVisitor implements RudiVisitor {
         if (ncs != null) {
           i = 0;
           for (String c : ncs) {
-            if (c.equals(out.className)
+            if (c.equals(rudi.className)
                     || (c.substring(0, 1).toUpperCase()
-                    + c.substring(1)).equals(out.className)) {
+                    + c.substring(1)).equals(rudi.className)) {
               c = "this";
             }
             if (i == 0) {
@@ -543,12 +544,12 @@ public class VGenerationVisitor implements RudiVisitor {
   public void visitNode(StatImport node) {
     logger.info("Processing import " + node.text);
     try {
-      RudimantCompiler.getEmbedded(out).process(node.text);
+      RudimantCompiler.getEmbedded(rudi).process(node.text);
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     } catch (FormatterException ex) {
       java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
-    } //    out.append(node.text + ".process(");
+    } //    outs.append(node.text + ".process(");
     //    Set<String> ncs = mem.getNeededClasses(node.name);
     //    if (ncs != null) {
     //      int i = 0;

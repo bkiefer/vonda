@@ -12,6 +12,14 @@ public class Behaviour {
   private final String _motion;
   private final int _delay;
 
+  /** Create a new behaviour
+   *
+   * @param text
+   * @param motion
+   * @param delay the minimum delay from or to the next speech act. A negative
+   *              delay means that the delay should be before this behaviour,
+   *              a positive after this.
+   */
   public Behaviour(String text, String motion, int delay) {
     _text = text;
     _motion = motion;

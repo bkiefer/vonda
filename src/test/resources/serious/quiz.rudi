@@ -16,22 +16,22 @@ process_rules_quiz:
       int lastInfo = lastOccurenceOfMyDA(#Inform(Instructing, theme=Quiz));
       if (! user.hasPlayedQuiz && lastInfo < 0) {
         propose("inform_gamerules") {
-            emitDA(#Inform("Instructing", "theme", "Quiz"));
+            emitDA(#Inform(Instructing, theme=Quiz));
           }
       }
 
       if ((user.hasPlayedQuiz
-           || lastOccurenceOfMyDA(#Inform("Instructing", "theme", "Quiz")) >= 0)
+           || lastOccurenceOfMyDA(#Inform(Instructing, theme=Quiz)) >= 0)
           && quiz.currentAsker == null
           && ! waitingForResponse()
           ) {
         propose("ask_for_user_starts") {
-            emitDA(#Request("AssigningRole", "theme", "Quiz", "agent", "user"));
+            emitDA(#Request(AssigningRole, theme=Quiz, agent=user));
             // TODO: ADD: RE-ASK WHEN NO REACTION: MAYBE DO IT MORE GENERAL
             // timeouts.newTimeout("ask_for_role", 10000);
           }
         propose("ask_for_robot_starts") {
-            emitDA(#Request("AssigningRole", "theme", "Quiz", "agent", "robot"));
+            emitDA(#Request(AssigningRole, theme=Quiz, agent=robot));
             // TODO: ADD: RE-ASK WHEN NO REACTION: MAYBE DO IT MORE GENERAL
             // timeouts.newTimeout("ask_for_role", 10000);
           }
@@ -47,7 +47,7 @@ process_rules_quiz:
     if (possibleStates.contains(quiz.status)) {
       processRulesQuizRunning(quiz);
     } */
-   
+
     if ("wait_for_ending".equals(quiz.status)
         || "ended_by_user".equals(quiz.status)) {
       logger.info("we are in endQuiz");
@@ -59,7 +59,7 @@ process_rules_quiz:
             // occur in our setup.
             dialogueAct = "ReturnGoodbye";
           }
-          DialogueAct close = emitDA(#dialogueAct("Meeting", "theme", "Quiz"));
+          DialogueAct close = emitDA(#dialogueAct(Meeting, theme=Quiz));
           if ("wait_for_ending".equals(quiz.status)) {
             // otherwise this comes from the user / app
             stopQuiz(quiz, NaoAgent.this);
@@ -104,7 +104,7 @@ if (true){
                   && "child".equals(quiz.tabletorientation)) {
                 // Change the tablet orientation automatically in the home version.
                 propose("request_turn_tablet") {
-                    emitDA(#Request("Turning", "theme", "Tablet"));
+                    emitDA(#Request(Turning, theme=Tablet));
                     // maybe introduce a timeout to ask again
                   }
                 }
@@ -140,7 +140,7 @@ if (true){
        if(! quiz.currentAsker.equals(quiz.tabletorientation)) {
         if (! isMyLastDA(#Request("Turning"))) {
           propose("request_turn_tablet") {
-              emitDA(#Request("Turning", "theme", "Tablet"));
+              emitDA(#Request(Turning, theme=Tablet));
               // maybe introduce a timeout to ask again
             }
         }
@@ -163,13 +163,13 @@ if (true){
               // Generate next question / answers
               // This needs to know the number of questions that was asked
               // by this agent, done by infoState
-              emitDA(#Inform("Asking",
-                  "string", q.getQuestionText(),
-                  "id", Integer.toString(1 + getNumberOfQuestionsCurrentAsker())));
-              emitDA(#Inform("Answering", answerArgs));
+              emitDA(#Inform(Asking,
+                  string = ^q.getQuestionText(),
+                  id = ^Integer.toString(1 + getNumberOfQuestionsCurrentAsker())));
+              // emitDA(#Inform(Answering, ^answerArgs));
 
               // turn tablet
-              emitDA(#Inform("Turning", "theme", "Tablet", "manner", "silent"));
+              emitDA(#Inform(Turning, theme=Tablet, manner=silent));
 
               // change status
               quiz.status = "wait_for_answer";
@@ -182,22 +182,22 @@ if (true){
       }
     } else {
      if ("answer_given".equals(quiz.status)
-            && !isMyLastDA(#Request("BeingCorrect", "agent", "user", "theme", "Quiz"))) {
+            && !isMyLastDA(#Request(BeingCorrect, agent=user, theme=Quiz))) {
       Turn current = quiz.currentTurn;
         /*@ String responder = ((String) current.get(TURN_RESPONDER)).equals(I_ROBOT)
                ? "robot" : "user"; @*/
         String responder;
         if (responder.equals("robot")) {
-         // TODO listen for the user to tell the robot whether his answer was 
+         // TODO listen for the user to tell the robot whether his answer was
          // right or wrong.
 //         newTimeout("UserTellsRobotRightOrWrong", 4000);
          propose("request_beingcorrect"){
-             emitDA(#Request("BeingCorrect", "agent", "user", "theme", "Quiz"));
+             emitDA(#Request(BeingCorrect, agent=user, theme=Quiz));
            }
         } else {
          quiz.status = "feedback_given";
         }
-      } 
+      }
 }
      if ("feedback_given".equals(quiz.status)) {
 
@@ -217,19 +217,18 @@ if (true){
           if (responder.equals("robot")) {
 //! Hier wieder das Problem: String concatenation geht nicht mehr wenn wir #Confirm schreiben wollen
 //! oder: das als archaische Herangehensweise erlauben? Dazu muss rudimant emitDA erkennen und reagieren, je nachdem, ob da " oder # kommt
-            emitDA("Allo" + (correct ? "Positive" : "Negative"),
-                "BeingSuccessful", "theme", "Quiz");
+            emitDA(#^("Allo" + (correct ? "Positive" : "Negative"))(BeingSuccessful, theme=Quiz));
           } else {
-            emitDA((correct ? "Confirm" : "Disconfirm"), "BeingCorrect",
-                "theme", "Quiz", "agent", "user");
+            emitDA(#^(correct ? "Confirm" : "Disconfirm")
+                   (BeingCorrect, theme=Quiz, agent=user));
             quiz.status = "wait_for_continue";
             if (!correct) {
               /*@ QuizQuestion q = (QuizQuestion) current.get(Turn.TURN_QUESTIONID); @*/
               QuizQuestion q;
               String solutionNo = Integer.toString(q.getWhichCorrect() + 1);
-              emitDA(#Inform("GivingSolution",
-                      "string" + solutionNo, q.answers.get(q.getWhichCorrect()),
-                      "id", solutionNo));
+              emitDA(#Inform(GivingSolution,
+                             ^("string" + solutionNo)= ^q.answers.get(q.getWhichCorrect()),
+                             id = ^solutionNo));
             }
             quiz.status = "wait_for_continue";
           }
@@ -286,7 +285,7 @@ if (true){
     }
 
     if (childAtHome()
-        && isMyLastDA(#Inform("Turning", "theme", "Tablet", "sender", I_ROBOT))
+        && isMyLastDA(#Inform(Turning, theme=Tablet, sender=^I_ROBOT))
         && ! "child".equals(quiz.tabletorientation)) {
       quiz.tabletorientation = "child";
       logger.info("Turn tablet to child here in Home version.");
@@ -321,4 +320,3 @@ process_rules_closing:
           reset();
         } */
     }
-  

@@ -61,14 +61,14 @@
     <dependency>
       <groupId>de.dfki.mlt</groupId>
       <artifactId>cplan-ccg</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.1-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
 
     <dependency>
       <groupId>de.dfki.mlt</groupId>
       <artifactId>cplan-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.1-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
 

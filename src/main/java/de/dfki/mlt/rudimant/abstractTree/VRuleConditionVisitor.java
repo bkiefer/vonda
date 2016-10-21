@@ -6,6 +6,8 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import de.dfki.mlt.rudimant.Mem;
+
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -36,7 +38,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(RudiTree node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    node.visit(this);
   }
 
   @Override
@@ -144,36 +146,34 @@ public class VRuleConditionVisitor implements RudiVisitor {
     //System.out.println("bool number " + this.compiledLook.keySet().size());
   }
 
+  public void visitDaToken(StringBuilder out, RTExpression exp) {
+    if (exp instanceof UVariable) {
+      out.append(((UVariable)exp).representation);
+    } else if (exp instanceof UString) {
+      String s = ((UString)exp).content;
+      out.append("\\\"").append(s.substring(1, s.length() -1)).append("\\\"");
+    } else {
+      out.append("\" + ");
+      this.visitNode(exp);
+      out.append(" + \"");
+    }
+  }
+
   @Override
   public void visitNode(ExpDialogueAct node) {
-    String result = "";
-    result += ("new DialogueAct(" + node.litGraph + ",");
-    // the first argument will never need to be more than a String
-    if (!node.rest.get(0).contains("\"")) {
-      result += ("\"" + node.rest.get(0) + "\"");
-    } else {
-      result += (node.rest.get(0));
+    StringBuilder out = new StringBuilder();
+    out.append("new DialogueAct(");
+    visitDaToken(out, node.daType);
+    out.append('(');
+    visitDaToken(out, node.proposition);
+    for (int i = 0; i < node.exps.size(); i += 2) {
+      out.append(", ");
+      visitDaToken(out, node.exps.get(i));
+      out.append(" = ");
+      visitDaToken(out, node.exps.get(i + 1));
     }
-    for (int i = 1; i < node.rest.size(); i++) {
-      result += (", " + node.rest.get(i));
-      /*String[] parts = node.rest.get(i).split("=");
-      if (parts.length == 1) {
-        // then this argument is a variable that is passed and should be found somewhere
-        if (mem.variableExists(parts[0])) {
-          result += (", \" " + parts[0] + "\"");
-        } else {
-          // TODO: or throw an error here?
-          result += (", " + parts[0]);
-        }
-      } else // this argument is of kind x = y, look if y is a variable we know
-       if (mem.variableExists(parts[1])) {
-          result += (", " + parts[0] + " = \" " + parts[1] + "\"");
-        } else {
-          result += (", " + parts[0] + " = " + parts[1]);
-        }
-*/
-    }
-    result += (")");
+    out.append(")");
+    String result = out.toString();
     if (collectDAs != null) {
       this.collectDAs += result;
       return;

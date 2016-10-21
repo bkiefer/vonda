@@ -5,15 +5,14 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.tr.dialogue.cplan.DagEdge;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
@@ -132,70 +131,49 @@ public abstract class Agent {
   // **********************************************************************
   // DialogueAct functions
   // **********************************************************************
-  public DialogueAct daFromVals(String diaActType, String proposition,
-          String... args) {
-    // args is a list of key/value pair
-    assert ((args.length & 1) == 0);
 
-    String dialogueAct = AsrTts.toRawSpeechAct(diaActType, proposition, args);
-    DialogueAct da = new DialogueAct();
-    da.dag = asr.toDag(dialogueAct);
-    return da;
-  }
-
-  public boolean subsumes(DialogueAct moreSpecific,
-      String type, String prop, String... keyVal) {
-    if (moreSpecific == null) {
-      return false;
-    }
-    DialogueAct general = new DialogueAct();
-    general.dag = asr.toDag(AsrTts.toRawSpeechAct(type, prop, keyVal));
-    return general.dag.subsumes(moreSpecific.dag);
-  }
-
-  /**
-   * Generate DialogueAct from a raw speech act representation
-   */
-  protected DialogueAct createEmitDA(String diaActType, String proposition,
-          String ... args) {
-    String dialogueAct = AsrTts.toRawSpeechAct(diaActType, proposition, args);
-    DialogueAct da = new DialogueAct();
-    da.dag = asr.toDag(dialogueAct);
+  /** Generate DialogueAct from a raw speech act representation */
+  protected DialogueAct createEmitDA(DialogueAct da) {
     myLastDAs.addFirst(da);
-
     newData();
     return da;
   }
 
-  /**
-   * Generate text and motion from a raw speech act representation and send it
+  /** Generate text and motion from a raw speech act representation and send it
    * to the Behaviourmanager
    */
-  protected DialogueAct emitDA(String diaActType, String proposition,
-          String ... args) {
-    DialogueAct da = createEmitDA(diaActType, proposition, args);
+  protected DialogueAct emitDA(int delay, DialogueAct da) {
     Pair<String, String> toSay = asr.generate(da.dag);
-    _hub.sendBehaviour(new Behaviour(toSay.first, toSay.second));
+    _hub.sendBehaviour(new Behaviour(toSay.first, toSay.second, delay));
     return da;
+  }
+
+  /** Generate text and motion from a raw speech act representation and send it
+   * to the Behaviourmanager
+   */
+  protected DialogueAct emitDA(DialogueAct da) {
+    return emitDA(Behaviour.DEFAULT_DELAY, da);
   }
 
   public DialogueAct getMyLastDA() {
     return myLastDAs.peekFirst();
   }
 
-  public boolean isMyLastDA(String type, String prop, String... keyVal) {
-    return subsumes(getMyLastDA(), type, prop, keyVal);
+  public boolean isMyLastDA(DialogueAct da) {
+    return da.subsumes(getMyLastDA());
   }
 
-  /**
-   * Return the index of the last speech act equal or more specific than the
-   * given one
+  public boolean isMyLastDA(String raw) {
+    return isMyLastDA(new DialogueAct(raw));
+  }
+
+  /** Return the index of the last speech act equal or more specific than the
+   *  given one
    */
-  protected int lastOccurenceOfMyDA(String type, String prop, String... keyVal) {
-    DialogueAct general = daFromVals(type, prop, keyVal);
+  protected int lastOccurence(DialogueAct da, Iterable<DialogueAct> daList) {
     int i = 0;
-    for (DialogueAct evt : myLastDAs) {
-      if (general.dag.subsumes(evt.dag)) {
+    for (DialogueAct evt : daList) {
+      if (da.dag.subsumes(evt.dag)) {
         return i;
       }
       ++i;
@@ -203,12 +181,48 @@ public abstract class Agent {
     return -1;
   }
 
-  /**
-   * Return the index of the last speech act with a type equal or more specific
-   * than the given one
+  /** Return the index of the last speech act with a type equal or more specific
+   *  than the given one
    */
-  protected int lastOccurenceOfMyDA(String type) {
-    return lastOccurenceOfMyDA(type, "top");
+  public int lastOccurenceOfMyDA(String raw) {
+    return saidInSession(new DialogueAct(raw));
+  }
+
+  /** When did i say this in this session? */
+  int saidInSession(DialogueAct da) {
+    return lastOccurence(da, myLastDAs);
+  }
+
+  /** Am I currently waiting for a response?
+   *  The condition is: I was the last to say something, and my dialogue act
+   *  was a question or a request.
+   * @return true if i'm waiting for a response.
+   */
+  protected boolean waitingForResponse() {
+    // if my last DA was a request or a question, and there is no newer incoming
+    // da, i'm waiting for an answer.
+    DialogueAct myLast = getMyLastDA();
+    if (myLast == null) {
+      return false;
+    }
+    DialogueAct lastDA = getLastDA();
+    final DialogueAct[] requests = {
+        new DialogueAct("Question(Frame)"),
+        new DialogueAct("Request(Frame)")
+    };
+    if (myLast.timeStamp < lastDA.timeStamp)
+      return false;
+    for (DialogueAct req : requests) {
+      if (myLast.isSubsumedBy(req)) return true;
+    }
+    return false;
+  }
+
+  /** Return the index of the last speech act equal or more specific than the
+   *  given one
+   */
+  protected int receivedInSession(DialogueAct da) {
+    return lastOccurence(da, lastDAs);
   }
 
   public DialogueAct getLastDA() {
@@ -219,11 +233,6 @@ public abstract class Agent {
       return null;
     }
     return last;
-  }
-
-  public DialogueAct addLastDA(String type, String prop, String... keyVal) {
-    DialogueAct newDA = daFromVals(type, prop, keyVal);
-    return addLastDA(newDA);
   }
 
   public DialogueAct addLastDA(DialogueAct newDA) {
@@ -240,11 +249,11 @@ public abstract class Agent {
     return newDA;
   }
 
-  public boolean isLastDA(String type, String prop, String... keyVal) {
+  public boolean isLastDA(String raw) {
     if (getLastDA() == null) {
       return false;
     }
-    return subsumes(getLastDA(), type, prop, keyVal);
+    return new DialogueAct(raw).subsumes(getLastDA());
   }
 
   public void lastDAprocessed() {

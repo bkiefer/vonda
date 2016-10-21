@@ -21,9 +21,8 @@ package de.dfki.mlt.rudimant.agent.nlg;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -32,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.lt.tr.dialogue.cplan.UtterancePlanner;
 import de.dfki.lt.tr.dialogue.cplan.functions.FunctionFactory;
-import java.util.LinkedHashMap;
 
 public class LanguageGenerator {
 
@@ -123,7 +121,7 @@ public class LanguageGenerator {
   }
 
   public DagNode toDag(String genericDialogueAct) {
-    return _ruleMapper.parseLfString(genericDialogueAct);
+    return DagNode.parseLfString(genericDialogueAct);
   }
 
   /**

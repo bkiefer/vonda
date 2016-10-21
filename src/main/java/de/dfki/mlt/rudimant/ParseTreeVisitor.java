@@ -5,54 +5,58 @@
  */
 package de.dfki.mlt.rudimant;
 
-import de.dfki.mlt.rudimant.abstractTree.ExpBoolean;
-import de.dfki.mlt.rudimant.abstractTree.UComment;
-import de.dfki.mlt.rudimant.abstractTree.ExpAssignment;
-import de.dfki.mlt.rudimant.abstractTree.StatFor2;
-import de.dfki.mlt.rudimant.abstractTree.StatFor3;
-import de.dfki.mlt.rudimant.abstractTree.ExpIf;
-import de.dfki.mlt.rudimant.abstractTree.StatPropose;
-import de.dfki.mlt.rudimant.abstractTree.StatTimeout;
-import de.dfki.mlt.rudimant.abstractTree.UnaryBoolean;
-import de.dfki.mlt.rudimant.abstractTree.StatDoWhile;
-import de.dfki.mlt.rudimant.abstractTree.StatImport;
-import de.dfki.mlt.rudimant.abstractTree.UCharacter;
-import de.dfki.mlt.rudimant.abstractTree.GrammarFile;
-import de.dfki.mlt.rudimant.abstractTree.StatListCreation;
-import de.dfki.mlt.rudimant.abstractTree.UCommentBlock;
-import de.dfki.mlt.rudimant.abstractTree.StatSetOperation;
-import de.dfki.mlt.rudimant.abstractTree.ExpArithmetic;
-import de.dfki.mlt.rudimant.abstractTree.StatAbstractBlock;
-import de.dfki.mlt.rudimant.abstractTree.ExpDialogueAct;
-import de.dfki.mlt.rudimant.abstractTree.StatFor1;
-import de.dfki.mlt.rudimant.abstractTree.StatReturn;
-import de.dfki.mlt.rudimant.abstractTree.StatFunDef;
-import de.dfki.mlt.rudimant.abstractTree.UNumber;
-import de.dfki.mlt.rudimant.abstractTree.UVariable;
-import de.dfki.mlt.rudimant.abstractTree.UFieldAccess;
-import de.dfki.mlt.rudimant.abstractTree.StatIf;
-import de.dfki.mlt.rudimant.abstractTree.StatWhile;
-import de.dfki.mlt.rudimant.abstractTree.StatMethodDeclaration;
-import de.dfki.mlt.rudimant.abstractTree.UString;
-import de.dfki.mlt.rudimant.abstractTree.UWildcard;
-import de.dfki.mlt.rudimant.abstractTree.RTExpression;
-import de.dfki.mlt.rudimant.abstractTree.UFuncCall;
-import de.dfki.mlt.rudimant.abstractTree.StatVarDef;
-import de.dfki.mlt.rudimant.abstractTree.RudiTree;
-import de.dfki.mlt.rudimant.abstractTree.ExpAbstractWrapper;
-import de.dfki.mlt.rudimant.abstractTree.ExpFuncOnObject;
-import de.dfki.mlt.rudimant.abstractTree.ExpLambda;
-import de.dfki.mlt.rudimant.abstractTree.GrammarRule;
-import de.dfki.mlt.rudimant.abstractTree.UNull;
-import de.dfki.lt.hfc.db.HfcDbService;
-import de.dfki.mlt.rudimant.io.RobotGrammarParser;
-import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
+
+import de.dfki.lt.hfc.db.HfcDbService;
+import de.dfki.mlt.rudimant.abstractTree.ExpAbstractWrapper;
+import de.dfki.mlt.rudimant.abstractTree.ExpArithmetic;
+import de.dfki.mlt.rudimant.abstractTree.ExpAssignment;
+import de.dfki.mlt.rudimant.abstractTree.ExpBoolean;
+import de.dfki.mlt.rudimant.abstractTree.ExpDialogueAct;
+import de.dfki.mlt.rudimant.abstractTree.ExpFuncOnObject;
+import de.dfki.mlt.rudimant.abstractTree.ExpIf;
+import de.dfki.mlt.rudimant.abstractTree.ExpLambda;
+import de.dfki.mlt.rudimant.abstractTree.GrammarFile;
+import de.dfki.mlt.rudimant.abstractTree.GrammarRule;
+import de.dfki.mlt.rudimant.abstractTree.RTExpression;
+import de.dfki.mlt.rudimant.abstractTree.RudiTree;
+import de.dfki.mlt.rudimant.abstractTree.StatAbstractBlock;
+import de.dfki.mlt.rudimant.abstractTree.StatDoWhile;
+import de.dfki.mlt.rudimant.abstractTree.StatFor1;
+import de.dfki.mlt.rudimant.abstractTree.StatFor2;
+import de.dfki.mlt.rudimant.abstractTree.StatFor3;
+import de.dfki.mlt.rudimant.abstractTree.StatFunDef;
+import de.dfki.mlt.rudimant.abstractTree.StatIf;
+import de.dfki.mlt.rudimant.abstractTree.StatImport;
+import de.dfki.mlt.rudimant.abstractTree.StatListCreation;
+import de.dfki.mlt.rudimant.abstractTree.StatMethodDeclaration;
+import de.dfki.mlt.rudimant.abstractTree.StatPropose;
+import de.dfki.mlt.rudimant.abstractTree.StatReturn;
+import de.dfki.mlt.rudimant.abstractTree.StatSetOperation;
+import de.dfki.mlt.rudimant.abstractTree.StatTimeout;
+import de.dfki.mlt.rudimant.abstractTree.StatVarDef;
+import de.dfki.mlt.rudimant.abstractTree.StatWhile;
+import de.dfki.mlt.rudimant.abstractTree.UCharacter;
+import de.dfki.mlt.rudimant.abstractTree.UComment;
+import de.dfki.mlt.rudimant.abstractTree.UCommentBlock;
+import de.dfki.mlt.rudimant.abstractTree.UFieldAccess;
+import de.dfki.mlt.rudimant.abstractTree.UFuncCall;
+import de.dfki.mlt.rudimant.abstractTree.UNull;
+import de.dfki.mlt.rudimant.abstractTree.UNumber;
+import de.dfki.mlt.rudimant.abstractTree.UString;
+import de.dfki.mlt.rudimant.abstractTree.UVariable;
+import de.dfki.mlt.rudimant.abstractTree.UWildcard;
+import de.dfki.mlt.rudimant.abstractTree.UnaryBoolean;
+import de.dfki.mlt.rudimant.io.RobotGrammarParser;
+import de.dfki.mlt.rudimant.io.RobotGrammarParser.Da_tokenContext;
+import de.dfki.mlt.rudimant.io.RobotGrammarParser.Type_specContext;
+import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
 
 /**
  *
@@ -91,7 +95,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     for (int i = 0; i < ctx.getChildCount(); i++) {
       curDepth = 0;
       rules.add(this.visit(ctx.getChild(i)));
-//      System.out.println("============================================\n" + 
+//      System.out.println("============================================\n" +
 //              ctx.getChild(i).getText());
 //      System.out.println("next one ");
     }
@@ -335,23 +339,16 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitLiteral_or_graph_exp(RobotGrammarParser.Literal_or_graph_expContext ctx) {
-    // LITERAL_OR_GRAPH LPAR ( exp (COMMA exp)*)? RPAR
+    // HASH da_token LPAR ( da_token ( COMMA ( da_token ASSIGN da_token) )* ) RPAR
     ArrayList<RTExpression> expList = new ArrayList<RTExpression>();
-    for (int i = 2; i < ctx.getChildCount() - 1;) {
+
+    for (int i = 5; i < ctx.getChildCount() - 1;) {
       expList.add((RTExpression) this.visit(ctx.getChild(i)));
       i += 2;   // because we aren't interested in commas
     }
-//    this.in_graph = false;
-//    return new ExpDialogueAct(ctx.getChild(0).getText(), expList);
-    List<String> rest = new ArrayList<String>();
-    for (int i = 2; i < ctx.getChildCount() - 1; i += 2) {  // we don't need the parenthesis
-      rest.add("\"" + ctx.getChild(i).getText()
-              .replaceAll("\\^([A-z]+)", "\" + $1 + \"").replace("^", "") + "\"");
-    }
-    if (ctx.getChild(0).getText().contains("^")) {
-      return new ExpDialogueAct(ctx.getChild(0).getText().substring(2), rest, expList);
-    }
-    return new ExpDialogueAct("\"" + ctx.getChild(0).getText().substring(1) + "\"", rest, expList);
+    return new ExpDialogueAct((RTExpression)this.visit(ctx.getChild(1)),
+        (RTExpression)this.visit(ctx.getChild(3)),
+        expList);
   }
 
   @Override
@@ -602,11 +599,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitField_access(RobotGrammarParser.Field_accessContext ctx) {
-    if (ctx.getText().contains("^")) {
-      String t = ctx.getText().replace("^", "");
-//    System.out.println(t);
-      return new UVariable(t, currentClass, currentTRule);
-    }
     ArrayList<String> parts = new ArrayList<String>();
     for (int i = 0; i < ctx.getChildCount(); i += 2) {
       parts.add(ctx.getChild(i).getText());
@@ -742,7 +734,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // (VARIABLE SMALLER VARIABLE GREATER)? variable ASSIGN LBRACE (VARIABLE (COMMA VARIABLE)*)? SEMICOLON
     if (ctx.getChild(1).getText().equals("=")) {
 // get all the elements to be added to the list
-      ArrayList<RTExpression> elements = new ArrayList();
+      ArrayList<RTExpression> elements = new ArrayList<>();
       for (int i = 3; i <= ctx.getChildCount() - 2;) {
         elements.add((RTExpression) this.visit(ctx.getChild(i)));
         i += 2;
@@ -750,7 +742,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       return new StatListCreation(ctx.getChild(0).getText(), elements, currentClass);
     } else {
 // get all the elements to be added to the list
-      ArrayList<RTExpression> elements = new ArrayList();
+      ArrayList<RTExpression> elements = new ArrayList<>();
       for (int i = 7; i <= ctx.getChildCount() - 2;) {
         elements.add((RTExpression) this.visit(ctx.getChild(i)));
         i += 2;
@@ -763,10 +755,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitVariable(RobotGrammarParser.VariableContext ctx) {
-    // VARIABLE | VARIABLE_MARKER field_access | VARIABLE_MARKER VARIABLE
-    String t = ctx.getText().replace("^", "");
-//    System.out.println(t);
-    return new UVariable(t, currentClass, currentTRule);
+    // VARIABLE | field_access
+    return new UVariable(ctx.getText(), currentClass, currentTRule);
   }
 
+  @Override
+  public RudiTree visitDa_token(Da_tokenContext ctx) {
+    return this.visit(ctx.getChild(ctx.getChildCount() - 1));
+  }
 }
