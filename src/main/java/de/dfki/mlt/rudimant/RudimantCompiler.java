@@ -82,7 +82,8 @@ public class RudimantCompiler {
   }
 
   private RudimantCompiler(RudimantCompiler parentCompiler) {
-    wrapperClass = parentCompiler.getWrapperClass();
+//    wrapperClass = parentCompiler.getWrapperClass();
+    wrapperClass = parentCompiler.className;
     constructorArgs = parentCompiler.getConstructorArgs();
     mem = parentCompiler.mem;
     _proxy = parentCompiler._proxy;

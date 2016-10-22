@@ -92,7 +92,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
       collectDAs += (")");
 
       this.compiledLook.put(this.lastbool, collectDAs);
-      this.realLook.put(lastbool, collectDAs);
+      this.realLook.put(lastbool, collectDAs.replaceAll("\\\\\"", "\\\""));
       collectDAs = null;
       return;
     } else if (node.doesSubsume) {
@@ -107,7 +107,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
       node.left.visit(this);
       collectDAs += (")");
       this.compiledLook.put(this.lastbool, collectDAs);
-      this.realLook.put(lastbool, collectDAs);
+      this.realLook.put(lastbool, collectDAs.replaceAll("\\\\\"", "\\\""));
       collectDAs = null;
       return;
     }
@@ -121,7 +121,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
         node.right.visit(this);
         this.lastbool = this.currentRule + this.counter++;
         this.compiledLook.put(this.lastbool, collectElements + ")");
-        this.realLook.put(lastbool, collectElements + ")");
+        this.realLook.put(lastbool, collectElements.replaceAll("\\\\\"", "\\\"") + ")");
         collectElements = null;
         return;
       }
@@ -162,7 +162,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
   @Override
   public void visitNode(ExpDialogueAct node) {
     StringBuilder out = new StringBuilder();
-    out.append("new DialogueAct(");
+    out.append("new DialogueAct(\"");
     visitDaToken(out, node.daType);
     out.append('(');
     visitDaToken(out, node.proposition);
@@ -172,7 +172,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
       out.append(" = ");
       visitDaToken(out, node.exps.get(i + 1));
     }
-    out.append(")");
+    out.append("\")");
     String result = out.toString();
     if (collectDAs != null) {
       this.collectDAs += result;
@@ -186,7 +186,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
     }
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, result);
-    this.realLook.put(lastbool, result);
+    this.realLook.put(lastbool, result.replaceAll("\\\\\"", "\\\""));
   }
 
   @Override
@@ -369,7 +369,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
     }
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, funcargs + isTrue);
-    this.realLook.put(lastbool, funcargs + isTrue);
+    this.realLook.put(lastbool, funcargs.replaceAll("\\\\\"", "\\\"") + isTrue);
     funcargs = m;
     isTrue = "";
   }

@@ -6,6 +6,7 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
+import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
 import java.util.ArrayList;
@@ -112,10 +113,10 @@ public class VTestTypeVisitor implements RudiVisitor {
       rudi.handleTypeError("expression " + node.fullexp + " could not be resolved to a type");
       node.right.setType("Object");
     }
-    if (node.operator != null && (node.left.getType().equals("DialogueAct")
-            || node.left.getType().contains("Rdf")
-            || node.right.getType().equals("DialogueAct"))) {
-      // TODO: then this should always produce a subsumes, shouldn't it?
+    try {
+      if (node.operator != null && (
+              this.rudi.getProxy().fetchRdfClass(node.left.getType()) != null)) {
+        // TODO: then this should always produce a subsumes, shouldn't it?
 //      if (node.left.getType().equals(node.right.getType())) {
         if (node.operator.equals("<=")) {
           node.isSubsumed = true;
@@ -126,14 +127,17 @@ public class VTestTypeVisitor implements RudiVisitor {
           node.rdf = true;
         }
 //      }
-    } else if (node.operator != null) {
-      if (!node.left.getType().equals(node.right.getType())) {
-        rudi.handleTypeError(node.fullexp + " s a boolean expression with type "
-                + node.left.getType() + " on the one and type " + node.right.getType()
-                + " on the other hand");
-      } else {
-        node.type = "boolean";
+      } else if (node.operator != null) {
+        if (!node.left.getType().equals(node.right.getType())) {
+          rudi.handleTypeError(node.fullexp + " s a boolean expression with type "
+                  + node.left.getType() + " on the one and type " + node.right.getType()
+                  + " on the other hand");
+        } else {
+          node.type = "boolean";
+        }
       }
+    } catch (TException ex) {
+      Logger.getLogger(VTestTypeVisitor.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
 

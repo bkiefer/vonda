@@ -7,7 +7,7 @@ LabelA:
   if (true){
     infoslots = {"Hobby", "Age"};
     String x = infoslots[1];
-    Object x = bla.schwafel.dingsbums;
+    Object y = bla.schwafel.dingsbums;
     String d = "adf";
     LabelB:
       if("bla" && true){

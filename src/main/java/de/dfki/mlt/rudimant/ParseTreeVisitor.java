@@ -53,6 +53,7 @@ import de.dfki.mlt.rudimant.abstractTree.UString;
 import de.dfki.mlt.rudimant.abstractTree.UVariable;
 import de.dfki.mlt.rudimant.abstractTree.UWildcard;
 import de.dfki.mlt.rudimant.abstractTree.UnaryBoolean;
+import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Da_tokenContext;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Type_specContext;
@@ -681,21 +682,21 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // Attention! if you added new tokens or deleted old ones, the case numbers might have changed and
     // you get unexpected behaviour! (see Generated Sources / RobotGrammarLexer.java for right numbers)
     switch (tn.getSymbol().getType()) {
-      case 9:   // token is NULL
+      case RobotGrammarLexer.NULL:   // token is NULL
         return new UNull();
-      case 10:   // token is TRUE
+      case RobotGrammarLexer.TRUE:   // token is TRUE
         return new UnaryBoolean(tn.getText());
-      case 11:  // token is FALSE
+      case RobotGrammarLexer.FALSE:  // token is FALSE
         return new UnaryBoolean(tn.getText());
-      case 16:  // token is character
+      case RobotGrammarLexer.CHARACTER:  // token is character
         return new UCharacter(tn.getText());
-      case 17:  // token is String
+      case RobotGrammarLexer.STRING:  // token is String
         return new UString(tn.getText());
-      case 20:  // token is an annotation
+      case RobotGrammarLexer.ANNOTATION:  // token is an annotation
         return new UString(tn.getText() + "\n");
-      case 50:  //token is wildcard
+      case RobotGrammarLexer.WILDCARD:  //token is wildcard
         return new UWildcard();
-      case 60:  // token is variable
+      case RobotGrammarLexer.VARIABLE:  // token is variable
         String t = tn.getText();
         t = t.replace("^", "");
         //System.out.println(currentClass);
@@ -715,9 +716,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
           throw new UnsupportedOperationException("This variable isn't declared "
                   + "anywhere: " + text);
         }*/
-      case 61:  // token is int
+      case RobotGrammarLexer.INT:  // token is int
         return new UNumber(tn.getText());
-      case 62:  // token is float
+      case RobotGrammarLexer.FLOAT:  // token is float
         return new UNumber(tn.getText());
     }
     throw new UnsupportedOperationException("The terminal node for " + tn.getText()

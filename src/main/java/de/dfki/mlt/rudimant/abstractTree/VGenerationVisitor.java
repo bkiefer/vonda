@@ -161,7 +161,7 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpDialogueAct node) {
-    out.append("new DialogueAct(");
+    out.append("new DialogueAct(\"");
     visitDaToken(node.daType);
     out.append('(');
     visitDaToken(node.proposition);
@@ -171,7 +171,7 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append(" = ");
       visitDaToken(node.exps.get(i + 1));
     }
-    out.append(")");
+    out.append("\")");
   }
 
   @Override
