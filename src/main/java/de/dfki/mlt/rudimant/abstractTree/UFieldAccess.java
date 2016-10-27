@@ -23,10 +23,12 @@ import de.dfki.mlt.rudimant.Mem;
 public class UFieldAccess extends RTLeaf {
 
   String type;
+  List<RudiTree> parts;
   List<String> representation;
   boolean asked = false;
 
-  public UFieldAccess(List<String> representation) {
+  public UFieldAccess(List<RudiTree> parts, List<String> representation) {
+    this.parts = parts;
     this.representation = representation;
   }
 
@@ -37,11 +39,14 @@ public class UFieldAccess extends RTLeaf {
   /**
    * ask the ontology about the type of this object
    *
+   * @param proxy
    * @param mem
+   * @param representation
    * @return the type of this object
    * @throws org.apache.thrift.TException
    */
-  public String getPredicateType(RdfProxy proxy, Mem mem) throws TException {
+  public String getPredicateType(RdfProxy proxy, Mem mem,
+          List<String> representation) throws TException {
     asked = true;
     // first element of representation is type
     // everything else specifies the wanted predicate information

@@ -30,7 +30,6 @@ public class VGenerationVisitor implements RudiVisitor {
 
   public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
-
   private RudimantCompiler out;
   private RudimantCompiler rudi;
   private Mem mem;
@@ -145,13 +144,12 @@ public class VGenerationVisitor implements RudiVisitor {
     //        + ret + ")");
   }
 
-
   public void visitDaToken(RTExpression exp) {
     if (exp instanceof UVariable) {
-      out.append(((UVariable)exp).representation);
+      out.append(((UVariable) exp).representation);
     } else if (exp instanceof UString) {
-      String s = ((UString)exp).content;
-      out.append("\\\"").append(s.substring(1, s.length() -1)).append("\\\"");
+      String s = ((UString) exp).content;
+      out.append("\\\"").append(s.substring(1, s.length() - 1)).append("\\\"");
     } else {
       out.append("\" + ");
       this.visitNode(exp);
@@ -286,10 +284,10 @@ public class VGenerationVisitor implements RudiVisitor {
     String conargs = "";
     String declare = "";
     if (null != rudi.getConstructorArgs()
-        && ! rudi.getConstructorArgs().isEmpty()) {
+            && !rudi.getConstructorArgs().isEmpty()) {
       int i = 0;
-      for(String a : rudi.getConstructorArgs().split(",")){
-        if(i > 0){
+      for (String a : rudi.getConstructorArgs().split(",")) {
+        if (i > 0) {
           conargs += ", ";
         }
         String s = a.trim().split(" ")[1];
@@ -691,15 +689,37 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UFieldAccess node) {
-    // TODO: tell me how the client is named!!!
-    out.append(node.representation.get(0));
-    for (int i = 1; i < node.representation.size(); i++) {
-      String r = node.representation.get(i);
-      if(!r.contains("\"")){
-        r = "\"" + r + "\"";
+    List<String> representation = new ArrayList<>();
+    node.parts.get(0).visit(this);
+    representation.add(node.representation.get(0));
+    String lastType = ((RTExpression) (node.parts.get(0))).getType();
+    for (int i = 1; i < node.parts.size(); i++) {
+      if (node.parts.get(i) instanceof UVariable) {
+        try {
+          if (this.rudi.getProxy().fetchRdfClass(lastType) != null) {
+            representation.add(node.representation.get(i));
+            // then we are in the case that this is actually an rdf operation
+            out.append(".getValue(" + node.representation.get(i) + ", client) ");
+            lastType = node.getPredicateType(rudi.getProxy(), mem, representation);
+            continue;
+          } else {
+            representation.clear();
+          }
+        } catch (TException ex) {
+          java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
+        }
       }
-      out.append(".getValue(" + r + ", client)" + " ");
+      out.append(".");
+      node.parts.get(i).visit(this);
     }
+    /*out.append(node.representation.get(0));
+     for (int i = 1; i < node.representation.size(); i++) {
+     String r = node.representation.get(i);
+     if(!r.contains("\"")){
+     r = "\"" + r + "\"";
+     }
+     out.append(".getValue(" + r + ", client)" + " ");
+     }*/
   }
 
   @Override

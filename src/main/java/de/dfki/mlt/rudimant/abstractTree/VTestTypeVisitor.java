@@ -386,7 +386,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(UFieldAccess node) {
     try {
-      node.type = node.getPredicateType(rudi.getProxy(), mem);
+      node.type = node.getPredicateType(rudi.getProxy(), mem, node.representation);
     } catch (TException ex) {
       Logger.getLogger(UFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
     }

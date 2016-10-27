@@ -6,10 +6,15 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import de.dfki.mlt.rudimant.Mem;
+import de.dfki.mlt.rudimant.RudimantCompiler;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.logging.Level;
+import org.apache.thrift.TException;
 
 /**
  *
@@ -24,15 +29,17 @@ public class VRuleConditionVisitor implements RudiVisitor {
   private LinkedHashMap<String, String> compiledLook;
   private int counter;
 
+  private RudimantCompiler rudi;
   private Mem mem;
 
   public void renewMap(String rule, LinkedHashMap<String, String> condLog,
-          LinkedHashMap<String, String> compiledLook, Mem mem) {
+          LinkedHashMap<String, String> compiledLook, RudimantCompiler rudi) {
     this.realLook = condLog;
     this.compiledLook = compiledLook;
     this.currentRule = rule;
     this.counter = 0;
-    this.mem = mem;
+    this.rudi = rudi;
+    this.mem = rudi.getMem();
     this.funcargs = "";
   }
 
@@ -326,12 +333,32 @@ public class VRuleConditionVisitor implements RudiVisitor {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
+  private String FieldAccessPart = null;
+  
   @Override
   public void visitNode(UFieldAccess node) {
-    // TODO: tell me how the client is named!!!
-    String t = (node.representation.get(0));
-    for (int i = 1; i < node.representation.size(); i++) {
-      t += (".getValue(" + node.representation.get(i) + ", client)" + " ");
+    List<String> representation = new ArrayList<>();
+    node.parts.get(0).visit(this);
+    representation.add(node.representation.get(0));
+    String lastType = ((RTExpression) (node.parts.get(0))).getType();
+    for (int i = 1; i < node.parts.size(); i++) {
+      if (node.parts.get(i) instanceof UVariable) {
+        try {
+          if (this.rudi.getProxy().fetchRdfClass(lastType) != null) {
+            representation.add(node.representation.get(i));
+            // then we are in the case that this is actually an rdf operation
+            out.append(".getValue(" + node.representation.get(i) + ", client) ");
+            lastType = node.getPredicateType(rudi.getProxy(), mem, representation);
+            continue;
+          } else {
+            representation.clear();
+          }
+        } catch (TException ex) {
+          java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+      out.append(".");
+      node.parts.get(i).visit(this);
     }
     if (collectElements != null) {
       this.collectElements += t + isTrue;
