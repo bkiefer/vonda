@@ -803,7 +803,7 @@ public class VGenerationVisitor implements RudiVisitor {
 
     // remembers how the expressions looked (for logging)
     LinkedHashMap<String, String> realLook = new LinkedHashMap<>();
-    condV.renewMap(rule, realLook, compiledLook, this.mem);
+    condV.renewMap(rule, realLook, compiledLook, this.rudi);
     condV.visitNode(bool);
     // now create a condition from those things
     //System.out.println(realLook.keySet().size());

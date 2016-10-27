@@ -155,10 +155,10 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   public void visitDaToken(StringBuilder out, RTExpression exp) {
     if (exp instanceof UVariable) {
-      out.append(((UVariable)exp).representation);
+      out.append(((UVariable) exp).representation);
     } else if (exp instanceof UString) {
-      String s = ((UString)exp).content;
-      out.append("\\\"").append(s.substring(1, s.length() -1)).append("\\\"");
+      String s = ((UString) exp).content;
+      out.append("\\\"").append(s.substring(1, s.length() - 1)).append("\\\"");
     } else {
       out.append("\" + ");
       this.visitNode(exp);
@@ -333,11 +333,16 @@ public class VRuleConditionVisitor implements RudiVisitor {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
-  private String FieldAccessPart = null;
-  
+  private String fieldAccessPart = null;
+
   @Override
   public void visitNode(UFieldAccess node) {
     List<String> representation = new ArrayList<>();
+    String saved = null;
+    if (fieldAccessPart != null) {
+      saved = fieldAccessPart;
+    }
+    fieldAccessPart = "";
     node.parts.get(0).visit(this);
     representation.add(node.representation.get(0));
     String lastType = ((RTExpression) (node.parts.get(0))).getType();
@@ -347,7 +352,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
           if (this.rudi.getProxy().fetchRdfClass(lastType) != null) {
             representation.add(node.representation.get(i));
             // then we are in the case that this is actually an rdf operation
-            out.append(".getValue(" + node.representation.get(i) + ", client) ");
+            fieldAccessPart += (".getValue(" + node.representation.get(i) + ", client) ");
             lastType = node.getPredicateType(rudi.getProxy(), mem, representation);
             continue;
           } else {
@@ -357,20 +362,23 @@ public class VRuleConditionVisitor implements RudiVisitor {
           java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
         }
       }
-      out.append(".");
+      fieldAccessPart += (".");
       node.parts.get(i).visit(this);
     }
     if (collectElements != null) {
-      this.collectElements += t + isTrue;
+      this.collectElements += fieldAccessPart + isTrue;
+      fieldAccessPart = saved;
       return;
     } else if (!funcargs.equals("")) {
-      funcargs += t;
+      funcargs += fieldAccessPart;
+      fieldAccessPart = saved;
       return;
     }
     this.lastbool = this.currentRule + this.counter++;
-    this.compiledLook.put(this.lastbool, t + isTrue);
-    this.realLook.put(lastbool, t + isTrue);
+    this.compiledLook.put(this.lastbool, fieldAccessPart + isTrue);
+    this.realLook.put(lastbool, fieldAccessPart + isTrue);
     isTrue = "";
+    fieldAccessPart = saved;
   }
 
   private String funcargs = "";
@@ -390,6 +398,10 @@ public class VRuleConditionVisitor implements RudiVisitor {
       }
     }
     funcargs += (")" + " ");
+    if (fieldAccessPart != null) {
+      this.fieldAccessPart += funcargs;
+      return;
+    }
     if (collectElements != null) {
       this.collectElements += funcargs + isTrue;
       return;
@@ -456,7 +468,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
   public void visitNode(UVariable node) {
     if (node.isRdfClass) {
       //if (node.getType().equals("DialogueAct") || mem.isRdf(node.representation)) {
-      if(collectDAs != null){
+      if (collectDAs != null) {
         this.collectDAs += "\"" + node.representation + "\"";
         return;
       }
@@ -468,16 +480,21 @@ public class VRuleConditionVisitor implements RudiVisitor {
     // if the variable is not in the memory,
     if (node.realOrigin != null) {
       String t = node.realOrigin;
+      String s = t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation;
+      if (fieldAccessPart != null) {
+        this.fieldAccessPart += s;
+        return;
+      }
       if (collectElements != null) {
-        this.collectElements += t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation;
+        this.collectElements += s;
         return;
       } else if (!funcargs.equals("")) {
-        this.funcargs += t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation;
+        this.funcargs += s;
         return;
       }
       //if (node.getType().equals("DialogueAct") || mem.isRdf(node.representation)) {
-      if(collectDAs != null){
-        this.collectDAs += t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation;
+      if (collectDAs != null) {
+        this.collectDAs += s;
         return;
       }
       this.lastbool = this.currentRule + this.counter++;
@@ -486,6 +503,10 @@ public class VRuleConditionVisitor implements RudiVisitor {
       this.realLook.put(lastbool, node.representation + " " + isTrue);
       return;
     } else {
+      if (fieldAccessPart != null) {
+        this.fieldAccessPart += node.representation;
+        return;
+      }
       if (collectElements != null) {
         this.collectElements += node.representation;
         return;
