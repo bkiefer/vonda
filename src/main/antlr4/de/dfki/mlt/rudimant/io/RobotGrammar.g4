@@ -112,7 +112,7 @@ funccall_on_object
 
 field_access
   : (VARIABLE | function_call)
-    ( ( DOT VARIABLE) )+
+    ( ( DOT (VARIABLE | LPAR function_call RPAR | function_call )) )+
   ;
 
 type_spec 
