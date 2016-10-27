@@ -468,6 +468,10 @@ public class VRuleConditionVisitor implements RudiVisitor {
   public void visitNode(UVariable node) {
     if (node.isRdfClass) {
       //if (node.getType().equals("DialogueAct") || mem.isRdf(node.representation)) {
+      if (fieldAccessPart != null) {
+        this.fieldAccessPart += node.representation;
+        return;
+      }
       if (collectDAs != null) {
         this.collectDAs += "\"" + node.representation + "\"";
         return;

@@ -129,9 +129,9 @@ variable
 exp
   : comment
   (LPAR exp RPAR
+  | funccall_on_object
   | variable
   | field_access
-  | funccall_on_object
   | assignment
   | if_exp
   | arithmetic
@@ -152,12 +152,12 @@ exp
 simple_exp
   : comment
   (LPAR exp RPAR
+  | funccall_on_object
   | variable
   | arithmetic
   | function_call
   | literal_or_graph_exp
   | field_access
-  | funccall_on_object
   | assignment
   | ( STRING
     | WILDCARD

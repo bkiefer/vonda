@@ -390,6 +390,12 @@ public class VTestTypeVisitor implements RudiVisitor {
     } catch (TException ex) {
       Logger.getLogger(UFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
     }
+    /*if(node.type == null){
+      // then this is not an rdf node, but some composed funccall
+      node.parts.get(node.parts.size() - 1).visit(this);
+      node.type = ((RTExpression)node.parts.get(node.parts.size() - 1)).getType();
+      return;
+    }*/
     for (int i = 1; i < node.representation.size(); i++) {
       if (node.representation.get(i).contains("(")) {
         continue;
