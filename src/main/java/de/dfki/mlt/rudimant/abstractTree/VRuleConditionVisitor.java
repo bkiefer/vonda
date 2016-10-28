@@ -179,6 +179,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
       out.append(" = ");
       visitDaToken(out, node.exps.get(i + 1));
     }
+    out.append(')');
     out.append("\")");
     String result = out.toString();
     if (collectDAs != null) {
