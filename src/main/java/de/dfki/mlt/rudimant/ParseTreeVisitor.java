@@ -8,12 +8,12 @@ package de.dfki.mlt.rudimant;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.mlt.rudimant.abstractTree.ExpAbstractWrapper;
 import de.dfki.mlt.rudimant.abstractTree.ExpArithmetic;
 import de.dfki.mlt.rudimant.abstractTree.ExpAssignment;
@@ -72,7 +72,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   // same for the current toplevel rule
   private String currentTRule;
   private int curDepth;
-  private HfcDbService.Client _client;
 
   /**
    * constructor; the visitor needs to know in which rule/file we're in
@@ -81,10 +80,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
    * name of the resulting java file!!!!
    * @param client
    */
-  public ParseTreeVisitor(String masterFile, HfcDbService.Client client) {
+  public ParseTreeVisitor(String masterFile, List<Token> commentTokens) {
     //this.memory = new HashMap<String, AbstractType>();
     currentClass = masterFile;
-    _client = client;
   }
 
   @Override
@@ -130,6 +128,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
               this.visit(ctx.getChild(ctx.getChildCount() - 1)),
               currentClass);
     }
+    // TODO: I'M ALMOST CONVINCED THIS IS WRONG. THE CONSTRUCTOR LOOKS EXACTLY
+    // LIKE THE ONE ABOVE, ALTHOUGH THERE IS NO VISIBILITY SPECIFIER.
     ArrayList<String> parameters = new ArrayList<>();
     ArrayList<String> partypes = new ArrayList<>();
     // get all the parameters of the function
@@ -144,18 +144,20 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
             currentClass);
   }
 
+  /*
   @Override
   public RudiTree visitLabel(RobotGrammarParser.LabelContext ctx) {
     // this method should never be reached as label is a part of grammar rule and
     // is not invoked there
     throw new UnsupportedOperationException("This method shouldn't be used");
   }
+  */
 
   @Override
   public RudiTree visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
     // comment label comment if_statement
 //    System.out.println("hi, i found rule " + ctx.getChild(1).getText());
-    String ruleName = ctx.getChild(1).getText().substring(0, ctx.getChild(1).getText().length() - 1);
+    String ruleName = ctx.getChild(0).getText();//.substring(0, ctx.getChild(0).getText().length() - 1);
     boolean toplevel = false;
     if (curDepth == 0) {
       // then this is a toplevel rule
@@ -163,17 +165,18 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       toplevel = true;
     }
     curDepth++;
-    return new GrammarRule((UCommentBlock) this.visit(ctx.getChild(0)), ruleName,
-            (UCommentBlock) this.visit(ctx.getChild(2)),
-            (StatIf) this.visit(ctx.getChild(3)), toplevel);
+    return new GrammarRule(null,//(UCommentBlock) this.visit(ctx.getChild(0)),
+    		ruleName,
+            null,//(UCommentBlock) this.visit(ctx.getChild(2)),
+            (StatIf) this.visit(ctx.getChild(2)), toplevel);
   }
 
   @Override
   public RudiTree visitStatement_block(RobotGrammarParser.Statement_blockContext ctx) {
     // comment (LBRACE comment (statement)* RBRACE)
     List<RudiTree> statblock = new ArrayList<RudiTree>();
-    statblock.add(this.visit(ctx.getChild(0)));
-    for (int i = 2; i < ctx.getChildCount() - 1; i++) {
+    // statblock.add(this.visit(ctx.getChild(0))); // comment
+    for (int i = 1; i < ctx.getChildCount() - 1; i++) {
       statblock.add(this.visit(ctx.getChild(i)));
     }
     return new StatAbstractBlock(statblock, true);
@@ -184,7 +187,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // (statement_block | (comment (some_statement | exp SEMICOLON))) comment
     List<RudiTree> statblock = new ArrayList<RudiTree>();
     statblock.add(this.visit(ctx.getChild(0)));
-    statblock.add(this.visit(ctx.getChild(1)));
+    // statblock.add(this.visit(ctx.getChild(1))); //COMMENT
     if (ctx.getChildCount() > 2) {
       statblock.add(this.visit(ctx.getChild(ctx.getChildCount() - 1)));
     }
@@ -196,8 +199,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // comment LBRACE comment (statement | ((CONTINUE | BREAK) SEMICOLON))* RBRACE
     // when entering a statement block, we need to create a new local environment
     List<RudiTree> statblock = new ArrayList<RudiTree>();
-    statblock.add(this.visit(ctx.getChild(0)));
-    for (int i = 2; i < ctx.getChildCount() - 1; i++) {
+    //statblock.add(this.visit(ctx.getChild(0)));
+    for (int i = 1; i < ctx.getChildCount() - 1; i++) {
       statblock.add(this.visit(ctx.getChild(i)));
     }
     return new StatAbstractBlock(statblock, true);
@@ -273,6 +276,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     }
   }
 
+  /*
   @Override
   public RudiTree visitArithmetic_operator(RobotGrammarParser.Arithmetic_operatorContext ctx) {
     // we should never get here since operators are directly used as Strings in arithmetics
@@ -290,6 +294,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // we should never get here since operators are directly used as Strings in arithmetics
     throw new UnsupportedOperationException("This method shouldn't be used");
   }
+  */
 
   @Override
   public RudiTree visitNumber(RobotGrammarParser.NumberContext ctx) {
@@ -328,14 +333,16 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 //              new ExpBoolean(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)), null, null, true, true),
 //              (UCommentBlock) this.visit(ctx.getChild(3)));
 //    }
-    if (ctx.getChildCount() == 5) { // exp of kind comment LPAR exp RPAR comment
-      return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
-              (RTExpression) this.visit(ctx.getChild(2)),
-              (UCommentBlock) this.visit(ctx.getChild(4)));
+    if (ctx.getChildCount() == 3) { // exp of kind comment LPAR exp RPAR comment
+      return new ExpAbstractWrapper(null, //(UCommentBlock) this.visit(ctx.getChild(0)),
+              (RTExpression) this.visit(ctx.getChild(1)),
+              null //(UCommentBlock) this.visit(ctx.getChild(4))
+              );
     }
-    return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
-            (RTExpression) this.visit(ctx.getChild(1)),
-            (UCommentBlock) this.visit(ctx.getChild(2)));
+    return new ExpAbstractWrapper(null, //(UCommentBlock) this.visit(ctx.getChild(0)),
+            (RTExpression) this.visit(ctx.getChild(0)),
+            null //(UCommentBlock) this.visit(ctx.getChild(2))
+            );
   }
 
   @Override
@@ -355,26 +362,31 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitSimple_exp(RobotGrammarParser.Simple_expContext ctx) {
     // comment exp comment
-    if (ctx.getChildCount() == 4) { // exp of kind comment NOT boolean_exp comment
+    if (ctx.getChildCount() == 2) { // exp of kind comment NOT boolean_exp comment
 //      System.out.println("simple exp");
-      return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
-              new ExpBoolean(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)), null, null, true, true),
-              (UCommentBlock) this.visit(ctx.getChild(3)));
+      return new ExpAbstractWrapper(null, //(UCommentBlock) this.visit(ctx.getChild(0)),
+              new ExpBoolean(ctx.getChild(1).getText(),
+            		  (RTExpression) this.visit(ctx.getChild(1)), null, null, true, true),
+              null//(UCommentBlock) this.visit(ctx.getChild(3))
+              );
     }
-    if (ctx.getChildCount() == 5) { // exp of kind comment LPAR exp RPAR comment
-      return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
-              (RTExpression) this.visit(ctx.getChild(2)),
-              (UCommentBlock) this.visit(ctx.getChild(4)));
+    if (ctx.getChildCount() == 3) { // exp of kind comment LPAR exp RPAR comment
+      return new ExpAbstractWrapper(null, //(UCommentBlock) this.visit(ctx.getChild(0)),
+              (RTExpression) this.visit(ctx.getChild(1)),
+              null //(UCommentBlock) this.visit(ctx.getChild(4))
+              );
     }
-    return new ExpAbstractWrapper((UCommentBlock) this.visit(ctx.getChild(0)),
-            (RTExpression) this.visit(ctx.getChild(1)),
-            (UCommentBlock) this.visit(ctx.getChild(2)));
+    return new ExpAbstractWrapper(null,//(UCommentBlock) this.visit(ctx.getChild(0)),
+            (RTExpression) this.visit(ctx.getChild(0)),
+            null //(UCommentBlock) this.visit(ctx.getChild(2))
+            );
   }
 
   @Override
   public RudiTree visitSimple_b_exp(RobotGrammarParser.Simple_b_expContext ctx) {
     // simple_exp (boolean_op2 exp)?
     if (ctx.getChildCount() == 1) {
+      // TODO DO WE NEED THIS?? Shouldn't it work if we just call visit??
       if (ctx.getText().equals("true") || ctx.getText().equals("false")) {
         return new UnaryBoolean(ctx.getText());
       }
@@ -386,7 +398,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
               null, null, false, false);
     } else {
 //      System.out.println("simple b exp 2");
-      return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
+      return new ExpBoolean(ctx.getText(),
+    		  (RTExpression) this.visit(ctx.getChild(0)),
               (RTExpression) this.visit(ctx.getChild(2)),
               ctx.getChild(1).getText(), false, false);
     }
@@ -396,9 +409,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitBoolean_exp(RobotGrammarParser.Boolean_expContext ctx) {
     //  simple_b_exp boolean_op1 boolean_exp |  simple_b_exp
     if (ctx.getChildCount() == 1) {
+    	// TODO DO WE NEED THIS?? Shouldn't it work if we just call visit??
       if (ctx.getText().equals("true") || ctx.getText().equals("false")) {
         return new UnaryBoolean(ctx.getText());
       }
+      // TODO: THIS must always be the case, or not??
       if (ctx.getChild(0) instanceof RobotGrammarParser.Simple_b_expContext) {
         return this.visit(ctx.getChild(0));
       }
@@ -410,6 +425,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 //              null, null, true, false);
     } else if (ctx.getChildCount() == 3) {
 //      System.out.println("b exp 3");
+    	// TODO: I DON'T UNDERSTAND THIS AT ALL, BUT IT SEEMS I HAVE TO MIMIC IT
+    	// FOR THE NEXT METHOD, OR IS IT THE SIMPLE_B_EXP I HAVE TO MIMIC???
       ExpBoolean arit = new ExpBoolean(ctx.getChild(2).getText(),
               (RTExpression) this.visit(ctx.getChild(2)),
               null, null, false, false);
@@ -434,16 +451,19 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   }
 
   @Override
-  public RudiTree visitBoolean_op1(RobotGrammarParser.Boolean_op1Context ctx) {
-    // operators are directly passed in boolean_exp
-    throw new UnsupportedOperationException("This method shouldn't be used ");
+  public RudiTree visitBool_and_exp(RobotGrammarParser.Bool_and_expContext ctx) {
+	  //  bool_and_exp | boolean_exp '||' bool_and_exp
+	  
+	  if (ctx.getChildCount() == 1) {
+		  return visit(ctx.getChild(0));
+	  }
+	  // boolean_exp '&&' bool_and_exp
+      return new ExpBoolean(ctx.getText(),
+    		  (RTExpression) this.visit(ctx.getChild(0)),
+    		  (RTExpression) this.visit(ctx.getChild(2)),
+    		  ctx.getChild(1).getText(), false, false);
   }
 
-  @Override
-  public RudiTree visitBoolean_op2(RobotGrammarParser.Boolean_op2Context ctx) {
-    // operators are directly passed in boolean_exp
-    throw new UnsupportedOperationException("This method shouldn't be used ");
-  }
 
   @Override
   public RudiTree visitAssignment(RobotGrammarParser.AssignmentContext ctx) {
@@ -465,10 +485,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     }
   }
 
-  @Override
-  public RudiTree visitPropose_arg(RobotGrammarParser.Propose_argContext ctx) {
-    return this.visit(ctx.getChild(0));
-  }
 
   @Override
   public RudiTree visitString_expression(RobotGrammarParser.String_expressionContext ctx) {
@@ -503,6 +519,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
             (StatAbstractBlock) this.visit(ctx.getChild(4)));
   }
 
+  /*
   @Override
   public RudiTree visitTimeout_statement(RobotGrammarParser.Timeout_statementContext ctx) {
     // TIMEOUT LPAR STRING COMMA INT RPAR statement_block
@@ -514,7 +531,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
               null);
     }
   }
-
+  */
   @Override
   public RudiTree visitIf_statement(RobotGrammarParser.If_statementContext ctx) {
     // IF LPAR boolean_exp RPAR statement (ELSE statement)?
@@ -614,6 +631,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     return new ExpLambda(ctx.getText());
   }
 
+  /*
   @Override
   public RudiTree visitComment(RobotGrammarParser.CommentContext ctx) {
     ArrayList<UComment> comments = new ArrayList<UComment>();
@@ -626,6 +644,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     }
     return new UCommentBlock(comments);
   }
+  */
 
   @Override
   public RudiTree visitSet_operation(RobotGrammarParser.Set_operationContext ctx) {
@@ -694,13 +713,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
         return new UCharacter(tn.getText());
       case RobotGrammarLexer.STRING:  // token is String
         return new UString(tn.getText());
+      // TODO: WHAT IS AN ANNOTATION, ANYWAY?
       case RobotGrammarLexer.ANNOTATION:  // token is an annotation
         return new UString(tn.getText() + "\n");
       case RobotGrammarLexer.WILDCARD:  //token is wildcard
         return new UWildcard();
       case RobotGrammarLexer.VARIABLE:  // token is variable
         String t = tn.getText();
-        t = t.replace("^", "");
+        // t = t.replace("^", "");
         //System.out.println(currentClass);
         return new UVariable(t, currentClass, currentTRule);
       /*if (Mem.existsVariable(text)) {

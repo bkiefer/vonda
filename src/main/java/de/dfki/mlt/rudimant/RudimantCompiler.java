@@ -1,6 +1,7 @@
 package de.dfki.mlt.rudimant;
 
 import static de.dfki.mlt.rudimant.Constants.*;
+import static de.dfki.mlt.rudimant.io.RobotGrammarParser.*;
 
 import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
@@ -244,14 +246,21 @@ public class RudimantCompiler {
     RobotGrammarLexer lexer = new RobotGrammarLexer(
             new ANTLRInputStream(new FileInputStream(inputFile)));
 
+    List<Integer> toCollect = Arrays.asList(new Integer[] {
+        JAVA_CODE, ONE_L_COMMENT, MULTI_L_COMMENT, NLWS
+    });
+    CollectorTokenSource collector = new CollectorTokenSource(lexer, toCollect);
+
     // initialise the parser
-    RobotGrammarParser parser = new RobotGrammarParser(new CommonTokenStream(lexer));
+    RobotGrammarParser parser = new RobotGrammarParser(
+        new CommonTokenStream(collector));
 
     // create a parse tree; grammar_file is the start rule
     ParseTree tree = parser.grammar_file();
 
     // initialise the visitor that will do all the work
-    ParseTreeVisitor visitor = new ParseTreeVisitor(inputRealName, _client);
+    ParseTreeVisitor visitor =
+        new ParseTreeVisitor(inputRealName, collector.getCollectedTokens());
 
     // walk the parse tree
     RudiTree myTree = visitor.visit(tree);

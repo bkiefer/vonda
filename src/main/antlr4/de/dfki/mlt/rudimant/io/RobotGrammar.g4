@@ -10,60 +10,62 @@ grammar RobotGrammar;
  */
 
 /// start rule
-// the part "LBRACE statement RBRACE" is ridiciulous but currently solves a parsing exception...
+// the part "'{' statement '}'" is ridiciulous but currently solves a parsing exception...
 grammar_file
   : imports*
-    (comment
-    (grammar_rule | method_declaration | statement 
-    | LBRACE statement RBRACE | ANNOTATION | imports))*
-    comment
+    (//comment
+    (grammar_rule | method_declaration | statement
+    | '{' statement '}' | ANNOTATION | imports))*
+    //comment
   ;
 
 imports
-  : IMPORT VARIABLE SEMICOLON
+  : IMPORT VARIABLE ';'
   ;
 
 method_declaration
-  : (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | type_spec) VARIABLE LPAR
-    ((type_spec | DEC_VAR) VARIABLE (COMMA (type_spec | DEC_VAR) VARIABLE)*)?
-    RPAR statement_block;
+  : (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | type_spec) VARIABLE '('
+    ((type_spec | DEC_VAR) VARIABLE (',' (type_spec | DEC_VAR) VARIABLE)*)?
+    ')' statement_block;
 
 grammar_rule
-  : comment label comment if_statement
+  // : comment label comment if_statement
+  : VARIABLE COLON if_statement
   ;
 
+/*
 label
   : VARIABLE COLON
   ;
-
+*/
 
 statement
   : (statement_block
-    | (comment
-    (exp SEMICOLON
+    | (// comment
+    (exp ';'
     | list_creation
     |  grammar_rule
-    | set_operation SEMICOLON
+    | set_operation ';'
     | return_statement
     | propose_statement
-    | timeout_statement
+    //| timeout_statement
     | if_statement
     | while_statement
     | for_statement
     | var_def
     | fun_def
-    //| SEMICOLON   <- we don't really need it, and it's a pain to find in parser
-    ))) comment
+    //| ';'   <- we don't really need it, and it's a pain to find in parser
+    ))) // comment
  ;
 
-return_statement: RETURN exp? SEMICOLON;
+return_statement: RETURN exp? ';';
 
-comment
+/* comment
   : (MULTI_L_COMMENT | ONE_L_COMMENT | JAVA_CODE)*
-  ;
+  ;*/
 
 if_statement
-  : IF LPAR boolean_exp RPAR (statement) (ELSE (statement))?
+  : IF '(' boolean_exp ')' (statement) (ELSE (statement))?
   ;
 
 if_exp
@@ -71,73 +73,75 @@ if_exp
   ;
 
 while_statement
-  : WHILE LPAR boolean_exp RPAR loop_statement_block
-  | DO loop_statement_block WHILE LPAR boolean_exp RPAR
+  : WHILE '(' boolean_exp ')' loop_statement_block
+  | DO loop_statement_block WHILE '(' boolean_exp ')'
   ;
 
 for_statement
-  : FOR LPAR assignment SEMICOLON exp SEMICOLON exp? RPAR loop_statement_block
-  | FOR LPAR (DEC_VAR | type_spec)? VARIABLE COLON exp RPAR loop_statement_block
-  | FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block
+  : FOR '(' assignment ';' exp ';' exp? ')' loop_statement_block
+  | FOR '(' (DEC_VAR | type_spec)? VARIABLE COLON exp ')' loop_statement_block
+  | FOR '(' '(' VARIABLE ( ',' VARIABLE )+ ')' COLON exp ')' loop_statement_block
   ;
 
 statement_block
-  : comment LBRACE comment statement* RBRACE
+  // : comment '{' comment statement* '}'
+  : '{' statement* '}'
   ;
 
 loop_statement_block
-  : comment LBRACE comment (statement | ((CONTINUE | BREAK) SEMICOLON))* RBRACE
+  //: comment '{' comment (statement | ((CONTINUE | BREAK) ';'))* '}'
+  : '{' (statement | ((CONTINUE | BREAK) ';'))* '}'
   ;
 
+// TODO: I THINK THIS ENTAILS THE NORMAL propose_statement
 loop_propose_statement
-  : PROPOSE LPAR propose_arg RPAR loop_statement_block/*loop_propose_block*/
+  : PROPOSE '(' string_expression ')' loop_statement_block/*loop_propose_block*/
   ;
 
 /*loop_propose_block
-  : comment LBRACE loop_statement+ RBRACE
+  : comment '{' loop_statement+ '}'
   ;*/
 
 loop_if_statement
-  : IF LPAR boolean_exp RPAR (statement | (CONTINUE | BREAK) SEMICOLON)
-    ( ELSE (statement | (CONTINUE | BREAK) SEMICOLON) )?
+  : IF '(' boolean_exp ')' (statement | (CONTINUE | BREAK) ';')
+    ( ELSE (statement | (CONTINUE | BREAK) ';') )?
   ;
 
 function_call
-  : VARIABLE LPAR ( exp ( COMMA exp )* )? RPAR
+  : VARIABLE '(' ( exp ( ',' exp )* )? ')'
   ;
 
 funccall_on_object
-  : (variable | function_call | field_access | STRING | LPAR exp RPAR) DOT function_call
+  : (variable | function_call | field_access | STRING | '(' exp ')') '.' function_call
   ;
 
 field_access
   : (VARIABLE | function_call)
-    ( ( DOT (VARIABLE | LPAR function_call RPAR | function_call )) )+
+    ( ( '.' (VARIABLE | '(' function_call ')' | function_call )) )+
   ;
 
-type_spec 
-    : VARIABLE LBRACK RBRACK
-    | VARIABLE SMALLER type_spec GREATER
+type_spec
+    : VARIABLE '[' ']'
+    | VARIABLE '<' type_spec '>'
     | VARIABLE
     ;
 
-variable 
-  : VARIABLE LBRACK ((VARIABLE | INT) | arithmetic) RBRACK
-  | VARIABLE 
+variable
+  : VARIABLE '[' ((VARIABLE | INT) | arithmetic) ']'
+  | VARIABLE
   ;
 
 exp
-  : comment
-  (LPAR exp RPAR
-  | funccall_on_object
-  | variable
-  | field_access
-  | assignment
+  : // comment
+  ('(' exp ')' //sexp
+  | funccall_on_object //sexp
+  | variable //sexp
+  | assignment //sexp
   | if_exp
-  | arithmetic
-  | function_call
-  | literal_or_graph_exp
-  | ( STRING
+  | arithmetic //sexp
+  | function_call //sexp
+  | literal_or_graph_exp //sexp
+  | ( STRING // all sexp
     | WILDCARD
     | FALSE
     | TRUE
@@ -145,13 +149,14 @@ exp
     )
   | boolean_exp
   | string_expression
+  | field_access // sexp
   )
-  comment
+  // comment
   ;
 
 simple_exp
-  : comment
-  (LPAR exp RPAR
+  : // comment
+  ('(' exp ')'
   | funccall_on_object
   | variable
   | arithmetic
@@ -167,72 +172,52 @@ simple_exp
     )
   | NOT boolean_exp
   )
-  comment
-  ;
-
-simple_b_exp
-  : simple_exp boolean_op2 exp
-  | simple_exp
+  // comment
   ;
 
 boolean_exp
-  : simple_b_exp boolean_op1 boolean_exp
-  | simple_b_exp boolean_op1 exp
-  | simple_b_exp
+  : bool_and_exp
+  | boolean_exp '||' bool_and_exp
+  // TODO: CHECK WHY THIS IS IN, SEEMS WRONG TO ME
+//  | simple_b_exp boolean_op1 exp
   //| NOT simple_b_exp
   ;
 
-boolean_op1
-  : AND
-  | OR
+bool_and_exp
+  : simple_b_exp
+  | bool_and_exp '&&' simple_b_exp
+	;
+
+simple_b_exp
+  : simple_exp
+  | simple_exp ('==' | '!=' | '<=' | '<' | '>=' | '>') exp
   ;
 
-boolean_op2
-  : EQUAL
-  | NOT_EQUAL
-  | SMALLER_EQUAL
-  | SMALLER
-  | GREATER_EQUAL
-  | GREATER
-  ;
+// TODO: IS THIS STILL USED?
+lambda_exp: '(' (DEC_VAR? VARIABLE (',' DEC_VAR? VARIABLE)*)? ')' ARROW exp;
 
-lambda_exp: LPAR (DEC_VAR? VARIABLE (COMMA DEC_VAR? VARIABLE)*)? RPAR ARROW exp;
+//timeout_statement: TIMEOUT '(' STRING ',' INT ')' statement_block;
 
-timeout_statement: TIMEOUT LPAR STRING COMMA INT RPAR statement_block;
-
+// TODO: seems obsolete (see above))
 propose_statement
-  : PROPOSE LPAR propose_arg RPAR statement_block
+  : PROPOSE '(' string_expression ')' statement_block
   ;
 
 /*
 propose_block
-  : comment LBRACE statement+ RBRACE
+  : comment '{' statement+ '}'
   ;*/
 
-string_expression
-  : simple_exp
-    ( PLUS exp)*
-  //| ( ( STRING | variable )
-  //  | field_access | string_expression
-  //  )
-  //  ( PLUS
-  //    ( ( STRING | variable )
-  //    | field_access | string_expression
-  //    )
-  //  )*
-  ;
+string_expression : simple_exp ( '+' exp )* ;
 
+/*
 propose_arg
   : string_expression
   ;
+*/
 
 literal_or_graph_exp
-  :  HASH da_token LPAR ( da_token 
-                             ( COMMA
-                               ( da_token ASSIGN da_token)
-                             )*
-                           )
-     RPAR
+  :  HASH da_token '(' ( da_token ( ',' ( da_token '=' da_token) )* ) ')'
   ;
 
 da_token
@@ -245,22 +230,22 @@ assignment
   : ( ( DEC_VAR | type_spec)? variable
       | field_access
     )
-    ASSIGN exp
+    '=' exp
   ;
 
 var_def
-  : type_spec variable SEMICOLON
+  : type_spec variable ';'
   ;
 
 fun_def
-  : type_spec variable LPAR
-    ( type_spec VARIABLE (COMMA type_spec VARIABLE)* )? RPAR SEMICOLON
+  : type_spec variable '('
+    ( type_spec VARIABLE (',' type_spec VARIABLE)* )? ')' ';'
   ;
 
 list_creation
-  : (VARIABLE SMALLER type_spec GREATER)? variable ASSIGN LBRACE ((variable | STRING | INT | FLOAT)
-                            (COMMA (variable | STRING | INT | FLOAT))*)? 
-    RBRACE SEMICOLON
+  : (VARIABLE '<' type_spec '>')? variable '=' '{' ((variable | STRING | INT | FLOAT)
+                            (',' (variable | STRING | INT | FLOAT))*)?
+    '}' ';'
   ;
 
 set_operation
@@ -275,35 +260,37 @@ number
     )
   ;
 
+/*
 arithmetic_operator
   : arithmetic_dot_operator
   | arithmetic_lin_operator
   ;
 
 arithmetic_dot_operator
-  : DIV
-  | MUL
-  | MOD
+  : '/'
+  | '*'
+  | '%'
   ;
 
 arithmetic_lin_operator
-  : MINUS
-  | PLUS
+  : '-'
+  | '+'
   ;
+*/
 
 /// either a number or a term containing at least one operator
 arithmetic
-  : term ( arithmetic_lin_operator term )*
+  : term ( ('-'|'+') term )*
   ;
 
 term
-  : factor ( arithmetic_dot_operator factor )*
+  : factor ( ('*'|'/'|'%') factor )*
   ;
 
 factor
   : number
-  | LPAR arithmetic RPAR
-  | MINUS arithmetic
+  | '(' arithmetic ')'
+  | '-' arithmetic
   ;
 
 
@@ -345,6 +332,7 @@ ASSIGN: '=';
 
 // operator for lambda expressions, annotations
 ARROW: '->';
+// TODO: WHAT IS THIS GOOD FOR ?
 ANNOTATION: '@'('0'..'9'|'A'..'z'|'_'|'('|')')+;
 
 /// separators:
@@ -389,16 +377,17 @@ WILDCARD: '_';
 HASH: '#';
 PROPOSE: 'propose';
 DEC_VAR: 'var';
-TIMEOUT: 'timeout';
+// TIMEOUT: 'timeout';
 VARIABLE_MARKER: '^';
 
 /// comments (starting with /* or //):
-JAVA_CODE: '/*@'.*?'@*/';//-> channel(HIDDEN);
-ONE_L_COMMENT: '//'.*?'\n' ;//-> channel(HIDDEN);
-MULTI_L_COMMENT: '/*'.*?'*/' ;//-> channel(HIDDEN);
+JAVA_CODE: '/*@'.*?'@*/' -> channel(HIDDEN);
+ONE_L_COMMENT: '//'.*?'\n' -> channel(HIDDEN);
+MULTI_L_COMMENT: '/*'.*?'*/' -> channel(HIDDEN);
 
 /// whitespace
-WS: ( ' ' | '\t' | '\r' | '\n' ) -> channel(HIDDEN);
+WS: [ \t\u000C]+ -> channel(HIDDEN);
+NLWS: [\n\r]+ -> channel(HIDDEN);
 
 /// identifiers (starting with "java letter"):
 VARIABLE: ('A'..'Z'|'a'..'z'|'_')('0'..'9'|'A'..'Z'|'a'..'z'|'_'|'$')*;
