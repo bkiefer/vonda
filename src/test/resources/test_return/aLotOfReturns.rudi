@@ -1,13 +1,14 @@
 
 // this is a file to test whether the return to label - functionality works as it is supposed to
-
+Child user;
 boolean equals(String b);
 
 LabelA:
   if (true){
     infoslots = {"Hobby", "Age"};
     String x = infoslots[1];
-    String x = a.b().c.d();
+    String y = a.b().c.d();
+    String z = user.feedback.second;
     int b = c().x;
     Object y = bla.schwafel.dingsbums;
     String d = "adf";

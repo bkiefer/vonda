@@ -318,9 +318,11 @@ public class VGenerationVisitor implements RudiVisitor {
     int i = 0;
     for (String n : mem.getNeededClasses(rudi.className)) {
       if (i == 0) {
-        out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " " + n);
+        out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
+                + n.substring(0, 1).toLowerCase() + n.substring(1));
       } else {
-        out.append(", " + n.substring(0, 1).toUpperCase() + n.substring(1) + " " + n);
+        out.append(", " + n.substring(0, 1).toUpperCase() + n.substring(1) + " "
+                + n.substring(0, 1).toLowerCase() + n.substring(1));
       }
       i++;
     }
@@ -415,9 +417,11 @@ public class VGenerationVisitor implements RudiVisitor {
       int i = 0;
       for (String n : mem.getNeededClasses(node.label)) {
         if (i == 0) {
-          out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " " + n);
+          out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
+                + n.substring(0, 1).toLowerCase() + n.substring(1));
         } else {
-          out.append(", " + n.substring(0, 1).toUpperCase() + n.substring(1) + " " + n);
+          out.append(", " + n.substring(0, 1).toUpperCase() + n.substring(1) + " "
+                + n.substring(0, 1).toLowerCase() + n.substring(1));
         }
         i++;
       }
