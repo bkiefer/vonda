@@ -88,8 +88,18 @@ public class VGenerationVisitor implements RudiVisitor {
     // visit also the left side, it could be using another class's variable!
     // System.out.println("Generating assignment");
     node.left.visit(this);
-    out.append(" = ");
-    node.right.visit(this);
+    try {
+      if (!node.declaration && rudi.getProxy().fetchRdfClass(node.right.getType()) != null) {
+        out.append(".set(");
+        node.right.visit(this);
+        out.append(")");
+      } else {
+        out.append(" = ");
+        node.right.visit(this);
+      }
+    } catch (TException ex) {
+      java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
+    }
     //out.append(";");
   }
 
@@ -136,10 +146,10 @@ public class VGenerationVisitor implements RudiVisitor {
       //        "\"" + ret.replace('"', ' ') +  " _ resulted to \" + " + ret);
       return;
     }
-    out.append("(");
+//    out.append("(");
     node.left.visit(this);
     this.conditionHandling(node);
-    out.append(")");
+//    out.append(")");
     //out.context.doLog("\"" + ret.replace('"', ' ') +  " resulted to \" + ("
     //        + ret + ")");
   }
@@ -169,6 +179,7 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append(" = ");
       visitDaToken(node.exps.get(i + 1));
     }
+    out.append(')');
     out.append("\")");
   }
 
