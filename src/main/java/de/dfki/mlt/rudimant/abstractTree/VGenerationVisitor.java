@@ -761,6 +761,9 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UString node) {
+    if(!node.content.contains("\"")){
+      out.append(node.content);
+    }
     if (this.escape) {
       out.append("\\" + node.content.substring(0, node.content.length() - 1) + "\\\"" + " ");
     } else {

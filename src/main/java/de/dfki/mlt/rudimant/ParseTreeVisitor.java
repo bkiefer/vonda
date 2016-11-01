@@ -130,6 +130,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     }
     // TODO: I'M ALMOST CONVINCED THIS IS WRONG. THE CONSTRUCTOR LOOKS EXACTLY
     // LIKE THE ONE ABOVE, ALTHOUGH THERE IS NO VISIBILITY SPECIFIER.
+    // yes, it was wrong, but now the empty specifier is actually empty
     ArrayList<String> parameters = new ArrayList<>();
     ArrayList<String> partypes = new ArrayList<>();
     // get all the parameters of the function
@@ -138,8 +139,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       partypes.add(ctx.getChild(++i).getText());
       i += 2;
     }
-    return new StatMethodDeclaration(ctx.getChild(0).getText(), ctx.getChild(1).getText(),
-            ctx.getChild(2).getText(), parameters, partypes,
+    return new StatMethodDeclaration("", ctx.getChild(0).getText(),
+            ctx.getChild(1).getText(), parameters, partypes,
             this.visit(ctx.getChild(ctx.getChildCount() - 1)),
             currentClass);
   }
@@ -376,10 +377,13 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
               null //(UCommentBlock) this.visit(ctx.getChild(4))
               );
     }
-    return new ExpAbstractWrapper(null,//(UCommentBlock) this.visit(ctx.getChild(0)),
-            (RTExpression) this.visit(ctx.getChild(0)),
-            null //(UCommentBlock) this.visit(ctx.getChild(2))
-            );
+    // so there is nothing to remember here, its just a single expression,
+    // do not create an unnecessary wrapper
+    return this.visit(ctx.getChild(0));
+//    return new ExpAbstractWrapper(null,//(UCommentBlock) this.visit(ctx.getChild(0)),
+//            (RTExpression) this.visit(ctx.getChild(0)),
+//            null //(UCommentBlock) this.visit(ctx.getChild(2))
+//            );
   }
 
   @Override
@@ -387,9 +391,10 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // simple_exp (boolean_op2 exp)?
     if (ctx.getChildCount() == 1) {
       // TODO DO WE NEED THIS?? Shouldn't it work if we just call visit??
-      if (ctx.getText().equals("true") || ctx.getText().equals("false")) {
-        return new UnaryBoolean(ctx.getText());
-      }
+      // aw: yes, that should do it
+//      if (ctx.getText().equals("true") || ctx.getText().equals("false")) {
+//        return new UnaryBoolean(ctx.getText());
+//      }
       if (ctx.getChild(0) instanceof RobotGrammarParser.Simple_b_expContext) {
         return this.visit(ctx.getChild(0));
       }
@@ -410,16 +415,18 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     //  simple_b_exp boolean_op1 boolean_exp |  simple_b_exp
     if (ctx.getChildCount() == 1) {
     	// TODO DO WE NEED THIS?? Shouldn't it work if we just call visit??
-      if (ctx.getText().equals("true") || ctx.getText().equals("false")) {
-        return new UnaryBoolean(ctx.getText());
-      }
+      // aw: we don't need it
+//      if (ctx.getText().equals("true") || ctx.getText().equals("false")) {
+//        return new UnaryBoolean(ctx.getText());
+//      }
       // TODO: THIS must always be the case, or not??
-      if (ctx.getChild(0) instanceof RobotGrammarParser.Simple_b_expContext) {
+      // aw: using the new grammar version, it certainly will always be the case
+//      if (ctx.getChild(0) instanceof RobotGrammarParser.Simple_b_expContext) {
         return this.visit(ctx.getChild(0));
-      }
+//      }
 //      System.out.println("b exp 1");
-      return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
-              null, null, false, false);
+//      return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
+//              null, null, false, false);
 //    } else if (ctx.getChildCount() == 2) {
 //      return new ExpBoolean(ctx.getText(), (RTExpression) this.visit(ctx.getChild(1)),
 //              null, null, true, false);
@@ -427,15 +434,19 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 //      System.out.println("b exp 3");
     	// TODO: I DON'T UNDERSTAND THIS AT ALL, BUT IT SEEMS I HAVE TO MIMIC IT
     	// FOR THE NEXT METHOD, OR IS IT THE SIMPLE_B_EXP I HAVE TO MIMIC???
-      ExpBoolean arit = new ExpBoolean(ctx.getChild(2).getText(),
-              (RTExpression) this.visit(ctx.getChild(2)),
-              null, null, false, false);
-      arit = new ExpBoolean(ctx.getText(),
+      // aw: this was supposed to handle precedence (which worked quite well),
+      // but it's resulting in the same as the previous method, so creating a
+      // new boolean is obsolete
+//      ExpBoolean arit = new ExpBoolean(ctx.getChild(2).getText(),
+//              (RTExpression) this.visit(ctx.getChild(2)),
+//              null, null, false, false);
+      RTExpression arit = (RTExpression) this.visit(ctx.getChild(2));
+      return new ExpBoolean(ctx.getText(),
               //              new ExpBoolean(ctx.getChild(0).getText(),
               (RTExpression) this.visit(ctx.getChild(0)),
               //                      null, null, false),
               arit, ctx.getChild(1).getText(), false, true);
-      return arit;
+      
 //    } else if (ctx.getChildCount() == 4) {
 //      ExpBoolean arit = new ExpBoolean(ctx.getChild(3).getText(),
 //              (RTExpression) this.visit(ctx.getChild(3)),
@@ -714,6 +725,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       case RobotGrammarLexer.STRING:  // token is String
         return new UString(tn.getText());
       // TODO: WHAT IS AN ANNOTATION, ANYWAY?
+      // aw: that would i.e. be @Override (yes, it is a String as long as the
+      // representation of Strings has to explicitly have a " to be put in "")
       case RobotGrammarLexer.ANNOTATION:  // token is an annotation
         return new UString(tn.getText() + "\n");
       case RobotGrammarLexer.WILDCARD:  //token is wildcard

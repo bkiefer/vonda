@@ -53,6 +53,7 @@ public class ExpBoolean implements RTExpression {
     this.not = not;
     this.type = "boolean";
     this.fullexp = fullexp;
+    // TODO: this seems to have become obsolete
     this.notIfSubsume = notIfSubsume;
   }
 

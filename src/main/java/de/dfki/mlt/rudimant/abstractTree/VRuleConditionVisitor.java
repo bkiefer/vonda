@@ -464,6 +464,13 @@ public class VRuleConditionVisitor implements RudiVisitor {
       return;
     }
     this.lastbool = this.currentRule + this.counter++;
+    if (!node.content.contains("\"")) {
+      this.compiledLook.put(this.lastbool,
+              node.content + " " + isTrue);
+      this.realLook.put(lastbool,
+              node.content + " " + isTrue);
+      return;
+    }
     this.compiledLook.put(this.lastbool,
             node.content.substring(0, node.content.length() - 1)
             + "\"" + " " + isTrue);
