@@ -161,10 +161,18 @@ public class VRuleConditionVisitor implements RudiVisitor {
       out.append("\\\"").append(s.substring(1, s.length() - 1)).append("\\\"");
     } else {
       out.append("\" + ");
+      whatVDATokenWants = "";
       this.visitNode(exp);
-      out.append(" + \"");
+      out.append(whatVDATokenWants).append(" + \"");
+      whatVDATokenWants = null;
     }
   }
+
+  /**
+   * a dummy to remember what variable is found in the DA; we do not want to
+   * directly print this
+   */
+  private String whatVDATokenWants = null;
 
   @Override
   public void visitNode(ExpDialogueAct node) {
@@ -393,12 +401,12 @@ public class VRuleConditionVisitor implements RudiVisitor {
     }
     funcargs = (node.representation + "(");
     for (int i = 0; i < node.exps.size(); i++) {
-      node.exps.get(i).visit(this);
-      if (i != node.exps.size() - 1) {
+      if (i > 0) {
         funcargs += (", ");
       }
+      node.exps.get(i).visit(this);
     }
-    funcargs += (")" + " ");
+    funcargs += (")");
     if (fieldAccessPart != null) {
       this.fieldAccessPart += funcargs;
       return;
@@ -472,6 +480,9 @@ public class VRuleConditionVisitor implements RudiVisitor {
       if (fieldAccessPart != null) {
         this.fieldAccessPart += node.representation;
         return;
+      } else if (!(this.whatVDATokenWants == null)) {
+        this.whatVDATokenWants += node.representation;
+        return;
       }
       if (collectDAs != null) {
         this.collectDAs += "\"" + node.representation + "\"";
@@ -488,6 +499,9 @@ public class VRuleConditionVisitor implements RudiVisitor {
       String s = t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation;
       if (fieldAccessPart != null) {
         this.fieldAccessPart += s;
+        return;
+      } else if (!(this.whatVDATokenWants == null)) {
+        this.whatVDATokenWants += node.representation;
         return;
       }
       if (collectElements != null) {
@@ -510,6 +524,9 @@ public class VRuleConditionVisitor implements RudiVisitor {
     } else {
       if (fieldAccessPart != null) {
         this.fieldAccessPart += node.representation;
+        return;
+      } else if (!(this.whatVDATokenWants == null)) {
+        this.whatVDATokenWants += node.representation;
         return;
       }
       if (collectElements != null) {
