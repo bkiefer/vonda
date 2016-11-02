@@ -45,11 +45,6 @@ public class VConditionCreatorVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpAbstractWrapper node) {
-    node.exp.visit(this);
-  }
-
-  @Override
   public void visitNode(ExpArithmetic node) {
     throw new UnsupportedOperationException("Not supported yet.");
 //    creation.append(compiledLook.get(expNames[counter]) + ";\n");
@@ -242,12 +237,7 @@ public class VConditionCreatorVisitor implements RudiVisitor {
   public void visitNode(StatSetOperation node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
-
-  @Override
-  public void visitNode(StatTimeout node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
+  
   @Override
   public void visitNode(StatVarDef node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

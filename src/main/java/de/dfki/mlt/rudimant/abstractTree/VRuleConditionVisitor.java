@@ -49,11 +49,6 @@ public class VRuleConditionVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpAbstractWrapper node) {
-    node.exp.visit(this);
-  }
-
-  @Override
   public void visitNode(ExpArithmetic node) {
     node.left.visit(this);
     if (node.right != null) {
@@ -299,11 +294,6 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatSetOperation node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatTimeout node) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 

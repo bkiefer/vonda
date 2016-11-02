@@ -12,11 +12,18 @@ grammar RobotGrammar;
 /// start rule
 // the part "'{' statement '}'" is ridiciulous but currently solves a parsing exception...
 grammar_file
-  : imports*
-    (//comment
-    (grammar_rule | method_declaration | statement
-    | '{' statement '}' | ANNOTATION | imports))*
-    //comment
+  : // TODO: THIS IS REDUNDANT. IT'S ALREADY CONTAINED IN WHAT FOLLOWS
+    imports*
+    (
+     // TODO: THIS IS REDUNDANT. IT'S ALREADY CONTAINED IN STATEMENT
+     grammar_rule
+     | method_declaration
+     | statement
+     // TODO: THIS IS REDUNDANT. IT'S ALREADY CONTAINED IN STATEMENT
+     | '{' statement '}'
+     | ANNOTATION
+     | imports
+    )*
   ;
 
 imports
@@ -28,41 +35,34 @@ method_declaration
     ((type_spec | DEC_VAR) VARIABLE (',' (type_spec | DEC_VAR) VARIABLE)*)?
     ')' statement_block;
 
+statement
+  : statement_block
+    |	(exp ';'
+    	 | list_creation
+    	 |  grammar_rule
+    	 | set_operation
+       | return_statement
+    	 | propose_statement
+    	 | if_statement
+       | while_statement
+       | for_statement
+       | var_def
+       | fun_def
+    	 //| ';'   <- we don't really need it, and it's a pain to find in parser
+    	)
+ ;
+////////// STATEMENTS ///////////////////
+
+statement_block
+  : '{' statement* '}'
+  ;
+
 grammar_rule
-  // : comment label comment if_statement
+  // label: if_statement
   : VARIABLE COLON if_statement
   ;
 
-/*
-label
-  : VARIABLE COLON
-  ;
-*/
-
-statement
-  : (statement_block
-    | (// comment
-    (exp ';'
-    | list_creation
-    |  grammar_rule
-    | set_operation ';'
-    | return_statement
-    | propose_statement
-    //| timeout_statement
-    | if_statement
-    | while_statement
-    | for_statement
-    | var_def
-    | fun_def
-    //| ';'   <- we don't really need it, and it's a pain to find in parser
-    ))) // comment
- ;
-
 return_statement: RETURN exp? ';';
-
-/* comment
-  : (MULTI_L_COMMENT | ONE_L_COMMENT | JAVA_CODE)*
-  ;*/
 
 if_statement
   : IF '(' boolean_exp ')' (statement) (ELSE (statement))?
@@ -78,34 +78,53 @@ while_statement
   ;
 
 for_statement
-  : FOR '(' assignment ';' exp ';' exp? ')' loop_statement_block
-  | FOR '(' (DEC_VAR | type_spec)? VARIABLE COLON exp ')' loop_statement_block
-  | FOR '(' '(' VARIABLE ( ',' VARIABLE )+ ')' COLON exp ')' loop_statement_block
-  ;
-
-statement_block
-  // : comment '{' comment statement* '}'
-  : '{' statement* '}'
+  : FOR '(' assignment? ';' exp? ';' exp? ')' loop_statement_block
+  | FOR '(' (DEC_VAR | type_spec)? VARIABLE ':' exp ')' loop_statement_block
+  // WHAT'S THIS???
+  | FOR '(' '(' VARIABLE ( ',' VARIABLE )+ ')' ':' exp ')' loop_statement_block
   ;
 
 loop_statement_block
-  //: comment '{' comment (statement | ((CONTINUE | BREAK) ';'))* '}'
   : '{' (statement | ((CONTINUE | BREAK) ';'))* '}'
   ;
 
-// TODO: I THINK THIS ENTAILS THE NORMAL propose_statement
+// allows 'continue' and 'break' while the ordinary one does not.
 loop_propose_statement
-  : PROPOSE '(' string_expression ')' loop_statement_block/*loop_propose_block*/
+  : PROPOSE '(' string_expression ')' loop_statement_block
   ;
-
-/*loop_propose_block
-  : comment '{' loop_statement+ '}'
-  ;*/
 
 loop_if_statement
   : IF '(' boolean_exp ')' (statement | (CONTINUE | BREAK) ';')
     ( ELSE (statement | (CONTINUE | BREAK) ';') )?
   ;
+
+propose_statement
+  : PROPOSE '(' string_expression ')' statement_block
+  ;
+
+var_def
+  : type_spec variable ';'
+  ;
+
+fun_def
+  : type_spec variable '('
+    ( type_spec VARIABLE (',' type_spec VARIABLE)* )? ')' ';'
+  ;
+
+list_creation
+  : (VARIABLE '<' type_spec '>')?
+    variable '=' '{' ((variable | STRING | INT | FLOAT)
+                      (',' (variable | STRING | INT | FLOAT))*)?
+                 '}' ';'
+  ;
+
+// TODO: WHAT'S THIS?
+set_operation
+  : (variable | field_access) (ADD | REMOVE) number ';'
+  ;
+
+
+////////////////// EXPRESSIONS ////////////////////////////////
 
 function_call
   : VARIABLE '(' ( exp ( ',' exp )* )? ')'
@@ -132,8 +151,8 @@ variable
   ;
 
 exp
-  : // comment
-  ('(' exp ')' //sexp
+  :
+  '(' exp ')' //sexp
   | funccall_on_object //sexp
   | variable //sexp
   | assignment //sexp
@@ -150,13 +169,11 @@ exp
   | boolean_exp
   | string_expression
   | field_access // sexp
-  )
-  // comment
   ;
 
 simple_exp
-  : // comment
-  ('(' exp ')'
+  :
+  '(' exp ')'
   | funccall_on_object
   | variable
   | arithmetic
@@ -171,16 +188,11 @@ simple_exp
     | NULL
     )
   | NOT boolean_exp
-  )
-  // comment
   ;
 
 boolean_exp
   : bool_and_exp
   | boolean_exp '||' bool_and_exp
-  // TODO: CHECK WHY THIS IS IN, SEEMS WRONG TO ME
-//  | simple_b_exp boolean_op1 exp
-  //| NOT simple_b_exp
   ;
 
 bool_and_exp
@@ -189,67 +201,27 @@ bool_and_exp
 	;
 
 simple_b_exp
-  : simple_exp
+  : simple_exp // will be compiled to '!= null' or '!= 0' or 'has()' ...
   | simple_exp ('==' | '!=' | '<=' | '<' | '>=' | '>') exp
   ;
 
 // TODO: IS THIS STILL USED?
 lambda_exp: '(' (DEC_VAR? VARIABLE (',' DEC_VAR? VARIABLE)*)? ')' ARROW exp;
 
-//timeout_statement: TIMEOUT '(' STRING ',' INT ')' statement_block;
-
-// TODO: seems obsolete (see above))
-propose_statement
-  : PROPOSE '(' string_expression ')' statement_block
-  ;
-
-/*
-propose_block
-  : comment '{' statement+ '}'
-  ;*/
-
 string_expression : simple_exp ( '+' exp )* ;
 
-/*
-propose_arg
-  : string_expression
-  ;
-*/
-
 literal_or_graph_exp
-  :  HASH da_token '(' ( da_token ( ',' ( da_token '=' da_token) )* ) ')'
+  : HASH da_token '(' ( da_token ( ',' ( da_token '=' da_token) )* ) ')'
   ;
 
 da_token
-    : VARIABLE_MARKER exp
-    | VARIABLE
-    | STRING
-    ;
+  : VARIABLE_MARKER exp
+  | VARIABLE
+  | STRING
+  ;
 
 assignment
-  : ( ( DEC_VAR | type_spec)? variable
-      | field_access
-    )
-    '=' exp
-  ;
-
-var_def
-  : type_spec variable ';'
-  ;
-
-fun_def
-  : type_spec variable '('
-    ( type_spec VARIABLE (',' type_spec VARIABLE)* )? ')' ';'
-  ;
-
-list_creation
-  : (VARIABLE '<' type_spec '>')? variable '=' '{' ((variable | STRING | INT | FLOAT)
-                            (',' (variable | STRING | INT | FLOAT))*)?
-    '}' ';'
-  ;
-
-set_operation
-  : (variable | field_access) (ADD | REMOVE) number
+  : ( (DEC_VAR | type_spec)? variable | field_access ) '=' exp
   ;
 
 number
@@ -260,25 +232,7 @@ number
     )
   ;
 
-/*
-arithmetic_operator
-  : arithmetic_dot_operator
-  | arithmetic_lin_operator
-  ;
-
-arithmetic_dot_operator
-  : '/'
-  | '*'
-  | '%'
-  ;
-
-arithmetic_lin_operator
-  : '-'
-  | '+'
-  ;
-*/
-
-/// either a number or a term containing at least one operator
+// either a number or a term containing at least one operator
 arithmetic
   : term ( ('-'|'+') term )*
   ;

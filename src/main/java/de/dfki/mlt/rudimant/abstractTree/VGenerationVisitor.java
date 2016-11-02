@@ -9,7 +9,6 @@ import de.dfki.mlt.rudimant.RudimantCompiler;
 import de.dfki.mlt.rudimant.Mem;
 import com.google.googlejavaformat.java.FormatterException;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -56,15 +55,7 @@ public class VGenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpAbstractWrapper node) {
-    node.commentbefore.visit(this);
-    node.exp.visit(this);
-    node.commentafter.visit(this);
-  }
-
-  @Override
   public void visitNode(ExpArithmetic node) {
-    String ret = "";
     if (node.minus) {
       out.append("-");
     }
@@ -260,18 +251,9 @@ public class VGenerationVisitor implements RudiVisitor {
     for (RudiTree r : node.rules) {
       if (r instanceof StatAbstractBlock) {
         for (RudiTree e : ((StatAbstractBlock) r).statblock) {
-          if (e instanceof ExpAbstractWrapper && (((ExpAbstractWrapper) e).exp instanceof ExpAssignment)) {
-            if (((ExpAssignment) ((ExpAbstractWrapper) e).exp).declaration) {
-              ((ExpAbstractWrapper) e).exp.visit(this);
-              out.append(";");
-            }
-          } else if (e instanceof ExpAbstractWrapper
-                  && (((ExpAbstractWrapper) e).exp instanceof ExpAbstractWrapper
-                  && ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp instanceof ExpAssignment)) {
-            // then it is a class attribute and we want it to be defined outside
-            // of the process method
-            if (((ExpAssignment) ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp).declaration) {
-              ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp.visit(this);
+          if (e instanceof ExpAssignment) {
+            if (((ExpAssignment) e).declaration) {
+              ((ExpAssignment) e).visit(this);
               out.append(";");
             }
           } else if (e instanceof StatVarDef || e instanceof StatFunDef) {
@@ -378,13 +360,8 @@ public class VGenerationVisitor implements RudiVisitor {
     for (RudiTree r : node.rules) {
       if (r instanceof StatAbstractBlock) {
         for (RudiTree e : ((StatAbstractBlock) r).statblock) {
-          if (e instanceof ExpAbstractWrapper && ((ExpAbstractWrapper) e).exp instanceof ExpAbstractWrapper
-                  && ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp instanceof ExpAssignment) {
-            if (((ExpAssignment) ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp).declaration) {
-              continue;
-            }
-          } else if (e instanceof ExpAbstractWrapper && (((ExpAbstractWrapper) e).exp instanceof ExpAssignment)) {
-            if (((ExpAssignment) ((ExpAbstractWrapper) e).exp).declaration) {
+          if (e instanceof ExpAssignment) {
+            if (((ExpAssignment) e).declaration) {
               continue;
             }
           } else if (e instanceof StatImport) {
@@ -426,11 +403,9 @@ public class VGenerationVisitor implements RudiVisitor {
         i++;
       }
       out.append("){\n");
-      node.commentb.visit(this);
       this.ruleIf = this.printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
       //mem.enterNextEnvironment();
-      node.commenta.visit(this);
       node.ifstat.visit(this);
       //mem.leaveEnvironment();
       out.append("}\n");
@@ -439,7 +414,6 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append("//Rule " + node.label + "\n");
       this.ruleIf = this.printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
-      node.commentb.visit(this);
 //      if (out.rm.shouldAddReturnto(node.label) != null) {
 //        out.append("if ((returnTo | (");
 //        int i = 0;
@@ -453,7 +427,6 @@ public class VGenerationVisitor implements RudiVisitor {
 //        }
 //        out.append(")) == 0) {\n");
 //      }
-      node.commenta.visit(this);
       node.ifstat.visit(this);
     }
   }
@@ -660,18 +633,6 @@ public class VGenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatTimeout node) {
-    if (node.statblock == null) {
-      out.append("newTimeout(" + node.name + "," + node.time + ");\n");
-    }
-    out.append("MyTimer t = newSpecialTimeout(" + node.name + "," + node.time + ");"
-            + "t.timer = new Timer(timeToFire, new ActionListener(){\n"
-            + "@Override\n public void actionPerformed(ActionEvent e)" + node.statblock + "});"
-            + "\n" + "t.started = System.currentTimeMillis();\n"
-            + " t.timer.start();\n");
-  }
-
-  @Override
   public void visitNode(StatVarDef node) {
     // no generation here
   }
@@ -805,9 +766,11 @@ public class VGenerationVisitor implements RudiVisitor {
    * @param rule
    */
   private String printRuleLogger(String rule, RTExpression bool_exp) {
-    if (bool_exp instanceof ExpAbstractWrapper) {
-      bool_exp = (RTExpression) ((ExpAbstractWrapper) bool_exp).exp;
-    }
+    
+    // TODO BK: bool_exp can be a simple expression, in which case it
+    // has to be turned into a comparison with zero, null or a call to
+    // the has(...) method
+    
     if (bool_exp instanceof UnaryBoolean) {
       // there isnt much we could log
 //      out.append("wholeCondition = " + ((UnaryBoolean) bool_exp).content + ";\n");
