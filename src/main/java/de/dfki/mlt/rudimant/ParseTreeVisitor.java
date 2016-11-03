@@ -81,7 +81,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // get all the parameters of the function
     for (int i = 3 + hasVis; i < ctx.getChildCount() - 2;) {
       partypes.add(ctx.getChild(i).getText());
-      partypes.add(ctx.getChild(++i).getText());
+      parameters.add(ctx.getChild(++i).getText());
       i += 2;
     }
     return new StatMethodDeclaration(
@@ -267,7 +267,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     if (ctx.getChildCount() == 2) {
       // NOT boolean_exp 
       return new ExpBoolean(ctx.getChild(1).getText(),
-          (RTExpression) this.visit(ctx.getChild(1)), null, null, true, true);
+          (RTExpression) this.visit(ctx.getChild(1)), null, "!", true);
     }
     if (ctx.getChildCount() == 3) { 
       // '(' exp ')'
@@ -279,16 +279,17 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitSimple_b_exp(RobotGrammarParser.Simple_b_expContext ctx) {
     // simple_exp | simple_exp ('==' | '!=' | '<=' | '<' | '>=' | '>') exp
-    if (ctx.getChildCount() == 1) {
-      // this is a simple expression, which must be turned into a comparison
-      // like '!= 0', '!= null', or a call to 'has(...)'
+    
+    if (ctx.getText().equals("true") || ctx.getText().equals("false")) {
       return this.visit(ctx.getChild(0));
-    } 
+    }
+    
     return new ExpBoolean(ctx.getText(),
         (RTExpression) this.visit(ctx.getChild(0)),
-        (RTExpression) this.visit(ctx.getChild(2)),
-        ctx.getChild(1).getText(),  // comparison operator
-        false, false);
+        (RTExpression) (ctx.getChildCount() == 1 ? null : this.visit(ctx.getChild(2))),
+        // comparison operator
+        (ctx.getChildCount() == 1 ? null : ctx.getChild(1).getText()),
+        false);
   }
 
   @Override
@@ -298,10 +299,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     if (ctx.getChildCount() == 1) {
       return this.visit(ctx.getChild(0));
     }
+    
     return new ExpBoolean(ctx.getText(),
         (RTExpression) this.visit(ctx.getChild(0)),
         (RTExpression) this.visit(ctx.getChild(2)),
-        ctx.getChild(1).getText(), false, true);
+        ctx.getChild(1).getText(), true);
   }
 
   @Override
@@ -315,7 +317,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 	  return new ExpBoolean(ctx.getText(),
 	      (RTExpression) this.visit(ctx.getChild(0)),
 	      (RTExpression) this.visit(ctx.getChild(2)),
-	      ctx.getChild(1).getText(), false, true);
+	      ctx.getChild(1).getText(), true);
   }
 
 
@@ -546,8 +548,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitTerminal(TerminalNode tn) {
-    // Attention! if you added new tokens or deleted old ones, the case numbers might have changed and
-    // you get unexpected behaviour! (see Generated Sources / RobotGrammarLexer.java for right numbers)
     switch (tn.getSymbol().getType()) {
       case RobotGrammarLexer.NULL:   // token is NULL
         return new UNull();
@@ -559,8 +559,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
         return new UCharacter(tn.getText());
       case RobotGrammarLexer.STRING:  // token is String
         return new UString(tn.getText());
-      // TODO: WHAT IS AN ANNOTATION, ANYWAY?
-      // aw: that would i.e. be @Override (yes, it is a String as long as the
+      // An annotation is sth. like @Override (yes, it is a String as long as the
       // representation of Strings has to explicitly have a " to be put in "")
       case RobotGrammarLexer.ANNOTATION:  // token is an annotation
         return new UString(tn.getText() + "\n");

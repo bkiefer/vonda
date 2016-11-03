@@ -42,10 +42,9 @@ public class ExpBoolean implements RTExpression {
    * @param left left part
    * @param right right part
    * @param operator operator in between
-   * @param not set true if there is a ! in front of the expression
    */
   public ExpBoolean(String fullexp, RTExpression left,
-          RTExpression right, String operator, boolean not, boolean notIfSubsume) {
+          RTExpression right, String operator, boolean notIfSubsume) {
 //    System.out.println("Created B exp " + fullexp);
     this.left = left;
     this.right = right;
