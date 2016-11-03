@@ -100,7 +100,7 @@ public class VGenerationVisitor implements RudiVisitor {
       node.getType();
     }
     String ret = "";
-    if (node.operator.equals("!")) {
+    if ("!".equals(node.operator)) {
       out.append("!");
     }
 

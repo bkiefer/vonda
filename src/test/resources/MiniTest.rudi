@@ -9,3 +9,9 @@ Child c;
 c.hasFather.hasGender;
  salutation = (firstEncounter()) ? "InitialGreeting" : "ReturnGreeting";
 }
+
+question_asked:
+if (! getCurrentTurn().QuestionId
+    && activity.status != "run_wait_for_question"
+    && activity.status != "run_wait_for_continue") {
+}

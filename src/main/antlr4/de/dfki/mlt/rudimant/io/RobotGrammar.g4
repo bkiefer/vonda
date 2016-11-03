@@ -187,7 +187,8 @@ simple_exp
     | TRUE
     | NULL
     )
-  | NOT boolean_exp
+  | NOT LPAR boolean_exp RPAR
+  | NOT simple_exp
   ;
 
 boolean_exp
@@ -303,8 +304,10 @@ DOT: '.';
 /// boolean operators:
 NOT: '!';
 EQUAL: '==';
-AND: '&'('&')?;
-OR: '|'('|')?;
+AND1: '&';
+OR1: '|';
+AND2: '&&';
+OR2: '||';
 NOT_EQUAL: '!=';
 SMALLER_EQUAL: '<=';
 SMALLER: '<';
