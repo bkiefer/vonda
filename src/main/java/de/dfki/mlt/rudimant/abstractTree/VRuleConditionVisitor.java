@@ -368,7 +368,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
       this.collectElements += fieldAccessPart + isTrue;
       fieldAccessPart = saved;
       return;
-    } else if (!funcargs.equals("")) {
+    } else if (!funcargs.equals("") && !fieldAccessPart.contains(funcargs)) {
       funcargs += fieldAccessPart;
       fieldAccessPart = saved;
       return;
