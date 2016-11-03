@@ -69,7 +69,7 @@ public class VConditionCreatorVisitor implements RudiVisitor {
       }
     }
     String n = "";
-    if (node.not) {
+    if ("!".equals(node.operator)) {
       this.condition.append("!");
       n = "!";
     }
@@ -131,7 +131,7 @@ public class VConditionCreatorVisitor implements RudiVisitor {
         this.creation.append(")");
       }
     } else {
-      if (node.not) {
+      if ("!".equals(node.operator)) {
 //        this.condition.append("!");
         this.visitNode(node.left);
         this.creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter++]) + ";\n");

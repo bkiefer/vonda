@@ -72,7 +72,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
   public void visitNode(ExpBoolean node) {
 
     String n = "";
-    if (node.not) {
+    if ("!".equals(node.operator)) {
       n = "!";
     }
     String function = "";
@@ -139,7 +139,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
       isTrue = node.isTrue + " ";
       node.left.visit(this);
       String l = this.lastbool;
-      if (node.not) {
+      if ("!".equals(node.operator)) {
         this.lastbool = this.currentRule + this.counter++;
         this.compiledLook.put(this.lastbool, n + l);
         this.realLook.put(lastbool, n + l);

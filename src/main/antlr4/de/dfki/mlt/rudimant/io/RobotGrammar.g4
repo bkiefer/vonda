@@ -191,13 +191,13 @@ simple_exp
   ;
 
 boolean_exp
-  : bool_and_exp
-  | boolean_exp '||' bool_and_exp
+  : bool_and_exp '||' boolean_exp
+  | bool_and_exp
   ;
 
 bool_and_exp
-  : simple_b_exp
-  | bool_and_exp '&&' simple_b_exp
+  : simple_b_exp '&&' bool_and_exp
+  | simple_b_exp
 	;
 
 simple_b_exp

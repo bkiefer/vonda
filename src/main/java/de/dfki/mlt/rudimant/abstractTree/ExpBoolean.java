@@ -17,7 +17,6 @@ public class ExpBoolean implements RTExpression {
 
   RTExpression left;
   RTExpression right;
-  boolean not;
   boolean notIfSubsume;
   boolean isSubsumed = false;   // <- magic part!!!
   boolean doesSubsume = false;   // <- magic part!!!
@@ -49,7 +48,6 @@ public class ExpBoolean implements RTExpression {
     this.left = left;
     this.right = right;
     this.operator = operator;
-    this.not = not;
     this.type = "boolean";
     this.fullexp = fullexp;
     // TODO: this seems to have become obsolete

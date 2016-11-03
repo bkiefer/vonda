@@ -263,7 +263,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitSimple_exp(RobotGrammarParser.Simple_expContext ctx) {
-    // comment exp comment
     if (ctx.getChildCount() == 2) {
       // NOT boolean_exp 
       return new ExpBoolean(ctx.getChild(1).getText(),
@@ -273,6 +272,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       // '(' exp ')'
       return this.visit(ctx.getChild(1));
     }
+    // other expression
     return this.visit(ctx.getChild(0));
   }
 
