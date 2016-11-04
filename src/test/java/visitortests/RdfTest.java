@@ -26,7 +26,10 @@ import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.client.HfcDbClient;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudimant.Mem;
+import de.dfki.mlt.rudimant.abstractTree.RudiTree;
 import de.dfki.mlt.rudimant.abstractTree.UFieldAccess;
+import de.dfki.mlt.rudimant.abstractTree.UVariable;
+import java.util.ArrayList;
 
 /**
  *
@@ -85,8 +88,11 @@ public class RdfTest {
     Mem mem = new Mem();
     mem.enterEnvironment();
     mem.addElement("child", "Child", null);
-    UFieldAccess field = new UFieldAccess(elem);
-    String result = field.getPredicateType(_proxy, mem);
+    List<RudiTree> l = new ArrayList<>();
+    UVariable v = new UVariable("Child", "child", "testclass", "testrule");
+    l.add(v);
+    UFieldAccess field = new UFieldAccess(l, elem);
+    String result = field.getPredicateType(_proxy, mem, elem);
     assertEquals("get forename", "String", result);
   }
 
@@ -96,8 +102,11 @@ public class RdfTest {
     Mem mem = new Mem();
     mem.enterEnvironment();
     mem.addElement("child", "Child", null);
-    UFieldAccess field = new UFieldAccess(elem);
-    String result = field.getPredicateType(_proxy, mem);
+    List<RudiTree> l = new ArrayList<>();
+    UVariable v = new UVariable("Child", "child", "testclass", "testrule");
+    l.add(v);
+    UFieldAccess field = new UFieldAccess(l, elem);
+    String result = field.getPredicateType(_proxy, mem, elem);
     assertEquals("get hasTreatment", "<dom:Treatment>", result);
   }
 
@@ -107,8 +116,11 @@ public class RdfTest {
     Mem mem = new Mem();
     mem.enterEnvironment();
     mem.addElement("child", "Child", null);
-    UFieldAccess field = new UFieldAccess(elem);
-    String result = field.getPredicateType(_proxy, mem);
+    List<RudiTree> l = new ArrayList<>();
+    UVariable v = new UVariable("Child", "child", "testclass", "testrule");
+    l.add(v);
+    UFieldAccess field = new UFieldAccess(l, elem);
+    String result = field.getPredicateType(_proxy, mem, elem);
     assertEquals("get birthdate", "<xsd:date>", result);
   }
 }

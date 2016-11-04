@@ -48,9 +48,8 @@ About the architecture of rudimant
   - mvn install rudimant. It will crash because now ParseTreeVisitor does not
     longer implement visit methods for all rules. Implement the missing rules.
     If necessary, create new RudiTree classes to represent your nodes.If you
-    added a lexeme, fix visitTerminal; in GeneratedSources > RobotGrammarLexer
-    you can see the number given to your new lexeme. The case of every lexeme
-    that has a higher number should be increased by 1.
+    added a lexeme, fix visitTerminal; if required, add a case 
+    RobotGrammarLexer.<yourTerminal> and do with it whatever you want.
   - If you added a new RudiTree class in the preceding step:
       - Add a visitNode method for that class to the RudiVisitor interface; this
         will force you to add the visit to every visitor class.

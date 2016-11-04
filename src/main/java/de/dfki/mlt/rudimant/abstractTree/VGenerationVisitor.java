@@ -9,7 +9,6 @@ import de.dfki.mlt.rudimant.RudimantCompiler;
 import de.dfki.mlt.rudimant.Mem;
 import com.google.googlejavaformat.java.FormatterException;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,7 +28,6 @@ import org.slf4j.LoggerFactory;
 public class VGenerationVisitor implements RudiVisitor {
 
   public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
-
 
   private RudimantCompiler out;
   private RudimantCompiler rudi;
@@ -57,15 +55,7 @@ public class VGenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpAbstractWrapper node) {
-    node.commentbefore.visit(this);
-    node.exp.visit(this);
-    node.commentafter.visit(this);
-  }
-
-  @Override
   public void visitNode(ExpArithmetic node) {
-    String ret = "";
     if (node.minus) {
       out.append("-");
     }
@@ -89,8 +79,18 @@ public class VGenerationVisitor implements RudiVisitor {
     // visit also the left side, it could be using another class's variable!
     // System.out.println("Generating assignment");
     node.left.visit(this);
-    out.append(" = ");
-    node.right.visit(this);
+    try {
+      if (!node.declaration && rudi.getProxy().fetchRdfClass(node.right.getType()) != null) {
+        out.append(".set(");
+        node.right.visit(this);
+        out.append(")");
+      } else {
+        out.append(" = ");
+        node.right.visit(this);
+      }
+    } catch (TException ex) {
+      java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
+    }
     //out.append(";");
   }
 
@@ -100,7 +100,7 @@ public class VGenerationVisitor implements RudiVisitor {
       node.getType();
     }
     String ret = "";
-    if (node.not) {
+    if ("!".equals(node.operator)) {
       out.append("!");
     }
 
@@ -137,21 +137,20 @@ public class VGenerationVisitor implements RudiVisitor {
       //        "\"" + ret.replace('"', ' ') +  " _ resulted to \" + " + ret);
       return;
     }
-    out.append("(");
+//    out.append("(");
     node.left.visit(this);
     this.conditionHandling(node);
-    out.append(")");
+//    out.append(")");
     //out.context.doLog("\"" + ret.replace('"', ' ') +  " resulted to \" + ("
     //        + ret + ")");
   }
 
-
   public void visitDaToken(RTExpression exp) {
     if (exp instanceof UVariable) {
-      out.append(((UVariable)exp).representation);
+      out.append(((UVariable) exp).representation);
     } else if (exp instanceof UString) {
-      String s = ((UString)exp).content;
-      out.append("\\\"").append(s.substring(1, s.length() -1)).append("\\\"");
+      String s = ((UString) exp).content;
+      out.append("\\\"").append(s.substring(1, s.length() - 1)).append("\\\"");
     } else {
       out.append("\" + ");
       this.visitNode(exp);
@@ -161,7 +160,7 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpDialogueAct node) {
-    out.append("new DialogueAct(");
+    out.append("new DialogueAct(\"");
     visitDaToken(node.daType);
     out.append('(');
     visitDaToken(node.proposition);
@@ -171,7 +170,8 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append(" = ");
       visitDaToken(node.exps.get(i + 1));
     }
-    out.append(")");
+    out.append(')');
+    out.append("\")");
   }
 
   @Override
@@ -251,18 +251,9 @@ public class VGenerationVisitor implements RudiVisitor {
     for (RudiTree r : node.rules) {
       if (r instanceof StatAbstractBlock) {
         for (RudiTree e : ((StatAbstractBlock) r).statblock) {
-          if (e instanceof ExpAbstractWrapper && (((ExpAbstractWrapper) e).exp instanceof ExpAssignment)) {
-            if (((ExpAssignment) ((ExpAbstractWrapper) e).exp).declaration) {
-              ((ExpAbstractWrapper) e).exp.visit(this);
-              out.append(";");
-            }
-          } else if (e instanceof ExpAbstractWrapper
-                  && (((ExpAbstractWrapper) e).exp instanceof ExpAbstractWrapper
-                  && ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp instanceof ExpAssignment)) {
-            // then it is a class attribute and we want it to be defined outside
-            // of the process method
-            if (((ExpAssignment) ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp).declaration) {
-              ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp.visit(this);
+          if (e instanceof ExpAssignment) {
+            if (((ExpAssignment) e).declaration) {
+              ((ExpAssignment) e).visit(this);
               out.append(";");
             }
           } else if (e instanceof StatVarDef || e instanceof StatFunDef) {
@@ -286,10 +277,10 @@ public class VGenerationVisitor implements RudiVisitor {
     String conargs = "";
     String declare = "";
     if (null != rudi.getConstructorArgs()
-        && ! rudi.getConstructorArgs().isEmpty()) {
+            && !rudi.getConstructorArgs().isEmpty()) {
       int i = 0;
-      for(String a : rudi.getConstructorArgs().split(",")){
-        if(i > 0){
+      for (String a : rudi.getConstructorArgs().split(",")) {
+        if (i > 0) {
           conargs += ", ";
         }
         String s = a.trim().split(" ")[1];
@@ -309,9 +300,11 @@ public class VGenerationVisitor implements RudiVisitor {
     int i = 0;
     for (String n : mem.getNeededClasses(rudi.className)) {
       if (i == 0) {
-        out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " " + n);
+        out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
+                + n.substring(0, 1).toLowerCase() + n.substring(1));
       } else {
-        out.append(", " + n.substring(0, 1).toUpperCase() + n.substring(1) + " " + n);
+        out.append(", " + n.substring(0, 1).toUpperCase() + n.substring(1) + " "
+                + n.substring(0, 1).toLowerCase() + n.substring(1));
       }
       i++;
     }
@@ -367,13 +360,8 @@ public class VGenerationVisitor implements RudiVisitor {
     for (RudiTree r : node.rules) {
       if (r instanceof StatAbstractBlock) {
         for (RudiTree e : ((StatAbstractBlock) r).statblock) {
-          if (e instanceof ExpAbstractWrapper && ((ExpAbstractWrapper) e).exp instanceof ExpAbstractWrapper
-                  && ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp instanceof ExpAssignment) {
-            if (((ExpAssignment) ((ExpAbstractWrapper) ((ExpAbstractWrapper) e).exp).exp).declaration) {
-              continue;
-            }
-          } else if (e instanceof ExpAbstractWrapper && (((ExpAbstractWrapper) e).exp instanceof ExpAssignment)) {
-            if (((ExpAssignment) ((ExpAbstractWrapper) e).exp).declaration) {
+          if (e instanceof ExpAssignment) {
+            if (((ExpAssignment) e).declaration) {
               continue;
             }
           } else if (e instanceof StatImport) {
@@ -406,18 +394,18 @@ public class VGenerationVisitor implements RudiVisitor {
       int i = 0;
       for (String n : mem.getNeededClasses(node.label)) {
         if (i == 0) {
-          out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " " + n);
+          out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
+                + n.substring(0, 1).toLowerCase() + n.substring(1));
         } else {
-          out.append(", " + n.substring(0, 1).toUpperCase() + n.substring(1) + " " + n);
+          out.append(", " + n.substring(0, 1).toUpperCase() + n.substring(1) + " "
+                + n.substring(0, 1).toLowerCase() + n.substring(1));
         }
         i++;
       }
       out.append("){\n");
-      node.commentb.visit(this);
       this.ruleIf = this.printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
       //mem.enterNextEnvironment();
-      node.commenta.visit(this);
       node.ifstat.visit(this);
       //mem.leaveEnvironment();
       out.append("}\n");
@@ -426,7 +414,6 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append("//Rule " + node.label + "\n");
       this.ruleIf = this.printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
-      node.commentb.visit(this);
 //      if (out.rm.shouldAddReturnto(node.label) != null) {
 //        out.append("if ((returnTo | (");
 //        int i = 0;
@@ -440,7 +427,6 @@ public class VGenerationVisitor implements RudiVisitor {
 //        }
 //        out.append(")) == 0) {\n");
 //      }
-      node.commenta.visit(this);
       node.ifstat.visit(this);
     }
   }
@@ -647,18 +633,6 @@ public class VGenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatTimeout node) {
-    if (node.statblock == null) {
-      out.append("newTimeout(" + node.name + "," + node.time + ");\n");
-    }
-    out.append("MyTimer t = newSpecialTimeout(" + node.name + "," + node.time + ");"
-            + "t.timer = new Timer(timeToFire, new ActionListener(){\n"
-            + "@Override\n public void actionPerformed(ActionEvent e)" + node.statblock + "});"
-            + "\n" + "t.started = System.currentTimeMillis();\n"
-            + " t.timer.start();\n");
-  }
-
-  @Override
   public void visitNode(StatVarDef node) {
     // no generation here
   }
@@ -669,6 +643,14 @@ public class VGenerationVisitor implements RudiVisitor {
     node.condition.visit(this);
     out.append(")");
     node.statblock.visit(this);
+  }
+
+  @Override
+  public void visitNode(StatSwitch node) {
+    out.append("switch (");
+    node.condition.visit(this);
+    out.append(")");
+    node.switchBlock.visit(this);
   }
 
   @Override
@@ -691,15 +673,37 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UFieldAccess node) {
-    // TODO: tell me how the client is named!!!
-    out.append(node.representation.get(0));
-    for (int i = 1; i < node.representation.size(); i++) {
-      String r = node.representation.get(i);
-      if(!r.contains("\"")){
-        r = "\"" + r + "\"";
+    List<String> representation = new ArrayList<>();
+    node.parts.get(0).visit(this);
+    representation.add(node.representation.get(0));
+    String lastType = ((RTExpression) (node.parts.get(0))).getType();
+    for (int i = 1; i < node.parts.size(); i++) {
+      if (node.parts.get(i) instanceof UVariable) {
+        try {
+          if (this.rudi.getProxy().fetchRdfClass(lastType) != null) {
+            representation.add(node.representation.get(i));
+            // then we are in the case that this is actually an rdf operation
+            out.append(".getValue(" + node.representation.get(i) + ", client) ");
+            lastType = node.getPredicateType(rudi.getProxy(), mem, representation);
+            continue;
+          } else {
+            representation.clear();
+          }
+        } catch (TException ex) {
+          java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
+        }
       }
-      out.append(".getValue(" + r + ", client)" + " ");
+      out.append(".");
+      node.parts.get(i).visit(this);
     }
+    /*out.append(node.representation.get(0));
+     for (int i = 1; i < node.representation.size(); i++) {
+     String r = node.representation.get(i);
+     if(!r.contains("\"")){
+     r = "\"" + r + "\"";
+     }
+     out.append(".getValue(" + r + ", client)" + " ");
+     }*/
   }
 
   @Override
@@ -726,6 +730,9 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UString node) {
+    if(!node.content.contains("\"")){
+      out.append(node.content);
+    }
     if (this.escape) {
       out.append("\\" + node.content.substring(0, node.content.length() - 1) + "\\\"" + " ");
     } else {
@@ -767,9 +774,11 @@ public class VGenerationVisitor implements RudiVisitor {
    * @param rule
    */
   private String printRuleLogger(String rule, RTExpression bool_exp) {
-    if (bool_exp instanceof ExpAbstractWrapper) {
-      bool_exp = (RTExpression) ((ExpAbstractWrapper) bool_exp).exp;
-    }
+
+    // TODO BK: bool_exp can be a simple expression, in which case it
+    // has to be turned into a comparison with zero, null or a call to
+    // the has(...) method
+
     if (bool_exp instanceof UnaryBoolean) {
       // there isnt much we could log
 //      out.append("wholeCondition = " + ((UnaryBoolean) bool_exp).content + ";\n");
@@ -783,7 +792,7 @@ public class VGenerationVisitor implements RudiVisitor {
 
     // remembers how the expressions looked (for logging)
     LinkedHashMap<String, String> realLook = new LinkedHashMap<>();
-    condV.renewMap(rule, realLook, compiledLook, this.mem);
+    condV.renewMap(rule, realLook, compiledLook, this.rudi);
     condV.visitNode(bool);
     // now create a condition from those things
     //System.out.println(realLook.keySet().size());

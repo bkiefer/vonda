@@ -5,17 +5,21 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import de.dfki.mlt.rudimant.Mem;
-
-import java.io.StringWriter;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.logging.Level;
+
+import org.apache.thrift.TException;
+
+import de.dfki.mlt.rudimant.Mem;
+import de.dfki.mlt.rudimant.RudimantCompiler;
 
 /**
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class VRuleConditionVisitor implements RudiVisitor {
+public class VRuleConditionVisitor extends NullVisitor {
 
   private String currentRule;
   // map the new variables to what they represent
@@ -24,26 +28,23 @@ public class VRuleConditionVisitor implements RudiVisitor {
   private LinkedHashMap<String, String> compiledLook;
   private int counter;
 
+  private RudimantCompiler rudi;
   private Mem mem;
 
   public void renewMap(String rule, LinkedHashMap<String, String> condLog,
-          LinkedHashMap<String, String> compiledLook, Mem mem) {
+          LinkedHashMap<String, String> compiledLook, RudimantCompiler rudi) {
     this.realLook = condLog;
     this.compiledLook = compiledLook;
     this.currentRule = rule;
     this.counter = 0;
-    this.mem = mem;
+    this.rudi = rudi;
+    this.mem = rudi.getMem();
     this.funcargs = "";
   }
 
   @Override
   public void visitNode(RudiTree node) {
     node.visit(this);
-  }
-
-  @Override
-  public void visitNode(ExpAbstractWrapper node) {
-    node.exp.visit(this);
   }
 
   @Override
@@ -70,7 +71,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
   public void visitNode(ExpBoolean node) {
 
     String n = "";
-    if (node.not) {
+    if ("!".equals(node.operator)) {
       n = "!";
     }
     String function = "";
@@ -92,7 +93,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
       collectDAs += (")");
 
       this.compiledLook.put(this.lastbool, collectDAs);
-      this.realLook.put(lastbool, collectDAs);
+      this.realLook.put(lastbool, collectDAs.replaceAll("\\\\\"", "\\\""));
       collectDAs = null;
       return;
     } else if (node.doesSubsume) {
@@ -107,7 +108,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
       node.left.visit(this);
       collectDAs += (")");
       this.compiledLook.put(this.lastbool, collectDAs);
-      this.realLook.put(lastbool, collectDAs);
+      this.realLook.put(lastbool, collectDAs.replaceAll("\\\\\"", "\\\""));
       collectDAs = null;
       return;
     }
@@ -121,7 +122,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
         node.right.visit(this);
         this.lastbool = this.currentRule + this.counter++;
         this.compiledLook.put(this.lastbool, collectElements + ")");
-        this.realLook.put(lastbool, collectElements + ")");
+        this.realLook.put(lastbool, collectElements.replaceAll("\\\\\"", "\\\"") + ")");
         collectElements = null;
         return;
       }
@@ -137,7 +138,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
       isTrue = node.isTrue + " ";
       node.left.visit(this);
       String l = this.lastbool;
-      if (node.not) {
+      if ("!".equals(node.operator)) {
         this.lastbool = this.currentRule + this.counter++;
         this.compiledLook.put(this.lastbool, n + l);
         this.realLook.put(lastbool, n + l);
@@ -148,21 +149,29 @@ public class VRuleConditionVisitor implements RudiVisitor {
 
   public void visitDaToken(StringBuilder out, RTExpression exp) {
     if (exp instanceof UVariable) {
-      out.append(((UVariable)exp).representation);
+      out.append(((UVariable) exp).representation);
     } else if (exp instanceof UString) {
-      String s = ((UString)exp).content;
-      out.append("\\\"").append(s.substring(1, s.length() -1)).append("\\\"");
+      String s = ((UString) exp).content;
+      out.append("\\\"").append(s.substring(1, s.length() - 1)).append("\\\"");
     } else {
       out.append("\" + ");
+      whatVDATokenWants = "";
       this.visitNode(exp);
-      out.append(" + \"");
+      out.append(whatVDATokenWants).append(" + \"");
+      whatVDATokenWants = null;
     }
   }
+
+  /**
+   * a dummy to remember what variable is found in the DA; we do not want to
+   * directly print this
+   */
+  private String whatVDATokenWants = null;
 
   @Override
   public void visitNode(ExpDialogueAct node) {
     StringBuilder out = new StringBuilder();
-    out.append("new DialogueAct(");
+    out.append("new DialogueAct(\"");
     visitDaToken(out, node.daType);
     out.append('(');
     visitDaToken(out, node.proposition);
@@ -172,7 +181,8 @@ public class VRuleConditionVisitor implements RudiVisitor {
       out.append(" = ");
       visitDaToken(out, node.exps.get(i + 1));
     }
-    out.append(")");
+    out.append(')');
+    out.append("\")");
     String result = out.toString();
     if (collectDAs != null) {
       this.collectDAs += result;
@@ -186,7 +196,7 @@ public class VRuleConditionVisitor implements RudiVisitor {
     }
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, result);
-    this.realLook.put(lastbool, result);
+    this.realLook.put(lastbool, result.replaceAll("\\\\\"", "\\\""));
   }
 
   @Override
@@ -201,105 +211,6 @@ public class VRuleConditionVisitor implements RudiVisitor {
     isTrue = "";
   }
 
-  @Override
-  public void visitNode(ExpIf node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(ExpLambda node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(GrammarFile node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(GrammarRule node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatAbstractBlock node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatDoWhile node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatFor1 node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatFor2 node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatFor3 node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatFunDef node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatIf node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatImport node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatListCreation node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatMethodDeclaration node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatPropose node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatReturn node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatSetOperation node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatTimeout node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatVarDef node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatWhile node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
 
   @Override
   public void visitNode(UCharacter node) {
@@ -326,24 +237,52 @@ public class VRuleConditionVisitor implements RudiVisitor {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
+  private String fieldAccessPart = null;
+
   @Override
   public void visitNode(UFieldAccess node) {
-    // TODO: tell me how the client is named!!!
-    String t = (node.representation.get(0));
-    for (int i = 1; i < node.representation.size(); i++) {
-      t += (".getValue(" + node.representation.get(i) + ", client)" + " ");
+    List<String> representation = new ArrayList<>();
+    String saved = null;
+    if (fieldAccessPart != null) {
+      saved = fieldAccessPart;
+    }
+    fieldAccessPart = "";
+    node.parts.get(0).visit(this);
+    representation.add(node.representation.get(0));
+    String lastType = ((RTExpression) (node.parts.get(0))).getType();
+    for (int i = 1; i < node.parts.size(); i++) {
+      if (node.parts.get(i) instanceof UVariable) {
+        try {
+          if (this.rudi.getProxy().fetchRdfClass(lastType) != null) {
+            representation.add(node.representation.get(i));
+            // then we are in the case that this is actually an rdf operation
+            fieldAccessPart += (".getValue(" + node.representation.get(i) + ", client) ");
+            lastType = node.getPredicateType(rudi.getProxy(), mem, representation);
+            continue;
+          } else {
+            representation.clear();
+          }
+        } catch (TException ex) {
+          java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
+      fieldAccessPart += (".");
+      node.parts.get(i).visit(this);
     }
     if (collectElements != null) {
-      this.collectElements += t + isTrue;
+      this.collectElements += fieldAccessPart + isTrue;
+      fieldAccessPart = saved;
       return;
-    } else if (!funcargs.equals("")) {
-      funcargs += t;
+    } else if (!funcargs.equals("") && !fieldAccessPart.contains(funcargs)) {
+      funcargs += fieldAccessPart;
+      fieldAccessPart = saved;
       return;
     }
     this.lastbool = this.currentRule + this.counter++;
-    this.compiledLook.put(this.lastbool, t + isTrue);
-    this.realLook.put(lastbool, t + isTrue);
+    this.compiledLook.put(this.lastbool, fieldAccessPart + isTrue);
+    this.realLook.put(lastbool, fieldAccessPart + isTrue);
     isTrue = "";
+    fieldAccessPart = saved;
   }
 
   private String funcargs = "";
@@ -357,19 +296,23 @@ public class VRuleConditionVisitor implements RudiVisitor {
     }
     funcargs = (node.representation + "(");
     for (int i = 0; i < node.exps.size(); i++) {
-      node.exps.get(i).visit(this);
-      if (i != node.exps.size() - 1) {
+      if (i > 0) {
         funcargs += (", ");
       }
+      node.exps.get(i).visit(this);
     }
-    funcargs += (")" + " ");
+    funcargs += (")");
+    if (fieldAccessPart != null) {
+      this.fieldAccessPart += funcargs;
+      return;
+    }
     if (collectElements != null) {
       this.collectElements += funcargs + isTrue;
       return;
     }
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, funcargs + isTrue);
-    this.realLook.put(lastbool, funcargs + isTrue);
+    this.realLook.put(lastbool, funcargs.replaceAll("\\\\\"", "\\\"") + isTrue);
     funcargs = m;
     isTrue = "";
   }
@@ -416,6 +359,13 @@ public class VRuleConditionVisitor implements RudiVisitor {
       return;
     }
     this.lastbool = this.currentRule + this.counter++;
+    if (!node.content.contains("\"")) {
+      this.compiledLook.put(this.lastbool,
+              node.content + " " + isTrue);
+      this.realLook.put(lastbool,
+              node.content + " " + isTrue);
+      return;
+    }
     this.compiledLook.put(this.lastbool,
             node.content.substring(0, node.content.length() - 1)
             + "\"" + " " + isTrue);
@@ -429,7 +379,14 @@ public class VRuleConditionVisitor implements RudiVisitor {
   public void visitNode(UVariable node) {
     if (node.isRdfClass) {
       //if (node.getType().equals("DialogueAct") || mem.isRdf(node.representation)) {
-      if(collectDAs != null){
+      if (fieldAccessPart != null) {
+        this.fieldAccessPart += node.representation;
+        return;
+      } else if (!(this.whatVDATokenWants == null)) {
+        this.whatVDATokenWants += node.representation;
+        return;
+      }
+      if (collectDAs != null) {
         this.collectDAs += "\"" + node.representation + "\"";
         return;
       }
@@ -441,16 +398,24 @@ public class VRuleConditionVisitor implements RudiVisitor {
     // if the variable is not in the memory,
     if (node.realOrigin != null) {
       String t = node.realOrigin;
+      String s = t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation;
+      if (fieldAccessPart != null) {
+        this.fieldAccessPart += s;
+        return;
+      } else if (!(this.whatVDATokenWants == null)) {
+        this.whatVDATokenWants += node.representation;
+        return;
+      }
       if (collectElements != null) {
-        this.collectElements += t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation;
+        this.collectElements += s;
         return;
       } else if (!funcargs.equals("")) {
-        this.funcargs += t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation;
+        this.funcargs += s;
         return;
       }
       //if (node.getType().equals("DialogueAct") || mem.isRdf(node.representation)) {
-      if(collectDAs != null){
-        this.collectDAs += t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation;
+      if (collectDAs != null) {
+        this.collectDAs += s;
         return;
       }
       this.lastbool = this.currentRule + this.counter++;
@@ -459,6 +424,13 @@ public class VRuleConditionVisitor implements RudiVisitor {
       this.realLook.put(lastbool, node.representation + " " + isTrue);
       return;
     } else {
+      if (fieldAccessPart != null) {
+        this.fieldAccessPart += node.representation;
+        return;
+      } else if (!(this.whatVDATokenWants == null)) {
+        this.whatVDATokenWants += node.representation;
+        return;
+      }
       if (collectElements != null) {
         this.collectElements += node.representation;
         return;

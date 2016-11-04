@@ -6,6 +6,7 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
+import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
 import java.util.ArrayList;
@@ -35,11 +36,6 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(RudiTree node) {
     node.visit(this);
-  }
-
-  @Override
-  public void visitNode(ExpAbstractWrapper node) {
-    node.exp.visit(this);
   }
 
   @Override
@@ -112,10 +108,10 @@ public class VTestTypeVisitor implements RudiVisitor {
       rudi.handleTypeError("expression " + node.fullexp + " could not be resolved to a type");
       node.right.setType("Object");
     }
-    if (node.operator != null && (node.left.getType().equals("DialogueAct")
-            || node.left.getType().contains("Rdf")
-            || node.right.getType().equals("DialogueAct"))) {
-      // TODO: then this should always produce a subsumes, shouldn't it?
+    try {
+      if (node.operator != null && (
+              this.rudi.getProxy().fetchRdfClass(node.left.getType()) != null)) {
+        // TODO: then this should always produce a subsumes, shouldn't it?
 //      if (node.left.getType().equals(node.right.getType())) {
         if (node.operator.equals("<=")) {
           node.isSubsumed = true;
@@ -126,14 +122,17 @@ public class VTestTypeVisitor implements RudiVisitor {
           node.rdf = true;
         }
 //      }
-    } else if (node.operator != null) {
-      if (!node.left.getType().equals(node.right.getType())) {
-        rudi.handleTypeError(node.fullexp + " s a boolean expression with type "
-                + node.left.getType() + " on the one and type " + node.right.getType()
-                + " on the other hand");
-      } else {
-        node.type = "boolean";
+      } else if (node.operator != null) {
+        if (!node.left.getType().equals(node.right.getType())) {
+          rudi.handleTypeError(node.fullexp + " s a boolean expression with type "
+                  + node.left.getType() + " on the one and type " + node.right.getType()
+                  + " on the other hand");
+        } else {
+          node.type = "boolean";
+        }
       }
+    } catch (TException ex) {
+      Logger.getLogger(VTestTypeVisitor.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
 
@@ -345,11 +344,6 @@ public class VTestTypeVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatTimeout node) {
-    // nothing to do
-  }
-
-  @Override
   public void visitNode(StatVarDef node) {
     mem.addElement(node.variable, node.type, node.position);
   }
@@ -357,11 +351,13 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatWhile node) {
     node.condition.visit(this);
-    /*if (!node.condition.getType().equals("boolean")) {
-      rudi.handleTypeError("This is a while statement where the condition does not "
-              + "resolve to boolean!");
-    }*/
     node.statblock.visit(this);
+  }
+
+  @Override
+  public void visitNode(StatSwitch node) {
+    node.condition.visit(this);
+    node.switchBlock.visit(this);
   }
 
   @Override
@@ -382,10 +378,16 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(UFieldAccess node) {
     try {
-      node.type = node.getPredicateType(rudi.getProxy(), mem);
+      node.type = node.getPredicateType(rudi.getProxy(), mem, node.representation);
     } catch (TException ex) {
       Logger.getLogger(UFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
     }
+    /*if(node.type == null){
+      // then this is not an rdf node, but some composed funccall
+      node.parts.get(node.parts.size() - 1).visit(this);
+      node.type = ((RTExpression)node.parts.get(node.parts.size() - 1)).getType();
+      return;
+    }*/
     for (int i = 1; i < node.representation.size(); i++) {
       if (node.representation.get(i).contains("(")) {
         continue;

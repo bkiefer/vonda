@@ -81,7 +81,7 @@ public class GrammarMain {
     }
   }
 
-  public void process(List files, File outputDirectory)
+  public void process(List<String> files, File outputDirectory)
       throws IOException, FormatterException, WrongFormatException, TException {
     if (! outputDirectory.exists()) {
       if (! outputDirectory.mkdirs()) {
@@ -94,8 +94,8 @@ public class GrammarMain {
             + outputDirectory.getAbsolutePath());
       }
     }
-    for (Object file : files) {
-      rc.process(new File((String) file), outputDirectory);
+    for (String file : files) {
+      rc.process(new File(file), outputDirectory);
     }
   }
 

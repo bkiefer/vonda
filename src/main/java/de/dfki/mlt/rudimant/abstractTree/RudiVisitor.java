@@ -13,8 +13,6 @@ public interface RudiVisitor {
 
   void visitNode(RudiTree node);
 
-  void visitNode(ExpAbstractWrapper node);
-
   void visitNode(ExpArithmetic node);
 
   void visitNode(ExpAssignment node);
@@ -59,7 +57,7 @@ public interface RudiVisitor {
 
   void visitNode(StatSetOperation node);
 
-  void visitNode(StatTimeout node);
+  void visitNode(StatSwitch node);
 
   void visitNode(StatVarDef node);
 

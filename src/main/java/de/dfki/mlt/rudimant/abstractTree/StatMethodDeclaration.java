@@ -5,7 +5,6 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import de.dfki.mlt.rudimant.Mem;
 import java.util.ArrayList;
 import java.util.Objects;
 

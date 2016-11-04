@@ -16,19 +16,14 @@ import java.util.Objects;
 public class GrammarRule implements RudiTree {
 
   // comment label comment if_statement
-  UCommentBlock commentb;
   String label;
-  UCommentBlock commenta;
   StatIf ifstat;
   // remember whether you are toplevel
   boolean toplevel;
 
-  public GrammarRule(UCommentBlock commentb, String label,
-          UCommentBlock commenta, StatIf ifstat, boolean toplevel) {
+  public GrammarRule(String label, StatIf ifstat, boolean toplevel) {
     this.label = label;
-    this.commentb = commentb;
     this.ifstat = ifstat;
-    this.commenta = commenta;
     this.toplevel = toplevel;
   }
 
@@ -41,7 +36,6 @@ public class GrammarRule implements RudiTree {
   public int hashCode() {
     int hash = 5;
     hash = 37 * hash + Objects.hashCode(this.label);
-    hash = 37 * hash + Objects.hashCode(this.commenta);
     hash = 37 * hash + Objects.hashCode(this.ifstat);
     return hash;
   }
@@ -59,9 +53,6 @@ public class GrammarRule implements RudiTree {
     }
     final GrammarRule other = (GrammarRule) obj;
     if (!Objects.equals(this.label, other.label)) {
-      return false;
-    }
-    if (!Objects.equals(this.commenta, other.commenta)) {
       return false;
     }
     if (!Objects.equals(this.ifstat, other.ifstat)) {
