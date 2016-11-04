@@ -151,24 +151,9 @@ variable
   ;
 
 exp
-  :
-  '(' exp ')' //sexp
-  | funccall_on_object //sexp
-  | variable //sexp
-  | assignment //sexp
-  | if_exp
-  | arithmetic //sexp
-  | function_call //sexp
-  | literal_or_graph_exp //sexp
-  | ( STRING // all sexp
-    | WILDCARD
-    | FALSE
-    | TRUE
-    | NULL
-    )
-  | boolean_exp
+  : boolean_exp
   | string_expression
-  | field_access // sexp
+  | simple_exp
   ;
 
 simple_exp
@@ -177,6 +162,7 @@ simple_exp
   | funccall_on_object
   | variable
   | arithmetic
+  | if_exp
   | function_call
   | literal_or_graph_exp
   | field_access
@@ -187,8 +173,7 @@ simple_exp
     | TRUE
     | NULL
     )
-  | NOT LPAR boolean_exp RPAR
-  | NOT simple_exp
+  | NOT exp
   ;
 
 boolean_exp
