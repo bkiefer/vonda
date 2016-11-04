@@ -57,6 +57,8 @@ public interface RudiVisitor {
 
   void visitNode(StatSetOperation node);
 
+  void visitNode(StatSwitch node);
+
   void visitNode(StatVarDef node);
 
   void visitNode(StatWhile node);

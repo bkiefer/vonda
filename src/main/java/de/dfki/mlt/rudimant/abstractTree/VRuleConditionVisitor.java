@@ -5,22 +5,21 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import de.dfki.mlt.rudimant.Mem;
-import de.dfki.mlt.rudimant.RudimantCompiler;
-
-import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Level;
+
 import org.apache.thrift.TException;
+
+import de.dfki.mlt.rudimant.Mem;
+import de.dfki.mlt.rudimant.RudimantCompiler;
 
 /**
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class VRuleConditionVisitor implements RudiVisitor {
+public class VRuleConditionVisitor extends NullVisitor {
 
   private String currentRule;
   // map the new variables to what they represent
@@ -212,100 +211,6 @@ public class VRuleConditionVisitor implements RudiVisitor {
     isTrue = "";
   }
 
-  @Override
-  public void visitNode(ExpIf node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(ExpLambda node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(GrammarFile node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(GrammarRule node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatAbstractBlock node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatDoWhile node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatFor1 node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatFor2 node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatFor3 node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatFunDef node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatIf node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatImport node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatListCreation node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatMethodDeclaration node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatPropose node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatReturn node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatSetOperation node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatVarDef node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(StatWhile node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
 
   @Override
   public void visitNode(UCharacter node) {

@@ -351,11 +351,13 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatWhile node) {
     node.condition.visit(this);
-    /*if (!node.condition.getType().equals("boolean")) {
-      rudi.handleTypeError("This is a while statement where the condition does not "
-              + "resolve to boolean!");
-    }*/
     node.statblock.visit(this);
+  }
+
+  @Override
+  public void visitNode(StatSwitch node) {
+    node.condition.visit(this);
+    node.switchBlock.visit(this);
   }
 
   @Override

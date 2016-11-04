@@ -646,6 +646,14 @@ public class VGenerationVisitor implements RudiVisitor {
   }
 
   @Override
+  public void visitNode(StatSwitch node) {
+    out.append("switch (");
+    node.condition.visit(this);
+    out.append(")");
+    node.switchBlock.visit(this);
+  }
+
+  @Override
   public void visitNode(UCharacter node) {
     out.append("\'" + node.content + "\'" + " ");
   }
@@ -766,11 +774,11 @@ public class VGenerationVisitor implements RudiVisitor {
    * @param rule
    */
   private String printRuleLogger(String rule, RTExpression bool_exp) {
-    
+
     // TODO BK: bool_exp can be a simple expression, in which case it
     // has to be turned into a comparison with zero, null or a call to
     // the has(...) method
-    
+
     if (bool_exp instanceof UnaryBoolean) {
       // there isnt much we could log
 //      out.append("wholeCondition = " + ((UnaryBoolean) bool_exp).content + ";\n");

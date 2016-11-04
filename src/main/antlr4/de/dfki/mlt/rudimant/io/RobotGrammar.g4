@@ -33,24 +33,26 @@ imports
 method_declaration
   : (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | type_spec) VARIABLE '('
     ((type_spec | DEC_VAR) VARIABLE (',' (type_spec | DEC_VAR) VARIABLE)*)?
-    ')' statement_block;
+    ')' statement_block
+  ;
 
 statement
   : statement_block
-    |	(exp ';'
-    	 | list_creation
-    	 |  grammar_rule
-    	 | set_operation
-       | return_statement
-    	 | propose_statement
-    	 | if_statement
-       | while_statement
-       | for_statement
-       | var_def
-       | fun_def
-    	 //| ';'   <- we don't really need it, and it's a pain to find in parser
-    	)
- ;
+  | exp ';'
+  | list_creation
+  | grammar_rule
+  | set_operation
+  | return_statement
+  | propose_statement
+  | if_statement
+  | while_statement
+  | for_statement
+  | switch_statement
+  | var_def
+  | fun_def
+  | CONTINUE ';'
+  | BREAK ';'
+  ;
 ////////// STATEMENTS ///////////////////
 
 statement_block
@@ -73,34 +75,38 @@ if_exp
   ;
 
 while_statement
-  : WHILE '(' boolean_exp ')' loop_statement_block
-  | DO loop_statement_block WHILE '(' boolean_exp ')'
+  : WHILE '(' boolean_exp ')' statement_block
+  | DO statement_block WHILE '(' boolean_exp ')'
   ;
 
 for_statement
-  : FOR '(' assignment? ';' exp? ';' exp? ')' loop_statement_block
-  | FOR '(' (DEC_VAR | type_spec)? VARIABLE ':' exp ')' loop_statement_block
+  : FOR '(' assignment? ';' exp? ';' exp? ')' statement_block
+  | FOR '(' (DEC_VAR | type_spec)? VARIABLE ':' exp ')' statement_block
   // WHAT'S THIS???
-  | FOR '(' '(' VARIABLE ( ',' VARIABLE )+ ')' ':' exp ')' loop_statement_block
-  ;
-
-loop_statement_block
-  : '{' (statement | ((CONTINUE | BREAK) ';'))* '}'
-  ;
-
-// allows 'continue' and 'break' while the ordinary one does not.
-loop_propose_statement
-  : PROPOSE '(' string_expression ')' loop_statement_block
-  ;
-
-loop_if_statement
-  : IF '(' boolean_exp ')' (statement | (CONTINUE | BREAK) ';')
-    ( ELSE (statement | (CONTINUE | BREAK) ';') )?
+  | FOR '(' '(' VARIABLE ( ',' VARIABLE )+ ')' ':' exp ')' statement_block
   ;
 
 propose_statement
   : PROPOSE '(' string_expression ')' statement_block
   ;
+
+switch_statement
+	:	SWITCH '(' exp ')' '{' switch_block '}'
+	;
+
+switch_block
+	:	switch_group* switch_label*
+	;
+
+switch_group
+	:	switch_label+ statement+
+	;
+
+switch_label
+	:	CASE string_expression ':'
+	|	CASE VARIABLE ':'
+	|	DEFAULT ':'
+	;
 
 var_def
   : type_spec variable ';'
@@ -151,9 +157,10 @@ variable
   ;
 
 exp
-  : boolean_exp
+  : simple_exp
+  | if_exp
   | string_expression
-  | simple_exp
+  | boolean_exp
   ;
 
 simple_exp
@@ -162,7 +169,6 @@ simple_exp
   | funccall_on_object
   | variable
   | arithmetic
-  | if_exp
   | function_call
   | literal_or_graph_exp
   | field_access
@@ -194,7 +200,7 @@ simple_b_exp
 // TODO: IS THIS STILL USED?
 lambda_exp: '(' (DEC_VAR? VARIABLE (',' DEC_VAR? VARIABLE)*)? ')' ARROW exp;
 
-string_expression : simple_exp ( '+' exp )* ;
+string_expression : (simple_exp|if_exp) ( '+' exp )* ;
 
 literal_or_graph_exp
   : HASH da_token '(' ( da_token ( ',' ( da_token '=' da_token) )* ) ')'
@@ -250,6 +256,9 @@ IF: 'if';
 ELSE: 'else';
 WHILE: 'while';
 DO: 'do';
+SWITCH: 'switch';
+CASE: 'case';
+DEFAULT: 'default';
 CONTINUE: 'continue';
 BREAK: 'break';
 FOR: 'for';
@@ -331,6 +340,7 @@ MULTI_L_COMMENT: '/*'.*?'*/' -> channel(HIDDEN);
 WS: [ \t\u000C]+ -> channel(HIDDEN);
 NLWS: [\n\r]+ -> channel(HIDDEN);
 
+// LETTER: ('A'..'Z'|'a'..'z');
 /// identifiers (starting with "java letter"):
 VARIABLE: ('A'..'Z'|'a'..'z'|'_')('0'..'9'|'A'..'Z'|'a'..'z'|'_'|'$')*;
 
