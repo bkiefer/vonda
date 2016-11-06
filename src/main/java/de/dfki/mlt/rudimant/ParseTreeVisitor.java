@@ -394,7 +394,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitSwitch_label(Switch_labelContext ctx) {
     // CASE string_expression ':' | CASE VARIABLE ':' | DEFAULT ':'
-    return new UString(ctx.getText());
+    return new USingleValue(ctx.getText(), "label");
   }
 
   @Override
@@ -555,23 +555,23 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
-  @Override
+ @Override
   public RudiTree visitTerminal(TerminalNode tn) {
     switch (tn.getSymbol().getType()) {
       case RobotGrammarLexer.NULL:   // token is NULL
-        return new UNull();
+        return new USingleValue("null", "Object");
       case RobotGrammarLexer.TRUE:   // token is TRUE
         return new UnaryBoolean(tn.getText());
       case RobotGrammarLexer.FALSE:  // token is FALSE
         return new UnaryBoolean(tn.getText());
       case RobotGrammarLexer.CHARACTER:  // token is character
-        return new UCharacter(tn.getText());
+        return new USingleValue(tn.getText(), "char");
       case RobotGrammarLexer.STRING:  // token is String
-        return new UString(tn.getText());
+        return new USingleValue(tn.getText(), "String");
       // An annotation is sth. like @Override (yes, it is a String as long as the
       // representation of Strings has to explicitly have a " to be put in "")
       case RobotGrammarLexer.ANNOTATION:  // token is an annotation
-        return new UString(tn.getText() + "\n");
+        return new USingleValue(tn.getText() + "\n", "annotation");
       case RobotGrammarLexer.WILDCARD:  //token is wildcard
         return new UWildcard();
       case RobotGrammarLexer.VARIABLE:  // token is variable
@@ -595,11 +595,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
                   + "anywhere: " + text);
         }*/
       case RobotGrammarLexer.INT:  // token is int
+        return new USingleValue(tn.getText(), "int");
       case RobotGrammarLexer.FLOAT:  // token is float
-        return new UNumber(tn.getText());
+        return new USingleValue(tn.getText(), "float");
       case RobotGrammarLexer.BREAK:
       case RobotGrammarLexer.CONTINUE:
-        return new UString(tn.getText());
+        return new USingleValue(tn.getText(), "break/continue");
     }
     throw new UnsupportedOperationException("The terminal node for " + tn.getText()
             + ", tree type: " + tn.getSymbol().getType() + " should never be used");

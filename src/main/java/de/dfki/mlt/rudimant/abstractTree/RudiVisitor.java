@@ -63,8 +63,6 @@ public interface RudiVisitor {
 
   void visitNode(StatWhile node);
 
-  void visitNode(UCharacter node);
-
   void visitNode(UComment node);
 
   void visitNode(UCommentBlock node);
@@ -72,12 +70,8 @@ public interface RudiVisitor {
   void visitNode(UFieldAccess node);
 
   void visitNode(UFuncCall node);
-
-  void visitNode(UNull node);
-
-  void visitNode(UNumber node);
-
-  void visitNode(UString node);
+  
+  void visitNode(USingleValue node);
 
   void visitNode(UVariable node);
 

@@ -19,7 +19,7 @@ import de.dfki.mlt.rudimant.RudimantCompiler;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class VRuleConditionVisitor extends NullVisitor {
+public class VRuleConditionVisitor extends VNullVisitor {
 
   private String currentRule;
   // map the new variables to what they represent
@@ -150,8 +150,9 @@ public class VRuleConditionVisitor extends NullVisitor {
   public void visitDaToken(StringBuilder out, RTExpression exp) {
     if (exp instanceof UVariable) {
       out.append(((UVariable) exp).representation);
-    } else if (exp instanceof UString) {
-      String s = ((UString) exp).content;
+    } else if (exp instanceof USingleValue 
+            && ((USingleValue)exp).type.equals("String")) {
+      String s = ((USingleValue) exp).content;
       out.append("\\\"").append(s.substring(1, s.length() - 1)).append("\\\"");
     } else {
       out.append("\" + ");
@@ -208,22 +209,6 @@ public class VRuleConditionVisitor extends NullVisitor {
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, node.look + isTrue + " ");
     this.realLook.put(lastbool, node.look + isTrue + " ");
-    isTrue = "";
-  }
-
-
-  @Override
-  public void visitNode(UCharacter node) {
-    if (collectElements != null) {
-      this.collectElements += node.content;
-      return;
-    } else if (!funcargs.equals("")) {
-      this.funcargs += node.content;
-      return;
-    }
-    this.lastbool = this.currentRule + this.counter++;
-    this.compiledLook.put(this.lastbool, "\'" + node.content + "\'" + isTrue + " ");
-    this.realLook.put(lastbool, node.content + isTrue);
     isTrue = "";
   }
 
@@ -318,35 +303,21 @@ public class VRuleConditionVisitor extends NullVisitor {
   }
 
   @Override
-  public void visitNode(UNull node) {
+  public void visitNode(USingleValue node) {
     if (collectElements != null) {
-      this.collectElements += "null";
+      this.collectElements += node.content + isTrue;
       return;
     } else if (!funcargs.equals("")) {
-      funcargs += "null";
+      funcargs += node.content + isTrue;
       return;
     }
     this.lastbool = this.currentRule + this.counter++;
-    this.compiledLook.put(this.lastbool, "null " + isTrue);
-    this.realLook.put(lastbool, "null " + isTrue);
+    this.compiledLook.put(this.lastbool, node.content + isTrue);
+    this.realLook.put(lastbool, node.content + isTrue);
     isTrue = "";
   }
 
-  @Override
-  public void visitNode(UNumber node) {
-    if (collectElements != null) {
-      this.collectElements += node.value + isTrue;
-      return;
-    } else if (!funcargs.equals("")) {
-      funcargs += node.value + isTrue;
-      return;
-    }
-    this.lastbool = this.currentRule + this.counter++;
-    this.compiledLook.put(this.lastbool, node.value + isTrue);
-    this.realLook.put(lastbool, node.value + isTrue);
-    isTrue = "";
-  }
-
+  /* TODO: is this covered correctly in USingleValue?
   @Override
   public void visitNode(UString node) {
     if (collectElements != null) {
@@ -373,7 +344,7 @@ public class VRuleConditionVisitor extends NullVisitor {
             node.content.substring(0, node.content.length() - 1)
             + "\"" + " " + isTrue);
     isTrue = "";
-  }
+  }*/
 
   @Override
   public void visitNode(UVariable node) {

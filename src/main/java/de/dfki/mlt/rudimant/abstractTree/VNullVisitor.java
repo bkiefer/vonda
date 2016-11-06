@@ -12,7 +12,7 @@ import java.util.LinkedHashMap;
  *
  * @author pal
  */
-public class NullVisitor implements RudiVisitor {
+public class VNullVisitor implements RudiVisitor {
 
 
   @Override
@@ -141,12 +141,6 @@ public class NullVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UCharacter node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-
-  }
-
-  @Override
   public void visitNode(UComment node) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
@@ -168,22 +162,11 @@ public class NullVisitor implements RudiVisitor {
 
   }
 
+
   @Override
-  public void visitNode(UNull node) {
+  public void visitNode(USingleValue node) {
     throw new UnsupportedOperationException("Not supported yet.");
-
   }
-
-  @Override
-  public void visitNode(UNumber node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-
-  }
-
-  @Override
-  public void visitNode(UString node) {
-     throw new UnsupportedOperationException("Not supported yet.");
- }
 
   @Override
   public void visitNode(UVariable node) {

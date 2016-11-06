@@ -12,7 +12,7 @@ import java.util.LinkedHashMap;
  *
  * @author pal
  */
-public class VConditionCreatorVisitor extends NullVisitor {
+public class VConditionCreatorVisitor extends VNullVisitor {
 
   // map the new variables to what they represent
   private Object[] expNames;
@@ -68,7 +68,7 @@ public class VConditionCreatorVisitor extends NullVisitor {
       }
       this.condition.append(subnot + n + expNames[counter]);
       this.creation.append(expNames[counter] + " = " + subnot + n
-                           + compiledLook.get(expNames[counter++]) + ";\n");
+              + compiledLook.get(expNames[counter++]) + ";\n");
       return;
     }
     if (node.right != null) {
@@ -80,7 +80,7 @@ public class VConditionCreatorVisitor extends NullVisitor {
       if (!(node.operator.equals("||") || node.operator.equals("&&"))) {
         // we do not go deeper
         this.creation.append(expNames[counter] + " = " + n
-                             + compiledLook.get(expNames[counter]) + ";\n");
+                + compiledLook.get(expNames[counter]) + ";\n");
         this.condition.append(expNames[counter++]);
         return;
       } // else
@@ -93,7 +93,7 @@ public class VConditionCreatorVisitor extends NullVisitor {
         this.condition.append(")");
         this.creation.append("}\n");
         this.creation.append(expNames[counter] + " = " + n
-                             + compiledLook.get(expNames[counter++]) + ";\n");
+                + compiledLook.get(expNames[counter++]) + ";\n");
         //        this.condition.append(expNames[counter++]);
         return;
       } else if (node.operator.equals("&&")) {
@@ -105,7 +105,7 @@ public class VConditionCreatorVisitor extends NullVisitor {
         this.condition.append(")");
         this.creation.append("}\n");
         this.creation.append(expNames[counter] + " = " + n
-                             + compiledLook.get(expNames[counter++]) + ";\n");
+                + compiledLook.get(expNames[counter++]) + ";\n");
         //        this.condition.append(expNames[counter++]);
         return;
       } else {
@@ -155,17 +155,7 @@ public class VConditionCreatorVisitor extends NullVisitor {
   }
 
   @Override
-  public void visitNode(UNull node) {
-    myVisitNode(node);
-  }
-
-  @Override
-  public void visitNode(UNumber node) {
-    myVisitNode(node);
-  }
-
-  @Override
-  public void visitNode(UString node) {
+  public void visitNode(USingleValue node) {
     myVisitNode(node);
   }
 

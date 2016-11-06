@@ -148,8 +148,9 @@ public class VGenerationVisitor implements RudiVisitor {
   public void visitDaToken(RTExpression exp) {
     if (exp instanceof UVariable) {
       out.append(((UVariable) exp).representation);
-    } else if (exp instanceof UString) {
-      String s = ((UString) exp).content;
+    } else if (exp instanceof USingleValue 
+            && ((USingleValue)exp).type.equals("String")) {
+      String s = ((USingleValue) exp).content;
       out.append("\\\"").append(s.substring(1, s.length() - 1)).append("\\\"");
     } else {
       out.append("\" + ");
@@ -654,11 +655,6 @@ public class VGenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UCharacter node) {
-    out.append("\'" + node.content + "\'" + " ");
-  }
-
-  @Override
   public void visitNode(UComment node) {
     out.append(node.comment + " ");
   }
@@ -717,27 +713,15 @@ public class VGenerationVisitor implements RudiVisitor {
     }
     out.append(")" + " ");
   }
-
+  
   @Override
-  public void visitNode(UNull node) {
-    out.append("null" + " ");
-  }
-
-  @Override
-  public void visitNode(UNumber node) {
-    out.append(node.value);
-  }
-
-  @Override
-  public void visitNode(UString node) {
-    if(!node.content.contains("\"")){
-      out.append(node.content);
-    }
-    if (this.escape) {
+  public void visitNode(USingleValue node) {
+    if("String".equals(node.type) && this.escape){
+      // properly escape if needed
       out.append("\\" + node.content.substring(0, node.content.length() - 1) + "\\\"" + " ");
-    } else {
-      out.append(node.content + " ");
+      return;
     }
+    out.append(node.content);
   }
 
   @Override

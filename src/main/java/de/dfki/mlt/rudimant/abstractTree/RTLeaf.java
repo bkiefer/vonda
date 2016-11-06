@@ -16,6 +16,8 @@ public abstract class RTLeaf implements RTExpression {
    * the leaf's type
    */
   String type = "Object";
+  String content;
 
+  @Override
   public abstract String getType();
 }

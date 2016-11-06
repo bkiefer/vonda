@@ -361,11 +361,6 @@ public class VTestTypeVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UCharacter node) {
-    // everything okay
-  }
-
-  @Override
   public void visitNode(UComment node) {
     // everything okay
   }
@@ -414,18 +409,8 @@ public class VTestTypeVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UNull node) {
-    // nothing to do
-  }
-
-  @Override
-  public void visitNode(UNumber node) {
-    // nothing to do
-  }
-
-  @Override
-  public void visitNode(UString node) {
-    // nothing to do
+  public void visitNode(USingleValue node) {
+    // nothing to test here
   }
 
   @Override
