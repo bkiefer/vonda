@@ -391,8 +391,8 @@ public class VRuleConditionVisitor extends VNullVisitor {
       }
       this.lastbool = this.currentRule + this.counter++;
       this.compiledLook.put(this.lastbool,
-              t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation + " " + isTrue);
-      this.realLook.put(lastbool, node.representation + " " + isTrue);
+              t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation + isTrue);
+      this.realLook.put(lastbool, node.representation + isTrue);
       return;
     } else {
       if (fieldAccessPart != null) {
@@ -414,8 +414,8 @@ public class VRuleConditionVisitor extends VNullVisitor {
         return;
       }
       this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool, node.representation + " " + isTrue);
-      this.realLook.put(lastbool, node.representation + " " + isTrue);
+      this.compiledLook.put(this.lastbool, node.representation + isTrue);
+      this.realLook.put(lastbool, node.representation + isTrue);
       isTrue = "";
     }
   }

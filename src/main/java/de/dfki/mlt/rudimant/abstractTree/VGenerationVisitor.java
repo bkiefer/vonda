@@ -575,7 +575,7 @@ public class VGenerationVisitor implements RudiVisitor {
     String ret = node.visibility + " " + node.return_type + " " + node.name + "(";
     if (!node.parameters.isEmpty()) {
       for (int i = 0; i < node.parameters.size(); i++) {
-        if (i == 1) {
+        if (i == 0) {
           ret += node.partypes.get(i) + " " + node.parameters.get(i);
         } else {
           ret += ", " + node.partypes.get(i) + " " + node.parameters.get(i);
@@ -731,10 +731,10 @@ public class VGenerationVisitor implements RudiVisitor {
     } // if the variable is not in the memory,
     else if (node.realOrigin != null) {
       String t = node.realOrigin;
-      out.append(t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation + " ");
+      out.append(t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation);
       return;
     } else {
-      out.append(node.representation + " ");
+      out.append(node.representation);
     }
   }
 
@@ -744,7 +744,7 @@ public class VGenerationVisitor implements RudiVisitor {
   }
 
   private void conditionHandling(ExpBoolean node) {
-    out.append(node.isTrue + " ");
+    out.append(node.isTrue);
   }
 
   /**
