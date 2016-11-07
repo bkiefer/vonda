@@ -76,7 +76,4 @@ public interface RudiVisitor {
   void visitNode(UVariable node);
 
   void visitNode(UWildcard node);
-
-  void visitNode(UnaryBoolean node);
-
 }

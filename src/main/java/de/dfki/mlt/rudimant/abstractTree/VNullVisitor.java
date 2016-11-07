@@ -179,11 +179,6 @@ public class VNullVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UnaryBoolean node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
   public void visitNode(StatSwitch node) {
     throw new UnsupportedOperationException("Not supported yet.");
   }

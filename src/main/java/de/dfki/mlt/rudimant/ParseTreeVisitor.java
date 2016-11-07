@@ -561,9 +561,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       case RobotGrammarLexer.NULL:   // token is NULL
         return new USingleValue("null", "Object");
       case RobotGrammarLexer.TRUE:   // token is TRUE
-        return new UnaryBoolean(tn.getText());
+        return new USingleValue(tn.getText(), "boolean");
       case RobotGrammarLexer.FALSE:  // token is FALSE
-        return new UnaryBoolean(tn.getText());
+        return new USingleValue(tn.getText(), "boolean");
       case RobotGrammarLexer.CHARACTER:  // token is character
         return new USingleValue(tn.getText(), "char");
       case RobotGrammarLexer.STRING:  // token is String

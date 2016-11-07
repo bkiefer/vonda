@@ -446,11 +446,6 @@ public class VTestTypeVisitor implements RudiVisitor {
     // nothing to do
   }
 
-  @Override
-  public void visitNode(UnaryBoolean node) {
-    // nothing to do
-  }
-
   private void conditionHandling(ExpBoolean node) {
     String t = node.left.getType();
     if (t == null) {

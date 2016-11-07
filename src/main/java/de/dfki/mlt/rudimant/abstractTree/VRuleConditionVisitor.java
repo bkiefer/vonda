@@ -434,19 +434,4 @@ public class VRuleConditionVisitor extends VNullVisitor {
     this.realLook.put(lastbool, " _ " + isTrue);
     isTrue = "";
   }
-
-  @Override
-  public void visitNode(UnaryBoolean node) {
-    if (collectElements != null) {
-      this.collectElements += node.content + " " + isTrue;
-      return;
-    } else if (!funcargs.equals("")) {
-      this.funcargs += node.content + " " + isTrue;
-      return;
-    }
-    this.lastbool = this.currentRule + this.counter++;
-    this.compiledLook.put(this.lastbool, node.content + " " + isTrue);
-    this.realLook.put(lastbool, node.content + " " + isTrue);
-    isTrue = "";
-  }
 }

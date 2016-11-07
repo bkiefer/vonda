@@ -743,11 +743,6 @@ public class VGenerationVisitor implements RudiVisitor {
     out.append("this.wildcard" + " ");   // wildcard is a local variable in resulting class
   }
 
-  @Override
-  public void visitNode(UnaryBoolean node) {
-    out.append(node.content + " ");
-  }
-
   private void conditionHandling(ExpBoolean node) {
     out.append(node.isTrue + " ");
   }
@@ -763,10 +758,10 @@ public class VGenerationVisitor implements RudiVisitor {
     // has to be turned into a comparison with zero, null or a call to
     // the has(...) method
 
-    if (bool_exp instanceof UnaryBoolean) {
+    if (bool_exp instanceof USingleValue && bool_exp.getType().equals("boolean")) {
       // there isnt much we could log
 //      out.append("wholeCondition = " + ((UnaryBoolean) bool_exp).content + ";\n");
-      return ((UnaryBoolean) bool_exp).content;
+      return ((USingleValue) bool_exp).content;
 //      return;
     }
     ExpBoolean bool = (ExpBoolean) bool_exp;

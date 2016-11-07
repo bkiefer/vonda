@@ -169,9 +169,4 @@ public class VConditionCreatorVisitor extends VNullVisitor {
     myVisitNode(node);
   }
 
-  @Override
-  public void visitNode(UnaryBoolean node) {
-    myVisitNode(node);
-  }
-
 }
