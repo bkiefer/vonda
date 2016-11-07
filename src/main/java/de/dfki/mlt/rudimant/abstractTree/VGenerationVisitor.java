@@ -679,7 +679,7 @@ public class VGenerationVisitor implements RudiVisitor {
           if (this.rudi.getProxy().fetchRdfClass(lastType) != null) {
             representation.add(node.representation.get(i));
             // then we are in the case that this is actually an rdf operation
-            out.append(".getValue(" + node.representation.get(i) + ", client) ");
+            out.append(".getValue(\"" + node.representation.get(i) + "\", client) ");
             lastType = node.getPredicateType(rudi.getProxy(), mem, representation);
             continue;
           } else {

@@ -6,7 +6,9 @@ test:
 if((activity <= Introduction)){
 //activity <= Introduction;
 Child c;
+Child user;
 c.hasFather.hasGender;
+    user.hasSessions.add(currentSession);
  salutation = (firstEncounter()) ? "InitialGreeting" : "ReturnGreeting";
 }
 

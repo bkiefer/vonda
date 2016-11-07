@@ -109,8 +109,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       node.right.setType("Object");
     }
     try {
-      if (node.operator != null && (
-              this.rudi.getProxy().fetchRdfClass(node.left.getType()) != null)) {
+      if (node.operator != null && (this.rudi.getProxy().fetchRdfClass(node.left.getType()) != null)) {
         // TODO: then this should always produce a subsumes, shouldn't it?
 //      if (node.left.getType().equals(node.right.getType())) {
         if (node.operator.equals("<=")) {
@@ -218,9 +217,9 @@ public class VTestTypeVisitor implements RudiVisitor {
   public void visitNode(StatDoWhile node) {
     node.condition.visit(this);
     /*if (!node.condition.getType().equals("boolean")) {
-      rudi.handleTypeError("This is a while statement where the condition does not "
-              + "resolve to boolean!");
-    }*/
+     rudi.handleTypeError("This is a while statement where the condition does not "
+     + "resolve to boolean!");
+     }*/
     node.statblock.visit(this);
   }
 
@@ -265,9 +264,9 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.currentRule = mem.getCurrentRule();
     node.condition.visit(this);
     /*if (!node.condition.getType().equals("boolean")) {
-      rudi.handleTypeError("This is an if statement where the condition: "
-              + node.conditionString + ", does not resolve to boolean!");
-    }*/
+     rudi.handleTypeError("This is an if statement where the condition: "
+     + node.conditionString + ", does not resolve to boolean!");
+     }*/
     node.statblockIf.visit(this);
     if (node.statblockElse != null) {
       node.statblockElse.visit(this);
@@ -278,10 +277,10 @@ public class VTestTypeVisitor implements RudiVisitor {
   public void visitNode(StatImport node) {
     String conargs = "";
     if (null != rudi.getConstructorArgs()
-        && ! rudi.getConstructorArgs().isEmpty()) {
+            && !rudi.getConstructorArgs().isEmpty()) {
       int i = 0;
-      for(String a : rudi.getConstructorArgs().split(",")){
-        if(i > 0){
+      for (String a : rudi.getConstructorArgs().split(",")) {
+        if (i > 0) {
           conargs += ", ";
         }
         conargs += a.trim().split(" ")[1];
@@ -378,17 +377,18 @@ public class VTestTypeVisitor implements RudiVisitor {
       Logger.getLogger(UFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
     }
     /*if(node.type == null){
-      // then this is not an rdf node, but some composed funccall
-      node.parts.get(node.parts.size() - 1).visit(this);
-      node.type = ((RTExpression)node.parts.get(node.parts.size() - 1)).getType();
-      return;
-    }*/
-    for (int i = 1; i < node.representation.size(); i++) {
-      if (node.representation.get(i).contains("(")) {
-        continue;
-      } else if (!mem.variableExists(node.representation.get(i))) {
-        node.representation.set(i, "\"" + node.representation.get(i) + "\"");
-      }
+     // then this is not an rdf node, but some composed funccall
+     node.parts.get(node.parts.size() - 1).visit(this);
+     node.type = ((RTExpression)node.parts.get(node.parts.size() - 1)).getType();
+     return;
+     }*/
+    for (int i = 0; i < node.representation.size(); i++) {
+      node.parts.get(i).visit(this);
+//      if (node.representation.get(i).contains("(")) {
+//        continue;
+//      } else if (!mem.variableExists(node.representation.get(i))) {
+//        node.representation.set(i, "\"" + node.representation.get(i) + "\"");
+//      }
     }
   }
 
@@ -418,22 +418,31 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.type = mem.getVariableType(node.representation);
     String o = mem.getVariableOriginClass(node.representation);
     if (o == null) {
-      if (node.type == null) {
-        // this variable wasnt declared, so it doesnt exist or is an rdf type
-        try {
-          if (rudi.getProxy().fetchRdfClass(node.representation) != null) {
-            node.isRdfClass = true;
-            return;
-          }
-        } catch (TException e) {
-          logger.error("Problem accessing database : {}", e.getMessage());
-          throw new RuntimeException(e);
+      // the variable does not originate in another file
+//      if (node.type == null) {
+      // is the variable an rdf type?
+      try {
+        if (rudi.getProxy().fetchRdfClass(node.type) != null) {
+          node.isRdfClass = true;
+          return;
+        } else // TODO: is this correct????
+          // it could still be sth like Introduction
+        if (rudi.getProxy().fetchRdfClass(node.representation) != null) {
+          node.isRdfClass = true;
+          return;
         }
+      } catch (TException e) {
+        logger.error("Problem accessing database : {}", e.getMessage());
+        throw new RuntimeException(e);
       }
-      rudi.handleTypeError("The variable " + node.representation
-              + " is used but was not declared");
-      node.type = "Object";
-      return;
+//      }
+      // if not, mem either found a type or this variable wasn't declared
+      if (node.type == null) {
+        rudi.handleTypeError("The variable " + node.representation
+                + " is used but was not declared");
+        node.type = "Object";
+        return;
+      }
     }
     if (!node.originClass.equals(o)) {
       mem.needsClass(mem.getCurrentTopRule(), o);
