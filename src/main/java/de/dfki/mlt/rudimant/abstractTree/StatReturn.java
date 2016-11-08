@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class StatReturn implements RTStatement, RudiTree {
+public class StatReturn extends RTStatement {
 
   RudiTree toRet;
   String lit;

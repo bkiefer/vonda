@@ -10,6 +10,6 @@ package de.dfki.mlt.rudimant.abstractTree;
  *
  * @author Anna Welker
  */
-public interface RTStatement extends RudiTree {
+public abstract class RTStatement extends RudiTree {
 
 }

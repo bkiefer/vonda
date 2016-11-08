@@ -11,10 +11,10 @@ package de.dfki.mlt.rudimant.abstractTree;
  *
  * @author Anna Welker
  */
-public interface RudiTree {
+public abstract class RudiTree {
 
   /**
    * visitor method
    */
-  public void visit(RudiVisitor v);
+  public abstract void visit(RudiVisitor v);
 }

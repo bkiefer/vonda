@@ -11,7 +11,7 @@ import java.util.Objects;
  *
  * @author anna
  */
-public class StatIf implements RTStatement, RudiTree {
+public class StatIf extends RTStatement {
 
   RTExpression condition;
   StatAbstractBlock statblockIf;

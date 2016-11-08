@@ -12,20 +12,8 @@ package de.dfki.mlt.rudimant.abstractTree;
  */
 public class UWildcard extends RTLeaf {
 
-  String type;
-
-  @Override
-  public String getType() {
-    return "Object"; // ???
-  }
-
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
-  }
-
-  @Override
-  public void setType(String to) {
-    this.type = to;
   }
 }

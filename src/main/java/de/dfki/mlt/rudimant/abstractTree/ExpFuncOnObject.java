@@ -13,13 +13,11 @@ import java.util.Objects;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class ExpFuncOnObject implements RTExpression {
+public class ExpFuncOnObject extends RTExpression {
 
   RTExpression on;
   RTExpression funccall;
   String look;
-  String type;
-
   /**
    *
    * @param on the object before the dot
@@ -30,14 +28,6 @@ public class ExpFuncOnObject implements RTExpression {
     this.on = on;
     this.funccall = funccall;
     this.look = look;
-  }
-
-  @Override
-  public String getType() {
-    if (this.type == null) {
-      this.type = this.funccall.getType();
-    }
-    return type;
   }
 
   @Override
@@ -72,10 +62,5 @@ public class ExpFuncOnObject implements RTExpression {
       return false;
     }
     return true;
-  }
-
-  @Override
-  public void setType(String to) {
-    this.type = to;
   }
 }

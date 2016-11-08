@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class StatVarDef implements RTStatement, RudiTree {
+public class StatVarDef extends RTStatement {
 
   String variable;
   String type;

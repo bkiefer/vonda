@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class UComment extends RTLeaf implements RTStatement {
+public class UComment extends RTLeaf {
 
   String comment;
   boolean containsClassName;

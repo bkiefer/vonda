@@ -12,7 +12,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class StatPropose implements RTStatement, RudiTree {
+public class StatPropose extends RTStatement {
 
   RTExpression arg;
   StatAbstractBlock block;

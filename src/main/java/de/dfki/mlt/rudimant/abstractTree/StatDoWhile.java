@@ -12,7 +12,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class StatDoWhile implements RTStatement, RudiTree {
+public class StatDoWhile extends RTStatement {
 
   RTExpression condition;
   StatAbstractBlock statblock;

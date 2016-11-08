@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class StatSetOperation implements RTStatement, RudiTree {
+public class StatSetOperation extends RTStatement {
 
   RudiTree left;
   boolean add;

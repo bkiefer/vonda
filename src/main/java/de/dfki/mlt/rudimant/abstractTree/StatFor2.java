@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class StatFor2 implements RTStatement, RudiTree {
+public class StatFor2 extends RTStatement {
 
   String varType;
   UVariable var;

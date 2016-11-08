@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class UCommentBlock implements RTStatement {
+public class UCommentBlock extends RTStatement {
 
   List<UComment> comments;
 

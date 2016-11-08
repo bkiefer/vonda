@@ -16,7 +16,6 @@ import java.util.Objects;
  */
 public class UVariable extends RTLeaf {
 
-  String type;
   String representation;
   String originClass;
   // set to the class whose attribute this variable is; null if the variable
@@ -41,11 +40,6 @@ public class UVariable extends RTLeaf {
   @Override
   public String toString() {
     return this.representation;
-  }
-
-  @Override
-  public String getType() {
-    return this.type;
   }
 
   @Override
@@ -76,10 +70,5 @@ public class UVariable extends RTLeaf {
       return false;
     }
     return true;
-  }
-
-  @Override
-  public void setType(String to) {
-    this.type = to;
   }
 }

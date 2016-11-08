@@ -13,19 +13,11 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class ExpLambda implements RudiTree, RTExpression {
+public class ExpLambda extends RTExpression {
 
   String exp;
-  String type;
-
   public ExpLambda(String exp) {
     this.exp = exp;
-  }
-
-  @Override
-  public String getType() {
-    // TODO: what's the type of a lambda expression?
-    return "Object";
   }
 
   @Override
@@ -56,10 +48,5 @@ public class ExpLambda implements RudiTree, RTExpression {
       return false;
     }
     return true;
-  }
-
-  @Override
-  public void setType(String to) {
-    this.type = to;
   }
 }

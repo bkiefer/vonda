@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class GrammarRule implements RudiTree {
+public class GrammarRule extends RudiTree {
 
   // comment label comment if_statement
   String label;

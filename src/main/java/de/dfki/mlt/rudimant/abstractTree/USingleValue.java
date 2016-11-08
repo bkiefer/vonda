@@ -21,21 +21,6 @@ public class USingleValue extends RTLeaf {
   }
 
   @Override
-  public String getType() {
-    return this.type;
-  }
-
-  /**
-   * note: this represents values like strings, ints, floats,..
-   * whose type is known at creation time and therefore shouldn't be changed
-   * @param to 
-   */
-  @Override
-  public void setType(String to) {
-    this.type = to;
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }

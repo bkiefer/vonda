@@ -18,18 +18,12 @@ import java.util.Objects;
  */
 public class UFuncCall extends RTLeaf {
 
-  String type;
   String representation;
   List<RTExpression> exps;
 
   public UFuncCall(String representation, List<RTExpression> exps) {
     this.representation = representation;
     this.exps = exps;
-  }
-
-  @Override
-  public String getType() {
-    return this.type;
   }
 
   @Override
@@ -64,10 +58,5 @@ public class UFuncCall extends RTLeaf {
       return false;
     }
     return true;
-  }
-
-  @Override
-  public void setType(String to) {
-    this.type = to;
   }
 }

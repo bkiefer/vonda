@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class ExpBoolean implements RTExpression {
+public class ExpBoolean extends RTExpression {
 
   RTExpression left;
   RTExpression right;
@@ -21,8 +21,6 @@ public class ExpBoolean implements RTExpression {
   boolean isSubsumed = false;   // <- magic part!!!
   boolean doesSubsume = false;   // <- magic part!!!
   String operator;
-  String type;
-
   String rule;
 
   String fullexp;
@@ -54,12 +52,6 @@ public class ExpBoolean implements RTExpression {
     this.notIfSubsume = notIfSubsume;
   }
 
-  @Override
-  public String getType() {
-    return type;
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
@@ -87,10 +79,5 @@ public class ExpBoolean implements RTExpression {
       return false;
     }
     return true;
-  }
-
-  @Override
-  public void setType(String to) {
-    this.type = to;
   }
 }

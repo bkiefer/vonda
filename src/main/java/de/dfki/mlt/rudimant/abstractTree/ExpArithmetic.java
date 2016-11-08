@@ -14,11 +14,10 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class ExpArithmetic implements RTExpression {
+public class ExpArithmetic extends RTExpression {
 
   RTExpression left;
   RTExpression right;
-  String type;
   String operator;
   boolean minus;
 
@@ -37,11 +36,6 @@ public class ExpArithmetic implements RTExpression {
     this.operator = operator;
     this.minus = minus;
     this.type = left.getType();
-  }
-
-  @Override
-  public String getType() {
-    return this.type;
   }
 
   @Override
@@ -81,11 +75,6 @@ public class ExpArithmetic implements RTExpression {
       return false;
     }
     return Objects.equals(this.right, other.right);
-  }
-
-  @Override
-  public void setType(String to) {
-    this.type = to;
   }
 
 }

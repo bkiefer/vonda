@@ -22,7 +22,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class GrammarFile implements RudiTree {
+public class GrammarFile extends RudiTree {
 
   // imports* (comment grammar_rule | method_declaration | statement )* comment
   List<RudiTree> rules;

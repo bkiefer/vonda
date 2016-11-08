@@ -148,7 +148,7 @@ public class VGenerationVisitor implements RudiVisitor {
   public void visitDaToken(RTExpression exp) {
     if (exp instanceof UVariable) {
       out.append(((UVariable) exp).representation);
-    } else if (exp instanceof USingleValue 
+    } else if (exp instanceof USingleValue
             && ((USingleValue)exp).type.equals("String")) {
       String s = ((USingleValue) exp).content;
       out.append("\\\"").append(s.substring(1, s.length() - 1)).append("\\\"");
@@ -713,7 +713,7 @@ public class VGenerationVisitor implements RudiVisitor {
     }
     out.append(")" + " ");
   }
-  
+
   @Override
   public void visitNode(USingleValue node) {
     if("String".equals(node.type) && this.escape){

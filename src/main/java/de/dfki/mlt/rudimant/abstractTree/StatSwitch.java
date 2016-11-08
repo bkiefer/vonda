@@ -9,7 +9,7 @@ package de.dfki.mlt.rudimant.abstractTree;
  *
  * @author anna
  */
-public class StatSwitch implements RTStatement {
+public class StatSwitch extends RTStatement {
 
   RTExpression condition;
   StatAbstractBlock switchBlock;

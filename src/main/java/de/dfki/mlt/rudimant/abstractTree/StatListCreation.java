@@ -12,7 +12,7 @@ import java.util.Objects;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class StatListCreation implements RudiTree, RTStatement {
+public class StatListCreation extends RTStatement {
 
   //RTExpression left;
   ArrayList<RTExpression> objects;

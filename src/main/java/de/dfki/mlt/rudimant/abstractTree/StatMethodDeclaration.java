@@ -14,7 +14,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class StatMethodDeclaration implements RudiTree {
+public class StatMethodDeclaration extends RudiTree {
 
   String visibility;
   String return_type;

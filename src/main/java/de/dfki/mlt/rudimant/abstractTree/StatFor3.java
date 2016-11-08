@@ -15,7 +15,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class StatFor3 implements RTStatement, RudiTree {
+public class StatFor3 extends RTStatement {
 
   List<String> variables;
   RudiTree exp;

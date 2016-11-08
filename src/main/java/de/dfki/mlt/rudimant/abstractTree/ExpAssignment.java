@@ -17,7 +17,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class ExpAssignment implements RudiTree, RTExpression {
+public class ExpAssignment extends RTExpression {
 
   String typeRight;
   RudiTree left;
@@ -93,22 +93,7 @@ public class ExpAssignment implements RudiTree, RTExpression {
     }
   }
 
-//  private void specialTest(Writer out){
-//    if(((RTExpression) right).getType() instanceof ArrayList<String>.class){
-//
-//    } else{
-//      throw new UnsupportedOperationException("The declaration of the variable "
-//              + ((UVariable) left).toString() + "\t in rule " + position
-//              + " has type mismatches:\n\t\t" + Mem.getSpecialVariableType(left.toString())
-//              + " does not match " + ((RTExpression) right).getType());
-//    }
-//  }
-  @Override
-  public String getType() {
-    return this.actualType;
-  }
-
-  @Override
+@Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
@@ -144,11 +129,6 @@ public class ExpAssignment implements RudiTree, RTExpression {
       return false;
     }
     return true;
-  }
-
-  @Override
-  public void setType(String to) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
 }

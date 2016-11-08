@@ -10,13 +10,17 @@ package de.dfki.mlt.rudimant.abstractTree;
  *
  * @author Anna Welker
  */
-public interface RTExpression extends RudiTree {
+public abstract class RTExpression extends RudiTree {
 
-  /**
-   *
-   * @return the expression's type
-   */
-  public String getType();
+  protected String type;
 
-  void setType(String to);
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String to) {
+    this.type = to;
+  }
+
+
 }

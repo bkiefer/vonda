@@ -14,7 +14,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class StatAbstractBlock implements RTStatement, RudiTree {
+public class StatAbstractBlock extends RTStatement {
 
   List<RudiTree> statblock;
   final boolean braces;

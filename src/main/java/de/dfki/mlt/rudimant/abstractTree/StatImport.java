@@ -16,7 +16,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class StatImport implements RudiTree {
+public class StatImport extends RudiTree {
 
   // IMPORT VARIABLE SEMICOLON
   String text;

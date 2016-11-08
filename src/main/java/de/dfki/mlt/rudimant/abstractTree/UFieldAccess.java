@@ -22,7 +22,6 @@ import de.dfki.mlt.rudimant.Mem;
  */
 public class UFieldAccess extends RTLeaf {
 
-  String type;
   List<RudiTree> parts;
   List<String> representation;
   boolean asked = false;
@@ -71,11 +70,6 @@ public class UFieldAccess extends RTLeaf {
   }
 
   @Override
-  public String getType() {
-    return this.type;
-  }
-
-  @Override
   public int hashCode() {
     int hash = 7;
     hash = 59 * hash + Objects.hashCode(this.representation);
@@ -98,10 +92,5 @@ public class UFieldAccess extends RTLeaf {
       return false;
     }
     return true;
-  }
-
-  @Override
-  public void setType(String to) {
-    this.type = to;
   }
 }

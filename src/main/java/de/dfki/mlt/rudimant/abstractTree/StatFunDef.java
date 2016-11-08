@@ -14,7 +14,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class StatFunDef implements RTStatement, RudiTree {
+public class StatFunDef extends RTStatement {
 
   String funcname;
   String type;

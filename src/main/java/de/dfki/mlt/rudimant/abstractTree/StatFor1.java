@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class StatFor1 implements RTStatement, RudiTree {
+public class StatFor1 extends RTStatement {
 
   ExpAssignment assignment;
   ExpBoolean condition;

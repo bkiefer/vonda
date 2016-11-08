@@ -10,14 +10,7 @@ package de.dfki.mlt.rudimant.abstractTree;
  *
  * @author Anna Welker
  */
-public abstract class RTLeaf implements RTExpression {
+public abstract class RTLeaf extends RTExpression {
 
-  /**
-   * the leaf's type
-   */
-  String type = "Object";
   String content;
-
-  @Override
-  public abstract String getType();
 }
