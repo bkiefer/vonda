@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
+import org.antlr.v4.runtime.ParserRuleContext;
+
 /**
  * all classes that can be created by the ParseTreeVisitor should implement this
  * interface, for it is the return type of the visit methods
@@ -17,4 +19,16 @@ public abstract class RudiTree {
    * visitor method
    */
   public abstract void visit(RudiVisitor v);
+
+  public RudiTree setPosition(ParserRuleContext context){
+    context.getStart().getStartIndex();
+    context.getStart().getStopIndex();
+
+    context.getStop().getStartIndex();
+    context.getStop().getStopIndex();
+
+    context.getStart().getTokenIndex();
+    context.getStop().getTokenIndex();
+    return this;
+  }
 }

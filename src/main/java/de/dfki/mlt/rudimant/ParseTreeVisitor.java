@@ -63,7 +63,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 //              ctx.getChild(i).getText());
 //      System.out.println("next one ");
     }
-    return new GrammarFile(rules);
+    return new GrammarFile(rules).setPosition(ctx);
   }
 
   @Override
