@@ -548,7 +548,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visit(ParseTree pt) {
-    // TODO setPosition?
     return pt.accept(this);
   }
 
@@ -561,26 +560,26 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitTerminal(TerminalNode tn) {
     switch (tn.getSymbol().getType()) {
       case RobotGrammarLexer.NULL:   // token is NULL
-        return new USingleValue("null", "Object");
+        return new USingleValue("null", "Object").setPosition(tn);
       case RobotGrammarLexer.TRUE:   // token is TRUE
-        return new USingleValue(tn.getText(), "boolean");
+        return new USingleValue(tn.getText(), "boolean").setPosition(tn);
       case RobotGrammarLexer.FALSE:  // token is FALSE
-        return new USingleValue(tn.getText(), "boolean");
+        return new USingleValue(tn.getText(), "boolean").setPosition(tn);
       case RobotGrammarLexer.CHARACTER:  // token is character
-        return new USingleValue(tn.getText(), "char");
+        return new USingleValue(tn.getText(), "char").setPosition(tn);
       case RobotGrammarLexer.STRING:  // token is String
-        return new USingleValue(tn.getText(), "String");
+        return new USingleValue(tn.getText(), "String").setPosition(tn);
       // An annotation is sth. like @Override (yes, it is a String as long as the
       // representation of Strings has to explicitly have a " to be put in "")
       case RobotGrammarLexer.ANNOTATION:  // token is an annotation
-        return new USingleValue(tn.getText() + "\n", "annotation");
+        return new USingleValue(tn.getText() + "\n", "annotation").setPosition(tn);
       case RobotGrammarLexer.WILDCARD:  //token is wildcard
-        return new UWildcard();
+        return new UWildcard().setPosition(tn);
       case RobotGrammarLexer.VARIABLE:  // token is variable
         String t = tn.getText();
         // t = t.replace("^", "");
         //System.out.println(currentClass);
-        return new UVariable(t, currentClass, currentTRule);
+        return new UVariable(t, currentClass, currentTRule).setPosition(tn);
       /*if (Mem.existsVariable(text)) {
           String origin = "";
           if (context.getCurrentRule().equals(Mem.getVariableOrigin(text))) {
@@ -597,12 +596,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
                   + "anywhere: " + text);
         }*/
       case RobotGrammarLexer.INT:  // token is int
-        return new USingleValue(tn.getText(), "int");
+        return new USingleValue(tn.getText(), "int").setPosition(tn);
       case RobotGrammarLexer.FLOAT:  // token is float
-        return new USingleValue(tn.getText(), "float");
+        return new USingleValue(tn.getText(), "float").setPosition(tn);
       case RobotGrammarLexer.BREAK:
       case RobotGrammarLexer.CONTINUE:
-        return new USingleValue(tn.getText(), "break/continue");
+        return new USingleValue(tn.getText(), "break/continue").setPosition(tn);
     }
     throw new UnsupportedOperationException("The terminal node for " + tn.getText()
             + ", tree type: " + tn.getSymbol().getType() + " should never be used");

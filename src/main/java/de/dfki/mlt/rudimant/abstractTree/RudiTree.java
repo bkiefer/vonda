@@ -6,6 +6,7 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
  * all classes that can be created by the ParseTreeVisitor should implement this
@@ -38,6 +39,14 @@ public abstract class RudiTree {
     positions = new int[]{
       context.getStart().getTokenIndex(),
       context.getStop().getTokenIndex()
+    };
+    return this;
+  }
+
+  public RudiTree setPosition(TerminalNode tn) {
+    positions = new int[]{
+      tn.getSymbol().getTokenIndex(),
+      tn.getSymbol().getTokenIndex()
     };
     return this;
   }
