@@ -15,6 +15,12 @@ import org.antlr.v4.runtime.ParserRuleContext;
  */
 public abstract class RudiTree {
 
+  /**
+   * positions contains the start and stop positions of a Token according to its
+   * ParserRuleContext.
+   * [0] = start of TokenIndex
+   * [1] = stop of TokenIndex
+   */
   int[] positions;
 
   /**
@@ -22,8 +28,14 @@ public abstract class RudiTree {
    */
   public abstract void visit(RudiVisitor v);
 
+  /**
+   * setPosition is used to store the start and stop position of a Token
+   * given its ParserRuleContext.
+   * @param context the ParserRuleContext.
+   * @return RudiTree
+   */
   public RudiTree setPosition(ParserRuleContext context) {
-    positions = new int[] {
+    positions = new int[]{
       context.getStart().getTokenIndex(),
       context.getStop().getTokenIndex()
     };
