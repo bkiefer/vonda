@@ -15,20 +15,18 @@ import org.antlr.v4.runtime.ParserRuleContext;
  */
 public abstract class RudiTree {
 
+  int[] positions;
+
   /**
    * visitor method
    */
   public abstract void visit(RudiVisitor v);
 
-  public RudiTree setPosition(ParserRuleContext context){
-    context.getStart().getStartIndex();
-    context.getStart().getStopIndex();
-
-    context.getStop().getStartIndex();
-    context.getStop().getStopIndex();
-
-    context.getStart().getTokenIndex();
-    context.getStop().getTokenIndex();
+  public RudiTree setPosition(ParserRuleContext context) {
+    positions = new int[] {
+      context.getStart().getTokenIndex(),
+      context.getStop().getTokenIndex()
+    };
     return this;
   }
 }
