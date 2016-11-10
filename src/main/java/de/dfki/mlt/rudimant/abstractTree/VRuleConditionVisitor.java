@@ -241,7 +241,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
           if (this.rudi.getProxy().fetchRdfClass(lastType) != null) {
             representation.add(node.representation.get(i));
             // then we are in the case that this is actually an rdf operation
-            fieldAccessPart += (".getValue(\"" + node.representation.get(i) + "\", client) ");
+            fieldAccessPart += (".getValue(\"" + node.representation.get(i) + "\") ");
             lastType = node.getPredicateType(rudi.getProxy(), mem, representation);
             continue;
           } else {

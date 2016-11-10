@@ -8,6 +8,7 @@ LabelA:
     infoslots = {"Hobby", "Age"};
     String x = infoslots[1];
     String y = a.b().c.d();
+    user.status = "test";
     String z = user.feedback.second;
     int b = c().x;
     Object y = bla.schwafel.dingsbums;
