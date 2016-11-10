@@ -90,7 +90,9 @@ public class VGenerationVisitor implements RudiVisitor {
         int i = ((UFieldAccess) node.left).representation.size();
         representation.addAll(((UFieldAccess) node.left).representation
                 .subList(0, i));
-        if (((UFieldAccess) node.left).getPredicateType(rudi.getProxy(), mem, representation)) {
+        String lefttype = ((UFieldAccess) node.left)
+                .getPredicateType(rudi.getProxy(), mem, representation);
+        if (this.rudi.getProxy().fetchRdfClass(lefttype) != null) {
           notPrintLastField = true;
           node.left.visit(this);
           out.append(".set(\"");
@@ -685,11 +687,23 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UFieldAccess node) {
+    int to = node.parts.size();
+    // TODO: this is not present in condition visitor now, should we add it?
+    if (to == 2 && node.representation.get(1).equals("new()")){
+      try {
+        // then this is a creation of a new rdf object
+        out.append("_proxy.getClass(\"" + 
+                rudi.getProxy().fetchRdfClass(node.representation.get(0)) +
+                "\");\n");
+        return;
+      } catch (TException ex) {
+        java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
+      }
+    }
     List<String> representation = new ArrayList<>();
     node.parts.get(0).visit(this);
     representation.add(node.representation.get(0));
     String lastType = ((RTExpression) (node.parts.get(0))).getType();
-    int to = node.parts.size();
     to = notPrintLastField ? to -= 1 : to;
     for (int i = 1; i < to; i++) {
       if (node.parts.get(i) instanceof UVariable) {
