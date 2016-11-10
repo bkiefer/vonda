@@ -150,8 +150,8 @@ public class VRuleConditionVisitor extends VNullVisitor {
   public void visitDaToken(StringBuilder out, RTExpression exp) {
     if (exp instanceof UVariable) {
       out.append(((UVariable) exp).representation);
-    } else if (exp instanceof USingleValue 
-            && ((USingleValue)exp).type.equals("String")) {
+    } else if (exp instanceof USingleValue
+            && ((USingleValue) exp).type.equals("String")) {
       String s = ((USingleValue) exp).content;
       out.append("\\\"").append(s.substring(1, s.length() - 1)).append("\\\"");
     } else {
@@ -345,7 +345,6 @@ public class VRuleConditionVisitor extends VNullVisitor {
             + "\"" + " " + isTrue);
     isTrue = "";
   }*/
-
   @Override
   public void visitNode(UVariable node) {
     if (node.isRdfClass) {
