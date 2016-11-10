@@ -77,18 +77,18 @@ public class VRuleConditionVisitor extends VNullVisitor {
     String function = "";
     if (node.rdf) {
       function = "RdfClass.isSubclassOf(";
-    } else {
-      function = "isSubsumed(";
-    }
+    } 
+//    else {
+//      function = "isSubsumed(";
+//    }
     if (node.isSubsumed) {
       this.lastbool = this.currentRule + this.counter++;
       collectDAs = n;
       if (node.notIfSubsume) {
         collectDAs += "!";
       }
-      collectDAs += (function);
       node.left.visit(this);
-      collectDAs += (", ");
+      collectDAs += (".isSubsumed(");
       node.right.visit(this);
       collectDAs += (")");
 
@@ -102,9 +102,8 @@ public class VRuleConditionVisitor extends VNullVisitor {
       if (node.notIfSubsume) {
         collectDAs += "!";
       }
-      collectDAs += (function);
       node.right.visit(this);
-      collectDAs += (", ");
+      collectDAs += (".isSubsumed(");
       node.left.visit(this);
       collectDAs += (")");
       this.compiledLook.put(this.lastbool, collectDAs);

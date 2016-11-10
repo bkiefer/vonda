@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
+import java.util.logging.Level;
 
 public class RudimantCompiler {
 
@@ -40,8 +41,8 @@ public class RudimantCompiler {
   // we don't want to crash in that case by turning it to uppercase and then trying to read it
   private String inputRealName;
 
-  private StringBuffer out;
-  private Writer toFile;
+//  private StringBuffer out;
+  private Writer out;
 
   private HfcDbService.Client _client;
   private RdfProxy _proxy;
@@ -63,11 +64,11 @@ public class RudimantCompiler {
   // ... and its constructor arguments, if any
   private final String constructorArgs;
 
-  public void setPackageName(String name){
+  public void setPackageName(String name) {
     this.packageName = name;
   }
 
-  public String getPackageName(){
+  public String getPackageName() {
     return this.packageName;
   }
 
@@ -116,7 +117,7 @@ public class RudimantCompiler {
     className = getClassName(topLevel);
     // subPackage.add(className);
 
-    if (packageName != null && ! packageName.isEmpty()) {
+    if (packageName != null && !packageName.isEmpty()) {
       subPackage.addAll(Arrays.asList(packageName.split("\\.")));
       rootLevel = subPackage.size() - 1;
     }
@@ -195,20 +196,29 @@ public class RudimantCompiler {
   }
 
   public RudimantCompiler append(char c) {
-    out.append(c);
+    try {
+      out.append(c);
+    } catch (IOException ex) {
+      throw new RuntimeException(ex);
+    }
     return this;
   }
 
   public RudimantCompiler append(CharSequence c) {
-    out.append(c);
+    try {
+      out.append(c);
+    } catch (IOException ex) {
+      throw new RuntimeException(ex);
+    }
     return this;
   }
 
   public void flush() throws FormatterException {
     try {
-      String formattedSource = new Formatter().formatSource(out.toString());
-      toFile.write(formattedSource);
-      toFile.flush();
+//      String formattedSource = new Formatter().formatSource(out.toString());
+//      toFile.write(formattedSource);
+//      toFile.flush();
+      out.flush();
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     }
@@ -221,7 +231,7 @@ public class RudimantCompiler {
     String classname = null;
     try {
       classname = inputRealName.substring(0, 1).toUpperCase()
-          + inputRealName.substring(1);
+              + inputRealName.substring(1);
     } catch (StringIndexOutOfBoundsException e) {
       logger.error("Could not find class name " + inputFile.getName());
     }
@@ -234,8 +244,9 @@ public class RudimantCompiler {
       // throw new IOException(outputdir + " is not a directory");
     }
     File outputFile = new File(outputdir, className + ".java");
-    toFile = Files.newBufferedWriter(outputFile.toPath());
-    out = new StringBuffer();
+//    toFile = Files.newBufferedWriter(outputFile.toPath());
+//    out = new StringBuffer();
+    out = Files.newBufferedWriter(outputFile.toPath());
 
     File inputFile = getInputFile();
     logger.info("parsing " + inputFile.getName() + " to " + outputFile);
@@ -246,21 +257,21 @@ public class RudimantCompiler {
     RobotGrammarLexer lexer = new RobotGrammarLexer(
             new ANTLRInputStream(new FileInputStream(inputFile)));
 
-    List<Integer> toCollect = Arrays.asList(new Integer[] {
-        JAVA_CODE, ONE_L_COMMENT, MULTI_L_COMMENT, NLWS
+    List<Integer> toCollect = Arrays.asList(new Integer[]{
+      JAVA_CODE, ONE_L_COMMENT, MULTI_L_COMMENT, NLWS
     });
     CollectorTokenSource collector = new CollectorTokenSource(lexer, toCollect);
 
     // initialise the parser
     RobotGrammarParser parser = new RobotGrammarParser(
-        new CommonTokenStream(collector));
+            new CommonTokenStream(collector));
 
     // create a parse tree; grammar_file is the start rule
     ParseTree tree = parser.grammar_file();
 
     // initialise the visitor that will do all the work
-    ParseTreeVisitor visitor =
-        new ParseTreeVisitor(inputRealName, collector.getCollectedTokens());
+    ParseTreeVisitor visitor
+            = new ParseTreeVisitor(inputRealName, collector.getCollectedTokens());
 
     // walk the parse tree
     RudiTree myTree = visitor.visit(tree);
@@ -291,13 +302,10 @@ public class RudimantCompiler {
     }
 
     logger.info("Done parsing " + inputFile.getName());
-    try {
       this.flush();
-    } catch (FormatterException ex) {
-      logger.warn("Could not autoformat the output; syntax may be broken");
-      toFile.write(out.toString());
-      toFile.flush();
-    }
+//      logger.warn("Could not autoformat the output; syntax may be broken");
+//      toFile.write(out.toString());
+//      toFile.flush();
   }
 
   /**
