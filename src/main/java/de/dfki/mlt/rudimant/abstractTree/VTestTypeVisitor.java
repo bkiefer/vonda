@@ -374,7 +374,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     mem.addElement(node.variable, node.type, node.position);
   }
 
-  /** push the boolean type down on the boolean exp, if it is not already */
+  /** TODO: push the boolean type down on the boolean exp, if it is not already */
   @Override
   public void visitNode(StatWhile node) {
     node.condition.visit(this);
@@ -420,7 +420,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
   }
 
-  /** Do the parameter types of the function are checked against the actual
+  /** TODO: Do the parameter types of the function are checked against the actual
    *  types? Is it necessary?
    */
   @Override
@@ -439,11 +439,15 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
   }
 
+  /** TODO: Do we have to check here if it's an RDF type?? or DialogueAct?? or is
+   *  this all clear?
+   */
   @Override
   public void visitNode(USingleValue node) {
     // nothing to test here
   }
 
+  /** TODO: Describe what's done here !! */
   @Override
   public void visitNode(UVariable node) {
     node.type = mem.getVariableType(node.representation);
@@ -486,6 +490,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     // nothing to do
   }
 
+  /** TODO: this is generation, not type computation. It does not belong here */
   private void conditionHandling(ExpBoolean node) {
     String t = node.left.getType();
     if (t == null) {
