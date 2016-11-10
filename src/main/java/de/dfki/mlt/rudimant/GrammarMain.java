@@ -67,11 +67,16 @@ public class GrammarMain {
     return new RdfProxy(client._client);
   }
 
+  @SuppressWarnings("unchecked")
   public void initCompiler()
       throws IOException, WrongFormatException, TException {
+    RdfProxy proxy = startClient();
+    if (configs.containsKey(CFG_NAME_TO_URI)) {
+      proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
+    }
     rc = new RudimantCompiler((String)configs.get(CFG_WRAPPER_CLASS),
         (String)configs.get(CFG_TARGET_CONSTRUCTOR),
-        startClient());
+        proxy);
     rc.setLog((boolean)
         (configs.get(CFG_LOG) == null ? false : configs.get(CFG_LOG)));
     rc.setThrowExceptions((boolean)configs.get(CFG_TYPE_ERROR_FATAL));

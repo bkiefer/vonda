@@ -1,3 +1,13 @@
+* Tree building
+  - Get rid of the minus field in ExpArithmetic, and treat it like negation
+    in the boolean case
+  - Rename ExpFuncOnObject to ExpMethodApplication
+  - Give the ExpFor nodes more speaking names
+
+* Type reasoning / computation
+  - Are parameter types of function declarations used for type computation?
+  - Type check of function parameters in UFuncCall ??
+
 * Dialogue Acts
   - hierarchy of DAs and Frames from the ontology with access functions
   - functionality: integrate jtfs for subsumption etc.
