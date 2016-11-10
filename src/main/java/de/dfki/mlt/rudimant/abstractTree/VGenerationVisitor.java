@@ -103,6 +103,7 @@ public class VGenerationVisitor implements RudiVisitor {
           node.right.visit(this);
           out.append(")");
           notPrintLastField = false;
+          return;
         }
       }
       node.left.visit(this);
@@ -710,7 +711,9 @@ public class VGenerationVisitor implements RudiVisitor {
     for (int i = 1; i < to; i++) {
       if (node.parts.get(i) instanceof UVariable) {
         try {
-          if (this.rudi.getProxy().fetchRdfClass(lastType) != null) {
+          // TODO: does this exclude sth we actually want to treat as rdf??
+          if (!"Object".equals(lastType) &&
+                  this.rudi.getProxy().fetchRdfClass(lastType) != null) {
             representation.add(node.representation.get(i));
             // then we are in the case that this is actually an rdf operation
             out.append(".getValue(\"" + node.representation.get(i) + "\") ");
