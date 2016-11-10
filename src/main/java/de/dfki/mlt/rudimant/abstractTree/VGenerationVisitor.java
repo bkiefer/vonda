@@ -87,15 +87,17 @@ public class VGenerationVisitor implements RudiVisitor {
         // if the second last part of the field access was an rdf, than we actually
         // want to put the right child into the database here
         List<String> representation = new ArrayList<>();
-        int i = ((UFieldAccess) node.left).representation.size();
+        int i = ((UFieldAccess) node.left).representation.size() - 1;
         representation.addAll(((UFieldAccess) node.left).representation
                 .subList(0, i));
         String lefttype = ((UFieldAccess) node.left)
                 .getPredicateType(rudi.getProxy(), mem, representation);
-        if (this.rudi.getProxy().fetchRdfClass(lefttype) != null) {
+//        if (this.rudi.getProxy().fetchRdfClass(lefttype) != null) {
+        if (lefttype != null && !lefttype.equals("Object")) {
+          // then getPredicateType found an rdf class related
           notPrintLastField = true;
           node.left.visit(this);
-          out.append(".set(\"");
+          out.append(".setValue(\"");
           out.append(((UFieldAccess) node.left).representation.get(i));
           out.append("\", ");
           node.right.visit(this);
