@@ -287,7 +287,7 @@ public class RudimantCompiler {
     logger.info("Done testing types of " + inputFile.getName());
 
     // generate the output
-    VGenerationVisitor gv = new VGenerationVisitor(this);
+    VGenerationVisitor gv = new VGenerationVisitor(this, collector.getCollectedTokens());
 
     if (myTree instanceof GrammarFile) {
       // tell the file its name (for class definition)

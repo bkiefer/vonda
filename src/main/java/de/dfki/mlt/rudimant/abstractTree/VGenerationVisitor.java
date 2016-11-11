@@ -11,10 +11,12 @@ import com.google.googlejavaformat.java.FormatterException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.antlr.v4.runtime.Token;
 
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
@@ -29,11 +31,12 @@ public class VGenerationVisitor implements RudiVisitor {
 
   public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
-  private RudimantCompiler out;
+   RudimantCompiler out;
   private RudimantCompiler rudi;
   private Mem mem;
   private VRuleConditionVisitor condV;
   private VConditionCreatorVisitor condV2;
+   LinkedList<Token> collectedTokens;
 
   // activate this bool to get double escaped String literals
   private boolean escape = false;
@@ -41,17 +44,19 @@ public class VGenerationVisitor implements RudiVisitor {
   // flag to tell the if if is a real rule if (contains the condition that was calculated)
   private String ruleIf = null;
 
-  public VGenerationVisitor(RudimantCompiler r) {
+  public VGenerationVisitor(RudimantCompiler r, LinkedList<Token> collectedTokens) {
     this.rudi = r;
     this.out = r;
     this.mem = rudi.getMem();
     condV = new VRuleConditionVisitor();
     condV2 = new VConditionCreatorVisitor();
+    this.collectedTokens = collectedTokens;
   }
+
 
   @Override
   public void visitNode(RudiTree node) {
-    node.visit(this);
+    node.visitWithComments(this);
   }
 
   @Override
@@ -61,13 +66,13 @@ public class VGenerationVisitor implements RudiVisitor {
     }
     if (node.right != null) {
       out.append("(");
-      node.left.visit(this);
+      node.left.visitWithComments(this);
       out.append(node.operator);
-      node.right.visit(this);
+      node.right.visitWithComments(this);
       out.append(")");
       return;
     }
-    node.left.visit(this);
+    node.left.visitWithComments(this);
   }
 
   boolean notPrintLastField = false;
@@ -96,19 +101,19 @@ public class VGenerationVisitor implements RudiVisitor {
         if (lefttype != null && !lefttype.equals("Object")) {
           // then getPredicateType found an rdf class related
           notPrintLastField = true;
-          node.left.visit(this);
+          node.left.visitWithComments(this);
           out.append(".setValue(\"");
           out.append(((UFieldAccess) node.left).representation.get(i));
           out.append("\", ");
-          node.right.visit(this);
+          node.right.visitWithComments(this);
           out.append(")");
           notPrintLastField = false;
           return;
         }
       }
-      node.left.visit(this);
+      node.left.visitWithComments(this);
       out.append(" = ");
-      node.right.visit(this);
+      node.right.visitWithComments(this);
 
     } catch (TException ex) {
       java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
@@ -129,37 +134,37 @@ public class VGenerationVisitor implements RudiVisitor {
     String function = "";
     if (node.rdf) {
       function = "RdfClass.isSubclassOf(";
-    } 
+    }
 //    else {
 //      function = "isSubsumed(";
 //    }
     if (node.isSubsumed) {
-      node.left.visit(this);
+      node.left.visitWithComments(this);
       out.append(".isSubsumed(");
-      node.right.visit(this);
+      node.right.visitWithComments(this);
       out.append(")");
       return;
     } else if (node.doesSubsume) {
-      node.right.visit(this);
+      node.right.visitWithComments(this);
       out.append(".isSubsumed(");
-      node.left.visit(this);
+      node.left.visitWithComments(this);
       out.append(")");
       return;
     }
     if (node.right != null) {
       out.append("(");
-      node.left.visit(this);
+      node.left.visitWithComments(this);
       out.append(" ");
       out.append(node.operator);
       out.append(" ");
-      node.right.visit(this);
+      node.right.visitWithComments(this);
       out.append(")");
       //out.context.doLog(
       //        "\"" + ret.replace('"', ' ') +  " _ resulted to \" + " + ret);
       return;
     }
 //    out.append("(");
-    node.left.visit(this);
+    node.left.visitWithComments(this);
     this.conditionHandling(node);
 //    out.append(")");
     //out.context.doLog("\"" + ret.replace('"', ' ') +  " resulted to \" + ("
@@ -198,18 +203,18 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpFuncOnObject node) {
-    node.on.visit(this);
+    node.on.visitWithComments(this);
     out.append(".");
-    node.funccall.visit(this);
+    node.funccall.visitWithComments(this);
   }
 
   @Override
   public void visitNode(ExpIf node) {
-    node.boolexp.visit(this);
+    node.boolexp.visitWithComments(this);
     out.append(" ? ");
-    node.thenexp.visit(this);
+    node.thenexp.visitWithComments(this);
     out.append(" : ");
-    node.elseexp.visit(this);
+    node.elseexp.visitWithComments(this);
   }
 
   @Override
@@ -275,11 +280,11 @@ public class VGenerationVisitor implements RudiVisitor {
         for (RudiTree e : ((StatAbstractBlock) r).statblock) {
           if (e instanceof ExpAssignment) {
             if (((ExpAssignment) e).declaration) {
-              ((ExpAssignment) e).visit(this);
+              ((ExpAssignment) e).visitWithComments(this);
               out.append(";");
             }
           } else if (e instanceof StatVarDef || e instanceof StatFunDef) {
-            e.visit(this);
+            e.visitWithComments(this);
           }
         }
       }
@@ -288,7 +293,7 @@ public class VGenerationVisitor implements RudiVisitor {
       if (r instanceof StatAbstractBlock) {
         for (RudiTree e : ((StatAbstractBlock) r).statblock) {
           if (e instanceof StatImport) {
-            r.visit(this);
+            r.visitWithComments(this);
           }
         }
       }
@@ -391,10 +396,10 @@ public class VGenerationVisitor implements RudiVisitor {
           } else if (e instanceof StatVarDef || e instanceof StatFunDef) {
             continue;
           }
-          e.visit(this);
+          e.visitWithComments(this);
         }
       } else {
-        r.visit(this);
+        r.visitWithComments(this);
       }
     }
 //    // add all the logger methods
@@ -428,7 +433,7 @@ public class VGenerationVisitor implements RudiVisitor {
       this.ruleIf = this.printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
       //mem.enterNextEnvironment();
-      node.ifstat.visit(this);
+      node.ifstat.visitWithComments(this);
       //mem.leaveEnvironment();
       out.append("}\n");
     } else {
@@ -449,7 +454,7 @@ public class VGenerationVisitor implements RudiVisitor {
 //        }
 //        out.append(")) == 0) {\n");
 //      }
-      node.ifstat.visit(this);
+      node.ifstat.visitWithComments(this);
     }
   }
 
@@ -462,11 +467,11 @@ public class VGenerationVisitor implements RudiVisitor {
     }
     for (RudiTree stat : node.statblock) {
       if (stat instanceof RTExpression) {
-        stat.visit(this);
+        stat.visitWithComments(this);
         out.append(";\n");
         break;
       }
-      stat.visit(this);
+      stat.visitWithComments(this);
     }
     if (node.braces) {
       out.append("}");
@@ -477,24 +482,24 @@ public class VGenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatDoWhile node) {
     out.append("do");
-    node.statblock.visit(this);
+    node.statblock.visitWithComments(this);
     out.append("while (");
-    node.condition.visit(this);
+    node.condition.visitWithComments(this);
     out.append(");");
   }
 
   @Override
   public void visitNode(StatFor1 node) {
     out.append("for ( ");
-    node.assignment.visit(this);
+    node.assignment.visitWithComments(this);
     out.append("; ");
-    node.condition.visit(this);
+    node.condition.visitWithComments(this);
     out.append(";");
     if (node.arithmetic != null) {
-      node.arithmetic.visit(this);
+      node.arithmetic.visitWithComments(this);
     }
     out.append(");");
-    node.statblock.visit(this);
+    node.statblock.visitWithComments(this);
   }
 
   @Override
@@ -505,23 +510,23 @@ public class VGenerationVisitor implements RudiVisitor {
       node.varType = ((RTExpression) node.exp).getType();
     }
     out.append("for (" + node.varType + " ");
-    node.var.visit(this);
+    node.var.visitWithComments(this);
     out.append(": ");
-    node.exp.visit(this);
+    node.exp.visitWithComments(this);
     out.append(") ");
-    node.statblock.visit(this);
+    node.statblock.visitWithComments(this);
   }
 
   @Override
   public void visitNode(StatFor3 node) {
     out.append("for (Object[] o : ");
-    node.exp.visit(this);
+    node.exp.visitWithComments(this);
     out.append(") {");
     int count = 0;
     for (String s : node.variables) {
       out.append("\nObject " + s + " = o[" + count++ + "]");
     }
-    node.statblock.visit(this);
+    node.statblock.visitWithComments(this);
     out.append("}");
   }
 
@@ -538,13 +543,13 @@ public class VGenerationVisitor implements RudiVisitor {
       ruleIf = null;
     } else {
       out.append("if (");
-      node.condition.visit(this);
+      node.condition.visitWithComments(this);
       out.append(") ");
     }
-    node.statblockIf.visit(this);
+    node.statblockIf.visitWithComments(this);
     if (node.statblockElse != null) {
       out.append("else");
-      node.statblockElse.visit(this);
+      node.statblockElse.visitWithComments(this);
     }
   }
 
@@ -605,16 +610,16 @@ public class VGenerationVisitor implements RudiVisitor {
     }
     ret += ")";
     out.append(ret + "\n");
-    node.block.visit(this);
+    node.block.visitWithComments(this);
     //mem.leaveEnvironment();
   }
 
   @Override
   public void visitNode(StatPropose node) {
     out.append("propose(");
-    node.arg.visit(this);
+    node.arg.visitWithComments(this);
     out.append(", new Proposal() {public void run()\n");
-    node.block.visit(this);
+    node.block.visitWithComments(this);
     out.append("});");
   }
 
@@ -638,19 +643,19 @@ public class VGenerationVisitor implements RudiVisitor {
       return;
     }
     out.append("return ");
-    node.toRet.visit(this);
+    node.toRet.visitWithComments(this);
     out.append(";\n");
   }
 
   @Override
   public void visitNode(StatSetOperation node) {
-    node.left.visit(this);
+    node.left.visitWithComments(this);
     if (node.add) {
       out.append(".add(");
     } else {
       out.append(".remove(");
     }
-    node.right.visit(this);
+    node.right.visitWithComments(this);
     out.append(");");
   }
 
@@ -662,17 +667,17 @@ public class VGenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatWhile node) {
     out.append("while (");
-    node.condition.visit(this);
+    node.condition.visitWithComments(this);
     out.append(")");
-    node.statblock.visit(this);
+    node.statblock.visitWithComments(this);
   }
 
   @Override
   public void visitNode(StatSwitch node) {
     out.append("switch (");
-    node.condition.visit(this);
+    node.condition.visitWithComments(this);
     out.append(")");
-    node.switchBlock.visit(this);
+    node.switchBlock.visitWithComments(this);
   }
 
   @Override
@@ -683,7 +688,7 @@ public class VGenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(UCommentBlock node) {
     for (UComment c : node.comments) {
-      c.visit(this);
+      c.visitWithComments(this);
       out.append("\n");
     }
   }
@@ -695,7 +700,7 @@ public class VGenerationVisitor implements RudiVisitor {
     if (to == 2 && node.representation.get(1).equals("new()")){
       try {
         // then this is a creation of a new rdf object
-        out.append("_proxy.getClass(\"" + 
+        out.append("_proxy.getClass(\"" +
                 rudi.getProxy().fetchRdfClass(node.representation.get(0)) +
                 "\");\n");
         return;
@@ -704,7 +709,7 @@ public class VGenerationVisitor implements RudiVisitor {
       }
     }
     List<String> representation = new ArrayList<>();
-    node.parts.get(0).visit(this);
+    node.parts.get(0).visitWithComments(this);
     representation.add(node.representation.get(0));
     String lastType = ((RTExpression) (node.parts.get(0))).getType();
     to = notPrintLastField ? to -= 1 : to;
@@ -727,7 +732,7 @@ public class VGenerationVisitor implements RudiVisitor {
         }
       }
       out.append(".");
-      node.parts.get(i).visit(this);
+      node.parts.get(i).visitWithComments(this);
     }
     /*out.append(node.representation.get(0));
      for (int i = 1; i < node.representation.size(); i++) {
@@ -743,7 +748,7 @@ public class VGenerationVisitor implements RudiVisitor {
   public void visitNode(UFuncCall node) {
     out.append(node.representation + "(");
     for (int i = 0; i < node.exps.size(); i++) {
-      node.exps.get(i).visit(this);
+      node.exps.get(i).visitWithComments(this);
       if (i != node.exps.size() - 1) {
         out.append(", ");
       }
