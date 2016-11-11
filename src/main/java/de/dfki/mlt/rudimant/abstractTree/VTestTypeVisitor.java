@@ -10,9 +10,8 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.thrift.TException;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -23,7 +22,7 @@ import org.slf4j.LoggerFactory;
  */
 public class VTestTypeVisitor implements RudiVisitor {
 
-  public static org.slf4j.Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
+  public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
   private RudimantCompiler rudi;
   private Mem mem;
@@ -38,6 +37,11 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.visit(this);
   }
 
+  /** If that is a binary expression, the resulting type should be the more
+   *  specific of both. If they are incompatible there should be a warning.
+   *  Maybe the type could be pushed down if there is only a non-empty type
+   *  on one branch
+   */
   @Override
   public void visitNode(ExpArithmetic node) {
     node.left.visit(this);
@@ -48,6 +52,16 @@ public class VTestTypeVisitor implements RudiVisitor {
     // assert (node.right.getType().equals(node.left.getType()));
   }
 
+  /** This has various aspects.
+   *  a) if there is a declaration, and the variable is already defined, that
+   *     should be either a warning or an error.
+   *  b) if the right side has a non-empty type
+   *     1) if the variable is defined, has it the right type? If it has no
+   *        type, set it to the type of the right side.
+   *     2) if it is not defined, define it and set type
+   *  c) if the variable has a type, and the right side has not, push it down
+   *     the right branch.
+   */
   @Override
   public void visitNode(ExpAssignment node) {
     logger.trace("Testing an assignment");
@@ -90,6 +104,12 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
   }
 
+  /** In principle the same as ExpArithmetic, with boolean only.
+   *  The one difference is that there are unary expressions which serve as
+   *  boolean expressions and later have to be turned into proper boolean
+   *  expressions, either by calling the right 0-ary method, or comparing with
+   *  zero or null.
+   */
   @Override
   public void visitNode(ExpBoolean node) {
     // System.out.println(node.fullexp);
@@ -131,21 +151,26 @@ public class VTestTypeVisitor implements RudiVisitor {
         }
       }
     } catch (TException ex) {
-      Logger.getLogger(VTestTypeVisitor.class.getName()).log(Level.SEVERE, null, ex);
+      logger.error(ex.toString());
     }
   }
 
+  /** This should have type "DialogueAct" already, which should be a constant */
   @Override
   public void visitNode(ExpDialogueAct node) {
     // no type testing needed (?)
   }
 
+  /** This should get the return type of the method */
   @Override
   public void visitNode(ExpFuncOnObject node) {
     node.on.visit(this);
     node.funccall.visit(this);
   }
 
+  /** This might push the boolean type downwards for the boolexp, but maybe
+   *  that's not necessary.
+   */
   @Override
   public void visitNode(ExpIf node) {
     node.boolexp.visit(this);
@@ -213,6 +238,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
   }
 
+  /** Make sure the boolean exp is really boolean, or transformed into one */
   @Override
   public void visitNode(StatDoWhile node) {
     node.condition.visit(this);
@@ -223,6 +249,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.statblock.visit(this);
   }
 
+  /** Same for the boolean expression here (is that the right for?) */
   @Override
   public void visitNode(StatFor1 node) {
     // TODO: this is a bit more complicated; remember the types of the variables
@@ -347,6 +374,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     mem.addElement(node.variable, node.type, node.position);
   }
 
+  /** TODO: push the boolean type down on the boolean exp, if it is not already */
   @Override
   public void visitNode(StatWhile node) {
     node.condition.visit(this);
@@ -374,7 +402,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     try {
       node.type = node.getPredicateType(rudi.getProxy(), mem, node.representation);
     } catch (TException ex) {
-      Logger.getLogger(UFieldAccess.class.getName()).log(Level.SEVERE, null, ex);
+      logger.error(ex.toString());
     }
     /*if(node.type == null){
      // then this is not an rdf node, but some composed funccall
@@ -392,6 +420,9 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
   }
 
+  /** TODO: Do the parameter types of the function are checked against the actual
+   *  types? Is it necessary?
+   */
   @Override
   public void visitNode(UFuncCall node) {
     if (node.type == null) {
@@ -408,11 +439,15 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
   }
 
+  /** TODO: Do we have to check here if it's an RDF type?? or DialogueAct?? or is
+   *  this all clear?
+   */
   @Override
   public void visitNode(USingleValue node) {
     // nothing to test here
   }
 
+  /** TODO: Describe what's done here !! */
   @Override
   public void visitNode(UVariable node) {
     node.type = mem.getVariableType(node.representation);
@@ -455,6 +490,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     // nothing to do
   }
 
+  /** TODO: this is generation, not type computation. It does not belong here */
   private void conditionHandling(ExpBoolean node) {
     String t = node.left.getType();
     if (t == null) {

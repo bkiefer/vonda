@@ -77,18 +77,18 @@ public class VRuleConditionVisitor extends VNullVisitor {
     String function = "";
     if (node.rdf) {
       function = "RdfClass.isSubclassOf(";
-    } else {
-      function = "isSubsumed(";
-    }
+    } 
+//    else {
+//      function = "isSubsumed(";
+//    }
     if (node.isSubsumed) {
       this.lastbool = this.currentRule + this.counter++;
       collectDAs = n;
       if (node.notIfSubsume) {
         collectDAs += "!";
       }
-      collectDAs += (function);
       node.left.visit(this);
-      collectDAs += (", ");
+      collectDAs += (".isSubsumed(");
       node.right.visit(this);
       collectDAs += (")");
 
@@ -102,9 +102,8 @@ public class VRuleConditionVisitor extends VNullVisitor {
       if (node.notIfSubsume) {
         collectDAs += "!";
       }
-      collectDAs += (function);
       node.right.visit(this);
-      collectDAs += (", ");
+      collectDAs += (".isSubsumed(");
       node.left.visit(this);
       collectDAs += (")");
       this.compiledLook.put(this.lastbool, collectDAs);
@@ -150,8 +149,8 @@ public class VRuleConditionVisitor extends VNullVisitor {
   public void visitDaToken(StringBuilder out, RTExpression exp) {
     if (exp instanceof UVariable) {
       out.append(((UVariable) exp).representation);
-    } else if (exp instanceof USingleValue 
-            && ((USingleValue)exp).type.equals("String")) {
+    } else if (exp instanceof USingleValue
+            && ((USingleValue) exp).type.equals("String")) {
       String s = ((USingleValue) exp).content;
       out.append("\\\"").append(s.substring(1, s.length() - 1)).append("\\\"");
     } else {
@@ -238,10 +237,12 @@ public class VRuleConditionVisitor extends VNullVisitor {
     for (int i = 1; i < node.parts.size(); i++) {
       if (node.parts.get(i) instanceof UVariable) {
         try {
-          if (this.rudi.getProxy().fetchRdfClass(lastType) != null) {
+          // TODO: does this exclude sth we actually want to treat as rdf??
+          if (!"Object".equals(lastType) &&
+                  this.rudi.getProxy().fetchRdfClass(lastType) != null) {
             representation.add(node.representation.get(i));
             // then we are in the case that this is actually an rdf operation
-            fieldAccessPart += (".getValue(\"" + node.representation.get(i) + "\", client) ");
+            fieldAccessPart += (".getValue(\"" + node.representation.get(i) + "\") ");
             lastType = node.getPredicateType(rudi.getProxy(), mem, representation);
             continue;
           } else {
@@ -345,7 +346,6 @@ public class VRuleConditionVisitor extends VNullVisitor {
             + "\"" + " " + isTrue);
     isTrue = "";
   }*/
-
   @Override
   public void visitNode(UVariable node) {
     if (node.isRdfClass) {

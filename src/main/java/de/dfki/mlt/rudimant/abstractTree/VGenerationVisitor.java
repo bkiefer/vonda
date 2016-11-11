@@ -70,6 +70,8 @@ public class VGenerationVisitor implements RudiVisitor {
     node.left.visit(this);
   }
 
+  boolean notPrintLastField = false;
+
   @Override
   public void visitNode(ExpAssignment node) {
     //System.out.println(((UVariable) left).toString());
@@ -78,16 +80,36 @@ public class VGenerationVisitor implements RudiVisitor {
     }
     // visit also the left side, it could be using another class's variable!
     // System.out.println("Generating assignment");
-    node.left.visit(this);
     try {
-      if (!node.declaration && rudi.getProxy().fetchRdfClass(node.right.getType()) != null) {
-        out.append(".set(");
-        node.right.visit(this);
-        out.append(")");
-      } else {
-        out.append(" = ");
-        node.right.visit(this);
+      if (!node.declaration && node.left instanceof UFieldAccess) {
+        //rudi.getProxy().fetchRdfClass(node.right.getType()) != null) {
+
+        // if the second last part of the field access was an rdf, than we actually
+        // want to put the right child into the database here
+        List<String> representation = new ArrayList<>();
+        int i = ((UFieldAccess) node.left).representation.size() - 1;
+        representation.addAll(((UFieldAccess) node.left).representation
+                .subList(0, i));
+        String lefttype = ((UFieldAccess) node.left)
+                .getPredicateType(rudi.getProxy(), mem, representation);
+//        if (this.rudi.getProxy().fetchRdfClass(lefttype) != null) {
+        if (lefttype != null && !lefttype.equals("Object")) {
+          // then getPredicateType found an rdf class related
+          notPrintLastField = true;
+          node.left.visit(this);
+          out.append(".setValue(\"");
+          out.append(((UFieldAccess) node.left).representation.get(i));
+          out.append("\", ");
+          node.right.visit(this);
+          out.append(")");
+          notPrintLastField = false;
+          return;
+        }
       }
+      node.left.visit(this);
+      out.append(" = ");
+      node.right.visit(this);
+
     } catch (TException ex) {
       java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
     }
@@ -107,20 +129,19 @@ public class VGenerationVisitor implements RudiVisitor {
     String function = "";
     if (node.rdf) {
       function = "RdfClass.isSubclassOf(";
-    } else {
-      function = "isSubsumed(";
-    }
+    } 
+//    else {
+//      function = "isSubsumed(";
+//    }
     if (node.isSubsumed) {
-      out.append(function);
       node.left.visit(this);
-      out.append(", ");
+      out.append(".isSubsumed(");
       node.right.visit(this);
       out.append(")");
       return;
     } else if (node.doesSubsume) {
-      out.append(function);
       node.right.visit(this);
-      out.append(", ");
+      out.append(".isSubsumed(");
       node.left.visit(this);
       out.append(")");
       return;
@@ -149,7 +170,7 @@ public class VGenerationVisitor implements RudiVisitor {
     if (exp instanceof UVariable) {
       out.append(((UVariable) exp).representation);
     } else if (exp instanceof USingleValue
-            && ((USingleValue)exp).type.equals("String")) {
+            && ((USingleValue) exp).type.equals("String")) {
       String s = ((USingleValue) exp).content;
       out.append("\\\"").append(s.substring(1, s.length() - 1)).append("\\\"");
     } else {
@@ -325,7 +346,7 @@ public class VGenerationVisitor implements RudiVisitor {
           for (String c : ncs) {
             if (c.equals(rudi.className)
                     || (c.substring(0, 1).toUpperCase()
-                    + c.substring(1)).equals(rudi.className)) {
+                            + c.substring(1)).equals(rudi.className)) {
               c = "this";
             }
             if (i == 0) {
@@ -396,10 +417,10 @@ public class VGenerationVisitor implements RudiVisitor {
       for (String n : mem.getNeededClasses(node.label)) {
         if (i == 0) {
           out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-                + n.substring(0, 1).toLowerCase() + n.substring(1));
+                  + n.substring(0, 1).toLowerCase() + n.substring(1));
         } else {
           out.append(", " + n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-                + n.substring(0, 1).toLowerCase() + n.substring(1));
+                  + n.substring(0, 1).toLowerCase() + n.substring(1));
         }
         i++;
       }
@@ -669,17 +690,33 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UFieldAccess node) {
+    int to = node.parts.size();
+    // TODO: this is not present in condition visitor now, should we add it?
+    if (to == 2 && node.representation.get(1).equals("new()")){
+      try {
+        // then this is a creation of a new rdf object
+        out.append("_proxy.getClass(\"" + 
+                rudi.getProxy().fetchRdfClass(node.representation.get(0)) +
+                "\");\n");
+        return;
+      } catch (TException ex) {
+        java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
+      }
+    }
     List<String> representation = new ArrayList<>();
     node.parts.get(0).visit(this);
     representation.add(node.representation.get(0));
     String lastType = ((RTExpression) (node.parts.get(0))).getType();
-    for (int i = 1; i < node.parts.size(); i++) {
+    to = notPrintLastField ? to -= 1 : to;
+    for (int i = 1; i < to; i++) {
       if (node.parts.get(i) instanceof UVariable) {
         try {
-          if (this.rudi.getProxy().fetchRdfClass(lastType) != null) {
+          // TODO: does this exclude sth we actually want to treat as rdf??
+          if (!"Object".equals(lastType) &&
+                  this.rudi.getProxy().fetchRdfClass(lastType) != null) {
             representation.add(node.representation.get(i));
             // then we are in the case that this is actually an rdf operation
-            out.append(".getValue(\"" + node.representation.get(i) + "\", client) ");
+            out.append(".getValue(\"" + node.representation.get(i) + "\") ");
             lastType = node.getPredicateType(rudi.getProxy(), mem, representation);
             continue;
           } else {
@@ -716,7 +753,7 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(USingleValue node) {
-    if("String".equals(node.type) && this.escape){
+    if ("String".equals(node.type) && this.escape) {
       // properly escape if needed
       out.append("\\" + node.content.substring(0, node.content.length() - 1) + "\\\"" + " ");
       return;
@@ -757,7 +794,6 @@ public class VGenerationVisitor implements RudiVisitor {
     // TODO BK: bool_exp can be a simple expression, in which case it
     // has to be turned into a comparison with zero, null or a call to
     // the has(...) method
-
     if (bool_exp instanceof USingleValue && bool_exp.getType().equals("boolean")) {
       // there isnt much we could log
 //      out.append("wholeCondition = " + ((UnaryBoolean) bool_exp).content + ";\n");

@@ -205,7 +205,7 @@ public abstract class Agent {
     if (myLast == null) {
       return false;
     }
-    DialogueAct lastDA = getLastDA();
+    DialogueAct lastDA = lastDA();
     final DialogueAct[] requests = {
         new DialogueAct("Question(Frame)"),
         new DialogueAct("Request(Frame)")
@@ -225,7 +225,7 @@ public abstract class Agent {
     return lastOccurence(da, lastDAs);
   }
 
-  public DialogueAct getLastDA() {
+  public DialogueAct lastDA() {
     DialogueAct last = lastDAs.peekFirst();
     // TODO: THIS IS NOT QUITE RIGHT. I SHOULD MARK SINGLE INCOMING DA'S AS
     // PROCESSED
@@ -249,11 +249,12 @@ public abstract class Agent {
     return newDA;
   }
 
+  // todo: RAUS!
   public boolean isLastDA(String raw) {
-    if (getLastDA() == null) {
+    if (lastDA() == null) {
       return false;
     }
-    return new DialogueAct(raw).subsumes(getLastDA());
+    return new DialogueAct(raw).subsumes(lastDA());
   }
 
   public void lastDAprocessed() {

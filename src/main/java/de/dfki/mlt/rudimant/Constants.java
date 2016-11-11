@@ -13,5 +13,7 @@ public interface Constants {
   public static final String CFG_LOG = "log";
   public static final String CFG_TARGET_CONSTRUCTOR = "targetConstructor";
   public static final String CFG_PACKAGE = "rootPackage";
+  public static final String CFG_NAME_TO_URI = "nameToURI";
+
 
 }

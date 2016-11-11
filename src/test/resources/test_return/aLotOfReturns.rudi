@@ -5,6 +5,7 @@ boolean equals(String b);
 
 LabelA:
   if (true){
+    user.status = "test";
     infoslots = {"Hobby", "Age"};
     String x = infoslots[1];
     String y = a.b().c.d();

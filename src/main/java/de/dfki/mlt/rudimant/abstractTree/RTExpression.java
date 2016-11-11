@@ -13,6 +13,7 @@ package de.dfki.mlt.rudimant.abstractTree;
 public abstract class RTExpression extends RudiTree {
 
   protected String type;
+  protected boolean isRdfType;
 
   public String getType() {
     return type;
@@ -22,5 +23,12 @@ public abstract class RTExpression extends RudiTree {
     this.type = to;
   }
 
+  public boolean isRdfType() {
+    return isRdfType;
+  }
+
+  public void setRdfType() {
+    isRdfType = true;
+  }
 
 }
