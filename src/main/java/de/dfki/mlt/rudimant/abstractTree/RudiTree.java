@@ -22,7 +22,7 @@ public abstract class RudiTree {
    * [0] = start of TokenIndex
    * [1] = stop of TokenIndex
    */
-  int[] positions;
+  public int[] positions;
 
   /**
    * visitor method

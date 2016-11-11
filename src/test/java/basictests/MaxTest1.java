@@ -15,20 +15,19 @@ import org.junit.Test;
 
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.mlt.rudimant.GrammarMain;
-import de.dfki.mlt.rudimant.TypeException;
 
 /**
  *
  * @author mawo
  */
-public class test1 {
+public class MaxTest1 {
 
   private static final String RESOURCE_DIR = "src/test/resources/";
 
 
   private String[] enterName(String filename){
     String[] name = {"-c", "src/test/resources/rudi.config.yml", "-d",
-    "src/test/resources/" + filename};
+    "src/test/resources/basic/" + filename};
 
     return name;
   }
@@ -50,6 +49,6 @@ public class test1 {
 //      "-c", "src/test/resources/rudi.config.yml", "-d",
 //      "src/test/resources/MiniTest.rudi",};
 
-    GrammarMain.main(enterName("MiniTest.rudi"));
+    GrammarMain.main(enterName("MaxTest1.rudi"));
   }
 }
