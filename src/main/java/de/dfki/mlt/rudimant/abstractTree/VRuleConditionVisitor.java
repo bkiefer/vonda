@@ -43,21 +43,11 @@ public class VRuleConditionVisitor extends VNullVisitor {
   }
 
   @Override
-  public void visitNode(RudiTree node) {
-    node.visit(this);
-  }
-
-  @Override
   public void visitNode(ExpArithmetic node) {
     node.left.visit(this);
     if (node.right != null) {
       node.right.visit(this);
     }
-  }
-
-  @Override
-  public void visitNode(ExpAssignment node) {
-    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   private String lastbool;
@@ -77,7 +67,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
     String function = "";
     if (node.rdf) {
       function = "RdfClass.isSubclassOf(";
-    } 
+    }
 //    else {
 //      function = "isSubsumed(";
 //    }
@@ -209,16 +199,6 @@ public class VRuleConditionVisitor extends VNullVisitor {
     this.compiledLook.put(this.lastbool, node.look + isTrue + " ");
     this.realLook.put(lastbool, node.look + isTrue + " ");
     isTrue = "";
-  }
-
-  @Override
-  public void visitNode(UComment node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(UCommentBlock node) {
-    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   private String fieldAccessPart = null;

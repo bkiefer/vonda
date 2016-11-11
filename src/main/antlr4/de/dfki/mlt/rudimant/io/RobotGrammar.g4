@@ -190,7 +190,7 @@ boolean_exp
 bool_and_exp
   : simple_b_exp '&&' bool_and_exp
   | simple_b_exp
-	;
+  ;
 
 simple_b_exp
   : simple_exp // will be compiled to '!= null' or '!= 0' or 'has()' ...
@@ -200,7 +200,7 @@ simple_b_exp
 // TODO: IS THIS STILL USED?
 lambda_exp: '(' (DEC_VAR? VARIABLE (',' DEC_VAR? VARIABLE)*)? ')' ARROW exp;
 
-string_expression : (simple_exp|if_exp) ( '+' exp )* ;
+string_expression : (simple_exp|if_exp) '+' exp | (simple_exp|if_exp) ;
 
 literal_or_graph_exp
   : HASH da_token '(' ( da_token ( ',' ( da_token '=' da_token) )* ) ')'
@@ -226,11 +226,13 @@ number
 
 // either a number or a term containing at least one operator
 arithmetic
-  : term ( ('-'|'+') term )*
+  : term ('-'|'+') arithmetic
+  | term
   ;
 
 term
-  : factor ( ('*'|'/'|'%') factor )*
+  : factor ('*'|'/'|'%') term
+  | factor
   ;
 
 factor

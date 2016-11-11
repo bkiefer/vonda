@@ -149,44 +149,28 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitArithmetic(RobotGrammarParser.ArithmeticContext ctx) {
-    // term ( arithmetic_lin_operator term )*
+    // term ('-'|'+') boolean_exp | term
     if (ctx.getChildCount() == 1) {
       return this.visit(ctx.getChild(0)).setPosition(ctx);
     }
-    ExpArithmetic arit = new ExpArithmetic(
-            (RTExpression) this.visit(ctx.getChild(ctx.getChildCount() - 1)),
-            null, null, false);
-    for (int i = ctx.getChildCount() - 2; i >= 0; i--) {
-      if (i % 2 == 1) {
-        arit = new ExpArithmetic(
-                new ExpArithmetic(
-                        (RTExpression) this.visit(ctx.getChild(i - 1)),
-                        null, null, false),
-                arit, ctx.getChild(i).getText(), false);
-      }
-    }
-    return arit.setPosition(ctx);
+    // 3 children
+    return new ExpArithmetic(
+        (RTExpression) this.visit(ctx.getChild(0)),
+        (RTExpression) this.visit(ctx.getChild(2)),
+        ctx.getChild(1).getText()).setPosition(ctx);
   }
 
   @Override
   public RudiTree visitTerm(RobotGrammarParser.TermContext ctx) {
-    // term ( arithmetic_lin_operator term )*
+    // factor ('*'|'/'|'%') term | factor
     if (ctx.getChildCount() == 1) {
       return this.visit(ctx.getChild(0)).setPosition(ctx);
     }
-    ExpArithmetic arit = new ExpArithmetic(
-            (RTExpression) this.visit(ctx.getChild(ctx.getChildCount() - 1)),
-            null, null, false);
-    for (int i = ctx.getChildCount() - 2; i >= 0; i--) {
-      if (i % 2 == 1) {
-        arit = new ExpArithmetic(
-                new ExpArithmetic(
-                        (RTExpression) this.visit(ctx.getChild(i - 1)),
-                        null, null, false),
-                arit, ctx.getChild(i).getText(), false);
-      }
-    }
-    return arit.setPosition(ctx);
+    // 3 children
+    return new ExpArithmetic(
+        (RTExpression) this.visit(ctx.getChild(0)),
+        (RTExpression) this.visit(ctx.getChild(2)),
+        ctx.getChild(1).getText()).setPosition(ctx);
   }
 
   @Override
@@ -197,7 +181,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     } // MINUS arithmetic
     else if (ctx.getChildCount() == 2) {
       return new ExpArithmetic(
-              (RTExpression) this.visit(ctx.getChild(1)), null, null, true).setPosition(ctx);
+              (RTExpression) this.visit(ctx.getChild(1)), null, "-").setPosition(ctx);
     } // LPAR arithmetic RPAR
     else {
       // we write a lot of nice parenthesis anyways
@@ -341,21 +325,15 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitString_expression(RobotGrammarParser.String_expressionContext ctx) {
-    // someString (PLUS someString)*
-    // TODO: stimmt das??
-    ExpArithmetic arit = new ExpArithmetic(
-            (RTExpression) this.visit(ctx.getChild(ctx.getChildCount() - 1)),
-            null, null, false);
-    for (int i = ctx.getChildCount() - 3; i >= 0; i--) {
-      if (i % 2 == 1) {
-        arit = new ExpArithmetic(
-                new ExpArithmetic(
-                        (RTExpression) this.visit(ctx.getChild(i - 1)),
-                        null, null, false),
-                arit, ctx.getChild(i).getText(), false);
-      }
+    // (simple_exp|if_exp) '+' exp | (simple_exp|if_exp)
+    if (ctx.getChildCount() == 1) {
+      return this.visit(ctx.getChild(0)).setPosition(ctx);
     }
-    return arit.setPosition(ctx);
+    // 3 children
+    return new ExpArithmetic(
+        (RTExpression) this.visit(ctx.getChild(0)),
+        (RTExpression) this.visit(ctx.getChild(2)),
+        ctx.getChild(1).getText()).setPosition(ctx);
   }
 
   @Override
@@ -421,18 +399,24 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitFor_statement(RobotGrammarParser.For_statementContext ctx) {
+    ctx.VARIABLE(0);
+
     if (ctx.getChild(3).getText().equals(":")) {
       // FOR '(' VARIABLE ':' exp ')' loop_statement_block
       // TODO: or should we check here that the type of the variable in assignment
       // is the type the iterable in exp returns? How?
       RTExpression exp = (RTExpression) this.visit(ctx.getChild(4));
-      return new StatFor2(new UVariable(ctx.getChild(2).getText(), currentClass,
-              currentTRule), exp,
-              (StatAbstractBlock) this.visit(ctx.getChild(6)), currentClass).setPosition(ctx);
+      UVariable var = new UVariable(ctx.getChild(2).getText(),
+          currentClass, currentTRule);
+      var.setPosition(ctx.VARIABLE(0));
+      return new StatFor2(var, exp,
+          (StatAbstractBlock) this.visit(ctx.getChild(6)), currentClass).setPosition(ctx);
     } else if (ctx.getChild(4).getText().equals(":")) {
+      UVariable var = new UVariable(ctx.getChild(3).getText(),
+          currentClass, currentTRule);
+      var.setPosition(ctx.VARIABLE(0));
       // FOR '(' (DEC_VAR | type_spec) VARIABLE ':' exp ')' loop_statement_block
-      return new StatFor2(ctx.getChild(2).getText(),
-              new UVariable(ctx.getChild(3).getText(), currentClass, currentTRule),
+      return new StatFor2(ctx.getChild(2).getText(), var,
               (RTExpression) this.visit(ctx.getChild(5)),
               (StatAbstractBlock) this.visit(ctx.getChild(7)), currentClass).setPosition(ctx);
     } else if (ctx.getChild(2).equals(";") || ctx.getChild(3).equals(";")) {

@@ -11,7 +11,7 @@ package de.dfki.mlt.rudimant.abstractTree;
  */
 public interface RudiVisitor {
 
-  void visitNode(RudiTree node);
+  void visitNode(RTExpression node);
 
   void visitNode(ExpArithmetic node);
 
@@ -70,7 +70,7 @@ public interface RudiVisitor {
   void visitNode(UFieldAccess node);
 
   void visitNode(UFuncCall node);
-  
+
   void visitNode(USingleValue node);
 
   void visitNode(UVariable node);

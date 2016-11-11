@@ -33,7 +33,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(RudiTree node) {
+  public void visitNode(RTExpression node) {
     node.visit(this);
   }
 
@@ -158,7 +158,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   /** This should have type "DialogueAct" already, which should be a constant */
   @Override
   public void visitNode(ExpDialogueAct node) {
-    // no type testing needed (?)
+    // no type testing needed.
   }
 
   /** This should get the return type of the method */
@@ -168,8 +168,8 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.funccall.visit(this);
   }
 
-  /** This might push the boolean type downwards for the boolexp, but maybe
-   *  that's not necessary.
+  /** This might push the boolean type downwards for the boolexp, but that's not
+   *  necessary because the bool expression already knows.
    */
   @Override
   public void visitNode(ExpIf node) {
@@ -238,7 +238,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
   }
 
-  /** Make sure the boolean exp is really boolean, or transformed into one */
+  /** condition is a boolean exp anyway, and has the right type */
   @Override
   public void visitNode(StatDoWhile node) {
     node.condition.visit(this);
@@ -249,18 +249,19 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.statblock.visit(this);
   }
 
-  /** Same for the boolean expression here (is that the right for?) */
+  /** for (a;b;c) {}, only visit the sub-parts of this. */
   @Override
   public void visitNode(StatFor1 node) {
-    // TODO: this is a bit more complicated; remember the types of the variables
-    // that were declared in the condition
-    // the assignment will add the variable to the memory
+    node.assignment.visit(this);
+    node.condition.visit(this);
+    node.arithmetic.visit(this);
+    node.statblock.visit(this);
   }
 
+  /** Short version of for, standard type: for(type a : iterable<varType>) {} */
   @Override
   public void visitNode(StatFor2 node) {
-    // TODO: this is a bit more complicated; remember the types of the variables
-    // that were declared in the condition
+    node.exp.visit(this);
     if (node.varType == null) {
       String et = node.exp.getType();
       if (et.contains("<")) {
@@ -268,8 +269,10 @@ public class VTestTypeVisitor implements RudiVisitor {
       }
     }
     mem.addElement(node.var.toString(), node.varType, node.position);
+    node.statblock.visit(this);
   }
 
+  /** short for with decomposition : for ((a,b,c) : complex_iterable) {} */
   @Override
   public void visitNode(StatFor3 node) {
     // TODO: this is a bit more complicated; remember the types of the variables
@@ -286,14 +289,11 @@ public class VTestTypeVisitor implements RudiVisitor {
             node.parameterTypes, node.position);
   }
 
+  /** Only visit children, boolean exp already has the right type */
   @Override
   public void visitNode(StatIf node) {
     node.currentRule = mem.getCurrentRule();
     node.condition.visit(this);
-    /*if (!node.condition.getType().equals("boolean")) {
-     rudi.handleTypeError("This is an if statement where the condition: "
-     + node.conditionString + ", does not resolve to boolean!");
-     }*/
     node.statblockIf.visit(this);
     if (node.statblockElse != null) {
       node.statblockElse.visit(this);
@@ -335,7 +335,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       node.listType = "List<" + node.objects.get(0).getType() + ">";
       mem.addElement(node.variableName, node.listType, node.origin);
     } else if (node.listType == null) {
-      node.listType = "Object";
+      node.listType = "List<Object>";
     }
   }
 
@@ -374,7 +374,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     mem.addElement(node.variable, node.type, node.position);
   }
 
-  /** TODO: push the boolean type down on the boolean exp, if it is not already */
+  /** boolean exp already has correct type. */
   @Override
   public void visitNode(StatWhile node) {
     node.condition.visit(this);
@@ -434,8 +434,8 @@ public class VTestTypeVisitor implements RudiVisitor {
       partypes.add(e.getType());
     }
     if (!mem.existsFunction(node.representation, partypes)) {
-      rudi.handleTypeError("The function call to " + node.representation + " referrs"
-              + " to a function that wasn't declared");
+      rudi.handleTypeError("The function call to " + node.representation +
+          " refers to a function that wasn't declared");
     }
   }
 

@@ -270,30 +270,27 @@ public class RudimantCompiler {
     ParseTree tree = parser.grammar_file();
 
     // initialise the visitor that will do all the work
-    ParseTreeVisitor visitor
-            = new ParseTreeVisitor(inputRealName, collector.getCollectedTokens());
+    ParseTreeVisitor visitor =
+        new ParseTreeVisitor(inputRealName, collector.getCollectedTokens());
 
-    // walk the parse tree
+    // create the abstract syntax tree
     RudiTree myTree = visitor.visit(tree);
 
-//    // walk the rudi tree
-//    // look for returns
-//    rm = new ReturnManagement(className);
-//    VReturnVisitor vret = new VReturnVisitor(rm);
-//    vret.visitNode(myTree);
     // do the type checking
-    VTestTypeVisitor ttv = new VTestTypeVisitor(this);
-    ttv.visitNode(myTree);
-    logger.info("Done testing types of " + inputFile.getName());
-
-    // generate the output
-    VGenerationVisitor gv = new VGenerationVisitor(this, collector.getCollectedTokens());
-
     if (myTree instanceof GrammarFile) {
+      GrammarFile gf = (GrammarFile)myTree;
+      VTestTypeVisitor ttv = new VTestTypeVisitor(this);
+      ttv.visitNode(gf);
+      logger.info("Done testing types of " + inputFile.getName());
+
+      // generate the output
+      VGenerationVisitor gv =
+          new VGenerationVisitor(this, collector.getCollectedTokens());
+
       // tell the file its name (for class definition)
-      ((GrammarFile) myTree).setClassName(className);
+      gf.setClassName(className);
       try {
-        gv.visitNode(myTree);
+        gv.visitNode(gf);
       } catch (InOutException e) {
         throw new IOException(e);
       }
@@ -302,10 +299,7 @@ public class RudimantCompiler {
     }
 
     logger.info("Done parsing " + inputFile.getName());
-      this.flush();
-//      logger.warn("Could not autoformat the output; syntax may be broken");
-//      toFile.write(out.toString());
-//      toFile.flush();
+    this.flush();
   }
 
   /**

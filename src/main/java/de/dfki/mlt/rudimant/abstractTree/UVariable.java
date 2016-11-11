@@ -5,7 +5,6 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import de.dfki.mlt.rudimant.Mem;
 import java.util.Objects;
 
 // TODO: test whether variable exists?
@@ -32,7 +31,6 @@ public class UVariable extends RTLeaf {
 
   public UVariable(String representation, String originClass, String originTRule
   ) {
-    //this.type = "Object";
     this.representation = representation;
     this.originClass = originClass;
   }
@@ -45,30 +43,5 @@ public class UVariable extends RTLeaf {
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
-  }
-
-  @Override
-  public int hashCode() {
-    int hash = 7;
-    hash = 89 * hash + Objects.hashCode(this.representation);
-    return hash;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final UVariable other = (UVariable) obj;
-    if (!Objects.equals(this.representation, other.representation)) {
-      return false;
-    }
-    return true;
   }
 }

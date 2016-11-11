@@ -14,10 +14,8 @@ import java.util.LinkedHashMap;
  */
 public class VNullVisitor implements RudiVisitor {
 
-
-  @Override
-  public void visitNode(RudiTree node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public void visitNode(RTExpression node) {
+    node.visit(this);
   }
 
   @Override
@@ -153,15 +151,12 @@ public class VNullVisitor implements RudiVisitor {
   @Override
   public void visitNode(UFieldAccess node) {
     throw new UnsupportedOperationException("Not supported yet.");
-
   }
 
   @Override
   public void visitNode(UFuncCall node) {
     throw new UnsupportedOperationException("Not supported yet.");
-
   }
-
 
   @Override
   public void visitNode(USingleValue node) {

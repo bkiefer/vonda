@@ -53,15 +53,14 @@ public class VGenerationVisitor implements RudiVisitor {
     this.collectedTokens = collectedTokens;
   }
 
-
   @Override
-  public void visitNode(RudiTree node) {
+  public void visitNode(RTExpression node) {
     node.visitWithComments(this);
   }
 
   @Override
   public void visitNode(ExpArithmetic node) {
-    if (node.minus) {
+    if (node.right == null && "-".equals(node.operator)) {
       out.append("-");
     }
     if (node.right != null) {
@@ -702,7 +701,7 @@ public class VGenerationVisitor implements RudiVisitor {
         // then this is a creation of a new rdf object
         out.append("_proxy.getClass(\"" +
                 rudi.getProxy().fetchRdfClass(node.representation.get(0)) +
-                "\");\n");
+                "\").newInstance(DEFNS);\n");
         return;
       } catch (TException ex) {
         java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);

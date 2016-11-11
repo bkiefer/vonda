@@ -39,11 +39,6 @@ public class VConditionCreatorVisitor extends VNullVisitor {
     return this.condition;
   }
 
-  @Override
-  public void visitNode(RudiTree node) {
-    node.visit(this);
-  }
-
   private boolean enteringCondition;
 
   @Override
