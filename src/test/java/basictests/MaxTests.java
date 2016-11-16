@@ -20,7 +20,7 @@ import de.dfki.mlt.rudimant.GrammarMain;
  *
  * @author mawo
  */
-public class MaxTest1 {
+public class MaxTests {
 
   private static final String RESOURCE_DIR = "src/test/resources/";
 
@@ -44,11 +44,16 @@ public class MaxTest1 {
   }
 
   @Test
-  public void miniTest() throws Exception {
+  public void maxTest1() throws Exception {
 //    String[] strings = new String[]{
 //      "-c", "src/test/resources/rudi.config.yml", "-d",
 //      "src/test/resources/MiniTest.rudi",};
 
     GrammarMain.main(enterName("MaxTest1.rudi"));
+  }
+
+  @Test
+  public void maxTest2() throws Exception {
+    GrammarMain.main(enterName("MaxTest2.rudi"));
   }
 }

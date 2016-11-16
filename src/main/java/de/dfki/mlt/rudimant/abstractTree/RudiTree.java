@@ -18,7 +18,7 @@ public abstract class RudiTree {
 
   /**
    * positions contains the start and stop positions of a Token according to its
-   * ParserRuleContext. [0] = start of TokenIndex [1] = stop of TokenIndex
+   * ParserRuleContext. [0] = start of TokenIndex, [1] = stop of TokenIndex
    */
   public int[] positions;
 
@@ -37,7 +37,12 @@ public abstract class RudiTree {
 
   private void checkComments(VGenerationVisitor v, int firstPos) {
       while (!v.collectedTokens.isEmpty() && v.collectedTokens.get(0).getTokenIndex() < firstPos) {
-        v.out.append(v.collectedTokens.get(0).getText());
+        String comment = v.collectedTokens.get(0).getText();
+        // Deal with java code
+        if(comment.startsWith("/*@")){
+          comment = comment.substring(3, comment.length()-3);
+        }
+        v.out.append(comment);
         v.collectedTokens.remove();
       }
     }
@@ -46,7 +51,7 @@ public abstract class RudiTree {
    * setPosition is used to store the start and stop position of a Token given
    * its ParserRuleContext.
    *
-   * @param context the ParserRuleContext.
+   * @param context The ParserRuleContext.
    * @return RudiTree
    */
   public RudiTree setPosition(ParserRuleContext context) {
@@ -57,6 +62,13 @@ public abstract class RudiTree {
     return this;
   }
 
+  /**
+   * setPosition is used to store the start and stop position of a Token given
+   * its ParserRuleContext.
+   *
+   * @param tn The TerminalNode
+   * @return RudiTree
+   */
   public RudiTree setPosition(TerminalNode tn) {
     positions = new int[]{
       tn.getSymbol().getTokenIndex(),

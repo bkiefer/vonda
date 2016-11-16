@@ -12,17 +12,18 @@ if (user) {
   if (! myLastDA()) {
     propose("greeting") {
       salutation = firstEncounter() ? InitialGreeting : ReturnGreeting;
+      /*multi line comment before DialogueAct*/
       DialogueAct da = emitDA(#^salutation(Meeting));
 
     ask_user_name:
       if (! user.GivenName && saidInSession(#Request(Name)) < 0) {
         // TODO: USE SAME LABELS IN GRAMMAR AND DATABASE
         // Max: ERROR? TODO: there is no Request(Name) DA!
-        // make sure the next DA is send only send out after 900ms pause
+        // make sure the next DA is only sent out after 900ms pause
         introduceDADelay(900);
         emitDA(#Request(Name));
       }
     }
   }
-// one line comment at the end before the last closing bracket
+// one line comment at the end before the last closing bracket (last bracket in rudi file)
 }
