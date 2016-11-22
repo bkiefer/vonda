@@ -5,8 +5,6 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.Objects;
-
 /**
  * this is a boolean expression; might also be a subsumes relation (but will in
  * sum always be a boolean)
@@ -17,17 +15,11 @@ public class ExpBoolean extends RTExpression {
 
   RTExpression left;
   RTExpression right;
-  boolean notIfSubsume;
-  boolean isSubsumed = false;   // <- magic part!!!
-  boolean doesSubsume = false;   // <- magic part!!!
   String operator;
   String rule;
 
   String fullexp;
-  // if the boolexp is no boolexp, type visitor should set this to the correct
-  // way of testing the existance of boolexp
-  String isTrue = "";
-  boolean testIsEmpty = false;
+
 
   // tell me whether this is not really subsumes, but rdf isSubclassOf
   boolean rdf = false;
@@ -41,43 +33,17 @@ public class ExpBoolean extends RTExpression {
    * @param operator operator in between
    */
   public ExpBoolean(String fullexp, RTExpression left,
-          RTExpression right, String operator, boolean notIfSubsume) {
+          RTExpression right, String operator) {
 //    System.out.println("Created B exp " + fullexp);
     this.left = left;
     this.right = right;
     this.operator = operator;
     this.type = "boolean";
     this.fullexp = fullexp;
-    // TODO: this seems to have become obsolete
-    this.notIfSubsume = notIfSubsume;
   }
 
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
 
-  @Override
-  public int hashCode() {
-    int hash = 3;
-    hash = 97 * hash + Objects.hashCode(this.fullexp);
-    return hash;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final ExpBoolean other = (ExpBoolean) obj;
-    if (!Objects.equals(this.fullexp, other.fullexp)) {
-      return false;
-    }
-    return true;
-  }
 }

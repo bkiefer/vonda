@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
+import static de.dfki.mlt.rudimant.Constants.*;
+
 /**
  * a special kind of the RudiTree is an expression; expressions can have types
  *
@@ -23,12 +25,26 @@ public abstract class RTExpression extends RudiTree {
     this.type = to;
   }
 
+  // Return true if this is represents an RDF type or a DialogueAct
+  // TODO: maybe has to be split up.
   public boolean isRdfType() {
     return isRdfType;
   }
 
   public void setRdfType() {
     isRdfType = true;
+  }
+
+  public boolean isComplexType() {
+    return ("String".equals(type)
+        || type.startsWith("Map")
+        || type.startsWith("Set")
+        || type.startsWith("RdfSet")
+        || type.startsWith("RdfList")
+        || (type.endsWith(">") && ! isRdfType()));
+  }
+
+  public void propagateType(String upperType) {
   }
 
 }

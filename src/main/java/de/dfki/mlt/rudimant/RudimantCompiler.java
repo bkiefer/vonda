@@ -315,7 +315,7 @@ public class RudimantCompiler {
     } else {
       // just set a warning into the logger
       //System.out.println("warning");
-      logger.warn(errorMessage);
+      logger.error(errorMessage);
     }
   }
 }

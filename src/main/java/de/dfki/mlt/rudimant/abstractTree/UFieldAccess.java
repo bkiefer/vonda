@@ -45,13 +45,13 @@ public class UFieldAccess extends RTLeaf {
    * @throws org.apache.thrift.TException
    */
   public String getPredicateType(RdfProxy proxy, Mem mem,
-          List<String> representation) throws TException {
+      List<String> representation) throws TException {
     asked = true;
     // first element of representation is type
     // everything else specifies the wanted predicate information
     String typ = mem.getVariableType(representation.get(0));
     RdfClass clazz = proxy.fetchRdfClass(typ);
-    if(clazz == null){
+    if (clazz == null){
       // then this is no rdf type; just assume/hope that it is a valid access to sth else
       // TODO: we should probably crash if we do not recognize this combination
       return "Object";
@@ -67,30 +67,5 @@ public class UFieldAccess extends RTLeaf {
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
-  }
-
-  @Override
-  public int hashCode() {
-    int hash = 7;
-    hash = 59 * hash + Objects.hashCode(this.representation);
-    return hash;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final UFieldAccess other = (UFieldAccess) obj;
-    if (!Objects.equals(this.representation, other.representation)) {
-      return false;
-    }
-    return true;
   }
 }

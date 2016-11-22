@@ -71,7 +71,10 @@ public class VRuleConditionVisitor extends VNullVisitor {
 //    else {
 //      function = "isSubsumed(";
 //    }
-    if (node.isSubsumed) {
+    /* TODO: TAKE CARE OF OPERATORS THAT START WITH "." AND END WITH "(" (BINARY)
+     * OR ")" (UNARY, LIKE '.isEmpty()')
+     *
+     if (node.isSubsumed) {
       this.lastbool = this.currentRule + this.counter++;
       collectDAs = n;
       if (node.notIfSubsume) {
@@ -101,6 +104,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
       collectDAs = null;
       return;
     }
+     */
     if (node.right != null) {
       if (!(node.operator.equals("||") || node.operator.equals("&&"))) {
 //      if (node.left.getType() == null // then this is probably an rdf
@@ -124,7 +128,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
       this.compiledLook.put(this.lastbool, n + l + node.operator + r);
       this.realLook.put(lastbool, n + l + node.operator + r);
     } else {
-      isTrue = node.isTrue + " ";
+      // isTrue = node.isTrue + " "; // TODO:EXPLAIN OR REMOVE
       node.left.visit(this);
       String l = this.lastbool;
       if ("!".equals(node.operator)) {

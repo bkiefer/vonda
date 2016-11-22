@@ -56,6 +56,8 @@ public class VConditionCreatorVisitor extends VNullVisitor {
       this.condition.append("!");
       n = "!";
     }
+    /* TODO: TAKE CARE OF OPERATORS THAT START WITH "." AND END WITH "(" (BINARY)
+     * OR ")" (UNARY, LIKE '.isEmpty()')
     if (node.doesSubsume || node.isSubsumed) {
       String subnot = "";
       if (node.notIfSubsume) {
@@ -66,6 +68,7 @@ public class VConditionCreatorVisitor extends VNullVisitor {
               + compiledLook.get(expNames[counter++]) + ";\n");
       return;
     }
+    */
     if (node.right != null) {
       //      if (node.left.getType() == null // then this is probably an rdf
       //              || !node.left.getType().equals("boolean")) {

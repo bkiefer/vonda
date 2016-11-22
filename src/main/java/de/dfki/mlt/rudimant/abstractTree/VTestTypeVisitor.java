@@ -5,11 +5,16 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
+import static de.dfki.mlt.rudimant.Constants.*;
+
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +32,17 @@ public class VTestTypeVisitor implements RudiVisitor {
   private RudimantCompiler rudi;
   private Mem mem;
 
-  public VTestTypeVisitor(RudimantCompiler rudi) {
+
+  static Map<String, Integer> typeCodes = new HashMap<>();
+  static {
+    typeCodes.put("Object", 0x1111);
+    typeCodes.put("String", 0x1);
+    typeCodes.put("double", 0x1110000);
+    typeCodes.put("float", 0x110000);
+    typeCodes.put("int", 0x10000);
+  }
+
+ public VTestTypeVisitor(RudimantCompiler rudi) {
     this.rudi = rudi;
     this.mem = rudi.getMem();
   }
@@ -35,6 +50,40 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(RTExpression node) {
     node.visit(this);
+  }
+
+  private String mergeTypes(String left, String right) {
+    // TODO:
+    // we also have to check if these are RDF types and are in a type relation.
+
+    // this should return the more specific of the two, or null if they are
+    // incompatible
+    int leftCode = typeCodes.get(left);
+    int rightCode = typeCodes.get(right);
+    int common = leftCode | rightCode;
+    if (common == leftCode) return left;
+    if (common == rightCode) return right;
+    return null;
+  }
+
+  private static ExpBoolean ensureBoolean(RTExpression ex) {
+    if (ex instanceof ExpBoolean)
+      return (ExpBoolean) ex;
+    // this is some other kind of expression, turn it into a comparison or
+    // method call returning a boolean
+    // TODO check if there's something missing for RDF types
+    if (ex.isComplexType()) {
+      return new ExpBoolean(ex + ".isEmpty()", ex, null, ".isEmpty()");
+    }
+    USingleValue right = null;
+    switch (ex.type) {
+    case "int":
+    case "float":
+    case "double": right = new USingleValue("0", ex.type); break;
+    default: right = new USingleValue("null", "Object"); break;
+    }
+    // we assume it's just an Object
+    return new ExpBoolean(ex + " != " + right, ex, right, "!=");
   }
 
   /** If that is a binary expression, the resulting type should be the more
@@ -47,9 +96,28 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.left.visit(this);
     if (node.right != null) {
       node.right.visit(this);
+
+      if (null == node.left.type) {
+        // unkown type to the left
+        if (null == node.right.type) {
+          // unknown type on both branches
+          logger.warn("Expression with unknown type: {}", node);
+        } else {
+          // propagate type from the right branch to the left
+          node.left.propagateType(node.right.type);
+        }
+      } else if (null == node.right.type) {
+        //
+        node.right.propagateType(node.left.type);
+      } else {
+        // check type compatibility
+        String type = mergeTypes(node.left.type, node.right.type);
+        if (type == null) {
+          logger.error("Incompatible types in {}: {} vs. {}", node,
+              node.left.type, node.right.type);
+        }
+      }
     }
-    // ?
-    // assert (node.right.getType().equals(node.left.getType()));
   }
 
   /** This has various aspects.
@@ -66,41 +134,34 @@ public class VTestTypeVisitor implements RudiVisitor {
   public void visitNode(ExpAssignment node) {
     logger.trace("Testing an assignment");
     node.right.visit(this);
-    if (node.declaration || (node.left instanceof UVariable
-            && !mem.variableExists(node.left.toString()))) {
-      if (node.actualType == null) {
-        node.declaration = true;
-        String t = node.right.getType();
-        boolean worked = mem.addElement(node.left.toString(),
-                t, node.position);
-        if (!worked) {
-          rudi.handleTypeError("You are trying to re-declare the variable "
-                  + node.left.toString() + ", you really shouldn't do this");
-        }
-        // do not forget to tell the variable what type we find out it is
-        ((UVariable) node.left).type = t;
-        node.actualType = t;
-        node.typeRight = t;
-        node.testTypeDecl(rudi);
-        node.position = mem.getCurrentTopRule();
-        return;
-      }
-      boolean worked = mem.addElement(node.left.toString(),
-              node.actualType, node.position);
-      if (!worked) {
-        rudi.handleTypeError("You are trying to re-declare the variable "
-                + node.left.toString() + ", you really shouldn't do this");
-      }
-      // do not forget to tell the variable what type we find out it is
-      ((UVariable) node.left).type = node.actualType;
-      node.testTypeDecl(rudi);
-      node.position = mem.getCurrentTopRule();
-//      node.left.visit(this);
+    node.left.visit(this);
+
+    if (node.actualType == null) {
+      node.actualType = node.right.type;
     } else {
-      // we have to visit the left part, too, because if this is no declaration
-      // that visit method will find out the variable type for us
-      node.left.visit(this);
-      node.testType(rudi);
+      if (node.right.type == null) {
+        node.right.propagateType(node.actualType);
+      } else {
+        if (mergeTypes(node.actualType, node.right.type) == null) {
+          rudi.handleTypeError("Declared type incompatible with expression: "
+              + node.actualType + ", " + node.right.type);
+        }
+      }
+    }
+
+    if (node.left instanceof UVariable) {
+      if (! mem.variableExists(node.left.toString())) {
+        node.declaration = true;
+        node.type = node.actualType;
+        if (node.type == null) {
+          rudi.handleTypeError("Type of variable unkown: "
+              + node.left + " in " + node);
+        }
+      } else {
+        // is this a variable declaration for an already existing variable?
+        if (node.declaration)
+          rudi.handleTypeError("Re-declaration of existing variable " + node.left);
+      }
     }
   }
 
@@ -115,44 +176,32 @@ public class VTestTypeVisitor implements RudiVisitor {
     // System.out.println(node.fullexp);
     node.rule = mem.getCurrentRule();
     node.left.visit(this);
-    if (node.right == null) {
-      this.conditionHandling(node);
+    if (node.right != null) {
+      node.right.visit(this);
+    }
+    // if one of the operands is an RDF type, or a DialogueAct, the operator has
+    // to be turned into a subsumption call
+    if (node.right.type.equals(DIALOGUE_ACT_TYPE)
+        || node.left.type.equals(DIALOGUE_ACT_TYPE)) {
+      if (node.operator.equals("<=")) {
+        node.operator = ".isSubsumed(";
+      } else if (node.operator.equals("=>")) {
+        node.operator = ".subsumes(";
+      }
       return;
     }
-    if (node.left.getType() == null) {
-      rudi.handleTypeError("expression " + node.fullexp + " could not be resolved to a type");
-      node.left.setType("Object");
-    }
-    node.right.visit(this);
-    if (node.right.getType() == null) {
-      rudi.handleTypeError("expression " + node.fullexp + " could not be resolved to a type");
-      node.right.setType("Object");
-    }
-    try {
-      if (node.operator != null && (this.rudi.getProxy().fetchRdfClass(node.left.getType()) != null)) {
-        // TODO: then this should always produce a subsumes, shouldn't it?
-//      if (node.left.getType().equals(node.right.getType())) {
-        if (node.operator.equals("<=")) {
-          node.isSubsumed = true;
-        } else if (node.operator.equals("=>")) {
-          node.doesSubsume = true;
-        }
-        if (node.left.getType().contains("Rdf")) {
-          node.rdf = true;
-        }
-//      }
-      } else if (node.operator != null) {
-        if (!node.left.getType().equals(node.right.getType())) {
-          rudi.handleTypeError(node.fullexp + " s a boolean expression with type "
-                  + node.left.getType() + " on the one and type " + node.right.getType()
-                  + " on the other hand");
-        } else {
-          node.type = "boolean";
-        }
+    // TODO THIS MIGHT NOT BE ENOUGH, E.G., IF ONE IS A RDF OBJECT AND THE OTHER
+    // IS A TYPE, WE MAYBE NEED ANOTHER FUNCTION CALL HERE
+    if (node.right.isRdfType() || node.left.isRdfType()) {
+      if (node.operator.equals("<=")) {
+        node.operator = ".isSubClassOf(";
+      } else if (node.operator.equals("=>")) {
+        node.operator = ".isSuperClassOf(";
       }
-    } catch (TException ex) {
-      logger.error(ex.toString());
+      return;
     }
+    node.left = ensureBoolean(node.left);
+    node.right = ensureBoolean(node.right);
   }
 
   /** This should have type "DialogueAct" already, which should be a constant */
@@ -174,6 +223,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(ExpIf node) {
     node.boolexp.visit(this);
+    node.boolexp = ensureBoolean(node.boolexp);
     node.thenexp.visit(this);
     node.elseexp.visit(this);
 //      rudi.handleTypeError(node.fullexp + " is an if expression where the condition does not "
@@ -216,6 +266,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(GrammarRule node) {
     mem.addRule(node.label, node.toplevel);
+    // TODO: EXPLAIN WHY THIS IS NECESSARY
     if (node.toplevel) {
       mem.enterEnvironment();
     }
@@ -227,6 +278,7 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatAbstractBlock node) {
+    // TODO: EXPLAIN WHY THIS IS NECESSARY
     if (node.braces) {
       mem.enterEnvironment();
     }
@@ -236,26 +288,6 @@ public class VTestTypeVisitor implements RudiVisitor {
     if (node.braces) {
       mem.leaveEnvironment();
     }
-  }
-
-  /** condition is a boolean exp anyway, and has the right type */
-  @Override
-  public void visitNode(StatDoWhile node) {
-    node.condition.visit(this);
-    /*if (!node.condition.getType().equals("boolean")) {
-     rudi.handleTypeError("This is a while statement where the condition does not "
-     + "resolve to boolean!");
-     }*/
-    node.statblock.visit(this);
-  }
-
-  /** for (a;b;c) {}, only visit the sub-parts of this. */
-  @Override
-  public void visitNode(StatFor1 node) {
-    node.assignment.visit(this);
-    node.condition.visit(this);
-    node.arithmetic.visit(this);
-    node.statblock.visit(this);
   }
 
   /** Short version of for, standard type: for(type a : iterable<varType>) {} */
@@ -282,24 +314,8 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
   }
 
-  @Override
-  public void visitNode(StatFunDef node) {
-    // these are not tested, just added to the memory
-    mem.addFunction(node.funcname, node.type,
-            node.parameterTypes, node.position);
-  }
 
-  /** Only visit children, boolean exp already has the right type */
-  @Override
-  public void visitNode(StatIf node) {
-    node.currentRule = mem.getCurrentRule();
-    node.condition.visit(this);
-    node.statblockIf.visit(this);
-    if (node.statblockElse != null) {
-      node.statblockElse.visit(this);
-    }
-  }
-
+  /** TODO: WHAT HAPPENS HERE? IS IT STILL NEEDED? */
   @Override
   public void visitNode(StatImport node) {
     String conargs = "";
@@ -340,8 +356,23 @@ public class VTestTypeVisitor implements RudiVisitor {
   }
 
   @Override
+  public void visitNode(StatSetOperation node) {
+    // TODO: test whether the set accepts variables of this type??
+  }
+
+  /* **********************************************************************
+   * Statements that add info to the binding table (var defs, fun defs)
+   * ********************************************************************* */
+
+  @Override
+  public void visitNode(StatVarDef node) {
+    mem.addElement(node.variable, node.type, node.position);
+  }
+
+  @Override
   public void visitNode(StatMethodDeclaration node) {
     mem.addFunction(node.name, node.return_type, node.partypes, node.position);
+    // TODO: ADD AN EXPLANATION HERE
     mem.enterEnvironment();
     if (!node.parameters.isEmpty()) {
       for (int i = 0; i < node.parameters.size(); i++) {
@@ -354,48 +385,55 @@ public class VTestTypeVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatPropose node) {
-    node.arg.visit(this);
-    node.block.visit(this);
+  public void visitNode(StatFunDef node) {
+    // these are not tested, just added to the memory
+    mem.addFunction(node.funcname, node.type,
+            node.parameterTypes, node.position);
   }
 
+  /* **********************************************************************
+   * Statements where one part must be a bool exp (if, do, while, for)
+   * where bool exp must be guaranteed
+   * ********************************************************************* */
+
+  /** visit children, ensure boolean exp */
   @Override
-  public void visitNode(StatReturn node) {
-    // nothing to do (?)
+  public void visitNode(StatIf node) {
+    node.currentRule = mem.getCurrentRule();
+    node.condition.visit(this);
+    node.statblockIf.visit(this);
+    if (node.statblockElse != null) {
+      node.statblockElse.visit(this);
+    }
+    node.condition = ensureBoolean(node.condition);
   }
 
-  @Override
-  public void visitNode(StatSetOperation node) {
-    // TODO: test whether the set accepts variables of this type??
-  }
-
-  @Override
-  public void visitNode(StatVarDef node) {
-    mem.addElement(node.variable, node.type, node.position);
-  }
-
-  /** boolean exp already has correct type. */
+  /** visit children, ensure boolean exp */
   @Override
   public void visitNode(StatWhile node) {
     node.condition.visit(this);
     node.statblock.visit(this);
+    node.condition = ensureBoolean(node.condition);
   }
 
+  /** condition is a boolean exp anyway, and has the right type */
   @Override
-  public void visitNode(StatSwitch node) {
+  public void visitNode(StatDoWhile node) {
     node.condition.visit(this);
-    node.switchBlock.visit(this);
+    node.statblock.visit(this);
+    node.condition = ensureBoolean(node.condition);
   }
 
+  /** for (a;b;c) {}, only visit the sub-parts of this. */
   @Override
-  public void visitNode(UComment node) {
-    // everything okay
+  public void visitNode(StatFor1 node) {
+    node.assignment.visit(this);
+    node.condition.visit(this);
+    node.arithmetic.visit(this);
+    node.statblock.visit(this);
+    node.condition = ensureBoolean(node.condition);
   }
 
-  @Override
-  public void visitNode(UCommentBlock node) {
-    // everything okay
-  }
 
   @Override
   public void visitNode(UFieldAccess node) {
@@ -447,14 +485,18 @@ public class VTestTypeVisitor implements RudiVisitor {
     // nothing to test here
   }
 
-  /** TODO: Describe what's done here !! */
+  /** We're trying to determine the type of a variable.
+   *  a) If the variable is already defined in another rudi file, it is fully
+   *     specified, and all type information is already stored with it.
+   *  b)
+   */
   @Override
   public void visitNode(UVariable node) {
     node.type = mem.getVariableType(node.representation);
     String o = mem.getVariableOriginClass(node.representation);
     if (o == null) {
       // the variable does not originate in another file
-//      if (node.type == null) {
+
       // is the variable an rdf type?
       try {
         if (rudi.getProxy().fetchRdfClass(node.type) != null) {
@@ -470,7 +512,7 @@ public class VTestTypeVisitor implements RudiVisitor {
         logger.error("Problem accessing database : {}", e.getMessage());
         throw new RuntimeException(e);
       }
-//      }
+
       // if not, mem either found a type or this variable wasn't declared
       if (node.type == null) {
         rudi.handleTypeError("The variable " + node.representation
@@ -485,12 +527,34 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
   }
 
+  /* **********************************************************************
+   * Nodes without special treatment
+   *
+   * ********************************************************************* */
+
   @Override
   public void visitNode(UWildcard node) {
     // nothing to do
   }
 
-  /** TODO: this is generation, not type computation. It does not belong here */
+  @Override
+  public void visitNode(StatPropose node) {
+    node.arg.visit(this);
+    node.block.visit(this);
+  }
+
+  @Override
+  public void visitNode(StatReturn node) {
+    // nothing to do (?)
+  }
+
+  @Override
+  public void visitNode(StatSwitch node) {
+    node.condition.visit(this);
+    node.switchBlock.visit(this);
+  }
+
+  /** TODO: this is generation, not type computation. It does not belong here *
   private void conditionHandling(ExpBoolean node) {
     String t = node.left.getType();
     if (t == null) {
@@ -514,5 +578,5 @@ public class VTestTypeVisitor implements RudiVisitor {
     } else {
       node.isTrue = "";
     }
-  }
+  }*/
 }

@@ -60,18 +60,25 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpArithmetic node) {
-    if (node.right == null && "-".equals(node.operator)) {
-      out.append("-");
-    }
-    if (node.right != null) {
+    if (node.right == null) {
+      // unary operator
+      // TODO: ENCAPSULATE THIS INTO TWO FUNCTIONS: isPrefixOperator() and
+      // isPostFixOperator()
+      if ("-".equals(node.operator) || "!".equals(node.operator)) {
+        out.append(node.operator);
+      }
+      out.append("(");
+      node.left.visitWithComments(this);
+      // something like .isEmpty(), which is a postfix operator
+      if (node.operator.endsWith(")")) out.append(node.operator);
+      out.append(")");
+    } else {
       out.append("(");
       node.left.visitWithComments(this);
       out.append(node.operator);
       node.right.visitWithComments(this);
       out.append(")");
-      return;
     }
-    node.left.visitWithComments(this);
   }
 
   boolean notPrintLastField = false;
@@ -137,7 +144,10 @@ public class VGenerationVisitor implements RudiVisitor {
 //    else {
 //      function = "isSubsumed(";
 //    }
-    if (node.isSubsumed) {
+    /* TODO: TAKE CARE OF OPERATORS THAT START WITH "." AND END WITH "(" (BINARY)
+     * OR ")" (UNARY, LIKE '.isEmpty()')
+     *
+     if (node.isSubsumed) {
       node.left.visitWithComments(this);
       out.append(".isSubsumed(");
       node.right.visitWithComments(this);
@@ -150,6 +160,7 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append(")");
       return;
     }
+    */
     if (node.right != null) {
       out.append("(");
       node.left.visitWithComments(this);
@@ -680,19 +691,6 @@ public class VGenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UComment node) {
-    out.append(node.comment + " ");
-  }
-
-  @Override
-  public void visitNode(UCommentBlock node) {
-    for (UComment c : node.comments) {
-      c.visitWithComments(this);
-      out.append("\n");
-    }
-  }
-
-  @Override
   public void visitNode(UFieldAccess node) {
     int to = node.parts.size();
     // TODO: this is not present in condition visitor now, should we add it?
@@ -784,8 +782,9 @@ public class VGenerationVisitor implements RudiVisitor {
     out.append("this.wildcard" + " ");   // wildcard is a local variable in resulting class
   }
 
+
   private void conditionHandling(ExpBoolean node) {
-    out.append(node.isTrue);
+    // out.append(node.isTrue); // TODO: EXPLAIN OR REMOVE
   }
 
   /**

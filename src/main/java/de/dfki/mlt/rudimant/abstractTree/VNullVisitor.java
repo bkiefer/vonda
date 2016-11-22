@@ -139,16 +139,6 @@ public class VNullVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UComment node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void visitNode(UCommentBlock node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
   public void visitNode(UFieldAccess node) {
     throw new UnsupportedOperationException("Not supported yet.");
   }

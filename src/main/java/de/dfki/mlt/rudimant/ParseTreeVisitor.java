@@ -47,7 +47,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
    * @param client
    */
   public ParseTreeVisitor(String masterFile, List<Token> commentTokens) {
-    //this.memory = new HashMap<String, AbstractType>();
     currentClass = masterFile;
   }
 
@@ -60,9 +59,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     for (int i = 0; i < ctx.getChildCount(); i++) {
       curDepth = 0;
       rules.add(this.visit(ctx.getChild(i)));
-//      System.out.println("============================================\n" +
-//              ctx.getChild(i).getText());
-//      System.out.println("next one ");
     }
     return new GrammarFile(rules).setPosition(ctx);
   }
@@ -79,20 +75,20 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | VARIABLE) VARIABLE LPAR
     // ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*) RPAR statement_block
 
-    int hasVis = ctx.getChild(3).getText().equals("(") ? 1 : 0;
+    int hasVisibilitySpec = ctx.getChild(3).getText().equals("(") ? 1 : 0;
 
     ArrayList<String> parameters = new ArrayList<>();
     ArrayList<String> partypes = new ArrayList<>();
     // get all the parameters of the function
-    for (int i = 3 + hasVis; i < ctx.getChildCount() - 2;) {
+    for (int i = 3 + hasVisibilitySpec; i < ctx.getChildCount() - 2;) {
       partypes.add(ctx.getChild(i).getText());
       parameters.add(ctx.getChild(++i).getText());
       i += 2;
     }
     return new StatMethodDeclaration(
-        (hasVis == 0 ? "" : ctx.getChild(0).getText()),
-        ctx.getChild(0 + hasVis).getText(),
-        ctx.getChild(1 + hasVis).getText(),
+        (hasVisibilitySpec == 0 ? "" : ctx.getChild(0).getText()),
+        ctx.getChild(0 + hasVisibilitySpec).getText(),
+        ctx.getChild(1 + hasVisibilitySpec).getText(),
         parameters, partypes,
         this.visit(ctx.getChild(ctx.getChildCount() - 1)),
         currentClass).setPosition(ctx);
@@ -116,7 +112,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitStatement_block(RobotGrammarParser.Statement_blockContext ctx) {
     // '{' (statement)* '}'
     List<RudiTree> statblock = new ArrayList<RudiTree>();
-    // statblock.add(this.visit(ctx.getChild(0))); // comment
     for (int i = 1; i < ctx.getChildCount() - 1; i++) {
       statblock.add(this.visit(ctx.getChild(i)));
     }
@@ -128,7 +123,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // (statement_block | (some_statement | exp SEMICOLON)))
     List<RudiTree> statblock = new ArrayList<RudiTree>();
     statblock.add(this.visit(ctx.getChild(0)));
-    // statblock.add(this.visit(ctx.getChild(1))); //COMMENT
     if (ctx.getChildCount() > 2) {
       statblock.add(this.visit(ctx.getChild(ctx.getChildCount() - 1)));
     }
@@ -141,9 +135,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     ArrayList<RTExpression> expList = new ArrayList<RTExpression>();
     for (int i = 2; i < ctx.getChildCount() - 1;) {
       expList.add((RTExpression) this.visit(ctx.getChild(i)));
-      i += 2;   // because we aren't interested in commas
+      i += 2;   // skip comma
     }
-    //throw new UnsupportedOperationException("Yay, I found a function: ");
     return new UFuncCall(ctx.getChild(0).getText(), expList).setPosition(ctx);
   }
 
@@ -243,11 +236,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     if (ctx.getChildCount() == 2) {
       // NOT simple_exp
       return new ExpBoolean(ctx.getChild(1).getText(),
-          (RTExpression) this.visit(ctx.getChild(1)), null, "!", true).setPosition(ctx);
+          (RTExpression) this.visit(ctx.getChild(1)), null, "!").setPosition(ctx);
     } else if (ctx.getChildCount() == 4) {
       // NOT LPAR boolean_exp RPAR
       return new ExpBoolean(ctx.getChild(2).getText(),
-          (RTExpression) this.visit(ctx.getChild(2)), null, "!", true).setPosition(ctx);
+          (RTExpression) this.visit(ctx.getChild(2)), null, "!").setPosition(ctx);
     }
     if (ctx.getChildCount() == 3) {
       // '(' exp ')'
@@ -269,8 +262,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
         (RTExpression) this.visit(ctx.getChild(0)),
         (RTExpression) (ctx.getChildCount() == 1 ? null : this.visit(ctx.getChild(2))),
         // comparison operator
-        (ctx.getChildCount() == 1 ? null : ctx.getChild(1).getText()),
-        false).setPosition(ctx);
+        (ctx.getChildCount() == 1 ? null : ctx.getChild(1).getText())
+        ).setPosition(ctx);
   }
 
   @Override
@@ -284,7 +277,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     return new ExpBoolean(ctx.getText(),
         (RTExpression) this.visit(ctx.getChild(0)),
         (RTExpression) this.visit(ctx.getChild(2)),
-        ctx.getChild(1).getText(), true).setPosition(ctx);
+        ctx.getChild(1).getText()).setPosition(ctx);
   }
 
   @Override
@@ -298,7 +291,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 	  return new ExpBoolean(ctx.getText(),
 	      (RTExpression) this.visit(ctx.getChild(0)),
 	      (RTExpression) this.visit(ctx.getChild(2)),
-	      ctx.getChild(1).getText(), true).setPosition(ctx);
+	      ctx.getChild(1).getText()).setPosition(ctx);
   }
 
 
@@ -308,17 +301,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     if (ctx.getChildCount() == 3) { // no declaration
       RudiTree left = this.visit(ctx.getChild(0));
       return new ExpAssignment(left,
-              (RTExpression) this.visit(ctx.getChild(2)), false, currentClass).setPosition(ctx);
+          (RTExpression) this.visit(ctx.getChild(2)), currentClass).setPosition(ctx);
     } else {  // declaration
-      if (ctx.getChild(0).getText().equals("var")) {
-        RudiTree right = this.visit(ctx.getChild(3));
-        return new ExpAssignment(this.visit(ctx.getChild(1)),
-                (RTExpression) right, true, currentClass).setPosition(ctx);
+      String declaredType = ctx.getChild(0).getText();
+      if (declaredType.equals("var")) {
+        declaredType = null;
       }
-      // now, this could be a special variable
-      String type = ctx.getChild(0).getText();
-      return new ExpAssignment(type, this.visit(ctx.getChild(1)),
-              (RTExpression) this.visit(ctx.getChild(3)), true, currentClass).setPosition(ctx);
+      return new ExpAssignment(declaredType, this.visit(ctx.getChild(1)),
+          (RTExpression) this.visit(ctx.getChild(3)), currentClass).setPosition(ctx);
     }
   }
 
@@ -452,7 +442,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitFunccall_on_object(RobotGrammarParser.Funccall_on_objectContext ctx) {
     // variable DOT function_call
-    //throw new UnsupportedOperationException("Yay, I found a function: ");
     return new ExpFuncOnObject((RTExpression) this.visit(ctx.getChild(0)),
             (RTExpression) this.visit(ctx.getChild(2)), ctx.getText().replace("^", "")).setPosition(ctx);
   }
@@ -472,21 +461,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitLambda_exp(RobotGrammarParser.Lambda_expContext ctx) {
     return new ExpLambda(ctx.getText()).setPosition(ctx);
   }
-
-  /*
-  @Override
-  public RudiTree visitComment(RobotGrammarParser.CommentContext ctx) {
-    ArrayList<UComment> comments = new ArrayList<UComment>();
-    for (int i = 0; i < ctx.getChildCount(); i++) {
-      if (ctx.getChild(i).getText().startsWith("/*@")) {
-        comments.add(new UComment(ctx.getChild(i).getText().substring(3, ctx.getChild(i).getText().length() - 3) + "\n"));
-      } else {
-        comments.add(new UComment(ctx.getChild(i).getText()));
-      }
-    }
-    return new UCommentBlock(comments);
-  }
-  */
 
   @Override
   public RudiTree visitSet_operation(RobotGrammarParser.Set_operationContext ctx) {
@@ -531,61 +505,41 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   }
 
   @Override
-  public RudiTree visit(ParseTree pt) {
-    return pt.accept(this);
+  public RudiTree visitChildren(RuleNode rn) {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
-  public RudiTree visitChildren(RuleNode rn) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  public RudiTree visitTerminal(TerminalNode tn) {
+    return visitTerminalInner(tn).setPosition(tn);
   }
 
- @Override
-  public RudiTree visitTerminal(TerminalNode tn) {
+  public RudiTree visitTerminalInner(TerminalNode tn) {
     switch (tn.getSymbol().getType()) {
       case RobotGrammarLexer.NULL:   // token is NULL
-        return new USingleValue("null", "Object").setPosition(tn);
+        return new USingleValue("null", "Object");
       case RobotGrammarLexer.TRUE:   // token is TRUE
-        return new USingleValue(tn.getText(), "boolean").setPosition(tn);
       case RobotGrammarLexer.FALSE:  // token is FALSE
-        return new USingleValue(tn.getText(), "boolean").setPosition(tn);
+        return new USingleValue(tn.getText(), "boolean");
       case RobotGrammarLexer.CHARACTER:  // token is character
-        return new USingleValue(tn.getText(), "char").setPosition(tn);
+        return new USingleValue(tn.getText(), "char");
       case RobotGrammarLexer.STRING:  // token is String
-        return new USingleValue(tn.getText(), "String").setPosition(tn);
+        return new USingleValue(tn.getText(), "String");
+      case RobotGrammarLexer.INT:  // token is int
+        return new USingleValue(tn.getText(), "int");
+      case RobotGrammarLexer.FLOAT:  // token is float
+        return new USingleValue(tn.getText(), "float");
       // An annotation is sth. like @Override (yes, it is a String as long as the
       // representation of Strings has to explicitly have a " to be put in "")
       case RobotGrammarLexer.ANNOTATION:  // token is an annotation
-        return new USingleValue(tn.getText() + "\n", "annotation").setPosition(tn);
+        return new USingleValue(tn.getText() + "\n", "annotation");
       case RobotGrammarLexer.WILDCARD:  //token is wildcard
-        return new UWildcard().setPosition(tn);
+        return new UWildcard();
       case RobotGrammarLexer.VARIABLE:  // token is variable
-        String t = tn.getText();
-        // t = t.replace("^", "");
-        //System.out.println(currentClass);
-        return new UVariable(t, currentClass, currentTRule).setPosition(tn);
-      /*if (Mem.existsVariable(text)) {
-          String origin = "";
-          if (context.getCurrentRule().equals(Mem.getVariableOrigin(text))) {
-            origin = "";
-          } else {
-            origin = context.getCurrentRule();
-          }
-          return new ALocalVar(Mem.getVariableType(text), text, origin);
-        } else if (context.isGlobalVariable(text)) {
-          return new AGlobalVar(context.getVariableType(text), text);
-        } else {
-          // TODO: find a nice exception
-          throw new UnsupportedOperationException("This variable isn't declared "
-                  + "anywhere: " + text);
-        }*/
-      case RobotGrammarLexer.INT:  // token is int
-        return new USingleValue(tn.getText(), "int").setPosition(tn);
-      case RobotGrammarLexer.FLOAT:  // token is float
-        return new USingleValue(tn.getText(), "float").setPosition(tn);
+        return new UVariable(tn.getText(), currentClass, currentTRule);
       case RobotGrammarLexer.BREAK:
       case RobotGrammarLexer.CONTINUE:
-        return new USingleValue(tn.getText(), "break/continue").setPosition(tn);
+        return new USingleValue(tn.getText(), "break/continue");
     }
     throw new UnsupportedOperationException("The terminal node for " + tn.getText()
             + ", tree type: " + tn.getSymbol().getType() + " should never be used");
@@ -593,14 +547,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitErrorNode(ErrorNode en) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   public RudiTree visitList_creation(RobotGrammarParser.List_creationContext ctx) {
     // (VARIABLE SMALLER VARIABLE GREATER)? variable ASSIGN LBRACE (VARIABLE (COMMA VARIABLE)*)? SEMICOLON
     if (ctx.getChild(1).getText().equals("=")) {
-// get all the elements to be added to the list
+      // get all the elements to be added to the list
       ArrayList<RTExpression> elements = new ArrayList<>();
       for (int i = 3; i <= ctx.getChildCount() - 2;) {
         elements.add((RTExpression) this.visit(ctx.getChild(i)));
@@ -608,7 +562,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       }
       return new StatListCreation(ctx.getChild(0).getText(), elements, currentClass).setPosition(ctx);
     } else {
-// get all the elements to be added to the list
+      // get all the elements to be added to the list
       ArrayList<RTExpression> elements = new ArrayList<>();
       for (int i = 7; i <= ctx.getChildCount() - 2;) {
         elements.add((RTExpression) this.visit(ctx.getChild(i)));
@@ -631,4 +585,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     return this.visit(ctx.getChild(ctx.getChildCount() - 1)).setPosition(ctx);
   }
 
+  @Override
+  public RudiTree visit(ParseTree pt) {
+    return pt.accept(this);
+  }
 }

@@ -213,7 +213,8 @@ da_token
   ;
 
 assignment
-  : ( (DEC_VAR | type_spec)? variable | field_access ) '=' exp
+  : ((DEC_VAR | type_spec)? variable) '=' exp
+  | field_access '=' exp
   ;
 
 number

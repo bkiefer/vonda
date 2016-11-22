@@ -8,7 +8,6 @@ package de.dfki.mlt.rudimant.abstractTree;
 import static de.dfki.mlt.rudimant.Constants.*;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * this class represents dialogue acts
@@ -21,6 +20,7 @@ public class ExpDialogueAct extends RTExpression {
   RTExpression daType;
   RTExpression proposition;
   List<RTExpression> exps;
+
   public ExpDialogueAct(RTExpression daType, RTExpression proposition,
       List<RTExpression> exps) {
     this.daType = daType;
@@ -33,30 +33,4 @@ public class ExpDialogueAct extends RTExpression {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
-
-  @Override
-  public int hashCode() {
-    int hash = 7;
-    hash = 89 * hash + Objects.hashCode(this.daType);
-    return hash;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final ExpDialogueAct other = (ExpDialogueAct) obj;
-    if (!Objects.equals(this.daType, other.daType)) {
-      return false;
-    }
-    return true;
-  }
-
 }
