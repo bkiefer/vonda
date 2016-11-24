@@ -5,7 +5,7 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.Objects;
+import java.util.Arrays;
 
 /**
  * this is an if expression, i.e., something like a ? b : c
@@ -32,28 +32,8 @@ public class ExpIf extends RTExpression {
     v.visitNode(this);
   }
 
-  @Override
-  public int hashCode() {
-    int hash = 3;
-    hash = 37 * hash + Objects.hashCode(this.fullexp);
-    return hash;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final ExpIf other = (ExpIf) obj;
-    if (!Objects.equals(this.fullexp, other.fullexp)) {
-      return false;
-    }
-    return true;
+  public Iterable<? extends RudiTree> getDtrs() {
+    RudiTree[] dtrs = { boolexp, thenexp, elseexp };
+    return Arrays.asList(dtrs);
   }
 }

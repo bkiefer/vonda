@@ -9,10 +9,7 @@ package de.dfki.mlt.rudimant.abstractTree;
  *
  * @author anna
  */
-public class StatSwitch extends RTStatement {
-
-  RTExpression condition;
-  StatAbstractBlock switchBlock;
+public class StatSwitch extends RTCondBlockStatement {
 
   /**
    * if there is no else case, set statblockElse to null
@@ -22,12 +19,11 @@ public class StatSwitch extends RTStatement {
    */
   public StatSwitch(RTExpression condition, StatAbstractBlock block) {
     this.condition = condition;
-    this.switchBlock = block;
+    this.block = block;
   }
 
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
-
 }

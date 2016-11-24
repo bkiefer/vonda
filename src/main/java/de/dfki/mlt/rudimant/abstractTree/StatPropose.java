@@ -5,7 +5,7 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.Objects;
+import java.util.Arrays;
 
 /**
  * represents a propose statement, creating a proposal
@@ -27,33 +27,8 @@ public class StatPropose extends RTStatement {
     v.visitNode(this);
   }
 
-  @Override
-  public int hashCode() {
-    int hash = 7;
-    hash = 83 * hash + Objects.hashCode(this.arg);
-    hash = 83 * hash + Objects.hashCode(this.block);
-    return hash;
+  public Iterable<? extends RudiTree> getDtrs() {
+    RudiTree[] dtrs = { arg, block };
+    return Arrays.asList(dtrs);
   }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final StatPropose other = (StatPropose) obj;
-    if (!Objects.equals(this.arg, other.arg)) {
-      return false;
-    }
-    if (!Objects.equals(this.block, other.block)) {
-      return false;
-    }
-    return true;
-  }
-
 }

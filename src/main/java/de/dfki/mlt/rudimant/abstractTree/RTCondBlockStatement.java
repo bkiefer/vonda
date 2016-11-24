@@ -5,20 +5,19 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.Collections;
+import java.util.Arrays;
 
 /**
- * the lowest, simplest nodes in the AbstractTree
+ * A statement that has a condition and a block: while, do..while, switch
  *
  * @author Anna Welker
  */
-public abstract class RTLeaf extends RTExpression {
-
-  String content;
+public abstract class RTCondBlockStatement extends RTStatement {
+  RTExpression condition;
+  StatAbstractBlock block;
 
   public Iterable<? extends RudiTree> getDtrs() {
-    return Collections.emptyList();
+    RudiTree[] dtrs = { condition, block };
+    return Arrays.asList(dtrs);
   }
-
-  public String toString() { return content; }
 }

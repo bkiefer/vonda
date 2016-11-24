@@ -5,8 +5,6 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.Objects;
-
 // TODO: test whether variable exists?
 /**
  * representation of a variable

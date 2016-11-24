@@ -372,7 +372,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatMethodDeclaration node) {
     mem.addFunction(node.name, node.return_type, node.partypes, node.position);
-    // TODO: ADD AN EXPLANATION HERE
+    // TODO: ADD AN EXPLANATION HERE: WHY ENTER A NEW ENVIRONMENT?
     mem.enterEnvironment();
     if (!node.parameters.isEmpty()) {
       for (int i = 0; i < node.parameters.size(); i++) {
@@ -380,16 +380,10 @@ public class VTestTypeVisitor implements RudiVisitor {
         mem.addElement(node.parameters.get(i), node.partypes.get(i), node.position);
       }
     }
-    node.block.visit(this);
+    if (node.block != null) node.block.visit(this);
     mem.leaveEnvironment();
   }
 
-  @Override
-  public void visitNode(StatFunDef node) {
-    // these are not tested, just added to the memory
-    mem.addFunction(node.funcname, node.type,
-            node.parameterTypes, node.position);
-  }
 
   /* **********************************************************************
    * Statements where one part must be a bool exp (if, do, while, for)
@@ -412,7 +406,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatWhile node) {
     node.condition.visit(this);
-    node.statblock.visit(this);
+    node.block.visit(this);
     node.condition = ensureBoolean(node.condition);
   }
 
@@ -420,7 +414,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatDoWhile node) {
     node.condition.visit(this);
-    node.statblock.visit(this);
+    node.block.visit(this);
     node.condition = ensureBoolean(node.condition);
   }
 
@@ -551,7 +545,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatSwitch node) {
     node.condition.visit(this);
-    node.switchBlock.visit(this);
+    node.block.visit(this);
   }
 
   /** TODO: this is generation, not type computation. It does not belong here *

@@ -5,7 +5,7 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.Objects;
+import java.util.Collections;
 
 /**
  * just to be able to deal with lambda expressions if someone should use them,
@@ -25,28 +25,7 @@ public class ExpLambda extends RTExpression {
     v.visitNode(this);
   }
 
-  @Override
-  public int hashCode() {
-    int hash = 7;
-    hash = 29 * hash + Objects.hashCode(this.exp);
-    return hash;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final ExpLambda other = (ExpLambda) obj;
-    if (!Objects.equals(this.exp, other.exp)) {
-      return false;
-    }
-    return true;
+  public Iterable<? extends RudiTree> getDtrs() {
+    return Collections.emptyList();
   }
 }

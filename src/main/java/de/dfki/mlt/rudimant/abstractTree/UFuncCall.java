@@ -6,7 +6,6 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * this is a call to a function; as field accesses are considered to be
@@ -31,32 +30,5 @@ public class UFuncCall extends RTLeaf {
     v.visitNode(this);
   }
 
-  @Override
-  public int hashCode() {
-    int hash = 7;
-    hash = 23 * hash + Objects.hashCode(this.representation);
-    hash = 23 * hash + Objects.hashCode(this.exps);
-    return hash;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final UFuncCall other = (UFuncCall) obj;
-    if (!Objects.equals(this.representation, other.representation)) {
-      return false;
-    }
-    if (!Objects.equals(this.exps, other.exps)) {
-      return false;
-    }
-    return true;
-  }
+  public Iterable<? extends RudiTree> getDtrs() { return exps; }
 }

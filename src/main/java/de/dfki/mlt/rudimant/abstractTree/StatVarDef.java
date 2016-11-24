@@ -5,7 +5,7 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.Objects;
+import java.util.Collections;
 
 /**
  * type_spec VARIABLE SEMICOLON = only to get the type of this variable into
@@ -30,33 +30,9 @@ public class StatVarDef extends RTStatement {
     v.visitNode(this);
   }
 
-  @Override
-  public int hashCode() {
-    int hash = 7;
-    hash = 17 * hash + Objects.hashCode(this.variable);
-    hash = 17 * hash + Objects.hashCode(this.type);
-    return hash;
-  }
+  public String toString() { return type + " " + variable +";"; }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final StatVarDef other = (StatVarDef) obj;
-    if (!Objects.equals(this.variable, other.variable)) {
-      return false;
-    }
-    if (!Objects.equals(this.type, other.type)) {
-      return false;
-    }
-    return true;
+  public Iterable<? extends RudiTree> getDtrs() {
+    return Collections.emptyList();
   }
-
 }

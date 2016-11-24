@@ -5,8 +5,9 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import static de.dfki.mlt.rudimant.Constants.*;
+import static de.dfki.mlt.rudimant.Constants.DIALOGUE_ACT_TYPE;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,5 +33,13 @@ public class ExpDialogueAct extends RTExpression {
 
   public void visit(RudiVisitor v) {
     v.visitNode(this);
+  }
+
+  public Iterable<? extends RudiTree> getDtrs() {
+    List<RudiTree> dtrs = new ArrayList<>();
+    dtrs.add(daType);
+    dtrs.add(proposition);
+    dtrs.addAll(exps);
+    return dtrs;
   }
 }

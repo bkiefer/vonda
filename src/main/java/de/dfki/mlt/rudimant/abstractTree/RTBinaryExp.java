@@ -5,20 +5,21 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.Collections;
+import java.util.Arrays;
 
 /**
- * the lowest, simplest nodes in the AbstractTree
+ * a special kind of the RudiTree is an expression; expressions can have types
  *
  * @author Anna Welker
  */
-public abstract class RTLeaf extends RTExpression {
+public abstract class RTBinaryExp extends RTExpression {
+  RTExpression left;
+  RTExpression right;
 
-  String content;
+  String operator;
 
   public Iterable<? extends RudiTree> getDtrs() {
-    return Collections.emptyList();
+    RudiTree[] dtrs = { left, right };
+    return Arrays.asList(dtrs);
   }
-
-  public String toString() { return content; }
 }

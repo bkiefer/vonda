@@ -89,11 +89,6 @@ public class VNullVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatFunDef node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
   public void visitNode(StatIf node) {
     throw new UnsupportedOperationException("Not supported yet.");
   }

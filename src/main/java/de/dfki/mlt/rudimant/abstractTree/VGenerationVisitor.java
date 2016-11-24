@@ -7,7 +7,6 @@ package de.dfki.mlt.rudimant.abstractTree;
 
 import de.dfki.mlt.rudimant.RudimantCompiler;
 import de.dfki.mlt.rudimant.Mem;
-import com.google.googlejavaformat.java.FormatterException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -293,7 +292,9 @@ public class VGenerationVisitor implements RudiVisitor {
               ((ExpAssignment) e).visitWithComments(this);
               out.append(";");
             }
-          } else if (e instanceof StatVarDef || e instanceof StatFunDef) {
+          } else if (e instanceof StatVarDef ||
+              (e instanceof StatMethodDeclaration &&
+                  ((StatMethodDeclaration)e).block == null)) {
             e.visitWithComments(this);
           }
         }
@@ -403,7 +404,9 @@ public class VGenerationVisitor implements RudiVisitor {
             }
           } else if (e instanceof StatImport) {
             continue;
-          } else if (e instanceof StatVarDef || e instanceof StatFunDef) {
+          } else if (e instanceof StatVarDef ||
+              (e instanceof StatMethodDeclaration &&
+                  ((StatMethodDeclaration)e).block == null)) {
             continue;
           }
           e.visitWithComments(this);
@@ -492,7 +495,7 @@ public class VGenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatDoWhile node) {
     out.append("do");
-    node.statblock.visitWithComments(this);
+    node.block.visitWithComments(this);
     out.append("while (");
     node.condition.visitWithComments(this);
     out.append(");");
@@ -541,11 +544,6 @@ public class VGenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatFunDef node) {
-    // no generation here
-  }
-
-  @Override
   public void visitNode(StatIf node) {
     if (this.ruleIf != null) {
       out.append("if (" + ruleIf + ") ");
@@ -565,14 +563,13 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatImport node) {
-    logger.info("Processing import " + node.text);
+    logger.info("Processing import " + node.content);
     try {
-      RudimantCompiler.getEmbedded(rudi).process(node.text);
+      RudimantCompiler.getEmbedded(rudi).process(node.content);
     } catch (IOException ex) {
       throw new RuntimeException(ex);
-    } catch (FormatterException ex) {
-      java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
-    } //    outs.append(node.text + ".process(");
+    }
+    //    outs.append(node.text + ".process(");
     //    Set<String> ncs = mem.getNeededClasses(node.name);
     //    if (ncs != null) {
     //      int i = 0;
@@ -619,8 +616,12 @@ public class VGenerationVisitor implements RudiVisitor {
       }
     }
     ret += ")";
+    if (node.block != null) {
+      node.block.visitWithComments(this);
+    } else {
+      out.append(';');
+    }
     out.append(ret + "\n");
-    node.block.visitWithComments(this);
     //mem.leaveEnvironment();
   }
 
@@ -679,7 +680,7 @@ public class VGenerationVisitor implements RudiVisitor {
     out.append("while (");
     node.condition.visitWithComments(this);
     out.append(")");
-    node.statblock.visitWithComments(this);
+    node.block.visitWithComments(this);
   }
 
   @Override
@@ -687,7 +688,7 @@ public class VGenerationVisitor implements RudiVisitor {
     out.append("switch (");
     node.condition.visitWithComments(this);
     out.append(")");
-    node.switchBlock.visitWithComments(this);
+    node.block.visitWithComments(this);
   }
 
   @Override

@@ -5,7 +5,7 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.Objects;
+import java.util.Collections;
 
 /**
  * a return statement; returns can be used with labels to return to the
@@ -40,33 +40,7 @@ public class StatReturn extends RTStatement {
     v.visitNode(this);
   }
 
-  @Override
-  public int hashCode() {
-    int hash = 5;
-    hash = 79 * hash + Objects.hashCode(this.toRet);
-    hash = 79 * hash + Objects.hashCode(this.lit);
-    return hash;
+  public Iterable<? extends RudiTree> getDtrs() {
+    return Collections.emptyList();
   }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final StatReturn other = (StatReturn) obj;
-    if (!Objects.equals(this.lit, other.lit)) {
-      return false;
-    }
-    if (!Objects.equals(this.toRet, other.toRet)) {
-      return false;
-    }
-    return true;
-  }
-
 }

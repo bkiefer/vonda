@@ -73,9 +73,9 @@
     </dependency>
 
     <dependency>
-      <groupId>com.google.googlejavaformat</groupId>
-      <artifactId>google-java-format</artifactId>
-      <version>1.0</version>
+      <groupId>de.dfki.mlt</groupId>
+      <artifactId>dataviz</artifactId>
+      <version>0.1-SNAPSHOT</version>
     </dependency>
 
     <dependency>

@@ -19,8 +19,6 @@ import org.apache.thrift.TException;
 import org.apache.thrift.transport.TTransportException;
 import org.yaml.snakeyaml.Yaml;
 
-import com.google.googlejavaformat.java.FormatterException;
-
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.client.HfcDbClient;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
@@ -87,7 +85,7 @@ public class GrammarMain {
   }
 
   public void process(List<String> files, File outputDirectory)
-      throws IOException, FormatterException, WrongFormatException, TException {
+      throws IOException, WrongFormatException, TException {
     if (! outputDirectory.exists()) {
       if (! outputDirectory.mkdirs()) {
         throw new IOException("Output directory could not be created: "
@@ -165,7 +163,7 @@ public class GrammarMain {
   @SuppressWarnings({"unchecked", "rawtypes"})
   public static void main(String[] args)
       throws IOException, TTransportException, FileNotFoundException,
-      WrongFormatException, TException, FormatterException {
+      WrongFormatException, TException {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 

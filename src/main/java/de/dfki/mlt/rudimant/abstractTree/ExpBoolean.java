@@ -11,11 +11,8 @@ package de.dfki.mlt.rudimant.abstractTree;
  *
  * @author Anna Welker
  */
-public class ExpBoolean extends RTExpression {
+public class ExpBoolean extends RTBinaryExp {
 
-  RTExpression left;
-  RTExpression right;
-  String operator;
   String rule;
 
   String fullexp;
@@ -45,5 +42,4 @@ public class ExpBoolean extends RTExpression {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
-
 }

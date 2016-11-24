@@ -5,7 +5,7 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.Objects;
+import java.util.Arrays;
 
 /**
  * representation of sth like a += b where a is a set and b should be added
@@ -30,37 +30,8 @@ public class StatSetOperation extends RTStatement {
     v.visitNode(this);
   }
 
-  @Override
-  public int hashCode() {
-    int hash = 7;
-    hash = 17 * hash + Objects.hashCode(this.left);
-    hash = 17 * hash + (this.add ? 1 : 0);
-    hash = 17 * hash + Objects.hashCode(this.right);
-    return hash;
+  public Iterable<? extends RudiTree> getDtrs() {
+    RudiTree[] dtrs = { left, right };
+    return Arrays.asList(dtrs);
   }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final StatSetOperation other = (StatSetOperation) obj;
-    if (this.add != other.add) {
-      return false;
-    }
-    if (!Objects.equals(this.left, other.left)) {
-      return false;
-    }
-    if (!Objects.equals(this.right, other.right)) {
-      return false;
-    }
-    return true;
-  }
-
 }

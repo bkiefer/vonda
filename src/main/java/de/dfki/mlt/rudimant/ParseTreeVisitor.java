@@ -493,7 +493,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       parnames.add(ctx.getChild(j++).getText());
       j++;
     }
-    return new StatFunDef(type, funcname, parnames, partypes, currentClass).setPosition(ctx);
+    return new StatMethodDeclaration(null, type, funcname, parnames, partypes,
+        null, currentClass).setPosition(ctx);
   }
 
   @Override

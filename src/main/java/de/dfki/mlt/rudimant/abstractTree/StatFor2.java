@@ -5,7 +5,7 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.Objects;
+import java.util.Arrays;
 
 /**
  * FOR LPAR VARIABLE COLON exp RPAR loop_statement_block a 'modern' for
@@ -48,37 +48,8 @@ public class StatFor2 extends RTStatement {
     v.visitNode(this);
   }
 
-  @Override
-  public int hashCode() {
-    int hash = 3;
-    hash = 37 * hash + Objects.hashCode(this.var);
-    hash = 37 * hash + Objects.hashCode(this.exp);
-    hash = 37 * hash + Objects.hashCode(this.statblock);
-    return hash;
+  public Iterable<? extends RudiTree> getDtrs() {
+    RudiTree[] dtrs = { var, exp, statblock };
+    return Arrays.asList(dtrs);
   }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final StatFor2 other = (StatFor2) obj;
-    if (!Objects.equals(this.var, other.var)) {
-      return false;
-    }
-    if (!Objects.equals(this.exp, other.exp)) {
-      return false;
-    }
-    if (!Objects.equals(this.statblock, other.statblock)) {
-      return false;
-    }
-    return true;
-  }
-
 }

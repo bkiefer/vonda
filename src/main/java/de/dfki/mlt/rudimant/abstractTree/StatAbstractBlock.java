@@ -6,7 +6,6 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * a class to represent a set of statements, might have curly braces or just be
@@ -29,33 +28,5 @@ public class StatAbstractBlock extends RTStatement {
     v.visitNode(this);
   }
 
-  @Override
-  public int hashCode() {
-    int hash = 3;
-    hash = 43 * hash + Objects.hashCode(this.statblock);
-    hash = 43 * hash + (this.braces ? 1 : 0);
-    return hash;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final StatAbstractBlock other = (StatAbstractBlock) obj;
-    if (this.braces != other.braces) {
-      return false;
-    }
-    if (!Objects.equals(this.statblock, other.statblock)) {
-      return false;
-    }
-    return true;
-  }
-
+  public Iterable<? extends RudiTree> getDtrs() { return statblock; }
 }

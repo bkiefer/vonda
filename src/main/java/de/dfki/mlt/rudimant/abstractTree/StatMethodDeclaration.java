@@ -6,7 +6,7 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.Arrays;
 
 /**
  * class that allows the implementation of methods in a .rudi file; we are not
@@ -41,49 +41,8 @@ public class StatMethodDeclaration extends RudiTree {
     v.visitNode(this);
   }
 
-  @Override
-  public int hashCode() {
-    int hash = 3;
-    hash = 53 * hash + Objects.hashCode(this.visibility);
-    hash = 53 * hash + Objects.hashCode(this.return_type);
-    hash = 53 * hash + Objects.hashCode(this.name);
-    hash = 53 * hash + Objects.hashCode(this.parameters);
-    hash = 53 * hash + Objects.hashCode(this.partypes);
-    hash = 53 * hash + Objects.hashCode(this.block);
-    return hash;
+  public Iterable<? extends RudiTree> getDtrs() {
+    RudiTree[] dtrs = { block };
+    return Arrays.asList(dtrs);
   }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final StatMethodDeclaration other = (StatMethodDeclaration) obj;
-    if (!Objects.equals(this.visibility, other.visibility)) {
-      return false;
-    }
-    if (!Objects.equals(this.return_type, other.return_type)) {
-      return false;
-    }
-    if (!Objects.equals(this.name, other.name)) {
-      return false;
-    }
-    if (!Objects.equals(this.parameters, other.parameters)) {
-      return false;
-    }
-    if (!Objects.equals(this.partypes, other.partypes)) {
-      return false;
-    }
-    if (!Objects.equals(this.block, other.block)) {
-      return false;
-    }
-    return true;
-  }
-
 }

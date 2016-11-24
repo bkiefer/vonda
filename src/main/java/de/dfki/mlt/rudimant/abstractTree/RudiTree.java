@@ -76,4 +76,6 @@ public abstract class RudiTree {
     };
     return this;
   }
+
+  public abstract Iterable<? extends RudiTree> getDtrs();
 }

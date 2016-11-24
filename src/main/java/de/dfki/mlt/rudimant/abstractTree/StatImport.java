@@ -5,8 +5,6 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.Objects;
-
 /**
  * represents an import statement; each import statement will cause the imported
  * .rudi file to be parsed and translated. While parsing the imported file,
@@ -16,14 +14,13 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class StatImport extends RudiTree {
+public class StatImport extends RTLeaf {
 
   // IMPORT VARIABLE SEMICOLON
-  String text;
   String name;
 
   public StatImport(String text) {
-    this.text = text;
+    this.content = text;
     if (text.contains(".")) {
       name = text.substring(text.lastIndexOf("."));
     } else {
@@ -35,30 +32,4 @@ public class StatImport extends RudiTree {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
-
-  @Override
-  public int hashCode() {
-    int hash = 7;
-    hash = 19 * hash + Objects.hashCode(this.text);
-    return hash;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final StatImport other = (StatImport) obj;
-    if (!Objects.equals(this.text, other.text)) {
-      return false;
-    }
-    return true;
-  }
-
 }

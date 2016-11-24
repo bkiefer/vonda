@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
+import java.util.Arrays;
+
 /**
  * this is either a variable declaration, or an assignment of a variable to a
  * new value. Most of the type checking rudimant currently does happens here.
@@ -49,5 +51,8 @@ public class ExpAssignment extends RTExpression {
     v.visitNode(this);
   }
 
-
+  public Iterable<? extends RudiTree> getDtrs() {
+    RudiTree[] dtrs = { left, right };
+    return Arrays.asList(dtrs);
+  }
 }

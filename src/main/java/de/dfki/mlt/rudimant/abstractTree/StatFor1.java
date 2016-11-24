@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -56,41 +57,8 @@ public class StatFor1 extends RTStatement {
     v.visitNode(this);
   }
 
-  @Override
-  public int hashCode() {
-    int hash = 3;
-    hash = 97 * hash + Objects.hashCode(this.assignment);
-    hash = 97 * hash + Objects.hashCode(this.condition);
-    hash = 97 * hash + Objects.hashCode(this.arithmetic);
-    hash = 97 * hash + Objects.hashCode(this.statblock);
-    return hash;
+  public Iterable<? extends RudiTree> getDtrs() {
+    RudiTree[] dtrs = { assignment, condition, arithmetic, statblock };
+    return Arrays.asList(dtrs);
   }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final StatFor1 other = (StatFor1) obj;
-    if (!Objects.equals(this.assignment, other.assignment)) {
-      return false;
-    }
-    if (!Objects.equals(this.condition, other.condition)) {
-      return false;
-    }
-    if (!Objects.equals(this.arithmetic, other.arithmetic)) {
-      return false;
-    }
-    if (!Objects.equals(this.statblock, other.statblock)) {
-      return false;
-    }
-    return true;
-  }
-
 }

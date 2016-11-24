@@ -5,7 +5,7 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.Objects;
+import java.util.Arrays;
 
 /**
  *
@@ -44,37 +44,8 @@ public class StatIf extends RTStatement {
     v.visitNode(this);
   }
 
-  @Override
-  public int hashCode() {
-    int hash = 7;
-    hash = 67 * hash + Objects.hashCode(this.statblockIf);
-    hash = 67 * hash + Objects.hashCode(this.statblockElse);
-    hash = 67 * hash + Objects.hashCode(this.conditionString);
-    return hash;
+  public Iterable<? extends RudiTree> getDtrs() {
+    RudiTree[] dtrs = { condition, statblockIf, statblockElse };
+    return Arrays.asList(dtrs);
   }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final StatIf other = (StatIf) obj;
-    if (!Objects.equals(this.conditionString, other.conditionString)) {
-      return false;
-    }
-    if (!Objects.equals(this.statblockIf, other.statblockIf)) {
-      return false;
-    }
-    if (!Objects.equals(this.statblockElse, other.statblockElse)) {
-      return false;
-    }
-    return true;
-  }
-
 }

@@ -5,7 +5,7 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.Objects;
+import java.util.Arrays;
 
 /**
  * represents a single grammar rule located in the .rudi file; each rule will be
@@ -32,33 +32,8 @@ public class GrammarRule extends RudiTree {
     v.visitNode(this);
   }
 
-  @Override
-  public int hashCode() {
-    int hash = 5;
-    hash = 37 * hash + Objects.hashCode(this.label);
-    hash = 37 * hash + Objects.hashCode(this.ifstat);
-    return hash;
+  public Iterable<? extends RudiTree> getDtrs() {
+    RudiTree[] dtrs = { ifstat };
+    return Arrays.asList(dtrs);
   }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final GrammarRule other = (GrammarRule) obj;
-    if (!Objects.equals(this.label, other.label)) {
-      return false;
-    }
-    if (!Objects.equals(this.ifstat, other.ifstat)) {
-      return false;
-    }
-    return true;
-  }
-
 }

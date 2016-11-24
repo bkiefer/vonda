@@ -5,8 +5,6 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.Objects;
-
 /**
  * this is an arithmetic expression with an operator, two expressions left and
  * right, and eventually if this is no complex term but a single number there is
@@ -14,11 +12,7 @@ import java.util.Objects;
  *
  * @author Anna Welker
  */
-public class ExpArithmetic extends RTExpression {
-
-  RTExpression left;
-  RTExpression right;
-  String operator;
+public class ExpArithmetic extends RTBinaryExp {
 
   /**
    * if the expression consists of only one part, set right and operator to null
@@ -28,8 +22,7 @@ public class ExpArithmetic extends RTExpression {
    * @param operator the operator in between
    * @param minus set true if there is a minus in front of the arithmetic
    */
-  public ExpArithmetic(RTExpression left,
-          RTExpression right, String operator) {
+  public ExpArithmetic(RTExpression left, RTExpression right, String operator) {
     this.left = left;
     this.right = right;
     this.operator = operator;
@@ -40,5 +33,4 @@ public class ExpArithmetic extends RTExpression {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
-
 }

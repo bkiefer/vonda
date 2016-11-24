@@ -5,8 +5,7 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.Arrays;
 
 /**
  * represents an application of a function like in a.equals(b)
@@ -35,32 +34,8 @@ public class ExpFuncOnObject extends RTExpression {
     v.visitNode(this);
   }
 
-  @Override
-  public int hashCode() {
-    int hash = 7;
-    hash = 17 * hash + Objects.hashCode(this.on);
-    hash = 17 * hash + Objects.hashCode(this.funccall);
-    return hash;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final ExpFuncOnObject other = (ExpFuncOnObject) obj;
-    if (!Objects.equals(this.on, other.on)) {
-      return false;
-    }
-    if (!Objects.equals(this.funccall, other.funccall)) {
-      return false;
-    }
-    return true;
+  public Iterable<? extends RudiTree> getDtrs() {
+    RudiTree[] dtrs = { on, funccall };
+    return Arrays.asList(dtrs);
   }
 }

@@ -6,7 +6,6 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  *
@@ -40,33 +39,7 @@ public class StatListCreation extends RTStatement {
     v.visitNode(this);
   }
 
-  @Override
-  public int hashCode() {
-    int hash = 7;
-    hash = 17 * hash + Objects.hashCode(this.objects);
-    hash = 17 * hash + Objects.hashCode(this.variableName);
-    return hash;
+  public Iterable<? extends RudiTree> getDtrs() {
+    return objects;
   }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final StatListCreation other = (StatListCreation) obj;
-    if (!Objects.equals(this.variableName, other.variableName)) {
-      return false;
-    }
-    if (!Objects.equals(this.objects, other.objects)) {
-      return false;
-    }
-    return true;
-  }
-
 }

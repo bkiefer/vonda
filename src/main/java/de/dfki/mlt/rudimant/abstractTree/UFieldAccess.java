@@ -6,7 +6,6 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.thrift.TException;
 
@@ -68,4 +67,6 @@ public class UFieldAccess extends RTLeaf {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+
+  public Iterable<? extends RudiTree> getDtrs() { return parts; }
 }

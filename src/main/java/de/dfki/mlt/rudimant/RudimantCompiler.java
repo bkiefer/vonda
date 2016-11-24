@@ -1,31 +1,32 @@
 package de.dfki.mlt.rudimant;
 
-import static de.dfki.mlt.rudimant.Constants.*;
+import static de.dfki.mlt.rudimant.Constants.RULES_FILE_EXTENSION;
 import static de.dfki.mlt.rudimant.io.RobotGrammarParser.*;
 
-import de.dfki.lt.hfc.db.HfcDbService;
-import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.mlt.rudimant.abstractTree.VGenerationVisitor;
-import de.dfki.mlt.rudimant.abstractTree.GrammarFile;
-import de.dfki.mlt.rudimant.abstractTree.RudiTree;
-import de.dfki.mlt.rudimant.abstractTree.VTestTypeVisitor;
-import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
-import de.dfki.mlt.rudimant.io.RobotGrammarParser;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.googlejavaformat.java.Formatter;
-import com.google.googlejavaformat.java.FormatterException;
-import java.util.logging.Level;
+
+import de.dfki.lt.hfc.db.HfcDbService;
+import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import de.dfki.mlt.rudimant.abstractTree.GrammarFile;
+import de.dfki.mlt.rudimant.abstractTree.RudiTree;
+import de.dfki.mlt.rudimant.abstractTree.VGenerationVisitor;
+import de.dfki.mlt.rudimant.abstractTree.VTestTypeVisitor;
+import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
+import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 
 public class RudimantCompiler {
 
@@ -44,7 +45,6 @@ public class RudimantCompiler {
 //  private StringBuffer out;
   private Writer out;
 
-  private HfcDbService.Client _client;
   private RdfProxy _proxy;
 
   private Mem mem;
@@ -111,7 +111,7 @@ public class RudimantCompiler {
     return result;
   }
 
-  public void process(File topLevel, File outputdir) throws IOException, FormatterException {
+  public void process(File topLevel, File outputdir) throws IOException {
     inputDirectory = topLevel.getParentFile();
     outputDirectory = outputdir;
     className = getClassName(topLevel);
@@ -124,11 +124,11 @@ public class RudimantCompiler {
     processForReal(getOutputDirectory());
   }
 
-  public void process(File topLevel) throws IOException, FormatterException {
+  public void process(File topLevel) throws IOException {
     process(topLevel, topLevel.getParentFile());
   }
 
-  public void process(String importSpec) throws IOException, FormatterException {
+  public void process(String importSpec) throws IOException {
     inputDirectory = parent.inputDirectory;
     outputDirectory = parent.outputDirectory;
 
@@ -213,7 +213,7 @@ public class RudimantCompiler {
     return this;
   }
 
-  public void flush() throws FormatterException {
+  public void flush() {
     try {
 //      String formattedSource = new Formatter().formatSource(out.toString());
 //      toFile.write(formattedSource);
@@ -238,7 +238,7 @@ public class RudimantCompiler {
     return classname;
   }
 
-  private void processForReal(File outputdir) throws IOException, FormatterException {
+  private void processForReal(File outputdir) throws IOException {
     if (!outputdir.isDirectory()) {
       Files.createDirectories(outputdir.toPath());
       // throw new IOException(outputdir + " is not a directory");
