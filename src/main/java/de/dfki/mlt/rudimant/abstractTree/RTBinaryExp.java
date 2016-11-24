@@ -19,7 +19,9 @@ public abstract class RTBinaryExp extends RTExpression {
   String operator;
 
   public Iterable<? extends RudiTree> getDtrs() {
-    RudiTree[] dtrs = { left, right };
-    return Arrays.asList(dtrs);
+    return Arrays.asList(
+        (right != null)
+        ? new RudiTree[]{ left, right }
+        : new RudiTree[]{ left });
   }
 }

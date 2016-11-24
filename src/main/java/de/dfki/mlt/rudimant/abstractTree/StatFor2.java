@@ -18,10 +18,10 @@ public class StatFor2 extends RTStatement {
   String varType;
   UVariable var;
   RTExpression exp;
-  StatAbstractBlock statblock;
+  RTStatement statblock;
   String position;
 
-  public StatFor2(UVariable var, RTExpression exp, StatAbstractBlock statblock,
+  public StatFor2(UVariable var, RTExpression exp, RTStatement statblock,
           String position) {
     this.var = var;
     this.exp = exp;
@@ -31,7 +31,7 @@ public class StatFor2 extends RTStatement {
   }
 
   public StatFor2(String varType, UVariable var, RTExpression exp,
-          StatAbstractBlock statblock, String position) {
+          RTStatement statblock, String position) {
     this.var = var;
     this.exp = exp;
     this.statblock = statblock;

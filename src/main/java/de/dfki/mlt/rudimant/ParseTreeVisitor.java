@@ -8,6 +8,7 @@ package de.dfki.mlt.rudimant;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -23,7 +24,6 @@ import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_groupContext;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_labelContext;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_statementContext;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
-import org.antlr.v4.runtime.RuleContext;
 
 /**
  *
@@ -120,13 +120,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitStatement(RobotGrammarParser.StatementContext ctx) {
-    // (statement_block | (some_statement | exp SEMICOLON)))
-    List<RudiTree> statblock = new ArrayList<RudiTree>();
-    statblock.add(this.visit(ctx.getChild(0)));
-    if (ctx.getChildCount() > 2) {
-      statblock.add(this.visit(ctx.getChild(ctx.getChildCount() - 1)));
-    }
-    return new StatAbstractBlock(statblock, false).setPosition(ctx);
+    return this.visit(ctx.getChild(0)).setPosition(ctx);
   }
 
   @Override
@@ -140,30 +134,35 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     return new UFuncCall(ctx.getChild(0).getText(), expList).setPosition(ctx);
   }
 
+  private RudiTree arithExp(ParserRuleContext ctx) {
+    RudiTree result;
+    if (ctx.getChildCount() == 1) {
+      result = this.visit(ctx.getChild(0));
+    } else { // 3 children
+      result = new ExpArithmetic(
+          (RTExpression) this.visit(ctx.getChild(0)),
+          (RTExpression) this.visit(ctx.getChild(2)),
+          ctx.getChild(1).getText());
+    }
+    return result.setPosition(ctx);
+  }
+
   @Override
   public RudiTree visitArithmetic(RobotGrammarParser.ArithmeticContext ctx) {
     // term ('-'|'+') boolean_exp | term
-    if (ctx.getChildCount() == 1) {
-      return this.visit(ctx.getChild(0)).setPosition(ctx);
-    }
-    // 3 children
-    return new ExpArithmetic(
-        (RTExpression) this.visit(ctx.getChild(0)),
-        (RTExpression) this.visit(ctx.getChild(2)),
-        ctx.getChild(1).getText()).setPosition(ctx);
+    return arithExp(ctx);
   }
 
   @Override
   public RudiTree visitTerm(RobotGrammarParser.TermContext ctx) {
     // factor ('*'|'/'|'%') term | factor
-    if (ctx.getChildCount() == 1) {
-      return this.visit(ctx.getChild(0)).setPosition(ctx);
-    }
-    // 3 children
-    return new ExpArithmetic(
-        (RTExpression) this.visit(ctx.getChild(0)),
-        (RTExpression) this.visit(ctx.getChild(2)),
-        ctx.getChild(1).getText()).setPosition(ctx);
+    return arithExp(ctx);
+  }
+
+  @Override
+  public RudiTree visitString_expression(RobotGrammarParser.String_expressionContext ctx) {
+    // (simple_exp|if_exp) '+' exp | (simple_exp|if_exp)
+    return arithExp(ctx);
   }
 
   @Override
@@ -213,8 +212,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitExp(RobotGrammarParser.ExpContext ctx) {
-    return (RTExpression)
-        this.visit(ctx.getChild(ctx.getChildCount() == 3 ? 1 : 0)).setPosition(ctx);
+    return (RTExpression) this.visit(ctx.getChild(0)).setPosition(ctx);
   }
 
   @Override
@@ -233,65 +231,50 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitSimple_exp(RobotGrammarParser.Simple_expContext ctx) {
-    if (ctx.getChildCount() == 2) {
-      // NOT simple_exp
-      return new ExpBoolean(ctx.getChild(1).getText(),
-          (RTExpression) this.visit(ctx.getChild(1)), null, "!").setPosition(ctx);
-    } else if (ctx.getChildCount() == 4) {
-      // NOT LPAR boolean_exp RPAR
-      return new ExpBoolean(ctx.getChild(2).getText(),
-          (RTExpression) this.visit(ctx.getChild(2)), null, "!").setPosition(ctx);
+    RudiTree result;
+    switch (ctx.getChildCount()) {
+    case 2: // NOT simple_exp
+      result = new ExpBoolean(ctx.getChild(1).getText(),
+          (RTExpression) this.visit(ctx.getChild(1)), null, "!"); break;
+    case 3: // '(' exp ')'
+      result = this.visit(ctx.getChild(1)); break;
+    case 1: // other expression
+      result = this.visit(ctx.getChild(0)); break;
+    default: throw new UnsupportedOperationException("How's that possible");
     }
-    if (ctx.getChildCount() == 3) {
-      // '(' exp ')'
-      return this.visit(ctx.getChild(1)).setPosition(ctx);
+    return result.setPosition(ctx);
+  }
+
+  private RudiTree boolExp(ParserRuleContext ctx) {
+    RudiTree result;
+    if (ctx.getChildCount() == 1) {
+      result = this.visit(ctx.getChild(0));
+    } else {
+      result = new ExpBoolean(ctx.getText(),
+          (RTExpression) this.visit(ctx.getChild(0)),
+          (RTExpression) this.visit(ctx.getChild(2)),
+          ctx.getChild(1).getText()         // operator
+          );
     }
-    // other expression
-    return this.visit(ctx.getChild(0)).setPosition(ctx);
+    return result.setPosition(ctx);
   }
 
   @Override
   public RudiTree visitSimple_b_exp(RobotGrammarParser.Simple_b_expContext ctx) {
     // simple_exp | simple_exp ('==' | '!=' | '<=' | '<' | '>=' | '>') exp
-
-    if (ctx.getText().equals("true") || ctx.getText().equals("false")) {
-      return this.visit(ctx.getChild(0)).setPosition(ctx);
-    }
-
-    return new ExpBoolean(ctx.getText(),
-        (RTExpression) this.visit(ctx.getChild(0)),
-        (RTExpression) (ctx.getChildCount() == 1 ? null : this.visit(ctx.getChild(2))),
-        // comparison operator
-        (ctx.getChildCount() == 1 ? null : ctx.getChild(1).getText())
-        ).setPosition(ctx);
+    return boolExp(ctx);
   }
 
   @Override
   public RudiTree visitBoolean_exp(RobotGrammarParser.Boolean_expContext ctx) {
     // bool_and_exp | boolean_exp '||' bool_and_exp
-
-    if (ctx.getChildCount() == 1) {
-      return this.visit(ctx.getChild(0)).setPosition(ctx);
-    }
-
-    return new ExpBoolean(ctx.getText(),
-        (RTExpression) this.visit(ctx.getChild(0)),
-        (RTExpression) this.visit(ctx.getChild(2)),
-        ctx.getChild(1).getText()).setPosition(ctx);
+    return boolExp(ctx);
   }
 
   @Override
   public RudiTree visitBool_and_exp(RobotGrammarParser.Bool_and_expContext ctx) {
 	  //  simple_b_exp | bool_and_exp '&&' simple_b_exp
-
-    if (ctx.getChildCount() == 1) {
-		  return visit(ctx.getChild(0)).setPosition(ctx);
-	  }
-	  // boolean_exp '&&' bool_and_exp
-	  return new ExpBoolean(ctx.getText(),
-	      (RTExpression) this.visit(ctx.getChild(0)),
-	      (RTExpression) this.visit(ctx.getChild(2)),
-	      ctx.getChild(1).getText()).setPosition(ctx);
+    return boolExp(ctx);
   }
 
 
@@ -310,20 +293,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       return new ExpAssignment(declaredType, this.visit(ctx.getChild(1)),
           (RTExpression) this.visit(ctx.getChild(3)), currentClass).setPosition(ctx);
     }
-  }
-
-
-  @Override
-  public RudiTree visitString_expression(RobotGrammarParser.String_expressionContext ctx) {
-    // (simple_exp|if_exp) '+' exp | (simple_exp|if_exp)
-    if (ctx.getChildCount() == 1) {
-      return this.visit(ctx.getChild(0)).setPosition(ctx);
-    }
-    // 3 children
-    return new ExpArithmetic(
-        (RTExpression) this.visit(ctx.getChild(0)),
-        (RTExpression) this.visit(ctx.getChild(2)),
-        ctx.getChild(1).getText()).setPosition(ctx);
   }
 
   @Override
@@ -371,12 +340,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // IF LPAR boolean_exp RPAR statement (ELSE statement)?
     if (ctx.getChildCount() == 5) {   // no else
       return new StatIf(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)),
-              (StatAbstractBlock) this.visit(ctx.getChild(4)), null).setPosition(ctx);
+              (RTStatement) this.visit(ctx.getChild(4)), null).setPosition(ctx);
     }
     // if there is an else
     return new StatIf(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)),
-            (StatAbstractBlock) this.visit(ctx.getChild(4)),
-            (StatAbstractBlock) this.visit(ctx.getChild(6))).setPosition(ctx);
+            (RTStatement) this.visit(ctx.getChild(4)),
+            (RTStatement) this.visit(ctx.getChild(6))).setPosition(ctx);
   }
 
   @Override
@@ -400,7 +369,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
           currentClass, currentTRule);
       var.setPosition(ctx.VARIABLE(0));
       return new StatFor2(var, exp,
-          (StatAbstractBlock) this.visit(ctx.getChild(6)), currentClass).setPosition(ctx);
+          (RTStatement) this.visit(ctx.getChild(6)), currentClass).setPosition(ctx);
     } else if (ctx.getChild(4).getText().equals(":")) {
       UVariable var = new UVariable(ctx.getChild(3).getText(),
           currentClass, currentTRule);
@@ -408,7 +377,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       // FOR '(' (DEC_VAR | type_spec) VARIABLE ':' exp ')' loop_statement_block
       return new StatFor2(ctx.getChild(2).getText(), var,
               (RTExpression) this.visit(ctx.getChild(5)),
-              (StatAbstractBlock) this.visit(ctx.getChild(7)), currentClass).setPosition(ctx);
+              (RTStatement) this.visit(ctx.getChild(7)), currentClass).setPosition(ctx);
     } else if (ctx.getChild(2).equals(";") || ctx.getChild(3).equals(";")) {
       // statement looks like "FOR LPAR assignment SEMICOLON exp SEMICOLON exp RPAR loop_statement_block"
       // all expressions are optional!
@@ -421,7 +390,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
         }
         ++i;
       }
-      StatAbstractBlock block = (StatAbstractBlock) this.visit(ctx.getChild(i));
+      RTStatement block = (RTStatement) this.visit(ctx.getChild(i));
 
       return new StatFor1((ExpAssignment)forExps[0], (ExpBoolean)forExps[1],
           (RTExpression)forExps[2], block, currentClass).setPosition(ctx);
@@ -434,7 +403,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
         vars.add(ctx.getChild(i).getText());
       }
       return new StatFor3(vars, exp,
-              (StatAbstractBlock) this.visit(ctx.getChild(ctx.getChildCount() - 1)),
+              (RTStatement) this.visit(ctx.getChild(ctx.getChildCount() - 1)),
               currentClass).setPosition(ctx);
     }
   }

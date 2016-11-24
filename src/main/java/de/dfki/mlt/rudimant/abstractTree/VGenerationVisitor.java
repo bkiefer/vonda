@@ -744,7 +744,7 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UFuncCall node) {
-    out.append(node.representation + "(");
+    out.append(node.content + "(");
     for (int i = 0; i < node.exps.size(); i++) {
       node.exps.get(i).visitWithComments(this);
       if (i != node.exps.size() - 1) {

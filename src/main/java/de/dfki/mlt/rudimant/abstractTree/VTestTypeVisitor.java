@@ -458,15 +458,15 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(UFuncCall node) {
     if (node.type == null) {
-      node.type = mem.getFunctionRetType(node.representation);
+      node.type = mem.getFunctionRetType(node.content);
     }
     // test whether the given parameters are of the correct type
     ArrayList<String> partypes = new ArrayList<String>();
     for (RTExpression e : node.exps) {
       partypes.add(e.getType());
     }
-    if (!mem.existsFunction(node.representation, partypes)) {
-      rudi.handleTypeError("The function call to " + node.representation +
+    if (!mem.existsFunction(node.content, partypes)) {
+      rudi.handleTypeError("The function call to " + node.content +
           " refers to a function that wasn't declared");
     }
   }

@@ -17,11 +17,10 @@ import java.util.List;
  */
 public class UFuncCall extends RTLeaf {
 
-  String representation;
   List<RTExpression> exps;
 
   public UFuncCall(String representation, List<RTExpression> exps) {
-    this.representation = representation;
+    this.content = representation;
     this.exps = exps;
   }
 

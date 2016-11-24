@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -41,6 +42,7 @@ public class StatReturn extends RTStatement {
   }
 
   public Iterable<? extends RudiTree> getDtrs() {
-    return Collections.emptyList();
+    if (toRet == null) return Collections.emptyList();
+    return Arrays.asList(new RudiTree[]{ toRet });
   }
 }

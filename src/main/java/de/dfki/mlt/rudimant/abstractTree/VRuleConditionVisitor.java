@@ -264,7 +264,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
       m = funcargs;
       funcargs = "";
     }
-    funcargs = (node.representation + "(");
+    funcargs = (node.content + "(");
     for (int i = 0; i < node.exps.size(); i++) {
       if (i > 0) {
         funcargs += (", ");

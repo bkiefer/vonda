@@ -82,13 +82,43 @@ public class TreeModelAdapter extends ModelAdapter {
         return ModelAdapter.MAP | ModelAdapter.TREE;
       return ModelAdapter.MAP;
 */
-      return ModelAdapter.TREE;
+      return ModelAdapter.SYMBOL | ModelAdapter.TREE;
     }
     return ModelAdapter.NONE;
   }
 
   public String getString(Object model) {
-    throw new UnsupportedOperationException("calling getString on " + model);
+    if (model instanceof RTBinaryExp) {
+      return ((RTBinaryExp)model).operator;
+    }
+    if (model instanceof StatReturn) {
+      return "return";
+    }
+    if (model instanceof GrammarRule) {
+      return ((GrammarRule)model).label + ":";
+    }
+    if (model instanceof StatIf) {
+      return "if";
+    }
+    if (model instanceof ExpDialogueAct) {
+      return "DialAct";
+    }
+    if (model instanceof ExpAssignment) {
+      return ":=";
+    }
+    if (model instanceof ExpIf) {
+      return "_ ? _ : _";
+    }
+    if (model instanceof StatPropose) {
+      return "propose";
+    }
+    if (model instanceof UFieldAccess) {
+      return "<FieldAccess>";
+    }
+    if (model instanceof StatAbstractBlock && ((StatAbstractBlock)model).braces) {
+      return "{ _ }";
+    }
+    return model.toString();
   }
 
   @Override
@@ -106,7 +136,8 @@ public class TreeModelAdapter extends ModelAdapter {
 
   @Override
   public Object getNodeContent(Object model) {
-    return new MapMarker((RudiTree) model);
+    //return new MapMarker((RudiTree) model);
+    return model;
   }
 
   @SuppressWarnings("rawtypes")

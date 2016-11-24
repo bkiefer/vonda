@@ -20,5 +20,7 @@ public abstract class RTLeaf extends RTExpression {
     return Collections.emptyList();
   }
 
-  public String toString() { return content; }
+  public String toString() {
+    return (content == null) ? "<null>" : content;
+  }
 }
