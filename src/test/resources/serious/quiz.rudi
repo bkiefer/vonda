@@ -1,4 +1,44 @@
 
+Activity activity;
+Child user;
+Introduction intro;
+Session currentSession;
+
+// General methods of Agent
+DialogueAct myLastDA();
+DialogueAct emitDA(DialogueAct da);
+DialogueAct emitDelayedDA(int delay, DialogueAct da);
+void addToMyDA(DialogueAct da);
+
+DialogueAct lastDA();
+
+void lastDAprocessed();
+
+int saidInSession(DialogueAct da);
+int receivedInSession(DialogueAct da);
+// void propose(String s, Proposal p);
+boolean waitingForResponse();
+int lastOccurenceOfMyDA(DialogueAct da);
+
+int random();
+int getInteger(String s);
+
+void newTimeout(String name, int millis);
+void removeTimeout(String name);
+boolean isTimedOut(String name);
+
+// Methods of NaoAgent
+boolean hasPlayedQuiz(Child user);
+void robotGivesSolution(boolean correct, int qId);
+NaoClient getHub();
+
+int[] getAssessment(Quiz activity, String URI);
+// TODO: can this be rudi-fied ??? Yes, but needed for InfoState
+boolean firstEncounter();
+
+void sendQuestionDA(Turn current);
+void sendAnswersDA(Turn current);
+void robotGivesSolution(boolean correct, Turn current);
 
 process_rules_quiz:
     if(true){

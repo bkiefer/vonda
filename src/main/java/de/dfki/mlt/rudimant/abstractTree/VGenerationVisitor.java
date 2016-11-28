@@ -517,8 +517,6 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatFor2 node) {
-    // TODO: or should we check here that the type of the variable in assignment
-    // is the type the iterable in exp returns? How?
     if (node.varType == null) {
       node.varType = ((RTExpression) node.exp).getType();
     }
@@ -785,7 +783,6 @@ public class VGenerationVisitor implements RudiVisitor {
 
 
   private void conditionHandling(ExpBoolean node) {
-    // out.append(node.isTrue); // TODO: EXPLAIN OR REMOVE
   }
 
   /**

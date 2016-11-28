@@ -49,11 +49,13 @@ public class MaxTests {
 //      "-c", "src/test/resources/rudi.config.yml", "-d",
 //      "src/test/resources/MiniTest.rudi",};
 
+    // TODO: enter user.GivenName into ontology to make this work
     GrammarMain.main(enterName("MaxTest1.rudi"));
   }
 
   @Test
   public void maxTest2() throws Exception {
+    // TODO: rudimant needs to know what gameLogic.isTurnBased() is supposed to be
     GrammarMain.main(enterName("MaxTest2.rudi"));
   }
 }

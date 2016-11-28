@@ -1,5 +1,9 @@
 DialogueAct activity;
 DialogueAct Introduction;
+Child user;
+DialogueAct myLastDA();
+boolean firstEncounter();
+int saidInSession(DialogueAct da);
 
 // one line comment before introduction:
 introduction:
