@@ -17,7 +17,6 @@ public class ExpIf extends RTExpression {
   RTExpression boolexp;
   RTExpression thenexp;
   RTExpression elseexp;
-  String fullexp;
 
   public ExpIf(String fullexp, RTExpression bool, RTExpression thenexp,
           RTExpression elseexp) {
@@ -36,4 +35,14 @@ public class ExpIf extends RTExpression {
     RudiTree[] dtrs = { boolexp, thenexp, elseexp };
     return Arrays.asList(dtrs);
   }
+
+  public void propagateType(String upperType) {
+    if (type != null) {
+      logger.error("Why didn't this type percolate up? " + fullexp + " " + type);
+      return;
+    }
+    thenexp.propagateType(upperType);
+    elseexp.propagateType(upperType);
+  }
+
 }

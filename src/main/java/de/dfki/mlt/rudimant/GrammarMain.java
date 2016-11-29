@@ -50,7 +50,7 @@ public class GrammarMain {
   private RudimantCompiler rc;
   // rdf functionality
 
-  private RdfProxy startClient()
+  public static RdfProxy startClient(Map<String, Object> configs)
       throws IOException, WrongFormatException, TException {
     HfcDbClient client = new HfcDbClient();
     client.init((String) configs.get(CFG_SERVER_HOST),
@@ -65,14 +65,13 @@ public class GrammarMain {
     return new RdfProxy(client._client);
   }
 
-  @SuppressWarnings("unchecked")
-  public void initCompiler()
+  public static RudimantCompiler initCompiler(Map<String, Object> configs)
       throws IOException, WrongFormatException, TException {
-    RdfProxy proxy = startClient();
+    RdfProxy proxy = startClient(configs);
     if (configs.containsKey(CFG_NAME_TO_URI)) {
       proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
     }
-    rc = new RudimantCompiler((String)configs.get(CFG_WRAPPER_CLASS),
+    RudimantCompiler rc = new RudimantCompiler((String)configs.get(CFG_WRAPPER_CLASS),
         (String)configs.get(CFG_TARGET_CONSTRUCTOR),
         proxy);
     rc.setLog((boolean)
@@ -82,9 +81,11 @@ public class GrammarMain {
     if (configs.containsKey(CFG_PACKAGE)) {
       rc.setPackageName((String) configs.get(CFG_PACKAGE));
     }
+    return rc;
   }
 
-  public void process(List<String> files, File outputDirectory)
+  public static void process(RudimantCompiler rc,
+      List<String> files, File outputDirectory)
       throws IOException, WrongFormatException, TException {
     if (! outputDirectory.exists()) {
       if (! outputDirectory.mkdirs()) {
@@ -231,6 +232,8 @@ public class GrammarMain {
         outputDirectory = new File((String)configs.get(CFG_OUTPUT_DIRECTORY));
       }
       main.setConfig(configs);
+      initCompiler(configs);
+      process(initCompiler(configs), files, outputDirectory);
     } catch (OptionException ex) {
       usage("Error parsing options: " + ex.getLocalizedMessage());
       System.exit(1);
@@ -239,8 +242,6 @@ public class GrammarMain {
       System.exit(1);
     }
 
-    main.initCompiler();
-    main.process(files, outputDirectory);
   }
 
   private static void usage(String message) {

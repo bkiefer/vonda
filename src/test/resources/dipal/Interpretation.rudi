@@ -1,0 +1,89 @@
+// check if we have input from the user
+if (! user.feedback) return;
+
+// **********************************************************************
+// INTRODUCTION
+// **********************************************************************
+
+check_salutation:
+if (myLastDA() <= #Salutation(Meeting)) {
+  if (activity <= Introduction) {
+    myDA = myLastDA();
+    // let's assume i was greeted back in the same way
+    da = addLastDA(myDA);
+  } else {
+    logger.warn("salutation outside intro");
+  }
+  return;
+}
+
+check_liking:
+if (myLastDA() <= #Request(Liking)) {
+  if (activity <= Introduction) {
+    String th = myLastDA().theme;
+    // TODO: WHAT'S THIS? it's the text coming from the user (chunks[1]),
+    // see InterpretationHandler.java
+    String val = user.feedback.second;
+    da = addLastDA(#Inform(Liking, theme=^th, value=^val));
+    setLiking(user, theme, val);
+  } else {
+    logger.warn("liking request outside intro");
+  }
+  return;
+}
+
+check_age:
+if (myLastDA <= #Request(Name)) {
+  if (activity <= Introduction) {
+    String val = user.feedback.second;
+    da = addLastDA(#Inform(Name, value=^val));
+    agent.user.set(CHILD_NAME, val);
+  } else {
+    logger.warn("name request outside intro");
+  }
+  return;
+}
+
+// **********************************************************************
+// Specialize Confirm
+// **********************************************************************
+
+request_answer:
+if (myLastDA <= #Request(top)) {
+  replyType = "Request";
+  switch (user.feedback.second.toLowerCase()) {
+  case "yes":
+  case "YES":
+    replyType = "AcceptRequest";
+    break;
+  case "no":
+    replyType = "RejectRequest";
+    break;
+  }
+  if (replyType == "Request") {
+    reply = myLastDA().copy();
+    reply.setDialogueAct(replyType);
+    addLastDA(reply);
+  }
+}
+
+// **********************************************************************
+// Quiz
+// **********************************************************************
+
+if (activity <= Quiz) {
+ question_read_by_user:
+  if (activity.status == "running_wait_for_question_read") {
+    userReadsQuestion();
+  }
+
+ answer_given_by_user:
+  if (activity.status == "running_wait_for_answer"
+      && getCurrentAsker() == I_ROBOT) {
+    turn = getCurrentTurn();
+    if (turn) {
+      turn.setAnswer(user.feedback.second);
+      activity.status = "running_answer_given";
+    }
+  }
+}

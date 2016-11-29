@@ -23,10 +23,11 @@ public class ExpFuncOnObject extends RTExpression {
    * @param representation the name of the function as a string
    * @param exps a list of the given arguments
    */
-  public ExpFuncOnObject(RTExpression on, RTExpression funccall, String look) {
+  public ExpFuncOnObject(String full, RTExpression on, RTExpression funccall) {
+    this.fullexp = full;
     this.on = on;
     this.funccall = funccall;
-    this.look = look;
+    this.look = full.replace("^", "");
   }
 
   @Override
@@ -37,5 +38,9 @@ public class ExpFuncOnObject extends RTExpression {
   public Iterable<? extends RudiTree> getDtrs() {
     RudiTree[] dtrs = { on, funccall };
     return Arrays.asList(dtrs);
+  }
+
+  public void propagateType(String upperType) {
+    logger.error("Why didn't this type percolate up? " + fullexp + " " + type);
   }
 }

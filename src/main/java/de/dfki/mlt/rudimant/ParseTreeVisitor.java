@@ -131,7 +131,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       expList.add((RTExpression) this.visit(ctx.getChild(i)));
       i += 2;   // skip comma
     }
-    return new UFuncCall(ctx.getChild(0).getText(), expList).setPosition(ctx);
+    return new UFuncCall(ctx.getText(), ctx.getChild(0).getText(),
+        expList).setPosition(ctx);
   }
 
   private RudiTree arithExp(ParserRuleContext ctx) {
@@ -139,7 +140,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     if (ctx.getChildCount() == 1) {
       result = this.visit(ctx.getChild(0));
     } else { // 3 children
-      result = new ExpArithmetic(
+      result = new ExpArithmetic(ctx.getText(),
           (RTExpression) this.visit(ctx.getChild(0)),
           (RTExpression) this.visit(ctx.getChild(2)),
           ctx.getChild(1).getText());
@@ -172,7 +173,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       return this.visit(ctx.getChild(0)).setPosition(ctx);
     } // MINUS arithmetic
     else if (ctx.getChildCount() == 2) {
-      return new ExpArithmetic(
+      return new ExpArithmetic(ctx.getText(),
               (RTExpression) this.visit(ctx.getChild(1)), null, "-").setPosition(ctx);
     } // LPAR arithmetic RPAR
     else {
@@ -224,7 +225,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       expList.add((RTExpression) this.visit(ctx.getChild(i)));
       i += 2;   // because we aren't interested in commas
     }
-    return new ExpDialogueAct((RTExpression)this.visit(ctx.getChild(1)),
+    return new ExpDialogueAct(ctx.getText(),
+        (RTExpression)this.visit(ctx.getChild(1)),
         (RTExpression)this.visit(ctx.getChild(3)),
         expList).setPosition(ctx);
   }
@@ -283,14 +285,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // ((DEC_VAR | VARIABLE)? VARIABLE | field_access) ASSIGN exp
     if (ctx.getChildCount() == 3) { // no declaration
       RudiTree left = this.visit(ctx.getChild(0));
-      return new ExpAssignment(left,
+      return new ExpAssignment(ctx.getText(), left,
           (RTExpression) this.visit(ctx.getChild(2)), currentClass).setPosition(ctx);
     } else {  // declaration
       String declaredType = ctx.getChild(0).getText();
       if (declaredType.equals("var")) {
         declaredType = null;
       }
-      return new ExpAssignment(declaredType, this.visit(ctx.getChild(1)),
+      return new ExpAssignment(ctx.getText(), declaredType, this.visit(ctx.getChild(1)),
           (RTExpression) this.visit(ctx.getChild(3)), currentClass).setPosition(ctx);
     }
   }
@@ -365,14 +367,15 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       // TODO: or should we check here that the type of the variable in assignment
       // is the type the iterable in exp returns? How?
       RTExpression exp = (RTExpression) this.visit(ctx.getChild(4));
-      UVariable var = new UVariable(ctx.getChild(2).getText(),
-          currentClass, currentTRule);
+      UVariable var = new UVariable(ctx.getChild(2).getText(), currentClass);
       var.setPosition(ctx.VARIABLE(0));
       return new StatFor2(var, exp,
           (RTStatement) this.visit(ctx.getChild(6)), currentClass).setPosition(ctx);
     } else if (ctx.getChild(4).getText().equals(":")) {
-      UVariable var = new UVariable(ctx.getChild(3).getText(),
-          currentClass, currentTRule);
+      // with type specification
+      UVariable var = new UVariable(ctx.getChild(2).getText(),
+          ctx.getChild(3).getText(),
+          currentClass);
       var.setPosition(ctx.VARIABLE(0));
       // FOR '(' (DEC_VAR | type_spec) VARIABLE ':' exp ')' loop_statement_block
       return new StatFor2(ctx.getChild(2).getText(), var,
@@ -411,8 +414,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitFunccall_on_object(RobotGrammarParser.Funccall_on_objectContext ctx) {
     // variable DOT function_call
-    return new ExpFuncOnObject((RTExpression) this.visit(ctx.getChild(0)),
-            (RTExpression) this.visit(ctx.getChild(2)), ctx.getText().replace("^", "")).setPosition(ctx);
+    return new ExpFuncOnObject(ctx.getText(),
+        (RTExpression) this.visit(ctx.getChild(0)),
+        (RTExpression) this.visit(ctx.getChild(2))).setPosition(ctx);
   }
 
   @Override
@@ -506,7 +510,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       case RobotGrammarLexer.WILDCARD:  //token is wildcard
         return new UWildcard();
       case RobotGrammarLexer.VARIABLE:  // token is variable
-        return new UVariable(tn.getText(), currentClass, currentTRule);
+        return new UVariable(tn.getText(), currentClass);
       case RobotGrammarLexer.BREAK:
       case RobotGrammarLexer.CONTINUE:
         return new USingleValue(tn.getText(), "break/continue");
@@ -547,7 +551,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitVariable(RobotGrammarParser.VariableContext ctx) {
     // VARIABLE | field_access
-    return new UVariable(ctx.getText(), currentClass, currentTRule).setPosition(ctx);
+    return new UVariable(ctx.getText(), currentClass).setPosition(ctx);
   }
 
   @Override

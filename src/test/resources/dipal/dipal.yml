@@ -1,0 +1,12 @@
+outputDirectory:    gen-java
+wrapperClass:       de.dfki.dialogue.NaoAgent
+serverHost:         localhost
+serverPort:         9090
+ontologyFile:       ontologies/pal.ini
+checkTypes:         false
+failOnError:        false
+targetConstructor:  String hostIP, int hostPort
+rootPackage:        de.dfki.dialogue
+nameToURI:
+  Activity : "<dom:Activity>"
+  Child : "<dom:Child>"

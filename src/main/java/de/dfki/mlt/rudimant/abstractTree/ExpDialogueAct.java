@@ -22,8 +22,9 @@ public class ExpDialogueAct extends RTExpression {
   RTExpression proposition;
   List<RTExpression> exps;
 
-  public ExpDialogueAct(RTExpression daType, RTExpression proposition,
-      List<RTExpression> exps) {
+  public ExpDialogueAct(String full, RTExpression daType,
+      RTExpression proposition, List<RTExpression> exps) {
+    this.fullexp = full;
     this.daType = daType;
     this.proposition = proposition;
     this.exps = exps;
@@ -41,5 +42,9 @@ public class ExpDialogueAct extends RTExpression {
     dtrs.add(proposition);
     dtrs.addAll(exps);
     return dtrs;
+  }
+
+  public void propagateType(String upperType) {
+    logger.error("Why didn't this type percolate up? " + fullexp + " " + type);
   }
 }

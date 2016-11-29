@@ -1,0 +1,71 @@
+
+Activity activity;
+Child user;
+Introduction intro;
+Session currentSession;
+
+Logger logger;
+
+// General methods of Agent
+DialogueAct myLastDA();
+DialogueAct emitDA(DialogueAct da);
+DialogueAct emitDelayedDA(int delay, DialogueAct da);
+void addToMyDA(DialogueAct da);
+
+DialogueAct lastDA();
+
+void lastDAprocessed();
+
+int saidInSession(DialogueAct da);
+int receivedInSession(DialogueAct da);
+// void propose(String s, Proposal p);
+boolean waitingForResponse();
+int lastOccurenceOfMyDA(DialogueAct da);
+
+int random();
+int getInteger(String s);
+
+void newTimeout(String name, int millis);
+void removeTimeout(String name);
+boolean isTimedOut(String name);
+
+// Methods of NaoAgent
+boolean hasPlayedQuiz(Child user);
+void robotGivesSolution(boolean correct, int qId);
+NaoClient getHub();
+
+int[] getAssessment(Quiz activity, String URI);
+// TODO: can this be rudi-fied ??? Yes, but needed for InfoState
+boolean firstEncounter();
+
+void sendQuestionDA(QuizHistory current);
+void sendAnswersDA(QuizHistory current);
+void robotGivesSolution(boolean correct, QuizHistory current);
+
+/*
+? intro.has(INTRODUCTION_GAMEPROPOSED)
+? allProperties(user.getRange(getLiking))
+? slot = Hobby
+? user.getLiking.slot
+*/
+
+boolean childAtHome() {
+  return user.isLocatedAt <= Home;
+}
+
+Activity newActivity(Rdf act) {
+  if (! act <= Activity) {
+    logger.error("Not an activity: {}", act);
+  }
+  currentSession.hasActivities.add(act);
+  activity = act;
+  logger.debug("New activity: {}", act);
+  return act;
+}
+
+import Idle;
+import Introduction;
+import Quiz;
+import Closing;
+import Incoming;
+import Interpretation;

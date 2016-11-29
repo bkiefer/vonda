@@ -1,9 +1,12 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import de.dfki.lt.loot.Pair;
 import de.dfki.lt.loot.gui.adapters.MapAdapterIterator;
@@ -16,50 +19,31 @@ public class TreeModelAdapter extends ModelAdapter {
     ModelAdapterFactory.registerAdapter(RudiTree.class, TreeModelAdapter.class);
   }
 
-  /*
   private class EdgeAdapterIterator implements MapAdapterIterator {
-    short[] _excludedFeatures;
-    Pair<Object, Object> _current;
-    private Iterator<? extends DagEdge> _iterator;
+    Map<String, String> _values;
 
-    // precondition: _iterator != null
-    private void advance() {
-      _current = null;
-      while (_current == null && _iterator.hasNext()) {
-        DagEdge edge = _iterator.next();
-        if (_excludedFeatures == null ||
-            Arrays.binarySearch(_excludedFeatures, edge.getFeature()) == -1)
-          _current = new Pair<Object, Object>(edge, edge.getValue());
+    Iterator<String> _it;
+
+    public EdgeAdapterIterator(RudiTree node) {
+      if (node instanceof RTExpression) {
+        _values = new HashMap<>();
+        RTExpression exp = (RTExpression)node;
+        _values.put("type", exp.type + (exp.isRdfType() ? "[R]" : ""));
       }
+      if (_values == null) {
+        _values = Collections.emptyMap();
+      }
+      _it = _values.keySet().iterator();
     }
 
-    public EdgeAdapterIterator(RudiTree node) { this(node, null); }
 
-    public EdgeAdapterIterator(RudiTree node, String[] excludedFeatures) {
-      _current = null;
-      _iterator = node.getEdgeIterator();
-      if (_iterator != null) {
-        if (excludedFeatures != null) {
-          _excludedFeatures = new short[excludedFeatures.length];
-          int i = 0;
-          for (String feat : excludedFeatures) {
-            _excludedFeatures[i] = RudiTree.getGrammar().getFeatureId(feat);
-          }
-          Arrays.sort(_excludedFeatures);
-        }
-        advance();
-      }
-    }
-
-    public boolean hasNext() { return _current != null; }
+    public boolean hasNext() { return _it.hasNext(); }
 
     public Pair<Object, Object> next() {
-      Pair<Object, Object> result = _current;
-      advance();
-      return result;
+      String key = _it.next();
+      return new Pair<Object, Object>(key, _values.get(key));
     }
   }
-  */
 
   private class MapMarker {
     RudiTree _root;
@@ -84,41 +68,66 @@ public class TreeModelAdapter extends ModelAdapter {
 */
       return ModelAdapter.SYMBOL | ModelAdapter.TREE;
     }
+    if (model instanceof String) {
+      return ModelAdapter.ATOM;
+    }
     return ModelAdapter.NONE;
   }
 
   public String getString(Object model) {
+    String result;
     if (model instanceof RTBinaryExp) {
-      return ((RTBinaryExp)model).operator;
+      result = ((RTBinaryExp)model).operator;
+    } else if (model instanceof StatReturn) {
+      result = "return";
+    } else if (model instanceof GrammarRule) {
+      result = ((GrammarRule)model).label + ":";
+    } else if (model instanceof StatIf) {
+      result = "if";
+    } else if (model instanceof ExpDialogueAct) {
+      result = "DialAct";
+    } else if (model instanceof ExpAssignment) {
+      result = ":=";
+    } else if (model instanceof ExpIf) {
+      result = "_ ? _ : _";
+    } else if (model instanceof StatPropose) {
+      result = "propose";
+    } else if (model instanceof UFieldAccess) {
+      result = "FieldAcc";
+    } else if (model instanceof StatMethodDeclaration) {
+      StatMethodDeclaration md = (StatMethodDeclaration)model;
+      result = "meth " + ((md.return_type != null) ? md.return_type + " ": "")
+          + md.name + '(';
+      if (! md.parameters.isEmpty()) {
+        if (md.partypes.get(0) != null) { result += md.partypes.get(0) + " "; }
+        result += md.parameters.get(0);
+      }
+      for (int i = 1; i < md.parameters.size(); ++i) {
+        result += ", ";
+        if (md.partypes.get(i) != null) { result += md.partypes.get(i) + " "; }
+        result += md.parameters.get(i);
+      }
+      result += ')';
+    } else if (model instanceof StatAbstractBlock) {
+      if (((StatAbstractBlock)model).braces)
+        result = "{ _ }";
+      else
+        result = "block";
+    } else if (model instanceof UFuncCall) {
+      result = ((UFuncCall)model).content + "( )";
+    } else {
+      if (null == model) {
+        result = "<null>";
+      } else {
+        result = model.toString();
+      }
     }
-    if (model instanceof StatReturn) {
-      return "return";
+    if (model instanceof RTExpression) {
+      RTExpression exp = (RTExpression)model;
+      if (exp.type != null)
+        result += "\n[" + exp.type + (exp.isRdfType() ? "[R]]" : "]");
     }
-    if (model instanceof GrammarRule) {
-      return ((GrammarRule)model).label + ":";
-    }
-    if (model instanceof StatIf) {
-      return "if";
-    }
-    if (model instanceof ExpDialogueAct) {
-      return "DialAct";
-    }
-    if (model instanceof ExpAssignment) {
-      return ":=";
-    }
-    if (model instanceof ExpIf) {
-      return "_ ? _ : _";
-    }
-    if (model instanceof StatPropose) {
-      return "propose";
-    }
-    if (model instanceof UFieldAccess) {
-      return "<FieldAccess>";
-    }
-    if (model instanceof StatAbstractBlock && ((StatAbstractBlock)model).braces) {
-      return "{ _ }";
-    }
-    return model.toString();
+    return result;
   }
 
   @Override
@@ -152,13 +161,12 @@ public class TreeModelAdapter extends ModelAdapter {
   //@Override
   //public boolean isNull(Object model) { return false; }
 
-  /*
+  /**/
   @Override
   public MapAdapterIterator mapIterator(Object model) {
     if (model instanceof MapMarker) {
-      final String[] exclude = { "ARGS" };
-      return new EdgeAdapterIterator(((MapMarker) model)._root, exclude);
+      return new EdgeAdapterIterator(((MapMarker)model)._root);
     }
     return new EdgeAdapterIterator((RudiTree) model);
-  }*/
+  }/**/
 }

@@ -82,7 +82,7 @@ while_statement
 for_statement
   : FOR '(' assignment? ';' exp? ';' exp? ')' statement_block
   | FOR '(' (DEC_VAR | type_spec)? VARIABLE ':' exp ')' statement_block
-  // WHAT'S THIS???
+  // for loop with destructuring into a tuple
   | FOR '(' '(' VARIABLE ( ',' VARIABLE )+ ')' ':' exp ')' statement_block
   ;
 
@@ -152,7 +152,7 @@ type_spec
     ;
 
 variable
-  : VARIABLE '[' ((VARIABLE | INT) | arithmetic) ']'
+  : VARIABLE '[' arithmetic ']'
   | VARIABLE
   ;
 

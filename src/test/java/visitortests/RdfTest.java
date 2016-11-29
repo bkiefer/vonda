@@ -89,7 +89,7 @@ public class RdfTest {
     mem.enterEnvironment();
     mem.addElement("child", "Child", null);
     List<RudiTree> l = new ArrayList<>();
-    UVariable v = new UVariable("Child", "child", "testclass", "testrule");
+    UVariable v = new UVariable("Child", "child", "testclass");
     l.add(v);
     UFieldAccess field = new UFieldAccess(l, elem);
     String result = field.getPredicateType(_proxy, mem, elem);
@@ -103,7 +103,7 @@ public class RdfTest {
     mem.enterEnvironment();
     mem.addElement("child", "Child", null);
     List<RudiTree> l = new ArrayList<>();
-    UVariable v = new UVariable("Child", "child", "testclass", "testrule");
+    UVariable v = new UVariable("Child", "child", "testclass");
     l.add(v);
     UFieldAccess field = new UFieldAccess(l, elem);
     String result = field.getPredicateType(_proxy, mem, elem);
@@ -117,7 +117,7 @@ public class RdfTest {
     mem.enterEnvironment();
     mem.addElement("child", "Child", null);
     List<RudiTree> l = new ArrayList<>();
-    UVariable v = new UVariable("Child", "child", "testclass", "testrule");
+    UVariable v = new UVariable("Child", "child", "testclass");
     l.add(v);
     UFieldAccess field = new UFieldAccess(l, elem);
     String result = field.getPredicateType(_proxy, mem, elem);

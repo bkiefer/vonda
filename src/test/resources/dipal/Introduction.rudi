@@ -1,0 +1,92 @@
+rules_introduction:
+if (! (activity <= Introduction)) return;
+
+
+// new session: greet user
+// TODO: ADD INFO FUNCTION TO GENERATION SO IT CAN CAPTURE USER NAME ETC.
+initial_greeting:
+if (user) {
+  if (! myLastDA()) {
+    activity.status = "active";
+    propose("greeting") {
+      salutation = firstEncounter() ? InitialGreeting : ReturnGreeting;
+      DialogueAct da = emitDA(#^salutation(Meeting));
+
+    ask_user_name:
+      if (! user.forename && saidInSession(#Request(Name)) < 0) {
+        // TODO: USE SAME LABELS IN GRAMMAR AND DATABASE
+        // Max: ERROR? TODO: there is no Request(Name) DA!
+        // make sure the next DA is send only send out after 900ms pause
+        emitDA(-900, #Request(Name));
+      }
+    }
+  }
+}
+
+// All these rules require that a greeting has taken place
+greetings_exchanged:
+if (saidInSession(#Salutation(Meeting)) >= 0
+    && receivedInSession(#Salutation(Meeting)) >= 0
+    && ! waitingForResponse()) {
+  if (childAtHome()) {
+    activity.status = "finished";
+  }
+
+  // TODO: we need a better introduction end criterion
+  if (activity.status != "finished") {
+    activity.status = "finished";
+    // TODO: GET LIST FROM THE PROPERTIES OF A USER
+    List<RdfProperty> slots = { Hobby, Color };
+    for (RdfProperty slot : slots) {
+      // SLOT unknown: ask for slot
+      // Ask for favorite hobby and color
+
+    ask_user_preference:
+      if (! user.getLiking.slot
+          && ! saidInSession(#Request(Liking, theme=^slot))) {
+        activity.status = "active";
+        propose("ask_for_preference_" + slot) {
+          emitDA(#Request(Liking, theme=^slot));
+        }
+      }
+
+    confirm_user_preference:
+      if (user.getLiking.slot && ! waitForResponse()
+          && saidInSession(#Request(Liking, theme=^slot))
+          // a nice way to express the disjunction (supertype?)
+          && ! saidInSession(#Answer(Liking, theme=^slot))) {
+        // Nao says he also likes the hobby/color
+        // TODO: Check whether Nao shares the hobby / likes the color.
+        activity.status = "active";
+        propose("like_preference_" + slot) {
+          emitDA(#Confirm(Liking, theme=^slot));
+        }
+        propose("dislike_preference_" + slot) {
+          emitDA(#Disconfirm(Liking, theme=^slot));
+        }
+      }
+    }
+
+
+    // TODO: GET LIST FROM THE PROPERTIES OF A USER
+    List<RdfProperty> infoslots = {birthdate};
+    // TODO: USE SAME LABELS IN GRAMMAR AND IN DATABASE
+    List<String> mapped = {"Age"};
+    int i = 0;
+    for (String slot : infoslots) {
+      // SLOT unknown: ask for slot
+      String daLabel = mapped.get(i);
+    ask_user_property:
+      if (! user.slot
+          && ! saidInSession(#Request(^daLabel))) {
+        activity.status = "active";
+        propose("ask_for_" + daLabel) { // slot.toLowerCase()
+          emitDA(#Request(^daLabel));
+        }
+      }
+    }
+  } else { // introduction is finished.
+    newActivity(Idle.new());
+    return;
+  }
+}

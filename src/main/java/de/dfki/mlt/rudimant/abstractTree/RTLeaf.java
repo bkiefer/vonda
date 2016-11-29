@@ -12,7 +12,7 @@ import java.util.Collections;
  *
  * @author Anna Welker
  */
-public abstract class RTLeaf extends RTExpression {
+public abstract class RTLeaf extends RudiTree {
 
   String content;
 

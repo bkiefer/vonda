@@ -13,7 +13,7 @@ import java.util.Collections;
  *
  * @author Anna Welker
  */
-public class ExpLambda extends RTExpression {
+public class ExpLambda extends RTExpLeaf {
 
   String exp;
   public ExpLambda(String exp) {
@@ -23,9 +23,5 @@ public class ExpLambda extends RTExpression {
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
-  }
-
-  public Iterable<? extends RudiTree> getDtrs() {
-    return Collections.emptyList();
   }
 }

@@ -15,12 +15,6 @@ public class ExpBoolean extends RTBinaryExp {
 
   String rule;
 
-  String fullexp;
-
-
-  // tell me whether this is not really subsumes, but rdf isSubclassOf
-  boolean rdf = false;
-
   /**
    * if the expression consists of only one part, set right and operator to null
    *
@@ -31,7 +25,6 @@ public class ExpBoolean extends RTBinaryExp {
    */
   public ExpBoolean(String fullexp, RTExpression left,
           RTExpression right, String operator) {
-//    System.out.println("Created B exp " + fullexp);
     this.left = left;
     this.right = right;
     this.operator = operator;

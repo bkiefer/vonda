@@ -11,7 +11,7 @@ package de.dfki.mlt.rudimant.abstractTree;
  *
  * @author Anna Welker
  */
-public class UVariable extends RTLeaf {
+public class UVariable extends RTExpLeaf {
 
   String representation;
   String originClass;
@@ -20,15 +20,13 @@ public class UVariable extends RTLeaf {
   String realOrigin;
   boolean isRdfClass;
 
-  public UVariable(String type, String representation, String originClass,
-          String originTRule) {
+  public UVariable(String type, String representation, String originClass) {
+    this(representation, originClass);
     this.type = type;
-    this.representation = representation;
-    this.originClass = originClass;
   }
 
-  public UVariable(String representation, String originClass, String originTRule
-  ) {
+  public UVariable(String representation, String originClass) {
+    this.fullexp = representation;
     this.representation = representation;
     this.originClass = originClass;
   }

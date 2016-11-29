@@ -22,7 +22,9 @@ public class ExpArithmetic extends RTBinaryExp {
    * @param operator the operator in between
    * @param minus set true if there is a minus in front of the arithmetic
    */
-  public ExpArithmetic(RTExpression left, RTExpression right, String operator) {
+  public ExpArithmetic(String full,
+      RTExpression left, RTExpression right, String operator) {
+    this.fullexp = full;
     this.left = left;
     this.right = right;
     this.operator = operator;
@@ -33,4 +35,5 @@ public class ExpArithmetic extends RTBinaryExp {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+
 }

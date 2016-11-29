@@ -19,7 +19,7 @@ import de.dfki.mlt.rudimant.Mem;
  *
  * @author Anna Welker
  */
-public class UFieldAccess extends RTLeaf {
+public class UFieldAccess extends RTExpLeaf {
 
   List<RudiTree> parts;
   List<String> representation;

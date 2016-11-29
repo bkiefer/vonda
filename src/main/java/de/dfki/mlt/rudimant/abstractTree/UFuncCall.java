@@ -15,11 +15,11 @@ import java.util.List;
  *
  * @author Anna Welker
  */
-public class UFuncCall extends RTLeaf {
+public class UFuncCall extends RTExpLeaf {
 
   List<RTExpression> exps;
 
-  public UFuncCall(String representation, List<RTExpression> exps) {
+  public UFuncCall(String full, String representation, List<RTExpression> exps) {
     this.content = representation;
     this.exps = exps;
   }

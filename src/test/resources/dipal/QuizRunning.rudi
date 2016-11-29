@@ -1,0 +1,134 @@
+//String stat = activity.status; // see if the one below does work
+process_rules_quiz_running:
+if (! activity.status.startsWith("run"))
+  return;
+
+just_started:
+if (activity.status == "run_started"
+    && activity.tabletOrientation != getCurrentAsker()) {
+  if (childAtHome()) {
+    activity.tabletOrientation = getCurrentAsker();
+    logger.info("Turn tablet to asker in home version here.");
+    activity.status = "run_wait_for_tablet";
+  } else {
+    newTimeout("TurnTabletToAsker", 10000);
+  }
+}
+
+tablet_to_asker:
+if (isTimedOut("TurnTabletToAsker")) {
+  removeTimeout("TurnTabletToAsker");
+  if (activity.tabletOrientation != getCurrentAsker()) {
+    propose("request_turn_tablet") {
+      emitDA(#Request(Turning, theme=Tablet));
+    }
+  }
+}
+
+tablet_to_responder:
+if (isTimedOut("TurnTabletToResponder")) {
+  removeTimeout("TurnTabletToResponder");
+  if (activity.tabletOrientation == getCurrentAsker()) {
+    // Change the tablet orientation automatically in the home version.
+    if (childAtHome()) {
+      if (getCurrentResponder() == I_ROBOT) {
+        // simulate turning the tablet to the robot in home version
+        activity.tabletOrientation = getCurrentResponder();
+        logger.info("Turn tablet to robot in home version");
+        userReadsQuestion();
+      }
+    } else {
+      propose("request_turn_tablet") {
+        emitDA(#Request(Turning, theme=Tablet));
+      }
+    }
+  }
+}
+
+question_asked:
+if (! getCurrentTurn().QuestionId
+    && activity.status != "run_wait_for_question"
+    && activity.status != "run_wait_for_continue") {
+  asker = getCurrentAsker();
+  responder = (asker == I_ROBOT) ? user : I_ROBOT;
+  logger.info("REQUEST NEW QUESTION, THE CURRENT ASKER IS {}, THE CURRENT RESPONDER IS {}",
+              asker, responder);
+  getHub().requestNextQuestion(asker);
+  activity.status = "run_wait_for_question";
+}
+
+asker_tablet_wait:
+if (activity.status == "run_wait_for_tablet"
+    && activity.tabletOrientation == getCurrentAsker()) {
+  // tablet orientation is OK, question will be posed by robot or child
+  if (getCurrentAsker() == I_ROBOT) {
+    propose("give_next_question") {
+      turn = getCurrentTurn();
+      sendQuestionDA(turn);
+      sendAnswersDA(turn);
+
+      turnTabletDA = #Inform(Turning, theme=Tablet, manner=silent);
+      if (childAtHome()) {
+        addToMyDA(turnTabletDA); // pretend emitting the DA
+      } else {
+        emitDA(turnTabletDA);
+        newTimeout("TurnTabletToResponder", 20000);
+      }
+      activity.status = "run_wait_for_answer";
+    }
+  } else {
+    // current asker is user
+
+    // wait for the user to finish reading the question and answers,
+    // if we have a real robot
+    if (activity.status != "run_wait_for_question_read") {
+      activity.status = "run_wait_for_question_read";
+      newTimeout("TurnTabletToResponder", 10000);
+    }
+  }
+}
+
+answer_given:
+if (activity.status == "run_answer_given") {
+  turn = getCurrentTurn();
+
+  boolean correct = turn.correct;
+  String responder = turn.responder == I_ROBOT ? "robot" : "user";
+
+  propose("run_feedback_" + (correct ? "correct_" : "wrong_")
+          + responder) {
+    if (responder == "robot") {
+      String daType = "Allo" + (correct ? "Positive" : "Negative");
+      emitDA(#^daType(BeingCorrect, theme=Quiz, agent=user));
+    } else {
+      String daType = correct ? "Confirm" : "Disconfirm";
+      emitDA(#^daType(BeingCorrect, theme=Quiz, agent=robot));
+      robotGivesSolution(correct, turn);
+    }
+    activity.status = "run_wait_for_continue";
+  }
+}
+
+wait_for_continue:
+if (activity.status == "run_wait_for_continue") {
+  // TODO FIX THIS, ONLY FOR TESTING !!!!!
+  if (true || getNumberOfTurns() < 5) {
+    propose("continue_quiz") {
+      Rdf turn = getCurrentTurn();
+      Rdf newTurn = Turn.new();
+      // Switch roles after each turn
+      newTurn.Asker = turn.Responder;
+      newTurn.Responder = turn.Asker;
+      activity.hasTurns.add(newTurn);
+      activity.status = "running";
+    }
+  }
+
+  propose("quiz_game_ends_max_time") {
+    endQuiz("technical");
+  }
+
+  propose("quiz_game_ends_max_rounds") {
+    endQuiz("time");
+  }
+}

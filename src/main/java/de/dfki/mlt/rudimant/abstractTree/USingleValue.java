@@ -9,13 +9,14 @@ package de.dfki.mlt.rudimant.abstractTree;
  * class representing a simple value like a String, an int or null
  * @author Anna Welker
  */
-public class USingleValue extends RTLeaf {
+public class USingleValue extends RTExpLeaf {
 
 //  residing in RTLeaf:
 //  String content;
 //  String type;
-  
+
   public USingleValue(String representation, String type){
+    this.fullexp = representation;
     this.content = representation;
     this.type = type;
   }
@@ -24,5 +25,5 @@ public class USingleValue extends RTLeaf {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
-  
+
 }

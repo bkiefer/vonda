@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+    xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:logic="http://www.dfki.de/lt/onto/common/logic.owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xml:base="http://www.dfki.de/lt/onto/common/logic.owl">
+  <owl:Ontology rdf:about="">
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >v0.9.0</owl:versionInfo>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >author(s): Hans-Ulrich Krieger</rdfs:comment>
+  </owl:Ontology>
+  <owl:Class rdf:ID="True">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="DontKnow"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="Error">
+    <rdfs:subClassOf rdf:resource="#True"/>
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="False"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="Proposition">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >&lt;p style="margin-top: 0"&gt;
+      a reified version of the quintuple &amp;lt;polarity, subject, predicate, 
+      object, transactiontime&amp;gt; that can be easily interfaced with 
+      Event/Situation classes, if needed
+    &lt;/p&gt;</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="#False">
+    <rdfs:subClassOf rdf:resource="#DontKnow"/>
+  </owl:Class>
+  <owl:FunctionalProperty rdf:ID="predicate">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
+    <rdfs:domain rdf:resource="#Proposition"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </owl:FunctionalProperty>
+  <owl:FunctionalProperty rdf:ID="object">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:domain rdf:resource="#Proposition"/>
+  </owl:FunctionalProperty>
+  <owl:FunctionalProperty rdf:ID="polarity">
+    <rdfs:domain rdf:resource="#Proposition"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:range rdf:resource="#DontKnow"/>
+  </owl:FunctionalProperty>
+  <owl:FunctionalProperty rdf:ID="ttime">
+    <rdfs:domain rdf:resource="#Proposition"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#long"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </owl:FunctionalProperty>
+  <owl:FunctionalProperty rdf:ID="subject">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:domain rdf:resource="#Proposition"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
+  </owl:FunctionalProperty>
+  <logic:False rdf:ID="false">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >&lt;p style="margin-top: 0"&gt;
+      always use this singleton instance
+    &lt;/p&gt;</rdfs:comment>
+  </logic:False>
+  <logic:Error rdf:ID="error">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >&lt;p style="margin-top: 0"&gt;
+      always use this singleton instance
+    &lt;/p&gt;</rdfs:comment>
+  </logic:Error>
+  <logic:True rdf:ID="true">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >&lt;p style="margin-top: 0"&gt;
+      always use this singleton instance
+    &lt;/p&gt;</rdfs:comment>
+  </logic:True>
+  <logic:DontKnow rdf:ID="dontknow">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >&lt;p style="margin-top: 0"&gt;
+      always use this singleton instance
+    &lt;/p&gt;</rdfs:comment>
+  </logic:DontKnow>
+</rdf:RDF>
+
+<!-- Created with Protege (with OWL Plugin 3.5, Build 663)  http://protege.stanford.edu -->

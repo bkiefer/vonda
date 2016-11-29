@@ -1,0 +1,84 @@
+process_rules_quiz:
+if (activity == null || ! (activity <= Quiz))
+  return;
+
+// todo: will the compiler try to resolve this to an RDF type??
+QuizHistory getCurrentTurn() {
+  if (! activity.hasTurns || activity.hasTurns.isEmpty())
+    return null;
+  return activity.hasTurns.peekFirst();
+}
+
+String getCurrentAsker() {
+  currentTurn = getCurrentTurn();
+  if (! currentTurn)
+    return null;
+  return currentTurn.asker;
+}
+
+String getCurrentResponder() {
+  if (! currentTurn)
+    return null;
+  return currentTurn.responder;
+}
+
+void endQuiz(String reason) {
+  if (! (myLastDA() <= #Inform(AssessingPerformance))
+      && ! (myLastDA() <= #Salutation(Meeting))) {
+    emitDA(#Breaking(Playing, Reason=^reason));
+
+    activity.status = "wait_for_assessment";
+  }
+}
+
+logger.info("Quiz status: {}, Asker: {}", activity.status, getCurrentasker());
+
+import QuizStarted;
+import QuizRunning;
+
+void assessQuizSession(String whose) {
+  // Get the amount of questions answered, and the number of correct answers
+  int[] results = getAssessment(activity, I_ROBOT);
+  int index = whose.equals("robot") ? 0 : 2;
+
+  emitDA(#Inform(AssessingPerformance, theme = Answer, agent = ^whose,
+                 total = ^Integer.toString(results[index]),
+                 correct = ^Integer.toString(results[index + 1])));
+  activity.status = "wait_for_ending";
+}
+
+wait_for_assessment:
+if ("wait_for_assessment".equals(activity.status)) {
+  // Currently there should always be an assessment of the user, and maybe
+  // also of the robot
+  propose("AssessUserPerformance") {
+    // seems strange, but is correct, this must be "user" and vice versa
+    assessQuizSession(quiz, "robot");
+  }
+  propose("AssessPerformanceBoth") {
+    assessQuizSession(quiz, "robot");
+    assessQuizSession(quiz, "user");
+  }
+  /*
+  propose("NoAssessment") {
+    activity.status = "wait_for_ending";
+  }
+  */
+}
+
+// TODO: THIS MUST BE REWORKED COMPLETELY
+quiz_ending:
+if (activity.status == "wait_for_ending"
+    || activity.status == "ended_by_user") {
+  propose("end_quiz") {
+    // This should say sth. like "It was nice playing with you"
+    String daType =
+      firstEncounter() && ! childAtHome() ? "InitialGoodbye" : "ReturnGoodbye";
+    DialogueAct close = emitDA(#^daType(Meeting, theme=Quiz));
+    if (activity.status == "wait_for_ending") {
+      // otherwise this comes from the user / app
+      getHub().stopQuiz(getCurrentAsker());
+    }
+    newActivity(Closing.new());
+  }
+}

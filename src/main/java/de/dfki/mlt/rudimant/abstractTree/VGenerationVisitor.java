@@ -137,9 +137,9 @@ public class VGenerationVisitor implements RudiVisitor {
     }
 
     String function = "";
-    if (node.rdf) {
-      function = "RdfClass.isSubclassOf(";
-    }
+//    if (node.rdf) {
+//      function = "RdfClass.isSubclassOf(";
+//    }
 //    else {
 //      function = "isSubsumed(";
 //    }

@@ -235,7 +235,7 @@ public class Mem {
   public void addImport(String importName, String conargs) {
     String importClassName = importName.substring(0, 1).toUpperCase() + importName.substring(1);
     this.rulesAndImports.get(this.curClass).add(importClassName + " "
-            + importName + " = new " + importClassName + "(" + conargs + 
+            + importName + " = new " + importClassName + "(" + conargs +
             ");\n" + importName + ".process(");
   }
 

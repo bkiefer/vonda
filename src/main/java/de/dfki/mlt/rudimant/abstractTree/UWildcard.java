@@ -10,7 +10,7 @@ package de.dfki.mlt.rudimant.abstractTree;
  *
  * @author Anna Welker
  */
-public class UWildcard extends RTLeaf {
+public class UWildcard extends RTExpLeaf {
 
   @Override
   public void visit(RudiVisitor v) {

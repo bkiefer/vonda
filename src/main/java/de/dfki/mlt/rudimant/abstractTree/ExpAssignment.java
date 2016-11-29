@@ -21,8 +21,9 @@ public class ExpAssignment extends RTExpression {
   String actualType;
   String position;
 
-  public ExpAssignment(RudiTree left, RTExpression right,
+  public ExpAssignment(String full, RudiTree left, RTExpression right,
           String position) {
+    fullexp = full;
     this.left = left;
     this.right = right;
     this.declaration = false;
@@ -37,13 +38,11 @@ public class ExpAssignment extends RTExpression {
    * @param declaration
    * @param position
    */
-  public ExpAssignment(String actualType, RudiTree left, RTExpression right,
+  public ExpAssignment(String full, String actualType, RudiTree left, RTExpression right,
           String position) {
-    this.left = left;
-    this.right = right;
+    this(full, left, right, position);
     this.declaration = true;
     this.actualType = actualType;
-    this.position = position;
   }
 
   @Override
@@ -54,5 +53,14 @@ public class ExpAssignment extends RTExpression {
   public Iterable<? extends RudiTree> getDtrs() {
     RudiTree[] dtrs = { left, right };
     return Arrays.asList(dtrs);
+  }
+
+  public void propagateType(String upperType) {
+    if (type != null) {
+      logger.error("Why didn't this type percolate up? " + fullexp + " " + type);
+      return;
+    }
+    type = upperType;
+    right.propagateType(upperType);
   }
 }

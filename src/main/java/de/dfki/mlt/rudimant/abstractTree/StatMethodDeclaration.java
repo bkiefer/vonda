@@ -7,6 +7,7 @@ package de.dfki.mlt.rudimant.abstractTree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * class that allows the implementation of methods in a .rudi file; we are not
@@ -42,6 +43,7 @@ public class StatMethodDeclaration extends RudiTree {
   }
 
   public Iterable<? extends RudiTree> getDtrs() {
+    if (block == null) return Collections.emptyList();
     RudiTree[] dtrs = { block };
     return Arrays.asList(dtrs);
   }

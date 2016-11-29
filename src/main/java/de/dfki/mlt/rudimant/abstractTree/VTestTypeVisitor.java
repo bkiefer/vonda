@@ -27,72 +27,19 @@ import org.slf4j.LoggerFactory;
  */
 public class VTestTypeVisitor implements RudiVisitor {
 
-  public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
+  public static final Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
   private RudimantCompiler rudi;
   private Mem mem;
-
-  static Map<String, Integer> typeCodes = new HashMap<>();
-
-  static {
-    typeCodes.put("Object", 0x1111);
-    typeCodes.put("String", 0x1);
-    typeCodes.put("double", 0x1110000);
-    typeCodes.put("float", 0x110000);
-    typeCodes.put("int", 0x10000);
-  }
-
-  public VTestTypeVisitor(RudimantCompiler rudi) {
-    this.rudi = rudi;
-    this.mem = rudi.getMem();
-  }
 
   @Override
   public void visitNode(RTExpression node) {
     node.visit(this);
   }
 
-  private String mergeTypes(String left, String right) {
-    // TODO:
-    // we also have to check if these are RDF types and are in a type relation.
-
-    // this should return the more specific of the two, or null if they are
-    // incompatible
-    int leftCode = typeCodes.get(left);
-    int rightCode = typeCodes.get(right);
-    int common = leftCode | rightCode;
-    if (common == leftCode) {
-      return left;
-    }
-    if (common == rightCode) {
-      return right;
-    }
-    return null;
-  }
-
-  private static ExpBoolean ensureBoolean(RTExpression ex) {
-    if (ex instanceof ExpBoolean) {
-      return (ExpBoolean) ex;
-    }
-    // this is some other kind of expression, turn it into a comparison or
-    // method call returning a boolean
-    // TODO check if there's something missing for RDF types
-    if (ex.isComplexType()) {
-      return new ExpBoolean(ex + ".isEmpty()", ex, null, ".isEmpty()");
-    }
-    USingleValue right = null;
-    switch (ex.type) {
-      case "int":
-      case "float":
-      case "double":
-        right = new USingleValue("0", ex.type);
-        break;
-      default:
-        right = new USingleValue("null", "Object");
-        break;
-    }
-    // we assume it's just an Object
-    return new ExpBoolean(ex + " != " + right, ex, right, "!=");
+  public VTestTypeVisitor(RudimantCompiler rudi) {
+    this.rudi = rudi;
+    this.mem = rudi.getMem();
   }
 
   /**
@@ -121,7 +68,7 @@ public class VTestTypeVisitor implements RudiVisitor {
         node.right.propagateType(node.left.type);
       } else {
         // check type compatibility
-        String type = mergeTypes(node.left.type, node.right.type);
+        String type = RTExpression.mergeTypes(node.left.type, node.right.type);
         if (type == null) {
           logger.error("Incompatible types in {}: {} vs. {}", node,
                   node.left.type, node.right.type);
@@ -143,7 +90,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     logger.trace("Testing an assignment");
     node.right.visit(this);
     // TODO: if this is a variable initialization, shouldn't we provide the type
-    // to left if it was given? As the type is not yet in the memory, we won't 
+    // to left if it was given? As the type is not yet in the memory, we won't
     // find it while visiting left and therefore get at least tons of warnings
     // Otherwise: infer type from right
     node.left.visit(this);
@@ -154,7 +101,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       if (node.right.type == null) {
         node.right.propagateType(node.actualType);
       } else {
-        if (mergeTypes(node.actualType, node.right.type) == null) {
+        if (RTExpression.mergeTypes(node.actualType, node.right.type) == null) {
           rudi.handleTypeError("Declared type incompatible with expression: "
                   + node.actualType + ", " + node.right.type);
         }
@@ -195,8 +142,8 @@ public class VTestTypeVisitor implements RudiVisitor {
       // to be turned into a subsumption call
       // TODO: this crashes if there is Introduction or Quiz on the right; they
       // are not assigned to a type when visited...
-      if (node.right.type.equals(DIALOGUE_ACT_TYPE)
-              || node.left.type.equals(DIALOGUE_ACT_TYPE)) {
+      if ((node.right.type != null && node.right.type.equals(DIALOGUE_ACT_TYPE))
+          || (node.left.type != null && node.left.type.equals(DIALOGUE_ACT_TYPE))) {
         if (node.operator.equals("<=")) {
           node.operator = ".isSubsumed(";
         } else if (node.operator.equals("=>")) {
@@ -214,9 +161,14 @@ public class VTestTypeVisitor implements RudiVisitor {
         }
         return;
       }
-      node.right = ensureBoolean(node.right);
+      if (node.operator.equals("&&") || node.operator.equals("||")) {
+        node.right = node.right.ensureBoolean();
+      }
     }
-    node.left = ensureBoolean(node.left);
+    if (node.operator.equals("&&") || node.operator.equals("||")
+        || node.operator.equals("!")) {
+      node.left = node.left.ensureBoolean();
+    }
   }
 
   /**
@@ -243,7 +195,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(ExpIf node) {
     node.boolexp.visit(this);
-    node.boolexp = ensureBoolean(node.boolexp);
+    node.boolexp = node.boolexp.ensureBoolean();
     node.thenexp.visit(this);
     node.elseexp.visit(this);
 //      rudi.handleTypeError(node.fullexp + " is an if expression where the condition does not "
@@ -400,20 +352,19 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatMethodDeclaration node) {
     mem.addFunction(node.name, node.return_type, node.partypes, node.position);
-    // TODO: ADD AN EXPLANATION HERE: WHY ENTER A NEW ENVIRONMENT?
-    // because the following variables are local to the method block we now step
-    // into; we don't want to be able to reach them from outside
-    mem.enterEnvironment();
-    if (!node.parameters.isEmpty()) {
+    if (node.block != null) {
+      // The following variables (function parameters) are local to the method
+      // block we now step into; we don't want them to be reachable them from
+      // outside
+      mem.enterEnvironment();
       for (int i = 0; i < node.parameters.size(); i++) {
         // add parameters to environment
-        mem.addElement(node.parameters.get(i), node.partypes.get(i), node.position);
+        mem.addElement(node.parameters.get(i), node.partypes.get(i),
+            node.position);
       }
-    }
-    if (node.block != null) {
       node.block.visit(this);
+      mem.leaveEnvironment();
     }
-    mem.leaveEnvironment();
   }
 
 
@@ -432,7 +383,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     if (node.statblockElse != null) {
       node.statblockElse.visit(this);
     }
-    node.condition = ensureBoolean(node.condition);
+    node.condition = node.condition.ensureBoolean();
   }
 
   /**
@@ -442,7 +393,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   public void visitNode(StatWhile node) {
     node.condition.visit(this);
     node.block.visit(this);
-    node.condition = ensureBoolean(node.condition);
+    node.condition = node.condition.ensureBoolean();
   }
 
   /**
@@ -452,7 +403,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   public void visitNode(StatDoWhile node) {
     node.condition.visit(this);
     node.block.visit(this);
-    node.condition = ensureBoolean(node.condition);
+    node.condition = node.condition.ensureBoolean();
   }
 
   /**
@@ -464,7 +415,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.condition.visit(this);
     node.arithmetic.visit(this);
     node.statblock.visit(this);
-    node.condition = ensureBoolean(node.condition);
+    node.condition = node.condition.ensureBoolean();
   }
 
   @Override

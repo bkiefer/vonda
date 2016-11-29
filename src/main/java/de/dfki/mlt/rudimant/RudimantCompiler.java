@@ -30,7 +30,7 @@ import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 
 public class RudimantCompiler {
 
-  public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
+  public static final Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
   private boolean log;
   private boolean throwExceptions = true;

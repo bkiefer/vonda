@@ -1,0 +1,13 @@
+rules_idle:
+if (activity == null || ! (activity <= Idle))
+  return;
+
+idle_gameproposed:
+if (! childAtHome() && activity.status != "gameProposed") {
+  propose("play_game") {
+    // TODO: isn't this rather a propose
+    //DialogueAct da = emitDA("YNQuestion", "Playing", "theme", "Quiz");
+    DialogueAct da = emitDA(#Request(Playing, theme=Quiz));
+    activity.status = "gameProposed";
+  }
+}
