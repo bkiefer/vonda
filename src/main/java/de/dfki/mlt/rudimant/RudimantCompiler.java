@@ -43,7 +43,7 @@ public class RudimantCompiler {
   private String inputRealName;
 
 //  private StringBuffer out;
-  private Writer out;
+  Writer out;
 
   private RdfProxy _proxy;
 

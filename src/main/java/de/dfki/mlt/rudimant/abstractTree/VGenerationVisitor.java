@@ -603,24 +603,17 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatMethodDeclaration node) {
+    if (node.block == null) return;
     //mem.enterNextEnvironment();
-    String ret = node.visibility + " " + node.return_type + " " + node.name + "(";
-    if (!node.parameters.isEmpty()) {
-      for (int i = 0; i < node.parameters.size(); i++) {
-        if (i == 0) {
-          ret += node.partypes.get(i) + " " + node.parameters.get(i);
-        } else {
-          ret += ", " + node.partypes.get(i) + " " + node.parameters.get(i);
-        }
+    out.append(node.visibility + " " + node.return_type + " " + node.name + "(");
+    for (int i = 0; i < node.parameters.size(); i++) {
+      if (i != 0) {
+        out.append(", ");
       }
+      out.append(node.partypes.get(i) + " " + node.parameters.get(i));
     }
-    ret += ")";
-    if (node.block != null) {
-      node.block.visitWithComments(this);
-    } else {
-      out.append(';');
-    }
-    out.append(ret + "\n");
+    out.append(")\n");
+    node.block.visitWithComments(this);
     //mem.leaveEnvironment();
   }
 

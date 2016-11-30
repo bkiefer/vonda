@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import de.dfki.lt.loot.gui.util.ObjectHandler;
 import de.dfki.mlt.rudimant.abstractTree.GrammarFile;
 import de.dfki.mlt.rudimant.abstractTree.RudiTree;
 import de.dfki.mlt.rudimant.abstractTree.TreeModelAdapter;
+import de.dfki.mlt.rudimant.abstractTree.VGenerationVisitor;
 import de.dfki.mlt.rudimant.abstractTree.VTestTypeVisitor;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
@@ -81,6 +83,66 @@ public class Visualize {
       }
     }
     return root;
+  }
+
+  public static String generate(String realName, InputStream in,
+      String confname)
+      throws IOException {
+    Yaml yaml = new Yaml();
+    Map<String, Object> configs = (Map<String, Object>)
+        yaml.load(new FileReader(confname));
+
+    // initialise the context magic
+    // context = new TestContext(log);
+    // initialise the lexer with given input file
+    RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(in));
+
+    List<Integer> toCollect = Arrays.asList(
+        new Integer[] { JAVA_CODE, ONE_L_COMMENT, MULTI_L_COMMENT, NLWS });
+    CollectorTokenSource collector = new CollectorTokenSource(lexer, toCollect);
+
+    // initialise the parser
+    RobotGrammarParser parser = new RobotGrammarParser(
+        new CommonTokenStream(collector));
+
+    // create a parse tree; grammar_file is the start rule
+    ParseTree tree = parser.grammar_file();
+
+    // initialise the visitor that will do all the work
+    ParseTreeVisitor visitor = new ParseTreeVisitor(realName,
+        collector.getCollectedTokens());
+
+    // create the abstract syntax tree
+    RudiTree root = visitor.visit(tree);
+
+    // do the type checking
+    if (root instanceof GrammarFile && configs != null) {
+      GrammarFile gf = (GrammarFile)root;
+      try {
+        RudimantCompiler rc = GrammarMain.initCompiler(configs);
+        rc.out = new StringWriter();
+        VTestTypeVisitor ttv = new VTestTypeVisitor(rc);
+        ttv.visitNode(gf);
+
+        // generate the output
+        VGenerationVisitor gv =
+            new VGenerationVisitor(rc, collector.getCollectedTokens());
+
+        // tell the file its name (for class definition)
+        gf.setClassName(realName);
+        try {
+          gv.visitNode(gf);
+        } catch (InOutException e) {
+          throw new IOException(e);
+        }
+        rc.flush();
+        return rc.out.toString();
+      }
+      catch (TException|WrongFormatException ex) {
+        // throw new RuntimeException(ex);
+      }
+    }
+    return "";
   }
 
   public static void show(RudiTree root, String realName, MainFrame mf) {
