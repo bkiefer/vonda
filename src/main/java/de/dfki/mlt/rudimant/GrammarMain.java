@@ -50,44 +50,6 @@ public class GrammarMain {
   private RudimantCompiler rc;
   // rdf functionality
 
-  public static RdfProxy startClient(Map<String, Object> configs)
-      throws IOException, WrongFormatException, TException {
-    HfcDbClient client = new HfcDbClient();
-    client.init((String) configs.get(CFG_SERVER_HOST),
-        (int) configs.get(CFG_SERVER_PORT));
-    /*
-    String ontoFileName = (String) configs.get(CFG_ONTOLOGY_FILE);
-    if (ontoFileName == null) {
-      throw new IOException("Ontology file is missing.");
-    }
-    client.readConfig(new File(ontoFileName));
-    */
-    return new RdfProxy(client._client);
-  }
-
-  public static RudimantCompiler initCompiler(Map<String, Object> configs)
-      throws IOException, WrongFormatException, TException {
-    RdfProxy proxy = startClient(configs);
-    if (configs.containsKey(CFG_NAME_TO_URI)) {
-      proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
-    }
-    RudimantCompiler rc = new RudimantCompiler((String)configs.get(CFG_WRAPPER_CLASS),
-        (String)configs.get(CFG_TARGET_CONSTRUCTOR),
-        proxy);
-    rc.setLog((boolean)
-        (configs.get(CFG_LOG) == null ? false : configs.get(CFG_LOG)));
-    rc.setThrowExceptions((boolean)configs.get(CFG_TYPE_ERROR_FATAL));
-    rc.setTypeCheck((boolean)configs.get(CFG_TYPE_CHECK));
-    if (configs.containsKey(CFG_PACKAGE)) {
-      rc.setPackageName((String) configs.get(CFG_PACKAGE));
-    }
-    if (configs.containsKey(CFG_VISUALISE)) {
-      rc.setVisualisation((boolean) configs.get(CFG_VISUALISE));
-      if ((boolean) configs.get(CFG_VISUALISE)) Visualize.init();
-    }
-    return rc;
-  }
-
   public static void process(RudimantCompiler rc,
       List<String> files, File outputDirectory)
       throws IOException, WrongFormatException, TException {
@@ -240,8 +202,7 @@ public class GrammarMain {
         outputDirectory = new File((String)configs.get(CFG_OUTPUT_DIRECTORY));
       }
       main.setConfig(configs);
-      initCompiler(configs);
-      process(initCompiler(configs), files, outputDirectory);
+      process(RudimantCompiler.init(configs), files, outputDirectory);
     } catch (OptionException ex) {
       usage("Error parsing options: " + ex.getLocalizedMessage());
       System.exit(1);

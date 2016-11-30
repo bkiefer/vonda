@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.thrift.TException;
 import org.apache.thrift.transport.TTransportException;
 import org.junit.BeforeClass;
 import org.junit.AfterClass;
@@ -54,9 +55,8 @@ public class TestMethodDeclaration {
     return in.replaceAll("[ \n\r\t]+", " ");
   }
 
-
   @Test
-  public void test() throws IOException {
+  public void test() throws IOException, WrongFormatException, TException {
     String methdecl = "Quiz foo() { i = 1; }";
 
     String s = Visualize.generate("methdecl", getInput(methdecl),
