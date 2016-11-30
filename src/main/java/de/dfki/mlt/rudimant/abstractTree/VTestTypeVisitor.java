@@ -12,6 +12,7 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -125,6 +126,17 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
   }
 
+  private boolean isBooleanOperator(String operator) {
+    return operator.equals("&&") || operator.equals("||")
+        || operator.equals("!");
+  }
+
+  private boolean isComparisonOperator(String operator) {
+    if ("<>=!".indexOf(operator.charAt(0)) < 0) return false;
+    return (operator.length() == 2 && operator.charAt(1) == '=')
+        || ("<>".indexOf(operator.charAt(0)) >= 0 && operator.length() == 1);
+  }
+
   /**
    * In principle the same as ExpArithmetic, with boolean only. The one
    * difference is that there are unary expressions which serve as boolean
@@ -138,35 +150,36 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.left.visit(this);
     if (node.right != null) {
       node.right.visit(this);
-      // if one of the operands is an RDF type, or a DialogueAct, the operator has
-      // to be turned into a subsumption call
-      // TODO: this crashes if there is Introduction or Quiz on the right; they
-      // are not assigned to a type when visited...
-      if ((node.right.type != null && node.right.type.equals(DIALOGUE_ACT_TYPE))
-          || (node.left.type != null && node.left.type.equals(DIALOGUE_ACT_TYPE))) {
-        if (node.operator.equals("<=")) {
-          node.operator = ".isSubsumed(";
-        } else if (node.operator.equals("=>")) {
-          node.operator = ".subsumes(";
+      if (isComparisonOperator(node.operator)) {
+        // if one of the operands is an RDF type, or a DialogueAct, the operator has
+        // to be turned into a subsumption call
+        // TODO: this crashes if there is Introduction or Quiz on the right; they
+        // are not assigned to a type when visited...
+        if ((node.right.type != null && node.right.type.equals(DIALOGUE_ACT_TYPE))
+            || (node.left.type != null && node.left.type.equals(DIALOGUE_ACT_TYPE))) {
+          if (node.operator.equals("<=")) {
+            node.operator = ".isSubsumed(";
+          } else if (node.operator.equals("=>")) {
+            node.operator = ".subsumes(";
+          }
+          return;
         }
-        return;
-      }
-      // TODO THIS MIGHT NOT BE ENOUGH, E.G., IF ONE IS A RDF OBJECT AND THE OTHER
-      // IS A TYPE, WE MAYBE NEED ANOTHER FUNCTION CALL HERE
-      if (node.right.isRdfType() || node.left.isRdfType()) {
-        if (node.operator.equals("<=")) {
-          node.operator = ".isSubClassOf(";
-        } else if (node.operator.equals("=>")) {
-          node.operator = ".isSuperClassOf(";
+        // TODO THIS MIGHT NOT BE ENOUGH, E.G., IF ONE IS A RDF OBJECT AND THE OTHER
+        // IS A TYPE, WE MAYBE NEED ANOTHER FUNCTION CALL HERE
+        if (node.right.isRdfType() || node.left.isRdfType()) {
+          if (node.operator.equals("<=")) {
+            node.operator = ".isSubClassOf(";
+          } else if (node.operator.equals("=>")) {
+            node.operator = ".isSuperClassOf(";
+          }
+          return;
         }
-        return;
       }
-      if (node.operator.equals("&&") || node.operator.equals("||")) {
+      if (isBooleanOperator(node.operator)) {
         node.right = node.right.ensureBoolean();
       }
     }
-    if (node.operator.equals("&&") || node.operator.equals("||")
-        || node.operator.equals("!")) {
+    if (isBooleanOperator(node.operator)) {
       node.left = node.left.ensureBoolean();
     }
   }
@@ -238,7 +251,6 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(GrammarRule node) {
     mem.addRule(node.label, node.toplevel);
-    // TODO: EXPLAIN WHY THIS IS NECESSARY
     // we step down into a new environment (later turned to a method) whose
     //  variables cannot be seen from the outside
     if (node.toplevel) {
@@ -252,9 +264,8 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatAbstractBlock node) {
-    // TODO: EXPLAIN WHY THIS IS NECESSARY
-    // we step down into a new environment (a block, possibly method block) whose
-    //  variables cannot be seen from the outside
+    // we step down into a new environment (a block, possibly method block)
+    // whose variables cannot be seen from the outside
     if (node.braces) {
       mem.enterEnvironment();
     }
@@ -278,7 +289,7 @@ public class VTestTypeVisitor implements RudiVisitor {
         node.varType = et.substring(et.indexOf("<"), et.indexOf(">"));
       }
     }
-    mem.addElement(node.var.toString(), node.varType, node.position);
+    mem.addVariableDeclaration(node.var.toString(), node.varType, node.position);
     node.statblock.visit(this);
   }
 
@@ -290,7 +301,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     // TODO: this is a bit more complicated; remember the types of the variables
     // that were declared in the condition
     for (String s : node.variables) {
-      mem.addElement(s, "Object", node.position);
+      mem.addVariableDeclaration(s, "Object", node.position);
     }
   }
 
@@ -326,11 +337,11 @@ public class VTestTypeVisitor implements RudiVisitor {
           rudi.handleTypeError("Found a list creation where the list type doesn't fit"
                   + " its objects' type");
         }
-        mem.addElement(node.variableName, node.listType, node.origin);
+        mem.addVariableDeclaration(node.variableName, node.listType, node.origin);
         return;
       }
       node.listType = "List<" + node.objects.get(0).getType() + ">";
-      mem.addElement(node.variableName, node.listType, node.origin);
+      mem.addVariableDeclaration(node.variableName, node.listType, node.origin);
     } else if (node.listType == null) {
       node.listType = "List<Object>";
     }
@@ -346,7 +357,7 @@ public class VTestTypeVisitor implements RudiVisitor {
    * ********************************************************************* */
   @Override
   public void visitNode(StatVarDef node) {
-    mem.addElement(node.variable, node.type, node.position);
+    mem.addVariableDeclaration(node.variable, node.type, node.position);
   }
 
   @Override
@@ -359,7 +370,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       mem.enterEnvironment();
       for (int i = 0; i < node.parameters.size(); i++) {
         // add parameters to environment
-        mem.addElement(node.parameters.get(i), node.partypes.get(i),
+        mem.addVariableDeclaration(node.parameters.get(i), node.partypes.get(i),
             node.position);
       }
       node.block.visit(this);
@@ -479,8 +490,12 @@ public class VTestTypeVisitor implements RudiVisitor {
    */
   @Override
   public void visitNode(UVariable node) {
-    node.type = mem.getVariableType(node.representation);
-    String o = mem.getVariableOriginClass(node.representation);
+    if (node.type != null && mem.getVariableType(node.fullexp) == null) {
+      mem.addVariableDeclaration(node.fullexp, node.type, node.originClass);
+    }
+    node.type = mem.getVariableType(node.fullexp);
+    String o = mem.getVariableOriginClass(node.fullexp);
+    /*
     if (o == null) {
       // the variable does not originate in another file
 
@@ -508,7 +523,8 @@ public class VTestTypeVisitor implements RudiVisitor {
         return;
       }
     }
-    if (!node.originClass.equals(o)) {
+    */
+    if (o != null && !node.originClass.equals(o)) {
       mem.needsClass(mem.getCurrentTopRule(), o);
       node.realOrigin = o;
     }

@@ -23,7 +23,6 @@ public abstract class RTExpression extends RudiTree {
   public static final Logger logger = LoggerFactory.getLogger(RudiTree.class);
 
   protected String type;
-  protected boolean isRdfType;
 
   String fullexp;
 
@@ -38,11 +37,7 @@ public abstract class RTExpression extends RudiTree {
   // Return true if this is represents an RDF type or a DialogueAct
   // TODO: maybe has to be split up.
   public boolean isRdfType() {
-    return isRdfType;
-  }
-
-  public void setRdfType() {
-    isRdfType = true;
+    return type != null && type.charAt(0) == '<';
   }
 
   public boolean isComplexType() {

@@ -5,8 +5,6 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.Collections;
-
 /**
  * just to be able to deal with lambda expressions if someone should use them,
  * but there is nothing like type checking implemented yet
@@ -15,9 +13,8 @@ import java.util.Collections;
  */
 public class ExpLambda extends RTExpLeaf {
 
-  String exp;
   public ExpLambda(String exp) {
-    this.exp = exp;
+    content = fullexp = exp;
   }
 
   @Override

@@ -85,13 +85,15 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       parameters.add(ctx.getChild(++i).getText());
       i += 2;
     }
+    RudiTree block = null;
+    if (!ctx.getChild(ctx.getChildCount() - 1).getText().equals(";")) {
+      block = this.visit(ctx.getChild(ctx.getChildCount() - 1));
+    }
     return new StatMethodDeclaration(
         (hasVisibilitySpec == 0 ? "" : ctx.getChild(0).getText()),
         ctx.getChild(0 + hasVisibilitySpec).getText(),
         ctx.getChild(1 + hasVisibilitySpec).getText(),
-        parameters, partypes,
-        this.visit(ctx.getChild(ctx.getChildCount() - 1)),
-        currentClass).setPosition(ctx);
+        parameters, partypes, block, currentClass).setPosition(ctx);
   }
 
   @Override
@@ -449,25 +451,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitType_spec(RobotGrammarParser.Type_specContext ctx) {
     // VARIABLE | VARIABLE SMALLER VARIABLE GREATER
     throw new UnsupportedOperationException("This method should not be used.");
-  }
-
-  @Override
-  public RudiTree visitFun_def(RobotGrammarParser.Fun_defContext ctx) {
-    // type_spec VARIABLE LPAR ( type_spec VARIABLE (COMMA type_spec VARIABLE)* )? RPAR SEMICOLON
-    // type_spec is either a boring normal type or a type of form Rdf<Child>
-    String type = ctx.getChild(0).getText();
-    String funcname = ctx.getChild(1).getText();
-    // get all the parameters & their types
-    ArrayList<String> parnames = new ArrayList<>();
-    ArrayList<String> partypes = new ArrayList<>();
-    int j = 3;
-    while (j < ctx.getChildCount() - 2) {
-      partypes.add(ctx.getChild(j++).getText());
-      parnames.add(ctx.getChild(j++).getText());
-      j++;
-    }
-    return new StatMethodDeclaration(null, type, funcname, parnames, partypes,
-        null, currentClass).setPosition(ctx);
   }
 
   @Override

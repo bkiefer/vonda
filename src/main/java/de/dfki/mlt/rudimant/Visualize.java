@@ -83,25 +83,39 @@ public class Visualize {
     return root;
   }
 
-  public static class RudiFileHandler implements ObjectHandler {
-  public boolean process(File f, InputStream in, MainFrame mf) throws IOException {
-    String inputRealName = f.getName().replace(RULES_FILE_EXTENSION, "");
-
-    // create the abstract syntax tree
-    RudiTree myTree = parseInput(inputRealName, in);
-
-    // do the type checking
-    typeCheck(myTree, configs);
-
+  public static void show(RudiTree root, String realName, MainFrame mf) {
     CompactLayout cl = new CompactLayout();
     cl.setTreeHorizontal(true);
 
-    DrawingPanel dp =
-        new DrawingPanel(myTree, cl, new TreeModelAdapter());
+    DrawingPanel dp = new DrawingPanel(root, cl, new TreeModelAdapter());
     mf.setContentArea(dp);
-    mf.setTitle(inputRealName);
-    return true;
+    mf.setTitle(realName);
   }
+
+  public static void show(RudiTree root, String realName) {
+    MainFrame mf = new MainFrame("foo");
+    mf.addFileAssociation(new RudiFileHandler(), "rudi");
+    show(root, realName, mf);
+  }
+
+  public static class RudiFileHandler implements ObjectHandler {
+    public boolean process(File f, InputStream in, MainFrame mf) throws IOException {
+      String inputRealName = f.getName().replace(RULES_FILE_EXTENSION, "");
+
+      // create the abstract syntax tree
+      RudiTree myTree = parseInput(inputRealName, in);
+
+      // do the type checking
+      typeCheck(myTree, configs);
+
+      // show tree
+      show(myTree, inputRealName, mf);
+      return true;
+    }
+  }
+
+  public static void init() {
+    Style.increaseDefaultFontSize(1.5);
   }
 
 
@@ -120,7 +134,6 @@ public class Visualize {
       Yaml yaml = new Yaml();
       configs = (Map<String, Object>)yaml.load(new FileReader(args[1]));
     }
-
 
     Style.increaseDefaultFontSize(1.5);
     MainFrame root = new MainFrame("foo");

@@ -1,6 +1,7 @@
 
 Activity activity;
 Child user;
+Agent I_ROBOT;
 Introduction intro;
 Session currentSession;
 

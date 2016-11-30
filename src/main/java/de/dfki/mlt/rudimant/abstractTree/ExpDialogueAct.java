@@ -29,7 +29,6 @@ public class ExpDialogueAct extends RTExpression {
     this.proposition = proposition;
     this.exps = exps;
     this.type = DIALOGUE_ACT_TYPE;
-    this.isRdfType = true;
   }
 
   public void visit(RudiVisitor v) {

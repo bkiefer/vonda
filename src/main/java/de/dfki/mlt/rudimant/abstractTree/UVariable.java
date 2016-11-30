@@ -5,7 +5,6 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-// TODO: test whether variable exists?
 /**
  * representation of a variable
  *
@@ -13,12 +12,10 @@ package de.dfki.mlt.rudimant.abstractTree;
  */
 public class UVariable extends RTExpLeaf {
 
-  String representation;
   String originClass;
   // set to the class whose attribute this variable is; null if the variable
   // is declared in originClass
   String realOrigin;
-  boolean isRdfClass;
 
   public UVariable(String type, String representation, String originClass) {
     this(representation, originClass);
@@ -26,14 +23,13 @@ public class UVariable extends RTExpLeaf {
   }
 
   public UVariable(String representation, String originClass) {
-    this.fullexp = representation;
-    this.representation = representation;
+    content = fullexp = representation;
     this.originClass = originClass;
   }
 
   @Override
   public String toString() {
-    return this.representation;
+    return this.fullexp;
   }
 
   @Override

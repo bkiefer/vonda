@@ -19,7 +19,6 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.lt.hfc.db.HfcDbService;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudimant.abstractTree.GrammarFile;
 import de.dfki.mlt.rudimant.abstractTree.RudiTree;
@@ -35,6 +34,7 @@ public class RudimantCompiler {
   private boolean log;
   private boolean throwExceptions = true;
   private boolean typeCheck = true;
+  private boolean visualise = false;
 
   private File inputDirectory;
   private File outputDirectory;
@@ -96,10 +96,11 @@ public class RudimantCompiler {
     this.typeCheck = parentCompiler.typeCheck;
     this.packageName = parent.getPackageName();
     this.rootLevel = parent.rootLevel;
+    this.visualise = parent.visualise;
   }
 
   public RudimantCompiler(String wrapperClass, String constructorArgs, RdfProxy proxy) {
-    mem = new Mem();
+    mem = new Mem(proxy);
     this.wrapperClass = wrapperClass;
     this._proxy = proxy;
     parent = null;
@@ -185,6 +186,10 @@ public class RudimantCompiler {
 
   public void setThrowExceptions(boolean b) {
     this.throwExceptions = b;
+  }
+
+  public void setVisualisation(boolean vis) {
+    this.visualise = vis;
   }
 
   public Mem getMem() {
@@ -282,6 +287,9 @@ public class RudimantCompiler {
       VTestTypeVisitor ttv = new VTestTypeVisitor(this);
       ttv.visitNode(gf);
       logger.info("Done testing types of " + inputFile.getName());
+      if (visualise) {
+        Visualize.show(gf, inputRealName);
+      }
 
       // generate the output
       VGenerationVisitor gv =

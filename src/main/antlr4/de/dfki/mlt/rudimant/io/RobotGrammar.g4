@@ -12,28 +12,15 @@ grammar RobotGrammar;
 /// start rule
 // the part "'{' statement '}'" is ridiciulous but currently solves a parsing exception...
 grammar_file
-  : // TODO: THIS IS REDUNDANT. IT'S ALREADY CONTAINED IN WHAT FOLLOWS
-    imports*
-    (
-     // TODO: THIS IS REDUNDANT. IT'S ALREADY CONTAINED IN STATEMENT
-     grammar_rule
-     | method_declaration
-     | statement
-     // TODO: THIS IS REDUNDANT. IT'S ALREADY CONTAINED IN STATEMENT
-     | '{' statement '}'
-     | ANNOTATION
-     | imports
+  : ( method_declaration
+      | statement
+      | ANNOTATION
+      | imports
     )*
   ;
 
 imports
   : IMPORT VARIABLE ';'
-  ;
-
-method_declaration
-  : (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | type_spec) VARIABLE '('
-    ((type_spec | DEC_VAR) VARIABLE (',' (type_spec | DEC_VAR) VARIABLE)*)?
-    ')' statement_block
   ;
 
 statement
@@ -49,7 +36,6 @@ statement
   | for_statement
   | switch_statement
   | var_def
-  | fun_def
   | CONTINUE ';'
   | BREAK ';'
   ;
@@ -64,6 +50,7 @@ grammar_rule
   : VARIABLE COLON if_statement
   ;
 
+// TODO: what about return label; ??
 return_statement: RETURN exp? ';';
 
 if_statement
@@ -112,9 +99,10 @@ var_def
   : type_spec variable ';'
   ;
 
-fun_def
-  : type_spec variable '('
-    ( type_spec VARIABLE (',' type_spec VARIABLE)* )? ')' ';'
+method_declaration
+  : (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | type_spec) VARIABLE '('
+    ((type_spec | DEC_VAR) VARIABLE (',' (type_spec | DEC_VAR) VARIABLE)*)?
+    ')' (statement_block |';')
   ;
 
 list_creation
@@ -136,8 +124,12 @@ function_call
   : VARIABLE '(' ( exp ( ',' exp )* )? ')'
   ;
 
+// TODO: the next two have to be merged into a more generic one. What to do
+// about field access with a '.' can only be decided in the type visitor, when
+// the type of the object to apply to is known
 funccall_on_object
-  : (variable | function_call | field_access | STRING | '(' exp ')') '.' function_call
+  : (variable | function_call | field_access | STRING | '(' exp ')')
+   '.' function_call
   ;
 
 field_access
@@ -173,12 +165,10 @@ simple_exp
   | literal_or_graph_exp
   | field_access
   | assignment
-  | ( STRING
-    | WILDCARD
-    | FALSE
-    | TRUE
-    | NULL
-    )
+  | STRING
+  | FALSE
+  | TRUE
+  | NULL
   | NOT exp
   ;
 
@@ -210,19 +200,14 @@ da_token
   : VARIABLE_MARKER exp
   | VARIABLE
   | STRING
+  | WILDCARD
   ;
 
+// TODO: is that all 'what you can assign to' (an lvalue), which can be:
+// a variable, an array element, an rdf slot (did i forget sth?)
 assignment
   : ((DEC_VAR | type_spec)? variable) '=' exp
   | field_access '=' exp
-  ;
-
-number
-  : ( INCREMENT | DECREMENT )?
-    ( ( INT | FLOAT | VARIABLE )
-      | field_access
-      | function_call
-    )
   ;
 
 // either a number or a term containing at least one operator
@@ -242,11 +227,13 @@ factor
   | '-' arithmetic
   ;
 
-
-/// citing rulesproto: TODO: CURRENTLY NOT IN SYNTAX: SUBSUMPTION + BINDING VARIABLES
-/*mysterious_binding_exp
-  : VARIABLE ASSIGN QUESTION VARIABLE
-  ;*/
+number
+  : ( INCREMENT | DECREMENT )?
+    ( ( INT | FLOAT | VARIABLE )
+      | field_access
+      | function_call
+    )
+  ;
 
 
 /*

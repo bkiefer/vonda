@@ -66,17 +66,18 @@ public class VGenerationVisitor implements RudiVisitor {
       if ("-".equals(node.operator) || "!".equals(node.operator)) {
         out.append(node.operator);
       }
-      out.append("(");
+      out.append('(');
       node.left.visitWithComments(this);
       // something like .isEmpty(), which is a postfix operator
       if (node.operator.endsWith(")")) out.append(node.operator);
-      out.append(")");
+      out.append(')');
     } else {
-      out.append("(");
+      out.append('(');
       node.left.visitWithComments(this);
       out.append(node.operator);
       node.right.visitWithComments(this);
-      out.append(")");
+      if (node.operator.endsWith("(")) out.append(')');
+      out.append(')');
     }
   }
 
@@ -182,7 +183,7 @@ public class VGenerationVisitor implements RudiVisitor {
 
   public void visitDaToken(RTExpression exp) {
     if (exp instanceof UVariable) {
-      out.append(((UVariable) exp).representation);
+      out.append(((UVariable) exp).fullexp);
     } else if (exp instanceof USingleValue
             && ((USingleValue) exp).type.equals("String")) {
       String s = ((USingleValue) exp).content;
@@ -228,7 +229,7 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpLambda node) {
-    out.append(node.exp);
+    out.append(node.content);
   }
 
   @Override
@@ -697,7 +698,7 @@ public class VGenerationVisitor implements RudiVisitor {
       try {
         // then this is a creation of a new rdf object
         out.append("_proxy.getClass(\"" +
-                rudi.getProxy().fetchRdfClass(node.representation.get(0)) +
+                rudi.getProxy().fetchClass(node.representation.get(0)) +
                 "\").newInstance(DEFNS);\n");
         return;
       } catch (TException ex) {
@@ -714,7 +715,7 @@ public class VGenerationVisitor implements RudiVisitor {
         try {
           // TODO: does this exclude sth we actually want to treat as rdf??
           if (!"Object".equals(lastType) &&
-                  this.rudi.getProxy().fetchRdfClass(lastType) != null) {
+                  this.rudi.getProxy().fetchClass(lastType) != null) {
             representation.add(node.representation.get(i));
             // then we are in the case that this is actually an rdf operation
             out.append(".getValue(\"" + node.representation.get(i) + "\") ");
@@ -764,15 +765,15 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UVariable node) {
-    if (node.isRdfClass) {
-      out.append("\"" + node.representation + "\"");
+    if (node.isRdfType()) {
+      out.append("\"" + node.content + "\"");
     } // if the variable is not in the memory,
     else if (node.realOrigin != null) {
       String t = node.realOrigin;
-      out.append(t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation);
+      out.append(t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.content);
       return;
     } else {
-      out.append(node.representation);
+      out.append(node.content);
     }
   }
 

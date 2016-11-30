@@ -24,14 +24,21 @@ import de.dfki.mlt.rudimant.GrammarMain;
 public class SeriousTest {
   static HfcDbServer server;
 
-  static final int SERVER_PORT = 8996;
+  public static final String RESOURCE_DIR = "src/test/resources/";
+
+  public static final int SERVER_PORT = 8996;
 
   @BeforeClass
   public static void setUpClass()
       throws TTransportException, IOException, WrongFormatException {
+    setupClass("ontos/pal.ini");
+  }
+
+  public static void setupClass(String iniFileName)
+      throws TTransportException, IOException, WrongFormatException {
     // start the HFC server
     server = new HfcDbServer(SERVER_PORT);
-    server.readConfig(new File("src/test/resources/ontos/pal.ini"));
+    server.readConfig(new File(RESOURCE_DIR + iniFileName));
     server.runServer();
   }
 

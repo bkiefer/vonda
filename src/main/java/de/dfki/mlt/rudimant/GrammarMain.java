@@ -81,6 +81,10 @@ public class GrammarMain {
     if (configs.containsKey(CFG_PACKAGE)) {
       rc.setPackageName((String) configs.get(CFG_PACKAGE));
     }
+    if (configs.containsKey(CFG_VISUALISE)) {
+      rc.setVisualisation((boolean) configs.get(CFG_VISUALISE));
+      if ((boolean) configs.get(CFG_VISUALISE)) Visualize.init();
+    }
     return rc;
   }
 
@@ -114,6 +118,7 @@ public class GrammarMain {
     { CFG_LOG, false , "l"},
     { CFG_TYPE_ERROR_FATAL, true, "e" },
     { CFG_TYPE_CHECK, true , "d" },
+    { CFG_VISUALISE, false , "v" },
     { CFG_TARGET_CONSTRUCTOR, "", "CA" }
   };
 
@@ -168,7 +173,7 @@ public class GrammarMain {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
-    OptionParser parser = new OptionParser("hleds:r:w:c:p:o:");
+    OptionParser parser = new OptionParser("hlveds:r:w:c:p:o:");
     parser.accepts("help");
     OptionSet options = null;
 
@@ -208,6 +213,9 @@ public class GrammarMain {
 
       if (options.has("w")) {
         configs.put(CFG_WRAPPER_CLASS, options.valueOf("w"));
+      }
+      if (options.has("v")) {
+        configs.put(CFG_VISUALISE, true);
       }
       if (options.has("r")) {
         configs.put(CFG_ONTOLOGY_FILE, options.valueOf("r"));

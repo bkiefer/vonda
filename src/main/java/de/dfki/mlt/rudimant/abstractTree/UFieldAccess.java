@@ -48,13 +48,18 @@ public class UFieldAccess extends RTExpLeaf {
     asked = true;
     // first element of representation is type
     // everything else specifies the wanted predicate information
-    String typ = mem.getVariableType(representation.get(0));
+    if (! isRdfType())
+      return "Object";
+    String type = mem.getVariableType(representation.get(0));
+    RdfClass clazz = proxy.getClass(type);
+    /*
     RdfClass clazz = proxy.fetchRdfClass(typ);
     if (clazz == null){
       // then this is no rdf type; just assume/hope that it is a valid access to sth else
       // TODO: we should probably crash if we do not recognize this combination
       return "Object";
     }
+    */
     List<String> predicatesBaseName
             = representation.subList(1, representation.size());
     List<String> predicatesURI = clazz.getPredicateType(predicatesBaseName);

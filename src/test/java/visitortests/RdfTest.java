@@ -29,6 +29,8 @@ import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.abstractTree.RudiTree;
 import de.dfki.mlt.rudimant.abstractTree.UFieldAccess;
 import de.dfki.mlt.rudimant.abstractTree.UVariable;
+import de.dfki.mlt.rudimant.abstractTree.VTestTypeVisitor;
+
 import java.util.ArrayList;
 
 /**
@@ -41,7 +43,6 @@ public class RdfTest {
 
   HfcDbClient client;
   private RdfProxy _proxy;
-
 
   /**
    *
@@ -85,11 +86,10 @@ public class RdfTest {
   @Test
   public void testgetType1() throws TException {
     List<String> elem = Arrays.asList(new String[] { "child", "forename" });
-    Mem mem = new Mem();
+    Mem mem = new Mem(_proxy);
     mem.enterEnvironment();
-    mem.addElement("child", "Child", null);
     List<RudiTree> l = new ArrayList<>();
-    UVariable v = new UVariable("Child", "child", "testclass");
+    UVariable v = new UVariable("<dom:Child>", "child", "testclass");
     l.add(v);
     UFieldAccess field = new UFieldAccess(l, elem);
     String result = field.getPredicateType(_proxy, mem, elem);
@@ -99,11 +99,10 @@ public class RdfTest {
   @Test
   public void testgetType2() throws TException {
     List<String> elem = Arrays.asList(new String[] { "child", "hasTreatment" });
-    Mem mem = new Mem();
+    Mem mem = new Mem(_proxy);
     mem.enterEnvironment();
-    mem.addElement("child", "Child", null);
     List<RudiTree> l = new ArrayList<>();
-    UVariable v = new UVariable("Child", "child", "testclass");
+    UVariable v = new UVariable("<dom:Child>", "child", "testclass");
     l.add(v);
     UFieldAccess field = new UFieldAccess(l, elem);
     String result = field.getPredicateType(_proxy, mem, elem);
@@ -113,11 +112,11 @@ public class RdfTest {
   @Test
   public void testgetType3() throws TException {
     List<String> elem = Arrays.asList(new String[] { "child", "birthdate" });
-    Mem mem = new Mem();
+    Mem mem = new Mem(_proxy);
     mem.enterEnvironment();
-    mem.addElement("child", "Child", null);
+    mem.addVariableDeclaration("child", "Child", null);
     List<RudiTree> l = new ArrayList<>();
-    UVariable v = new UVariable("Child", "child", "testclass");
+    UVariable v = new UVariable("<dom:Child>", "child", "testclass");
     l.add(v);
     UFieldAccess field = new UFieldAccess(l, elem);
     String result = field.getPredicateType(_proxy, mem, elem);

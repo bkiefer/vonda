@@ -20,6 +20,7 @@ public class UFuncCall extends RTExpLeaf {
   List<RTExpression> exps;
 
   public UFuncCall(String full, String representation, List<RTExpression> exps) {
+    this.fullexp = full;
     this.content = representation;
     this.exps = exps;
   }

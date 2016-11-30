@@ -1,7 +1,7 @@
 outputDirectory:    gen-java
 wrapperClass:       de.dfki.dialogue.NaoAgent
 serverHost:         localhost
-serverPort:         9090
+serverPort:         8996
 ontologyFile:       ontologies/pal.ini
 checkTypes:         false
 failOnError:        false

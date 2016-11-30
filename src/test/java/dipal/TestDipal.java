@@ -1,5 +1,6 @@
 package dipal;
 
+import static visitortests.SeriousTest.*;
 import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
@@ -18,10 +19,9 @@ import visitortests.*;
 
 public class TestDipal {
 
-  private static final String RESOURCE_DIR = "src/test/resources/";
-
-  private String[] enterName(String filename){
+  private static String[] enterName(String filename){
     String[] name = {"-c", RESOURCE_DIR + "dipal/dipal.yml",
+        "-p", Integer.toString(SERVER_PORT), "-v",
         RESOURCE_DIR + "dipal/" + filename};
 
     return name;
@@ -30,7 +30,7 @@ public class TestDipal {
   @BeforeClass
   public static void setUpClass()
     throws TTransportException, IOException, WrongFormatException {
-    SeriousTest.setUpClass();
+    SeriousTest.setupClass("dipal/ontologies/pal.ini");
   }
 
   @AfterClass
@@ -41,6 +41,12 @@ public class TestDipal {
   @Test
   public void testDipal() throws TTransportException, FileNotFoundException, IOException, WrongFormatException, TException {
     GrammarMain.main(enterName("PalAgent.rudi"));
+  }
+
+  public static void main(String[] args) throws TTransportException, FileNotFoundException, IOException, WrongFormatException, TException {
+    setUpClass();
+    GrammarMain.main(enterName("PalAgent.rudi"));
+    tearDownClass();
   }
 
 }

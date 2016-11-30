@@ -11,10 +11,6 @@ package de.dfki.mlt.rudimant.abstractTree;
  */
 public class USingleValue extends RTExpLeaf {
 
-//  residing in RTLeaf:
-//  String content;
-//  String type;
-
   public USingleValue(String representation, String type){
     this.fullexp = representation;
     this.content = representation;

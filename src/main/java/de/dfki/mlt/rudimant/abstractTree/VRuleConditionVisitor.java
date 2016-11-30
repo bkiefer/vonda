@@ -142,7 +142,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
 
   public void visitDaToken(StringBuilder out, RTExpression exp) {
     if (exp instanceof UVariable) {
-      out.append(((UVariable) exp).representation);
+      out.append(((UVariable) exp).content);
     } else if (exp instanceof USingleValue
             && ((USingleValue) exp).type.equals("String")) {
       String s = ((USingleValue) exp).content;
@@ -223,7 +223,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
         try {
           // TODO: does this exclude sth we actually want to treat as rdf??
           if (!"Object".equals(lastType) &&
-                  this.rudi.getProxy().fetchRdfClass(lastType) != null) {
+                  this.rudi.getProxy().fetchClass(lastType) != null) {
             representation.add(node.representation.get(i));
             // then we are in the case that this is actually an rdf operation
             fieldAccessPart += (".getValue(\"" + node.representation.get(i) + "\") ");
@@ -332,33 +332,33 @@ public class VRuleConditionVisitor extends VNullVisitor {
   }*/
   @Override
   public void visitNode(UVariable node) {
-    if (node.isRdfClass) {
-      //if (node.getType().equals("DialogueAct") || mem.isRdf(node.representation)) {
+    if (node.isRdfType()) {
+      //if (node.getType().equals("DialogueAct") || mem.isRdf(node.content)) {
       if (fieldAccessPart != null) {
-        this.fieldAccessPart += node.representation;
+        this.fieldAccessPart += node.content;
         return;
       } else if (!(this.whatVDATokenWants == null)) {
-        this.whatVDATokenWants += node.representation;
+        this.whatVDATokenWants += node.content;
         return;
       }
       if (collectDAs != null) {
-        this.collectDAs += "\"" + node.representation + "\"";
+        this.collectDAs += "\"" + node.content + "\"";
         return;
       }
       this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool, "\"" + node.representation + "\"");
-      this.realLook.put(this.lastbool, "\"" + node.representation + "\"");
+      this.compiledLook.put(this.lastbool, "\"" + node.content + "\"");
+      this.realLook.put(this.lastbool, "\"" + node.content + "\"");
       return;
     }
     // if the variable is not in the memory,
     if (node.realOrigin != null) {
       String t = node.realOrigin;
-      String s = t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation;
+      String s = t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.content;
       if (fieldAccessPart != null) {
         this.fieldAccessPart += s;
         return;
       } else if (!(this.whatVDATokenWants == null)) {
-        this.whatVDATokenWants += node.representation;
+        this.whatVDATokenWants += node.content;
         return;
       }
       if (collectElements != null) {
@@ -368,38 +368,38 @@ public class VRuleConditionVisitor extends VNullVisitor {
         this.funcargs += s;
         return;
       }
-      //if (node.getType().equals("DialogueAct") || mem.isRdf(node.representation)) {
+      //if (node.getType().equals("DialogueAct") || mem.isRdf(node.content)) {
       if (collectDAs != null) {
         this.collectDAs += s;
         return;
       }
       this.lastbool = this.currentRule + this.counter++;
       this.compiledLook.put(this.lastbool,
-              t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.representation + isTrue);
-      this.realLook.put(lastbool, node.representation + isTrue);
+              t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.content + isTrue);
+      this.realLook.put(lastbool, node.content + isTrue);
       return;
     } else {
       if (fieldAccessPart != null) {
-        this.fieldAccessPart += node.representation;
+        this.fieldAccessPart += node.content;
         return;
       } else if (!(this.whatVDATokenWants == null)) {
-        this.whatVDATokenWants += node.representation;
+        this.whatVDATokenWants += node.content;
         return;
       }
       if (collectElements != null) {
-        this.collectElements += node.representation;
+        this.collectElements += node.content;
         return;
       } else if (!funcargs.equals("")) {
-        this.funcargs += node.representation;
+        this.funcargs += node.content;
         return;
       }
       if (collectDAs != null) {
-        this.collectDAs += node.representation;
+        this.collectDAs += node.content;
         return;
       }
       this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool, node.representation + isTrue);
-      this.realLook.put(lastbool, node.representation + isTrue);
+      this.compiledLook.put(this.lastbool, node.content + isTrue);
+      this.realLook.put(lastbool, node.content + isTrue);
       isTrue = "";
     }
   }

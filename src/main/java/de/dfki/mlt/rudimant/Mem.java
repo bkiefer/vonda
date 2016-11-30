@@ -7,8 +7,12 @@ package de.dfki.mlt.rudimant;
 
 import java.util.*;
 
+import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
+import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 
 /**
  * this is rudimants memory, used for type checking
@@ -30,8 +34,8 @@ public class Mem {
   // as this is only a way to provide mem with information about the types of
   // imported java functions, we probably don't need local namespaces
   // functions are not implemented locally in this version
-  private HashMap<String, String> functionTypes = new HashMap<>();
-  private HashMap<String, ArrayList<String>> functionParTypes = new HashMap<>();
+  private HashMap<String, String> functionReturnTypes = new HashMap<>();
+  private HashMap<String, ArrayList<String>> functionParamaterTypes = new HashMap<>();
 
   // every toplevel rule might use variables of super rules from the super file
   private String curRule;
@@ -42,10 +46,26 @@ public class Mem {
   // remember the toplevel rules and imports in the correct order
   private Map<String, List<String>> rulesAndImports;
 
-  public Mem() {
+  private RdfProxy _proxy;
+
+  public Mem(RdfProxy proxy) {
     environment = new ArrayDeque<>();
     current = null;
     rulesAndImports = new HashMap<>();
+    _proxy = proxy;
+  }
+
+  private String checkRdf(String type) {
+    if (type == null || type.charAt(0) == '<') return type;
+    try {
+      RdfClass clazz = _proxy.fetchClass(type);
+      if (clazz != null) {
+        type = clazz.toString(); // the URI of the class
+      }
+    } catch (TException e) {
+      throw new RuntimeException(e);
+    }
+    return type;
   }
 
   /**
@@ -103,17 +123,22 @@ public class Mem {
     }
   }
 
-  /**
+  /** Add a function/method declaration, optionally with return and parameter
+   *  types. If the types are not known, it's assumed they are null.
    *
-   * @param funcname
-   * @param functype
-   * @param partypes
+   * @param funcname The name of the function
+   * @param functype the return type of the function, or null
+   * @param partypes the parameter types of the function's parameters
    * @param origin first element class, second rule origin
    */
   public void addFunction(String funcname, String functype,
           ArrayList<String> partypes, String origin) {
-    functionTypes.put(funcname, functype);
-    functionParTypes.put(funcname, partypes);
+    functype = checkRdf(functype);
+    functionReturnTypes.put(funcname, functype);
+    for (int i = 0; i < partypes.size(); ++i) {
+      partypes.set(i, checkRdf(partypes.get(i)));
+    }
+    functionParamaterTypes.put(funcname, partypes);
     // we may need this later, it doesn't harm us now
     // TODO: still sensible?
     //variableOrigin.put(funcname, origin);
@@ -121,10 +146,10 @@ public class Mem {
 
   public boolean existsFunction(String funcname,
           ArrayList<String> partypes) {
-    if (!functionTypes.containsKey(funcname)) {
+    if (!functionReturnTypes.containsKey(funcname)) {
       return false;
     }
-    return (partypes.equals(functionParTypes.get(funcname)));
+    return (partypes.equals(functionParamaterTypes.get(funcname)));
   }
 
   /**
@@ -136,7 +161,7 @@ public class Mem {
   public String getFunctionRetType(String funcname) {
     // TODO: we could also identify the function by the parameter types, is this
     // necessary?
-    return functionTypes.get(funcname);
+    return functionReturnTypes.get(funcname);
   }
 
   /**
@@ -146,14 +171,14 @@ public class Mem {
    * @param origin first element class, second rule origin
    * @return
    */
-  public boolean addElement(String variable, String type, String origin) {
+  public boolean addVariableDeclaration(String variable, String type, String origin) {
     logger.debug("Add var {}:{} [{}]", environment.size(), variable, type);
     if (current.containsKey(variable)) {
       return false;
     }
     // TODO: check if RDF type
-    boolean isRdf = false;
-    current.put(variable, type, isRdf, origin);
+    type = checkRdf(type);
+    current.put(variable, type, origin);
     return true;
   }
 
@@ -162,7 +187,8 @@ public class Mem {
   }
 
   public boolean isRdf(String variable) {
-    return current.isRdf(variable);
+    String type = current.get(variable);
+    return (type != null && type.charAt(0) == '<');
   }
 
   /**

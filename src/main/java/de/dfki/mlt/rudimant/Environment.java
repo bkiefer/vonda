@@ -33,15 +33,12 @@ public class Environment {
     return newEnv;
   }
 
-  public void put(String v, String t, boolean isRdf) {
-    if (isRdf) {
-      rdfs.add(v);
-    }
+  public void put(String v, String t) {
     this.variableToType.put(v, t);
   }
 
-  public void put(String v, String t, boolean isRdf, String o) {
-    put(v, t, isRdf);
+  public void put(String v, String t, String o) {
+    put(v, t);
     this.variableOrigin.put(v, o);
   }
 
