@@ -60,6 +60,7 @@ public class ExpLambdaTest {
     Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("conditional", getInput(conditionalExp));
     RudiTree dtr = getNodeOfInterest(rt.first);
     //assertEquals("Wrong class:", ExpLambda.class, dtr.getClass());
+    // according to Anna, this function doesn't work yet (1.12.2016)
   }
 
 }
