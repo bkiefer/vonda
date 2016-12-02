@@ -557,6 +557,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     } else {
       toCreate = ctx.getChild(1).getText();
     }
-    return ExpNew(ctx.getText(), toCreate, construct);
+    return new ExpNew(ctx.getText(), toCreate, construct);
   }
 }

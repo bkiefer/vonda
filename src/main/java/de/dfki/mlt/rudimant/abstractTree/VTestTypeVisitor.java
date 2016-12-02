@@ -563,7 +563,8 @@ public class VTestTypeVisitor implements RudiVisitor {
       node.type = node.toCreate;
     } else {
       String f = node.fullexp;
-      node.type = f.substring(f.indexOf(" "), f.indexOf("("));
+      // the type is the java object created
+      node.type = f.substring(f.indexOf("w"), f.indexOf("("));
       node.construct.visit(this);
     }
   }

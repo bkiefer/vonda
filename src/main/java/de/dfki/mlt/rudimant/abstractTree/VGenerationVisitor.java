@@ -906,9 +906,15 @@ public class VGenerationVisitor implements RudiVisitor {
     if(node.construct != null){
       out.append("new ");
       node.construct.visit(this);
-      return;
     } else {
-      // TODO: how to do rdf generation?????
+      try {
+        // TODO: how to do rdf generation?????
+        out.append("_proxy.getClass(\"" +
+                rudi.getProxy().fetchClass(node.toCreate) +
+                "\").newInstance(DEFNS);\n");
+      } catch (TException ex) {
+        java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
+      }
     }
   }
 }
