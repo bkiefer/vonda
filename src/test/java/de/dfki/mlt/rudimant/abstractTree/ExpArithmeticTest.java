@@ -12,7 +12,12 @@ import org.junit.Test;
 import de.dfki.mlt.rudimant.RudimantCompiler;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
+/**
+ *
+ * @author max
+ */
 public class ExpArithmeticTest {
 
   String header = "label: if(true) {";
@@ -66,6 +71,9 @@ public class ExpArithmeticTest {
     Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("arithmetic", getInput(arithmeticExp));
     RudiTree dtr = getNodeOfInterest(rt.first);
     assertTrue(dtr instanceof ExpArithmetic);
+
+    String type = ((ExpArithmetic) dtr).getType();
+    assertEquals("type of 1 - 2", "int", type);
   }
 
 }
