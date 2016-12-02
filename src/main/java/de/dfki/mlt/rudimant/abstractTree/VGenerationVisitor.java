@@ -215,13 +215,6 @@ public class VGenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpFuncOnObject node) {
-    node.on.visitWithComments(this);
-    out.append(".");
-    node.funccall.visitWithComments(this);
-  }
-
-  @Override
   public void visitNode(ExpIf node) {
     node.boolexp.visitWithComments(this);
     out.append(" ? ");

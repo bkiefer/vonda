@@ -197,7 +197,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
     this.realLook.put(lastbool, result.replaceAll("\\\\\"", "\\\""));
   }
 
-  @Override
+  /*@Override
   public void visitNode(ExpFuncOnObject node) {
     if (collectElements != null) {
       this.collectElements += node.look + isTrue + " ";
@@ -207,7 +207,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
     this.compiledLook.put(this.lastbool, node.look + isTrue + " ");
     this.realLook.put(lastbool, node.look + isTrue + " ");
     isTrue = "";
-  }
+  }*/
 
   private String fieldAccessPart = null;
 

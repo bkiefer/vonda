@@ -413,13 +413,13 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     }
   }
 
-  @Override
+  /*@Override
   public RudiTree visitFunccall_on_object(RobotGrammarParser.Funccall_on_objectContext ctx) {
     // variable DOT function_call
     return new ExpFuncOnObject(ctx.getText(),
         (RTExpression) this.visit(ctx.getChild(0)),
         (RTExpression) this.visit(ctx.getChild(2))).setPosition(ctx);
-  }
+  }*/
 
   @Override
   public RudiTree visitField_access(RobotGrammarParser.Field_accessContext ctx) {

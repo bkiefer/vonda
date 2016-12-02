@@ -127,13 +127,13 @@ function_call
 // TODO: the next two have to be merged into a more generic one. What to do
 // about field access with a '.' can only be decided in the type visitor, when
 // the type of the object to apply to is known
-funccall_on_object
+/*funccall_on_object
   : (variable | function_call | field_access | STRING | '(' exp ')')
    '.' function_call
-  ;
+  ;*/
 
 field_access
-  : (VARIABLE | function_call)
+  : (variable | function_call | STRING | '(' exp ')')
     ( ( '.' (VARIABLE | '(' function_call ')' | function_call )) )+
   ;
 
@@ -159,7 +159,7 @@ exp
 simple_exp
   :
   '(' exp ')'
-  | funccall_on_object
+  //| funccall_on_object
   | variable
   | arithmetic
   | function_call
