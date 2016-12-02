@@ -546,4 +546,17 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visit(ParseTree pt) {
     return pt.accept(this);
   }
+
+  @Override
+  public RudiTree visitNew_exp(RobotGrammarParser.New_expContext ctx) {
+    // NEW VARIABLE | NEW function_call
+    String toCreate = null;
+    RTExpression construct = null;
+    if(ctx.getChild(1).getText().contains("(")){
+      construct = (RTExpression) this.visit(ctx.getChild(1));
+    } else {
+      toCreate = ctx.getChild(1).getText();
+    }
+    return ExpNew(ctx.getText(), toCreate, construct);
+  }
 }

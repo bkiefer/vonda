@@ -900,4 +900,15 @@ public class VGenerationVisitor implements RudiVisitor {
 //    printRuleLogger(null, bool_exp);
 //    out.append("}\n}\n");
 //  }
+
+  @Override
+  public void visitNode(ExpNew node) {
+    if(node.construct != null){
+      out.append("new ");
+      node.construct.visit(this);
+      return;
+    } else {
+      // TODO: how to do rdf generation?????
+    }
+  }
 }

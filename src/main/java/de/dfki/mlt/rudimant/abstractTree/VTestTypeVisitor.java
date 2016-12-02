@@ -556,6 +556,18 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.block.visit(this);
   }
 
+  @Override
+  public void visitNode(ExpNew node) {
+    if(node.toCreate != null){
+      // TODO: insert proper rdf type
+      node.type = node.toCreate;
+    } else {
+      String f = node.fullexp;
+      node.type = f.substring(f.indexOf(" "), f.indexOf("("));
+      node.construct.visit(this);
+    }
+  }
+
   /**
    * TODO: this is generation, not type computation. It does not belong here *
    * private void conditionHandling(ExpBoolean node) { String t =

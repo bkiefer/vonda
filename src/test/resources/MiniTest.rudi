@@ -4,8 +4,10 @@ DialogueAct Introduction;
 
 test:
 if((activity <= Introduction)){
+Child c = new Child;
+Object r = new Object();
 //activity <= Introduction;
-Child c;
+//Child c;
 Child user;
 c.hasFather.hasGender;
     user.hasSessions.add(currentSession);

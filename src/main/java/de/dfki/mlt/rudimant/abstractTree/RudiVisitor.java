@@ -26,6 +26,8 @@ public interface RudiVisitor {
   void visitNode(ExpIf node);
 
   void visitNode(ExpLambda node);
+  
+  void visitNode(ExpNew node);
 
   void visitNode(GrammarFile node);
 

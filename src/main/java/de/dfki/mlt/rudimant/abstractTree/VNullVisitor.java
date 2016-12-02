@@ -163,4 +163,9 @@ public class VNullVisitor implements RudiVisitor {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
+  @Override
+  public void visitNode(ExpNew node) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
 }

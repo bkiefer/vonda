@@ -153,6 +153,7 @@ exp
   | if_exp
   | string_expression
   | boolean_exp
+  | new_exp
   ;
 
 simple_exp
@@ -185,6 +186,11 @@ bool_and_exp
 simple_b_exp
   : simple_exp // will be compiled to '!= null' or '!= 0' or 'has()' ...
   | simple_exp ('==' | '!=' | '<=' | '<' | '>=' | '>') exp
+  ;
+
+new_exp
+  : NEW VARIABLE
+  | NEW function_call
   ;
 
 // TODO: IS THIS STILL USED?
@@ -259,6 +265,7 @@ RETURN: 'return';
 PUBLIC: 'public';
 PROTECTED: 'protected';
 PRIVATE: 'private';
+NEW: 'new';
 
 /// character literal (starting with ' ):
 CHARACTER: '\''.'\'';
