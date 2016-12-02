@@ -132,9 +132,11 @@ function_call
    '.' function_call
   ;*/
 
+// TODO: allowing exp after . is too much, should we split exp into exp and
+// complex exp??
 field_access
   : (variable | function_call | STRING | '(' exp ')')
-    ( ( '.' (VARIABLE | '(' function_call ')' | function_call )) )+
+    ( '.' exp)+
   ;
 
 type_spec
