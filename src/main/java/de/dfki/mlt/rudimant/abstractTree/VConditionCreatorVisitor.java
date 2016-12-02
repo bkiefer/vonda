@@ -106,15 +106,6 @@ public class VConditionCreatorVisitor extends VNullVisitor {
                 + compiledLook.get(expNames[counter++]) + ";\n");
         //        this.condition.append(expNames[counter++]);
         return;
-      } else {
-        this.condition.append("(");
-        this.creation.append("(");
-        this.visitNode(node.left);
-        condition.append(node.operator);
-        creation.append(node.operator);
-        this.visitNode(node.right);
-        this.condition.append(")");
-        this.creation.append(")");
       }
     } else {
       if ("!".equals(node.operator)) {

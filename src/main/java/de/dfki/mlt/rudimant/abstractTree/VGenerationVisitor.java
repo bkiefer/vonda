@@ -168,6 +168,9 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append(node.operator);
       out.append(" ");
       node.right.visitWithComments(this);
+      if(node.operator.contains("(")){
+        out.append(")");
+      }
       out.append(")");
       //out.context.doLog(
       //        "\"" + ret.replace('"', ' ') +  " _ resulted to \" + " + ret);
@@ -483,7 +486,7 @@ public class VGenerationVisitor implements RudiVisitor {
       if (stat instanceof RTExpression) {
         stat.visitWithComments(this);
         out.append(";\n");
-        break;
+        continue;
       }
       stat.visitWithComments(this);
     }
