@@ -12,6 +12,7 @@ Child user;
 c.hasFather.hasGender;
     user.hasSessions.add(currentSession);
  salutation = (firstEncounter()) ? "InitialGreeting" : "ReturnGreeting";
+activity <= Introduction;
 }
 
 question_asked:

@@ -114,6 +114,9 @@ public class VRuleConditionVisitor extends VNullVisitor {
         collectElements += node.operator + " ";
         node.right.visit(this);
         this.lastbool = this.currentRule + this.counter++;
+        if(node.operator.contains("(")){
+          collectElements += ")";
+        }
         this.compiledLook.put(this.lastbool, collectElements + ")");
         this.realLook.put(lastbool, collectElements.replaceAll("\\\\\"", "\\\"") + ")");
         collectElements = null;
@@ -125,8 +128,9 @@ public class VRuleConditionVisitor extends VNullVisitor {
       node.right.visit(this);
       String r = this.lastbool;
       this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool, n + l + node.operator + r);
-      this.realLook.put(lastbool, n + l + node.operator + r);
+      this.compiledLook.put(this.lastbool, n + "(" + 
+              l + node.operator + r + ")");
+      this.realLook.put(lastbool, n + "(" + l + node.operator + r + "(");
     } else {
       // isTrue = node.isTrue + " "; // TODO:EXPLAIN OR REMOVE
       node.left.visit(this);
@@ -339,6 +343,9 @@ public class VRuleConditionVisitor extends VNullVisitor {
         return;
       } else if (!(this.whatVDATokenWants == null)) {
         this.whatVDATokenWants += node.content;
+        return;
+      } else if (collectElements != null) {
+        this.collectElements += node.content;
         return;
       }
       if (collectDAs != null) {
