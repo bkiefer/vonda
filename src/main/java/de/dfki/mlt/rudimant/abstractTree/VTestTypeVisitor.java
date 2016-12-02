@@ -194,12 +194,12 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   /**
    * This should get the return type of the method
-   */
+   *
   @Override
   public void visitNode(ExpFuncOnObject node) {
     node.on.visit(this);
     node.funccall.visit(this);
-  }
+  }*/
 
   /**
    * This might push the boolean type downwards for the boolexp, but that's not

@@ -124,11 +124,6 @@ public class VConditionCreatorVisitor extends VNullVisitor {
   }
 
   @Override
-  public void visitNode(ExpFuncOnObject node) {
-    myVisitNode(node);
-  }
-
-  @Override
   public void visitNode(ExpIf node) {
     myVisitNode(node);
   }

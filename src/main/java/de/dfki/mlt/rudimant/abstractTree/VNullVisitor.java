@@ -39,11 +39,6 @@ public class VNullVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpFuncOnObject node) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
   public void visitNode(ExpIf node) {
     throw new UnsupportedOperationException("Not supported yet.");
   }

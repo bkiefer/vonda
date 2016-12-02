@@ -2,7 +2,7 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
- */
+ *//*
 package de.dfki.mlt.rudimant.abstractTree;
 
 import static org.junit.Assert.assertTrue;
@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 /**
  *
  * @author christophe
- */
+ *//*
 public class ExpLambdaTest {
 
   String header = "label: if(true) {";
@@ -51,7 +51,7 @@ public class ExpLambdaTest {
     /*
     lambda_exp:
     '(' (DEC_VAR? VARIABLE (',' DEC_VAR? VARIABLE)*)? ')' ARROW exp;
-    */
+    *//*
 
   @Test
   public void test() throws IOException {
@@ -64,3 +64,4 @@ public class ExpLambdaTest {
   }
 
 }
+*/
