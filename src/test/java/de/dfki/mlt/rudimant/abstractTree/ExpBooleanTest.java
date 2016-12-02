@@ -1,6 +1,5 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -13,8 +12,7 @@ import org.junit.Test;
 import de.dfki.mlt.rudimant.RudimantCompiler;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 public class ExpBooleanTest {
 
@@ -22,8 +20,8 @@ public class ExpBooleanTest {
   /// boolean operators:
 NOT: '!';
 EQUAL: '==';
-AND1: '&';
-OR1: '|';
+AND1: '&'; TODO deprecated?
+OR1: '|'; TODO deprecated?
 AND2: '&&';
 OR2: '||';
 NOT_EQUAL: '!=';
@@ -70,15 +68,15 @@ GREATER: '>';
 
   @Test
   public void testBoolean3() throws IOException {
-    String booleanExp = "False;";
+    String booleanExp = "false;";
 
     Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("boolean", getInput(booleanExp));
     RudiTree dtr = getNodeOfInterest(rt.first);
     // TODO dtr is instanceof UVariable. Is this correct?
+    // dtr.getType is "boolean" as String. Is this correct?
 
-    // assertTrue(dtr instanceof ExpBoolean);
-//     System.out.println(dtr.getClass());
-//     System.out.println("!!!!!");
+     assertTrue(dtr instanceof USingleValue);
+     assertEquals("false should be of type Boolean", "boolean", (((RTExpression) dtr).getType()));
   }
 
   @Test

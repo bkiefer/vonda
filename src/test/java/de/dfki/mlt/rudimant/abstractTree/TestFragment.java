@@ -1,6 +1,7 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -11,12 +12,6 @@ import org.antlr.v4.runtime.Token;
 import org.junit.Test;
 
 import de.dfki.mlt.rudimant.RudimantCompiler;
-import de.dfki.mlt.rudimant.abstractTree.ExpIf;
-import de.dfki.mlt.rudimant.abstractTree.GrammarFile;
-import de.dfki.mlt.rudimant.abstractTree.GrammarRule;
-import de.dfki.mlt.rudimant.abstractTree.RudiTree;
-import de.dfki.mlt.rudimant.abstractTree.StatAbstractBlock;
-import de.dfki.mlt.rudimant.abstractTree.StatIf;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 
 public class TestFragment {
@@ -45,6 +40,15 @@ public class TestFragment {
     Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("conditional", getInput(conditionalExp));
     RudiTree dtr = getNodeOfInterest(rt.first);
     assertTrue(dtr instanceof ExpIf);
+
+    String type_boolean = ((ExpIf) dtr).boolexp.getType();
+    assertEquals("boolean part of conditional", "boolean", type_boolean);
+
+    String type_then = ((ExpIf) dtr).thenexp.getType();
+    assertEquals("then part", "int", type_then);
+
+    String type_else = ((ExpIf) dtr).elseexp.getType();
+    assertEquals("else part", "int", type_else);
   }
 
 }
