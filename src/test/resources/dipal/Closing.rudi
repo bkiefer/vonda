@@ -11,7 +11,7 @@ if (activity.status != "proposed") {
     user.hasActivity.add(currentSession);
 
     if (childAtHome()) {
-      newActivity(Idle.new());
+      newActivity(new Idle);
     } else {
       newTimeout("EndSession", 35000);
     }

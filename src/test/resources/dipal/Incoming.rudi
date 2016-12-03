@@ -23,7 +23,7 @@ if (lastDA() <= #Salutation(Meeting)) {
 incoming_acceptplay:
 if ((lastDA() <= #AcceptRequest(Playing) || lastDA() <= #Confirm(Playing))
     && !(activity <= Quiz)) {
-  activity = newActivity(Quiz.new());
+  activity = newActivity(new Quiz);
   if (! activity.status || activity.status == "none") {
     activity.hasParticipant = user;
     activity.status = "started";
@@ -37,7 +37,7 @@ if ((lastDA() <= #RejectRequest(Playing) || lastDA() <= #Disconfirm(Playing))
     && activity && !(activity <= Quiz) && !(activity <= Closing)) {
   // OK, maybe next time
   emitDA(#Disconfirm(Playing));
-  newActivity(Closing.new());
+  newActivity(new Closing);
   lastDAprocessed();
 }
 
@@ -65,7 +65,7 @@ if (lastDA() <= #Request(AssigningRole)
     }
 
   // TODO check if theme matches current activity (e.g. quiz game)
-  QuizHistory turn = QuizHistory.new();
+  QuizHistory turn = new QuizHistory;
   activity.hasTurns.add(turn);
   turn.Asker = agt;
   turn.Responder = (agt == user) ? I_ROBOT : user;

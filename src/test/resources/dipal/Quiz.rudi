@@ -79,6 +79,6 @@ if (activity.status == "wait_for_ending"
       // otherwise this comes from the user / app
       getHub().stopQuiz(getCurrentAsker());
     }
-    newActivity(Closing.new());
+    newActivity(new Closing);
   }
 }

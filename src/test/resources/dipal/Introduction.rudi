@@ -86,7 +86,7 @@ if (saidInSession(#Salutation(Meeting)) >= 0
       }
     }
   } else { // introduction is finished.
-    newActivity(Idle.new());
+    newActivity(new Idle);
     return;
   }
 }
