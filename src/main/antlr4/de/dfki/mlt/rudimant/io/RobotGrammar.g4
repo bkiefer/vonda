@@ -136,7 +136,7 @@ function_call
 // complex exp??
 field_access
   : (variable | function_call | STRING | '(' exp ')')
-    ( '.' exp)+
+    ( '.' simple_exp)+
   ;
 
 type_spec

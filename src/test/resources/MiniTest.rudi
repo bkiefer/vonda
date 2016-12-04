@@ -3,7 +3,8 @@ DialogueAct activity;
 DialogueAct Introduction;
 
 test:
-if((activity <= Introduction)){
+if(activity.status != "proposed"){
+activity.status = "proposed";
 Child c = new Child;
 Object r = new Object();
 //activity <= Introduction;

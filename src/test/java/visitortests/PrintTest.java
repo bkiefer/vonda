@@ -32,33 +32,33 @@ public class PrintTest {
     SeriousTest.tearDownClass();
   }
 
-  @Test(expected = TypeException.class)
-  public void ImportFailTest() throws Exception {
-    String[] strings = new String[]{
-        "-c=src/test/resources/rudi.config.yml",
-        "src/test/resources/test_import/Test2.rudi"
-    };
-    GrammarMain.main(strings);
-  }
-
-  @Test
-  public void ImportTest() throws Exception {
-    String[] strings = {
-        "-c=src/test/resources/rudi.config.yml",
-        "src/test/resources/test_import/Test.rudi"
-    };
-    GrammarMain.main(strings);
-//    assertFail(GrammarMain.main(strings));
-  }
-
-  @Test
-  public void ReturnTest() throws Exception {
-    String[] strings = new String[]{
-      "-c", "src/test/resources/rudi.config.yml", "-d",
-      "src/test/resources/test_return/aLotOfReturns.rudi"};
-    GrammarMain.main(strings);
-    //assertFail(GrammarMain.main(strings2));
-  }
+//  @Test(expected = TypeException.class)
+//  public void ImportFailTest() throws Exception {
+//    String[] strings = new String[]{
+//        "-c=src/test/resources/rudi.config.yml",
+//        "src/test/resources/test_import/Test2.rudi"
+//    };
+//    GrammarMain.main(strings);
+//  }
+//
+//  @Test
+//  public void ImportTest() throws Exception {
+//    String[] strings = {
+//        "-c=src/test/resources/rudi.config.yml",
+//        "src/test/resources/test_import/Test.rudi"
+//    };
+//    GrammarMain.main(strings);
+////    assertFail(GrammarMain.main(strings));
+//  }
+//
+//  @Test
+//  public void ReturnTest() throws Exception {
+//    String[] strings = new String[]{
+//      "-c", "src/test/resources/rudi.config.yml", "-d",
+//      "src/test/resources/test_return/aLotOfReturns.rudi"};
+//    GrammarMain.main(strings);
+//    //assertFail(GrammarMain.main(strings2));
+//  }
 
   @Test
   public void miniTest() throws Exception {

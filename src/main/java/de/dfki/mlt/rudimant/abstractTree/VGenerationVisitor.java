@@ -682,8 +682,8 @@ public class VGenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(UFieldAccess node) {
     int to = node.parts.size();
-    // TODO: this is not present in condition visitor now, should we add it?
-    if (to == 2 && node.representation.get(1).equals("new()")){
+    // the following is obsolete as new is now a keyword
+    /*if (to == 2 && node.representation.get(1).equals("new()")){
       try {
         // then this is a creation of a new rdf object
         out.append("_proxy.getClass(\"" +
@@ -693,7 +693,7 @@ public class VGenerationVisitor implements RudiVisitor {
       } catch (TException ex) {
         java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
       }
-    }
+    }*/
     List<String> representation = new ArrayList<>();
     node.parts.get(0).visitWithComments(this);
     representation.add(node.representation.get(0));
@@ -754,7 +754,9 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UVariable node) {
-    if (node.isRdfType()) {
+    // please, only turn into an "" exp if this is no real variable that we
+    // already know
+    if (node.isRdfType() && ! mem.variableExists(node.content)) {
       out.append("\"" + node.content + "\"");
     } // if the variable is not in the memory,
     else if (node.realOrigin != null) {

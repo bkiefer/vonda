@@ -130,9 +130,8 @@ public class VRuleConditionVisitor extends VNullVisitor {
       this.lastbool = this.currentRule + this.counter++;
       this.compiledLook.put(this.lastbool, n + "(" + 
               l + node.operator + r + ")");
-      this.realLook.put(lastbool, n + "(" + l + node.operator + r + "(");
+      this.realLook.put(lastbool, n + "(" + l + node.operator + r + ")");
     } else {
-      // isTrue = node.isTrue + " "; // TODO:EXPLAIN OR REMOVE
       node.left.visit(this);
       String l = this.lastbool;
       if ("!".equals(node.operator)) {
