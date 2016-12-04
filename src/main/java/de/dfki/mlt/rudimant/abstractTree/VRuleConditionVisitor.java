@@ -224,9 +224,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
     for (int i = 1; i < node.parts.size(); i++) {
       if (node.parts.get(i) instanceof UVariable) {
         try {
-          // TODO: does this exclude sth we actually want to treat as rdf??
-          if (!"Object".equals(lastType) &&
-                  this.rudi.getProxy().fetchClass(lastType) != null) {
+          if (node.isRdfType(lastType)) {
             representation.add(node.representation.get(i));
             // then we are in the case that this is actually an rdf operation
             fieldAccessPart += (".getValue(\"" + node.representation.get(i) + "\") ");

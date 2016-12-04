@@ -151,28 +151,33 @@ variable
   ;
 
 exp
-  : simple_exp
+  : complex_exp
   | if_exp
   | string_expression
   | boolean_exp
   | new_exp
   ;
 
-simple_exp
+complex_exp
   :
-  '(' exp ')'
   //| funccall_on_object
-  | variable
-  | arithmetic
-  | function_call
+    arithmetic
   | literal_or_graph_exp
-  | field_access
   | assignment
+  | NOT exp
+  | simple_exp
+  ;
+
+simple_exp
+  : 
+  '(' exp ')'
+  | variable
+  | function_call
+  | field_access
   | STRING
   | FALSE
   | TRUE
   | NULL
-  | NOT exp
   ;
 
 boolean_exp
@@ -186,8 +191,8 @@ bool_and_exp
   ;
 
 simple_b_exp
-  : simple_exp // will be compiled to '!= null' or '!= 0' or 'has()' ...
-  | simple_exp ('==' | '!=' | '<=' | '<' | '>=' | '>') exp
+  : complex_exp // will be compiled to '!= null' or '!= 0' or 'has()' ...
+  | complex_exp ('==' | '!=' | '<=' | '<' | '>=' | '>') exp
   ;
 
 new_exp
@@ -198,7 +203,7 @@ new_exp
 // TODO: IS THIS STILL USED?
 lambda_exp: '(' (DEC_VAR? VARIABLE (',' DEC_VAR? VARIABLE)*)? ')' ARROW exp;
 
-string_expression : (simple_exp|if_exp) '+' exp | (simple_exp|if_exp) ;
+string_expression : (complex_exp|if_exp) '+' exp | (complex_exp|if_exp) ;
 
 literal_or_graph_exp
   : HASH da_token '(' ( da_token ( ',' ( da_token '=' da_token) )* ) ')'

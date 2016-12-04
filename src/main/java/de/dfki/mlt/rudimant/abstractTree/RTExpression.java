@@ -39,6 +39,11 @@ public abstract class RTExpression extends RudiTree {
   public boolean isRdfType() {
     return type != null && type.charAt(0) == '<';
   }
+  
+  // easier for recursion if we can also give the method a type
+  public boolean isRdfType(String type) {
+    return type != null && type.charAt(0) == '<';
+  }
 
   public boolean isComplexType() {
     if (type == null) return false;
