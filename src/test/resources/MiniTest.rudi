@@ -1,6 +1,5 @@
 
 DialogueAct activity;
-DialogueAct Introduction;
 
 test:
 if(activity.status != "proposed"){
@@ -13,7 +12,7 @@ Child user;
 c.hasFather.hasGender;
     user.hasSessions.add(currentSession);
  salutation = (firstEncounter()) ? "InitialGreeting" : "ReturnGreeting";
-activity <= Introduction;
+if(activity <= Introduction){}
 }
 
 question_asked:

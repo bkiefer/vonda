@@ -128,13 +128,15 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   private boolean isBooleanOperator(String operator) {
     return operator.equals("&&") || operator.equals("||")
-        || operator.equals("!");
+            || operator.equals("!");
   }
 
   private boolean isComparisonOperator(String operator) {
-    if ("<>=!".indexOf(operator.charAt(0)) < 0) return false;
+    if ("<>=!".indexOf(operator.charAt(0)) < 0) {
+      return false;
+    }
     return (operator.length() == 2 && operator.charAt(1) == '=')
-        || ("<>".indexOf(operator.charAt(0)) >= 0 && operator.length() == 1);
+            || ("<>".indexOf(operator.charAt(0)) >= 0 && operator.length() == 1);
   }
 
   /**
@@ -156,7 +158,7 @@ public class VTestTypeVisitor implements RudiVisitor {
         // TODO: this crashes if there is Introduction or Quiz on the right; they
         // are not assigned to a type when visited...
         if ((node.right.type != null && node.right.type.equals(DIALOGUE_ACT_TYPE))
-            || (node.left.type != null && node.left.type.equals(DIALOGUE_ACT_TYPE))) {
+                || (node.left.type != null && node.left.type.equals(DIALOGUE_ACT_TYPE))) {
           if (node.operator.equals("<=")) {
             node.operator = ".isSubsumed(";
           } else if (node.operator.equals("=>")) {
@@ -195,12 +197,10 @@ public class VTestTypeVisitor implements RudiVisitor {
   /**
    * This should get the return type of the method
    *
-  @Override
-  public void visitNode(ExpFuncOnObject node) {
-    node.on.visit(this);
-    node.funccall.visit(this);
-  }*/
-
+   * @Override public void visitNode(ExpFuncOnObject node) {
+   * node.on.visit(this); node.funccall.visit(this);
+  }
+   */
   /**
    * This might push the boolean type downwards for the boolexp, but that's not
    * necessary because the bool expression already knows.
@@ -371,7 +371,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       for (int i = 0; i < node.parameters.size(); i++) {
         // add parameters to environment
         mem.addVariableDeclaration(node.parameters.get(i), node.partypes.get(i),
-            node.position);
+                node.position);
       }
       node.block.visit(this);
       mem.leaveEnvironment();
@@ -474,9 +474,8 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   /**
    * TODO: Do we have to check here if it's an RDF type?? or DialogueAct?? or is
-   * this all clear?
-   * we might have to test whether Quiz is sth like that and give the node a
-   * proper type; how to do that?
+   * this all clear? we might have to test whether Quiz is sth like that and
+   * give the node a proper type; how to do that?
    */
   @Override
   public void visitNode(USingleValue node) {
@@ -490,40 +489,51 @@ public class VTestTypeVisitor implements RudiVisitor {
    */
   @Override
   public void visitNode(UVariable node) {
-    if (node.type != null && mem.getVariableType(node.fullexp) == null) {
+    if (node.type != null && mem.getVariableType(node.content) == null) {
       mem.addVariableDeclaration(node.fullexp, node.type, node.originClass);
+      return;
     }
     node.type = mem.getVariableType(node.fullexp);
     String o = mem.getVariableOriginClass(node.fullexp);
-    /*
-    if (o == null) {
-      // the variable does not originate in another file
-
-      // is the variable an rdf type?
-      try {
-        if (rudi.getProxy().fetchRdfClass(node.type) != null) {
-          node.isRdfClass = true;
-          return;
-        } else // TODO: is this correct????
-        // it could still be sth like Introduction
-        if (rudi.getProxy().fetchRdfClass(node.representation) != null) {
-          node.isRdfClass = true;
-          return;
-        }
-      } catch (TException e) {
-        logger.error("Problem accessing database : {}", e.getMessage());
-        throw new RuntimeException(e);
+    // we could have sth like Introduction, that is an undeclared rdf class
+    try {
+      RdfClass cl = rudi.getProxy().fetchClass(node.content);
+      if (cl != null) {
+        node.type = cl.toString();
       }
-
-      // if not, mem either found a type or this variable wasn't declared
-      if (node.type == null) {
-        rudi.handleTypeError("The variable " + node.representation
-                + " is used but was not declared");
-        node.type = "Object";
-        return;
-      }
+    } catch (TException ex) {
+      logger.error(ex.toString());
     }
-    */
+
+    /*
+     if (o == null) {
+     // the variable does not originate in another file
+
+     // is the variable an rdf type?
+     try {
+     if (rudi.getProxy().fetchRdfClass(node.type) != null) {
+     node.isRdfClass = true;
+     return;
+     } else // TODO: is this correct????
+     // it could still be sth like Introduction
+     if (rudi.getProxy().fetchRdfClass(node.representation) != null) {
+     node.isRdfClass = true;
+     return;
+     }
+     } catch (TException e) {
+     logger.error("Problem accessing database : {}", e.getMessage());
+     throw new RuntimeException(e);
+     }
+
+     // if not, mem either found a type or this variable wasn't declared
+     if (node.type == null) {
+     rudi.handleTypeError("The variable " + node.representation
+     + " is used but was not declared");
+     node.type = "Object";
+     return;
+     }
+     }
+     */
     if (o != null && !node.originClass.equals(o)) {
       mem.needsClass(mem.getCurrentTopRule(), o);
       node.realOrigin = o;
@@ -558,7 +568,7 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpNew node) {
-    if(node.toCreate != null){
+    if (node.toCreate != null) {
       // TODO: insert proper rdf type
       node.type = node.toCreate;
     } else {
@@ -579,7 +589,6 @@ public class VTestTypeVisitor implements RudiVisitor {
    * (mem.isRdf(node.fullexp)) { node.isTrue = ".has()?;\n"; } else {
    * node.isTrue = " != null"; if (t.contains("List") || t.contains("Set") ||
    * t.contains("Map")) { node.testIsEmpty = true; } }
-   * node.left.setType("boolean"); } else { node.isTrue = ""; }
-  }
+   * node.left.setType("boolean"); } else { node.isTrue = ""; } }
    */
 }
