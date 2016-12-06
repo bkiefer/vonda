@@ -55,8 +55,45 @@ public class Mem {
     _proxy = proxy;
   }
 
-  private String checkRdf(String type) {
-    if (type == null || type.charAt(0) == '<') return type;
+  static Map<String, Integer> typeCodes = new HashMap<>();
+
+  static {
+    typeCodes.put("Object", 0x1111);
+    typeCodes.put("String", 0x1);
+    typeCodes.put("double", 0x1110000);
+    typeCodes.put("float", 0x110000);
+    typeCodes.put("int", 0x10000);
+  }
+
+  private static boolean isRdfType(String type) {
+    return (type != null && type.charAt(0) == '<');
+  }
+
+  public String mergeTypes(String left, String right) {
+    if (isRdfType(left) || isRdfType(right)) {
+      if (!((isRdfType(left) && isRdfType(right)))) return null;
+      // return _proxy.fetchMostSpecific(left, right);
+      return left.equals(right) ? left : null;
+    }
+    // TODO:
+    // we also have to check if these are RDF types and are in a type relation.
+
+    // this should return the more specific of the two, or null if they are
+    // incompatible
+    Integer leftCode = typeCodes.get(left);
+    Integer rightCode = typeCodes.get(right);
+    if (leftCode == null || rightCode == null) return null;
+    int common = leftCode | rightCode;
+    if (common == leftCode) {
+      return left;
+    }
+    if (common == rightCode) {
+      return right;
+    }
+    return null;
+  }
+
+  public String checkRdf(String type) {
     try {
       RdfClass clazz = _proxy.fetchClass(type);
       if (clazz != null) {
@@ -226,16 +263,19 @@ public class Mem {
    * @return the position in memory where the environment is stored
    */
   public void enterEnvironment() {
-    current = current == null ? new Environment() : current.deepCopy();
-    environment.add(current);
     logger.trace("Enter level {}", environment.size());
+    if (current == null) {
+      current = new Environment();
+    } else {
+      environment.push(current);
+      current = current.deepCopy();
+    }
   }
 
   public void leaveEnvironment() {
     logger.trace("Leave level {}", environment.size());
     // restore the values in actual that we changed
-    environment.pop();
-    current = environment.peekLast();
+    current = environment.isEmpty() ? null : environment.pop();
   }
 
   /**

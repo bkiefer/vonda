@@ -69,7 +69,7 @@ public class VTestTypeVisitor implements RudiVisitor {
         node.right.propagateType(node.left.type);
       } else {
         // check type compatibility
-        String type = RTExpression.mergeTypes(node.left.type, node.right.type);
+        String type = mem.mergeTypes(node.left.type, node.right.type);
         if (type == null) {
           logger.error("Incompatible types in {}: {} vs. {}", node,
                   node.left.type, node.right.type);
@@ -97,12 +97,15 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.left.visit(this);
 
     if (node.actualType == null) {
-      node.actualType = node.right.type;
+      node.actualType = node.type = node.right.type;
     } else {
+      node.actualType = mem.checkRdf(node.actualType);
       if (node.right.type == null) {
         node.right.propagateType(node.actualType);
+        node.type = node.actualType;
       } else {
-        if (RTExpression.mergeTypes(node.actualType, node.right.type) == null) {
+        if ((node.type = mem.mergeTypes(node.actualType, node.right.type))
+            == null) {
           rudi.handleTypeError("Declared type incompatible with expression: "
                   + node.actualType + ", " + node.right.type);
         }
@@ -112,7 +115,6 @@ public class VTestTypeVisitor implements RudiVisitor {
     if (node.left instanceof UVariable) {
       if (!mem.variableExists(node.left.toString())) {
         node.declaration = true;
-        node.type = node.actualType;
         mem.addVariableDeclaration(((UVariable)node.left).content,
                 node.type, mem.getClassName());
         if (node.type == null) {

@@ -39,7 +39,7 @@ public abstract class RTExpression extends RudiTree {
   public boolean isRdfType() {
     return type != null && type.charAt(0) == '<';
   }
-  
+
   // easier for recursion if we can also give the method a type
   public boolean isRdfType(String type) {
     return type != null && type.charAt(0) == '<';
@@ -53,35 +53,6 @@ public abstract class RTExpression extends RudiTree {
         || type.startsWith("RdfSet")
         || type.startsWith("RdfList")
         || (type.endsWith(">") && ! isRdfType()));
-  }
-
-  static Map<String, Integer> typeCodes = new HashMap<>();
-
-  static {
-    typeCodes.put("Object", 0x1111);
-    typeCodes.put("String", 0x1);
-    typeCodes.put("double", 0x1110000);
-    typeCodes.put("float", 0x110000);
-    typeCodes.put("int", 0x10000);
-  }
-
-  public static String mergeTypes(String left, String right) {
-    // TODO:
-    // we also have to check if these are RDF types and are in a type relation.
-
-    // this should return the more specific of the two, or null if they are
-    // incompatible
-    Integer leftCode = typeCodes.get(left);
-    Integer rightCode = typeCodes.get(right);
-    if (leftCode == null || rightCode == null) return null;
-    int common = leftCode | rightCode;
-    if (common == leftCode) {
-      return left;
-    }
-    if (common == rightCode) {
-      return right;
-    }
-    return null;
   }
 
   public ExpBoolean ensureBoolean() {
