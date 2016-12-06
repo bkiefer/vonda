@@ -30,12 +30,12 @@ public class VGenerationVisitor implements RudiVisitor {
 
   public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
-   RudimantCompiler out;
+  RudimantCompiler out;
   private RudimantCompiler rudi;
   private Mem mem;
   private VRuleConditionVisitor condV;
   private VConditionCreatorVisitor condV2;
-   LinkedList<Token> collectedTokens;
+  LinkedList<Token> collectedTokens;
 
   // activate this bool to get double escaped String literals
   private boolean escape = false;
@@ -69,14 +69,18 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append('(');
       node.left.visitWithComments(this);
       // something like .isEmpty(), which is a postfix operator
-      if (node.operator.endsWith(")")) out.append(node.operator);
+      if (node.operator.endsWith(")")) {
+        out.append(node.operator);
+      }
       out.append(')');
     } else {
       out.append('(');
       node.left.visitWithComments(this);
       out.append(node.operator);
       node.right.visitWithComments(this);
-      if (node.operator.endsWith("(")) out.append(')');
+      if (node.operator.endsWith("(")) {
+        out.append(')');
+      }
       out.append(')');
     }
   }
@@ -86,9 +90,6 @@ public class VGenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(ExpAssignment node) {
     //System.out.println(((UVariable) left).toString());
-    if (node.declaration) {
-      out.append(node.actualType + " ");
-    }
     // visit also the left side, it could be using another class's variable!
     // System.out.println("Generating assignment");
     try {
@@ -116,6 +117,9 @@ public class VGenerationVisitor implements RudiVisitor {
           notPrintLastField = false;
           return;
         }
+      }
+      if (node.declaration) {
+        out.append(node.actualType + " ");
       }
       node.left.visitWithComments(this);
       out.append(" = ");
@@ -160,7 +164,7 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append(")");
       return;
     }
-    */
+     */
     if (node.right != null) {
       out.append("(");
       node.left.visitWithComments(this);
@@ -168,7 +172,7 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append(node.operator);
       out.append(" ");
       node.right.visitWithComments(this);
-      if(node.operator.contains("(")){
+      if (node.operator.contains("(")) {
         out.append(")");
       }
       out.append(")");
@@ -235,9 +239,8 @@ public class VGenerationVisitor implements RudiVisitor {
     String oldrule = mem.getCurrentRule();
     String oldTrule = mem.getCurrentTopRule();
     mem.enterClass(rudi.className);
-    
-    //mem.enterNextEnvironment();
 
+    //mem.enterNextEnvironment();
     // tell the file in which package it lies
     String pkg = rudi.getPackageName();
     if (pkg == null) {
@@ -290,9 +293,9 @@ public class VGenerationVisitor implements RudiVisitor {
               ((ExpAssignment) e).visitWithComments(this);
               out.append(";");
             }
-          } else if (e instanceof StatVarDef ||
-              (e instanceof StatMethodDeclaration &&
-                  ((StatMethodDeclaration)e).block == null)) {
+          } else if (e instanceof StatVarDef
+                  || (e instanceof StatMethodDeclaration
+                  && ((StatMethodDeclaration) e).block == null)) {
             e.visitWithComments(this);
           }
         }
@@ -402,9 +405,9 @@ public class VGenerationVisitor implements RudiVisitor {
             }
           } else if (e instanceof StatImport) {
             continue;
-          } else if (e instanceof StatVarDef ||
-              (e instanceof StatMethodDeclaration &&
-                  ((StatMethodDeclaration)e).block == null)) {
+          } else if (e instanceof StatVarDef
+                  || (e instanceof StatMethodDeclaration
+                  && ((StatMethodDeclaration) e).block == null)) {
             continue;
           }
           e.visitWithComments(this);
@@ -564,8 +567,7 @@ public class VGenerationVisitor implements RudiVisitor {
       RudimantCompiler.getEmbedded(rudi).process(node.content);
     } catch (IOException ex) {
       throw new RuntimeException(ex);
-    }
-    //    outs.append(node.text + ".process(");
+    } //    outs.append(node.text + ".process(");
     //    Set<String> ncs = mem.getNeededClasses(node.name);
     //    if (ncs != null) {
     //      int i = 0;
@@ -600,7 +602,9 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatMethodDeclaration node) {
-    if (node.block == null) return;
+    if (node.block == null) {
+      return;
+    }
     //mem.enterNextEnvironment();
     out.append(node.visibility + " " + node.return_type + " " + node.name + "(");
     for (int i = 0; i < node.parameters.size(); i++) {
@@ -755,7 +759,7 @@ public class VGenerationVisitor implements RudiVisitor {
   public void visitNode(UVariable node) {
     // please, only turn into an "" exp if this is no real variable that we
     // already know
-    if (node.isRdfType() && ! mem.variableExists(node.content)) {
+    if (node.isRdfType() && !mem.variableExists(node.content)) {
       out.append("\"" + node.content + "\"");
     } // if the variable is not in the memory,
     else if (node.realOrigin != null) {
@@ -771,7 +775,6 @@ public class VGenerationVisitor implements RudiVisitor {
   public void visitNode(UWildcard node) {
     out.append("this.wildcard" + " ");   // wildcard is a local variable in resulting class
   }
-
 
   private void conditionHandling(ExpBoolean node) {
   }
@@ -897,18 +900,17 @@ public class VGenerationVisitor implements RudiVisitor {
 //    printRuleLogger(null, bool_exp);
 //    out.append("}\n}\n");
 //  }
-
   @Override
   public void visitNode(ExpNew node) {
-    if(node.construct != null){
+    if (node.construct != null) {
       out.append("new ");
       node.construct.visit(this);
     } else {
       try {
         // TODO: how to do rdf generation?????
-        out.append("_proxy.getClass(\"" +
-                rudi.getProxy().fetchClass(node.toCreate) +
-                "\").newInstance(DEFNS)");
+        out.append("_proxy.getClass(\""
+                + rudi.getProxy().fetchClass(node.toCreate)
+                + "\").newInstance(DEFNS)");
       } catch (TException ex) {
         java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
       }
