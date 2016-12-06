@@ -303,13 +303,17 @@ public class RudimantCompiler {
     logger.info("parsing " + inputFile.getName() + " to " + outputFile);
     processForReal(new FileInputStream(inputFile), output);
     this.flush();
-    // TODO: NEEDS BETTER SPEC FOR UNCR.CFG
-    String[] cmdArray = {
-      "uncrustify",  "--no-backup",
-      "-c", "src/main/resources/uncrustify.cfg",
-      outputFile.getAbsolutePath()
-    };
-    Runtime.getRuntime().exec(cmdArray);
+    try {
+      // TODO: NEEDS BETTER SPEC FOR UNCR.CFG
+      String[] cmdArray = {
+          "uncrustify",  "--no-backup",
+          "-c", "src/main/resources/uncrustify.cfg",
+          outputFile.getAbsolutePath()
+      };
+      Runtime.getRuntime().exec(cmdArray);
+    } catch (IOException ex){
+      logger.error("Failed to run uncrustify");
+    }
   }
 
   public static Pair<GrammarFile, LinkedList<Token>> parseInput(String realName, InputStream in)
