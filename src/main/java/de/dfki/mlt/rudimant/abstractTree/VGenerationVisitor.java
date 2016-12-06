@@ -235,6 +235,7 @@ public class VGenerationVisitor implements RudiVisitor {
     String oldrule = mem.getCurrentRule();
     String oldTrule = mem.getCurrentTopRule();
     mem.enterClass(rudi.className);
+    
     //mem.enterNextEnvironment();
 
     // tell the file in which package it lies
@@ -907,7 +908,7 @@ public class VGenerationVisitor implements RudiVisitor {
         // TODO: how to do rdf generation?????
         out.append("_proxy.getClass(\"" +
                 rudi.getProxy().fetchClass(node.toCreate) +
-                "\").newInstance(DEFNS);\n");
+                "\").newInstance(DEFNS)");
       } catch (TException ex) {
         java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
       }

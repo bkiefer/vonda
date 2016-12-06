@@ -113,6 +113,8 @@ public class VTestTypeVisitor implements RudiVisitor {
       if (!mem.variableExists(node.left.toString())) {
         node.declaration = true;
         node.type = node.actualType;
+        mem.addVariableDeclaration(((UVariable)node.left).content,
+                node.type, mem.getClassName());
         if (node.type == null) {
           rudi.handleTypeError("Type of variable unkown: "
                   + node.left + " in " + node);
