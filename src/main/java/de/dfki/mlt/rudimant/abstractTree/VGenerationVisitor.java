@@ -103,7 +103,7 @@ public class VGenerationVisitor implements RudiVisitor {
         representation.addAll(((UFieldAccess) node.left).representation
                 .subList(0, i));
         String lefttype = ((UFieldAccess) node.left)
-                .getPredicateType(rudi.getProxy(), mem, representation);
+                .getPredicateType(mem.getProxy(), mem, representation);
 //        if (this.rudi.getProxy().fetchRdfClass(lefttype) != null) {
         if (lefttype != null && !lefttype.equals("Object")) {
           // then getPredicateType found an rdf class related
@@ -711,7 +711,7 @@ public class VGenerationVisitor implements RudiVisitor {
             representation.add(node.representation.get(i));
             // then we are in the case that this is actually an rdf operation
             out.append(".getValue(\"" + node.representation.get(i) + "\") ");
-            lastType = node.getPredicateType(rudi.getProxy(), mem, representation);
+            lastType = node.getPredicateType(mem.getProxy(), mem, representation);
             continue;
           } else {
             representation.clear();
@@ -909,7 +909,7 @@ public class VGenerationVisitor implements RudiVisitor {
       try {
         // TODO: how to do rdf generation?????
         out.append("_proxy.getClass(\""
-                + rudi.getProxy().fetchClass(node.toCreate)
+                + mem.getProxy().fetchClass(node.toCreate)
                 + "\").newInstance(DEFNS)");
       } catch (TException ex) {
         java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);

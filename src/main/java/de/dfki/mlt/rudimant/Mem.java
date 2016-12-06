@@ -93,6 +93,10 @@ public class Mem {
     return null;
   }
 
+  public RdfProxy getProxy() {
+    return _proxy;
+  }
+
   public String checkRdf(String type) {
     try {
       RdfClass clazz = _proxy.fetchClass(type);

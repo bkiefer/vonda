@@ -436,7 +436,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(UFieldAccess node) {
     try {
-      node.type = node.getPredicateType(rudi.getProxy(), mem, node.representation);
+      node.type = node.getPredicateType(mem.getProxy(), mem, node.representation);
     } catch (TException ex) {
       logger.error(ex.toString());
     }
@@ -501,7 +501,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     String o = mem.getVariableOriginClass(node.fullexp);
     // we could have sth like Introduction, that is an undeclared rdf class
     try {
-      RdfClass cl = rudi.getProxy().fetchClass(node.content);
+      RdfClass cl = mem.getProxy().fetchClass(node.content);
       if (cl != null) {
         node.type = cl.toString();
       }

@@ -52,8 +52,6 @@ public class RudimantCompiler {
 //  private StringBuffer out;
   Writer out;
 
-  private RdfProxy _proxy;
-
   private Mem mem;
 
   public List<String> subPackage = new ArrayList<>();
@@ -79,10 +77,6 @@ public class RudimantCompiler {
     return this.packageName;
   }
 
-  public RdfProxy getProxy() {
-    return _proxy;
-  }
-
   public String getWrapperClass() {
     return wrapperClass;
   }
@@ -96,7 +90,6 @@ public class RudimantCompiler {
     wrapperClass = parentCompiler.className;
     constructorArgs = parentCompiler.getConstructorArgs();
     mem = parentCompiler.mem;
-    _proxy = parentCompiler._proxy;
     parent = parentCompiler;
     this.log = parentCompiler.log;
     this.throwExceptions = parentCompiler.throwExceptions;
@@ -109,7 +102,6 @@ public class RudimantCompiler {
   public RudimantCompiler(String wrapperClass, String constructorArgs, RdfProxy proxy) {
     mem = new Mem(proxy);
     this.wrapperClass = wrapperClass;
-    this._proxy = proxy;
     parent = null;
     this.constructorArgs = constructorArgs;
   }

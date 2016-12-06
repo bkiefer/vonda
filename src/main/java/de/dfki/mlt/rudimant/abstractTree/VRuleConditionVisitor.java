@@ -128,7 +128,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
       node.right.visit(this);
       String r = this.lastbool;
       this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool, n + "(" + 
+      this.compiledLook.put(this.lastbool, n + "(" +
               l + node.operator + r + ")");
       this.realLook.put(lastbool, n + "(" + l + node.operator + r + ")");
     } else {
@@ -228,7 +228,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
             representation.add(node.representation.get(i));
             // then we are in the case that this is actually an rdf operation
             fieldAccessPart += (".getValue(\"" + node.representation.get(i) + "\") ");
-            lastType = node.getPredicateType(rudi.getProxy(), mem, representation);
+            lastType = node.getPredicateType(mem.getProxy(), mem, representation);
             continue;
           } else {
             representation.clear();
