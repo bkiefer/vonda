@@ -1,4 +1,5 @@
 String activity = "j";
+Child user;
 
 import bla;
 rule:

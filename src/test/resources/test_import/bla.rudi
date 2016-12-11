@@ -1,6 +1,7 @@
 
 importedRule:
-  if(false){
+  if(user <= Child){
+    user = new Child;
     activity = "f";
     int te = 0;
     //String te = "test";

@@ -75,35 +75,35 @@ public class VRuleConditionVisitor extends VNullVisitor {
      * OR ")" (UNARY, LIKE '.isEmpty()')
      *
      if (node.isSubsumed) {
-      this.lastbool = this.currentRule + this.counter++;
-      collectDAs = n;
-      if (node.notIfSubsume) {
-        collectDAs += "!";
-      }
-      node.left.visit(this);
-      collectDAs += (".isSubsumed(");
-      node.right.visit(this);
-      collectDAs += (")");
+     this.lastbool = this.currentRule + this.counter++;
+     collectDAs = n;
+     if (node.notIfSubsume) {
+     collectDAs += "!";
+     }
+     node.left.visit(this);
+     collectDAs += (".isSubsumed(");
+     node.right.visit(this);
+     collectDAs += (")");
 
-      this.compiledLook.put(this.lastbool, collectDAs);
-      this.realLook.put(lastbool, collectDAs.replaceAll("\\\\\"", "\\\""));
-      collectDAs = null;
-      return;
-    } else if (node.doesSubsume) {
-      this.lastbool = this.currentRule + this.counter++;
-      collectDAs = n;
-      if (node.notIfSubsume) {
-        collectDAs += "!";
-      }
-      node.right.visit(this);
-      collectDAs += (".isSubsumed(");
-      node.left.visit(this);
-      collectDAs += (")");
-      this.compiledLook.put(this.lastbool, collectDAs);
-      this.realLook.put(lastbool, collectDAs.replaceAll("\\\\\"", "\\\""));
-      collectDAs = null;
-      return;
-    }
+     this.compiledLook.put(this.lastbool, collectDAs);
+     this.realLook.put(lastbool, collectDAs.replaceAll("\\\\\"", "\\\""));
+     collectDAs = null;
+     return;
+     } else if (node.doesSubsume) {
+     this.lastbool = this.currentRule + this.counter++;
+     collectDAs = n;
+     if (node.notIfSubsume) {
+     collectDAs += "!";
+     }
+     node.right.visit(this);
+     collectDAs += (".isSubsumed(");
+     node.left.visit(this);
+     collectDAs += (")");
+     this.compiledLook.put(this.lastbool, collectDAs);
+     this.realLook.put(lastbool, collectDAs.replaceAll("\\\\\"", "\\\""));
+     collectDAs = null;
+     return;
+     }
      */
     if (node.right != null) {
       if (!(node.operator.equals("||") || node.operator.equals("&&"))) {
@@ -114,7 +114,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
         collectElements += node.operator + " ";
         node.right.visit(this);
         this.lastbool = this.currentRule + this.counter++;
-        if(node.operator.contains("(")){
+        if (node.operator.contains("(")) {
           collectElements += ")";
         }
         this.compiledLook.put(this.lastbool, collectElements + ")");
@@ -128,8 +128,8 @@ public class VRuleConditionVisitor extends VNullVisitor {
       node.right.visit(this);
       String r = this.lastbool;
       this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool, n + "(" +
-              l + node.operator + r + ")");
+      this.compiledLook.put(this.lastbool, n + "("
+              + l + node.operator + r + ")");
       this.realLook.put(lastbool, n + "(" + l + node.operator + r + ")");
     } else {
       node.left.visit(this);
@@ -197,17 +197,16 @@ public class VRuleConditionVisitor extends VNullVisitor {
   }
 
   /*@Override
-  public void visitNode(ExpFuncOnObject node) {
-    if (collectElements != null) {
-      this.collectElements += node.look + isTrue + " ";
-      return;
-    }
-    this.lastbool = this.currentRule + this.counter++;
-    this.compiledLook.put(this.lastbool, node.look + isTrue + " ");
-    this.realLook.put(lastbool, node.look + isTrue + " ");
-    isTrue = "";
-  }*/
-
+   public void visitNode(ExpFuncOnObject node) {
+   if (collectElements != null) {
+   this.collectElements += node.look + isTrue + " ";
+   return;
+   }
+   this.lastbool = this.currentRule + this.counter++;
+   this.compiledLook.put(this.lastbool, node.look + isTrue + " ");
+   this.realLook.put(lastbool, node.look + isTrue + " ");
+   isTrue = "";
+   }*/
   private String fieldAccessPart = null;
 
   @Override
@@ -304,47 +303,59 @@ public class VRuleConditionVisitor extends VNullVisitor {
   }
 
   /* TODO: is this covered correctly in USingleValue?
-  @Override
-  public void visitNode(UString node) {
-    if (collectElements != null) {
-      this.collectElements += node.content.substring(0, node.content.length() - 1)
-              + "\"" + " " + isTrue;
-      return;
-    } else if (!funcargs.equals("")) {
-      this.funcargs += node.content.substring(0, node.content.length() - 1)
-              + "\"" + " " + isTrue;
-      return;
-    }
-    this.lastbool = this.currentRule + this.counter++;
-    if (!node.content.contains("\"")) {
-      this.compiledLook.put(this.lastbool,
-              node.content + " " + isTrue);
-      this.realLook.put(lastbool,
-              node.content + " " + isTrue);
-      return;
-    }
-    this.compiledLook.put(this.lastbool,
-            node.content.substring(0, node.content.length() - 1)
-            + "\"" + " " + isTrue);
-    this.realLook.put(lastbool,
-            node.content.substring(0, node.content.length() - 1)
-            + "\"" + " " + isTrue);
-    isTrue = "";
-  }*/
+   @Override
+   public void visitNode(UString node) {
+   if (collectElements != null) {
+   this.collectElements += node.content.substring(0, node.content.length() - 1)
+   + "\"" + " " + isTrue;
+   return;
+   } else if (!funcargs.equals("")) {
+   this.funcargs += node.content.substring(0, node.content.length() - 1)
+   + "\"" + " " + isTrue;
+   return;
+   }
+   this.lastbool = this.currentRule + this.counter++;
+   if (!node.content.contains("\"")) {
+   this.compiledLook.put(this.lastbool,
+   node.content + " " + isTrue);
+   this.realLook.put(lastbool,
+   node.content + " " + isTrue);
+   return;
+   }
+   this.compiledLook.put(this.lastbool,
+   node.content.substring(0, node.content.length() - 1)
+   + "\"" + " " + isTrue);
+   this.realLook.put(lastbool,
+   node.content.substring(0, node.content.length() - 1)
+   + "\"" + " " + isTrue);
+   isTrue = "";
+   }*/
   @Override
   public void visitNode(UVariable node) {
+    // we might need to import this variable from elsewhere
+    String ret = "";
+    if (node.realOrigin != null) {
+      String t = node.realOrigin;
+      ret = t.substring(0, 1).toLowerCase() + t.substring(1)
+              + "." + node.content;
+    } else {
+      ret = node.content;
+    }
+    if (fieldAccessPart != null) {
+      this.fieldAccessPart += ret;
+      return;
+    } else if (!(this.whatVDATokenWants == null)) {
+      this.whatVDATokenWants += ret;
+      return;
+    } else if (collectElements != null) {
+      this.collectElements += ret;
+      return;
+    } else if (!funcargs.equals("")) {
+      this.funcargs += ret;
+      return;
+    }
     if (node.isRdfType()) {
       //if (node.getType().equals("DialogueAct") || mem.isRdf(node.content)) {
-      if (fieldAccessPart != null) {
-        this.fieldAccessPart += node.content;
-        return;
-      } else if (!(this.whatVDATokenWants == null)) {
-        this.whatVDATokenWants += node.content;
-        return;
-      } else if (collectElements != null) {
-        this.collectElements += node.content;
-        return;
-      }
       if (collectDAs != null) {
         this.collectDAs += "\"" + node.content + "\"";
         return;
@@ -354,58 +365,17 @@ public class VRuleConditionVisitor extends VNullVisitor {
       this.realLook.put(this.lastbool, "\"" + node.content + "\"");
       return;
     }
-    // if the variable is not in the memory,
-    if (node.realOrigin != null) {
-      String t = node.realOrigin;
-      String s = t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.content;
-      if (fieldAccessPart != null) {
-        this.fieldAccessPart += s;
-        return;
-      } else if (!(this.whatVDATokenWants == null)) {
-        this.whatVDATokenWants += node.content;
-        return;
-      }
-      if (collectElements != null) {
-        this.collectElements += s;
-        return;
-      } else if (!funcargs.equals("")) {
-        this.funcargs += s;
-        return;
-      }
-      //if (node.getType().equals("DialogueAct") || mem.isRdf(node.content)) {
-      if (collectDAs != null) {
-        this.collectDAs += s;
-        return;
-      }
-      this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool,
-              t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.content + isTrue);
-      this.realLook.put(lastbool, node.content + isTrue);
+    if (collectDAs != null) {
+      this.collectDAs += ret;
       return;
-    } else {
-      if (fieldAccessPart != null) {
-        this.fieldAccessPart += node.content;
-        return;
-      } else if (!(this.whatVDATokenWants == null)) {
-        this.whatVDATokenWants += node.content;
-        return;
-      }
-      if (collectElements != null) {
-        this.collectElements += node.content;
-        return;
-      } else if (!funcargs.equals("")) {
-        this.funcargs += node.content;
-        return;
-      }
-      if (collectDAs != null) {
-        this.collectDAs += node.content;
-        return;
-      }
-      this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool, node.content + isTrue);
-      this.realLook.put(lastbool, node.content + isTrue);
-      isTrue = "";
     }
+    // if none of the above happens, we do not want to collect the variable as
+    // part of sth else, but give it a proper boolean (however that should happen)
+
+    this.lastbool = this.currentRule + this.counter++;
+    this.compiledLook.put(this.lastbool, ret + isTrue);
+    this.realLook.put(lastbool, ret + isTrue);
+    isTrue = "";
   }
 
   @Override
