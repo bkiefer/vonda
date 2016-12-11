@@ -462,6 +462,11 @@ public class VTestTypeVisitor implements RudiVisitor {
    */
   @Override
   public void visitNode(UFuncCall node) {
+    String o = mem.getFunctionOrigin(node.content);
+    if (o != null && !rudi.className.equals(o)) {
+      mem.needsClass(mem.getCurrentTopRule(), o);
+      node.realOrigin = o;
+    }
     if (node.type == null) {
       node.type = mem.getFunctionRetType(node.content);
     }

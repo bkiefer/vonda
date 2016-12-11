@@ -35,6 +35,7 @@ public class Mem {
   // imported java functions, we probably don't need local namespaces
   // functions are not implemented locally in this version
   private HashMap<String, String> functionReturnTypes = new HashMap<>();
+  private HashMap<String, String> functionOrigins = new HashMap<>();
   private HashMap<String, ArrayList<String>> functionParamaterTypes = new HashMap<>();
 
   // every toplevel rule might use variables of super rules from the super file
@@ -182,7 +183,11 @@ public class Mem {
     functionParamaterTypes.put(funcname, partypes);
     // we may need this later, it doesn't harm us now
     // TODO: still sensible?
-    //variableOrigin.put(funcname, origin);
+    functionOrigins.put(funcname, origin);
+  }
+  
+  public String getFunctionOrigin(String funcname){
+    return this.functionOrigins.get(funcname);
   }
 
   public boolean existsFunction(String funcname,
