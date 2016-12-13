@@ -72,8 +72,8 @@ public class Mem {
 
   public String mergeTypes(String left, String right) {
     if (isRdfType(left) || isRdfType(right)) {
-      if (!((isRdfType(left) && isRdfType(right)))) return null;
-      // return _proxy.fetchMostSpecific(left, right);
+      if (!((isRdfType(left) && isRdfType(right))))
+        return _proxy.fetchMostSpecific(left, right);
       return left.equals(right) ? left : null;
     }
     // TODO:
@@ -185,7 +185,7 @@ public class Mem {
     // TODO: still sensible?
     functionOrigins.put(funcname, origin);
   }
-  
+
   public String getFunctionOrigin(String funcname){
     return this.functionOrigins.get(funcname);
   }
