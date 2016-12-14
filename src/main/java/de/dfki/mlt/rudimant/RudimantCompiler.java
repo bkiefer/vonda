@@ -24,8 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.WrongFormatException;
-import de.dfki.lt.hfc.db.client.HfcDbClient;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import de.dfki.mlt.rudimant.abstractTree.GrammarFile;
 import de.dfki.mlt.rudimant.abstractTree.RudiTree;
 import de.dfki.mlt.rudimant.abstractTree.VGenerationVisitor;
@@ -106,24 +106,20 @@ public class RudimantCompiler {
     this.constructorArgs = constructorArgs;
   }
 
-  public static RdfProxy startClient(Map<String, Object> configs)
+  public static RdfProxy startClient(File configDir, Map<String, Object> configs)
       throws IOException, WrongFormatException, TException {
-    HfcDbClient client = new HfcDbClient();
-    client.init((String) configs.get(CFG_SERVER_HOST),
-        (int) configs.get(CFG_SERVER_PORT));
-    /*
+    HfcDbHandler handler = new HfcDbHandler();
     String ontoFileName = (String) configs.get(CFG_ONTOLOGY_FILE);
     if (ontoFileName == null) {
       throw new IOException("Ontology file is missing.");
     }
-    client.readConfig(new File(ontoFileName));
-    */
-    return new RdfProxy(client._client);
+    handler.readConfig(new File(configDir, ontoFileName));
+    return new RdfProxy(handler);
   }
 
-  public static RudimantCompiler init(Map<String, Object> configs)
+  public static RudimantCompiler init(File configDir, Map<String, Object> configs)
       throws IOException, WrongFormatException, TException {
-    RdfProxy proxy = startClient(configs);
+    RdfProxy proxy = startClient(configDir, configs);
     if (configs.containsKey(CFG_NAME_TO_URI)) {
       proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
     }

@@ -1,4 +1,4 @@
-outputDirectory:    gen-java
+outputDirectory:    ../../../../target/test/testfiles/dipal
 wrapperClass:       de.dfki.dialogue.NaoAgent
 serverHost:         localhost
 serverPort:         8996

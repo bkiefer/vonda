@@ -38,8 +38,9 @@ public class QuizTest {
     String[] strings = new String[]{
       // "-c", "rudi.config.yml",
       "-p", Integer.toString(SeriousTest.SERVER_PORT),
-      "-o=target/test/testfiles", "-d",
-      "src/test/resources/serious/quiz.rudi",};
+      "-o", "target/test/testfiles",
+      "-r", "src/test/resources/ontos/pal.ini",
+      "-d", "src/test/resources/serious/quiz.rudi",};
     GrammarMain.main(strings);
   }
 

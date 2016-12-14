@@ -6,6 +6,7 @@
 package visitortests;
 
 import static org.junit.Assert.assertEquals;
+import static visitortests.SeriousTest.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,6 +26,7 @@ import org.junit.Test;
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.client.HfcDbClient;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.abstractTree.RudiTree;
 import de.dfki.mlt.rudimant.abstractTree.UFieldAccess;
@@ -39,10 +41,8 @@ import java.util.ArrayList;
  */
 public class RdfTest {
 
-  private static final String RESOURCE_DIR = "src/test/resources/";
-
   HfcDbClient client;
-  private RdfProxy _proxy;
+  private static RdfProxy _proxy;
 
   /**
    *
@@ -55,11 +55,16 @@ public class RdfTest {
   public static void startServer()
       throws FileNotFoundException, IOException, WrongFormatException, TException {
     SeriousTest.setUpClass();
-
+    HfcDbHandler handler = new HfcDbHandler();
+    String ontoFileName = RESOURCE_DIR + TEST_ONTO_CFG;
+    handler.readConfig(new File(ontoFileName));
+    _proxy = new RdfProxy(handler);
+    /*
     HfcDbClient client = new HfcDbClient();
     client.init("localhost", SeriousTest.SERVER_PORT);
     client.readConfig(new File(RESOURCE_DIR + "rifca/rifca.ini"));
     client.shutdown();
+    */
   }
 
   @AfterClass
@@ -70,9 +75,9 @@ public class RdfTest {
   @Before
   public void setUp()
       throws IOException, WrongFormatException, TException {
-    client = new HfcDbClient();
-    client.init("localhost", SeriousTest.SERVER_PORT);
-    _proxy = new RdfProxy(client._client);
+    //client = new HfcDbClient();
+    //client.init("localhost", SeriousTest.SERVER_PORT);
+    //_proxy = new RdfProxy(client._client);
     Map<String, String> resolv = new HashMap<>();
     resolv.put("Child", "<dom:Child>");
     _proxy.setBaseToUri(resolv);
@@ -80,7 +85,7 @@ public class RdfTest {
 
   @After
   public void tearDown() {
-    client.shutdown();
+    //client.shutdown();
   }
 
   @Test

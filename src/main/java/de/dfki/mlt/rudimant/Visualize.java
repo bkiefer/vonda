@@ -4,6 +4,7 @@ import static de.dfki.mlt.rudimant.Constants.*;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,15 +35,14 @@ public class Visualize {
 
   private static final Logger logger = LoggerFactory.getLogger("viz");
 
-  static Map<String, Object> configs = null;
+  public static Map<String, Object> configs = null;
+  public static File confDir = null;
 
   public static String generate(String realName, InputStream in,
       String confname)
       throws IOException, WrongFormatException, TException {
-    Yaml yaml = new Yaml();
-    Map<String, Object> configs = (Map<String, Object>)
-        yaml.load(new FileReader(confname));
-    RudimantCompiler rc = RudimantCompiler.init(configs);
+    readConfig(confname);
+    RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
     StringWriter sw = new StringWriter();
     rc.processForReal(in, sw);
     rc.flush();
@@ -75,7 +75,7 @@ public class Visualize {
 
       // do the type checking
       try {
-        RudimantCompiler rc = RudimantCompiler.init(configs);
+        RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
         new VTestTypeVisitor(rc).visitNode(myTree.first);
       } catch (WrongFormatException|TException ex) {
         throw new RuntimeException(ex);
@@ -91,6 +91,14 @@ public class Visualize {
     Style.increaseDefaultFontSize(1.5);
   }
 
+  @SuppressWarnings("unchecked")
+  public static void readConfig(String confname)
+      throws FileNotFoundException {
+    Yaml yaml = new Yaml();
+    File confFile = new File(confname);
+    confDir = confFile.getParentFile();
+    configs = (Map<String, Object>) yaml.load(new FileReader(confFile));
+  }
 
   /**
    * @param args: the file that should be parsed without ending (in args[0])
@@ -103,10 +111,7 @@ public class Visualize {
 
     File inputFile = new File(args[0]);
 
-    if (args.length > 1) {
-      Yaml yaml = new Yaml();
-      configs = (Map<String, Object>)yaml.load(new FileReader(args[1]));
-    }
+    if (args.length > 1) { readConfig(args[1]); }
 
     Style.increaseDefaultFontSize(1.5);
     MainFrame root = new MainFrame("foo");

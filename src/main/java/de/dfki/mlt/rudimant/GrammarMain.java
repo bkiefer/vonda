@@ -144,6 +144,7 @@ public class GrammarMain {
     int port = (Integer)getDefault(CFG_SERVER_PORT);
     File outputDirectory = null;
     List files = null;
+    File configDir = new File(".");
 
     try {
       options = parser.parse(args);
@@ -161,8 +162,10 @@ public class GrammarMain {
       }
       if (options.has("c")) {
         Yaml yaml = new Yaml();
-        configs = (Map<String, Object>)
-            yaml.load(new FileReader((String)options.valueOf("c")));
+        String confName = (String)options.valueOf("c");
+        File confFile = new File(confName);
+        configDir = confFile.getParentFile();
+        configs = (Map<String, Object>) yaml.load(new FileReader(confFile));
       } else {
         configs = main.defaultConfig();
       }
@@ -183,7 +186,15 @@ public class GrammarMain {
         configs.put(CFG_ONTOLOGY_FILE, options.valueOf("r"));
       }
       if (options.has("o")) {
-        configs.put(CFG_OUTPUT_DIRECTORY, options.valueOf("o"));
+        outputDirectory = new File((String)options.valueOf("o"));
+      } else {
+        if (configs.containsKey(CFG_OUTPUT_DIRECTORY)) {
+          String outDir = (String)configs.get(CFG_OUTPUT_DIRECTORY);
+          outputDirectory = new File(outDir);
+          if (! outputDirectory.isAbsolute()) {
+            outputDirectory = new File(configDir, outDir);
+          }
+        }
       }
       if (options.has("p")) {
         port = Integer.parseInt((String)options.valueOf("p"));
@@ -198,11 +209,8 @@ public class GrammarMain {
         }
       }
       configs.put(CFG_SERVER_PORT, port);
-      if (configs.containsKey(CFG_OUTPUT_DIRECTORY)) {
-        outputDirectory = new File((String)configs.get(CFG_OUTPUT_DIRECTORY));
-      }
       main.setConfig(configs);
-      process(RudimantCompiler.init(configs), files, outputDirectory);
+      process(RudimantCompiler.init(configDir, configs), files, outputDirectory);
     } catch (OptionException ex) {
       usage("Error parsing options: " + ex.getLocalizedMessage());
       System.exit(1);
