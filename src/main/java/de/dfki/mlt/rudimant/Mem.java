@@ -170,7 +170,7 @@ public class Mem {
           ArrayList<String> partypes, String origin) {
     this.current.addFunction(funcname, functype, partypes, origin, this);
   }
-  
+
   public String getFunctionOrigin(String funcname){
     return current.getFunctionOrigin(funcname);
   }
@@ -200,13 +200,12 @@ public class Mem {
    * @return
    */
   public boolean addVariableDeclaration(String variable, String type, String origin) {
-    logger.debug("Add var {}:{} [{}]", environment.size(), variable, type);
     if (current.containsKey(variable)) {
       return false;
     }
-    // TODO: check if RDF type
     type = checkRdf(type);
     current.put(variable, type, origin);
+    logger.debug("Add var {}:{} [{}]", environment.size(), variable, type);
     return true;
   }
 
