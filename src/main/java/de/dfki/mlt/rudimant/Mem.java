@@ -31,13 +31,6 @@ public class Mem {
 
   private Environment current;
 
-  // as this is only a way to provide mem with information about the types of
-  // imported java functions, we probably don't need local namespaces
-  // functions are not implemented locally in this version
-  private HashMap<String, String> functionReturnTypes = new HashMap<>();
-  private HashMap<String, String> functionOrigins = new HashMap<>();
-  private HashMap<String, ArrayList<String>> functionParamaterTypes = new HashMap<>();
-
   // every toplevel rule might use variables of super rules from the super file
   private String curRule;
   private String curClass;
@@ -175,27 +168,16 @@ public class Mem {
    */
   public void addFunction(String funcname, String functype,
           ArrayList<String> partypes, String origin) {
-    functype = checkRdf(functype);
-    functionReturnTypes.put(funcname, functype);
-    for (int i = 0; i < partypes.size(); ++i) {
-      partypes.set(i, checkRdf(partypes.get(i)));
-    }
-    functionParamaterTypes.put(funcname, partypes);
-    // we may need this later, it doesn't harm us now
-    // TODO: still sensible?
-    functionOrigins.put(funcname, origin);
+    this.current.addFunction(funcname, functype, partypes, origin, this);
   }
   
   public String getFunctionOrigin(String funcname){
-    return this.functionOrigins.get(funcname);
+    return current.getFunctionOrigin(funcname);
   }
 
   public boolean existsFunction(String funcname,
           ArrayList<String> partypes) {
-    if (!functionReturnTypes.containsKey(funcname)) {
-      return false;
-    }
-    return (partypes.equals(functionParamaterTypes.get(funcname)));
+    return current.existsFunction(funcname, partypes);
   }
 
   /**
@@ -207,7 +189,7 @@ public class Mem {
   public String getFunctionRetType(String funcname) {
     // TODO: we could also identify the function by the parameter types, is this
     // necessary?
-    return functionReturnTypes.get(funcname);
+    return current.getFunctionRetType(funcname);
   }
 
   /**
