@@ -432,6 +432,10 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.statblock.visit(this);
     node.condition = node.condition.ensureBoolean();
   }
+  
+  // set this variable to tell error handling that we are in a function invoked
+  // on a java object, so we probably do not wanna throw an error here
+  boolean partOfFieldAccess = false;
 
   @Override
   public void visitNode(UFieldAccess node) {
@@ -446,6 +450,7 @@ public class VTestTypeVisitor implements RudiVisitor {
      node.type = ((RTExpression)node.parts.get(node.parts.size() - 1)).getType();
      return;
      }*/
+    partOfFieldAccess = true;
     for (int i = 0; i < node.representation.size(); i++) {
       node.parts.get(i).visit(this);
 //      if (node.representation.get(i).contains("(")) {
@@ -454,6 +459,7 @@ public class VTestTypeVisitor implements RudiVisitor {
 //        node.representation.set(i, "\"" + node.representation.get(i) + "\"");
 //      }
     }
+    partOfFieldAccess = false;
   }
 
   /**
@@ -476,6 +482,10 @@ public class VTestTypeVisitor implements RudiVisitor {
       partypes.add(e.getType());
     }
     if (!mem.existsFunction(node.content, partypes)) {
+      if(partOfFieldAccess){
+        // TODO: adapt this if you still want to throw an error
+        return;
+      }
       rudi.handleTypeError("The function call to " + node.content
               + " refers to a function that wasn't declared");
     }
