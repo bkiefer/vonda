@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
+import de.dfki.mlt.rudimant.Location;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -21,6 +22,11 @@ public abstract class RudiTree {
    * ParserRuleContext. [0] = start of TokenIndex, [1] = stop of TokenIndex
    */
   public int[] positions;
+  
+  /**
+   * contains the origin file and the line this Rudi Tree started on 
+   */
+  public Location location;
 
   /**
    * visitor method
@@ -74,6 +80,11 @@ public abstract class RudiTree {
       tn.getSymbol().getTokenIndex(),
       tn.getSymbol().getTokenIndex()
     };
+    return this;
+  }
+  
+  public RudiTree setLocation(String originClass, int linenumber){
+    this.location = new Location(originClass, linenumber);
     return this;
   }
 
