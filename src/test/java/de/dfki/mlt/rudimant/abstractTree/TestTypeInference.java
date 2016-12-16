@@ -1,6 +1,7 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import static visitortests.SeriousTest.*;
+import static de.dfki.mlt.rudimant.Visualize.*;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
@@ -29,8 +30,6 @@ public class TestTypeInference {
   String footer = "";
   RudimantCompiler rc = null;
 
-  static Map<String, Object> configs = null;
-
   public RudiTree getNodeOfInterest(RudiTree rt) {
     assertTrue(rt instanceof GrammarFile);
     GrammarFile gf = (GrammarFile) rt;
@@ -54,7 +53,7 @@ public class TestTypeInference {
 
     // do the type checking
     try {
-      rc = RudimantCompiler.init(configs);
+      rc = RudimantCompiler.init(confDir, configs);
       new VTestTypeVisitor(rc).visitNode(myTree.first);
     } catch (WrongFormatException | TException ex) {
       throw new RuntimeException(ex);
@@ -66,8 +65,7 @@ public class TestTypeInference {
   public static void setUpClass()
     throws TTransportException, IOException, WrongFormatException {
     setupClass("dipal/ontologies/pal.ini");
-    Yaml yaml = new Yaml();
-    configs = (Map<String, Object>) yaml.load(new FileReader(RESOURCE_DIR + "dipal/dipal.yml"));
+    readConfig(RESOURCE_DIR + "dipal/dipal.yml");
   }
 
   @AfterClass
@@ -83,7 +81,7 @@ public class TestTypeInference {
   public void test() throws IOException, WrongFormatException, TException {
     String boolexp = "Quiz foo() { b = 5 < 1; }";
 
-    String s = Visualize.generate("boolexp", getInput(boolexp),
+    String s = generate("boolexp", getInput(boolexp),
       RESOURCE_DIR + "dipal/dipal.yml");
     s = normalizeSpaces(s);
     String expected = "Quiz foo() {boolean b = (5 < 1); }} ";
@@ -91,9 +89,14 @@ public class TestTypeInference {
     assertEquals(expected,
     s.substring(s.length() - expected.length()));
 
+
+    // can't be tested like that because the memory is now handled correctly
+    // and after leaving the last block is empty.
+    /*
     parseAndTypecheck(boolexp);
     String type = rc.getMem().getVariableType("b");
     assertTrue(type.equals("boolean"));
+    */
   }
 
 }

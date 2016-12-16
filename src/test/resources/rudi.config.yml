@@ -1,7 +1,7 @@
-outputDirectory:    target/test/testfiles/
+outputDirectory:    ../../../target/test/testfiles/
 wrapperClass:       NaoAgent
 serverHost:         localhost
 serverPort:         8996
 checkTypes:         true
 failOnError:        false
-ontologyFile:       src/test/resources/ontos/pal.ini
+ontologyFile:       ontos/pal.ini

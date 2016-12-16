@@ -119,7 +119,20 @@ public class VGenerationVisitor implements RudiVisitor {
         }
       }
       if (node.declaration) {
-        out.append(node.actualType + " ");
+//        if(node.actualType == null){
+//            throw new UnsupportedOperationException("no actualtype for declaration of " + node.fullexp);
+//          }
+        if (node.actualType != null &&  node.actualType.startsWith("<")){
+          if (node.actualType.startsWith("<dial")){  // <dial:DialogueAct > has to be replaced by DialogueAct
+            out.append("DialogueAct ");            
+          }
+          else{ // every other type starting with < has to be replaced by RdfType
+            out.append("RdfType "); 
+          }
+        }
+        else{          
+          out.append(node.actualType + " "); 
+        }
       }
       node.left.visitWithComments(this);
       out.append(" = ");

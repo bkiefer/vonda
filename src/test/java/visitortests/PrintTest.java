@@ -44,7 +44,7 @@ public class PrintTest {
   @Test
   public void ImportTest() throws Exception {
     String[] strings = {
-        "-c=src/test/resources/rudi.config.yml",
+        "-c", "src/test/resources/rudi.config.yml",
         "src/test/resources/test_import/Test.rudi"
     };
     GrammarMain.main(strings);

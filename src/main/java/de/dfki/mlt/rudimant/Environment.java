@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudimant;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,18 +19,27 @@ public class Environment {
 
   private Map<String, String> variableToType;
   private Map<String, String> variableOrigin;
-  private HashSet<String> rdfs;
+  private HashSet<String> rdfs;  
+  private HashMap<String, String> functionReturnTypes;
+  private HashMap<String, String> functionOrigins;
+  private HashMap<String, ArrayList<String>> functionParamaterTypes;
 
   public Environment() {
     this.variableToType = new HashMap<>();
     this.variableOrigin = new HashMap<>();
     this.rdfs = new HashSet<>();
+    this.functionOrigins = new HashMap<>();
+    this.functionParamaterTypes = new HashMap<>();
+    this.functionReturnTypes = new HashMap<>();
   }
 
   public Environment deepCopy() {
     Environment newEnv = new Environment();
     newEnv.variableOrigin.putAll(this.variableOrigin);
     newEnv.variableToType.putAll(this.variableToType);
+    newEnv.functionOrigins.putAll(this.functionOrigins);
+    newEnv.functionParamaterTypes.putAll(this.functionParamaterTypes);
+    newEnv.functionReturnTypes.putAll(this.functionReturnTypes);
     return newEnv;
   }
 
@@ -60,5 +70,49 @@ public class Environment {
 
   public boolean isRdf(String variable) {
     return this.rdfs.contains(variable);
+  }
+  
+    /** Add a function/method declaration, optionally with return and parameter
+   *  types. If the types are not known, it's assumed they are null.
+   *
+   * @param funcname The name of the function
+   * @param functype the return type of the function, or null
+   * @param partypes the parameter types of the function's parameters
+   * @param origin first element class, second rule origin
+   */
+  public void addFunction(String funcname, String functype,
+          ArrayList<String> partypes, String origin, Mem mem) {
+    functype = mem.checkRdf(functype);
+    functionReturnTypes.put(funcname, functype);
+    for (int i = 0; i < partypes.size(); ++i) {
+      partypes.set(i, mem.checkRdf(partypes.get(i)));
+    }
+    functionParamaterTypes.put(funcname, partypes);
+    // we may need this later, it doesn't harm us now
+    // TODO: still sensible?
+    functionOrigins.put(funcname, origin);
+  }
+    public String getFunctionOrigin(String funcname){
+    return this.functionOrigins.get(funcname);
+  }
+
+  public boolean existsFunction(String funcname,
+          ArrayList<String> partypes) {
+    if (!functionReturnTypes.containsKey(funcname)) {
+      return false;
+    }
+    return (partypes.equals(functionParamaterTypes.get(funcname)));
+  }
+
+  /**
+   * returns null if there is no such function
+   *
+   * @param funcname the name of the function
+   * @return its return type or null
+   */
+  public String getFunctionRetType(String funcname) {
+    // TODO: we could also identify the function by the parameter types, is this
+    // necessary?
+    return functionReturnTypes.get(funcname);
   }
 }

@@ -25,6 +25,8 @@ public class SeriousTest {
   static HfcDbServer server;
 
   public static final String RESOURCE_DIR = "src/test/resources/";
+  public static final String TEST_CONFIG = "rudi.config.yml";
+  public static final String TEST_ONTO_CFG = "ontos/pal.ini";
 
   public static final int SERVER_PORT = 8996;
 
@@ -36,23 +38,25 @@ public class SeriousTest {
 
   public static void setupClass(String iniFileName)
       throws TTransportException, IOException, WrongFormatException {
+    /*
     // start the HFC server
     server = new HfcDbServer(SERVER_PORT);
     server.readConfig(new File(RESOURCE_DIR + iniFileName));
     server.runServer();
+    */
   }
 
   @AfterClass
   public static void tearDownClass() {
-    server.shutdown();
+    // server.shutdown();
   }
 
   @Test
   public void PalAgentTest() throws Exception {
     String[] strings = new String[]{
-        "-c", "rudi.config.yml",
-        "-o", "target/test/testfiles", "-d",
-        "src/test/resources/serious/palAgent.rudi"};
+        "-c", RESOURCE_DIR + TEST_CONFIG,
+        "-o", "target/test/testfiles",
+        "-d", "src/test/resources/serious/palAgent.rudi"};
     GrammarMain.main(strings);
   }
 }

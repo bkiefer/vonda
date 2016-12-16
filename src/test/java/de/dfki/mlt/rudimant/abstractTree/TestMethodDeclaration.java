@@ -1,14 +1,13 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import static visitortests.SeriousTest.*;
+import static de.dfki.mlt.rudimant.Visualize.*;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
-import java.util.Map;
 
 import org.antlr.v4.runtime.Token;
 import org.apache.thrift.TException;
@@ -16,7 +15,6 @@ import org.apache.thrift.transport.TTransportException;
 import org.junit.BeforeClass;
 import org.junit.AfterClass;
 import org.junit.Test;
-import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.mlt.rudimant.RudimantCompiler;
@@ -32,8 +30,6 @@ public class TestMethodDeclaration {
 
   String header = "";
   String footer = "";
-
-  static Map<String, Object> configs = null;
 
   public RudiTree getNodeOfInterest(RudiTree rt) {
     assertTrue(rt instanceof GrammarFile);
@@ -58,7 +54,7 @@ public class TestMethodDeclaration {
 
     // do the type checking
     try {
-      RudimantCompiler rc = RudimantCompiler.init(configs);
+      RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
       new VTestTypeVisitor(rc).visitNode(myTree.first);
     } catch (WrongFormatException|TException ex) {
       throw new RuntimeException(ex);
@@ -70,9 +66,7 @@ public class TestMethodDeclaration {
   public static void setUpClass()
     throws TTransportException, IOException, WrongFormatException {
     setupClass("dipal/ontologies/pal.ini");
-    Yaml yaml = new Yaml();
-    Map<String, Object> configs = (Map<String, Object>)
-        yaml.load(new FileReader(RESOURCE_DIR + "dipal/dipal.yml"));
+    readConfig(RESOURCE_DIR + "dipal/dipal.yml");
   }
 
   @AfterClass

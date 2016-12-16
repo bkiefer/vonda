@@ -4,7 +4,9 @@ if (activity == null || ! (activity <= Quiz))
 
 // todo: will the compiler try to resolve this to an RDF type??
 QuizHistory getCurrentTurn() {
-  if (! activity.hasTurns || activity.hasTurns.isEmpty())
+  // this tests if activity has a hasTurns property (which is relational), and
+  // if so, if it has more than zero values.
+  if (! activity.hasTurns)
     return null;
   return activity.hasTurns.peekFirst();
 }

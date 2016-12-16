@@ -1,6 +1,6 @@
 package de.dfki.mlt.rudimant.agent;
 
-import de.dfki.lt.hfc.db.HfcDbService;
+import de.dfki.lt.hfc.db.rdfProxy.DbClient;
 import de.dfki.lt.hfc.db.rdfProxy.RdfHierarchy;
 import de.dfki.lt.tr.dialogue.cplan.Hierarchy;
 import de.dfki.lt.tr.dialogue.cplan.util.ShortIDMap;
@@ -13,7 +13,7 @@ public class DiaHierarchy extends RdfHierarchy implements Hierarchy {
 
   protected ShortIDMap<String> nameToFeature = new ShortIDMap<String>();
 
-  public DiaHierarchy(HfcDbService.Client client) {
+  public DiaHierarchy(DbClient client) {
     super(client);
   }
 

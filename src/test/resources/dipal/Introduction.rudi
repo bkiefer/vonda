@@ -51,7 +51,7 @@ if (saidInSession(#Salutation(Meeting)) >= 0
       }
 
     confirm_user_preference:
-      if (user.getLiking.slot && ! waitForResponse()
+      if (user.getLiking.slot && ! waitingForResponse()
           && saidInSession(#Request(Liking, theme=^slot))
           // a nice way to express the disjunction (supertype?)
           && ! saidInSession(#Answer(Liking, theme=^slot))) {

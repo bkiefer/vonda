@@ -31,13 +31,6 @@ public class Mem {
 
   private Environment current;
 
-  // as this is only a way to provide mem with information about the types of
-  // imported java functions, we probably don't need local namespaces
-  // functions are not implemented locally in this version
-  private HashMap<String, String> functionReturnTypes = new HashMap<>();
-  private HashMap<String, String> functionOrigins = new HashMap<>();
-  private HashMap<String, ArrayList<String>> functionParamaterTypes = new HashMap<>();
-
   // every toplevel rule might use variables of super rules from the super file
   private String curRule;
   private String curClass;
@@ -64,6 +57,7 @@ public class Mem {
     typeCodes.put("double", 0x1110000);
     typeCodes.put("float", 0x110000);
     typeCodes.put("int", 0x10000);
+    typeCodes.put("boolean", 0x10000000);
   }
 
   private static boolean isRdfType(String type) {
@@ -99,6 +93,12 @@ public class Mem {
   }
 
   public String checkRdf(String type) {
+    // if is necessary, because otherwise, Object as the static type in a 
+    // declaration gets changed to RdfType by 
+    // VGenerationVisitor.visitNode(ExpAssignment node)
+    if ("Object".equals(type)){  
+      return type;
+    }
     try {
       RdfClass clazz = _proxy.fetchClass(type);
       if (clazz != null) {
@@ -175,27 +175,16 @@ public class Mem {
    */
   public void addFunction(String funcname, String functype,
           ArrayList<String> partypes, String origin) {
-    functype = checkRdf(functype);
-    functionReturnTypes.put(funcname, functype);
-    for (int i = 0; i < partypes.size(); ++i) {
-      partypes.set(i, checkRdf(partypes.get(i)));
-    }
-    functionParamaterTypes.put(funcname, partypes);
-    // we may need this later, it doesn't harm us now
-    // TODO: still sensible?
-    functionOrigins.put(funcname, origin);
+    this.current.addFunction(funcname, functype, partypes, origin, this);
   }
 
   public String getFunctionOrigin(String funcname){
-    return this.functionOrigins.get(funcname);
+    return current.getFunctionOrigin(funcname);
   }
 
   public boolean existsFunction(String funcname,
           ArrayList<String> partypes) {
-    if (!functionReturnTypes.containsKey(funcname)) {
-      return false;
-    }
-    return (partypes.equals(functionParamaterTypes.get(funcname)));
+    return current.existsFunction(funcname, partypes);
   }
 
   /**
@@ -207,7 +196,7 @@ public class Mem {
   public String getFunctionRetType(String funcname) {
     // TODO: we could also identify the function by the parameter types, is this
     // necessary?
-    return functionReturnTypes.get(funcname);
+    return current.getFunctionRetType(funcname);
   }
 
   /**
@@ -218,13 +207,12 @@ public class Mem {
    * @return
    */
   public boolean addVariableDeclaration(String variable, String type, String origin) {
-    logger.debug("Add var {}:{} [{}]", environment.size(), variable, type);
     if (current.containsKey(variable)) {
       return false;
     }
-    // TODO: check if RDF type
     type = checkRdf(type);
     current.put(variable, type, origin);
+    logger.debug("Add var {}:{} [{}]", environment.size(), variable, type);
     return true;
   }
 
