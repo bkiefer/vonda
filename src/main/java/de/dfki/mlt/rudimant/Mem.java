@@ -49,36 +49,42 @@ public class Mem {
     _proxy = proxy;
   }
 
-  static Map<String, Integer> typeCodes = new HashMap<>();
+  static Map<String, Long> typeCodes = new HashMap<>();
 
+  static final long JAVA_TYPE = 0x10;
   static {
-    typeCodes.put("Object", 0x1111);
-    typeCodes.put("String", 0x1);
-    typeCodes.put("double", 0x1110000);
-    typeCodes.put("float", 0x110000);
-    typeCodes.put("int", 0x10000);
-    typeCodes.put("boolean", 0x10000000);
+    typeCodes.put("Object", 0x11l);
+    typeCodes.put("String", 0x1l);
+    typeCodes.put("Rdf", 0x100l);
+    typeCodes.put("double", 0x100000l);
+    typeCodes.put("float", 0x11000l);
+    typeCodes.put("int", 0x111000l);
+    typeCodes.put("boolean", 0x1000000l);
   }
 
   private static boolean isRdfType(String type) {
     return (type != null && type.charAt(0) == '<');
   }
 
+  /** Return the more specific of the two types, if it exists, null otherwise */
   public String mergeTypes(String left, String right) {
+    // check if these are RDF types and are in a type relation.
     if (isRdfType(left) || isRdfType(right)) {
-      if (!((isRdfType(left) && isRdfType(right))))
+    if (isRdfType(left) && isRdfType(right))
         return _proxy.fetchMostSpecific(left, right);
-      return left.equals(right) ? left : null;
+      if ("Rdf".equals(left)) return right;
+      if ("Rdf".equals(right)) return left;
+      return null;
     }
-    // TODO:
-    // we also have to check if these are RDF types and are in a type relation.
 
     // this should return the more specific of the two, or null if they are
     // incompatible
-    Integer leftCode = typeCodes.get(left);
-    Integer rightCode = typeCodes.get(right);
-    if (leftCode == null || rightCode == null) return null;
-    int common = leftCode | rightCode;
+    Long leftCode = typeCodes.get(left);
+    if (leftCode == null) leftCode = JAVA_TYPE;
+    Long rightCode = typeCodes.get(right);
+    if (rightCode == null) rightCode = JAVA_TYPE;
+
+    long common = leftCode & rightCode;
     if (common == leftCode) {
       return left;
     }
@@ -93,10 +99,10 @@ public class Mem {
   }
 
   public String checkRdf(String type) {
-    // if is necessary, because otherwise, Object as the static type in a 
-    // declaration gets changed to RdfType by 
+    // if is necessary, because otherwise, Object as the static type in a
+    // declaration gets changed to RdfType by
     // VGenerationVisitor.visitNode(ExpAssignment node)
-    if ("Object".equals(type)){  
+    if ("Object".equals(type)){
       return type;
     }
     try {
