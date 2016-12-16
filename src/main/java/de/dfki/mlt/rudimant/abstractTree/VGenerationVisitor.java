@@ -913,7 +913,7 @@ public class VGenerationVisitor implements RudiVisitor {
       try {
         // TODO: how to do rdf generation?????
         out.append("_proxy.getClass(\""
-                + mem.getProxy().fetchClass(node.toCreate)
+                + mem.getProxy().fetchClass(node.type)
                 + "\").newInstance(DEFNS)");
       } catch (TException ex) {
         java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
