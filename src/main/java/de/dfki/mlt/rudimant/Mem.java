@@ -57,6 +57,7 @@ public class Mem {
     typeCodes.put("double", 0x1110000);
     typeCodes.put("float", 0x110000);
     typeCodes.put("int", 0x10000);
+    typeCodes.put("boolean", 0x10000000);
   }
 
   private static boolean isRdfType(String type) {
