@@ -17,7 +17,7 @@ if (user) {
         // TODO: USE SAME LABELS IN GRAMMAR AND DATABASE
         // Max: ERROR? TODO: there is no Request(Name) DA!
         // make sure the next DA is send only send out after 900ms pause
-        emitDA(-900, #Request(Name));
+        emitDelayed(-900, #Request(Name));
       }
     }
   }

@@ -482,6 +482,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     // test whether the given parameters are of the correct type
     ArrayList<String> partypes = new ArrayList<String>();
     for (RTExpression e : node.exps) {
+      e.visit(this);
       partypes.add(e.getType());
     }
     if (!mem.existsFunction(node.content, partypes)) {
@@ -590,12 +591,13 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpNew node) {
-    if (node.toCreate != null) {
-      // TODO: insert proper rdf type
-      node.type = node.toCreate;
+    if (node.construct == null) {
+      // insert proper rdf type
+      node.type = mem.checkRdf(node.type);
     } else {
       String f = node.fullexp;
       // the type is the java object created
+      // TODO: shouldn't that be indexOf("w") + 1 ??
       node.type = f.substring(f.indexOf("w"), f.indexOf("("));
       node.construct.visit(this);
     }

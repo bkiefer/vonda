@@ -13,22 +13,19 @@ import java.util.Arrays;
  * @author pal
  */
 public class ExpNew extends RTExpression {
-  
-  // the rdf that should be created
-  String toCreate;
+
   // the java object creation as a function call
   RTExpression construct;
-  
+
   /**
-   * 
+   *
    * @param toCreate set to the rdf object class whose type should be created
    *                  or to null if this is a java creation
    * @param construct set to the function call that represents the java creation
    *                  (to null if no java creation)
    */
   public ExpNew(String fullexp, String toCreate, RTExpression construct){
-    // TODO: type!!!!!!!!!!!!
-    this.toCreate = toCreate;
+    this.type = toCreate;
     this.construct = construct;
     this.fullexp = fullexp;
   }
@@ -49,5 +46,5 @@ public class ExpNew extends RTExpression {
     return Arrays.asList(dtrs);
   }
 
-  
+
 }
