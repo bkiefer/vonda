@@ -10,7 +10,7 @@ Logger logger;
 // General methods of Agent
 DialogueAct myLastDA();
 DialogueAct emitDA(DialogueAct da);
-DialogueAct emitDA(int delay, DialogueAct da);
+DialogueAct emitDelayed(int delay, DialogueAct da);
 void addToMyDA(DialogueAct da);
 
 DialogueAct lastDA();
