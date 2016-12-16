@@ -11,7 +11,9 @@ Logger logger;
 DialogueAct myLastDA();
 DialogueAct emitDA(DialogueAct da);
 DialogueAct emitDelayed(int delay, DialogueAct da);
+DialogueAct addLastDA(DialogueAct da);
 void addToMyDA(DialogueAct da);
+Turn getCurrentTurn();
 
 DialogueAct lastDA();
 

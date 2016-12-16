@@ -57,6 +57,7 @@ public class Mem {
     typeCodes.put("double", 0x1110000);
     typeCodes.put("float", 0x110000);
     typeCodes.put("int", 0x10000);
+    typeCodes.put("boolean", 0x10000000);
   }
 
   private static boolean isRdfType(String type) {
@@ -92,6 +93,12 @@ public class Mem {
   }
 
   public String checkRdf(String type) {
+    // if is necessary, because otherwise, Object as the static type in a 
+    // declaration gets changed to RdfType by 
+    // VGenerationVisitor.visitNode(ExpAssignment node)
+    if ("Object".equals(type)){  
+      return type;
+    }
     try {
       RdfClass clazz = _proxy.fetchClass(type);
       if (clazz != null) {
