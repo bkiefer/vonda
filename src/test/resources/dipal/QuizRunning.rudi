@@ -115,7 +115,7 @@ if (activity.status == "run_wait_for_continue") {
   if (true || getNumberOfTurns() < 5) {
     propose("continue_quiz") {
       Rdf turn = getCurrentTurn();
-      Rdf newTurn = new Turn;
+      Rdf newTurn = new QuizHistory;
       // Switch roles after each turn
       newTurn.Asker = turn.Responder;
       newTurn.Responder = turn.Asker;

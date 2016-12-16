@@ -36,4 +36,9 @@ public class UVariable extends RTExpLeaf {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+
+  public void propagateType(String upperType) {
+    // it's not an error if the type is null
+    type = upperType;
+  }
 }

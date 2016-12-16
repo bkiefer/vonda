@@ -1,7 +1,7 @@
 
 Activity activity;
 Child user;
-Agent I_ROBOT;
+Actor I_ROBOT;
 Introduction intro;
 Session currentSession;
 
@@ -13,7 +13,7 @@ DialogueAct emitDA(DialogueAct da);
 DialogueAct emitDelayed(int delay, DialogueAct da);
 DialogueAct addLastDA(DialogueAct da);
 void addToMyDA(DialogueAct da);
-Turn getCurrentTurn();
+QuizHistory getCurrentTurn();
 
 DialogueAct lastDA();
 
