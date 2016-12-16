@@ -121,7 +121,9 @@ public class VTestTypeVisitor implements RudiVisitor {
           rudi.handleTypeError("Type of variable unkown: "
                   + node.left + " in " + node);
         }
+        else{
         node.actualType = node.type;
+        }
       } else {
         // is this a variable declaration for an already existing variable?
         if (node.declaration) {

@@ -92,6 +92,12 @@ public class Mem {
   }
 
   public String checkRdf(String type) {
+    // if is necessary, because otherwise, Object as the static type in a 
+    // declaration gets changed to RdfType by 
+    // VGenerationVisitor.visitNode(ExpAssignment node)
+    if ("Object".equals(type)){  
+      return type;
+    }
     try {
       RdfClass clazz = _proxy.fetchClass(type);
       if (clazz != null) {
