@@ -122,16 +122,14 @@ public class VGenerationVisitor implements RudiVisitor {
 //        if(node.actualType == null){
 //            throw new UnsupportedOperationException("no actualtype for declaration of " + node.fullexp);
 //          }
-        if (node.actualType != null &&  node.actualType.startsWith("<")){
-          if (node.actualType.startsWith("<dial")){  // <dial:DialogueAct > has to be replaced by DialogueAct
-            out.append("DialogueAct ");            
+        if (node.actualType != null && node.actualType.startsWith("<")) {
+          if (node.actualType.startsWith("<dial")) {  // <dial:DialogueAct > has to be replaced by DialogueAct
+            out.append("DialogueAct ");
+          } else { // every other type starting with < has to be replaced by RdfType
+            out.append("RdfType ");
           }
-          else{ // every other type starting with < has to be replaced by RdfType
-            out.append("RdfType "); 
-          }
-        }
-        else{          
-          out.append(node.actualType + " "); 
+        } else {
+          out.append(node.actualType + " ");
         }
       }
       node.left.visitWithComments(this);
@@ -165,18 +163,18 @@ public class VGenerationVisitor implements RudiVisitor {
      * OR ")" (UNARY, LIKE '.isEmpty()')
      *
      if (node.isSubsumed) {
-      node.left.visitWithComments(this);
-      out.append(".isSubsumed(");
-      node.right.visitWithComments(this);
-      out.append(")");
-      return;
-    } else if (node.doesSubsume) {
-      node.right.visitWithComments(this);
-      out.append(".isSubsumed(");
-      node.left.visitWithComments(this);
-      out.append(")");
-      return;
-    }
+     node.left.visitWithComments(this);
+     out.append(".isSubsumed(");
+     node.right.visitWithComments(this);
+     out.append(")");
+     return;
+     } else if (node.doesSubsume) {
+     node.right.visitWithComments(this);
+     out.append(".isSubsumed(");
+     node.left.visitWithComments(this);
+     out.append(")");
+     return;
+     }
      */
     if (node.right != null) {
       out.append("(");
@@ -202,8 +200,8 @@ public class VGenerationVisitor implements RudiVisitor {
   }
 
   public void visitDaToken(RTExpression exp) {
-//    System.out.println("visiting datoken " + exp.fullexp + " which is " 
-//            + (exp instanceof UVariable? "" : "not ") + "instance of UVariable");
+//    System.out.println("visiting datoken " + exp.fullexp + " which is "
+//            + (exp instanceof UVariable ? "" : "not ") + "instance of UVariable");
     if (exp instanceof UVariable) {
       out.append("\" + ");
       out.append(((UVariable) exp).fullexp);
@@ -211,10 +209,10 @@ public class VGenerationVisitor implements RudiVisitor {
     } else if (exp instanceof USingleValue
             && ((USingleValue) exp).type.equals("String")) {
       String s = ((USingleValue) exp).content;
-      if(s.contains("\"")){
+      if (s.contains("\"")) {
         s = s.substring(1, s.length() - 1);
       }
-      out.append("\\\"").append(s).append("\\\"");
+      out.append(s);
     } else {
       out.append("\" + ");
       this.visitNode(exp);
@@ -230,7 +228,9 @@ public class VGenerationVisitor implements RudiVisitor {
     visitDaToken(node.proposition);
     for (int i = 0; i < node.exps.size(); i += 2) {
       out.append(", ");
-      visitDaToken(node.exps.get(i));
+      // TODO: is there a reason why this should ever be something special?
+//      visitDaToken(node.exps.get(i));
+      out.append(node.exps.get(i).fullexp);
       out.append(" = ");
       visitDaToken(node.exps.get(i + 1));
     }
@@ -383,7 +383,7 @@ public class VGenerationVisitor implements RudiVisitor {
           for (String c : ncs) {
             if (c.equals(rudi.className)
                     || (c.substring(0, 1).toUpperCase()
-                            + c.substring(1)).equals(rudi.className)) {
+                    + c.substring(1)).equals(rudi.className)) {
               c = "this";
             }
             if (i == 0) {
@@ -709,16 +709,16 @@ public class VGenerationVisitor implements RudiVisitor {
     int to = node.parts.size();
     // the following is obsolete as new is now a keyword
     /*if (to == 2 && node.representation.get(1).equals("new()")){
-      try {
-        // then this is a creation of a new rdf object
-        out.append("_proxy.getClass(\"" +
-                rudi.getProxy().fetchClass(node.representation.get(0)) +
-                "\").newInstance(DEFNS);\n");
-        return;
-      } catch (TException ex) {
-        java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
-      }
-    }*/
+     try {
+     // then this is a creation of a new rdf object
+     out.append("_proxy.getClass(\"" +
+     rudi.getProxy().fetchClass(node.representation.get(0)) +
+     "\").newInstance(DEFNS);\n");
+     return;
+     } catch (TException ex) {
+     java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
+     }
+     }*/
     List<String> representation = new ArrayList<>();
     node.parts.get(0).visitWithComments(this);
     representation.add(node.representation.get(0));
@@ -755,7 +755,7 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UFuncCall node) {
-    if(node.realOrigin != null) {
+    if (node.realOrigin != null) {
       String t = node.realOrigin;
       out.append(t.substring(0, 1).toLowerCase() + t.substring(1) + ".");
     }

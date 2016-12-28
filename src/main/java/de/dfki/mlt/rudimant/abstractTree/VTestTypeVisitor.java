@@ -200,17 +200,24 @@ public class VTestTypeVisitor implements RudiVisitor {
    */
   @Override
   public void visitNode(ExpDialogueAct node) {
+    if (node.daType instanceof UVariable) {
+      if (!mem.variableExists(((UVariable) node.daType).content)) {
+        node.daType = mem.degradeToString((UVariable) node.daType);
+      }
+    }
     if (node.proposition instanceof UVariable) {
-      if (!mem.variableExists(((UVariable)node.proposition).content)) {
-        node.proposition = mem.degradeToString((UVariable)node.proposition);
+      if (!mem.variableExists(((UVariable) node.proposition).content)) {
+        node.proposition = mem.degradeToString((UVariable) node.proposition);
       }
     }
-    for(RTExpression e: node.exps){
-    if (e instanceof UVariable) {
-      if (!mem.variableExists(((UVariable)e).content)) {
-        e = mem.degradeToString((UVariable)e);
+    int i = 0;
+    for (RTExpression e : node.exps) {
+      if (e instanceof UVariable) {
+        if (!mem.variableExists(((UVariable) e).content)) {
+          node.exps.set(i, mem.degradeToString((UVariable) e));
+        }
       }
-    }
+      i++;
     }
   }
 
