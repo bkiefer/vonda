@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * represents a namespace (to be used by the memory=
@@ -16,6 +18,8 @@ import java.util.Map;
  * @author Anna Welker
  */
 public class Environment {
+
+  private static Logger logger = LoggerFactory.getLogger(Environment.class);
 
   private Map<String, String> variableToType;
   private Map<String, String> variableOrigin;
@@ -97,11 +101,22 @@ public class Environment {
   }
 
   public boolean existsFunction(String funcname,
-          ArrayList<String> partypes) {
+          ArrayList<String> partypes, Mem mem) {
     if (!functionReturnTypes.containsKey(funcname)) {
       return false;
     }
-    return (partypes.equals(functionParamaterTypes.get(funcname)));
+    int i = 0;
+    if(partypes.size() != functionParamaterTypes.get(funcname).size()){
+      logger.error("You are using overridden methods (call to " + funcname + ") which rudimant currently doesn't allow!!");
+      return false;
+    }
+    for(String parameter: partypes){
+      if(mem.mergeTypes(parameter, functionParamaterTypes.get(funcname).get(i)) == null){
+        return false;
+      }
+      i++;
+    }
+    return true;
   }
 
   /**

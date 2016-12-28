@@ -190,7 +190,7 @@ public class Mem {
 
   public boolean existsFunction(String funcname,
           ArrayList<String> partypes) {
-    return current.existsFunction(funcname, partypes);
+    return current.existsFunction(funcname, partypes, this);
   }
 
   /**

@@ -342,7 +342,7 @@ public class VTestTypeVisitor implements RudiVisitor {
         if (!(node.listType.substring(node.listType.indexOf("<"),
                 node.listType.indexOf(">")).equals(node.objects.get(0)))) {
           rudi.handleTypeError("Found a list creation where the list type doesn't fit"
-                  + " its objects' type");
+                  + " its objects' type: " + node.listType + " vs " + node.objects.get(0));
         }
         mem.addVariableDeclaration(node.variableName, node.listType, node.origin);
         return;
