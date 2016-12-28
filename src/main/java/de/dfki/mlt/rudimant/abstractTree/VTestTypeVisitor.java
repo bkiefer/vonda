@@ -220,7 +220,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.elseexp.visit(this);
 //      rudi.handleTypeError(node.fullexp + " is an if expression where the condition does not "
 //              + "resolve to boolean!");
-    if (!node.thenexp.getType().equals(node.elseexp.getType())) {
+    if (mem.mergeTypes(node.thenexp.getType(),node.elseexp.getType()) == null) {
       rudi.handleTypeError(node.fullexp + " is an if expression where the else expression "
               + "does not have the same type as the right expression!\n("
               + "comparing types " + node.thenexp.getType() + " on left and "
@@ -339,10 +339,11 @@ public class VTestTypeVisitor implements RudiVisitor {
         this.visitNode(e);
       }
       if (node.listType != null) {
-        if (!(node.listType.substring(node.listType.indexOf("<"),
-                node.listType.indexOf(">")).equals(node.objects.get(0)))) {
+        if (mem.mergeTypes(node.listType.substring(node.listType.indexOf("<") + 1,
+                node.listType.indexOf(">")), node.objects.get(0).getType()) == null) {
           rudi.handleTypeError("Found a list creation where the list type doesn't fit"
-                  + " its objects' type: " + node.listType + " vs " + node.objects.get(0));
+                  + " its objects' type: " + node.listType.substring(node.listType.indexOf("<") + 1,
+                  node.listType.indexOf(">")) + " vs " + node.objects.get(0));
         }
         mem.addVariableDeclaration(node.variableName, node.listType, node.origin);
         return;
