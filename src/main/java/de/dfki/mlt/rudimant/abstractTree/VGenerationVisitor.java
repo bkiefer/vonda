@@ -202,12 +202,19 @@ public class VGenerationVisitor implements RudiVisitor {
   }
 
   public void visitDaToken(RTExpression exp) {
+//    System.out.println("visiting datoken " + exp.fullexp + " which is " 
+//            + (exp instanceof UVariable? "" : "not ") + "instance of UVariable");
     if (exp instanceof UVariable) {
+      out.append("\" + ");
       out.append(((UVariable) exp).fullexp);
+      out.append("+ \"");
     } else if (exp instanceof USingleValue
             && ((USingleValue) exp).type.equals("String")) {
       String s = ((USingleValue) exp).content;
-      out.append("\\\"").append(s.substring(1, s.length() - 1)).append("\\\"");
+      if(s.contains("\"")){
+        s = s.substring(1, s.length() - 1);
+      }
+      out.append("\\\"").append(s).append("\\\"");
     } else {
       out.append("\" + ");
       this.visitNode(exp);
