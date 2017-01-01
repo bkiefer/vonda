@@ -39,15 +39,15 @@ public class TestFragment {
 
     Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("conditional", getInput(conditionalExp));
     RudiTree dtr = getNodeOfInterest(rt.first);
-    assertTrue(dtr instanceof ExpIf);
+    assertTrue(dtr instanceof ExpConditional);
 
-    String type_boolean = ((ExpIf) dtr).boolexp.getType();
+    String type_boolean = ((ExpConditional) dtr).boolexp.getType();
     assertEquals("boolean part of conditional", "boolean", type_boolean);
 
-    String type_then = ((ExpIf) dtr).thenexp.getType();
+    String type_then = ((ExpConditional) dtr).thenexp.getType();
     assertEquals("then part", "int", type_then);
 
-    String type_else = ((ExpIf) dtr).elseexp.getType();
+    String type_else = ((ExpConditional) dtr).elseexp.getType();
     assertEquals("else part", "int", type_else);
   }
 

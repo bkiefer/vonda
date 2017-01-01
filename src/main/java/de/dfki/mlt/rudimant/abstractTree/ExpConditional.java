@@ -8,17 +8,17 @@ package de.dfki.mlt.rudimant.abstractTree;
 import java.util.Arrays;
 
 /**
- * this is an if expression, i.e., something like a ? b : c
+ * this is a conditional expression, i.e., something like a ? b : c
  *
  * @author Anna Welker
  */
-public class ExpIf extends RTExpression {
+public class ExpConditional extends RTExpression {
 
   RTExpression boolexp;
   RTExpression thenexp;
   RTExpression elseexp;
 
-  public ExpIf(String fullexp, RTExpression bool, RTExpression thenexp,
+  public ExpConditional(String fullexp, RTExpression bool, RTExpression thenexp,
           RTExpression elseexp) {
     this.boolexp = bool;
     this.thenexp = thenexp;

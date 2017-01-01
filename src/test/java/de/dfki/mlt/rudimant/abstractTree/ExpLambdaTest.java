@@ -16,7 +16,7 @@ import org.antlr.v4.runtime.Token;
 import org.junit.Test;
 
 import de.dfki.mlt.rudimant.RudimantCompiler;
-import de.dfki.mlt.rudimant.abstractTree.ExpIf;
+import de.dfki.mlt.rudimant.abstractTree.ExpConditional;
 import de.dfki.mlt.rudimant.abstractTree.GrammarFile;
 import de.dfki.mlt.rudimant.abstractTree.GrammarRule;
 import de.dfki.mlt.rudimant.abstractTree.RudiTree;

@@ -358,15 +358,17 @@ public class RudimantCompiler {
    * the set typeCheck parameter
    *
    * @param errorMessage
+   * @param locationInfo
    */
-  public void handleTypeError(String errorMessage) {
+  public void handleTypeError(String errorMessage, String[] locationInfo) {
+    String newErrorMessage = locationInfo[0] + ":" + locationInfo[1] + ": " + errorMessage;
     if (this.typeCheck) {
-      // throw a real Exception
-      throw new TypeException(errorMessage);
+      // throw a real Exception 
+      throw new TypeException(newErrorMessage);
     } else {
       // just set a warning into the logger
       //System.out.println("warning");
-      logger.error(errorMessage);
+      logger.error(newErrorMessage);
     }
   }
 }

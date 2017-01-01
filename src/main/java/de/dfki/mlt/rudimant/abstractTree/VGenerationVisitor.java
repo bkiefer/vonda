@@ -232,7 +232,7 @@ public class VGenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpIf node) {
+  public void visitNode(ExpConditional node) {
     node.boolexp.visitWithComments(this);
     out.append(" ? ");
     node.thenexp.visitWithComments(this);

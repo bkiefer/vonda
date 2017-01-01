@@ -11,6 +11,7 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
+import de.dfki.mlt.rudimant.Location;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,8 +43,8 @@ public class VTestTypeVisitor implements RudiVisitor {
     this.rudi = rudi;
     this.mem = rudi.getMem();
   }
-
-  /**
+  
+ /**
    * If that is a binary expression, the resulting type should be the more
    * specific of both. If they are incompatible there should be a warning. Maybe
    * the type could be pushed down if there is only a non-empty type on one
@@ -56,10 +57,11 @@ public class VTestTypeVisitor implements RudiVisitor {
       node.right.visit(this);
 
       if (null == node.left.type) {
-        // unkown type to the left
+        // unknown type to the left
         if (null == node.right.type) {
           // unknown type on both branches
-          logger.warn("Expression with unknown type: {}", node);
+          String[] locationInfo = this.getLocationInfo(node);          
+          logger.warn("{}:{}: Expression with unknown type: {}", locationInfo[0], locationInfo[1], node);
         } else {
           // propagate type from the right branch to the left
           node.left.propagateType(node.right.type);
@@ -71,7 +73,8 @@ public class VTestTypeVisitor implements RudiVisitor {
         // check type compatibility
         String type = mem.mergeTypes(node.left.type, node.right.type);
         if (type == null) {
-          logger.error("Incompatible types in {}: {} vs. {}", node,
+          String[] locationInfo = this.getLocationInfo(node);
+          logger.error("{}:{}: Incompatible types in {}: {} vs. {}", locationInfo[0], locationInfo[1], node,
                   node.left.type, node.right.type);
         }
       }
@@ -106,8 +109,9 @@ public class VTestTypeVisitor implements RudiVisitor {
       } else {
         if ((node.type = mem.mergeTypes(node.actualType, node.right.type))
             == null) {
+          String[] locationInfo = this.getLocationInfo(node);
           rudi.handleTypeError("Declared type incompatible with expression: "
-                  + node.actualType + ", " + node.right.type);
+                  + node.actualType + ", " + node.right.type, locationInfo);
         }
       }
     }
@@ -118,16 +122,18 @@ public class VTestTypeVisitor implements RudiVisitor {
         mem.addVariableDeclaration(((UVariable)node.left).content,
                 node.type, mem.getClassName());
         if (node.type == null) {
+          String[] locationInfo = this.getLocationInfo(node);
           rudi.handleTypeError("Type of variable unkown: "
-                  + node.left + " in " + node);
+                  + node.left + " in " + node, locationInfo);
         }
         else{
         node.actualType = node.type;
         }
       } else {
         // is this a variable declaration for an already existing variable?
-        if (node.declaration) {
-          rudi.handleTypeError("Re-declaration of existing variable " + node.left);
+        if (node.declaration) {          
+          String[] locationInfo = this.getLocationInfo(node);          
+          rudi.handleTypeError("Re-declaration of existing variable " + node.left, locationInfo);
         }
       }
     }
@@ -213,18 +219,19 @@ public class VTestTypeVisitor implements RudiVisitor {
    * necessary because the bool expression already knows.
    */
   @Override
-  public void visitNode(ExpIf node) {
+  public void visitNode(ExpConditional node) {
     node.boolexp.visit(this);
     node.boolexp = node.boolexp.ensureBoolean();
     node.thenexp.visit(this);
     node.elseexp.visit(this);
-//      rudi.handleTypeError(node.fullexp + " is an if expression where the condition does not "
+//      rudi.handleTypeError(node.fullexp + " is a conditional expression where the condition does not "
 //              + "resolve to boolean!");
-    if (!node.thenexp.getType().equals(node.elseexp.getType())) {
-      rudi.handleTypeError(node.fullexp + " is an if expression where the else expression "
+    if (!node.thenexp.getType().equals(node.elseexp.getType())) {          
+      String[] locationInfo = this.getLocationInfo(node);
+      rudi.handleTypeError(node.fullexp + " is a conditional expression where the else expression " 
               + "does not have the same type as the right expression!\n("
               + "comparing types " + node.thenexp.getType() + " on left and "
-              + node.elseexp.getType() + " on right)");
+              + node.elseexp.getType() + " on right)", locationInfo);
     }
     node.type = node.thenexp.getType();
   }
@@ -341,8 +348,9 @@ public class VTestTypeVisitor implements RudiVisitor {
       if (node.listType != null) {
         if (!(node.listType.substring(node.listType.indexOf("<"),
                 node.listType.indexOf(">")).equals(node.objects.get(0)))) {
+          String[] locationInfo = this.getLocationInfo(node);
           rudi.handleTypeError("Found a list creation where the list type doesn't fit"
-                  + " its objects' type");
+                  + " its objects' type", locationInfo);
         }
         mem.addVariableDeclaration(node.variableName, node.listType, node.origin);
         return;
@@ -445,7 +453,9 @@ public class VTestTypeVisitor implements RudiVisitor {
     try {
       node.type = node.getPredicateType(mem.getProxy(), mem, node.representation);
     } catch (TException ex) {
-      logger.error(ex.toString());
+      String[] locationInfo = this.getLocationInfo(node);
+      String message = locationInfo[0] + ":" + locationInfo[1] + ": " + ex.toString();
+      logger.error(message);
     }
     /*if(node.type == null){
      // then this is not an rdf node, but some composed funccall
@@ -490,8 +500,9 @@ public class VTestTypeVisitor implements RudiVisitor {
         // TODO: adapt this if you still want to throw an error
         return;
       }
+      String[] locationInfo = this.getLocationInfo(node);
       rudi.handleTypeError("The function call to " + node.content
-              + " refers to a function that wasn't declared");
+              + " refers to a function that wasn't declared", locationInfo);
     }
   }
 
@@ -601,6 +612,22 @@ public class VTestTypeVisitor implements RudiVisitor {
       node.type = f.substring(f.indexOf("w"), f.indexOf("("));
       node.construct.visit(this);
     }
+  }
+  
+  /**
+   * Used to give class name and line number in error messages
+   * @param node
+   * @return String array with two elements,
+   * 1.: origin class,
+   * 2.: line number 
+   */
+  public String[] getLocationInfo(RudiTree node){
+     Location nodeLocation = node.getLocation();
+     String originClass = nodeLocation.getOriginClass();
+     int lineNumber = nodeLocation.getLineNumber();
+     String lineNumberAsString = Integer.toString(lineNumber);
+     String[] locationInfo = {originClass, lineNumberAsString};
+     return locationInfo;
   }
 
   /**

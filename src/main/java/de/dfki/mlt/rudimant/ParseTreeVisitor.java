@@ -420,7 +420,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitIf_exp(RobotGrammarParser.If_expContext ctx) {
     // boolean_exp QUESTION exp COLON exp
-    return new ExpIf(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
+    return new ExpConditional(ctx.getText(), (RTExpression) this.visit(ctx.getChild(0)),
             (RTExpression) this.visit(ctx.getChild(2)),
             (RTExpression) this.visit(ctx.getChild(4))).setPosition(ctx)
             .setLocation(currentClass, ctx.getStart().getLine());

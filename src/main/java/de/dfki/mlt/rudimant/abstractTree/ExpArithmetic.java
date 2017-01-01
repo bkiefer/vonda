@@ -28,9 +28,9 @@ public class ExpArithmetic extends RTBinaryExp {
     this.left = left;
     this.right = right;
     this.operator = operator;
-    this.type = left.getType();
+    this.type = left.getType();   
   }
-
+ 
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);

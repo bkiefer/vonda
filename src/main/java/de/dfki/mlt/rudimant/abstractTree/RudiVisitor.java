@@ -21,7 +21,7 @@ public interface RudiVisitor {
 
   void visitNode(ExpDialogueAct node);
 
-  void visitNode(ExpIf node);
+  void visitNode(ExpConditional node);
 
   void visitNode(ExpLambda node);
   

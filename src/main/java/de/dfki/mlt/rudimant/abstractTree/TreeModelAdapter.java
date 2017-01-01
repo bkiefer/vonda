@@ -88,7 +88,7 @@ public class TreeModelAdapter extends ModelAdapter {
       result = "DialAct";
     } else if (model instanceof ExpAssignment) {
       result = ":=";
-    } else if (model instanceof ExpIf) {
+    } else if (model instanceof ExpConditional) {
       result = "_ ? _ : _";
     } else if (model instanceof StatPropose) {
       result = "propose";

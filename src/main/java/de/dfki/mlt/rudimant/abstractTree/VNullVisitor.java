@@ -39,7 +39,7 @@ public class VNullVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpIf node) {
+  public void visitNode(ExpConditional node) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 

@@ -89,4 +89,8 @@ public abstract class RudiTree {
   }
 
   public abstract Iterable<? extends RudiTree> getDtrs();
+  
+  public Location getLocation(){
+    return this.location;
+  }
 }
