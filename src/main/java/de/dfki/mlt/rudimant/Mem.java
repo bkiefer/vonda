@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import de.dfki.mlt.rudimant.abstractTree.USingleValue;
+import de.dfki.mlt.rudimant.abstractTree.UVariable;
 
 /**
  * this is rudimants memory, used for type checking
@@ -190,7 +192,7 @@ public class Mem {
 
   public boolean existsFunction(String funcname,
           ArrayList<String> partypes) {
-    return current.existsFunction(funcname, partypes);
+    return current.existsFunction(funcname, partypes, this);
   }
 
   /**
@@ -352,5 +354,9 @@ public class Mem {
 
   public boolean isExistingRule(String rule) {
     return ruleNums.get(this.curClass).containsKey(rule);
+  }
+  
+  public USingleValue degradeToString(UVariable variable){
+    return new USingleValue(variable.toString(), "String");
   }
 }

@@ -119,14 +119,13 @@ public class VTestTypeVisitor implements RudiVisitor {
     if (node.left instanceof UVariable) {
       if (!mem.variableExists(node.left.toString())) {
         node.declaration = true;
-        mem.addVariableDeclaration(((UVariable)node.left).content,
+        mem.addVariableDeclaration(((UVariable) node.left).content,
                 node.type, mem.getClassName());
         if (node.type == null) {
           String[] locationInfo = this.getLocationInfo(node);
           rudi.handleTypeError("Type of variable unkown: "
                   + node.left + " in " + node, locationInfo);
-        }
-        else{
+        } else {
         node.actualType = node.type;
         }
       } else {
@@ -201,18 +200,38 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   /**
    * This should have type "DialogueAct" already, which should be a constant
+   * What we have to do is finding out which tokens are actual variables and
+   * degrading all others to String (so we can infer how to represent them in
+   * generation)
    */
   @Override
   public void visitNode(ExpDialogueAct node) {
-    // no type testing needed.
+    if (node.daType instanceof UVariable) {
+      if (!mem.variableExists(((UVariable) node.daType).content)) {
+        node.daType = mem.degradeToString((UVariable) node.daType);
+      }
+    }
+    if (node.proposition instanceof UVariable) {
+      if (!mem.variableExists(((UVariable) node.proposition).content)) {
+        node.proposition = mem.degradeToString((UVariable) node.proposition);
+      }
+    }
+    int i = 0;
+    for (RTExpression e : node.exps) {
+      if (e instanceof UVariable) {
+        if (!mem.variableExists(((UVariable) e).content)) {
+          node.exps.set(i, mem.degradeToString((UVariable) e));
+        }
+      }
+      i++;
+    }
   }
 
   /**
    * This should get the return type of the method
    *
    * @Override public void visitNode(ExpFuncOnObject node) {
-   * node.on.visit(this); node.funccall.visit(this);
-  }
+   * node.on.visit(this); node.funccall.visit(this); }
    */
   /**
    * This might push the boolean type downwards for the boolexp, but that's not
@@ -226,7 +245,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.elseexp.visit(this);
 //      rudi.handleTypeError(node.fullexp + " is a conditional expression where the condition does not "
 //              + "resolve to boolean!");
-    if (!node.thenexp.getType().equals(node.elseexp.getType())) {          
+    if (mem.mergeTypes(node.thenexp.getType(), node.elseexp.getType()) == null) {
       String[] locationInfo = this.getLocationInfo(node);
       rudi.handleTypeError(node.fullexp + " is a conditional expression where the else expression " 
               + "does not have the same type as the right expression!\n("
@@ -346,11 +365,12 @@ public class VTestTypeVisitor implements RudiVisitor {
         this.visitNode(e);
       }
       if (node.listType != null) {
-        if (!(node.listType.substring(node.listType.indexOf("<"),
-                node.listType.indexOf(">")).equals(node.objects.get(0)))) {
+        if (mem.mergeTypes(node.listType.substring(node.listType.indexOf("<") + 1,
+                node.listType.indexOf(">")), node.objects.get(0).getType()) == null) {
           String[] locationInfo = this.getLocationInfo(node);
           rudi.handleTypeError("Found a list creation where the list type doesn't fit"
-                  + " its objects' type", locationInfo);
+                  + " its objects' type: " + node.listType.substring(node.listType.indexOf("<") + 1,
+                          node.listType.indexOf(">")) + " vs " + node.objects.get(0), locationInfo);
         }
         mem.addVariableDeclaration(node.variableName, node.listType, node.origin);
         return;
@@ -443,7 +463,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.statblock.visit(this);
     node.condition = node.condition.ensureBoolean();
   }
-  
+
   // set this variable to tell error handling that we are in a function invoked
   // on a java object, so we probably do not wanna throw an error here
   boolean partOfFieldAccess = false;
@@ -496,7 +516,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       partypes.add(e.getType());
     }
     if (!mem.existsFunction(node.content, partypes)) {
-      if(partOfFieldAccess){
+      if (partOfFieldAccess) {
         // TODO: adapt this if you still want to throw an error
         return;
       }
