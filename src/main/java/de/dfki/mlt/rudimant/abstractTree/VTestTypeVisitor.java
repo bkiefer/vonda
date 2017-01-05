@@ -169,19 +169,19 @@ public class VTestTypeVisitor implements RudiVisitor {
               || node.right.getType().equals("int") || node.right.getType().equals("float"))){
         switch(node.operator){
           case "==":
-            node.operator = "Agent.isEqual(";
+            node.operator = "isEqual(";
             break;
           case "<":
-            node.operator = "Agent.isSmaller(";
+            node.operator = "isSmaller(";
             break;
           case ">":
-            node.operator = "Agent.isGreater(";
+            node.operator = "isGreater(";
             break;
           case "<=":
-            node.operator = "Agent.isSmallerEqual(";
+            node.operator = "isSmallerEqual(";
             break;
           case ">=":
-            node.operator = "Agent.isGreaterEqual(";
+            node.operator = "isGreaterEqual(";
             break;
         }
       }
