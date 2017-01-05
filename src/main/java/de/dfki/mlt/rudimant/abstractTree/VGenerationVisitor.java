@@ -278,7 +278,7 @@ public class VGenerationVisitor implements RudiVisitor {
       pkg += ".";
     }
     // Let's import our supersuper class
-    out.append("import de.dfki.mlt.rudimant.agent.Agent;\n");
+    out.append("import de.dfki.mlt.rudimant.agent.DialogueAct;\n");
     // maybe we need to import the class that imported us to use its variables
     out.append("import ");
     if (rudi.getParent() != null) {
@@ -464,6 +464,7 @@ public class VGenerationVisitor implements RudiVisitor {
       // get all the required class instances
       int i = 0;
       for (String n : mem.getNeededClasses(node.label)) {
+        out.append("final ");
         if (i == 0) {
           out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
                   + n.substring(0, 1).toLowerCase() + n.substring(1));
