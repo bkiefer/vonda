@@ -445,4 +445,16 @@ public abstract class Agent {
       proposalsSent = false;
     }
   }
+  
+  /********************************************************
+   * overloaded boolean operator methods
+   ********************************************************/
+ 
+//  public static boolean isEqual(){}
+//  public static boolean isSmaller(){}
+//  public static boolean isGreater(){}
+//  public static boolean isSmallerEqual(){}
+//  public static boolean isGreaterEqual(){}
+  
+  
 }

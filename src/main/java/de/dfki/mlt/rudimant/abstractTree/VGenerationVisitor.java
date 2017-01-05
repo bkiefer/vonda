@@ -176,6 +176,14 @@ public class VGenerationVisitor implements RudiVisitor {
      return;
      }
      */
+    if(node.operator.contains("Agent.")){
+      out.append(node.operator);
+      node.left.visitWithComments(this);
+      out.append(", ");
+      node.right.visitWithComments(this);
+      out.append(")");
+      return;
+    }
     if (node.right != null) {
       out.append("(");
       node.left.visitWithComments(this);
@@ -183,9 +191,9 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append(node.operator);
       out.append(" ");
       node.right.visitWithComments(this);
-      if (node.operator.contains("(")) {
+      /*if (node.operator.contains("(")) {
         out.append(")");
-      }
+      }*/
       out.append(")");
       //out.context.doLog(
       //        "\"" + ret.replace('"', ' ') +  " _ resulted to \" + " + ret);
@@ -269,6 +277,8 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append("package " + pkg + ";\n");
       pkg += ".";
     }
+    // Let's import our supersuper class
+    out.append("import de.dfki.mlt.rudimant.agent.Agent;\n");
     // maybe we need to import the class that imported us to use its variables
     out.append("import ");
     if (rudi.getParent() != null) {

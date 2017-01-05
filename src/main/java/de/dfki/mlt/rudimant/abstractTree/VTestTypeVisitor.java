@@ -164,7 +164,28 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.left.visit(this);
     if (node.right != null) {
       node.right.visit(this);
-      if (isComparisonOperator(node.operator)) {
+      if(!(node.left.getType() != null && 
+              (node.left.getType().equals("int") || node.left.getType().equals("float"))
+              || node.right.getType().equals("int") || node.right.getType().equals("float"))){
+        switch(node.operator){
+          case "=":
+            node.operator = "Agent.isEqual(";
+            break;
+          case "<":
+            node.operator = "Agent.isSmaller(";
+            break;
+          case ">":
+            node.operator = "Agent.isGreater(";
+            break;
+          case "<=":
+            node.operator = "Agent.isSmallerEqual(";
+            break;
+          case ">=":
+            node.operator = "Agent.isGreaterEqual(";
+            break;
+        }
+      }
+      /*if (isComparisonOperator(node.operator)) {
         // if one of the operands is an RDF type, or a DialogueAct, the operator has
         // to be turned into a subsumption call
         // TODO: this crashes if there is Introduction or Quiz on the right; they
@@ -188,7 +209,7 @@ public class VTestTypeVisitor implements RudiVisitor {
           }
           return;
         }
-      }
+      }*/
       if (isBooleanOperator(node.operator)) {
         node.right = node.right.ensureBoolean();
       }

@@ -220,7 +220,7 @@ public class Mem {
     }
     type = checkRdf(type);
     current.put(variable, type, origin);
-    logger.debug("Add var {}:{} [{}]", environment.size(), variable, type);
+    logger.trace("Add var {}:{} [{}]", environment.size(), variable, type);
     return true;
   }
 
