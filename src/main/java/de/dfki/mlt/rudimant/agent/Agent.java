@@ -456,5 +456,52 @@ public abstract class Agent {
 //  public static boolean isSmallerEqual(){}
 //  public static boolean isGreaterEqual(){}
   
+  public static boolean isEqual(DialogueAct left, DialogueAct right){
+    return false;
+  } 
+  public static boolean isSmaller(DialogueAct left, DialogueAct right){
+    return left.isSubsumedBy(right);
+  }
+  public static boolean isGreater(DialogueAct left, DialogueAct right){
+    return left.subsumes(right);
+  }
+  public static boolean isSmallerEqual(DialogueAct left, DialogueAct right){
+    return (isEqual(left, right) || isSmaller(left, right));
+  }
+  public static boolean isGreaterEqual(DialogueAct left, DialogueAct right){
+    return (isEqual(left, right) || isGreater(left, right));
+  }
+  
+  public static boolean isEqual(String left, DialogueAct right){
+    return false;
+  } 
+  public static boolean isSmaller(String left, DialogueAct right){
+    return (new DialogueAct(left)).isSubsumedBy(right);
+  }
+  public static boolean isGreater(String left, DialogueAct right){
+    return (new DialogueAct(left)).subsumes(right);
+  }
+  public static boolean isSmallerEqual(String left, DialogueAct right){
+    return (isEqual(left, right) || isSmaller(left, right));
+  }
+  public static boolean isGreaterEqual(String left, DialogueAct right){
+    return (isEqual(left, right) || isGreater(left, right));
+  }
+  
+  public static boolean isEqual(DialogueAct left, String right){
+    return false;
+  } 
+  public static boolean isSmaller(DialogueAct left, String right){
+    return left.isSubsumedBy(new DialogueAct(right));
+  }
+  public static boolean isGreater(DialogueAct left, String right){
+    return left.subsumes(new DialogueAct(right));
+  }
+  public static boolean isSmallerEqual(DialogueAct left, String right){
+    return (isEqual(left, right) || isSmaller(left, right));
+  }
+  public static boolean isGreaterEqual(DialogueAct left, String right){
+    return (isEqual(left, right) || isGreater(left, right));
+  }
   
 }

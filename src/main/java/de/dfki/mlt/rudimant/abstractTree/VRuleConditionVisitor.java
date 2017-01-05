@@ -343,8 +343,8 @@ public class VRuleConditionVisitor extends VNullVisitor {
    }*/
   @Override
   public void visitNode(UVariable node) {
-    // we might need to import this variable from elsewhere
     String ret = "";
+    // we might need to import this variable from elsewhere
     if (node.realOrigin != null) {
       String t = node.realOrigin;
       ret = t.substring(0, 1).toLowerCase() + t.substring(1)
@@ -363,17 +363,6 @@ public class VRuleConditionVisitor extends VNullVisitor {
       return;
     } else if (!funcargs.equals("")) {
       this.funcargs += ret;
-      return;
-    }
-    if (node.isRdfType()) {
-      //if (node.getType().equals("DialogueAct") || mem.isRdf(node.content)) {
-      if (collectDAs != null) {
-        this.collectDAs += "\"" + node.content + "\"";
-        return;
-      }
-      this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool, "\"" + node.content + "\"");
-      this.realLook.put(this.lastbool, "\"" + node.content + "\"");
       return;
     }
     if (collectDAs != null) {

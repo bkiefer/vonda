@@ -790,16 +790,10 @@ public class VGenerationVisitor implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(UVariable node) {
-    // please, only turn into an "" exp if this is no real variable that we
-    // already know
-    if (node.isRdfType() && !mem.variableExists(node.content)) {
-      out.append("\"" + node.content + "\"");
-    } // if the variable is not in the memory,
-    else if (node.realOrigin != null) {
+  public void visitNode(UVariable node) {// if the variable is not in the memory,
+    if (node.realOrigin != null) {
       String t = node.realOrigin;
       out.append(t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.content);
-      return;
     } else {
       out.append(node.content);
     }

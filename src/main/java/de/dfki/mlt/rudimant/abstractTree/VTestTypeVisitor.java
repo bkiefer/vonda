@@ -168,7 +168,7 @@ public class VTestTypeVisitor implements RudiVisitor {
               (node.left.getType().equals("int") || node.left.getType().equals("float"))
               || node.right.getType().equals("int") || node.right.getType().equals("float"))){
         switch(node.operator){
-          case "=":
+          case "==":
             node.operator = "Agent.isEqual(";
             break;
           case "<":
@@ -575,6 +575,9 @@ public class VTestTypeVisitor implements RudiVisitor {
       RdfClass cl = mem.getProxy().fetchClass(node.content);
       if (cl != null) {
         node.type = cl.toString();
+        if(!mem.variableExists(node.content)){
+          node.content = "\"" + node.content + "\"";
+        }
       }
     } catch (TException ex) {
       logger.error(ex.toString());
