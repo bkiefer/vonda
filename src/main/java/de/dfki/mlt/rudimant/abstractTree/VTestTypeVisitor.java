@@ -166,7 +166,8 @@ public class VTestTypeVisitor implements RudiVisitor {
       node.right.visit(this);
       if(!(node.left.getType() != null && 
               (node.left.getType().equals("int") || node.left.getType().equals("float"))
-              || node.right.getType().equals("int") || node.right.getType().equals("float"))){
+              || (node.right.getType() != null && 
+              (node.right.getType().equals("int") || node.right.getType().equals("float"))))){
         switch(node.operator){
           case "==":
             node.operator = "isEqual(";
