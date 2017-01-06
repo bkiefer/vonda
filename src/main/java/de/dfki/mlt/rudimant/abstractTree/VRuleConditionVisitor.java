@@ -109,21 +109,22 @@ public class VRuleConditionVisitor extends VNullVisitor {
       if (!(node.operator.equals("||") || node.operator.equals("&&"))) {
 //      if (node.left.getType() == null // then this is probably an rdf
 //              || !node.left.getType().equals("boolean")) {
-        collectElements = n + "(";
-        if(node.operator.contains("Agent.")){
-          collectElements += node.operator;
+        if(node.operator.contains("(")){
+          collectElements = node.operator;
           node.left.visit(this);
           collectElements += (", ");
           node.right.visit(this);
           collectElements += (")");
         } else {
+          collectElements = n + "(";
           node.left.visit(this);
           collectElements += node.operator + " ";
           node.right.visit(this);
+          collectElements += (")");
         }
         this.lastbool = this.currentRule + this.counter++;
-        this.compiledLook.put(this.lastbool, collectElements + ")");
-        this.realLook.put(lastbool, collectElements.replaceAll("\\\\\"", "\\\"") + ")");
+        this.compiledLook.put(this.lastbool, collectElements);
+        this.realLook.put(lastbool, collectElements.replaceAll("\\\\\"", "\\\""));
         collectElements = null;
         return;
       }

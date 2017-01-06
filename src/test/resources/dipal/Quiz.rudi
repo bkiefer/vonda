@@ -6,6 +6,7 @@ if (activity == null || ! (activity <= Quiz))
 QuizHistory getCurrentTurn() {
   // this tests if activity has a hasTurns property (which is relational), and
   // if so, if it has more than zero values.
+  // TODO: TEST IF IT REALLY DOES!
   if (! activity.hasTurns)
     return null;
   return activity.hasTurns.peekFirst();

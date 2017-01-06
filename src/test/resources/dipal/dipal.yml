@@ -5,7 +5,7 @@ serverPort:         8996
 ontologyFile:       ontologies/pal.ini
 checkTypes:         false
 failOnError:        false
-targetConstructor:  String hostIP, int hostPort
+targetConstructor:  
 rootPackage:        de.dfki.dialogue
 nameToURI:
   Activity : "<dom:Activity>"

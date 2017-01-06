@@ -176,7 +176,7 @@ public class VGenerationVisitor implements RudiVisitor {
      return;
      }
      */
-    if(node.operator.contains("Agent.")){
+    if(node.operator.contains("(")){
       out.append(node.operator);
       node.left.visitWithComments(this);
       out.append(", ");
@@ -345,10 +345,10 @@ public class VGenerationVisitor implements RudiVisitor {
     // also, to use them for imports, declare those parameters class attributes
     String conargs = "";
     String declare = "";
-    if (null != rudi.getConstructorArgs()
-            && !rudi.getConstructorArgs().isEmpty()) {
+    String args = rudi.getConstructorArgs();
+    if (null != args && !args.isEmpty()) {
       int i = 0;
-      for (String a : rudi.getConstructorArgs().split(",")) {
+      for (String a : args.split(",")) {
         if (i > 0) {
           conargs += ", ";
         }
@@ -358,8 +358,10 @@ public class VGenerationVisitor implements RudiVisitor {
         conargs += a.trim().split(" ")[1];
         i++;
       }
+    } else {
+      args = "";
     }
-    out.append("public " + rudi.className + "(" + rudi.getConstructorArgs() + ") {\n"
+    out.append("public " + rudi.className + "(" + args + ") {\n"
             + "super(" + conargs + ");\n" + declare + "}\n");
 
     // finally, the main processing method that will call all rules and imports
@@ -379,7 +381,7 @@ public class VGenerationVisitor implements RudiVisitor {
     }
     out.append("){\n");
     // initialize me according to the super class init
-    out.append("this.init();\n");
+    out.append("// this.init();\n");
     // use all methods created from rules in this file
     for (String toplevel : mem.getToplevelCalls(rudi.className)) {
       if (toplevel.contains("(")) {

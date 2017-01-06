@@ -774,5 +774,15 @@ public abstract class Agent {
     catch (TException e){
       return isGreaterEqual(new DialogueAct(left), new DialogueAct(right));
     }
-  }  
+  }
+  
+  /**
+   * function that logs (rule) conditions
+   * @param values the parts of the condition, mapped to true or false
+   * @param rule the name of the rule whose condition this is
+   * @param file the file the rule is in
+   */
+  public void LoggerFunction(HashMap<String,Boolean> values, String rule, String file){
+    // TODO: do sth useful with information
+  }
 }
