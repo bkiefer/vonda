@@ -634,7 +634,9 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatReturn node) {
-    // nothing to do (?)
+    if (!mem.isExistingRule(node.lit) && node.toRet != null){
+      node.toRet.visit(this);
+    }
   }
 
   @Override

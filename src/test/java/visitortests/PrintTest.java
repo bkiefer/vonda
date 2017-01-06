@@ -41,11 +41,21 @@ public class PrintTest {
 //    GrammarMain.main(strings);
 //  }
 
+//  @Test
+//  public void ImportTest() throws Exception {
+//    String[] strings = {
+//        "-c", "src/test/resources/rudi.config.yml",
+//        "src/test/resources/test_import/Test.rudi"
+//    };
+//    GrammarMain.main(strings);
+////    assertFail(GrammarMain.main(strings));
+//  }
+  
   @Test
-  public void ImportTest() throws Exception {
+  public void SingleFileTest() throws Exception {
     String[] strings = {
         "-c", "src/test/resources/rudi.config.yml",
-        "src/test/resources/test_import/Test.rudi"
+        "src/test/resources/basic/agentMethods.rudi"
     };
     GrammarMain.main(strings);
 //    assertFail(GrammarMain.main(strings));

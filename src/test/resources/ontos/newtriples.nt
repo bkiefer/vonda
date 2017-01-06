@@ -1,0 +1,26 @@
+<http://www.dfki.de/lt/onto/pal/domain.owl#category> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#category> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#category> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/domain.owl#QuizHistory> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#category> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#Closing> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#Closing> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/domain.owl#Other> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#hasActivities> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#hasActivities> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/domain.owl#Session> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#hasActivities> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/pal/domain.owl#Activity> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#Idle> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#Idle> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/domain.owl#Other> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#Introduction> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#Introduction> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/domain.owl#Other> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#Session> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#Session> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\n      A container for activities, to collect them for one login session with \n      the system.\n    </p>"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#Session> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/domain.owl#Activity> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#status> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#status> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#status> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/domain.owl#Activity> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#status> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#tabletOrientation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#tabletOrientation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#tabletOrientation> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/domain.owl#Quiz> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#tabletOrientation> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#hasHistory> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\n      This should rather be a list of turns.\n    </p>"^^<http://www.w3.org/2001/XMLSchema#string> .
+
