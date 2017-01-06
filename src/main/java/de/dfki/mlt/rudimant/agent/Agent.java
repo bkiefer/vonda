@@ -709,6 +709,9 @@ public abstract class Agent {
     try{
       RdfClass leftRdf = _proxy.getRdfClass(left);
       RdfClass rightRdf = _proxy.getRdfClass(right);
+      if(leftRdf == null || rightRdf == null){
+        return isEqual(new DialogueAct(left), new DialogueAct(right));
+      }
       return isEqual(leftRdf, rightRdf);
     }
     catch (TException e){
@@ -721,6 +724,9 @@ public abstract class Agent {
     try{
       RdfClass leftRdf = _proxy.getRdfClass(left);
       RdfClass rightRdf = _proxy.getRdfClass(right);
+      if(leftRdf == null || rightRdf == null){
+        return isSmaller(new DialogueAct(left), new DialogueAct(right));
+      }
       return isSmaller(leftRdf, rightRdf);
     }
     catch (TException e){
@@ -732,6 +738,9 @@ public abstract class Agent {
     try{
       RdfClass leftRdf = _proxy.getRdfClass(left);
       RdfClass rightRdf = _proxy.getRdfClass(right);
+      if(leftRdf == null || rightRdf == null){
+        return isGreater(new DialogueAct(left), new DialogueAct(right));
+      }
       return isGreater(leftRdf, rightRdf);
     }
     catch (TException e){
@@ -743,6 +752,9 @@ public abstract class Agent {
     try{
       RdfClass leftRdf = _proxy.getRdfClass(left);
       RdfClass rightRdf = _proxy.getRdfClass(right);
+      if(leftRdf == null || rightRdf == null){
+        return isSmallerEqual(new DialogueAct(left), new DialogueAct(right));
+      }
       return isSmallerEqual(leftRdf, rightRdf);
     }
     catch (TException e){
@@ -754,6 +766,9 @@ public abstract class Agent {
     try{
       RdfClass leftRdf = _proxy.getRdfClass(left);
       RdfClass rightRdf = _proxy.getRdfClass(right);
+      if(leftRdf == null || rightRdf == null){
+        return isGreaterEqual(new DialogueAct(left), new DialogueAct(right));
+      }
       return isGreaterEqual(leftRdf, rightRdf);
     }
     catch (TException e){
