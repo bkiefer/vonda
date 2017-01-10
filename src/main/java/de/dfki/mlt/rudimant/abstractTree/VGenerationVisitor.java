@@ -279,6 +279,7 @@ public class VGenerationVisitor implements RudiVisitor {
     }
     // Let's import our supersuper class
     out.append("import de.dfki.mlt.rudimant.agent.DialogueAct;\n");
+    out.append("import de.dfki.lt.hfc.db.rdfProxy.Rdf;\n");
     // maybe we need to import the class that imported us to use its variables
     out.append("import ");
     if (rudi.getParent() != null) {
