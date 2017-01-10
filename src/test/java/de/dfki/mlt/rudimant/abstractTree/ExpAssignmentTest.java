@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import de.dfki.mlt.rudimant.RudimantCompiler;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
+import java.util.Iterator;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
@@ -30,6 +31,25 @@ public class ExpAssignmentTest {
     StatIf _if = (StatIf) dtr.getDtrs().iterator().next();
     StatAbstractBlock blk = (StatAbstractBlock) ((StatIf) _if).statblockIf;
     return blk.getDtrs().iterator().next();
+  }
+
+  /**
+   * Returns the nth node of interest.
+   * @param rt RudiTree
+   * @param n Specifies which node to return.
+   * @return node of interest
+   */
+  public RudiTree getNodeOfInterest(RudiTree rt, int n) {
+    assertTrue(rt instanceof GrammarFile);
+    GrammarFile gf = (GrammarFile) rt;
+    GrammarRule dtr = (GrammarRule) gf.getDtrs().iterator().next();
+    StatIf _if = (StatIf) dtr.getDtrs().iterator().next();
+    StatAbstractBlock blk = (StatAbstractBlock) ((StatIf) _if).statblockIf;
+    Iterator it = blk.getDtrs().iterator();
+    for (int i=0; i<n; i++){
+      it.next();
+    }
+    return (RudiTree) it.next();
   }
 
   public InputStream getInput(String input) {
@@ -68,12 +88,33 @@ public class ExpAssignmentTest {
     RudiTree dtr = getNodeOfInterest(rt.first);
     assertTrue(dtr instanceof ExpAssignment);
 
-    String type_rigt = ((ExpAssignment) dtr).right.getType();
-    assertEquals("right side type of boolean test = 4+5 should be int", "int", type_rigt);
+    String type_right = ((ExpAssignment) dtr).right.getType();
+    assertEquals("right side type of boolean test = 4+5 should be int", "int", type_right);
 
 //    String type_left = ((RTExpression)((ExpAssignment) dtr).left).getType();
 //    assertEquals("right side type of boolean test = 4+5 should be int", "boolean", type_left);
 
+  }
+
+  @Test
+  public void testAssignment4() throws IOException {
+    String assignmentExp = "test = true; test2 = 1; test3 = test2; test4 = 2;";
+
+    Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("assignment", getInput(assignmentExp));
+    RudiTree dtr = getNodeOfInterest(rt.first, 0); // test = true
+    assertTrue(dtr instanceof ExpAssignment);
+
+    String type_right = ((ExpAssignment) dtr).right.getType();
+    assertEquals("right side type test should be boolean", "boolean", type_right);
+
+    dtr = getNodeOfInterest(rt.first, 1); // test2 = 1
+    type_right = ((ExpAssignment) dtr).right.getType();
+    assertEquals("right side type test2 should be int", "int", type_right);
+
+    dtr = getNodeOfInterest(rt.first, 2); // test3 = test2
+    type_right = ((ExpAssignment) dtr).right.getType();
+    // TODO
+//    assertEquals("right side type test3 should be int", "int", type_right);
   }
 
 }
