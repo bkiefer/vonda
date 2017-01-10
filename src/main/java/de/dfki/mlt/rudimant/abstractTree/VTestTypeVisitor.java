@@ -418,6 +418,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatMethodDeclaration node) {
     mem.addFunction(node.name, node.return_type, node.partypes, node.position);
+    node.return_type = mem.checkRdf(node.return_type);
     if (node.block != null) {
       // The following variables (function parameters) are local to the method
       // block we now step into; we don't want them to be reachable them from

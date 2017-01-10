@@ -125,8 +125,8 @@ public class VGenerationVisitor implements RudiVisitor {
         if (node.actualType != null && node.actualType.startsWith("<")) {
           if (node.actualType.startsWith("<dial")) {  // <dial:DialogueAct > has to be replaced by DialogueAct
             out.append("DialogueAct ");
-          } else { // every other type starting with < has to be replaced by RdfType
-            out.append("RdfType ");
+          } else { // every other type starting with < has to be replaced by Rdf
+            out.append("Rdf ");
           }
         } else {
           out.append(node.actualType + " ");
@@ -640,7 +640,17 @@ public class VGenerationVisitor implements RudiVisitor {
       return;
     }
     //mem.enterNextEnvironment();
-    out.append(node.visibility + " " + node.return_type + " " + node.name + "(");
+    out.append(node.visibility + " ");
+    if (node.return_type.startsWith("<")) {
+          if (node.return_type.startsWith("<dial")) {  // <dial:DialogueAct > has to be replaced by DialogueAct
+            out.append("DialogueAct ");
+          } else { // every other type starting with < has to be replaced by Rdf
+            out.append("Rdf ");
+          }
+        } else {
+          out.append(node.return_type + " ");
+        }
+    out.append(node.name + "(");
     for (int i = 0; i < node.parameters.size(); i++) {
       if (i != 0) {
         out.append(", ");

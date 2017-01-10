@@ -44,9 +44,9 @@ public abstract class Agent {
 
   protected Random random = new Random(System.currentTimeMillis());
 
-  public abstract class Proposal {
+  public class Proposal {
 
-    public abstract void run() throws Exception;
+    public void run() throws Exception {}
 
     public String name;
 
