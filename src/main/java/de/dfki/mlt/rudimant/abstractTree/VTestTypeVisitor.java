@@ -43,7 +43,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     this.rudi = rudi;
     this.mem = rudi.getMem();
   }
-  
+
  /**
    * If that is a binary expression, the resulting type should be the more
    * specific of both. If they are incompatible there should be a warning. Maybe
@@ -60,7 +60,7 @@ public class VTestTypeVisitor implements RudiVisitor {
         // unknown type to the left
         if (null == node.right.type) {
           // unknown type on both branches
-          String[] locationInfo = this.getLocationInfo(node);          
+          String[] locationInfo = this.getLocationInfo(node);
           logger.warn("{}:{}: Expression with unknown type: {}", locationInfo[0], locationInfo[1], node);
         } else {
           // propagate type from the right branch to the left
@@ -130,8 +130,8 @@ public class VTestTypeVisitor implements RudiVisitor {
         }
       } else {
         // is this a variable declaration for an already existing variable?
-        if (node.declaration) {          
-          String[] locationInfo = this.getLocationInfo(node);          
+        if (node.declaration) {
+          String[] locationInfo = this.getLocationInfo(node);
           rudi.handleTypeError("Re-declaration of existing variable " + node.left, locationInfo);
         }
       }
@@ -164,8 +164,8 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.left.visit(this);
     if (node.right != null) {
       node.right.visit(this);
-      if(!("int".equals(node.left.getType()) || "float".equals(node.left.getType()))
-              || "int".equals(node.right.getType()) || "float".equals(node.right.getType())){
+      if(!("int".equals(node.left.getType()) || "float".equals(node.left.getType())
+              || "int".equals(node.right.getType()) || "float".equals(node.right.getType()))){
         switch(node.operator){
           case "==":
             node.operator = "isEqual(";
@@ -267,7 +267,7 @@ public class VTestTypeVisitor implements RudiVisitor {
 //              + "resolve to boolean!");
     if (mem.mergeTypes(node.thenexp.getType(), node.elseexp.getType()) == null) {
       String[] locationInfo = this.getLocationInfo(node);
-      rudi.handleTypeError(node.fullexp + " is a conditional expression where the else expression " 
+      rudi.handleTypeError(node.fullexp + " is a conditional expression where the else expression "
               + "does not have the same type as the right expression!\n("
               + "comparing types " + node.thenexp.getType() + " on left and "
               + node.elseexp.getType() + " on right)", locationInfo);
@@ -659,13 +659,13 @@ public class VTestTypeVisitor implements RudiVisitor {
       node.construct.visit(this);
     }
   }
-  
+
   /**
    * Used to give class name and line number in error messages
    * @param node
    * @return String array with two elements,
    * 1.: origin class,
-   * 2.: line number 
+   * 2.: line number
    */
   public String[] getLocationInfo(RudiTree node){
      Location nodeLocation = node.getLocation();
