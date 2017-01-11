@@ -22,9 +22,9 @@ public abstract class RudiTree {
    * ParserRuleContext. [0] = start of TokenIndex, [1] = stop of TokenIndex
    */
   public int[] positions;
-  
+
   /**
-   * contains the origin file and the line this Rudi Tree started on 
+   * contains the origin file and the line this Rudi Tree started on
    */
   public Location location;
 
@@ -60,11 +60,12 @@ public abstract class RudiTree {
    * @param context The ParserRuleContext.
    * @return RudiTree
    */
-  public RudiTree setPosition(ParserRuleContext context) {
+  public RudiTree setPosition(ParserRuleContext context, String originClass) {
     positions = new int[]{
       context.getStart().getTokenIndex(),
       context.getStop().getTokenIndex()
     };
+    this.location = new Location(originClass, context.getStart().getLine());
     return this;
   }
 
@@ -75,21 +76,17 @@ public abstract class RudiTree {
    * @param tn The TerminalNode
    * @return RudiTree
    */
-  public RudiTree setPosition(TerminalNode tn) {
+  public RudiTree setPosition(TerminalNode tn, String originClass) {
     positions = new int[]{
       tn.getSymbol().getTokenIndex(),
       tn.getSymbol().getTokenIndex()
     };
-    return this;
-  }
-  
-  public RudiTree setLocation(String originClass, int linenumber){
-    this.location = new Location(originClass, linenumber);
+    this.location = new Location(originClass, tn.getSymbol().getTokenIndex());
     return this;
   }
 
   public abstract Iterable<? extends RudiTree> getDtrs();
-  
+
   public Location getLocation(){
     return this.location;
   }
