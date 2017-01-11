@@ -64,7 +64,7 @@ public class Mem {
     typeCodes.put("boolean", 0x1000000l);
   }
 
-  private static boolean isRdfType(String type) {
+  public static boolean isRdfType(String type) {
     return (type != null && type.charAt(0) == '<');
   }
 
@@ -107,13 +107,9 @@ public class Mem {
     if ("Object".equals(type)){
       return type;
     }
-    try {
-      RdfClass clazz = _proxy.fetchClass(type);
-      if (clazz != null) {
-        type = clazz.toString(); // the URI of the class
-      }
-    } catch (TException e) {
-      throw new RuntimeException(e);
+    RdfClass clazz = _proxy.fetchClass(type);
+    if (clazz != null) {
+      type = clazz.toString(); // the URI of the class
     }
     return type;
   }
@@ -355,7 +351,7 @@ public class Mem {
   public boolean isExistingRule(String rule) {
     return ruleNums.get(this.curClass).containsKey(rule);
   }
-  
+
   public USingleValue degradeToString(UVariable variable){
     return new USingleValue(variable.toString(), "String");
   }

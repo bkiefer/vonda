@@ -97,7 +97,7 @@ public class RdfTest {
     UVariable v = new UVariable("<dom:Child>", "child", "testclass");
     l.add(v);
     UFieldAccess field = new UFieldAccess(l, elem);
-    String result = field.getPredicateType(_proxy, mem, elem);
+    String result = field.getPropertyType(_proxy, mem, elem);
    //assertEquals("get forename", "String", result);
   }
 
@@ -110,7 +110,7 @@ public class RdfTest {
     UVariable v = new UVariable("<dom:Child>", "child", "testclass");
     l.add(v);
     UFieldAccess field = new UFieldAccess(l, elem);
-    String result = field.getPredicateType(_proxy, mem, elem);
+    String result = field.getPropertyType(_proxy, mem, elem);
     //assertEquals("get hasTreatment", "<dom:Treatment>", result);
   }
 
@@ -124,7 +124,7 @@ public class RdfTest {
     UVariable v = new UVariable("<dom:Child>", "child", "testclass");
     l.add(v);
     UFieldAccess field = new UFieldAccess(l, elem);
-    String result = field.getPredicateType(_proxy, mem, elem);
+    String result = field.getPropertyType(_proxy, mem, elem);
     //assertEquals("get birthdate", "<xsd:date>", result);
   }
 }

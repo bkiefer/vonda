@@ -15,6 +15,7 @@ import de.dfki.mlt.rudimant.Location;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.thrift.TException;
@@ -489,31 +490,61 @@ public class VTestTypeVisitor implements RudiVisitor {
   // on a java object, so we probably do not wanna throw an error here
   boolean partOfFieldAccess = false;
 
+  /**
+   * How this should work: We start from the leftmost element, stored in the
+   * first element of the list, and work our way down.
+   *
+   * TODO CHECK FOR PROPERTIES RANGING OVER XSD DATATYPES, ETC. ALL FUZZY STUFF
+   */
   @Override
   public void visitNode(UFieldAccess node) {
+    String currentType = null;
+    Iterator<RudiTree> it = node.parts.iterator();
+
+    RudiTree currentNode = it.next(); // can not be empty
+    currentNode.visit(this);
+    currentType = ((RTExpression)currentNode).type;
     try {
-      node.type = node.getPredicateType(mem.getProxy(), mem, node.representation);
+      while (it.hasNext()) {
+        RudiTree currentAccessor = it.next();
+        currentAccessor.visit(this);
+        if (currentType == null) {
+          // try to continue with the type of the accessor, if any
+          if (currentAccessor instanceof RTExpression) {
+            currentType = ((RTExpression)currentAccessor).type;
+          }
+        } else if (Mem.isRdfType(currentType)) {
+          RdfClass clz = mem.getProxy().getClass(currentType);
+          if (currentAccessor instanceof UVariable) {
+            // only a literal: check if it is a property of clz, and update the
+            // current type
+            String predUri = clz.fetchProperty(((UVariable)currentAccessor).content);
+
+            int predType = clz.getPropertyType(predUri);
+            boolean isFunctional = (predType & RdfClass.FUNCTIONAL_PROPERTY) != 0;
+            // Set<Bla> vs Bla distinction, not that i know what to do wit it.
+            currentType = clz.getPropertyRange(predUri);
+          } else if (currentAccessor instanceof RTExpression) {
+            // could also be a method application, possibly, what else?
+            currentType = ((RTExpression)currentAccessor).type;
+          } else {
+            currentType = null;
+          }
+        } else { // this must be a Java type, let's try with the accessor type
+          if (currentAccessor instanceof RTExpression) {
+            currentType = ((RTExpression)currentAccessor).type;
+          } else {
+            currentType = null;
+          }
+        }
+        currentNode = currentAccessor;
+      }
+      node.type = currentType;
     } catch (TException ex) {
       String[] locationInfo = this.getLocationInfo(node);
       String message = locationInfo[0] + ":" + locationInfo[1] + ": " + ex.toString();
       logger.error(message);
     }
-    /*if(node.type == null){
-     // then this is not an rdf node, but some composed funccall
-     node.parts.get(node.parts.size() - 1).visit(this);
-     node.type = ((RTExpression)node.parts.get(node.parts.size() - 1)).getType();
-     return;
-     }*/
-    partOfFieldAccess = true;
-    for (int i = 0; i < node.representation.size(); i++) {
-      node.parts.get(i).visit(this);
-//      if (node.representation.get(i).contains("(")) {
-//        continue;
-//      } else if (!mem.variableExists(node.representation.get(i))) {
-//        node.representation.set(i, "\"" + node.representation.get(i) + "\"");
-//      }
-    }
-    partOfFieldAccess = false;
   }
 
   /**
@@ -571,17 +602,14 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.type = mem.getVariableType(node.fullexp);
     String o = mem.getVariableOriginClass(node.fullexp);
     // we could have sth like Introduction, that is an undeclared rdf class
-    try {
-      RdfClass cl = mem.getProxy().fetchClass(node.content);
-      if (cl != null) {
-        node.type = cl.toString();
-        if(!mem.variableExists(node.content)){
-          node.content = "\"" + node.content + "\"";
-        }
+    RdfClass cl = mem.getProxy().fetchClass(node.content);
+    if (cl != null) {
+      node.type = cl.toString();
+      if(!mem.variableExists(node.content)){
+        node.content = "\"" + node.content + "\"";
       }
-    } catch (TException ex) {
-      logger.error(ex.toString());
     }
+
 
     /*
      if (o == null) {

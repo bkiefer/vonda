@@ -43,7 +43,7 @@ public class UFieldAccess extends RTExpLeaf {
    * @return the type of this object
    * @throws org.apache.thrift.TException
    */
-  public String getPredicateType(RdfProxy proxy, Mem mem,
+  public String getPropertyType(RdfProxy proxy, Mem mem,
       List<String> representation) throws TException {
     asked = true;
     // first element of representation is type
@@ -52,6 +52,7 @@ public class UFieldAccess extends RTExpLeaf {
       return "Object";
     String type = mem.getVariableType(representation.get(0));
     RdfClass clazz = proxy.getClass(type);
+    if (clazz == null) return null;
     /*
     RdfClass clazz = proxy.fetchRdfClass(typ);
     if (clazz == null){
@@ -62,7 +63,7 @@ public class UFieldAccess extends RTExpLeaf {
     */
     List<String> predicatesBaseName
             = representation.subList(1, representation.size());
-    List<String> predicatesURI = clazz.getPredicateType(predicatesBaseName);
+    List<String> predicatesURI = clazz.getPropertyType(predicatesBaseName);
     if (predicatesURI == null)
       return null;
     return predicatesURI.get(predicatesURI.size() - 1);

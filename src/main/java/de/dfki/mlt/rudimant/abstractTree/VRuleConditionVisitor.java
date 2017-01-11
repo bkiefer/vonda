@@ -233,7 +233,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
             representation.add(node.representation.get(i));
             // then we are in the case that this is actually an rdf operation
             fieldAccessPart += (".getValue(\"" + node.representation.get(i) + "\") ");
-            lastType = node.getPredicateType(mem.getProxy(), mem, representation);
+            lastType = node.getPropertyType(mem.getProxy(), mem, representation);
             continue;
           } else {
             representation.clear();

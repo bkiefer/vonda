@@ -449,20 +449,20 @@ public abstract class Agent {
       proposalsSent = false;
     }
   }
-  
+
   /********************************************************
    * overloaded boolean operator methods
    ********************************************************/
- 
+
 //  public static boolean isEqual(){}
 //  public static boolean isSmaller(){}
 //  public static boolean isGreater(){}
 //  public static boolean isSmallerEqual(){}
 //  public static boolean isGreaterEqual(){}
-  
+
   public static boolean isEqual(DialogueAct left, DialogueAct right){
     return (left.isSubsumedBy(right) && right.isSubsumedBy(left));
-  } 
+  }
   public static boolean isSmaller(DialogueAct left, DialogueAct right){
     return (isSmallerEqual(left, right) && !isSmallerEqual(right, left));
   }
@@ -475,13 +475,15 @@ public abstract class Agent {
   public static boolean isGreaterEqual(DialogueAct left, DialogueAct right){
     return isSmallerEqual(right, left);
   }
-  
+
   public static boolean isEqual(String left, DialogueAct right){
     return isEqual(new DialogueAct(left), right);
-  } 
+  }
+
   public static boolean isSmaller(String left, DialogueAct right){
     return isSmaller(new DialogueAct(left), right);
   }
+
   public static boolean isGreater(String left, DialogueAct right){
     return isGreater(new DialogueAct(left), right);
   }
@@ -491,10 +493,10 @@ public abstract class Agent {
   public static boolean isGreaterEqual(String left, DialogueAct right){
     return isGreaterEqual(new DialogueAct(left), right);
   }
-  
+
   public static boolean isEqual(DialogueAct left, String right){
     return isEqual(left, new DialogueAct(right));
-  } 
+  }
   public static boolean isSmaller(DialogueAct left, String right){
     return isSmaller(left, new DialogueAct(right));
   }
@@ -507,10 +509,10 @@ public abstract class Agent {
   public static boolean isGreaterEqual(DialogueAct left, String right){
     return isGreaterEqual(left, new DialogueAct(right));
   }
-  
+
     public static boolean isEqual(Rdf left, Rdf right){
     return isEqual(left.getClazz(), right.getClazz());
-  } 
+  }
   public static boolean isSmaller(Rdf left, Rdf right){
     return (isSmallerEqual(left, right) && !isSmallerEqual(right, left));
   }
@@ -520,95 +522,48 @@ public abstract class Agent {
   public static boolean isSmallerEqual(Rdf left, Rdf right){
     return isSmallerEqual(left.getClazz(), right.getClazz());
   }
+
   public static boolean isGreaterEqual(Rdf left, Rdf right){
     return isSmallerEqual(right, left);
   }
-  
-  public boolean isEqual(String left, Rdf right){    
-    try {
-      return isEqual(_proxy.getRdfClass(left), right.getClazz());
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
-  } 
+
+  public boolean isEqual(String left, Rdf right){
+    return isEqual(_proxy.getRdfClass(left), right.getClazz());
+  }
+
   public boolean isSmaller(String left, Rdf right){
-    try {
-      return isSmaller(_proxy.getRdfClass(left), right.getClazz());
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
+    return isSmaller(_proxy.getRdfClass(left), right.getClazz());
   }
   public boolean isGreater(String left, Rdf right){
-    try {
-      return isGreater(_proxy.getRdfClass(left), right.getClazz());
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
+    return isGreater(_proxy.getRdfClass(left), right.getClazz());
   }
+
   public boolean isSmallerEqual(String left, Rdf right){
-    try {
-      return isSmallerEqual(_proxy.getRdfClass(left), right.getClazz());
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
+    return isSmallerEqual(_proxy.getRdfClass(left), right.getClazz());
   }
   public boolean isGreaterEqual(String left, Rdf right){
-    try {
-      return isGreaterEqual(_proxy.getRdfClass(left), right.getClazz());
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
+    return isGreaterEqual(_proxy.getRdfClass(left), right.getClazz());
   }
-  
+
   public boolean isEqual(Rdf left, String right){
-    try {
-      return isEqual(left.getClazz(), _proxy.getRdfClass(right));
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
-  } 
+    return isEqual(left.getClazz(), _proxy.getRdfClass(right));
+  }
   public boolean isSmaller(Rdf left, String right){
-    try {
-      return isSmaller(left.getClazz(), _proxy.getRdfClass(right));
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
+    return isSmaller(left.getClazz(), _proxy.getRdfClass(right));
   }
   public boolean isGreater(Rdf left, String right){
-    try {
-      return isGreater(left.getClazz(), _proxy.getRdfClass(right));
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
-  }  
+    return isGreater(left.getClazz(), _proxy.getRdfClass(right));
+  }
   public boolean isSmallerEqual(Rdf left, String right){
-    try {
-      return isSmallerEqual(left.getClazz(), _proxy.getRdfClass(right));
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
+    return isSmallerEqual(left.getClazz(), _proxy.getRdfClass(right));
   }
   public boolean isGreaterEqual(Rdf left, String right){
-    try {
-      return isGreaterEqual(left.getClazz(), _proxy.getRdfClass(right));
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
+    return isGreaterEqual(left.getClazz(), _proxy.getRdfClass(right));
   }
-  
+
   public static boolean isEqual(RdfClass left, RdfClass right){
     return (left.isSubclassOf(right) && right.isSubclassOf(left));
-  } 
+  }
   public static boolean isSmaller(RdfClass left, RdfClass right){
     return (isSmallerEqual(left, right) && !isSmallerEqual(right, left));
   }
@@ -621,161 +576,86 @@ public abstract class Agent {
   public static boolean isGreaterEqual(RdfClass left, RdfClass right){
     return isSmallerEqual(right, left);
   }
-  
-  public boolean isEqual(String left, RdfClass right){    
-    try {
-      return isEqual(_proxy.getRdfClass(left), right);
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);      
-    }
-    return false;
-  } 
+
+  public boolean isEqual(String left, RdfClass right){
+    return isEqual(_proxy.getRdfClass(left), right);
+  }
   public boolean isSmaller(String left, RdfClass right){
-    try {
-      return isSmaller(_proxy.getRdfClass(left), right);
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
+    return isSmaller(_proxy.getRdfClass(left), right);
   }
   public boolean isGreater(String left, RdfClass right){
-    try {
-      return isGreater(_proxy.getRdfClass(left), right);
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
+    return isGreater(_proxy.getRdfClass(left), right);
   }
   public boolean isSmallerEqual(String left, RdfClass right){
-    try {
-      return isSmallerEqual(_proxy.getRdfClass(left), right);
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
+    return isSmallerEqual(_proxy.getRdfClass(left), right);
   }
   public boolean isGreaterEqual(String left, RdfClass right){
-    try {
-      return isGreaterEqual(_proxy.getRdfClass(left), right);
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
+    return isGreaterEqual(_proxy.getRdfClass(left), right);
   }
-  
+
   public boolean isEqual(RdfClass left, String right){
-    try {
-      return isEqual(left, _proxy.getRdfClass(right));
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
-  } 
+    return isEqual(left, _proxy.getRdfClass(right));
+  }
   public boolean isSmaller(RdfClass left, String right){
-    try {
-      return isSmaller(left, _proxy.getRdfClass(right));
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
+    return isSmaller(left, _proxy.getRdfClass(right));
   }
   public boolean isGreater(RdfClass left, String right){
-    try {
-      return isGreater(left, _proxy.getRdfClass(right));
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
-  }  
+    return isGreater(left, _proxy.getRdfClass(right));
+  }
   public boolean isSmallerEqual(RdfClass left, String right){
-    try {
-      return isSmallerEqual(left, _proxy.getRdfClass(right));
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
+    return isSmallerEqual(left, _proxy.getRdfClass(right));
   }
   public boolean isGreaterEqual(RdfClass left, String right){
-    try {
-      return isGreaterEqual(left, _proxy.getRdfClass(right));
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(Agent.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return false;
+    return isGreaterEqual(left, _proxy.getRdfClass(right));
   }
-  
+
   public boolean isEqual(String left, String right){
     //try to find out whether left and right are DialogueActs or Rdf objects
-    try{
-      RdfClass leftRdf = _proxy.getRdfClass(left);
-      RdfClass rightRdf = _proxy.getRdfClass(right);
-      if(leftRdf == null || rightRdf == null){
-        return isEqual(new DialogueAct(left), new DialogueAct(right));
-      }
-      return isEqual(leftRdf, rightRdf);
-    }
-    catch (TException e){
+    RdfClass leftRdf = _proxy.getRdfClass(left);
+    RdfClass rightRdf = _proxy.getRdfClass(right);
+    if(leftRdf == null || rightRdf == null){
       return isEqual(new DialogueAct(left), new DialogueAct(right));
     }
+    return isEqual(leftRdf, rightRdf);
   }
-  
+
   public boolean isSmaller(String left, String right){
     //try to find out whether left and right are DialogueActs or Rdf objects
-    try{
-      RdfClass leftRdf = _proxy.getRdfClass(left);
-      RdfClass rightRdf = _proxy.getRdfClass(right);
-      if(leftRdf == null || rightRdf == null){
-        return isSmaller(new DialogueAct(left), new DialogueAct(right));
-      }
-      return isSmaller(leftRdf, rightRdf);
-    }
-    catch (TException e){
+    RdfClass leftRdf = _proxy.getRdfClass(left);
+    RdfClass rightRdf = _proxy.getRdfClass(right);
+    if(leftRdf == null || rightRdf == null){
       return isSmaller(new DialogueAct(left), new DialogueAct(right));
     }
-  }  
+    return isSmaller(leftRdf, rightRdf);
+  }
   public boolean isGreater(String left, String right){
     //try to find out whether left and right are DialogueActs or Rdf objects
-    try{
-      RdfClass leftRdf = _proxy.getRdfClass(left);
-      RdfClass rightRdf = _proxy.getRdfClass(right);
-      if(leftRdf == null || rightRdf == null){
-        return isGreater(new DialogueAct(left), new DialogueAct(right));
-      }
-      return isGreater(leftRdf, rightRdf);
-    }
-    catch (TException e){
+    RdfClass leftRdf = _proxy.getRdfClass(left);
+    RdfClass rightRdf = _proxy.getRdfClass(right);
+    if(leftRdf == null || rightRdf == null){
       return isGreater(new DialogueAct(left), new DialogueAct(right));
     }
-  }  
+    return isGreater(leftRdf, rightRdf);
+  }
   public boolean isSmallerEqual(String left, String right){
     //try to find out whether left and right are DialogueActs or Rdf objects
-    try{
-      RdfClass leftRdf = _proxy.getRdfClass(left);
-      RdfClass rightRdf = _proxy.getRdfClass(right);
-      if(leftRdf == null || rightRdf == null){
-        return isSmallerEqual(new DialogueAct(left), new DialogueAct(right));
-      }
-      return isSmallerEqual(leftRdf, rightRdf);
-    }
-    catch (TException e){
+    RdfClass leftRdf = _proxy.getRdfClass(left);
+    RdfClass rightRdf = _proxy.getRdfClass(right);
+    if(leftRdf == null || rightRdf == null){
       return isSmallerEqual(new DialogueAct(left), new DialogueAct(right));
     }
+    return isSmallerEqual(leftRdf, rightRdf);
   }
+
   public boolean isGreaterEqual(String left, String right){
-    //try to find out whether left and right are DialogueActs or Rdf objects
-    try{
-      RdfClass leftRdf = _proxy.getRdfClass(left);
-      RdfClass rightRdf = _proxy.getRdfClass(right);
-      if(leftRdf == null || rightRdf == null){
-        return isGreaterEqual(new DialogueAct(left), new DialogueAct(right));
-      }
-      return isGreaterEqual(leftRdf, rightRdf);
-    }
-    catch (TException e){
+    RdfClass leftRdf = _proxy.getRdfClass(left);
+    RdfClass rightRdf = _proxy.getRdfClass(right);
+    if(leftRdf == null || rightRdf == null){
       return isGreaterEqual(new DialogueAct(left), new DialogueAct(right));
     }
+    return isGreaterEqual(leftRdf, rightRdf);
   }
-  
+
   /**
    * function that logs (rule) conditions
    * @param values the parts of the condition, mapped to true or false

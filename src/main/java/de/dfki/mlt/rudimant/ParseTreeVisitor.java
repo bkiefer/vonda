@@ -98,14 +98,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
     //  label if_statement
     String ruleName = ctx.getChild(0).getText();
-    boolean toplevel = false;
-    if (curDepth == 0) {
-      // then this is a toplevel rule
-      toplevel = true;
-    }
+    boolean toplevel = (curDepth == 0); // then this is a toplevel rule
     curDepth++;
-    return new GrammarRule(ruleName, (StatIf) this.visit(ctx.getChild(2)), toplevel)
-            .setPosition(ctx, currentClass);
+    return new GrammarRule(ruleName,
+        (StatIf) this.visit(ctx.getChild(2)), toplevel)
+        .setPosition(ctx, currentClass);
   }
 
   @Override
