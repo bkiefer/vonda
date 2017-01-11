@@ -80,12 +80,12 @@ public class TestMethodDeclaration {
 
   @Test
   public void test() throws IOException, WrongFormatException, TException {
-    String methdecl = "Quiz foo() { i = 1; }";
+    String methdecl = "void foo() { i = 1; }";
 
     String s = Visualize.generate("methdecl", getInput(methdecl),
         RESOURCE_DIR + "dipal/dipal.yml");
     s = normalizeSpaces(s);
-    String expected = "Quiz foo() {int i = 1; }} ";
+    String expected = "void foo() {int i = 1; }} ";
     assertEquals(expected,
         s.substring(s.length() - expected.length()));
   }
