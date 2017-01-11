@@ -79,12 +79,12 @@ public class TestTypeInference {
 
   @Test
   public void test() throws IOException, WrongFormatException, TException {
-    String boolexp = "Quiz foo() { b = 5 < 1; }";
+    String boolexp = "void foo() { b = 5 < 1; }";
 
     String s = generate("boolexp", getInput(boolexp),
       RESOURCE_DIR + "dipal/dipal.yml");
     s = normalizeSpaces(s);
-    String expected = "Quiz foo() {boolean b = (5 < 1); }} ";
+    String expected = "void foo() {boolean b = (5 < 1); }} ";
     expected = normalizeSpaces(expected);
     assertEquals(expected,
     s.substring(s.length() - expected.length()));
