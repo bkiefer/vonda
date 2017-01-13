@@ -16,7 +16,7 @@ import java.util.Arrays;
 public class StatFor1 extends RTStatement {
 
   ExpAssignment assignment;
-  ExpBoolean condition;
+  RTExpression condition;
   RTExpression arithmetic;
   RTStatement statblock;
 

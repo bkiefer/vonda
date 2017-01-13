@@ -1,27 +1,23 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
-import static visitortests.SeriousTest.*;
 import static de.dfki.mlt.rudimant.Visualize.*;
 import static org.junit.Assert.*;
+import static visitortests.SeriousTest.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
-import java.util.Map;
 
 import org.antlr.v4.runtime.Token;
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TTransportException;
-import org.junit.BeforeClass;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.mlt.rudimant.RudimantCompiler;
-import de.dfki.mlt.rudimant.Visualize;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 
 public class TestTypeInference {
@@ -55,7 +51,7 @@ public class TestTypeInference {
     try {
       rc = RudimantCompiler.init(confDir, configs);
       new VTestTypeVisitor(rc).visitNode(myTree.first);
-    } catch (WrongFormatException | TException ex) {
+    } catch (WrongFormatException ex) {
       throw new RuntimeException(ex);
     }
     return myTree.first;

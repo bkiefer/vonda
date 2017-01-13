@@ -52,7 +52,7 @@ public class GrammarMain {
 
   public static void process(RudimantCompiler rc,
       List<String> files, File outputDirectory)
-      throws IOException, WrongFormatException, TException {
+      throws IOException {
     if (! outputDirectory.exists()) {
       if (! outputDirectory.mkdirs()) {
         throw new IOException("Output directory could not be created: "
@@ -126,12 +126,11 @@ public class GrammarMain {
    *
    * @param args: the file that should be parsed without ending (in args[0])
    *             + the complete path of the configfile
+   * @throws WrongFormatException
    * @throws Exception
    */
   @SuppressWarnings({"unchecked", "rawtypes"})
-  public static void main(String[] args)
-      throws IOException, TTransportException, FileNotFoundException,
-      WrongFormatException, TException {
+  public static void main(String[] args) throws WrongFormatException {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
@@ -217,6 +216,14 @@ public class GrammarMain {
     } catch (NumberFormatException nex) {
       usage("Argument of -p (port) must be a number");
       System.exit(1);
+    } catch (IOException ex) {
+      usage("A file error occured: " + ex.getMessage());
+    } catch (RuntimeException ex) {
+      usage("An unknown Error occured: " + ex.getMessage());
+      if (ex.getCause() != null)
+        ex.getCause().printStackTrace();
+      else
+        ex.printStackTrace();
     }
 
   }

@@ -76,8 +76,9 @@ public class Visualize {
       // do the type checking
       try {
         RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
+        rc.className = "Test";
         new VTestTypeVisitor(rc).visitNode(myTree.first);
-      } catch (WrongFormatException|TException ex) {
+      } catch (WrongFormatException ex) {
         throw new RuntimeException(ex);
       }
 
@@ -107,7 +108,7 @@ public class Visualize {
    */
   @SuppressWarnings("unchecked")
   public static void main(String[] args)
-      throws IOException, TException, WrongFormatException {
+      throws IOException, WrongFormatException {
 
     File inputFile = new File(args[0]);
 

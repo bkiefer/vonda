@@ -56,7 +56,7 @@ public class TestMethodDeclaration {
     try {
       RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
       new VTestTypeVisitor(rc).visitNode(myTree.first);
-    } catch (WrongFormatException|TException ex) {
+    } catch (WrongFormatException ex) {
       throw new RuntimeException(ex);
     }
     return myTree.first;

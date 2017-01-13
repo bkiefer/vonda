@@ -107,7 +107,7 @@ public class RudimantCompiler {
   }
 
   public static RdfProxy startClient(File configDir, Map<String, Object> configs)
-      throws IOException, WrongFormatException, TException {
+      throws IOException, WrongFormatException {
     HfcDbHandler handler = new HfcDbHandler();
     String ontoFileName = (String) configs.get(CFG_ONTOLOGY_FILE);
     if (ontoFileName == null) {
@@ -118,7 +118,7 @@ public class RudimantCompiler {
   }
 
   public static RudimantCompiler init(File configDir, Map<String, Object> configs)
-      throws IOException, WrongFormatException, TException {
+      throws IOException, WrongFormatException {
     RdfProxy proxy = startClient(configDir, configs);
     if (configs.containsKey(CFG_NAME_TO_URI)) {
       proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
@@ -363,7 +363,7 @@ public class RudimantCompiler {
   public void handleTypeError(String errorMessage, String[] locationInfo) {
     String newErrorMessage = locationInfo[0] + ":" + locationInfo[1] + ": " + errorMessage;
     if (this.typeCheck) {
-      // throw a real Exception 
+      // throw a real Exception
       throw new TypeException(newErrorMessage);
     } else {
       // just set a warning into the logger

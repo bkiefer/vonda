@@ -54,7 +54,8 @@ void robotGivesSolution(boolean correct, QuizHistory current);
 */
 
 boolean childAtHome() {
-  return user.isLocatedAt <= Home;
+  // TODO: HOME MUST BE A CONSTANT (RDF) FOR THE HOME LOCATION
+  return user.isLocatedAt == "<dom:Home>";
 }
 
 Activity newActivity(Rdf act) {

@@ -152,6 +152,7 @@ public class VTestTypeVisitor implements RudiVisitor {
             || ("<>".indexOf(operator.charAt(0)) >= 0 && operator.length() == 1);
   }
 
+
   /**
    * In principle the same as ExpArithmetic, with boolean only. The one
    * difference is that there are unary expressions which serve as boolean
@@ -165,8 +166,8 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.left.visit(this);
     if (node.right != null) {
       node.right.visit(this);
-      if(!("int".equals(node.left.getType()) || "float".equals(node.left.getType())
-              || "int".equals(node.right.getType()) || "float".equals(node.right.getType()))){
+      if(! Mem.isPODType(node.left.getType())
+          && ! Mem.isPODType(node.right.getType())) {
         switch(node.operator){
           case "==":
             node.operator = "isEqual(";
@@ -504,47 +505,45 @@ public class VTestTypeVisitor implements RudiVisitor {
     RudiTree currentNode = it.next(); // can not be empty
     currentNode.visit(this);
     currentType = ((RTExpression)currentNode).type;
-    try {
-      while (it.hasNext()) {
-        RudiTree currentAccessor = it.next();
-        currentAccessor.visit(this);
-        if (currentType == null) {
-          // try to continue with the type of the accessor, if any
-          if (currentAccessor instanceof RTExpression) {
-            currentType = ((RTExpression)currentAccessor).type;
-          }
-        } else if (Mem.isRdfType(currentType)) {
-          RdfClass clz = mem.getProxy().getClass(currentType);
-          if (currentAccessor instanceof UVariable) {
-            // only a literal: check if it is a property of clz, and update the
-            // current type
-            String predUri = clz.fetchProperty(((UVariable)currentAccessor).content);
-
-            int predType = clz.getPropertyType(predUri);
-            boolean isFunctional = (predType & RdfClass.FUNCTIONAL_PROPERTY) != 0;
-            // Set<Bla> vs Bla distinction, not that i know what to do wit it.
-            currentType = clz.getPropertyRange(predUri);
-          } else if (currentAccessor instanceof RTExpression) {
-            // could also be a method application, possibly, what else?
-            currentType = ((RTExpression)currentAccessor).type;
-          } else {
-            currentType = null;
-          }
-        } else { // this must be a Java type, let's try with the accessor type
-          if (currentAccessor instanceof RTExpression) {
-            currentType = ((RTExpression)currentAccessor).type;
-          } else {
-            currentType = null;
-          }
+    // this is dangerous, and only works if this condition can not be
+    // "interrupted"
+    partOfFieldAccess = true;
+    while (it.hasNext()) {
+      RudiTree currentAccessor = it.next();
+      currentAccessor.visit(this);
+      if (currentType == null) {
+        // try to continue with the type of the accessor, if any
+        if (currentAccessor instanceof RTExpression) {
+          currentType = ((RTExpression)currentAccessor).type;
         }
-        currentNode = currentAccessor;
+      } else if (Mem.isRdfType(currentType)) {
+        RdfClass clz = mem.getProxy().getClass(currentType);
+        if (currentAccessor instanceof UVariable) {
+          // only a literal: check if it is a property of clz, and update the
+          // current type
+          String predUri = clz.fetchProperty(((UVariable)currentAccessor).content);
+
+          int predType = clz.getPropertyType(predUri);
+          boolean isFunctional = (predType & RdfClass.FUNCTIONAL_PROPERTY) != 0;
+          // Set<Bla> vs Bla distinction, not that i know what to do wit it.
+            currentType = clz.getPropertyRange(predUri);
+        } else if (currentAccessor instanceof RTExpression) {
+          // could also be a method application, possibly, what else?
+          currentType = ((RTExpression)currentAccessor).type;
+        } else {
+          currentType = null;
+        }
+      } else { // this must be a Java type, let's try with the accessor type
+        if (currentAccessor instanceof RTExpression) {
+          currentType = ((RTExpression)currentAccessor).type;
+        } else {
+          currentType = null;
+        }
       }
-      node.type = currentType;
-    } catch (TException ex) {
-      String[] locationInfo = this.getLocationInfo(node);
-      String message = locationInfo[0] + ":" + locationInfo[1] + ": " + ex.toString();
-      logger.error(message);
+      currentNode = currentAccessor;
     }
+    node.type = currentType;
+    partOfFieldAccess = false;
   }
 
   /**

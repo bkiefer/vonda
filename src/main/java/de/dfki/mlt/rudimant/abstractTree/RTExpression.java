@@ -37,7 +37,7 @@ public abstract class RTExpression extends RudiTree {
   // Return true if this is represents an RDF type or a DialogueAct
   // TODO: maybe has to be split up.
   public boolean isRdfType() {
-    return type != null && type.charAt(0) == '<';
+    return isRdfType(type);
   }
 
   // easier for recursion if we can also give the method a type
@@ -55,9 +55,9 @@ public abstract class RTExpression extends RudiTree {
         || (type.endsWith(">") && ! isRdfType()));
   }
 
-  public ExpBoolean ensureBoolean() {
-    if (this instanceof ExpBoolean) {
-      return (ExpBoolean) this;
+  public RTExpression ensureBoolean() {
+    if ("boolean".equals(type) || this instanceof ExpBoolean) {
+      return this;
     }
 
     ExpBoolean result = null;
@@ -66,7 +66,7 @@ public abstract class RTExpression extends RudiTree {
     // method call returning a boolean
     // TODO check if there's something missing for RDF types
     if (isComplexType()) {
-      result = new ExpBoolean(fullexp + ".isEmpty()", this, null, ".isEmpty()");
+      result = new ExpBoolean(fullexp, this, null, ".isEmpty()");
     }
     if (type == null) {
       right = new USingleValue("null", "Object");
@@ -83,7 +83,7 @@ public abstract class RTExpression extends RudiTree {
       }
     }
     // we assume it's just an Object
-    result = new ExpBoolean(fullexp + " != " + right, this, right, "!=");
+    result = new ExpBoolean(fullexp, this, right, "!=");
     result.positions = positions;
     if (right != null) {
       int lastpos = positions[positions.length - 1];

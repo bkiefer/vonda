@@ -837,7 +837,7 @@ public class VGenerationVisitor implements RudiVisitor {
       return ((USingleValue) bool_exp).content;
 //      return;
     }
-    ExpBoolean bool = (ExpBoolean) bool_exp;
+    RTExpression bool = bool_exp;
 
     // remembers how the expressions should be realized by rudimant
     LinkedHashMap<String, String> compiledLook = new LinkedHashMap<>();
