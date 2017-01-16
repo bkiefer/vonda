@@ -5,15 +5,8 @@
  */
 package basictests;
 
-import visitortests.*;
-import java.io.IOException;
-
-import org.apache.thrift.transport.TTransportException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.mlt.rudimant.GrammarMain;
 
 /**
@@ -26,21 +19,11 @@ public class MaxTests {
 
 
   private String[] enterName(String filename){
-    String[] name = {"-c", "src/test/resources/rudi.config.yml", "-d",
-    "src/test/resources/basic/" + filename};
+    String[] name = {
+        "-c", RESOURCE_DIR + "rudi.config.yml",
+        "-d", RESOURCE_DIR + "basic/" + filename};
 
     return name;
-  }
-
-  @BeforeClass
-  public static void setUpClass()
-    throws TTransportException, IOException, WrongFormatException {
-    SeriousTest.setUpClass();
-  }
-
-  @AfterClass
-  public static void tearDownClass() {
-    SeriousTest.tearDownClass();
   }
 
   @Test

@@ -65,13 +65,7 @@ public class TestMethodDeclaration {
   @BeforeClass
   public static void setUpClass()
     throws TTransportException, IOException, WrongFormatException {
-    setupClass("dipal/ontologies/pal.ini");
     readConfig(RESOURCE_DIR + "dipal/dipal.yml");
-  }
-
-  @AfterClass
-  public static void tearDown() {
-    tearDownClass();
   }
 
   public static String normalizeSpaces(String in) {

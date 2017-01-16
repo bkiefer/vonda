@@ -1,18 +1,20 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
-import static de.dfki.mlt.rudimant.Visualize.*;
+import static de.dfki.mlt.rudimant.Visualize.confDir;
+import static de.dfki.mlt.rudimant.Visualize.configs;
+import static de.dfki.mlt.rudimant.Visualize.generate;
+import static de.dfki.mlt.rudimant.Visualize.readConfig;
 import static org.junit.Assert.*;
-import static visitortests.SeriousTest.*;
+import static visitortests.SeriousTest.RESOURCE_DIR;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 
 import org.antlr.v4.runtime.Token;
 import org.apache.thrift.TException;
-import org.apache.thrift.transport.TTransportException;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -58,15 +60,8 @@ public class TestTypeInference {
   }
 
   @BeforeClass
-  public static void setUpClass()
-    throws TTransportException, IOException, WrongFormatException {
-    setupClass("dipal/ontologies/pal.ini");
+  public static void setUpClass() throws FileNotFoundException {
     readConfig(RESOURCE_DIR + "dipal/dipal.yml");
-  }
-
-  @AfterClass
-  public static void tearDown() {
-    tearDownClass();
   }
 
   public static String normalizeSpaces(String in) {

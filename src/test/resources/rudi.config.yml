@@ -5,3 +5,6 @@ serverPort:         8996
 checkTypes:         true
 failOnError:        false
 ontologyFile:       ontos/pal.ini
+nameToURI:
+  Activity : "<dom:Activity>"
+  Child : "<dom:Child>"

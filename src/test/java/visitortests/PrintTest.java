@@ -5,32 +5,15 @@
  */
 package visitortests;
 
-import java.io.IOException;
-
-import org.apache.thrift.transport.TTransportException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.mlt.rudimant.GrammarMain;
-import de.dfki.mlt.rudimant.TypeException;
 
 /**
  *
  * @author Anna Welker
  */
 public class PrintTest {
-  @BeforeClass
-  public static void setUpClass()
-      throws TTransportException, IOException, WrongFormatException {
-    SeriousTest.setUpClass();
-  }
-
-  @AfterClass
-  public static void tearDownClass() {
-    SeriousTest.tearDownClass();
-  }
 
 //  @Test(expected = TypeException.class)
 //  public void ImportFailTest() throws Exception {
@@ -50,7 +33,7 @@ public class PrintTest {
 //    GrammarMain.main(strings);
 ////    assertFail(GrammarMain.main(strings));
 //  }
-  
+
   @Test
   public void SingleFileTest() throws Exception {
     String[] strings = {

@@ -30,27 +30,6 @@ public class SeriousTest {
 
   public static final int SERVER_PORT = 8996;
 
-  @BeforeClass
-  public static void setUpClass()
-      throws TTransportException, IOException, WrongFormatException {
-    setupClass("ontos/pal.ini");
-  }
-
-  public static void setupClass(String iniFileName)
-      throws TTransportException, IOException, WrongFormatException {
-    /*
-    // start the HFC server
-    server = new HfcDbServer(SERVER_PORT);
-    server.readConfig(new File(RESOURCE_DIR + iniFileName));
-    server.runServer();
-    */
-  }
-
-  @AfterClass
-  public static void tearDownClass() {
-    // server.shutdown();
-  }
-
   @Test
   public void PalAgentTest() throws Exception {
     String[] strings = new String[]{

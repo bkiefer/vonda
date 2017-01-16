@@ -5,15 +5,8 @@
  */
 package visitortests;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import org.apache.thrift.TException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.mlt.rudimant.GrammarMain;
 
 /**
@@ -22,16 +15,6 @@ import de.dfki.mlt.rudimant.GrammarMain;
  */
 public class QuizTest {
 
-  @BeforeClass
-  public static void setUpClass()
-      throws FileNotFoundException, IOException, WrongFormatException, TException  {
-    SeriousTest.setUpClass();
-  }
-
-  @AfterClass
-  public static void tearDownClass() {
-    SeriousTest.tearDownClass();
-  }
 
   @Test
   public void TestQuiz() throws Exception {
