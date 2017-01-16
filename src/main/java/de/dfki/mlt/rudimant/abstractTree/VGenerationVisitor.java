@@ -134,25 +134,24 @@ public class VGenerationVisitor implements RudiVisitor {
       }
     }
     out.append(' ');
-    node.left.visitWithComments(this);
     UPropertyAccess pa = null;
     boolean functional = false;
-    if (node.left instanceof UFieldAccess && node.isRdfType()) {
+    if (node.left instanceof UFieldAccess) {
       UFieldAccess acc = (UFieldAccess)node.left;
       RudiTree lastPart = acc.parts.get(acc.parts.size() - 1);
-      if (lastPart instanceof UPropertyAccess) pa = (UPropertyAccess)lastPart;
+      if (lastPart instanceof UPropertyAccess)
+        pa = (UPropertyAccess)lastPart;
       functional = pa != null && pa.functional;
       //
       notPrintLastField = pa != null;
       node.left.visitWithComments(this);
       notPrintLastField = false;
       if (pa != null) {
-        out.append(functional ? ".setSingleValue(" : ".setValue(");
-        out.append(acc.representation.get(acc.representation.size() - 1));
-        out.append(", ");
+        out.append(functional ? ".setSingleValue(\"" : ".setValue(\"");
+        out.append(pa.label.content).append("\", ");
       }
-    }
-    if (pa == null) {
+    } else {
+      node.left.visitWithComments(this);
       out.append(" = ");
     }
     node.right.visitWithComments(this);
@@ -775,7 +774,7 @@ public class VGenerationVisitor implements RudiVisitor {
         // then we are in the case that this is actually an rdf operation
         representation.add(node.representation.get(i));
         out.append(pa.functional ? ".getSingleValue(\"" : ".getValue(\"");
-        out.append(node.representation.get(i)).append("\") ");
+        out.append(pa.label.content).append("\") ");
       } else {
         // TODO: EXPLAIN THIS IF
         if (! (node.parts.get(i) instanceof UVariable))

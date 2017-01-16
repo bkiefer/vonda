@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -289,9 +290,16 @@ public class RudimantCompiler {
           "-c", "src/main/resources/uncrustify.cfg",
           outputFile.getAbsolutePath()
       };
-      Runtime.getRuntime().exec(cmdArray);
+      Process proc = Runtime.getRuntime().exec(cmdArray);
+      boolean killed = proc.waitFor(5, TimeUnit.SECONDS);
+      int exitCode = proc.exitValue();
+      if (exitCode != 0) {
+        logger.warn("Uncrustify finished with error code {}", exitCode);
+      }
     } catch (IOException ex){
       logger.error("Failed to run uncrustify");
+    } catch (InterruptedException e) {
+      logger.warn("uncrustify was interrupted");
     }
   }
 

@@ -187,9 +187,9 @@ public class GrammarMain {
       }
       main.setConfig(configs);
       process(RudimantCompiler.init(configDir, configs), files, outputDirectory);
+      System.out.println("Parsing finished");
     } catch (OptionException ex) {
-      usage("Error parsing options: " + ex.getLocalizedMessage());
-      System.exit(1);
+      usage("Error parsing options: " + ex.getMessage());
     } catch (IOException ex) {
       usage("A file error occured: " + ex.getMessage());
     } /*catch (RuntimeException ex) {
@@ -209,7 +209,6 @@ public class GrammarMain {
         + "              -r ontos.ini -w WrapperClass -c config.yaml\n"
         + "              -o outputDir toplevelfile.rudi (file.rudi)*\n"
         + "For help see rumdimant -help\n");
-    System.exit(-1);
   }
 
 }
