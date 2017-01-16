@@ -21,7 +21,7 @@ public abstract class RTExpLeaf extends RTExpression {
   }
 
   public String toString() {
-    return (content == null) ? "<null>" : content;
+    return (content == null) ? fullexp : content;
   }
 
   public void propagateType(String upperType) {

@@ -21,7 +21,6 @@ public class TestDipal {
 
   private static String[] enterName(String filename){
     String[] name = {"-c", RESOURCE_DIR + "dipal/dipal.yml",
-        "-p", Integer.toString(SERVER_PORT), "-v",
         RESOURCE_DIR + "dipal/" + filename};
 
     return name;

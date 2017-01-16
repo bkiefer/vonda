@@ -19,7 +19,6 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +37,6 @@ public class RudimantCompiler {
 
   public static final Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
-  private boolean log;
   private boolean throwExceptions = true;
   private boolean typeCheck = true;
   private boolean visualise = false;
@@ -91,7 +89,6 @@ public class RudimantCompiler {
     constructorArgs = parentCompiler.getConstructorArgs();
     mem = parentCompiler.mem;
     parent = parentCompiler;
-    this.log = parentCompiler.log;
     this.throwExceptions = parentCompiler.throwExceptions;
     this.typeCheck = parentCompiler.typeCheck;
     this.packageName = parent.getPackageName();
@@ -127,8 +124,6 @@ public class RudimantCompiler {
         (String)configs.get(CFG_WRAPPER_CLASS),
         (String)configs.get(CFG_TARGET_CONSTRUCTOR),
         proxy);
-    rc.setLog((boolean)
-        (configs.get(CFG_LOG) == null ? false : configs.get(CFG_LOG)));
     rc.setThrowExceptions((boolean)configs.get(CFG_TYPE_ERROR_FATAL));
     rc.setTypeCheck((boolean)configs.get(CFG_TYPE_CHECK));
     if (configs.containsKey(CFG_PACKAGE)) {
@@ -141,7 +136,7 @@ public class RudimantCompiler {
     return rc;
   }
 
-  public static RudimantCompiler getEmbedded(RudimantCompiler parent) throws TException {
+  public static RudimantCompiler getEmbedded(RudimantCompiler parent) {
     RudimantCompiler result = new RudimantCompiler(parent);
     return result;
   }
@@ -208,10 +203,6 @@ public class RudimantCompiler {
       result = new File(result, s);
     }
     return result;
-  }
-
-  public void setLog(boolean log) {
-    this.log = log;
   }
 
   public void setTypeCheck(boolean typeCheck) {
@@ -358,17 +349,27 @@ public class RudimantCompiler {
    * the set typeCheck parameter
    *
    * @param errorMessage
-   * @param locationInfo
+   * @param node the tree node where the error occured
    */
-  public void handleTypeError(String errorMessage, String[] locationInfo) {
-    String newErrorMessage = locationInfo[0] + ":" + locationInfo[1] + ": " + errorMessage;
+  public void typeError(String errorMessage, RudiTree node) {
+    String newErrorMessage = node.getLocation() + " " + errorMessage;
     if (this.typeCheck) {
       // throw a real Exception
       throw new TypeException(newErrorMessage);
     } else {
       // just set a warning into the logger
-      //System.out.println("warning");
       logger.error(newErrorMessage);
     }
+  }
+
+  /**
+   * use this to report a type checking warning
+   *
+   * @param errorMessage
+   * @param node the tree node where the error occured
+   */
+  public void typeWarning(String errorMessage, RudiTree node) {
+    // just set a warning into the logger
+    logger.warn(node.getLocation() + " " + errorMessage);
   }
 }

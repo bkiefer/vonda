@@ -36,13 +36,14 @@ if (saidInSession(#Salutation(Meeting)) >= 0
   if (activity.status != "finished") {
     activity.status = "finished";
     // TODO: GET LIST FROM THE PROPERTIES OF A USER
-    List<RdfProperty> slots = { Hobby, Color };
-    for (RdfProperty slot : slots) {
+    List<String> slots = { "hasHobby", "hasColor", "hasSport" };
+    prefs = user.hasPreference;
+    for (String slot : slots) {
       // SLOT unknown: ask for slot
       // Ask for favorite hobby and color
 
     ask_user_preference:
-      if (! user.getLiking.slot
+      if (! prefs.slot
           && ! saidInSession(#Request(Liking, theme=^slot))) {
         activity.status = "active";
         propose("ask_for_preference_" + slot) {
@@ -51,7 +52,7 @@ if (saidInSession(#Salutation(Meeting)) >= 0
       }
 
     confirm_user_preference:
-      if (user.getLiking.slot && ! waitingForResponse()
+      if (prefs.slot && ! waitingForResponse()
           && saidInSession(#Request(Liking, theme=^slot))
           // a nice way to express the disjunction (supertype?)
           && ! saidInSession(#Answer(Liking, theme=^slot))) {

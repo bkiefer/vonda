@@ -37,7 +37,6 @@ public class QuizTest {
   public void TestQuiz() throws Exception {
     String[] strings = new String[]{
       // "-c", "rudi.config.yml",
-      "-p", Integer.toString(SeriousTest.SERVER_PORT),
       "-o", "target/test/testfiles",
       "-r", "src/test/resources/ontos/pal.ini",
       "-d", "src/test/resources/serious/quiz.rudi",};

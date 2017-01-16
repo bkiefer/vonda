@@ -25,4 +25,8 @@ public class Location {
   public int getLineNumber() {
     return lineNumber;
   }
+
+  public String toString() {
+    return originClass + ":" + lineNumber + ":";
+  }
 }

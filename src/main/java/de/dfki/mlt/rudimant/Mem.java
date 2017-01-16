@@ -7,7 +7,6 @@ package de.dfki.mlt.rudimant;
 
 import java.util.*;
 
-import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -246,15 +245,6 @@ public class Mem {
     return current.getOrigin(variable);
   }
 
-  /**
-   * get the rule the given variable is located
-   *
-   * @param variable a variable
-   * @return the toplevel rule it came from
-   *
-   * public String getVariableOriginTRule(String variable) { return
-   * variableOrigin.get(variable).get(1); }
-   */
   /**
    * get the type of the given variable
    *

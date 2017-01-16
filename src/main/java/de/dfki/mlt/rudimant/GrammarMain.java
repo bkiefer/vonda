@@ -8,20 +8,15 @@ package de.dfki.mlt.rudimant;
 import static de.dfki.mlt.rudimant.Constants.*;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.thrift.TException;
-import org.apache.thrift.transport.TTransportException;
 import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.lt.hfc.WrongFormatException;
-import de.dfki.lt.hfc.db.client.HfcDbClient;
-import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -47,7 +42,6 @@ public class GrammarMain {
 
   private Map<String, Object> configs;
 
-  private RudimantCompiler rc;
   // rdf functionality
 
   public static void process(RudimantCompiler rc,
@@ -75,9 +69,6 @@ public class GrammarMain {
   }
 
   final static Object [][] defaults = {
-    { CFG_SERVER_HOST, "localhost" , "s"},
-    { CFG_SERVER_PORT, 9000 , null },
-    { CFG_LOG, false , "l"},
     { CFG_TYPE_ERROR_FATAL, true, "e" },
     { CFG_TYPE_CHECK, true , "d" },
     { CFG_VISUALISE, false , "v" },
@@ -134,13 +125,12 @@ public class GrammarMain {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
-    OptionParser parser = new OptionParser("hlveds:r:w:c:p:o:");
+    OptionParser parser = new OptionParser("hvedr:w:c:o:");
     parser.accepts("help");
     OptionSet options = null;
 
     GrammarMain main = new GrammarMain();
     Map<String, Object> configs;
-    int port = (Integer)getDefault(CFG_SERVER_PORT);
     File outputDirectory = null;
     List files = null;
     File configDir = new File(".");
@@ -195,43 +185,29 @@ public class GrammarMain {
           }
         }
       }
-      if (options.has("p")) {
-        port = Integer.parseInt((String)options.valueOf("p"));
-      } else {
-        if (configs.containsKey(CFG_SERVER_PORT)) {
-          Object p = configs.get(CFG_SERVER_PORT);
-          if (p instanceof Integer) {
-            port = (Integer)p;
-          } else if (p instanceof String) {
-            port = Integer.parseInt((String) p);
-          }
-        }
-      }
-      configs.put(CFG_SERVER_PORT, port);
       main.setConfig(configs);
       process(RudimantCompiler.init(configDir, configs), files, outputDirectory);
     } catch (OptionException ex) {
       usage("Error parsing options: " + ex.getLocalizedMessage());
       System.exit(1);
-    } catch (NumberFormatException nex) {
-      usage("Argument of -p (port) must be a number");
-      System.exit(1);
     } catch (IOException ex) {
       usage("A file error occured: " + ex.getMessage());
-    } catch (RuntimeException ex) {
+    } /*catch (RuntimeException ex) {
       usage("An unknown Error occured: " + ex.getMessage());
       if (ex.getCause() != null)
         ex.getCause().printStackTrace();
       else
         ex.printStackTrace();
-    }
+    }*/
 
   }
 
   private static void usage(String message) {
     System.out.println(message);
-    System.out.println("Please use this tool as follows: "
-        + "java rudimant <directory_to_be_searched/> <output_directory/>? OPTIONS\n"
+    System.out.println(
+          "java rudimant -h<elp> -v<isualize> -e<rrorstops> -d<ypecheck>\n"
+        + "              -r ontos.ini -w WrapperClass -c config.yaml\n"
+        + "              -o outputDir toplevelfile.rudi (file.rudi)*\n"
         + "For help see rumdimant -help\n");
     System.exit(-1);
   }
