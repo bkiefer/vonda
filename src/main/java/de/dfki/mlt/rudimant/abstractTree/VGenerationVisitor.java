@@ -5,8 +5,8 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import de.dfki.mlt.rudimant.RudimantCompiler;
-import de.dfki.mlt.rudimant.Mem;
+import static de.dfki.mlt.rudimant.Constants.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -14,12 +14,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import org.antlr.v4.runtime.Token;
 
-import org.apache.thrift.TException;
+import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
+import de.dfki.mlt.rudimant.Mem;
+import de.dfki.mlt.rudimant.RudimantCompiler;
 
 /**
  * this visitor generates the java code
@@ -92,52 +94,70 @@ public class VGenerationVisitor implements RudiVisitor {
     //System.out.println(((UVariable) left).toString());
     // visit also the left side, it could be using another class's variable!
     // System.out.println("Generating assignment");
-    try {
-      if (!node.declaration && node.left instanceof UFieldAccess) {
-        //rudi.getProxy().fetchRdfClass(node.right.getType()) != null) {
+    /* BK THIS DOESN'T SEEM RIGHT
+    if (!node.declaration && node.left instanceof UFieldAccess) {
+      //rudi.getProxy().fetchRdfClass(node.right.getType()) != null) {
 
-        // if the second last part of the field access was an rdf, than we actually
-        // want to put the right child into the database here
-        List<String> representation = new ArrayList<>();
-        int i = ((UFieldAccess) node.left).representation.size() - 1;
-        representation.addAll(((UFieldAccess) node.left).representation
-                .subList(0, i));
-        String lefttype = ((UFieldAccess) node.left)
-                .getPropertyType(mem.getProxy(), mem, representation);
-//        if (this.rudi.getProxy().fetchRdfClass(lefttype) != null) {
-        if (lefttype != null && !lefttype.equals("Object")) {
-          // then getPredicateType found an rdf class related
-          notPrintLastField = true;
-          node.left.visitWithComments(this);
-          out.append(".setValue(\"");
-          out.append(((UFieldAccess) node.left).representation.get(i));
-          out.append("\", ");
-          node.right.visitWithComments(this);
-          out.append(")");
-          notPrintLastField = false;
-          return;
-        }
+      // if the second last part of the field access was an rdf, than we actually
+      // want to put the right child into the database here
+      List<String> representation = new ArrayList<>();
+      int i = ((UFieldAccess) node.left).representation.size() - 1;
+      representation.addAll(((UFieldAccess) node.left).representation
+          .subList(0, i));
+      String lefttype = ((UFieldAccess) node.left)
+          .getPropertyType(mem.getProxy(), mem, representation);
+//    if (this.rudi.getProxy().fetchRdfClass(lefttype) != null) {
+      if (lefttype != null && !lefttype.equals("Object")) {
+        // then getPredicateType found an rdf class related
+        notPrintLastField = true;
+        node.left.visitWithComments(this);
+        out.append(".setValue(\"");
+        out.append(((UFieldAccess) node.left).representation.get(i));
+        out.append("\", ");
+        node.right.visitWithComments(this);
+        out.append(")");
+        notPrintLastField = false;
+        return;
       }
-      if (node.declaration) {
-//        if(node.actualType == null){
-//            throw new UnsupportedOperationException("no actualtype for declaration of " + node.fullexp);
-//          }
-        if (node.actualType != null && node.actualType.startsWith("<")) {
-          if (node.actualType.startsWith("<dial")) {  // <dial:DialogueAct > has to be replaced by DialogueAct
-            out.append("DialogueAct ");
-          } else { // every other type starting with < has to be replaced by Rdf
-            out.append("Rdf ");
-          }
-        } else {
-          out.append(node.actualType + " ");
-        }
+    }
+    */
+    if (node.declaration) {
+//    if(node.actualType == null){
+//    throw new UnsupportedOperationException("no actualtype for declaration of " + node.fullexp);
+//    }
+      if (Mem.isRdfType(node.actualType)) {
+        // All RDF types except DialogueAct has to be replaced with Rdf
+        out.append((DIALOGUE_ACT_TYPE.equals(node.actualType))
+            ? "DialogueAct" : "Rdf");
+      } else {
+        out.append(node.actualType);
       }
+    }
+    out.append(' ');
+    node.left.visitWithComments(this);
+    UPropertyAccess pa = null;
+    boolean functional = false;
+    if (node.left instanceof UFieldAccess && node.isRdfType()) {
+      UFieldAccess acc = (UFieldAccess)node.left;
+      RudiTree lastPart = acc.parts.get(acc.parts.size() - 1);
+      if (lastPart instanceof UPropertyAccess) pa = (UPropertyAccess)lastPart;
+      functional = pa != null && pa.functional;
+      //
+      notPrintLastField = pa != null;
       node.left.visitWithComments(this);
+      notPrintLastField = false;
+      if (pa != null) {
+        out.append(functional ? ".setSingleValue(" : ".setValue(");
+        out.append(acc.representation.get(acc.representation.size() - 1));
+        out.append(", ");
+      }
+    }
+    if (pa == null) {
       out.append(" = ");
-      node.right.visitWithComments(this);
-
-    } catch (TException ex) {
-      java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    node.right.visitWithComments(this);
+    if (pa != null) {
+      out.append(")"); // close call to set(Single)Value()
     }
     //out.append(";");
   }
@@ -618,9 +638,6 @@ public class VGenerationVisitor implements RudiVisitor {
     //      }
     //    }
     //    out.append(");\n");
-    catch (TException ex) {
-      throw new RuntimeException(ex);
-    }
   }
 
   @Override
@@ -731,51 +748,44 @@ public class VGenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(UFieldAccess node) {
     int to = node.parts.size();
-    // the following is obsolete as new is now a keyword
-    /*if (to == 2 && node.representation.get(1).equals("new()")){
-     try {
-     // then this is a creation of a new rdf object
-     out.append("_proxy.getClass(\"" +
-     rudi.getProxy().fetchClass(node.representation.get(0)) +
-     "\").newInstance(DEFNS);\n");
-     return;
-     } catch (TException ex) {
-     java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
-     }
-     }*/
     List<String> representation = new ArrayList<>();
     node.parts.get(0).visitWithComments(this);
     representation.add(node.representation.get(0));
     String lastType = ((RTExpression) (node.parts.get(0))).getType();
-    to = notPrintLastField ? to -= 1 : to;
+    // TODO: EXPLAIN WHEN THE BOOLEAN IS TRUE, AND WHY
+    to = notPrintLastField ? to - 1 : to;
     for (int i = 1; i < to; i++) {
+      /*
       if (node.parts.get(i) instanceof UVariable) {
-        try {
-          if (node.isRdfType(lastType)) {
-            representation.add(node.representation.get(i));
-            // then we are in the case that this is actually an rdf operation
-            out.append(".getValue(\"" + node.representation.get(i) + "\") ");
-            lastType = node.getPropertyType(mem.getProxy(), mem, representation);
-            continue;
-          } else {
-            representation.clear();
-          }
-        } catch (TException ex) {
-          java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
+        if (node.isRdfType(lastType)) {
+          representation.add(node.representation.get(i));
+          // then we are in the case that this is actually an rdf operation
+          out.append(".getValue(\"" + node.representation.get(i) + "\") ");
+          lastType = node.getPropertyType(mem.getProxy(), mem, representation);
+          continue;
+        } else {
+          representation.clear();
         }
       }
       out.append(".");
       node.parts.get(i).visitWithComments(this);
+      */
+      if (node.parts.get(i) instanceof UPropertyAccess) {
+        UPropertyAccess pa = (UPropertyAccess)node.parts.get(i);
+        // then we are in the case that this is actually an rdf operation
+        representation.add(node.representation.get(i));
+        out.append(pa.functional ? ".getSingleValue(\"" : ".getValue(\"");
+        out.append(node.representation.get(i)).append("\") ");
+      } else {
+        // TODO: EXPLAIN THIS IF
+        if (! (node.parts.get(i) instanceof UVariable))
+          representation.clear();
+        out.append(".");
+        node.parts.get(i).visit(this);
+      }
     }
-    /*out.append(node.representation.get(0));
-     for (int i = 1; i < node.representation.size(); i++) {
-     String r = node.representation.get(i);
-     if(!r.contains("\"")){
-     r = "\"" + r + "\"";
-     }
-     out.append(".getValue(" + r + ", client)" + " ");
-     }*/
   }
+
 
   @Override
   public void visitNode(UFuncCall node) {

@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.apache.thrift.TException;
+import org.apache.tools.ant.taskdefs.Javadoc.AccessType;
 
+import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
 
@@ -225,25 +227,20 @@ public class VRuleConditionVisitor extends VNullVisitor {
     fieldAccessPart = "";
     node.parts.get(0).visit(this);
     representation.add(node.representation.get(0));
-    String lastType = ((RTExpression) (node.parts.get(0))).getType();
     for (int i = 1; i < node.parts.size(); i++) {
-      if (node.parts.get(i) instanceof UVariable) {
-        try {
-          if (node.isRdfType(lastType)) {
-            representation.add(node.representation.get(i));
-            // then we are in the case that this is actually an rdf operation
-            fieldAccessPart += (".getValue(\"" + node.representation.get(i) + "\") ");
-            lastType = node.getPropertyType(mem.getProxy(), mem, representation);
-            continue;
-          } else {
-            representation.clear();
-          }
-        } catch (TException ex) {
-          java.util.logging.Logger.getLogger(VGenerationVisitor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+      if (node.parts.get(i) instanceof UPropertyAccess) {
+        UPropertyAccess pa = (UPropertyAccess)node.parts.get(i);
+        // then we are in the case that this is actually an rdf operation
+        representation.add(node.representation.get(i));
+        fieldAccessPart += pa.functional ? ".getSingleValue(\"" : ".getValue(\"";
+        fieldAccessPart += node.representation.get(i) + "\") ";
+      } else {
+        // TODO: EXPLAIN THIS IF
+        if (! (node.parts.get(i) instanceof UVariable))
+          representation.clear();
+        fieldAccessPart += (".");
+        node.parts.get(i).visit(this);
       }
-      fieldAccessPart += (".");
-      node.parts.get(i).visit(this);
     }
     if (collectElements != null) {
       this.collectElements += fieldAccessPart + isTrue;
