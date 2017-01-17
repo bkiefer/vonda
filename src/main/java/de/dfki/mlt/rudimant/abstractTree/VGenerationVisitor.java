@@ -959,7 +959,7 @@ public class VGenerationVisitor implements RudiVisitor {
     } else {
       // TODO: how to do rdf generation?????
       out.append("_proxy.getClass(\""
-          + mem.getProxy().fetchClass(node.type)
+          + mem.getProxy().getClass(node.type)
           + "\").newInstance(DEFNS)");
 
     }

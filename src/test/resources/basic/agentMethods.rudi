@@ -46,12 +46,18 @@ void sendQuestionDA(QuizHistory current);
 void sendAnswersDA(QuizHistory current);
 void robotGivesSolution(boolean correct, QuizHistory current);
 
+Activity testActivity(Rdf act);
+
 /*
 ? intro.has(INTRODUCTION_GAMEPROPOSED)
 ? allProperties(user.getRange(getLiking))
 ? slot = Hobby
 ? user.getLiking.slot
 */
+
+void test(){
+  testActivity(new Idle);
+}
 
 boolean childAtHome() {
   if(user.isLocatedAt <= Home){}
