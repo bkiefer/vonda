@@ -1,7 +1,12 @@
-outputDirectory:    target/test/testfiles/
-wrapperClass:       NaoAgent
-serverPort:         8996
-webserverPort:      8995
-resourceDir:        ../hfc-database/src/test/resources/
-rootPackage:      de.dfki.dialogue.naoagent
-targetConstructor:  String hostIP, int port
+outputDirectory:    src/main/gen-java
+wrapperClass:       de.dfki.dialogue.NaoAgent
+serverHost:         localhost
+serverPort:         9090
+ontologyFile:       src/main/resources/ontologies/pal.ini
+checkTypes:         true
+failOnError:        false
+targetConstructor:  
+rootPackage:        de.dfki.dialogue
+nameToURI:
+  Activity : "<dom:Activity>"
+  Child : "<dom:Child>"
