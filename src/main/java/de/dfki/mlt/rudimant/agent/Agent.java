@@ -454,11 +454,11 @@ public abstract class Agent {
    * overloaded boolean operator methods
    ********************************************************/
 
-//  public static boolean isEqual(){}
-//  public static boolean isSmaller(){}
-//  public static boolean isGreater(){}
-//  public static boolean isSmallerEqual(){}
-//  public static boolean isGreaterEqual(){}
+//  public boolean isEqual(){}
+//  public boolean isSmaller(){}
+//  public boolean isGreater(){}
+//  public boolean isSmallerEqual(){}
+//  public boolean isGreaterEqual(){}
 
   public static boolean isEqual(DialogueAct left, DialogueAct right){
     return (left.isSubsumedBy(right) && right.isSubsumedBy(left));
@@ -654,6 +654,226 @@ public abstract class Agent {
       return isGreaterEqual(new DialogueAct(left), new DialogueAct(right));
     }
     return isGreaterEqual(leftRdf, rightRdf);
+  }
+  
+  public boolean isEqual(Object left, Object right){
+    if (left instanceof String) {
+      if (right instanceof String) {
+        return isEqual((String) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isEqual((String) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isEqual((String) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isEqual((String) left, (DialogueAct) right);
+      }
+    } else if (left instanceof Rdf) {
+      if (right instanceof String) {
+        return isEqual((Rdf) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isEqual((Rdf) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isEqual((Rdf) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isEqual((Rdf) left, (DialogueAct) right);
+      }
+    } else if (left instanceof RdfClass) {
+      if (right instanceof String) {
+        return isEqual((RdfClass) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isEqual((RdfClass) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isEqual((RdfClass) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isEqual((RdfClass) left, (DialogueAct) right);
+      }
+    } else { // instanceof DialogueAct
+      if (right instanceof String) {
+        return isEqual((DialogueAct) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isEqual((DialogueAct) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isEqual((DialogueAct) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isEqual((DialogueAct) left, (DialogueAct) right);
+      }
+    }
+  }
+  
+  public boolean isSmaller(Object left, Object right){
+    if (left instanceof String) {
+      if (right instanceof String) {
+        return isSmaller((String) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isSmaller((String) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isSmaller((String) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isSmaller((String) left, (DialogueAct) right);
+      }
+    } else if (left instanceof Rdf) {
+      if (right instanceof String) {
+        return isSmaller((Rdf) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isSmaller((Rdf) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isSmaller((Rdf) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isSmaller((Rdf) left, (DialogueAct) right);
+      }
+    } else if (left instanceof RdfClass) {
+      if (right instanceof String) {
+        return isSmaller((RdfClass) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isSmaller((RdfClass) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isSmaller((RdfClass) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isSmaller((RdfClass) left, (DialogueAct) right);
+      }
+    } else { // instanceof DialogueAct
+      if (right instanceof String) {
+        return isSmaller((DialogueAct) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isSmaller((DialogueAct) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isSmaller((DialogueAct) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isSmaller((DialogueAct) left, (DialogueAct) right);
+      }
+    }
+  }
+  
+  public boolean isGreater(Object left, Object right){
+    if (left instanceof String) {
+      if (right instanceof String) {
+        return isGreater((String) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isGreater((String) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isGreater((String) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isGreater((String) left, (DialogueAct) right);
+      }
+    } else if (left instanceof Rdf) {
+      if (right instanceof String) {
+        return isGreater((Rdf) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isGreater((Rdf) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isGreater((Rdf) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isGreater((Rdf) left, (DialogueAct) right);
+      }
+    } else if (left instanceof RdfClass) {
+      if (right instanceof String) {
+        return isGreater((RdfClass) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isGreater((RdfClass) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isGreater((RdfClass) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isGreater((RdfClass) left, (DialogueAct) right);
+      }
+    } else { // instanceof DialogueAct
+      if (right instanceof String) {
+        return isGreater((DialogueAct) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isGreater((DialogueAct) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isGreater((DialogueAct) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isGreater((DialogueAct) left, (DialogueAct) right);
+      }
+    }
+  }
+  
+  public boolean isSmallerEqual(Object left, Object right){
+    if (left instanceof String) {
+      if (right instanceof String) {
+        return isSmallerEqual((String) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isSmallerEqual((String) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isSmallerEqual((String) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isSmallerEqual((String) left, (DialogueAct) right);
+      }
+    } else if (left instanceof Rdf) {
+      if (right instanceof String) {
+        return isSmallerEqual((Rdf) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isSmallerEqual((Rdf) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isSmallerEqual((Rdf) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isSmallerEqual((Rdf) left, (DialogueAct) right);
+      }
+    } else if (left instanceof RdfClass) {
+      if (right instanceof String) {
+        return isSmallerEqual((RdfClass) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isSmallerEqual((RdfClass) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isSmallerEqual((RdfClass) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isSmallerEqual((RdfClass) left, (DialogueAct) right);
+      }
+    } else { // instanceof DialogueAct
+      if (right instanceof String) {
+        return isSmallerEqual((DialogueAct) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isSmallerEqual((DialogueAct) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isSmallerEqual((DialogueAct) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isSmallerEqual((DialogueAct) left, (DialogueAct) right);
+      }
+    }
+  }
+  
+  public boolean isGreaterEqual(Object left, Object right){
+    if (left instanceof String) {
+      if (right instanceof String) {
+        return isSmallerEqual((String) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isSmallerEqual((String) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isSmallerEqual((String) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isSmallerEqual((String) left, (DialogueAct) right);
+      }
+    } else if (left instanceof Rdf) {
+      if (right instanceof String) {
+        return isSmallerEqual((Rdf) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isSmallerEqual((Rdf) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isSmallerEqual((Rdf) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isSmallerEqual((Rdf) left, (DialogueAct) right);
+      }
+    } else if (left instanceof RdfClass) {
+      if (right instanceof String) {
+        return isSmallerEqual((RdfClass) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isSmallerEqual((RdfClass) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isSmallerEqual((RdfClass) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isSmallerEqual((RdfClass) left, (DialogueAct) right);
+      }
+    } else { // instanceof DialogueAct
+      if (right instanceof String) {
+        return isSmallerEqual((DialogueAct) left, (String) right);
+      } else if (right instanceof Rdf) {
+        return isSmallerEqual((DialogueAct) left, (Rdf) right);
+      } else if (right instanceof RdfClass) {
+        return isSmallerEqual((DialogueAct) left, (RdfClass) right);
+      } else { // instanceof DialogueAct
+        return isSmallerEqual((DialogueAct) left, (DialogueAct) right);
+      }
+    }
   }
 
   /**
