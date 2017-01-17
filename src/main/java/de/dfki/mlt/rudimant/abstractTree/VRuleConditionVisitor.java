@@ -54,9 +54,6 @@ public class VRuleConditionVisitor extends VNullVisitor {
 
   private String lastbool;
   private String isTrue = "";
-
-  private String collectDAs;
-
   private String collectElements;
 
   @Override
@@ -67,46 +64,6 @@ public class VRuleConditionVisitor extends VNullVisitor {
       n = "!";
     }
     String function = "";
-//    if (node.rdf) {
-//      function = "RdfClass.isSubclassOf(";
-//    }
-//    else {
-//      function = "isSubsumed(";
-//    }
-    /* TODO: TAKE CARE OF OPERATORS THAT START WITH "." AND END WITH "(" (BINARY)
-     * OR ")" (UNARY, LIKE '.isEmpty()')
-     *
-     if (node.isSubsumed) {
-     this.lastbool = this.currentRule + this.counter++;
-     collectDAs = n;
-     if (node.notIfSubsume) {
-     collectDAs += "!";
-     }
-     node.left.visit(this);
-     collectDAs += (".isSubsumed(");
-     node.right.visit(this);
-     collectDAs += (")");
-
-     this.compiledLook.put(this.lastbool, collectDAs);
-     this.realLook.put(lastbool, collectDAs.replaceAll("\\\\\"", "\\\""));
-     collectDAs = null;
-     return;
-     } else if (node.doesSubsume) {
-     this.lastbool = this.currentRule + this.counter++;
-     collectDAs = n;
-     if (node.notIfSubsume) {
-     collectDAs += "!";
-     }
-     node.right.visit(this);
-     collectDAs += (".isSubsumed(");
-     node.left.visit(this);
-     collectDAs += (")");
-     this.compiledLook.put(this.lastbool, collectDAs);
-     this.realLook.put(lastbool, collectDAs.replaceAll("\\\\\"", "\\\""));
-     collectDAs = null;
-     return;
-     }
-     */
     if (node.right != null) {
       if (!(node.operator.equals("||") || node.operator.equals("&&"))) {
 //      if (node.left.getType() == null // then this is probably an rdf
@@ -157,7 +114,8 @@ public class VRuleConditionVisitor extends VNullVisitor {
     } else if (exp instanceof USingleValue
             && ((USingleValue) exp).type.equals("String")) {
       String s = ((USingleValue) exp).content;
-      out.append("\\\"").append(s.substring(1, s.length() - 1)).append("\\\"");
+//      out.append("\\\"").append(s).append("\\\"");
+      out.append(s);
     } else {
       out.append("\" + ");
       whatVDATokenWants = "";
@@ -189,19 +147,17 @@ public class VRuleConditionVisitor extends VNullVisitor {
     out.append(')');
     out.append("\")");
     String result = out.toString();
-    if (collectDAs != null) {
-      this.collectDAs += result;
-      return;
-    } else if (!funcargs.equals("")) {
+    if (!funcargs.equals("")) {
       this.funcargs += result;
       return;
     } else if (collectElements != null) {
       this.collectElements += result;
       return;
     }
+    // normally, this should not be needed here
     this.lastbool = this.currentRule + this.counter++;
     this.compiledLook.put(this.lastbool, result);
-    this.realLook.put(lastbool, result.replaceAll("\\\\\"", "\\\""));
+    this.realLook.put(lastbool, result);
   }
 
   /*@Override
@@ -283,10 +239,12 @@ public class VRuleConditionVisitor extends VNullVisitor {
     funcargs += (")");
     if (fieldAccessPart != null) {
       this.fieldAccessPart += funcargs;
+      funcargs = "";
       return;
     }
     if (collectElements != null) {
       this.collectElements += funcargs + isTrue;
+      funcargs = "";
       return;
     }
     this.lastbool = this.currentRule + this.counter++;
@@ -361,10 +319,6 @@ public class VRuleConditionVisitor extends VNullVisitor {
       return;
     } else if (!funcargs.equals("")) {
       this.funcargs += ret;
-      return;
-    }
-    if (collectDAs != null) {
-      this.collectDAs += ret;
       return;
     }
     // if none of the above happens, we do not want to collect the variable as
