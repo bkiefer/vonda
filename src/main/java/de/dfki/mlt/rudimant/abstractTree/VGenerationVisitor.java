@@ -149,6 +149,10 @@ public class VGenerationVisitor implements RudiVisitor {
       if (pa != null) {
         out.append(functional ? ".setSingleValue(\"" : ".setValue(\"");
         out.append(pa.label.content).append("\", ");
+      } else {
+        // TODO: this is probably not good, but it happens (as in QuizRunning,
+        // newTurn.Asker=turn.Respoder)
+        out.append(" = ");
       }
     } else {
       node.left.visitWithComments(this);
