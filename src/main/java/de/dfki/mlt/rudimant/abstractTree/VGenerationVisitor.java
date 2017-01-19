@@ -154,6 +154,11 @@ public class VGenerationVisitor implements RudiVisitor {
       node.left.visitWithComments(this);
       out.append(" = ");
     }
+    if(!node.type.equals(node.right.getType())){
+      // then there is either sth wrong here, what would at least have resulted 
+      // in warnings in type testing, or it is possible to cast the right part
+      out.append("(" + node.type + ") ");
+    }
     node.right.visitWithComments(this);
     if (pa != null) {
       out.append(")"); // close call to set(Single)Value()
