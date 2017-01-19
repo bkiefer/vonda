@@ -669,15 +669,15 @@ public class VGenerationVisitor implements RudiVisitor {
     }
     //mem.enterNextEnvironment();
     out.append(node.visibility + " ");
-    if (node.return_type.startsWith("<")) {
-          if (node.return_type.startsWith("<dial")) {  // <dial:DialogueAct > has to be replaced by DialogueAct
-            out.append("DialogueAct ");
-          } else { // every other type starting with < has to be replaced by Rdf
-            out.append("Rdf ");
-          }
-        } else {
-          out.append(node.return_type + " ");
-        }
+    if (Mem.isRdfType(node.return_type)) {
+      if (node.return_type.equals(DIALOGUE_ACT_TYPE)) {  // <dial:DialogueAct > has to be replaced by DialogueAct
+        out.append("DialogueAct ");
+      } else { // every other type starting with < has to be replaced by Rdf
+        out.append("Rdf ");
+      }
+    } else {
+      out.append(node.return_type + " ");
+    }
     out.append(node.name + "(");
     for (int i = 0; i < node.parameters.size(); i++) {
       if (i != 0) {
@@ -758,29 +758,18 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UFieldAccess node) {
-    int to = node.parts.size();
     List<String> representation = new ArrayList<>();
     node.parts.get(0).visitWithComments(this);
+    // getvalue branch says: (not sure what's right)
+    // representation.add(((RTExpression) (node.parts.get(0))).getType());
     representation.add(node.representation.get(0));
-    String lastType = ((RTExpression) (node.parts.get(0))).getType();
-    // TODO: EXPLAIN WHEN THE BOOLEAN IS TRUE, AND WHY
-    to = notPrintLastField ? to - 1 : to;
+    int to = node.parts.size();
+    // don't print the last field if this is in an assignment rather than an
+    // access, which means that a set method is generated.
+    if (notPrintLastField) {
+      --to;
+    }
     for (int i = 1; i < to; i++) {
-      /*
-      if (node.parts.get(i) instanceof UVariable) {
-        if (node.isRdfType(lastType)) {
-          representation.add(node.representation.get(i));
-          // then we are in the case that this is actually an rdf operation
-          out.append(".getValue(\"" + node.representation.get(i) + "\") ");
-          lastType = node.getPropertyType(mem.getProxy(), mem, representation);
-          continue;
-        } else {
-          representation.clear();
-        }
-      }
-      out.append(".");
-      node.parts.get(i).visitWithComments(this);
-      */
       if (node.parts.get(i) instanceof UPropertyAccess) {
         UPropertyAccess pa = (UPropertyAccess)node.parts.get(i);
         // then we are in the case that this is actually an rdf operation
