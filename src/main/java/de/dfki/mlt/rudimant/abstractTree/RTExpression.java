@@ -56,17 +56,29 @@ public abstract class RTExpression extends RudiTree {
   }
 
   public RTExpression ensureBoolean() {
-    if ("boolean".equals(type) || this instanceof ExpBoolean) {
-      return this;
-    }
-
     ExpBoolean result = null;
     USingleValue right = null;
+    
+    if (this instanceof ExpBoolean) {
+      return this;
+    } else if ("boolean".equals(type)){
+      if(this instanceof USingleValue){
+        return this;
+      } else {
+        // if this is a funccall with type boolean, we'd still like to have it
+        // as a boolean, at least wrapped up
+        result = new ExpBoolean(fullexp, this, null, null);
+      result.positions = positions;
+      return result;
+      }
+    }
     // this is some other kind of expression, turn it into a comparison or
     // method call returning a boolean
     // TODO check if there's something missing for RDF types
     if (isComplexType()) {
       result = new ExpBoolean(fullexp, this, null, ".isEmpty()");
+      result.positions = positions;
+      return result;
     }
     if (type == null) {
       right = new USingleValue("null", "Object");

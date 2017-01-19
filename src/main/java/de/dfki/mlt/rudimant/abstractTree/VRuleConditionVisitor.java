@@ -99,11 +99,11 @@ public class VRuleConditionVisitor extends VNullVisitor {
     } else {
       node.left.visit(this);
       String l = this.lastbool;
-      if ("!".equals(node.operator)) {
+//      if ("!".equals(node.operator)) {
         this.lastbool = this.currentRule + this.counter++;
         this.compiledLook.put(this.lastbool, n + l);
         this.realLook.put(lastbool, n + l);
-      }
+//      }
     }
     //System.out.println("bool number " + this.compiledLook.keySet().size());
   }

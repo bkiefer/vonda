@@ -201,15 +201,15 @@ public class VGenerationVisitor implements RudiVisitor {
      return;
      }
      */
-    if(node.operator.contains("(")){
-      out.append(node.operator);
-      node.left.visitWithComments(this);
-      out.append(", ");
-      node.right.visitWithComments(this);
-      out.append(")");
-      return;
-    }
     if (node.right != null) {
+      if(node.operator.contains("(")){
+        out.append(node.operator);
+        node.left.visitWithComments(this);
+        out.append(", ");
+        node.right.visitWithComments(this);
+        out.append(")");
+        return;
+      }
       out.append("(");
       node.left.visitWithComments(this);
       out.append(" ");
