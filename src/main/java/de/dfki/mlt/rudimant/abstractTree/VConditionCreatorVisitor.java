@@ -48,7 +48,7 @@ public class VConditionCreatorVisitor extends VNullVisitor {
       this.enteringCondition = false;
       int i = 0;
       for (Object e : expNames) {
-        this.creation.append("boolean " + expNames[i++] + " = false;\n");
+        this.creation.append("boolean ").append(expNames[i++]).append(" = false;\n");
       }
     }
     String n = "";
@@ -108,17 +108,24 @@ public class VConditionCreatorVisitor extends VNullVisitor {
         return;
       }
     } else {
-      if ("!".equals(node.operator)) {
+//      if ("!".equals(node.operator)) {
         //        this.condition.append("!");
         this.visitNode(node.left);
         this.creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter++]) + ";\n");
-        return;
-      }
-      this.visitNode(node.left);
+//        return;
+//      }
+//      this.visitNode(node.left);
     }
   }
 
   private void myVisitNode(RTExpression node) {
+    if(this.enteringCondition){
+      // we are in a case where this is a condition with one single element
+      this.enteringCondition = false;
+      creation.append("boolean ").append(expNames[counter]).append(" = ")
+            .append(compiledLook.get(expNames[counter])).append(";\n");
+      return;
+    }
     creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
     condition.append(expNames[counter++]);
   }

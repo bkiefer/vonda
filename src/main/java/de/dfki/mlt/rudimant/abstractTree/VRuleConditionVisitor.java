@@ -192,8 +192,8 @@ public class VRuleConditionVisitor extends VNullVisitor {
         fieldAccessPart += node.representation.get(i) + "\") ";
       } else {
         // TODO: EXPLAIN THIS IF
-        if (! (node.parts.get(i) instanceof UVariable))
-          representation.clear();
+//        if (! (node.parts.get(i) instanceof UVariable))
+//        representation.clear();
         fieldAccessPart += (".");
         node.parts.get(i).visit(this);
       }
@@ -226,8 +226,6 @@ public class VRuleConditionVisitor extends VNullVisitor {
     if(node.realOrigin != null) {
       String t = node.realOrigin;
       funcargs = (t.substring(0, 1).toLowerCase() + t.substring(1) + ".");
-    } else {
-      funcargs = "";
     }
     funcargs += (node.content + "(");
     for (int i = 0; i < node.exps.size(); i++) {
@@ -241,8 +239,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
       this.fieldAccessPart += funcargs;
       funcargs = "";
       return;
-    }
-    if (collectElements != null) {
+    } else if (collectElements != null) {
       this.collectElements += funcargs + isTrue;
       funcargs = "";
       return;
@@ -256,11 +253,14 @@ public class VRuleConditionVisitor extends VNullVisitor {
 
   @Override
   public void visitNode(USingleValue node) {
-    if (collectElements != null) {
+    if (!funcargs.equals("")) {
+      funcargs += node.content + isTrue;
+      return;
+    } else if (collectElements != null) {
       this.collectElements += node.content + isTrue;
       return;
-    } else if (!funcargs.equals("")) {
-      funcargs += node.content + isTrue;
+    } else if (fieldAccessPart != null) {
+      this.fieldAccessPart += node.content + isTrue;
       return;
     }
     this.lastbool = this.currentRule + this.counter++;
