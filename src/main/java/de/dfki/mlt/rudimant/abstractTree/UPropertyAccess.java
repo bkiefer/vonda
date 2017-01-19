@@ -23,6 +23,9 @@ public class UPropertyAccess extends RTExpLeaf {
 
   public UPropertyAccess(UVariable l, boolean var, String rt,
       boolean func) {
+    // an access will always return sth of type Object, so to not get null
+    // I'll set the type of this to Object by default
+    type = "Object";
     label = l;
     propertyVariable = var;
     rangeType = rt;

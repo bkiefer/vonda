@@ -88,20 +88,24 @@ public class VTestTypeVisitor implements RudiVisitor {
     // to left if it was given? As the type is not yet in the memory, we won't
     // find it while visiting left and therefore get at least tons of warnings
     // Otherwise: infer type from right
+    if(node.declaration){
+      node.left.type = node.type;
+    }
     node.left.visit(this);
-
-    if (node.actualType == null) {
-      node.actualType = node.type = node.right.type;
+    if (node.type == null) {
+      node.type = node.right.type;
     } else {
-      node.actualType = mem.checkRdf(node.actualType);
+      node.type = mem.checkRdf(node.type);
       if (node.right.type == null) {
-        node.right.propagateType(node.actualType);
-        node.type = node.actualType;
+        node.right.propagateType(node.type);
       } else {
-        if ((node.type = mem.mergeTypes(node.actualType, node.right.type))
+        String t = "";
+        if ((t = mem.mergeTypes(node.type, node.right.type))
             == null) {
           rudi.typeError("Declared type incompatible with expression: "
-                  + node.actualType + ", " + node.right.type, node);
+                  + node.type + ", " + node.right.type, node);
+        } else {
+          node.type = t;
         }
       }
     }
@@ -114,8 +118,6 @@ public class VTestTypeVisitor implements RudiVisitor {
         if (node.type == null) {
           rudi.typeError("Type of variable unkown: "
                   + node.left + " in " + node, node);
-        } else {
-        node.actualType = node.type;
         }
       } else {
         // is this a variable declaration for an already existing variable?
@@ -525,6 +527,8 @@ public class VTestTypeVisitor implements RudiVisitor {
           "  of partial field access for " + var.content + " to " +
           currentType, node);
     }
+    // TODO: an access will always return sth of type Object, so to not get null
+    // I'll set the type of this to Object by default
     return new UPropertyAccess(var, false, currentType, isFunctional);
   }
 

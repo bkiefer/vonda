@@ -15,13 +15,12 @@ import java.util.Arrays;
  */
 public class ExpAssignment extends RTExpression {
 
-  RudiTree left; // can be either a UVariable or a Field access
+  RTExpression left; // can be either a UVariable or a Field access
   RTExpression right;
   boolean declaration;
-  String actualType;
   String position;
 
-  public ExpAssignment(String full, RudiTree left, RTExpression right,
+  public ExpAssignment(String full, RTExpression left, RTExpression right,
           String position) {
     fullexp = full;
     this.left = left;
@@ -35,14 +34,13 @@ public class ExpAssignment extends RTExpression {
    * @param actualType the declared type
    * @param left
    * @param right
-   * @param declaration
    * @param position
    */
-  public ExpAssignment(String full, String actualType, RudiTree left, RTExpression right,
+  public ExpAssignment(String full, String actualType, RTExpression left, RTExpression right,
           String position) {
     this(full, left, right, position);
     this.declaration = true;
-    this.actualType = actualType;
+    this.type = actualType;
   }
 
   @Override

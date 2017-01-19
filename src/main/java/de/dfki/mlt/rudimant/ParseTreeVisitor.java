@@ -320,14 +320,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // ((DEC_VAR | VARIABLE)? VARIABLE | field_access) ASSIGN exp
     if (ctx.getChildCount() == 3) { // no declaration
       RudiTree left = this.visit(ctx.getChild(0));
-      return new ExpAssignment(ctx.getText(), left,
+      return new ExpAssignment(ctx.getText(), (RTExpression)left,
               (RTExpression) this.visit(ctx.getChild(2)), currentClass).setPosition(ctx, currentClass);
     } else {  // declaration
       String declaredType = ctx.getChild(0).getText();
       if (declaredType.equals("var")) {
         declaredType = null;
       }
-      return new ExpAssignment(ctx.getText(), declaredType, this.visit(ctx.getChild(1)),
+      return new ExpAssignment(ctx.getText(), declaredType, (RTExpression)this.visit(ctx.getChild(1)),
               (RTExpression) this.visit(ctx.getChild(3)), currentClass).setPosition(ctx, currentClass);
     }
   }
