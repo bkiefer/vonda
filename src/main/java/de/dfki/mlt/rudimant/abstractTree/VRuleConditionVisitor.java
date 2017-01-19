@@ -198,12 +198,12 @@ public class VRuleConditionVisitor extends VNullVisitor {
         node.parts.get(i).visit(this);
       }
     }
-    if (collectElements != null) {
-      this.collectElements += fieldAccessPart + isTrue;
+     if (!funcargs.equals("") && !fieldAccessPart.contains(funcargs)) {
+      funcargs += fieldAccessPart;
       fieldAccessPart = saved;
       return;
-    } else if (!funcargs.equals("") && !fieldAccessPart.contains(funcargs)) {
-      funcargs += fieldAccessPart;
+    } else if (collectElements != null) {
+      this.collectElements += fieldAccessPart + isTrue;
       fieldAccessPart = saved;
       return;
     }

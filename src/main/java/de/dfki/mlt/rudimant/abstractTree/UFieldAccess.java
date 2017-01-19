@@ -19,9 +19,10 @@ public class UFieldAccess extends RTExpLeaf {
   List<String> representation;
   boolean asked = false;
 
-  public UFieldAccess(List<RudiTree> parts, List<String> representation) {
+  public UFieldAccess(String fullexp, List<RudiTree> parts, List<String> representation) {
     this.parts = parts;
     this.representation = representation;
+    this.fullexp = fullexp;
   }
 
   @Override

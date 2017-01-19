@@ -25,7 +25,7 @@ if (myLastDA() <= #Request(Liking)) {
     // see InterpretationHandler.java
     String val = user.feedback.second;
     da = addLastDA(#Inform(Liking, theme=^th, value=^val));
-    setLiking(user, theme, val);
+    setLiking(user, th, val);
   } else {
     logger.warn("liking request outside intro");
   }
@@ -33,7 +33,7 @@ if (myLastDA() <= #Request(Liking)) {
 }
 
 check_age:
-if (myLastDA <= #Request(Name)) {
+if (myLastDA() <= #Request(Name)) {
   if (activity <= Introduction) {
     String val = user.feedback.second;
     da = addLastDA(#Inform(Name, value=^val));
@@ -61,7 +61,7 @@ if (myLastDA <= #Request(top)) {
     break;
   }
   if (replyType == "Request") {
-    reply = myLastDA().copy();
+    DialogueAct reply = myLastDA().copy();
     reply.setDialogueAct(replyType);
     addLastDA(reply);
   }
@@ -71,6 +71,7 @@ if (myLastDA <= #Request(top)) {
 // Quiz
 // **********************************************************************
 
+quiz:
 if (activity <= Quiz) {
  question_read_by_user:
   if (activity.status == "running_wait_for_question_read") {

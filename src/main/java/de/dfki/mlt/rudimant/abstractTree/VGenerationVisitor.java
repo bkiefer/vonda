@@ -267,7 +267,7 @@ public class VGenerationVisitor implements RudiVisitor {
       out.append(", ");
       // TODO: is there a reason why this should ever be something special?
 //      visitDaToken(node.exps.get(i));
-      out.append(node.exps.get(i).fullexp);
+      visitDaToken(node.exps.get(i));
       out.append(" = ");
       visitDaToken(node.exps.get(i + 1));
     }
@@ -789,8 +789,8 @@ public class VGenerationVisitor implements RudiVisitor {
         out.append(pa.label.content).append("\") ");
       } else {
         // TODO: EXPLAIN THIS IF
-        if (! (node.parts.get(i) instanceof UVariable))
-          representation.clear();
+//        if (! (node.parts.get(i) instanceof UVariable))
+//          representation.clear();
         out.append(".");
         node.parts.get(i).visit(this);
       }
