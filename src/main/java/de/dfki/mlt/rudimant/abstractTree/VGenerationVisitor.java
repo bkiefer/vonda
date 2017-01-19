@@ -273,11 +273,13 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpConditional node) {
+    out.append('(');
     node.boolexp.visitWithComments(this);
     out.append(" ? ");
     node.thenexp.visitWithComments(this);
     out.append(" : ");
     node.elseexp.visitWithComments(this);
+    out.append(')');
   }
 
   @Override
