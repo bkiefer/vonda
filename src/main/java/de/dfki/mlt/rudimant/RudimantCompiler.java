@@ -45,7 +45,8 @@ public class RudimantCompiler {
   private File inputDirectory;
   private File outputDirectory;
   // there may be users that do not start the .rudi files with capital letters,
-  // we don't want to crash in that case by turning it to uppercase and then trying to read it
+  // we don't want to crash in that case by turning it to uppercase and then
+  // trying to read it
   private String inputRealName;
 
 //  private StringBuffer out;
@@ -85,7 +86,6 @@ public class RudimantCompiler {
   }
 
   private RudimantCompiler(RudimantCompiler parentCompiler) {
-//    wrapperClass = parentCompiler.getWrapperClass();
     wrapperClass = parentCompiler.className;
     constructorArgs = parentCompiler.getConstructorArgs();
     mem = parentCompiler.mem;
@@ -146,7 +146,6 @@ public class RudimantCompiler {
     inputDirectory = topLevel.getParentFile();
     outputDirectory = outputdir;
     className = getClassName(topLevel);
-    // subPackage.add(className);
 
     if (packageName != null && !packageName.isEmpty()) {
       subPackage.addAll(Arrays.asList(packageName.split("\\.")));
@@ -246,9 +245,6 @@ public class RudimantCompiler {
 
   public void flush() {
     try {
-//      String formattedSource = new Formatter().formatSource(out.toString());
-//      toFile.write(formattedSource);
-//      toFile.flush();
       out.flush();
     } catch (IOException ex) {
       throw new RuntimeException(ex);
@@ -272,11 +268,8 @@ public class RudimantCompiler {
   private void processForReal(File outputdir) throws IOException {
     if (!outputdir.isDirectory()) {
       Files.createDirectories(outputdir.toPath());
-      // throw new IOException(outputdir + " is not a directory");
     }
     File outputFile = new File(outputdir, className + ".java");
-//    toFile = Files.newBufferedWriter(outputFile.toPath());
-//    out = new StringBuffer();
     Writer output = Files.newBufferedWriter(outputFile.toPath());
 
     File inputFile = getInputFile();

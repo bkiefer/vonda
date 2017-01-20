@@ -7,9 +7,6 @@ package de.dfki.mlt.rudimant.abstractTree;
 
 import static de.dfki.mlt.rudimant.Constants.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +55,7 @@ public abstract class RTExpression extends RudiTree {
   public RTExpression ensureBoolean() {
     ExpBoolean result = null;
     USingleValue right = null;
-    
+
     if (this instanceof ExpBoolean) {
       return this;
     } else if ("boolean".equals(type)){

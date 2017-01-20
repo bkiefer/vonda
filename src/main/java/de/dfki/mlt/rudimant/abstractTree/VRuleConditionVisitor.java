@@ -8,18 +8,16 @@ package de.dfki.mlt.rudimant.abstractTree;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.logging.Level;
 
-import org.apache.thrift.TException;
-import org.apache.tools.ant.taskdefs.Javadoc.AccessType;
-
-import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
 
 /**
  *
  * @author Anna Welker, anna.welker@dfki.de
+ *
+ * Collects data to generate the complex boolean conditions to log the rules
+ * properly.
  */
 public class VRuleConditionVisitor extends VNullVisitor {
 
@@ -66,8 +64,6 @@ public class VRuleConditionVisitor extends VNullVisitor {
     String function = "";
     if (node.right != null) {
       if (!(node.operator.equals("||") || node.operator.equals("&&"))) {
-//      if (node.left.getType() == null // then this is probably an rdf
-//              || !node.left.getType().equals("boolean")) {
         if(node.operator.contains("(")){
           collectElements = node.operator;
           node.left.visit(this);
@@ -99,13 +95,10 @@ public class VRuleConditionVisitor extends VNullVisitor {
     } else {
       node.left.visit(this);
       String l = this.lastbool;
-//      if ("!".equals(node.operator)) {
         this.lastbool = this.currentRule + this.counter++;
         this.compiledLook.put(this.lastbool, n + l);
         this.realLook.put(lastbool, n + l);
-//      }
     }
-    //System.out.println("bool number " + this.compiledLook.keySet().size());
   }
 
   public void visitDaToken(StringBuilder out, RTExpression exp) {
@@ -114,7 +107,6 @@ public class VRuleConditionVisitor extends VNullVisitor {
     } else if (exp instanceof USingleValue
             && ((USingleValue) exp).type.equals("String")) {
       String s = ((USingleValue) exp).content;
-//      out.append("\\\"").append(s).append("\\\"");
       out.append(s);
     } else {
       out.append("\" + ");
@@ -160,17 +152,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
     this.realLook.put(lastbool, result);
   }
 
-  /*@Override
-   public void visitNode(ExpFuncOnObject node) {
-   if (collectElements != null) {
-   this.collectElements += node.look + isTrue + " ";
-   return;
-   }
-   this.lastbool = this.currentRule + this.counter++;
-   this.compiledLook.put(this.lastbool, node.look + isTrue + " ");
-   this.realLook.put(lastbool, node.look + isTrue + " ");
-   isTrue = "";
-   }*/
+  // this will end up in the resulting Java code and do the work
   private String fieldAccessPart = null;
 
   @Override
@@ -269,34 +251,6 @@ public class VRuleConditionVisitor extends VNullVisitor {
     isTrue = "";
   }
 
-  /* TODO: is this covered correctly in USingleValue?
-   @Override
-   public void visitNode(UString node) {
-   if (collectElements != null) {
-   this.collectElements += node.content.substring(0, node.content.length() - 1)
-   + "\"" + " " + isTrue;
-   return;
-   } else if (!funcargs.equals("")) {
-   this.funcargs += node.content.substring(0, node.content.length() - 1)
-   + "\"" + " " + isTrue;
-   return;
-   }
-   this.lastbool = this.currentRule + this.counter++;
-   if (!node.content.contains("\"")) {
-   this.compiledLook.put(this.lastbool,
-   node.content + " " + isTrue);
-   this.realLook.put(lastbool,
-   node.content + " " + isTrue);
-   return;
-   }
-   this.compiledLook.put(this.lastbool,
-   node.content.substring(0, node.content.length() - 1)
-   + "\"" + " " + isTrue);
-   this.realLook.put(lastbool,
-   node.content.substring(0, node.content.length() - 1)
-   + "\"" + " " + isTrue);
-   isTrue = "";
-   }*/
   @Override
   public void visitNode(UVariable node) {
     String ret = "";
