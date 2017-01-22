@@ -41,6 +41,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
     this.rudi = rudi;
     this.mem = rudi.getMem();
     this.enteringCondition = true;
+    this.lastbool = null;
   }
 
   @Override
@@ -96,11 +97,18 @@ public class VRuleConditionVisitor extends VNullVisitor {
               + l + node.operator + r + ")");
       this.realLook.put(lastbool, n + "(" + l + node.operator + r + ")");
     } else {
-      node.left.visitStringV(this);
-      String l = this.lastbool;
+      if("!".equals(node.operator)){
+        node.left.visitStringV(this);
+        String l = this.lastbool;
+        this.lastbool = this.currentRule + this.counter++;
+        this.compiledLook.put(this.lastbool, n + l);
+        this.realLook.put(lastbool, n + l);
+        return null;
+      }
+      String left = node.left.visitStringV(this);
       this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool, n + l);
-      this.realLook.put(lastbool, n + l);
+      this.compiledLook.put(this.lastbool, left);
+      this.realLook.put(lastbool, left);
     }
     return null;
   }
@@ -134,7 +142,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
       ret += ", " + visitDaToken(node.exps.get(i));
       ret += " = " + visitDaToken(node.exps.get(i + 1));
     }
-    ret += ")\"))";
+    ret += ")\")";
     return ret;
     // normally, this should not be needed here
 //    this.lastbool = this.currentRule + this.counter++;

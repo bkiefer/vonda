@@ -35,7 +35,7 @@ public class VGenerationVisitor implements RudiVisitor {
   private RudimantCompiler rudi;
   private Mem mem;
   private VRuleConditionVisitor condV;
-  private VConditionCreatorVisitor condV2;
+  private VBoolVarCreatorVisitor condV2;
   LinkedList<Token> collectedTokens;
 
   // activate this bool to get double escaped String literals
@@ -49,7 +49,7 @@ public class VGenerationVisitor implements RudiVisitor {
     this.out = r;
     this.mem = rudi.getMem();
     condV = new VRuleConditionVisitor();
-    condV2 = new VConditionCreatorVisitor();
+    condV2 = new VBoolVarCreatorVisitor();
     this.collectedTokens = collectedTokens;
   }
 
@@ -729,7 +729,7 @@ public class VGenerationVisitor implements RudiVisitor {
       return ((USingleValue) bool_exp).content;
     }
     RTExpression bool = bool_exp;
-
+    
     // remembers how the expressions should be realized by rudimant
     LinkedHashMap<String, String> compiledLook = new LinkedHashMap<>();
 
@@ -738,7 +738,8 @@ public class VGenerationVisitor implements RudiVisitor {
     condV.renewMap(rule, realLook, compiledLook, this.rudi);
     condV.visitNode(bool);
     // now create a condition from those things
-    condV2.newMap(realLook.keySet().toArray(), compiledLook);
+    Object[] expnames = realLook.keySet().toArray();
+    condV2.newMap(expnames, compiledLook);
     condV2.visitNode(bool_exp);
 
     out.append(condV2.getBoolCreation().toString());
@@ -755,7 +756,7 @@ public class VGenerationVisitor implements RudiVisitor {
             + mem.getClassName() + "\");\n");
 
     out.append("}\n");
-    return condV2.getCondition().toString();
+    return (String) expnames[expnames.length - 1];
   }
 
   public void dummyLoggingMethod(String rule, String className, Map toLog) {
