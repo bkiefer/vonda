@@ -54,6 +54,11 @@ public class VGenerationVisitor implements RudiVisitor {
   }
 
   @Override
+  public void visitNode(RudiTree node) {
+    node.visitWithComments(this);
+  }
+
+  @Override
   public void visitNode(RTExpression node) {
     node.visitWithComments(this);
   }

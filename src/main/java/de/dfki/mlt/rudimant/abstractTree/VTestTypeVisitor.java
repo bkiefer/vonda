@@ -27,6 +27,11 @@ public class VTestTypeVisitor implements RudiVisitor {
   private Mem mem;
 
   @Override
+  public void visitNode(RudiTree node) {
+    node.visit(this);
+  }
+
+  @Override
   public void visitNode(RTExpression node) {
     node.visit(this);
   }

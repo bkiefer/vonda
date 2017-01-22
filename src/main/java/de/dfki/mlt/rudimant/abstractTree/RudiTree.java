@@ -40,6 +40,11 @@ public abstract class RudiTree {
     int endPos = this.positions[1];
     checkComments(v, endPos);
   }
+  
+  /**
+   * the visitMethod for the visitor that allows to return Strings
+   */
+  public abstract String visitStringV(RTStringVisitor v);
 
   private void checkComments(VGenerationVisitor v, int firstPos) {
       while (!v.collectedTokens.isEmpty() && v.collectedTokens.get(0).getTokenIndex() < firstPos) {

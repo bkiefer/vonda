@@ -38,6 +38,11 @@ public class UPropertyAccess extends RTExpLeaf {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+  
+  @Override
+  public String visitStringV(RTStringVisitor v){
+    return v.visitNode(this);
+  }
 
   public Iterable<? extends RudiTree> getDtrs() {
     RudiTree[] dtrs = { label };

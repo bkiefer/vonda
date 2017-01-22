@@ -42,7 +42,7 @@ public class VConditionCreatorVisitor extends VNullVisitor {
   private boolean enteringCondition;
 
   @Override
-  public void visitNode(ExpBoolean node) {
+  public String visitNode(ExpBoolean node) {
     if (this.enteringCondition) {
       // we are at the beginning; initialize all boolean vars of this condition
       this.enteringCondition = false;
@@ -56,31 +56,13 @@ public class VConditionCreatorVisitor extends VNullVisitor {
       this.condition.append("!");
       n = "!";
     }
-    /* TODO: TAKE CARE OF OPERATORS THAT START WITH "." AND END WITH "(" (BINARY)
-     * OR ")" (UNARY, LIKE '.isEmpty()')
-    if (node.doesSubsume || node.isSubsumed) {
-      String subnot = "";
-      if (node.notIfSubsume) {
-        subnot = "!";
-      }
-      this.condition.append(subnot + n + expNames[counter]);
-      this.creation.append(expNames[counter] + " = " + subnot + n
-              + compiledLook.get(expNames[counter++]) + ";\n");
-      return;
-    }
-    */
     if (node.right != null) {
-      //      if (node.left.getType() == null // then this is probably an rdf
-      //              || !node.left.getType().equals("boolean")) {
-      //        this.condition.append(expNames[counter++]);
-      //        return;
-      //      }
       if (!(node.operator.equals("||") || node.operator.equals("&&"))) {
         // we do not go deeper
         this.creation.append(expNames[counter] + " = " + n
                 + compiledLook.get(expNames[counter]) + ";\n");
         this.condition.append(expNames[counter++]);
-        return;
+        return null;
       } // else
       if (node.operator.equals("||")) {
         this.condition.append("(");
@@ -93,7 +75,7 @@ public class VConditionCreatorVisitor extends VNullVisitor {
         this.creation.append(expNames[counter] + " = " + n
                 + compiledLook.get(expNames[counter++]) + ";\n");
         //        this.condition.append(expNames[counter++]);
-        return;
+        return null;
       } else if (node.operator.equals("&&")) {
         this.condition.append("(");
         this.visitNode(node.left);
@@ -105,7 +87,7 @@ public class VConditionCreatorVisitor extends VNullVisitor {
         this.creation.append(expNames[counter] + " = " + n
                 + compiledLook.get(expNames[counter++]) + ";\n");
         //        this.condition.append(expNames[counter++]);
-        return;
+        return null;
       }
     } else {
 //      if ("!".equals(node.operator)) {
@@ -116,48 +98,49 @@ public class VConditionCreatorVisitor extends VNullVisitor {
 //      }
 //      this.visitNode(node.left);
     }
+    return null;
   }
 
-  private void myVisitNode(RTExpression node) {
+  private String myVisitNode(RTExpression node) {
     if(this.enteringCondition){
-      // we are in a case where this is a condition with one single element
+//       we are in a case where this is a condition with one single element
       this.enteringCondition = false;
       creation.append("boolean ").append(expNames[counter]).append(" = ")
             .append(compiledLook.get(expNames[counter])).append(";\n");
-      return;
     }
-    creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
-    condition.append(expNames[counter++]);
+//    creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
+//    condition.append(expNames[counter++]);
+    return null;
   }
 
   @Override
-  public void visitNode(ExpConditional node) {
-    myVisitNode(node);
+  public String visitNode(ExpConditional node) {
+    return myVisitNode(node);
   }
 
   @Override
-  public void visitNode(UFieldAccess node) {
-    myVisitNode(node);
+  public String visitNode(UFieldAccess node) {
+    return myVisitNode(node);
   }
 
   @Override
-  public void visitNode(UFuncCall node) {
-    myVisitNode(node);
+  public String visitNode(UFuncCall node) {
+    return myVisitNode(node);
   }
 
   @Override
-  public void visitNode(USingleValue node) {
-    myVisitNode(node);
+  public String visitNode(USingleValue node) {
+    return myVisitNode(node);
   }
 
   @Override
-  public void visitNode(UVariable node) {
-    myVisitNode(node);
+  public String visitNode(UVariable node) {
+    return myVisitNode(node);
   }
 
   @Override
-  public void visitNode(UWildcard node) {
-    myVisitNode(node);
+  public String visitNode(UWildcard node) {
+    return myVisitNode(node);
   }
 
 }

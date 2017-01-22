@@ -51,8 +51,9 @@ About the architecture of rudimant
     added a lexeme, fix visitTerminal; if required, add a case 
     RobotGrammarLexer.<yourTerminal> and do with it whatever you want.
   - If you added a new RudiTree class in the preceding step:
-      - Add a visitNode method for that class to the RudiVisitor interface; this
-        will force you to add the visit to every visitor class.
+      - Add a visitNode method for that class to the RudiVisitor interface and
+        to the RTStringVisitor; this will force you to add the visit to every
+        visitor class.
       - Implement those visit methods; remember that after VTypeCheckVisitor,
         the expressions should know their type, and that VRuleConditionVisitor
         should produce the exact same code to represent your node as

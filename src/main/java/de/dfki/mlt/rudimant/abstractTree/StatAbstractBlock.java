@@ -27,6 +27,11 @@ public class StatAbstractBlock extends RTStatement {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+  
+  @Override
+  public String visitStringV(RTStringVisitor v){
+    return v.visitNode(this);
+  }
 
   public Iterable<? extends RudiTree> getDtrs() { return statblock; }
 }
