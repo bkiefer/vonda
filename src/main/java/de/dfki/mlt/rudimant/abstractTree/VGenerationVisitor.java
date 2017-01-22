@@ -264,6 +264,14 @@ public class VGenerationVisitor implements RudiVisitor {
     out.append("// add to this set the name of all rules you want to be logged\n");
     out.append("private Set<String> rulesToLog = new HashSet<>();\n");
 
+    // create variable fields for all those classes whose concrete instances we
+    // will need
+    for (String n : mem.getNeededClasses(node.classname)) {
+      out.append("private final ");
+      out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
+                    + n.substring(0, 1).toLowerCase() + n.substring(1));
+      out.append(";\n");
+    }
     // initialize all class attributes before the main process method,
     // do all those import things now - but before that, we have to know about
     // all the variables declared here
@@ -313,24 +321,26 @@ public class VGenerationVisitor implements RudiVisitor {
     } else {
       args = "";
     }
+    // get all those classes the toplevel rules need
+    int i = 0;
+    for (String n : mem.getNeededClasses(rudi.className)) {
+      String name = n.substring(0, 1).toLowerCase() + n.substring(1);
+      if (i == 0) {
+        args += n.substring(0, 1).toUpperCase() + n.substring(1) + " "
+                + name;
+      } else {
+        args += ", " + n.substring(0, 1).toUpperCase() + n.substring(1) + " "
+                + name;
+      }
+      declare += "this." + name + " = "  + name + ";\n";
+      i++;
+    }
     out.append("public " + rudi.className + "(" + args + ") {\n"
             + "super(" + conargs + ");\n" + declare + "}\n");
 
     // finally, the main processing method that will call all rules and imports
     // declared in this file
     out.append("\tpublic void process(");
-    // get all those classes the toplevel rules need
-    int i = 0;
-    for (String n : mem.getNeededClasses(rudi.className)) {
-      if (i == 0) {
-        out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-                + n.substring(0, 1).toLowerCase() + n.substring(1));
-      } else {
-        out.append(", " + n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-                + n.substring(0, 1).toLowerCase() + n.substring(1));
-      }
-      i++;
-    }
     out.append("){\n");
     // initialize me according to the super class init
     out.append("// this.init();\n");
@@ -339,41 +349,41 @@ public class VGenerationVisitor implements RudiVisitor {
       if (toplevel.contains("(")) {
         out.append(toplevel);
 
-        String t = toplevel.substring(0, toplevel.indexOf(" "));
-        Set<String> ncs = mem.getNeededClasses(t);
-        if (ncs != null) {
-          i = 0;
-          for (String c : ncs) {
-            if (c.equals(rudi.className)
-                    || (c.substring(0, 1).toUpperCase()
-                    + c.substring(1)).equals(rudi.className)) {
-              c = "this";
-            }
-            if (i == 0) {
-              out.append(c.substring(0, 1).toLowerCase()
-                      + c.substring(1));
-            } else {
-              out.append(", " + c.substring(0, 1).toLowerCase()
-                      + c.substring(1));
-            }
-            i++;
-          }
-        }
+//        String t = toplevel.substring(0, toplevel.indexOf(" "));
+//        Set<String> ncs = mem.getNeededClasses(t);
+//        if (ncs != null) {
+//          i = 0;
+//          for (String c : ncs) {
+//            if (c.equals(rudi.className)
+//                    || (c.substring(0, 1).toUpperCase()
+//                    + c.substring(1)).equals(rudi.className)) {
+//              c = "this";
+//            }
+//            if (i == 0) {
+//              out.append(c.substring(0, 1).toLowerCase()
+//                      + c.substring(1));
+//            } else {
+//              out.append(", " + c.substring(0, 1).toLowerCase()
+//                      + c.substring(1));
+//            }
+//            i++;
+//          }
+//        }
         out.append(");\n");
       } else {
         out.append(toplevel + "(");
-        // don't forget the needed class instances here
-        i = 0;
-        for (String n : mem.getNeededClasses(toplevel)) {
-          if (i == 0) {
-            out.append(n.substring(0, 1).toLowerCase()
-                    + n.substring(1));
-          } else {
-            out.append(", " + n.substring(0, 1).toLowerCase()
-                    + n.substring(1));
-          }
-          i++;
-        }
+//        // don't forget the needed class instances here
+//        i = 0;
+//        for (String n : mem.getNeededClasses(toplevel)) {
+//          if (i == 0) {
+//            out.append(n.substring(0, 1).toLowerCase()
+//                    + n.substring(1));
+//          } else {
+//            out.append(", " + n.substring(0, 1).toLowerCase()
+//                    + n.substring(1));
+//          }
+//          i++;
+//        }
         out.append(");");
       }
     }
@@ -411,18 +421,20 @@ public class VGenerationVisitor implements RudiVisitor {
       // this is a toplevel rule and will be converted to a method
       out.append("public void " + node.label + "(");
       // get all the required class instances
-      int i = 0;
-      for (String n : mem.getNeededClasses(node.label)) {
-        if (i == 0) {
-          out.append("final ");
-          out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-                  + n.substring(0, 1).toLowerCase() + n.substring(1));
-        } else {
-          out.append(", final " + n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-                  + n.substring(0, 1).toLowerCase() + n.substring(1));
-        }
-        i++;
-      }
+      // as their fields may also be used in methods, this was moved to be fields
+      // in our classes
+//      int i = 0;
+//      for (String n : mem.getNeededClasses(node.label)) {
+//        if (i == 0) {
+//          out.append("final ");
+//          out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
+//                  + n.substring(0, 1).toLowerCase() + n.substring(1));
+//        } else {
+//          out.append(", final " + n.substring(0, 1).toUpperCase() + n.substring(1) + " "
+//                  + n.substring(0, 1).toLowerCase() + n.substring(1));
+//        }
+//        i++;
+//      }
       out.append("){\n");
       this.ruleIf = this.printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
@@ -772,7 +784,7 @@ public class VGenerationVisitor implements RudiVisitor {
       // TODO: how to do rdf generation?????
       out.append("_proxy.getClass(\""
           + mem.getProxy().getClass(node.type)
-          + "\").newInstance(DEFNS)");
+          + "\").getNewInstance(DEFNS)");
 
     }
   }
