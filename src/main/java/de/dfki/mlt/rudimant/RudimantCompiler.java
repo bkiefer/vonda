@@ -341,6 +341,10 @@ public class RudimantCompiler {
     return new Pair<>((GrammarFile)myTree, collector.getCollectedTokens());
   }
 
+  void processForReal(InputStream in, Writer output, Mem mem) throws IOException {
+    this.mem = mem;
+    processForReal(in, output);
+  }
 
   void processForReal(InputStream in, Writer output) throws IOException {
     out = output;

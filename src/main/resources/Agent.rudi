@@ -1,0 +1,5 @@
+// all standard Java methods that we should remember
+boolean equals(Object e);
+void info(String, int);
+
+// all Agent methods we should know

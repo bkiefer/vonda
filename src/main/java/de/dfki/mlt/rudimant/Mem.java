@@ -48,8 +48,13 @@ public class Mem {
 
   private RdfProxy _proxy;
   
-  private final String agentInit = "";
+  private final String agentInit = "src/main/resources/Agent.rudi";
   private final String wrapperInit;
+  /**
+   * to be able to not go down into environments for our different
+   * initialization files
+   **/
+  private boolean initializing = false;
 
   public Mem(RdfProxy proxy) {
     wrapperInit = null;
@@ -59,21 +64,31 @@ public class Mem {
     current = new Environment();
   }
   
-  public Mem(RdfProxy proxy, String wrapperClass, RudimantCompiler rudi) {
-    wrapperInit = wrapperClass + ".rudi";
+  /**
+   * use this initialization version to initialize with standard Java and Agent
+   * methods plus those defined in <wrapperClass>.rudi
+   * @param proxy
+   * @param wrapperClassPath full file path (without .rudi)
+   * @param rudi 
+   */
+  public Mem(RdfProxy proxy, String wrapperClassPath, RudimantCompiler rudi) {
+    wrapperInit = wrapperClassPath + ".rudi";
     environment = new ArrayDeque<>();
     rulesAndImports = new HashMap<>();
     _proxy = proxy;
     current = new Environment();
-    initializeJavaFs(current, wrapperClass, rudi);
+    initializeJavaFs(rudi);
   }
 
-  private void initializeJavaFs(Environment en, String wrapperClass,
-          RudimantCompiler rc){
+  private void initializeJavaFs(RudimantCompiler rc){
     try {
-      rc.processForReal(new FileInputStream(wrapperClass), null);
+      initializing = true;
+      rc.processForReal(new FileInputStream(agentInit), null, this);
+      rc.processForReal(new FileInputStream(wrapperInit), null, this);
+      initializing = false;
     } catch (FileNotFoundException ex) {
-      java.util.logging.Logger.getLogger(Mem.class.getName()).log(Level.SEVERE, null, ex);
+      // means the files do not exist to read from, but that is okay, we just
+      // won't be as smart as we could be with type knowledge
     } catch (IOException ex) {
       java.util.logging.Logger.getLogger(Mem.class.getName()).log(Level.SEVERE, null, ex);
     }
@@ -288,6 +303,9 @@ public class Mem {
    * adds a new Environment with the given depth
    */
   public void enterEnvironment() {
+    if(initializing){
+      return;
+    }
     logger.trace("Enter level {}", environment.size());
     if (current == null) {
       current = new Environment();
@@ -298,6 +316,9 @@ public class Mem {
   }
 
   public void leaveEnvironment() {
+    if(initializing){
+      return;
+    }
     logger.trace("Leave level {}", environment.size());
     // restore the values in actual that we changed
     current = environment.isEmpty() ? null : environment.pop();
