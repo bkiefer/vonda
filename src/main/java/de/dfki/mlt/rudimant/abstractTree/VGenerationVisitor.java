@@ -132,7 +132,13 @@ public class VGenerationVisitor implements RudiVisitor {
             !node.type.equals(node.right.getType())){
       // then there is either sth wrong here, what would at least have resulted
       // in warnings in type testing, or it is possible to cast the right part
-      out.append("(" + node.type + ") ");
+      if (Mem.isRdfType(node.type)) {
+        // All RDF types except DialogueAct has to be replaced with Rdf
+        out.append("(" + ((DIALOGUE_ACT_TYPE.equals(node.type))
+            ? "DialogueAct" : "Rdf") + ") ");
+      } else {
+        out.append("(" + node.type + ") ");
+      }
     }
     node.right.visitWithComments(this);
     if (pa != null) {
@@ -241,6 +247,9 @@ public class VGenerationVisitor implements RudiVisitor {
     // Let's import our supersuper class
     out.append("import de.dfki.mlt.rudimant.agent.DialogueAct;\n");
     out.append("import de.dfki.lt.hfc.db.rdfProxy.Rdf;\n");
+    // we also need all imports that might be hidden in /*@ in the rudi
+    // so, look for it in the comment before the first element we've got
+    node.rules.get(0).printImportifJava(this);
     // maybe we need to import the class that imported us to use its variables
     out.append("import ");
     if (rudi.getParent() != null) {

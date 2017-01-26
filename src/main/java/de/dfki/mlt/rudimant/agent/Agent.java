@@ -305,7 +305,7 @@ public abstract class Agent {
     timeouts.newTimeout(name, millis);
   }
 
-  protected boolean isTimedout(String name) {
+  protected boolean isTimedOut(String name) {
     return timeouts.isTimedout(name);
   }
 

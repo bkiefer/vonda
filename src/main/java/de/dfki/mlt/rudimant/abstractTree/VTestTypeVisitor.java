@@ -127,6 +127,7 @@ public class VTestTypeVisitor implements RudiVisitor {
                   + node.left + " in " + node, node);
           mem.addVariableDeclaration(((UVariable) node.left).content,
                   "Object", mem.getClassName());
+          node.type = "Object";
           return;
         }
         mem.addVariableDeclaration(((UVariable) node.left).content,

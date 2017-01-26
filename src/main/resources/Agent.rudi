@@ -24,7 +24,7 @@ DialogueAct addLastDA(DialogueAct newDA);
 boolean isLastDA(String raw);
 void lastDAprocessed();
 void newTimeout(String name, int millis);
-boolean isTimedout(String name);
+boolean isTimedOut(String name);
 void removeTimeout(String name);
 void newData();
 String getLanguage();

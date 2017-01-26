@@ -44,7 +44,7 @@ void endQuiz(Rdf quiz, String reason);
 
 String DEFNS;
 String I_ROBOT;
-Rdf activity;
-Rdf user;
-Rdf currentSession;
+Activity activity;
+Child user;
+Session currentSession;
 Map<String, QuizQuestion> questionCache;

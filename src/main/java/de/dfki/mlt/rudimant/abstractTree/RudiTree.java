@@ -41,6 +41,17 @@ public abstract class RudiTree {
     checkComments(v, endPos);
   }
   
+  boolean lookingForImport = false;
+  /**
+   * print the comment before and forget about it if -and only if- it is an
+   * import in java escapes
+   */
+  public void printImportifJava(VGenerationVisitor v){
+    lookingForImport = true;
+    checkComments(v, this.positions[0]);
+    lookingForImport = false;
+  }
+  
   /**
    * the visitMethod for the visitor that allows to return Strings
    */
@@ -52,6 +63,11 @@ public abstract class RudiTree {
         // Deal with java code
         if(comment.startsWith("/*@")){
           comment = comment.substring(3, comment.length()-3);
+          if(lookingForImport){
+            if(!comment.contains("import")){
+              return;
+            }
+          }
         }
         v.out.append(comment);
         v.collectedTokens.remove();
