@@ -34,7 +34,7 @@ void endQuiz(String reason) {
   }
 }
 
-logger.info("Quiz status: {}, Asker: {}", activity.status, getCurrentasker());
+//logger.info("Quiz status: {}, Asker: {}", activity.status, getCurrentasker());
 
 import QuizStarted;
 import QuizRunning;

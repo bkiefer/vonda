@@ -45,11 +45,24 @@ public class Mem {
 
   public Mem(RdfProxy proxy) {
     environment = new ArrayDeque<>();
-    current = null;
     rulesAndImports = new HashMap<>();
     _proxy = proxy;
+    current = new Environment();
+    initializeJavaFs(current);
   }
 
+  private void initializeJavaFs(Environment en){
+    ArrayList<String> partypes = new ArrayList<String>();
+    partypes.add("Object");
+    this.addFunction("equals", "boolean", (ArrayList<String>)partypes.clone(), null);
+    partypes.clear();
+    partypes.add("String");
+    partypes.add("int");
+    this.addFunction("info", "void", (ArrayList<String>)partypes.clone(), null);
+    partypes.clear();
+    this.addFunction("currentTimeMillis", "int", partypes, null);
+  }
+  
   static Map<String, Long> typeCodes = new HashMap<>();
 
   static final long JAVA_TYPE = 0x10;
@@ -257,8 +270,6 @@ public class Mem {
 
   /**
    * adds a new Environment with the given depth
-   *
-   * @return the position in memory where the environment is stored
    */
   public void enterEnvironment() {
     logger.trace("Enter level {}", environment.size());

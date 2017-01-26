@@ -1,4 +1,5 @@
 // check if we have input from the user
+check_input:
 if (! user.feedback) return;
 
 // **********************************************************************
@@ -49,7 +50,7 @@ if (myLastDA() <= #Request(Name)) {
 // **********************************************************************
 
 request_answer:
-if (myLastDA <= #Request(top)) {
+if (myLastDA() <= #Request(top)) {
   replyType = "Request";
   switch (user.feedback.second.toLowerCase()) {
   case "yes":
