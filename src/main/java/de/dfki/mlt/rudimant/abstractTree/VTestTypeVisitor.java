@@ -93,6 +93,10 @@ public class VTestTypeVisitor implements RudiVisitor {
     // find it while visiting left and therefore get at least tons of warnings
     // Otherwise: infer type from right
     if(node.declaration){
+        // is this a variable declaration for an already existing variable?
+      if (mem.variableExists(node.left.toString())) {
+          rudi.typeError("Re-declaration of existing variable " + node.left, node);
+      }
       node.left.type = node.type;
     }
     node.left.visit(this);
@@ -114,20 +118,19 @@ public class VTestTypeVisitor implements RudiVisitor {
       }
     }
 
+    // enter the variable into mem if we found a type, else enter "Object"
     if (node.left instanceof UVariable) {
       if (!mem.variableExists(node.left.toString())) {
         node.declaration = true;
-        mem.addVariableDeclaration(((UVariable) node.left).content,
-                node.type, mem.getClassName());
         if (node.type == null) {
           rudi.typeError("Type of variable unkown: "
                   + node.left + " in " + node, node);
+          mem.addVariableDeclaration(((UVariable) node.left).content,
+                  "Object", mem.getClassName());
+          return;
         }
-      } else {
-        // is this a variable declaration for an already existing variable?
-        if (node.declaration) {
-          rudi.typeError("Re-declaration of existing variable " + node.left, node);
-        }
+        mem.addVariableDeclaration(((UVariable) node.left).content,
+                node.type, mem.getClassName());
       }
     }
   }
