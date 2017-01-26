@@ -229,6 +229,9 @@ public class Mem {
    */
   public void addFunction(String funcname, String functype,
           ArrayList<String> partypes, String origin) {
+    if(initializing){
+      origin = null;
+    }
     this.current.addFunction(funcname, functype, partypes, origin, this);
   }
 
@@ -263,6 +266,9 @@ public class Mem {
   public boolean addVariableDeclaration(String variable, String type, String origin) {
     if (current.containsKey(variable)) {
       return false;
+    }
+    if(initializing){
+      origin = null;
     }
     type = checkRdf(type);
     current.put(variable, type, origin);

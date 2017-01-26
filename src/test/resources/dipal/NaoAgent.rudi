@@ -1,0 +1,51 @@
+// methods of NaoAgent we should know
+
+DialogueAct emitDA(String diaActType, String proposition,
+      String ... args);
+void reset();
+Rdf getCurrentTurn(Rdf quiz);
+int getNumberOfTurns(Rdf quiz);
+void setAnswer(Rdf t, String answerResponse);
+int[] getAssessment(Rdf quiz, String robot);
+Rdf newTurn(Rdf quiz);
+void setAsker(Rdf turn, String askerUri, String responderUri);
+boolean hasPlayedGame(Rdf user);
+void setLiking(Rdf user, String theme, String value);
+String getActivityName();
+
+// TODO: all this seems to be superfluous
+Rdf getUser();
+String getUserName();
+String getUserGender();
+Object getLiking(Rdf user, String theme);
+String getUserColor();
+String getUserHobby();
+
+// TODO: can this be rudi-fied ??? Yes, but needed for InfoState
+boolean firstEncounter();
+
+boolean isFamiliar();
+boolean activityIs(String className);
+String getCurrentAsker();
+int getNumberOfQuestionsCurrentAsker();
+void assessQuizSession(Rdf quiz, String whose);
+String[] getQuestionArgs(QuizQuestion q, Rdf currentTurn);
+String[] getAnswerArgs(QuizQuestion q);
+DialogueAct sendQuestionDA(QuizHistory currentTurn);
+DialogueAct sendAnswersDA(QuizHistory currentTurn);
+void userReadsQuestion();
+void robotGivesSolution(boolean correct, int qId);
+boolean hasPlayedQuiz(Child user);
+String mapToAgent(String userUri);
+String mapAgentToUri(String agentString);
+void initQuiz();
+void endQuiz(Rdf quiz, String reason);
+
+// variables of NaoAgent we should know
+
+String DEFNS;
+String I_ROBOT;
+Rdf activity;
+Rdf user;
+Rdf currentSession;
+Map<String, QuizQuestion> questionCache;
