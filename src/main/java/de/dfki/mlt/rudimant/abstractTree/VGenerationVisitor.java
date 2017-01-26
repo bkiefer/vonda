@@ -118,7 +118,7 @@ public class VGenerationVisitor implements RudiVisitor {
       node.left.visitWithComments(this);
       notPrintLastField = false;
       if (pa != null) {
-        out.append(functional ? ".setSingleValue(" : ".setValue(");
+        out.append(functional ? ".set(" : ".setValue(");
         pa.getPropertyName(out);
         out.append(", ");
       } else {

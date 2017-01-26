@@ -14,6 +14,11 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudimant.abstractTree.USingleValue;
 import de.dfki.mlt.rudimant.abstractTree.UVariable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.logging.Level;
 
 /**
  * this is rudimants memory, used for type checking
@@ -42,25 +47,36 @@ public class Mem {
   private Map<String, List<String>> rulesAndImports;
 
   private RdfProxy _proxy;
+  
+  private final String agentInit = "";
+  private final String wrapperInit;
 
   public Mem(RdfProxy proxy) {
+    wrapperInit = null;
     environment = new ArrayDeque<>();
     rulesAndImports = new HashMap<>();
     _proxy = proxy;
     current = new Environment();
-    initializeJavaFs(current);
+  }
+  
+  public Mem(RdfProxy proxy, String wrapperClass, RudimantCompiler rudi) {
+    wrapperInit = wrapperClass + ".rudi";
+    environment = new ArrayDeque<>();
+    rulesAndImports = new HashMap<>();
+    _proxy = proxy;
+    current = new Environment();
+    initializeJavaFs(current, wrapperClass, rudi);
   }
 
-  private void initializeJavaFs(Environment en){
-    ArrayList<String> partypes = new ArrayList<String>();
-    partypes.add("Object");
-    this.addFunction("equals", "boolean", (ArrayList<String>)partypes.clone(), null);
-    partypes.clear();
-    partypes.add("String");
-    partypes.add("int");
-    this.addFunction("info", "void", (ArrayList<String>)partypes.clone(), null);
-    partypes.clear();
-    this.addFunction("currentTimeMillis", "int", partypes, null);
+  private void initializeJavaFs(Environment en, String wrapperClass,
+          RudimantCompiler rc){
+    try {
+      rc.processForReal(new FileInputStream(wrapperClass), null);
+    } catch (FileNotFoundException ex) {
+      java.util.logging.Logger.getLogger(Mem.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (IOException ex) {
+      java.util.logging.Logger.getLogger(Mem.class.getName()).log(Level.SEVERE, null, ex);
+    }
   }
   
   static Map<String, Long> typeCodes = new HashMap<>();

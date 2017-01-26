@@ -42,7 +42,7 @@ public class Visualize {
       String confname)
       throws IOException, WrongFormatException, TException {
     readConfig(confname);
-    RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
+    RudimantCompiler rc = RudimantCompiler.init(confDir, configs, null);
     StringWriter sw = new StringWriter();
     rc.processForReal(in, sw);
     rc.flush();
@@ -75,7 +75,7 @@ public class Visualize {
 
       // do the type checking
       try {
-        RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
+        RudimantCompiler rc = RudimantCompiler.init(confDir, configs, null);
         rc.className = "Test";
         new VTestTypeVisitor(rc).visitNode(myTree.first);
       } catch (WrongFormatException ex) {

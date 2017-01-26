@@ -96,8 +96,17 @@ public class RudimantCompiler {
     this.rootLevel = parent.rootLevel;
     this.visualise = parent.visualise;
   }
+  
+  public RudimantCompiler(File rootDir, String wrapperClass,
+          String constructorArgs, RdfProxy proxy) {
+    mem = new Mem(proxy, rootDir.getAbsolutePath() + "/" + wrapperClass, this);
+    this.wrapperClass = wrapperClass;
+    parent = null;
+    this.constructorArgs = constructorArgs;
+  }
 
-  public RudimantCompiler(String wrapperClass, String constructorArgs, RdfProxy proxy) {
+  public RudimantCompiler(String wrapperClass, String constructorArgs,
+          RdfProxy proxy) {
     mem = new Mem(proxy);
     this.wrapperClass = wrapperClass;
     parent = null;
@@ -115,16 +124,26 @@ public class RudimantCompiler {
     return new RdfProxy(handler);
   }
 
-  public static RudimantCompiler init(File configDir, Map<String, Object> configs)
+  public static RudimantCompiler init(File configDir, Map<String, Object> configs,
+          File rootDir)
       throws IOException, WrongFormatException {
     RdfProxy proxy = startClient(configDir, configs);
     if (configs.containsKey(CFG_NAME_TO_URI)) {
       proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
     }
-    RudimantCompiler rc = new RudimantCompiler(
-        (String)configs.get(CFG_WRAPPER_CLASS),
-        (String)configs.get(CFG_TARGET_CONSTRUCTOR),
-        proxy);
+    RudimantCompiler rc = null;
+      if(rootDir != null){
+        rc = new RudimantCompiler(
+              rootDir,
+              (String)configs.get(CFG_WRAPPER_CLASS),
+              (String)configs.get(CFG_TARGET_CONSTRUCTOR),
+              proxy);
+      } else {
+        rc = new RudimantCompiler(
+              (String)configs.get(CFG_WRAPPER_CLASS),
+              (String)configs.get(CFG_TARGET_CONSTRUCTOR),
+              proxy);
+    }
     rc.setThrowExceptions((boolean)configs.get(CFG_TYPE_ERROR_FATAL));
     rc.setTypeCheck((boolean)configs.get(CFG_TYPE_CHECK));
     if (configs.containsKey(CFG_PACKAGE)) {
@@ -333,6 +352,10 @@ public class RudimantCompiler {
     // do the type checking
     VTestTypeVisitor ttv = new VTestTypeVisitor(this);
     ttv.visitNode(gf);
+    if (output == null) {
+      // then there is nothing to write to; we are in a memory initialization
+      return;
+    }
     // generate the output
     VGenerationVisitor gv = new VGenerationVisitor(this, pair.second);
     // tell the file its name (for class definition)
