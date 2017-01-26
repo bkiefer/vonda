@@ -1,7 +1,6 @@
 // methods of NaoAgent we should know
 
-DialogueAct emitDA(String diaActType, String proposition,
-      String ... args);
+// DialogueAct emitDA(String diaActType, String proposition, String ... args);
 void reset();
 Rdf getCurrentTurn(Rdf quiz);
 int getNumberOfTurns(Rdf quiz);
@@ -28,8 +27,8 @@ boolean isFamiliar();
 boolean activityIs(String className);
 String getCurrentAsker();
 int getNumberOfQuestionsCurrentAsker();
-void assessQuizSession(Rdf quiz, String whose);
-String[] getQuestionArgs(QuizQuestion q, Rdf currentTurn);
+void assessQuizSession(Quiz quiz, String whose);
+String[] getQuestionArgs(QuizQuestion q, Turn currentTurn);
 String[] getAnswerArgs(QuizQuestion q);
 DialogueAct sendQuestionDA(QuizHistory currentTurn);
 DialogueAct sendAnswersDA(QuizHistory currentTurn);

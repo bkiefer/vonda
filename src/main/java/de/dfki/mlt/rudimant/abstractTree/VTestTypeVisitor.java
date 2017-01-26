@@ -547,7 +547,7 @@ public class VTestTypeVisitor implements RudiVisitor {
         }
       }
     }
-    node.type = currentType; // the final result type
+    node.type = currentType == null? "Object" : currentType; // the final result type
     partOfFieldAccess = false;
   }
 

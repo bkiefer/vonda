@@ -141,7 +141,7 @@ field_access
 
 type_spec
     : VARIABLE '[' ']'
-    | VARIABLE '<' type_spec '>'
+    | VARIABLE '<' type_spec (',' type_spec)* '>'
     | VARIABLE
     ;
 

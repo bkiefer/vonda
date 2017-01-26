@@ -32,6 +32,9 @@ boolean waitForIntention();
 //void propose(String name, Proposal p);
 void executeProposal(Intention intention);
 
+//!!!!!! Attention !!!!!!! This is used extensively in rudis, but not declared anywhere
+DialogueAct myLastDA();
+
 // all Agent variables we should know
 
 String executedLast;

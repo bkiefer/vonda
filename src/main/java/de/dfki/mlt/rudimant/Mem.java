@@ -76,22 +76,36 @@ public class Mem {
     environment = new ArrayDeque<>();
     rulesAndImports = new HashMap<>();
     _proxy = proxy;
-    current = new Environment();
     initializeJavaFs(rudi);
   }
 
   private void initializeJavaFs(RudimantCompiler rc){
+    initializing = true;
+    // enter our very first environment, 
+    enterEnvironment();
     try {
-      initializing = true;
+      logger.info("initializing Agent and Java methods");
       rc.processForReal(new FileInputStream(agentInit), null, this);
-      rc.processForReal(new FileInputStream(wrapperInit), null, this);
-      initializing = false;
     } catch (FileNotFoundException ex) {
       // means the files do not exist to read from, but that is okay, we just
       // won't be as smart as we could be with type knowledge
+      logger.debug("could not import one of the initializer files: " +
+              agentInit + "\n ");
     } catch (IOException ex) {
       java.util.logging.Logger.getLogger(Mem.class.getName()).log(Level.SEVERE, null, ex);
     }
+    try {
+      logger.info("initializing " + wrapperInit + " methods");
+      rc.processForReal(new FileInputStream(wrapperInit), null, this);
+    } catch (FileNotFoundException ex) {
+      // means the files do not exist to read from, but that is okay, we just
+      // won't be as smart as we could be with type knowledge
+      logger.debug("could not import one of the initializer files: " +
+              wrapperInit + "\n ");
+    } catch (IOException ex) {
+      java.util.logging.Logger.getLogger(Mem.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    initializing = false;
   }
   
   static Map<String, Long> typeCodes = new HashMap<>();
@@ -309,9 +323,9 @@ public class Mem {
    * adds a new Environment with the given depth
    */
   public void enterEnvironment() {
-    if(initializing){
-      return;
-    }
+//    if(initializing){
+//      return;
+//    }
     logger.trace("Enter level {}", environment.size());
     if (current == null) {
       current = new Environment();
@@ -322,9 +336,9 @@ public class Mem {
   }
 
   public void leaveEnvironment() {
-    if(initializing){
-      return;
-    }
+//    if(initializing){
+//      return;
+//    }
     logger.trace("Leave level {}", environment.size());
     // restore the values in actual that we changed
     current = environment.isEmpty() ? null : environment.pop();

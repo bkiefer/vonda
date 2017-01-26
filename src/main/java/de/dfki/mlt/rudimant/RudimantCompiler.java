@@ -99,7 +99,8 @@ public class RudimantCompiler {
   
   public RudimantCompiler(File rootDir, String wrapperClass,
           String constructorArgs, RdfProxy proxy) {
-    mem = new Mem(proxy, rootDir.getAbsolutePath() + "/" + wrapperClass, this);
+    mem = new Mem(proxy, rootDir.getAbsolutePath() + "/" 
+            + wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1), this);
     this.wrapperClass = wrapperClass;
     parent = null;
     this.constructorArgs = constructorArgs;
@@ -132,7 +133,7 @@ public class RudimantCompiler {
       proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
     }
     RudimantCompiler rc = null;
-      if(rootDir != null){
+      if(rootDir != null && configs.get(CFG_WRAPPER_CLASS) != null){
         rc = new RudimantCompiler(
               rootDir,
               (String)configs.get(CFG_WRAPPER_CLASS),
