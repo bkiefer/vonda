@@ -114,7 +114,7 @@ public class ExpAssignmentTest {
     dtr = getNodeOfInterest(rt.first, 2); // test3 = test2
     type_right = ((ExpAssignment) dtr).right.getType();
     // TODO this should be possible.
-//    assertEquals("right side type test3 should be int", "int", type_right);
+    assertEquals("right side type test3 should be int", "int", type_right);
   }
 
 }
