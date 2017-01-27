@@ -1,0 +1,9 @@
+wrapperClass:       Test
+ontologyFile:       ../dipal/ontologies/pal.ini
+checkTypes:         false
+failOnError:        false
+targetConstructor:
+rootPackage:
+nameToURI:
+  Activity : "<dom:Activity>"
+  Child : "<dom:Child>"

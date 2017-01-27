@@ -7,6 +7,8 @@ package de.dfki.mlt.rudimant.abstractTree;
 
 import java.util.Arrays;
 
+import de.dfki.mlt.rudimant.RudimantCompiler;
+
 /**
  * this represents an access to the ontology (will result in an rdf object in
  * output)
@@ -36,9 +38,21 @@ public class UPropertyAccess extends RTExpLeaf {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+  
+  @Override
+  public String visitStringV(RTStringVisitor v){
+    return v.visitNode(this);
+  }
 
   public Iterable<? extends RudiTree> getDtrs() {
     RudiTree[] dtrs = { label };
     return Arrays.asList(dtrs);
   }
+
+  void getPropertyName(RudimantCompiler out) {
+    if(!propertyVariable) out.append('"');
+    out.append(label.content);
+    if(!propertyVariable) out.append('"');
+  }
+
 }

@@ -19,14 +19,20 @@ public class UFieldAccess extends RTExpLeaf {
   List<String> representation;
   boolean asked = false;
 
-  public UFieldAccess(List<RudiTree> parts, List<String> representation) {
+  public UFieldAccess(String fullexp, List<RudiTree> parts, List<String> representation) {
     this.parts = parts;
     this.representation = representation;
+    this.fullexp = fullexp;
   }
 
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
+  }
+  
+  @Override
+  public String visitStringV(RTStringVisitor v){
+    return v.visitNode(this);
   }
 
   public Iterable<? extends RudiTree> getDtrs() { return parts; }

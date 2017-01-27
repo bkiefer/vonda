@@ -51,7 +51,7 @@ public class TestTypeInference {
 
     // do the type checking
     try {
-      rc = RudimantCompiler.init(confDir, configs);
+      rc = RudimantCompiler.init(confDir, configs, null);
       new VTestTypeVisitor(rc).visitNode(myTree.first);
     } catch (WrongFormatException ex) {
       throw new RuntimeException(ex);

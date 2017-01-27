@@ -36,14 +36,13 @@ if (saidInSession(#Salutation(Meeting)) >= 0
   if (activity.status != "finished") {
     activity.status = "finished";
     // TODO: GET LIST FROM THE PROPERTIES OF A USER
-    List<String> slots = { "hasHobby", "hasColor", "hasSport" };
-    prefs = user.hasPreference;
+    List<String> slots = { Hobby, Color };
     for (String slot : slots) {
       // SLOT unknown: ask for slot
       // Ask for favorite hobby and color
 
     ask_user_preference:
-      if (! prefs.slot
+      if (! user.getLiking.slot
           && ! saidInSession(#Request(Liking, theme=^slot))) {
         activity.status = "active";
         propose("ask_for_preference_" + slot) {
@@ -52,7 +51,7 @@ if (saidInSession(#Salutation(Meeting)) >= 0
       }
 
     confirm_user_preference:
-      if (prefs.slot && ! waitingForResponse()
+      if (user.getLiking.slot && ! waitingForResponse()
           && saidInSession(#Request(Liking, theme=^slot))
           // a nice way to express the disjunction (supertype?)
           && ! saidInSession(#Answer(Liking, theme=^slot))) {
@@ -70,7 +69,7 @@ if (saidInSession(#Salutation(Meeting)) >= 0
 
 
     // TODO: GET LIST FROM THE PROPERTIES OF A USER
-    List<RdfProperty> infoslots = {birthdate};
+    List<String> infoslots = {"birthdate"};
     // TODO: USE SAME LABELS IN GRAMMAR AND IN DATABASE
     List<String> mapped = {"Age"};
     int i = 0;

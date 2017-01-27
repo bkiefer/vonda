@@ -14,6 +14,11 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudimant.abstractTree.USingleValue;
 import de.dfki.mlt.rudimant.abstractTree.UVariable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.logging.Level;
 
 /**
  * this is rudimants memory, used for type checking
@@ -42,14 +47,67 @@ public class Mem {
   private Map<String, List<String>> rulesAndImports;
 
   private RdfProxy _proxy;
+  
+  private final String agentInit = "src/main/resources/Agent.rudi";
+  private final String wrapperInit;
+  /**
+   * to be able to not go down into environments for our different
+   * initialization files
+   **/
+  private boolean initializing = false;
 
   public Mem(RdfProxy proxy) {
+    wrapperInit = null;
     environment = new ArrayDeque<>();
-    current = null;
     rulesAndImports = new HashMap<>();
     _proxy = proxy;
+    current = new Environment();
+  }
+  
+  /**
+   * use this initialization version to initialize with standard Java and Agent
+   * methods plus those defined in <wrapperClass>.rudi
+   * @param proxy
+   * @param wrapperClassPath full file path (without .rudi)
+   * @param rudi 
+   */
+  public Mem(RdfProxy proxy, String wrapperClassPath, RudimantCompiler rudi) {
+    wrapperInit = wrapperClassPath + ".rudi";
+    environment = new ArrayDeque<>();
+    rulesAndImports = new HashMap<>();
+    _proxy = proxy;
+    initializeJavaFs(rudi);
   }
 
+  private void initializeJavaFs(RudimantCompiler rc){
+    initializing = true;
+    // enter our very first environment, 
+    enterEnvironment();
+    try {
+      logger.info("initializing Agent and Java methods");
+      rc.processForReal(new FileInputStream(agentInit), null, this);
+    } catch (FileNotFoundException ex) {
+      // means the files do not exist to read from, but that is okay, we just
+      // won't be as smart as we could be with type knowledge
+      logger.debug("could not import one of the initializer files: " +
+              agentInit + "\n ");
+    } catch (IOException ex) {
+      java.util.logging.Logger.getLogger(Mem.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    try {
+      logger.info("initializing " + wrapperInit + " methods");
+      rc.processForReal(new FileInputStream(wrapperInit), null, this);
+    } catch (FileNotFoundException ex) {
+      // means the files do not exist to read from, but that is okay, we just
+      // won't be as smart as we could be with type knowledge
+      logger.debug("could not import one of the initializer files: " +
+              wrapperInit + "\n ");
+    } catch (IOException ex) {
+      java.util.logging.Logger.getLogger(Mem.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    initializing = false;
+  }
+  
   static Map<String, Long> typeCodes = new HashMap<>();
 
   static final long JAVA_TYPE = 0x10;
@@ -185,6 +243,9 @@ public class Mem {
    */
   public void addFunction(String funcname, String functype,
           ArrayList<String> partypes, String origin) {
+    if(initializing){
+      origin = null;
+    }
     this.current.addFunction(funcname, functype, partypes, origin, this);
   }
 
@@ -219,6 +280,9 @@ public class Mem {
   public boolean addVariableDeclaration(String variable, String type, String origin) {
     if (current.containsKey(variable)) {
       return false;
+    }
+    if(initializing){
+      origin = null;
     }
     type = checkRdf(type);
     current.put(variable, type, origin);
@@ -257,10 +321,11 @@ public class Mem {
 
   /**
    * adds a new Environment with the given depth
-   *
-   * @return the position in memory where the environment is stored
    */
   public void enterEnvironment() {
+//    if(initializing){
+//      return;
+//    }
     logger.trace("Enter level {}", environment.size());
     if (current == null) {
       current = new Environment();
@@ -271,6 +336,9 @@ public class Mem {
   }
 
   public void leaveEnvironment() {
+//    if(initializing){
+//      return;
+//    }
     logger.trace("Leave level {}", environment.size());
     // restore the values in actual that we changed
     current = environment.isEmpty() ? null : environment.pop();

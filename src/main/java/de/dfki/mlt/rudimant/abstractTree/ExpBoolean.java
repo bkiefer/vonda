@@ -35,4 +35,9 @@ public class ExpBoolean extends RTBinaryExp {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+  
+  @Override
+  public String visitStringV(RTStringVisitor v){
+    return v.visitNode(this);
+  }
 }

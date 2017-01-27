@@ -163,6 +163,10 @@ public abstract class Agent {
     return myLastDAs.peekFirst();
   }
 
+  public DialogueAct myLastDA() {
+    return getMyLastDA();
+  }
+
   public boolean isMyLastDA(DialogueAct da) {
     return da.subsumes(getMyLastDA());
   }
@@ -301,7 +305,7 @@ public abstract class Agent {
     timeouts.newTimeout(name, millis);
   }
 
-  protected boolean isTimedout(String name) {
+  protected boolean isTimedOut(String name) {
     return timeouts.isTimedout(name);
   }
 

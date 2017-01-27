@@ -54,7 +54,7 @@ public class TestMethodDeclaration {
 
     // do the type checking
     try {
-      RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
+      RudimantCompiler rc = RudimantCompiler.init(confDir, configs, null);
       new VTestTypeVisitor(rc).visitNode(myTree.first);
     } catch (WrongFormatException ex) {
       throw new RuntimeException(ex);

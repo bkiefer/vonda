@@ -11,63 +11,65 @@ package de.dfki.mlt.rudimant.abstractTree;
  */
 public interface RudiVisitor {
 
-  void visitNode(RTExpression node);
-
-  void visitNode(ExpArithmetic node);
-
-  void visitNode(ExpAssignment node);
-
-  void visitNode(ExpBoolean node);
-
-  void visitNode(ExpDialogueAct node);
-
-  void visitNode(ExpConditional node);
-
-  void visitNode(ExpLambda node);
+  public void visitNode(RudiTree node);
   
-  void visitNode(ExpNew node);
+  public void visitNode(RTExpression node);
 
-  void visitNode(GrammarFile node);
+  public void visitNode(ExpArithmetic node);
 
-  void visitNode(GrammarRule node);
+  public void visitNode(ExpAssignment node);
 
-  void visitNode(StatAbstractBlock node);
+  public void visitNode(ExpBoolean node);
 
-  void visitNode(StatDoWhile node);
+  public void visitNode(ExpDialogueAct node);
 
-  void visitNode(StatFor1 node);
+  public void visitNode(ExpConditional node);
 
-  void visitNode(StatFor2 node);
+  public void visitNode(ExpLambda node);
+  
+  public void visitNode(ExpNew node);
 
-  void visitNode(StatFor3 node);
+  public void visitNode(GrammarFile node);
 
-  void visitNode(StatIf node);
+  public void visitNode(GrammarRule node);
 
-  void visitNode(StatImport node);
+  public void visitNode(StatAbstractBlock node);
 
-  void visitNode(StatListCreation node);
+  public void visitNode(StatDoWhile node);
 
-  void visitNode(StatMethodDeclaration node);
+  public void visitNode(StatFor1 node);
 
-  void visitNode(StatPropose node);
+  public void visitNode(StatFor2 node);
 
-  void visitNode(StatReturn node);
+  public void visitNode(StatFor3 node);
 
-  void visitNode(StatSetOperation node);
+  public void visitNode(StatIf node);
 
-  void visitNode(StatSwitch node);
+  public void visitNode(StatImport node);
 
-  void visitNode(StatVarDef node);
+  public void visitNode(StatListCreation node);
 
-  void visitNode(StatWhile node);
+  public void visitNode(StatMethodDeclaration node);
 
-  void visitNode(UFieldAccess node);
+  public void visitNode(StatPropose node);
 
-  void visitNode(UFuncCall node);
+  public void visitNode(StatReturn node);
 
-  void visitNode(USingleValue node);
+  public void visitNode(StatSetOperation node);
 
-  void visitNode(UVariable node);
+  public void visitNode(StatSwitch node);
 
-  void visitNode(UWildcard node);
+  public void visitNode(StatVarDef node);
+
+  public void visitNode(StatWhile node);
+
+  public void visitNode(UFieldAccess node);
+
+  public void visitNode(UFuncCall node);
+
+  public void visitNode(USingleValue node);
+
+  public void visitNode(UVariable node);
+
+  public void visitNode(UWildcard node);
 }

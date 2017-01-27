@@ -1,4 +1,5 @@
 // check if we have input from the user
+check_input:
 if (! user.feedback) return;
 
 // **********************************************************************
@@ -25,7 +26,7 @@ if (myLastDA() <= #Request(Liking)) {
     // see InterpretationHandler.java
     String val = user.feedback.second;
     da = addLastDA(#Inform(Liking, theme=^th, value=^val));
-    setLiking(user, theme, val);
+    setLiking(user, th, val);
   } else {
     logger.warn("liking request outside intro");
   }
@@ -33,11 +34,11 @@ if (myLastDA() <= #Request(Liking)) {
 }
 
 check_age:
-if (myLastDA <= #Request(Name)) {
+if (myLastDA() <= #Request(Name)) {
   if (activity <= Introduction) {
     String val = user.feedback.second;
     da = addLastDA(#Inform(Name, value=^val));
-    agent.user.set(CHILD_NAME, val);
+    user.set(CHILD_NAME, val);
   } else {
     logger.warn("name request outside intro");
   }
@@ -49,7 +50,7 @@ if (myLastDA <= #Request(Name)) {
 // **********************************************************************
 
 request_answer:
-if (myLastDA <= #Request(top)) {
+if (myLastDA() <= #Request(top)) {
   replyType = "Request";
   switch (user.feedback.second.toLowerCase()) {
   case "yes":
@@ -61,7 +62,7 @@ if (myLastDA <= #Request(top)) {
     break;
   }
   if (replyType == "Request") {
-    reply = myLastDA().copy();
+    DialogueAct reply = myLastDA().copy();
     reply.setDialogueAct(replyType);
     addLastDA(reply);
   }
@@ -71,6 +72,7 @@ if (myLastDA <= #Request(top)) {
 // Quiz
 // **********************************************************************
 
+quiz:
 if (activity <= Quiz) {
  question_read_by_user:
   if (activity.status == "running_wait_for_question_read") {

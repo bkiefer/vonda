@@ -3,4 +3,4 @@ set -x
 here=`pwd`
 script_dir=`dirname $0`
 
-java -Dlog4j.configuration=file:"$script_dir/log4j.properties" -jar "$script_dir/target/rudimant.jar" "$@"
+java -Dapp.dir="$script_dir" -Dlog4j.configuration=file:"$script_dir/log4j.properties" -jar "$script_dir/target/rudimant.jar" "$@"

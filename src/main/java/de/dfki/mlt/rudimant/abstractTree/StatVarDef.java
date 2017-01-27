@@ -29,6 +29,11 @@ public class StatVarDef extends RTStatement {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+  
+  @Override
+  public String visitStringV(RTStringVisitor v){
+    return v.visitNode(this);
+  }
 
   public String toString() { return type + " " + variable +";"; }
 

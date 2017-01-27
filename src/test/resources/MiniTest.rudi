@@ -1,6 +1,13 @@
 
 DialogueAct activity;
 
+bla:
+if ("wait_for_assessment".equals(activity.status)) {
+"wait_for_assessment".equals(activity.status);
+  emitDA(#Inform(Answer,
+           id=^Integer.toString(answerNumber + 1),
+           ^("string" + Integer.toString(answerNumber + 1))=^answerString));}
+
 test:
 if(activity.status != "proposed"){
 activity.status = "proposed";

@@ -1,0 +1,53 @@
+// all standard Java methods that we should remember
+
+boolean equals(Object e);
+void info(String s, int i);
+
+
+// all Agent methods we should know
+
+void sendBehaviour(Object obj);
+void reset();
+DialogueAct createEmitDA(DialogueAct da);
+DialogueAct emitDA(int delay, DialogueAct da);
+DialogueAct emitDA(DialogueAct da);
+DialogueAct getMyLastDA();
+boolean isMyLastDA(DialogueAct da);
+boolean isMyLastDA(String raw);
+int lastOccurence(DialogueAct da, Iterable<DialogueAct> daList);
+int lastOccurenceOfMyDA(String raw);
+int saidInSession(DialogueAct da);
+boolean waitingForResponse();
+int receivedInSession(DialogueAct da);
+DialogueAct lastDA();
+DialogueAct addLastDA(DialogueAct newDA);
+boolean isLastDA(String raw);
+void lastDAprocessed();
+void newTimeout(String name, int millis);
+boolean isTimedOut(String name);
+void removeTimeout(String name);
+void newData();
+String getLanguage();
+boolean waitForIntention();
+//void propose(String name, Proposal p);
+void executeProposal(Intention intention);
+
+//!!!!!! Attention !!!!!!! This is used extensively in rudis, but not declared anywhere
+DialogueAct myLastDA();
+
+// all Agent variables we should know
+
+String executedLast;
+long lastDAprocessed;
+String _language;
+double proposedRobotMood;
+Random random;
+RdfProxy _proxy;
+CommunicationHub _hub;
+AsrTts asr;
+Deque<DialogueAct> myLastDAs;
+Deque<DialogueAct> lastDAs;
+Timeouts timeouts;
+boolean newData;
+//Map<String, Proposal> pendingProposals;
+boolean proposalsSent;

@@ -117,8 +117,8 @@ if (activity.status == "run_wait_for_continue") {
       Rdf turn = getCurrentTurn();
       Rdf newTurn = new QuizHistory;
       // Switch roles after each turn
-      newTurn.Asker = turn.Responder;
-      newTurn.Responder = turn.Asker;
+      newTurn.asker = turn.responder;
+      newTurn.responder = turn.asker;
       activity.hasTurns.add(newTurn);
       activity.status = "running";
     }

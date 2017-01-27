@@ -34,15 +34,15 @@ public class PrintTest {
 ////    assertFail(GrammarMain.main(strings));
 //  }
 
-  @Test
-  public void SingleFileTest() throws Exception {
-    String[] strings = {
-        "-c", "src/test/resources/rudi.config.yml",
-        "src/test/resources/basic/agentMethods.rudi"
-    };
-    GrammarMain.main(strings);
-//    assertFail(GrammarMain.main(strings));
-  }
+//  @Test
+//  public void SingleFileTest() throws Exception {
+//    String[] strings = {
+//        "-c", "src/test/resources/rudi.config.yml",
+//        "src/test/resources/basic/agentMethods.rudi"
+//    };
+//    GrammarMain.main(strings);
+////    assertFail(GrammarMain.main(strings));
+//  }
 
 //  @Test
 //  public void ReturnTest() throws Exception {
@@ -53,12 +53,12 @@ public class PrintTest {
 //    //assertFail(GrammarMain.main(strings2));
 //  }
 //
-//  @Test
-//  public void miniTest() throws Exception {
-//    String[] strings = new String[]{
-//      "-c", "src/test/resources/rudi.config.yml", "-d",
-//      "src/test/resources/MiniTest.rudi",
-//    };
-//    GrammarMain.main(strings);
-//  }
+  @Test
+  public void miniTest() throws Exception {
+    String[] strings = new String[]{
+      "-c", "src/test/resources/rudi.config.yml", "-d",
+      "src/test/resources/MiniTest.rudi",
+    };
+    GrammarMain.main(strings);
+  }
 }

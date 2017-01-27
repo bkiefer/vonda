@@ -45,7 +45,8 @@ public class RudimantCompiler {
   private File inputDirectory;
   private File outputDirectory;
   // there may be users that do not start the .rudi files with capital letters,
-  // we don't want to crash in that case by turning it to uppercase and then trying to read it
+  // we don't want to crash in that case by turning it to uppercase and then
+  // trying to read it
   private String inputRealName;
 
 //  private StringBuffer out;
@@ -85,8 +86,7 @@ public class RudimantCompiler {
   }
 
   private RudimantCompiler(RudimantCompiler parentCompiler) {
-//    wrapperClass = parentCompiler.getWrapperClass();
-    wrapperClass = parentCompiler.className;
+    wrapperClass = parentCompiler.wrapperClass;
     constructorArgs = parentCompiler.getConstructorArgs();
     mem = parentCompiler.mem;
     parent = parentCompiler;
@@ -96,8 +96,18 @@ public class RudimantCompiler {
     this.rootLevel = parent.rootLevel;
     this.visualise = parent.visualise;
   }
+  
+  public RudimantCompiler(File rootDir, String wrapperClass,
+          String constructorArgs, RdfProxy proxy) {
+    mem = new Mem(proxy, rootDir.getAbsolutePath() + "/" 
+            + wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1), this);
+    this.wrapperClass = wrapperClass;
+    parent = null;
+    this.constructorArgs = constructorArgs;
+  }
 
-  public RudimantCompiler(String wrapperClass, String constructorArgs, RdfProxy proxy) {
+  public RudimantCompiler(String wrapperClass, String constructorArgs,
+          RdfProxy proxy) {
     mem = new Mem(proxy);
     this.wrapperClass = wrapperClass;
     parent = null;
@@ -115,16 +125,26 @@ public class RudimantCompiler {
     return new RdfProxy(handler);
   }
 
-  public static RudimantCompiler init(File configDir, Map<String, Object> configs)
+  public static RudimantCompiler init(File configDir, Map<String, Object> configs,
+          File rootDir)
       throws IOException, WrongFormatException {
     RdfProxy proxy = startClient(configDir, configs);
     if (configs.containsKey(CFG_NAME_TO_URI)) {
       proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
     }
-    RudimantCompiler rc = new RudimantCompiler(
-        (String)configs.get(CFG_WRAPPER_CLASS),
-        (String)configs.get(CFG_TARGET_CONSTRUCTOR),
-        proxy);
+    RudimantCompiler rc = null;
+      if(rootDir != null && configs.get(CFG_WRAPPER_CLASS) != null){
+        rc = new RudimantCompiler(
+              rootDir,
+              (String)configs.get(CFG_WRAPPER_CLASS),
+              (String)configs.get(CFG_TARGET_CONSTRUCTOR),
+              proxy);
+      } else {
+        rc = new RudimantCompiler(
+              (String)configs.get(CFG_WRAPPER_CLASS),
+              (String)configs.get(CFG_TARGET_CONSTRUCTOR),
+              proxy);
+    }
     rc.setThrowExceptions((boolean)configs.get(CFG_TYPE_ERROR_FATAL));
     rc.setTypeCheck((boolean)configs.get(CFG_TYPE_CHECK));
     if (configs.containsKey(CFG_PACKAGE)) {
@@ -146,7 +166,6 @@ public class RudimantCompiler {
     inputDirectory = topLevel.getParentFile();
     outputDirectory = outputdir;
     className = getClassName(topLevel);
-    // subPackage.add(className);
 
     if (packageName != null && !packageName.isEmpty()) {
       subPackage.addAll(Arrays.asList(packageName.split("\\.")));
@@ -246,9 +265,6 @@ public class RudimantCompiler {
 
   public void flush() {
     try {
-//      String formattedSource = new Formatter().formatSource(out.toString());
-//      toFile.write(formattedSource);
-//      toFile.flush();
       out.flush();
     } catch (IOException ex) {
       throw new RuntimeException(ex);
@@ -272,11 +288,8 @@ public class RudimantCompiler {
   private void processForReal(File outputdir) throws IOException {
     if (!outputdir.isDirectory()) {
       Files.createDirectories(outputdir.toPath());
-      // throw new IOException(outputdir + " is not a directory");
     }
     File outputFile = new File(outputdir, className + ".java");
-//    toFile = Files.newBufferedWriter(outputFile.toPath());
-//    out = new StringBuffer();
     Writer output = Files.newBufferedWriter(outputFile.toPath());
 
     File inputFile = getInputFile();
@@ -329,6 +342,10 @@ public class RudimantCompiler {
     return new Pair<>((GrammarFile)myTree, collector.getCollectedTokens());
   }
 
+  void processForReal(InputStream in, Writer output, Mem mem) throws IOException {
+    this.mem = mem;
+    processForReal(in, output);
+  }
 
   void processForReal(InputStream in, Writer output) throws IOException {
     out = output;
@@ -340,6 +357,10 @@ public class RudimantCompiler {
     // do the type checking
     VTestTypeVisitor ttv = new VTestTypeVisitor(this);
     ttv.visitNode(gf);
+    if (output == null) {
+      // then there is nothing to write to; we are in a memory initialization
+      return;
+    }
     // generate the output
     VGenerationVisitor gv = new VGenerationVisitor(this, pair.second);
     // tell the file its name (for class definition)

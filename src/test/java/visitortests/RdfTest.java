@@ -49,12 +49,6 @@ public class RdfTest {
     String ontoFileName = RESOURCE_DIR + TEST_ONTO_CFG;
     handler.readConfig(new File(ontoFileName));
     _proxy = new RdfProxy(handler);
-    /*
-    HfcDbClient client = new HfcDbClient();
-    client.init("localhost", SeriousTest.SERVER_PORT);
-    client.readConfig(new File(RESOURCE_DIR + "rifca/rifca.ini"));
-    client.shutdown();
-    */
   }
 
   @Before

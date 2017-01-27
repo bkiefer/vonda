@@ -9,7 +9,6 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +25,11 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   private RudimantCompiler rudi;
   private Mem mem;
+
+  @Override
+  public void visitNode(RudiTree node) {
+    node.visit(this);
+  }
 
   @Override
   public void visitNode(RTExpression node) {
@@ -89,6 +93,10 @@ public class VTestTypeVisitor implements RudiVisitor {
     // find it while visiting left and therefore get at least tons of warnings
     // Otherwise: infer type from right
     if(node.declaration){
+        // is this a variable declaration for an already existing variable?
+      if (mem.variableExists(node.left.toString())) {
+          rudi.typeError("Re-declaration of existing variable " + node.left, node);
+      }
       node.left.type = node.type;
     }
     node.left.visit(this);
@@ -139,20 +147,20 @@ public class VTestTypeVisitor implements RudiVisitor {
       }
     }
 
+    // enter the variable into mem if we found a type, else enter "Object"
     if (node.left instanceof UVariable) {
       if (!mem.variableExists(node.left.toString())) {
         node.declaration = true;
-        mem.addVariableDeclaration(((UVariable) node.left).content,
-                node.type, mem.getClassName());
         if (node.type == null) {
           rudi.typeError("Type of variable unknown: "
                   + node.left + " in " + node, node);
+          mem.addVariableDeclaration(((UVariable) node.left).content,
+                  "Object", mem.getClassName());
+          node.type = "Object";
+          return;
         }
-      } else {
-        // is this a variable declaration for an already existing variable?
-        if (node.declaration) {
-          rudi.typeError("Re-declaration of existing variable " + node.left, node);
-        }
+        mem.addVariableDeclaration(((UVariable) node.left).content,
+                node.type, mem.getClassName());
       }
     }
   }
@@ -179,7 +187,6 @@ public class VTestTypeVisitor implements RudiVisitor {
    */
   @Override
   public void visitNode(ExpBoolean node) {
-    // System.out.println(node.fullexp);
     node.rule = mem.getCurrentRule();
     node.left.visit(this);
     if (node.right != null) {
@@ -204,31 +211,6 @@ public class VTestTypeVisitor implements RudiVisitor {
             break;
         }
       }
-      /*if (isComparisonOperator(node.operator)) {
-        // if one of the operands is an RDF type, or a DialogueAct, the operator has
-        // to be turned into a subsumption call
-        // TODO: this crashes if there is Introduction or Quiz on the right; they
-        // are not assigned to a type when visited...
-        if ((node.right.type != null && node.right.type.equals(DIALOGUE_ACT_TYPE))
-                || (node.left.type != null && node.left.type.equals(DIALOGUE_ACT_TYPE))) {
-          if (node.operator.equals("<=")) {
-            node.operator = ".isSubsumed(";
-          } else if (node.operator.equals("=>")) {
-            node.operator = ".subsumes(";
-          }
-          return;
-        }
-        // TODO THIS MIGHT NOT BE ENOUGH, E.G., IF ONE IS A RDF OBJECT AND THE OTHER
-        // IS A TYPE, WE MAYBE NEED ANOTHER FUNCTION CALL HERE
-        if (node.right.isRdfType() || node.left.isRdfType()) {
-          if (node.operator.equals("<=")) {
-            node.operator = ".isSubClassOf(";
-          } else if (node.operator.equals("=>")) {
-            node.operator = ".isSuperClassOf(";
-          }
-          return;
-        }
-      }*/
       if (isBooleanOperator(node.operator)) {
         node.right = node.right.ensureBoolean();
       }
@@ -285,8 +267,6 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.boolexp = node.boolexp.ensureBoolean();
     node.thenexp.visit(this);
     node.elseexp.visit(this);
-//      rudi.handleTypeError(node.fullexp + " is a conditional expression where the condition does not "
-//              + "resolve to boolean!");
     if (mem.mergeTypes(node.thenexp.getType(), node.elseexp.getType()) == null) {
       rudi.typeError(node.fullexp
           + " is a conditional expression where the else expression "
@@ -317,9 +297,8 @@ public class VTestTypeVisitor implements RudiVisitor {
         mem.needsClass(rudi.className, n);
       }
     }
-    // do not leave the environment, we are still in it! (but remember to leave it
-    // once the generation is done)
-//    mem.leaveEnvironment();
+    // do not leave the environment, we are still in it! (but remember to leave
+    // it once the generation is done)
     mem.leaveClass(oldname, oldrule, oldTrule);
   }
 
@@ -601,7 +580,7 @@ public class VTestTypeVisitor implements RudiVisitor {
         }
       }
     }
-    node.type = currentType; // the final result type
+    node.type = currentType == null? "Object" : currentType; // the final result type
     partOfFieldAccess = false;
   }
 
@@ -667,36 +646,6 @@ public class VTestTypeVisitor implements RudiVisitor {
       }
     }
 
-
-    /*
-     if (o == null) {
-     // the variable does not originate in another file
-
-     // is the variable an rdf type?
-     try {
-     if (rudi.getProxy().fetchRdfClass(node.type) != null) {
-     node.isRdfClass = true;
-     return;
-     } else // TODO: is this correct????
-     // it could still be sth like Introduction
-     if (rudi.getProxy().fetchRdfClass(node.representation) != null) {
-     node.isRdfClass = true;
-     return;
-     }
-     } catch (TException e) {
-     logger.error("Problem accessing database : {}", e.getMessage());
-     throw new RuntimeException(e);
-     }
-
-     // if not, mem either found a type or this variable wasn't declared
-     if (node.type == null) {
-     rudi.handleTypeError("The variable " + node.representation
-     + " is used but was not declared");
-     node.type = "Object";
-     return;
-     }
-     }
-     */
     if (o != null && !node.originClass.equals(o)) {
       mem.needsClass(mem.getCurrentTopRule(), o);
       node.realOrigin = o;
