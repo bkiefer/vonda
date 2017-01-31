@@ -355,7 +355,9 @@ public class VGenerationVisitor implements RudiVisitor {
     out.append("// this.init();\n");
     // use all methods created from rules in this file
     for (String toplevel : mem.getToplevelCalls(rudi.className)) {
+      // is it a rule or an import?
       if (toplevel.contains("(")) {
+        // an import
         out.append(toplevel);
 
 //        String t = toplevel.substring(0, toplevel.indexOf(" "));
@@ -380,6 +382,7 @@ public class VGenerationVisitor implements RudiVisitor {
 //        }
         out.append(");\n");
       } else {
+        // a rule
         out.append(toplevel + "(");
 //        // don't forget the needed class instances here
 //        i = 0;
@@ -750,7 +753,7 @@ public class VGenerationVisitor implements RudiVisitor {
       return ((USingleValue) bool_exp).content;
     }
     RTExpression bool = bool_exp;
-    
+
     // remembers how the expressions should be realized by rudimant
     LinkedHashMap<String, String> compiledLook = new LinkedHashMap<>();
 
