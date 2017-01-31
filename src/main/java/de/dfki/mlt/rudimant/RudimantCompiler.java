@@ -5,8 +5,10 @@ import static de.dfki.mlt.rudimant.io.RobotGrammarParser.*;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -96,10 +98,10 @@ public class RudimantCompiler {
     this.rootLevel = parent.rootLevel;
     this.visualise = parent.visualise;
   }
-  
+
   public RudimantCompiler(File rootDir, String wrapperClass,
           String constructorArgs, RdfProxy proxy) {
-    mem = new Mem(proxy, rootDir.getAbsolutePath() + "/" 
+    mem = new Mem(proxy, rootDir.getAbsolutePath() + "/"
             + wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1), this);
     this.wrapperClass = wrapperClass;
     parent = null;
@@ -285,22 +287,41 @@ public class RudimantCompiler {
     return classname;
   }
 
-  private void processForReal(File outputdir) throws IOException {
-    if (!outputdir.isDirectory()) {
-      Files.createDirectories(outputdir.toPath());
-    }
-    File outputFile = new File(outputdir, className + ".java");
-    Writer output = Files.newBufferedWriter(outputFile.toPath());
+  private static final File tmpCfg = new File("/tmp/uncrustify.cfg");
+  private static boolean cfgWritten = false;
 
-    File inputFile = getInputFile();
-    logger.info("parsing " + inputFile.getName() + " to " + outputFile);
-    processForReal(new FileInputStream(inputFile), output);
-    this.flush();
+  private static void uncrustify(File outputFile) {
+    if (!cfgWritten && ! tmpCfg.exists()) {
+      InputStream in = null;
+      OutputStream out = null;
+      try {
+        cfgWritten = true;
+        in = RudimantCompiler.class.getResourceAsStream("/uncrustify.cfg");
+        out = new FileOutputStream(tmpCfg);
+        int b;
+        while ((b = in.read()) >= 0) {
+          out.write(b);
+        }
+      } catch (IOException ex){
+        logger.error("Failed to write uncrustify config");
+      }
+      finally {
+        try {
+          if (out != null) {
+            in.close();
+            out.flush();
+            out.close();
+          }
+        }
+        catch (IOException ex){
+          logger.error("Failed to write uncrustify config");
+        }
+      }
+    }
     try {
       // TODO: NEEDS BETTER SPEC FOR UNCR.CFG
       String[] cmdArray = {
-          "uncrustify",  "--no-backup",
-          "-c", "src/main/resources/uncrustify.cfg",
+          "uncrustify",  "--no-backup", "-c", tmpCfg.getAbsolutePath(),
           outputFile.getAbsolutePath()
       };
       Process proc = Runtime.getRuntime().exec(cmdArray);
@@ -314,6 +335,20 @@ public class RudimantCompiler {
     } catch (InterruptedException e) {
       logger.warn("uncrustify was interrupted");
     }
+  }
+
+  private void processForReal(File outputdir) throws IOException {
+    if (!outputdir.isDirectory()) {
+      Files.createDirectories(outputdir.toPath());
+    }
+    File outputFile = new File(outputdir, className + ".java");
+    Writer output = Files.newBufferedWriter(outputFile.toPath());
+
+    File inputFile = getInputFile();
+    logger.info("parsing " + inputFile.getName() + " to " + outputFile);
+    processForReal(new FileInputStream(inputFile), output);
+    this.flush();
+    uncrustify(outputFile);
   }
 
   public static Pair<GrammarFile, LinkedList<Token>> parseInput(String realName, InputStream in)
