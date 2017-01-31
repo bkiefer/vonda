@@ -40,6 +40,8 @@ public class RudimantCompiler {
 
   public static final Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
+  private static HfcDbHandler handler;
+
   private boolean throwExceptions = true;
   private boolean typeCheck = true;
   private boolean visualise = false;
@@ -118,7 +120,7 @@ public class RudimantCompiler {
 
   public static RdfProxy startClient(File configDir, Map<String, Object> configs)
       throws IOException, WrongFormatException {
-    HfcDbHandler handler = new HfcDbHandler();
+    handler = new HfcDbHandler();
     String ontoFileName = (String) configs.get(CFG_ONTOLOGY_FILE);
     if (ontoFileName == null) {
       throw new IOException("Ontology file is missing.");
@@ -157,6 +159,10 @@ public class RudimantCompiler {
       if ((boolean) configs.get(CFG_VISUALISE)) Visualize.init();
     }
     return rc;
+  }
+
+  public static void shutdown() {
+    handler.shutdown();
   }
 
   public static RudimantCompiler getEmbedded(RudimantCompiler parent) {
