@@ -27,7 +27,11 @@ public class UPropertyAccess extends RTExpLeaf {
       boolean func) {
     // an access will always return sth of type Object, so to not get null
     // I'll set the type of this to Object by default
-    type = "Object";
+    if(rt == null){
+      type = "Object";
+    } else {
+      type = rt;
+    }
     label = l;
     propertyVariable = var;
     rangeType = rt;
@@ -38,7 +42,7 @@ public class UPropertyAccess extends RTExpLeaf {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
-  
+
   @Override
   public String visitStringV(RTStringVisitor v){
     return v.visitNode(this);

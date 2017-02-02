@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import static de.dfki.mlt.rudimant.Constants.DIALOGUE_ACT_TYPE;
 import de.dfki.mlt.rudimant.abstractTree.USingleValue;
 import de.dfki.mlt.rudimant.abstractTree.UVariable;
 import java.io.File;
@@ -130,6 +131,26 @@ public class Mem {
 
   public static boolean isRdfType(String type) {
     return (type != null && type.charAt(0) == '<');
+  }
+
+  /**
+   * returns a correct java type for whatever input
+   * @param something
+   * @return
+   */
+  public String convertRdfType(String something){
+    if(!isRdfType(something)){
+      return something;
+    }
+    if(something.startsWith("<xsd:")){
+      String ret = something.substring(something.indexOf(":") + 1, something.indexOf(">"));
+      // TODO: which other types have to be put in correct form?
+      ret = ret.equals("string")? "String" : ret;
+      return ret;
+    } else {
+      return (DIALOGUE_ACT_TYPE.equals(something))
+                  ? "DialogueAct" : "Rdf";
+    }
   }
 
   /** Return the more specific of the two types, if it exists, null otherwise */

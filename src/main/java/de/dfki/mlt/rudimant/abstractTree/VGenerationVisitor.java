@@ -96,13 +96,7 @@ public class VGenerationVisitor implements RudiVisitor {
   @Override
   public void visitNode(ExpAssignment node) {
     if (node.declaration) {
-      if (Mem.isRdfType(node.type)) {
-        // All RDF types except DialogueAct has to be replaced with Rdf
-        out.append((DIALOGUE_ACT_TYPE.equals(node.type))
-            ? "DialogueAct" : "Rdf");
-      } else {
-        out.append(node.type);
-      }
+      out.append(mem.convertRdfType(node.type));
     }
     out.append(' ');
     UPropertyAccess pa = null;
@@ -132,13 +126,7 @@ public class VGenerationVisitor implements RudiVisitor {
             !node.type.equals(node.right.getType())){
       // then there is either sth wrong here, what would at least have resulted
       // in warnings in type testing, or it is possible to cast the right part
-      if (Mem.isRdfType(node.type)) {
-        // All RDF types except DialogueAct has to be replaced with Rdf
-        out.append("(" + ((DIALOGUE_ACT_TYPE.equals(node.type))
-            ? "DialogueAct" : "Rdf") + ") ");
-      } else {
-        out.append("(" + node.type + ") ");
-      }
+      out.append("(" + mem.convertRdfType(node.type) + ") ");
     }
     node.right.visitWithComments(this);
     if (pa != null) {
@@ -381,6 +369,7 @@ public class VGenerationVisitor implements RudiVisitor {
           }
         }
         out.append(");\n");
+        out.append(t + ".process();\n");
       } else {
         // a rule
         out.append(toplevel + "(");
@@ -661,16 +650,14 @@ public class VGenerationVisitor implements RudiVisitor {
     // Plan: if we could determine the types of subexpressions in TypeVisitor,
     //       we could enter them into a list and just output that list here
     //       in reversed order - edit: let's just reverse them in the access class
-//    int j = 0;
-    for (String cast : node.getTypesToCast()){
-//      if(j != 0){
+    for (int i = 1; i < to; i++) {
+      if (node.parts.get(i) instanceof UPropertyAccess) {
+        UPropertyAccess pa = (UPropertyAccess)node.parts.get(i);
+        String cast = mem.convertRdfType(pa.getType());
         out.append("((");
-//      } else {
-//        out.append("(");
-//      }
-      out.append(cast);
-      out.append(")");
-//      j++;
+        out.append(cast);
+        out.append(")");
+      }
     }
     node.parts.get(0).visitWithComments(this);
     for (int i = 1; i < to; i++) {

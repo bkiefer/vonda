@@ -20,39 +20,11 @@ public class UFieldAccess extends RTExpLeaf {
   List<RudiTree> parts;
   List<String> representation;
   boolean asked = false;
-  private List<String> typesToCastTo = new ArrayList<>();
 
   public UFieldAccess(String fullexp, List<RudiTree> parts, List<String> representation) {
     this.parts = parts;
     this.representation = representation;
     this.fullexp = fullexp;
-  }
-
-  /**
-   * enter the given type as a type that we have to cast to in generation,
-   * because getValue will only return Object
-   * @param to
-   */
-  void addCastTo(String to){
-    if(to == null){
-      logger.warn("adding cast to null for a field access");
-      return;
-    }
-    if(to.contains("<")){
-      to = (DIALOGUE_ACT_TYPE.equals(to))
-            ? "DialogueAct" : "Rdf";
-    }
-    typesToCastTo.add(0, to);
-  }
-
-  /**
-   * gives a list of types that were encountered to be the runtime types of
-   * the getValue calls contained in this fieldaccess; the first element of the
-   * list will be the outermost cast!
-   * @return
-   */
-  List<String> getTypesToCast(){
-    return this.typesToCastTo;
   }
 
   @Override
