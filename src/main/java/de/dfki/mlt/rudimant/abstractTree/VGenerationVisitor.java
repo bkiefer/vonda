@@ -432,21 +432,6 @@ public class VGenerationVisitor implements RudiVisitor {
     if (node.toplevel) {
       // this is a toplevel rule and will be converted to a method
       out.append("public void " + node.label + "(");
-      // get all the required class instances
-      // as their fields may also be used in methods, this was moved to be fields
-      // in our classes
-//      int i = 0;
-//      for (String n : mem.getNeededClasses(node.label)) {
-//        if (i == 0) {
-//          out.append("final ");
-//          out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-//                  + n.substring(0, 1).toLowerCase() + n.substring(1));
-//        } else {
-//          out.append(", final " + n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-//                  + n.substring(0, 1).toLowerCase() + n.substring(1));
-//        }
-//        i++;
-//      }
       out.append("){\n");
       this.ruleIf = this.printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");

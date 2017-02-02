@@ -406,11 +406,7 @@ public class RudimantCompiler {
     VGenerationVisitor gv = new VGenerationVisitor(this, pair.second);
     // tell the file its name (for class definition)
     gf.setClassName(className);
-    try {
-      gv.visitNode(gf);
-    } catch (InOutException e) {
-      throw new IOException(e);
-    }
+    gv.visitNode(gf);
     logger.info("Done parsing");
   }
 
