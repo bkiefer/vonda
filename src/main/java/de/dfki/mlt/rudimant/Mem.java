@@ -49,13 +49,13 @@ public class Mem {
 
   private RdfProxy _proxy;
 
-  private final String agentInit = "src/main/resources/Agent.rudi";
-  private final String wrapperInit;
+  String agentInit = "src/main/resources/Agent.rudi";
+  String wrapperInit;
   /**
    * to be able to not go down into environments for our different
    * initialization files
    **/
-  private boolean initializing = false;
+  boolean initializing = false;
 
   public Mem(RdfProxy proxy) {
     wrapperInit = null;
@@ -63,50 +63,8 @@ public class Mem {
     rulesAndImports = new HashMap<>();
     _proxy = proxy;
     current = new Environment();
-  }
-
-  /**
-   * use this initialization version to initialize with standard Java and Agent
-   * methods plus those defined in <wrapperClass>.rudi
-   * @param proxy
-   * @param wrapperClassPath full file path (without .rudi)
-   * @param rudi
-   */
-  public Mem(RdfProxy proxy, String wrapperClassPath, RudimantCompiler rudi) {
-    wrapperInit = wrapperClassPath + ".rudi";
-    environment = new ArrayDeque<>();
-    rulesAndImports = new HashMap<>();
-    _proxy = proxy;
-    initializeJavaFs(rudi);
-  }
-
-  private void initializeJavaFs(RudimantCompiler rc){
-    initializing = true;
     // enter our very first environment,
-    enterEnvironment();
-    try {
-      logger.info("initializing Agent and Java methods");
-      rc.processForReal(new FileInputStream(agentInit), null, this);
-    } catch (FileNotFoundException ex) {
-      // means the files do not exist to read from, but that is okay, we just
-      // won't be as smart as we could be with type knowledge
-      logger.debug("could not import one of the initializer files: " +
-              agentInit + "\n ");
-    } catch (IOException ex) {
-      java.util.logging.Logger.getLogger(Mem.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    try {
-      logger.info("initializing " + wrapperInit + " methods");
-      rc.processForReal(new FileInputStream(wrapperInit), null, this);
-    } catch (FileNotFoundException ex) {
-      // means the files do not exist to read from, but that is okay, we just
-      // won't be as smart as we could be with type knowledge
-      logger.debug("could not import one of the initializer files: " +
-              wrapperInit + "\n ");
-    } catch (IOException ex) {
-      java.util.logging.Logger.getLogger(Mem.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    initializing = false;
+    this.enterEnvironment();
   }
 
   static Map<String, Long> typeCodes = new HashMap<>();

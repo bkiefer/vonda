@@ -35,6 +35,8 @@ import de.dfki.mlt.rudimant.abstractTree.VTestTypeVisitor;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
+import java.io.FileNotFoundException;
+import java.util.logging.Level;
 
 public class RudimantCompiler {
 
@@ -101,21 +103,42 @@ public class RudimantCompiler {
     this.visualise = parent.visualise;
   }
 
-  public RudimantCompiler(File rootDir, String wrapperClass,
-          String constructorArgs, RdfProxy proxy) {
-    mem = new Mem(proxy, rootDir.getAbsolutePath() + "/"
-            + wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1), this);
+  private RudimantCompiler(String wrapperClass, String targetConstructor,
+          RdfProxy Proxy){
     this.wrapperClass = wrapperClass;
-    parent = null;
-    this.constructorArgs = constructorArgs;
+    constructorArgs = targetConstructor;
   }
 
-  public RudimantCompiler(String wrapperClass, String constructorArgs,
-          RdfProxy proxy) {
+  public void initMem(File rootDir, RdfProxy proxy) {
     mem = new Mem(proxy);
-    this.wrapperClass = wrapperClass;
+    mem.wrapperInit = wrapperClass + ".rudi";
+    mem.initializing = true;
     parent = null;
-    this.constructorArgs = constructorArgs;
+    logger.info("initializing Agent and Java methods");
+    try {
+      this.processForReal(new FileInputStream(mem.agentInit), null, mem);
+    } catch (FileNotFoundException ex) {
+      // means the files do not exist to read from, but that is okay, we just
+      // won't be as smart as we could be with type knowledge
+      logger.debug("could not import or read one of the initializer files: " +
+              mem.agentInit + "\n ");
+    } catch (IOException ex) {
+      logger.debug("could not import or read one of the initializer files: " +
+              mem.agentInit + "\n ");
+    }
+    logger.info("initializing " + mem.wrapperInit + " methods");
+    try {
+      this.processForReal(new FileInputStream(mem.wrapperInit), null, mem);
+    } catch (FileNotFoundException ex) {
+      // means the files do not exist to read from, but that is okay, we just
+      // won't be as smart as we could be with type knowledge
+      logger.debug("could not import or read one of the initializer files: " +
+              mem.wrapperInit + "\n ");
+   } catch (IOException ex) {
+      logger.debug("could not import or read one of the initializer files: " +
+              mem.wrapperInit + "\n ");
+    }
+    mem.initializing = false;
   }
 
   public static RdfProxy startClient(File configDir, Map<String, Object> configs)
@@ -136,18 +159,12 @@ public class RudimantCompiler {
     if (configs.containsKey(CFG_NAME_TO_URI)) {
       proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
     }
-    RudimantCompiler rc = null;
-      if(rootDir != null && configs.get(CFG_WRAPPER_CLASS) != null){
-        rc = new RudimantCompiler(
-              rootDir,
+    RudimantCompiler rc = new RudimantCompiler(
               (String)configs.get(CFG_WRAPPER_CLASS),
               (String)configs.get(CFG_TARGET_CONSTRUCTOR),
               proxy);
-      } else {
-        rc = new RudimantCompiler(
-              (String)configs.get(CFG_WRAPPER_CLASS),
-              (String)configs.get(CFG_TARGET_CONSTRUCTOR),
-              proxy);
+    if(rootDir != null && configs.get(CFG_WRAPPER_CLASS) != null){
+      rc.initMem(rootDir, proxy);
     }
     rc.setThrowExceptions((boolean)configs.get(CFG_TYPE_ERROR_FATAL));
     rc.setTypeCheck((boolean)configs.get(CFG_TYPE_CHECK));
