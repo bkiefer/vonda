@@ -21,16 +21,11 @@ import static org.junit.Assert.assertEquals;
  */
 public class ExpAssignmentTest {
 
-  String header = "label: if(true) {";
-  String footer = "}";
+  static String header = "label: if(true) {";
+  static String footer = "}";
 
-  public RudiTree getNodeOfInterest(RudiTree rt) {
-    assertTrue(rt instanceof GrammarFile);
-    GrammarFile gf = (GrammarFile) rt;
-    GrammarRule dtr = (GrammarRule) gf.getDtrs().iterator().next();
-    StatIf _if = (StatIf) dtr.getDtrs().iterator().next();
-    StatAbstractBlock blk = (StatAbstractBlock) ((StatIf) _if).statblockIf;
-    return blk.getDtrs().iterator().next();
+  static public RudiTree getNodeOfInterest(RudiTree rt) {
+    return getNodeOfInterest(rt, 0);
   }
 
   /**
@@ -39,20 +34,20 @@ public class ExpAssignmentTest {
    * @param n Specifies which node to return.
    * @return node of interest
    */
-  public RudiTree getNodeOfInterest(RudiTree rt, int n) {
+  static public RudiTree getNodeOfInterest(RudiTree rt, int n) {
     assertTrue(rt instanceof GrammarFile);
     GrammarFile gf = (GrammarFile) rt;
     GrammarRule dtr = (GrammarRule) gf.getDtrs().iterator().next();
     StatIf _if = (StatIf) dtr.getDtrs().iterator().next();
     StatAbstractBlock blk = (StatAbstractBlock) ((StatIf) _if).statblockIf;
-    Iterator it = blk.getDtrs().iterator();
+    Iterator<? extends RudiTree> it = blk.getDtrs().iterator();
     for (int i=0; i<n; i++){
       it.next();
     }
-    return (RudiTree) it.next();
+    return it.next();
   }
 
-  public InputStream getInput(String input) {
+  static public InputStream getInput(String input) {
     String toParse = header + input + footer;
     return new ByteArrayInputStream(toParse.getBytes());
   }

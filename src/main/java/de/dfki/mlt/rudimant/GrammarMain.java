@@ -143,7 +143,7 @@ public class GrammarMain {
         usage("Input file is missing");
       }
 
-      File inputDirectory = outputDirectory = 
+      File inputDirectory = outputDirectory =
               new File((String)files.get(0)).getParentFile();
 
       if (options.has("help") || options.has("h")) {
@@ -189,6 +189,7 @@ public class GrammarMain {
       main.setConfig(configs);
       process(RudimantCompiler.init(configDir, configs, inputDirectory), files,
               outputDirectory);
+      RudimantCompiler.shutdown();
       System.out.println("Parsing finished");
     } catch (OptionException ex) {
       usage("Error parsing options: " + ex.getMessage());
