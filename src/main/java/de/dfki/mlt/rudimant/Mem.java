@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import static de.dfki.mlt.rudimant.Constants.DIALOGUE_ACT_TYPE;
 import de.dfki.mlt.rudimant.abstractTree.USingleValue;
 import de.dfki.mlt.rudimant.abstractTree.UVariable;
 import java.io.File;
@@ -47,7 +48,7 @@ public class Mem {
   private Map<String, List<String>> rulesAndImports;
 
   private RdfProxy _proxy;
-  
+
   private final String agentInit = "src/main/resources/Agent.rudi";
   private final String wrapperInit;
   /**
@@ -63,13 +64,13 @@ public class Mem {
     _proxy = proxy;
     current = new Environment();
   }
-  
+
   /**
    * use this initialization version to initialize with standard Java and Agent
    * methods plus those defined in <wrapperClass>.rudi
    * @param proxy
    * @param wrapperClassPath full file path (without .rudi)
-   * @param rudi 
+   * @param rudi
    */
   public Mem(RdfProxy proxy, String wrapperClassPath, RudimantCompiler rudi) {
     wrapperInit = wrapperClassPath + ".rudi";
@@ -81,7 +82,7 @@ public class Mem {
 
   private void initializeJavaFs(RudimantCompiler rc){
     initializing = true;
-    // enter our very first environment, 
+    // enter our very first environment,
     enterEnvironment();
     try {
       logger.info("initializing Agent and Java methods");
@@ -107,7 +108,7 @@ public class Mem {
     }
     initializing = false;
   }
-  
+
   static Map<String, Long> typeCodes = new HashMap<>();
 
   static final long JAVA_TYPE = 0x10;
@@ -130,6 +131,26 @@ public class Mem {
 
   public static boolean isRdfType(String type) {
     return (type != null && type.charAt(0) == '<');
+  }
+
+  /**
+   * returns a correct java type for whatever input
+   * @param something
+   * @return
+   */
+  public String convertRdfType(String something){
+    if(!isRdfType(something)){
+      return something;
+    }
+    if(something.startsWith("<xsd:")){
+      String ret = something.substring(something.indexOf(":") + 1, something.indexOf(">"));
+      // TODO: which other types have to be put in correct form?
+      ret = ret.equals("string")? "String" : ret;
+      return ret;
+    } else {
+      return (DIALOGUE_ACT_TYPE.equals(something))
+                  ? "DialogueAct" : "Rdf";
+    }
   }
 
   /** Return the more specific of the two types, if it exists, null otherwise */
@@ -367,8 +388,7 @@ public class Mem {
   public void addImport(String importName, String conargs) {
     String importClassName = importName.substring(0, 1).toUpperCase() + importName.substring(1);
     this.rulesAndImports.get(this.curClass).add(importClassName + " "
-            + importName + " = new " + importClassName + "(" + conargs +
-            ");\n" + importName + ".process(");
+            + importName + " = new " + importClassName + "(");
   }
 
   /**
@@ -378,12 +398,11 @@ public class Mem {
    * @return
    */
   public List<String> getToplevelCalls(String classname) {
-    return this.rulesAndImports.get(this.curClass);
+    return this.rulesAndImports.get(classname);
   }
 
   /**
    * return all toplevel rules contained in the given class
-   *
    * @param classname
    * @return
    */

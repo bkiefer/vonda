@@ -8,6 +8,7 @@ package de.dfki.mlt.rudimant.abstractTree;
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
@@ -292,9 +293,13 @@ public class VTestTypeVisitor implements RudiVisitor {
     for (RudiTree t : node.rules) {
       t.visit(this);
     }
-    for (String s : mem.getTopLevelRules(rudi.className)) {
-      for (String n : mem.getNeededClasses(s)) {
-        mem.needsClass(rudi.className, n);
+    if(mem.getToplevelCalls(rudi.className) != null){
+      for (String s : mem.getToplevelCalls(rudi.className)) {
+        if(mem.getNeededClasses(s) != null){
+          for (String n : mem.getNeededClasses(s)) {
+            mem.needsClass(rudi.className, n);
+          }
+        }
       }
     }
     // do not leave the environment, we are still in it! (but remember to leave
@@ -365,18 +370,24 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatImport node) {
     String conargs = "";
-    if (null != rudi.getConstructorArgs()
-            && !rudi.getConstructorArgs().isEmpty()) {
-      int i = 0;
-      for (String a : rudi.getConstructorArgs().split(",")) {
-        if (i > 0) {
-          conargs += ", ";
-        }
-        conargs += a.trim().split(" ")[1];
-        i++;
-      }
-    }
+//    if (null != rudi.getConstructorArgs()
+//            && !rudi.getConstructorArgs().isEmpty()) {
+//      int i = 0;
+//      for (String a : rudi.getConstructorArgs().split(",")) {
+//        if (i > 0) {
+//          conargs += ", ";
+//        }
+//        conargs += a.trim().split(" ")[1];
+//        i++;
+//      }
+//    }
     mem.addImport(node.name, conargs);
+    logger.info("Processing import " + node.content);
+    try {
+      RudimantCompiler.getEmbedded(rudi).process(node.content);
+    } catch (IOException ex) {
+      throw new RuntimeException(ex);
+    }
   }
 
   @Override
@@ -557,13 +568,10 @@ public class VTestTypeVisitor implements RudiVisitor {
     // this is dangerous, and only works if this condition can not be
     // "interrupted"
     partOfFieldAccess = true;
-    // remember whether we did sth rdf-y and should do casting
-    boolean rdfy = false;
     for(int i = 1; i < node.parts.size(); ++i) {
       currentNode = node.parts.get(i);
       currentNode.visit(this);
       if (Mem.isRdfType(currentType)) {
-        rdfy = true;
         if (currentNode instanceof UVariable) {
           // only a literal, delegate this because it's complicated
           UPropertyAccess acc =
@@ -582,14 +590,6 @@ public class VTestTypeVisitor implements RudiVisitor {
         } else {
           currentType = null;
         }
-      }
-      if (rdfy) {
-        // it seems to me that we should not do this with the very first element
-        // so, as we hava to do it with the last, do it after currentType was
-        // set to its new value
-          // in this case we have to assume a getValue call, so remember that
-          // its result has to be casted to the actual type
-          node.addCastTo(currentType);
       }
     }
     node.type = currentType == null? "Object" : currentType; // the final result type
