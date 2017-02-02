@@ -360,26 +360,26 @@ public class VGenerationVisitor implements RudiVisitor {
         // an import
         out.append(toplevel);
 
-//        String t = toplevel.substring(0, toplevel.indexOf(" "));
-//        Set<String> ncs = mem.getNeededClasses(t);
-//        if (ncs != null) {
-//          i = 0;
-//          for (String c : ncs) {
-//            if (c.equals(rudi.className)
-//                    || (c.substring(0, 1).toUpperCase()
-//                    + c.substring(1)).equals(rudi.className)) {
-//              c = "this";
-//            }
-//            if (i == 0) {
-//              out.append(c.substring(0, 1).toLowerCase()
-//                      + c.substring(1));
-//            } else {
-//              out.append(", " + c.substring(0, 1).toLowerCase()
-//                      + c.substring(1));
-//            }
-//            i++;
-//          }
-//        }
+        String t = toplevel.substring(toplevel.indexOf(" ") + 1, toplevel.indexOf(" ="));
+        Set<String> ncs = mem.getNeededClasses(t);
+        if (ncs != null) {
+          i = 0;
+          for (String c : ncs) {
+            if (c.equals(rudi.className)
+                    || (c.substring(0, 1).toUpperCase()
+                    + c.substring(1)).equals(rudi.className)) {
+              c = "this";
+            }
+            if (i == 0) {
+              out.append(c.substring(0, 1).toLowerCase()
+                      + c.substring(1));
+            } else {
+              out.append(", " + c.substring(0, 1).toLowerCase()
+                      + c.substring(1));
+            }
+            i++;
+          }
+        }
         out.append(");\n");
       } else {
         // a rule
@@ -432,21 +432,6 @@ public class VGenerationVisitor implements RudiVisitor {
     if (node.toplevel) {
       // this is a toplevel rule and will be converted to a method
       out.append("public void " + node.label + "(");
-      // get all the required class instances
-      // as their fields may also be used in methods, this was moved to be fields
-      // in our classes
-//      int i = 0;
-//      for (String n : mem.getNeededClasses(node.label)) {
-//        if (i == 0) {
-//          out.append("final ");
-//          out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-//                  + n.substring(0, 1).toLowerCase() + n.substring(1));
-//        } else {
-//          out.append(", final " + n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-//                  + n.substring(0, 1).toLowerCase() + n.substring(1));
-//        }
-//        i++;
-//      }
       out.append("){\n");
       this.ruleIf = this.printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
@@ -551,12 +536,13 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatImport node) {
-    logger.info("Processing import " + node.content);
-    try {
-      RudimantCompiler.getEmbedded(rudi).process(node.content);
-    } catch (IOException ex) {
-      throw new RuntimeException(ex);
-    }
+    // moved to type visitor
+//    logger.info("Processing import " + node.content);
+//    try {
+//      RudimantCompiler.getEmbedded(rudi).process(node.content);
+//    } catch (IOException ex) {
+//      throw new RuntimeException(ex);
+//    }
   }
 
   @Override

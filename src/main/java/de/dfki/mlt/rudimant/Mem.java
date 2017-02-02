@@ -47,7 +47,7 @@ public class Mem {
   private Map<String, List<String>> rulesAndImports;
 
   private RdfProxy _proxy;
-  
+
   private final String agentInit = "src/main/resources/Agent.rudi";
   private final String wrapperInit;
   /**
@@ -63,13 +63,13 @@ public class Mem {
     _proxy = proxy;
     current = new Environment();
   }
-  
+
   /**
    * use this initialization version to initialize with standard Java and Agent
    * methods plus those defined in <wrapperClass>.rudi
    * @param proxy
    * @param wrapperClassPath full file path (without .rudi)
-   * @param rudi 
+   * @param rudi
    */
   public Mem(RdfProxy proxy, String wrapperClassPath, RudimantCompiler rudi) {
     wrapperInit = wrapperClassPath + ".rudi";
@@ -81,7 +81,7 @@ public class Mem {
 
   private void initializeJavaFs(RudimantCompiler rc){
     initializing = true;
-    // enter our very first environment, 
+    // enter our very first environment,
     enterEnvironment();
     try {
       logger.info("initializing Agent and Java methods");
@@ -107,7 +107,7 @@ public class Mem {
     }
     initializing = false;
   }
-  
+
   static Map<String, Long> typeCodes = new HashMap<>();
 
   static final long JAVA_TYPE = 0x10;
@@ -367,8 +367,7 @@ public class Mem {
   public void addImport(String importName, String conargs) {
     String importClassName = importName.substring(0, 1).toUpperCase() + importName.substring(1);
     this.rulesAndImports.get(this.curClass).add(importClassName + " "
-            + importName + " = new " + importClassName + "(" + conargs +
-            ");\n" + importName + ".process(");
+            + importName + " = new " + importClassName + "(");
   }
 
   /**
@@ -378,12 +377,11 @@ public class Mem {
    * @return
    */
   public List<String> getToplevelCalls(String classname) {
-    return this.rulesAndImports.get(this.curClass);
+    return this.rulesAndImports.get(classname);
   }
 
   /**
    * return all toplevel rules contained in the given class
-   *
    * @param classname
    * @return
    */

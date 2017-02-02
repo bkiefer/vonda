@@ -8,6 +8,7 @@ package de.dfki.mlt.rudimant.abstractTree;
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
@@ -292,9 +293,13 @@ public class VTestTypeVisitor implements RudiVisitor {
     for (RudiTree t : node.rules) {
       t.visit(this);
     }
-    for (String s : mem.getTopLevelRules(rudi.className)) {
-      for (String n : mem.getNeededClasses(s)) {
-        mem.needsClass(rudi.className, n);
+    if(mem.getToplevelCalls(rudi.className) != null){
+      for (String s : mem.getToplevelCalls(rudi.className)) {
+        if(mem.getNeededClasses(s) != null){
+          for (String n : mem.getNeededClasses(s)) {
+            mem.needsClass(rudi.className, n);
+          }
+        }
       }
     }
     // do not leave the environment, we are still in it! (but remember to leave
@@ -365,18 +370,24 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatImport node) {
     String conargs = "";
-    if (null != rudi.getConstructorArgs()
-            && !rudi.getConstructorArgs().isEmpty()) {
-      int i = 0;
-      for (String a : rudi.getConstructorArgs().split(",")) {
-        if (i > 0) {
-          conargs += ", ";
-        }
-        conargs += a.trim().split(" ")[1];
-        i++;
-      }
-    }
+//    if (null != rudi.getConstructorArgs()
+//            && !rudi.getConstructorArgs().isEmpty()) {
+//      int i = 0;
+//      for (String a : rudi.getConstructorArgs().split(",")) {
+//        if (i > 0) {
+//          conargs += ", ";
+//        }
+//        conargs += a.trim().split(" ")[1];
+//        i++;
+//      }
+//    }
     mem.addImport(node.name, conargs);
+    logger.info("Processing import " + node.content);
+    try {
+      RudimantCompiler.getEmbedded(rudi).process(node.content);
+    } catch (IOException ex) {
+      throw new RuntimeException(ex);
+    }
   }
 
   @Override
