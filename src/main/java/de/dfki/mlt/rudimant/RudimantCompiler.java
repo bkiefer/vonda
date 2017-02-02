@@ -111,7 +111,8 @@ public class RudimantCompiler {
 
   public void initMem(File rootDir, RdfProxy proxy) {
     mem = new Mem(proxy);
-    mem.wrapperInit = wrapperClass + ".rudi";
+    mem.wrapperInit = rootDir + "/" +
+            wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + ".rudi";
     mem.initializing = true;
     parent = null;
     logger.info("initializing Agent and Java methods");
@@ -120,10 +121,10 @@ public class RudimantCompiler {
     } catch (FileNotFoundException ex) {
       // means the files do not exist to read from, but that is okay, we just
       // won't be as smart as we could be with type knowledge
-      logger.debug("could not import or read one of the initializer files: " +
+      logger.debug("could not import one of the initializer files: " +
               mem.agentInit + "\n ");
     } catch (IOException ex) {
-      logger.debug("could not import or read one of the initializer files: " +
+      logger.debug("could not read one of the initializer files: " +
               mem.agentInit + "\n ");
     }
     logger.info("initializing " + mem.wrapperInit + " methods");
@@ -132,10 +133,10 @@ public class RudimantCompiler {
     } catch (FileNotFoundException ex) {
       // means the files do not exist to read from, but that is okay, we just
       // won't be as smart as we could be with type knowledge
-      logger.debug("could not import or read one of the initializer files: " +
+      logger.debug("could not import one of the initializer files: " +
               mem.wrapperInit + "\n ");
    } catch (IOException ex) {
-      logger.debug("could not import or read one of the initializer files: " +
+      logger.debug("could not  read one of the initializer files: " +
               mem.wrapperInit + "\n ");
     }
     mem.initializing = false;
