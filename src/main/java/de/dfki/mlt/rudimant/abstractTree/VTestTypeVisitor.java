@@ -102,6 +102,35 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.left.visit(this);
     if (node.type == null) {
       node.type = node.right.type;
+      if (node.type == null){  // variable declaration with another variable?
+            if (node.left instanceof UVariable) {
+              if (node.right instanceof UVariable){
+                 if (!mem.variableExists(node.right.toString())) {
+                   rudi.typeError("Assignment of a value of a non-existing variable " + node.right + "to " + node.left, node);
+                 }
+                 else{
+                   if (!mem.variableExists(node.left.toString())){
+                     node.declaration = true;
+                     node.type = mem.getVariableType(node.right.toString());
+                     node.left.type = mem.getVariableType(node.right.toString());
+                     node.right.type = mem.getVariableType(node.right.toString());
+                     mem.addVariableDeclaration(((UVariable) node.left).content,
+                node.type, mem.getClassName());
+                   }
+                   else{  // variable declaration for an already existing variable?
+                    if (node.declaration) {
+                      rudi.typeError("Re-declaration of existing variable " + node.left, node);
+                    }
+                    else{
+                      if (!mem.getVariableType(node.left.toString()).equals(mem.getVariableType(node.right.toString()))){
+                      rudi.typeError("Assignment of the value of " + node.right + "to existing variable" + node.left + ": Types do not match", node);
+                    }
+                    }
+                   }
+                 }
+              }
+            }        
+      }
     } else {
       node.type = mem.checkRdf(node.type);
       if (node.right.type == null) {
@@ -123,7 +152,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       if (!mem.variableExists(node.left.toString())) {
         node.declaration = true;
         if (node.type == null) {
-          rudi.typeError("Type of variable unkown: "
+          rudi.typeError("Type of variable unknown: "
                   + node.left + " in " + node, node);
           mem.addVariableDeclaration(((UVariable) node.left).content,
                   "Object", mem.getClassName());
