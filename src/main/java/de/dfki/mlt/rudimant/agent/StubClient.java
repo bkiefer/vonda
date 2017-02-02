@@ -46,6 +46,10 @@ public class StubClient implements CommunicationHub {
     _agent = agent;
   }
 
+  public void stringToIntention(String in) {
+    inQueue.add(new Event(EventType.INTENTION, new DialogueAct(in)));
+  }
+
   @Override
   public void sendBehaviour(Behaviour b) {
     System.out.println(b.getText());
