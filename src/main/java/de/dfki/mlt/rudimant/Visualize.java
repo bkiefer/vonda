@@ -1,7 +1,8 @@
 package de.dfki.mlt.rudimant;
 
-import static de.dfki.mlt.rudimant.Constants.*;
+import static de.dfki.mlt.rudimant.Constants.RULES_FILE_EXTENSION;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,15 +10,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
-import org.antlr.v4.runtime.Token;
 import org.apache.thrift.TException;
-import org.junit.BeforeClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.lt.hfc.WrongFormatException;
@@ -28,33 +25,40 @@ import de.dfki.lt.loot.gui.layouts.CompactLayout;
 import de.dfki.lt.loot.gui.util.ObjectHandler;
 import de.dfki.mlt.rudimant.abstractTree.GrammarFile;
 import de.dfki.mlt.rudimant.abstractTree.RudiTree;
-import de.dfki.mlt.rudimant.abstractTree.TestTypeInference;
 import de.dfki.mlt.rudimant.abstractTree.TreeModelAdapter;
-import de.dfki.mlt.rudimant.abstractTree.VTestTypeVisitor;
-import de.dfki.mlt.rudimant.agent.nlg.Pair;
 
 
 public class Visualize {
 
-  private static final Logger logger = LoggerFactory.getLogger("viz");
+  static String header = "";
+  static String footer = "";
+
+  public static void setUp(String configFile, String h, String f)
+      throws FileNotFoundException {
+    readConfig(configFile);
+    header = h;
+    footer = f;
+  }
+
+  public static InputStream getInput(String input) {
+    String toParse = header + input + footer;
+    return new ByteArrayInputStream(toParse.getBytes());
+  }
 
   public static Map<String, Object> configs = new HashMap<>();
   public static File confDir = null;
 
-  @BeforeClass
-  public static void setUpClass() throws FileNotFoundException {
-    TestTypeInference.setUpClass();
-  }
-
-  public static String generate(String realName, InputStream in,
-      String confname)
+  public static String generate(String in)
       throws IOException, WrongFormatException, TException {
-    readConfig(confname);
     RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
     StringWriter sw = new StringWriter();
-    rc.processForReal(in, sw);
+    rc.processForReal(getInput(in), sw);
     rc.flush();
     return sw.toString();
+  }
+
+  public static String normalizeSpaces(String in) {
+    return in.replaceAll("[ \n\r\t]+", " ");
   }
 
   public static void show(RudiTree root, String realName, MainFrame mf) {
@@ -94,15 +98,32 @@ public class Visualize {
     Style.increaseDefaultFontSize(1.5);
   }
 
-
-  public static GrammarFile parseAndTypecheck(InputStream input) {
+  public static GrammarFile parseAndTypecheck(InputStream in) {
     try {
       // create the abstract syntax tree
       RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
-      return rc.processForReal(input, null);
+      return rc.processForReal(in, null);
     } catch (Exception ex) {
       throw new RuntimeException(ex);
     }
+  }
+
+  public static GrammarFile parseAndTypecheck(String in) {
+    return parseAndTypecheck(getInput(in));
+  }
+
+  public static GrammarFile parseAndTypecheck(InputStream in, Writer out) {
+    try {
+      // create the abstract syntax tree
+      RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
+      return rc.processForReal(in, out);
+    } catch (Exception ex) {
+      throw new RuntimeException(ex);
+    }
+  }
+
+  public static GrammarFile parseAndTypecheck(String in, Writer out) {
+    return parseAndTypecheck(getInput(in), out);
   }
 
   @SuppressWarnings("unchecked")
@@ -119,7 +140,6 @@ public class Visualize {
    * @throws WrongFormatException
    * @throws Exception
    */
-  @SuppressWarnings("unchecked")
   public static void main(String[] args)
       throws IOException, WrongFormatException {
 

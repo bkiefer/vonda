@@ -1,19 +1,17 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
+import static de.dfki.mlt.rudimant.Visualize.setUp;
+import static de.dfki.mlt.rudimant.abstractTree.TestTypeInference.getNodeOfInterest;
+import static org.junit.Assert.*;
+import static visitortests.SeriousTest.RESOURCE_DIR;
 
-import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
 
-import org.antlr.v4.runtime.Token;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.dfki.mlt.rudimant.RudimantCompiler;
 import de.dfki.mlt.rudimant.Visualize;
-import de.dfki.mlt.rudimant.agent.nlg.Pair;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -36,28 +34,19 @@ GREATER_EQUAL: '>=';
 GREATER: '>';
 
    */
-  String header = "label: if(true) {";
-  String footer = "}";
+  static String header = "label: if(true) {";
+  static String footer = "}";
 
-  public RudiTree getNodeOfInterest(RudiTree rt) {
-    assertTrue(rt instanceof GrammarFile);
-    GrammarFile gf = (GrammarFile) rt;
-    GrammarRule dtr = (GrammarRule) gf.getDtrs().iterator().next();
-    StatIf _if = (StatIf) dtr.getDtrs().iterator().next();
-    StatAbstractBlock blk = (StatAbstractBlock) ((StatIf) _if).statblockIf;
-    return blk.getDtrs().iterator().next();
-  }
-
-  public InputStream getInput(String input) {
-    String toParse = header + input + footer;
-    return new ByteArrayInputStream(toParse.getBytes());
+  @BeforeClass
+  public static void setUpClass() throws FileNotFoundException {
+    setUp(RESOURCE_DIR + "dipal/dipal.yml", header, footer);
   }
 
   @Test
   public void testBoolean() throws IOException {
     String booleanExp = "4 < 5;";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(booleanExp)));
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(booleanExp));
     assertTrue(dtr instanceof ExpBoolean);
   }
 
@@ -65,7 +54,7 @@ GREATER: '>';
   public void testBoolean2() throws IOException {
     String booleanExp = "4 == 5;";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(booleanExp)));
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(booleanExp));
     assertTrue(dtr instanceof ExpBoolean);
   }
 
@@ -73,7 +62,7 @@ GREATER: '>';
   public void testBoolean3() throws IOException {
     String booleanExp = "false;";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(booleanExp)));
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(booleanExp));
     // TODO dtr is instanceof UVariable. Is this correct?
     // dtr.getType is "boolean" as String. Is this correct?
 
@@ -85,7 +74,7 @@ GREATER: '>';
   public void testBoolean4() throws IOException {
     String booleanExp = "!(5>5);";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(booleanExp)));
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(booleanExp));
 
     assertTrue(dtr instanceof ExpBoolean);
   }
@@ -94,7 +83,7 @@ GREATER: '>';
   public void testBoolean5() throws IOException {
     String booleanExp = "(False && False || True);";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(booleanExp)));
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(booleanExp));
 
     assertTrue(dtr instanceof ExpBoolean);
   }
@@ -104,7 +93,7 @@ GREATER: '>';
     String booleanExp = "(False & False | True);";
 // TODO should this work? we get a nullpointer here.
 
-//    Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("boolean", getInput(booleanExp));
+//    Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("boolean", booleanExp));
 //    RudiTree dtr = getNodeOfInterest(rt.first);
 //     assertTrue(dtr instanceof ExpBoolean);
   }
@@ -113,7 +102,7 @@ GREATER: '>';
   public void testBoolean7() throws IOException {
     String booleanExp = "(var1 != var2);";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(booleanExp)));
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(booleanExp));
 
     assertTrue(dtr instanceof ExpBoolean);
   }
@@ -122,7 +111,7 @@ GREATER: '>';
   public void testBoolean8() throws IOException {
     String booleanExp = "(var1 >= var2 && var1 <= var2);";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(booleanExp)));
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(booleanExp));
 
     assertTrue(dtr instanceof ExpBoolean);
   }

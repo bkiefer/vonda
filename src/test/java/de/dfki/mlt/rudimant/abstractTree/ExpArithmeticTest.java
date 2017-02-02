@@ -1,8 +1,9 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
-import static de.dfki.mlt.rudimant.abstractTree.TestTypeInference.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static de.dfki.mlt.rudimant.Visualize.setUp;
+import static de.dfki.mlt.rudimant.abstractTree.TestTypeInference.getNodeOfInterest;
+import static org.junit.Assert.*;
+import static visitortests.SeriousTest.RESOURCE_DIR;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -20,12 +21,12 @@ import de.dfki.mlt.rudimant.Visualize;
  */
 public class ExpArithmeticTest {
 
-  String header = "label: if(true) {";
-  String footer = "}";
+  static String header = "label: if(true) {";
+  static String footer = "}";
 
   @BeforeClass
   public static void setUpClass() throws FileNotFoundException {
-    TestTypeInference.setUpClass();
+    setUp(RESOURCE_DIR + "dipal/dipal.yml", header, footer);
   }
 
   public InputStream getInput(String input) {

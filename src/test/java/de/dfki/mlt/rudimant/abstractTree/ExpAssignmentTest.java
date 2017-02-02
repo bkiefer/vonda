@@ -1,27 +1,20 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
+import static de.dfki.mlt.rudimant.Visualize.*;
+import static visitortests.SeriousTest.RESOURCE_DIR;
 import static de.dfki.mlt.rudimant.abstractTree.TestTypeInference.*;
 
 import de.dfki.lt.hfc.WrongFormatException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedList;
 
-import org.antlr.v4.runtime.Token;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.yaml.snakeyaml.Yaml;
 
-
-import de.dfki.mlt.rudimant.RudimantCompiler;
 import de.dfki.mlt.rudimant.Visualize;
-import de.dfki.mlt.rudimant.agent.nlg.Pair;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.Iterator;
-import java.util.Map;
+
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
@@ -36,7 +29,7 @@ public class ExpAssignmentTest {
 
   @BeforeClass
   public static void setUpClass() throws FileNotFoundException {
-    TestTypeInference.setUpClass();
+    setUp(RESOURCE_DIR + "dipal/dipal.yml", header, footer);
   }
 
   static public InputStream getInput(String input) {
@@ -44,28 +37,11 @@ public class ExpAssignmentTest {
     return new ByteArrayInputStream(toParse.getBytes());
   }
 
-  static public RudimantCompiler getCompiler(File input) throws IOException, WrongFormatException{
-    try{
-        Yaml yaml = new Yaml();
-        String confName = "src/test/resources/rudi.config.yml";
-        File confFile = new File(confName);
-        File configDir = confFile.getParentFile();
-        Map<String, Object> configs =
-            (Map<String, Object>) yaml.load(new FileReader(confFile));
-        RudimantCompiler rc = RudimantCompiler.init(configDir, configs);
-        return rc;
-    }
-    catch (FileNotFoundException e){
-      System.out.println("There is something wrong with the config file");
-      return null;
-    }
-  }
-
   @Test
   public void testAssignment1() throws IOException {
     String assignmentExp = "test = 4;";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(assignmentExp)));
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(assignmentExp));
     assertTrue(dtr instanceof ExpAssignment);
     String type = ((ExpAssignment) dtr).right.getType();
     assertEquals("right side type of test = 4 should be int", "int", type);
@@ -75,7 +51,7 @@ public class ExpAssignmentTest {
   public void testAssignment2() throws IOException {
     String assignmentExp = "test = (4>5);";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(assignmentExp)));
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(assignmentExp));
     assertTrue(dtr instanceof ExpAssignment);
     String type = ((ExpAssignment) dtr).right.getType();
     assertEquals("right side type of test = (4>5) should be boolean", "boolean", type);
@@ -86,7 +62,7 @@ public class ExpAssignmentTest {
   public void testAssignment3() throws IOException {
     String assignmentExp = "boolean test = 4+5;";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(assignmentExp)));
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(assignmentExp));
     assertTrue(dtr instanceof ExpAssignment);
 
     String type_right = ((ExpAssignment) dtr).right.getType();
@@ -101,11 +77,7 @@ public class ExpAssignmentTest {
   public void testAssignment4() throws IOException, WrongFormatException {
     String assignmentExp = "test = true; test2 = 1; test3 = test2; test4 = 2;";
 
-
     GrammarFile gf = Visualize.parseAndTypecheck(getInput(assignmentExp));
-    //RudimantCompiler rc = getCompiler(new File("src/test/resources/tinytests/ExpAssignment4.rudi"));
-    //VTestTypeVisitor visitor = new VTestTypeVisitor(rc);
-    //visitor.visitNode(gf);
     RudiTree dtr = getNodeOfInterest(gf, 0); // test = true
     assertTrue(dtr instanceof ExpAssignment);
 
