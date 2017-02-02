@@ -1,6 +1,7 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import static visitortests.SeriousTest.*;
+import static de.dfki.mlt.rudimant.abstractTree.TestTypeInference.*;
 import static de.dfki.mlt.rudimant.Visualize.*;
 import static org.junit.Assert.*;
 
@@ -27,40 +28,6 @@ import de.dfki.mlt.rudimant.abstractTree.StatIf;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 
 public class TestMethodDeclaration {
-
-  String header = "";
-  String footer = "";
-
-  public RudiTree getNodeOfInterest(RudiTree rt) {
-    assertTrue(rt instanceof GrammarFile);
-    GrammarFile gf = (GrammarFile) rt;
-    GrammarRule dtr = (GrammarRule) gf.getDtrs().iterator().next();
-    StatIf _if = (StatIf) dtr.getDtrs().iterator().next();
-    StatAbstractBlock blk = (StatAbstractBlock)((StatIf) _if).statblockIf;
-    return blk.getDtrs().iterator().next();
-  }
-
-  public InputStream getInput(String input) {
-    String toParse = header + input + footer;
-    return new ByteArrayInputStream(toParse.getBytes());
-  }
-
-  public RudiTree parseAndTypecheck(String input) throws IOException {
-    String inputRealName = "";
-
-    // create the abstract syntax tree
-    Pair<GrammarFile, LinkedList<Token>> myTree =
-        RudimantCompiler.parseInput(inputRealName, getInput(input));
-
-    // do the type checking
-    try {
-      RudimantCompiler rc = RudimantCompiler.init(confDir, configs, null);
-      new VTestTypeVisitor(rc).visitNode(myTree.first);
-    } catch (WrongFormatException ex) {
-      throw new RuntimeException(ex);
-    }
-    return myTree.first;
-  }
 
   @BeforeClass
   public static void setUpClass()

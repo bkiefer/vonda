@@ -44,22 +44,11 @@ public class GrammarMain {
 
   // rdf functionality
 
-  public static void process(RudimantCompiler rc,
-      List<String> files, File outputDirectory)
+  public static void process(RudimantCompiler rc, List<String> files)
       throws IOException {
-    if (! outputDirectory.exists()) {
-      if (! outputDirectory.mkdirs()) {
-        throw new IOException("Output directory could not be created: "
-            + outputDirectory.getAbsolutePath());
-      }
-    } else {
-      if (! outputDirectory.isDirectory()) {
-        throw new IOException("Output directory is not a directory: "
-            + outputDirectory.getAbsolutePath());
-      }
-    }
+
     for (String file : files) {
-      rc.process(new File(file), outputDirectory);
+      rc.process(new File(file));
     }
   }
 
@@ -72,7 +61,8 @@ public class GrammarMain {
     { CFG_TYPE_ERROR_FATAL, true, "e" },
     { CFG_TYPE_CHECK, true , "d" },
     { CFG_VISUALISE, false , "v" },
-    { CFG_TARGET_CONSTRUCTOR, "", "CA" }
+    { CFG_TARGET_CONSTRUCTOR, "", "CA" },
+    { CFG_WRAPPER_CLASS, "w", "DummyAgent" }
   };
 
   public Map<String, Object> defaultConfig() {
@@ -177,32 +167,17 @@ public class GrammarMain {
       }
       if (options.has("o")) {
         outputDirectory = new File((String)options.valueOf("o"));
-      } else {
-        if (configs.containsKey(CFG_OUTPUT_DIRECTORY)) {
-          String outDir = (String)configs.get(CFG_OUTPUT_DIRECTORY);
-          outputDirectory = new File(outDir);
-          if (! outputDirectory.isAbsolute()) {
-            outputDirectory = new File(configDir, outDir);
-          }
-        }
+        configs.put(CFG_OUTPUT_DIRECTORY, outputDirectory);
       }
       main.setConfig(configs);
-      process(RudimantCompiler.init(configDir, configs, inputDirectory), files,
-              outputDirectory);
+      process(RudimantCompiler.init(configDir, configs), files);
       RudimantCompiler.shutdown();
       System.out.println("Parsing finished");
     } catch (OptionException ex) {
       usage("Error parsing options: " + ex.getMessage());
     } catch (IOException ex) {
       usage("A file error occured: " + ex.getMessage());
-    } /*catch (RuntimeException ex) {
-      usage("An unknown Error occured: " + ex.getMessage());
-      if (ex.getCause() != null)
-        ex.getCause().printStackTrace();
-      else
-        ex.printStackTrace();
-    }*/
-
+    }
   }
 
   private static void usage(String message) {

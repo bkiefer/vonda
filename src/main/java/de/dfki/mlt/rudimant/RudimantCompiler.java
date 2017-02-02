@@ -35,8 +35,6 @@ import de.dfki.mlt.rudimant.abstractTree.VTestTypeVisitor;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
-import java.io.FileNotFoundException;
-import java.util.logging.Level;
 
 public class RudimantCompiler {
 
@@ -60,10 +58,10 @@ public class RudimantCompiler {
 
   private Mem mem;
 
-  public List<String> subPackage = new ArrayList<>();
-  int rootLevel = 0;
+  private List<String> subPackage = new ArrayList<>();
+  private int rootLevel = 0;
 
-  public String className;
+  private String className;
 
   private String packageName;
 
@@ -75,21 +73,8 @@ public class RudimantCompiler {
   // ... and its constructor arguments, if any
   private final String constructorArgs;
 
-  public void setPackageName(String name) {
-    this.packageName = name;
-  }
-
-  public String getPackageName() {
-    return this.packageName;
-  }
-
-  public String getWrapperClass() {
-    return wrapperClass;
-  }
-
-  public String getConstructorArgs() {
-    return constructorArgs;
-  }
+  // Definitions for methods and variables in Agent.java
+  private static final String agentInit = "/Agent.rudi";
 
   private RudimantCompiler(RudimantCompiler parentCompiler) {
     wrapperClass = parentCompiler.wrapperClass;
@@ -103,45 +88,47 @@ public class RudimantCompiler {
     this.visualise = parent.visualise;
   }
 
-  private RudimantCompiler(String wrapperClass, String targetConstructor,
-          RdfProxy Proxy){
-    this.wrapperClass = wrapperClass;
+  private RudimantCompiler(String wrapper, String targetConstructor){
+    wrapperClass = wrapper;
     constructorArgs = targetConstructor;
   }
 
-  public void initMem(File rootDir, RdfProxy proxy) {
+  private void checkOutputDirectory(File configDir, Map<String, Object> configs)
+      throws IOException {
+    if (configs.containsKey(CFG_OUTPUT_DIRECTORY)) {
+      Object o = configs.get(CFG_OUTPUT_DIRECTORY);
+      if (o instanceof String) {
+        outputDirectory = new File((String)o);
+        if (! outputDirectory.isAbsolute()) {
+          outputDirectory = new File(configDir, (String)o);
+        }
+      } else {
+        outputDirectory = (File)o;
+      }
+    }
+    if (outputDirectory == null) return;
+  }
+
+  private void initMem(RdfProxy proxy, String wrapperClass) {
     mem = new Mem(proxy);
-    mem.wrapperInit = wrapperClass + ".rudi";
+    File wrapperInit = new File(wrapperClass + ".rudi");
     mem.initializing = true;
     parent = null;
     logger.info("initializing Agent and Java methods");
     try {
-      this.processForReal(new FileInputStream(mem.agentInit), null, mem);
-    } catch (FileNotFoundException ex) {
-      // means the files do not exist to read from, but that is okay, we just
-      // won't be as smart as we could be with type knowledge
-      logger.debug("could not import or read one of the initializer files: " +
-              mem.agentInit + "\n ");
-    } catch (IOException ex) {
-      logger.debug("could not import or read one of the initializer files: " +
-              mem.agentInit + "\n ");
-    }
-    logger.info("initializing " + mem.wrapperInit + " methods");
-    try {
-      this.processForReal(new FileInputStream(mem.wrapperInit), null, mem);
-    } catch (FileNotFoundException ex) {
-      // means the files do not exist to read from, but that is okay, we just
-      // won't be as smart as we could be with type knowledge
-      logger.debug("could not import or read one of the initializer files: " +
-              mem.wrapperInit + "\n ");
+      processForReal(RudimantCompiler.class.getResourceAsStream(agentInit), null);
+      if (wrapperInit.exists()) {
+        processForReal(new FileInputStream(wrapperInit), null);
+      } else {
+        logger.info("No method declaration file for {}", wrapperInit);
+      }
    } catch (IOException ex) {
-      logger.debug("could not import or read one of the initializer files: " +
-              mem.wrapperInit + "\n ");
+      logger.error("Initializer file import: {}", ex);
     }
     mem.initializing = false;
   }
 
-  public static RdfProxy startClient(File configDir, Map<String, Object> configs)
+  private static RdfProxy startClient(File configDir, Map<String, Object> configs)
       throws IOException, WrongFormatException {
     handler = new HfcDbHandler();
     String ontoFileName = (String) configs.get(CFG_ONTOLOGY_FILE);
@@ -152,28 +139,30 @@ public class RudimantCompiler {
     return new RdfProxy(handler);
   }
 
-  public static RudimantCompiler init(File configDir, Map<String, Object> configs,
-          File rootDir)
+  @SuppressWarnings("unchecked")
+  public static RudimantCompiler init(File configDir, Map<String, Object> configs)
       throws IOException, WrongFormatException {
+    if(configs.get(CFG_WRAPPER_CLASS) == null) {
+      logger.error("No implementation class specified, exiting.");
+      return null;
+    }
     RdfProxy proxy = startClient(configDir, configs);
     if (configs.containsKey(CFG_NAME_TO_URI)) {
       proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
     }
     RudimantCompiler rc = new RudimantCompiler(
               (String)configs.get(CFG_WRAPPER_CLASS),
-              (String)configs.get(CFG_TARGET_CONSTRUCTOR),
-              proxy);
-    if(rootDir != null && configs.get(CFG_WRAPPER_CLASS) != null){
-      rc.initMem(rootDir, proxy);
-    }
-    rc.setThrowExceptions((boolean)configs.get(CFG_TYPE_ERROR_FATAL));
-    rc.setTypeCheck((boolean)configs.get(CFG_TYPE_CHECK));
+              (String)configs.get(CFG_TARGET_CONSTRUCTOR));
+    rc.checkOutputDirectory(configDir, configs);
+    rc.initMem(proxy, rc.wrapperClass);
+    rc.throwExceptions = (boolean)configs.get(CFG_TYPE_ERROR_FATAL);
+    rc.typeCheck = (boolean)configs.get(CFG_TYPE_CHECK);
     if (configs.containsKey(CFG_PACKAGE)) {
-      rc.setPackageName((String) configs.get(CFG_PACKAGE));
+      rc.packageName = (String) configs.get(CFG_PACKAGE);
     }
     if (configs.containsKey(CFG_VISUALISE)) {
-      rc.setVisualisation((boolean) configs.get(CFG_VISUALISE));
-      if ((boolean) configs.get(CFG_VISUALISE)) Visualize.init();
+      if (rc.visualise = (boolean) configs.get(CFG_VISUALISE))
+        Visualize.init();
     }
     return rc;
   }
@@ -182,15 +171,11 @@ public class RudimantCompiler {
     handler.shutdown();
   }
 
-  public static RudimantCompiler getEmbedded(RudimantCompiler parent) {
-    RudimantCompiler result = new RudimantCompiler(parent);
-    return result;
-  }
-
-  public void process(File topLevel, File outputdir) throws IOException {
+  public void process(File topLevel) throws IOException {
     inputDirectory = topLevel.getParentFile();
-    outputDirectory = outputdir;
-    className = getClassName(topLevel);
+    if (outputDirectory == null)
+      outputDirectory = inputDirectory;
+    className = computeClassName(topLevel);
 
     if (packageName != null && !packageName.isEmpty()) {
       subPackage.addAll(Arrays.asList(packageName.split("\\.")));
@@ -199,11 +184,7 @@ public class RudimantCompiler {
     processForReal(getOutputDirectory());
   }
 
-  public void process(File topLevel) throws IOException {
-    process(topLevel, topLevel.getParentFile());
-  }
-
-  public void process(String importSpec) throws IOException {
+  private void process(String importSpec) throws IOException {
     inputDirectory = parent.inputDirectory;
     outputDirectory = parent.outputDirectory;
 
@@ -218,6 +199,14 @@ public class RudimantCompiler {
     processForReal(getOutputDirectory());
   }
 
+  public void processImport(String importSpec) {
+    try {
+      RudimantCompiler result = new RudimantCompiler(this);
+      result.process(importSpec);
+    } catch (IOException ex) {
+      throw new RuntimeException(ex);
+    }
+  }
   /**
    * Return the inputfile, which is relative to inputDirectory, the subdirectory
    * is specified by the subPackage, and the last entry of subPackage, which is
@@ -250,16 +239,16 @@ public class RudimantCompiler {
     return result;
   }
 
-  public void setTypeCheck(boolean typeCheck) {
-    this.typeCheck = typeCheck;
+  public String getPackageName() {
+    return this.packageName;
   }
 
-  public void setThrowExceptions(boolean b) {
-    this.throwExceptions = b;
+  public String getWrapperClass() {
+    return wrapperClass;
   }
 
-  public void setVisualisation(boolean vis) {
-    this.visualise = vis;
+  public String getConstructorArgs() {
+    return constructorArgs;
   }
 
   public Mem getMem() {
@@ -268,6 +257,10 @@ public class RudimantCompiler {
 
   public RudimantCompiler getParent() {
     return parent;
+  }
+
+  public String getClassName() {
+    return className;
   }
 
   public RudimantCompiler append(char c) {
@@ -296,7 +289,7 @@ public class RudimantCompiler {
     }
   }
 
-  public String getClassName(File inputFile) {
+  public String computeClassName(File inputFile) {
     // remember the real name, without upper case transformation, so getInputFile()
     // won't crash
     this.inputRealName = inputFile.getName().replace(RULES_FILE_EXTENSION, "");
@@ -342,7 +335,6 @@ public class RudimantCompiler {
       }
     }
     try {
-      // TODO: NEEDS BETTER SPEC FOR UNCR.CFG
       String[] cmdArray = {
           "uncrustify",  "--no-backup", "-c", tmpCfg.getAbsolutePath(),
           outputFile.getAbsolutePath()
@@ -369,13 +361,14 @@ public class RudimantCompiler {
 
     File inputFile = getInputFile();
     logger.info("parsing " + inputFile.getName() + " to " + outputFile);
-    processForReal(new FileInputStream(inputFile), output);
+    if (processForReal(new FileInputStream(inputFile), output) == null)
+      throw new UnsupportedOperationException("Parsing failed.");
     this.flush();
     uncrustify(outputFile);
   }
 
-  public static Pair<GrammarFile, LinkedList<Token>> parseInput(String realName, InputStream in)
-      throws IOException {
+  private static Pair<GrammarFile, LinkedList<Token>> parseInput(String realName,
+      InputStream in) throws IOException {
     // initialise the lexer with given input file
     RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(in));
 
@@ -396,20 +389,17 @@ public class RudimantCompiler {
 
     // create the abstract syntax tree
     RudiTree myTree = visitor.visit(tree);
-    if (! (myTree instanceof GrammarFile)) return null;
+    if (! (myTree instanceof GrammarFile))
+      return null;
     return new Pair<>((GrammarFile)myTree, collector.getCollectedTokens());
   }
 
-  void processForReal(InputStream in, Writer output, Mem mem) throws IOException {
-    this.mem = mem;
-    processForReal(in, output);
-  }
-
-  void processForReal(InputStream in, Writer output) throws IOException {
+  public GrammarFile processForReal(InputStream in, Writer output)
+      throws IOException {
     out = output;
     Pair<GrammarFile, LinkedList<Token>> pair = parseInput(inputRealName, in);
     if (pair == null)
-      throw new UnsupportedOperationException("Parsing failed.");
+      return null;
 
     GrammarFile gf = pair.first;
     // do the type checking
@@ -417,7 +407,7 @@ public class RudimantCompiler {
     ttv.visitNode(gf);
     if (output == null) {
       // then there is nothing to write to; we are in a memory initialization
-      return;
+      return gf;
     }
     // generate the output
     VGenerationVisitor gv = new VGenerationVisitor(this, pair.second);
@@ -425,6 +415,7 @@ public class RudimantCompiler {
     gf.setClassName(className);
     gv.visitNode(gf);
     logger.info("Done parsing");
+    return gf;
   }
 
   /**

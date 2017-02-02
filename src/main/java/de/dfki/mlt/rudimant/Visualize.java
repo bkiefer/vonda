@@ -9,11 +9,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
 import org.antlr.v4.runtime.Token;
 import org.apache.thrift.TException;
+import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -26,6 +28,7 @@ import de.dfki.lt.loot.gui.layouts.CompactLayout;
 import de.dfki.lt.loot.gui.util.ObjectHandler;
 import de.dfki.mlt.rudimant.abstractTree.GrammarFile;
 import de.dfki.mlt.rudimant.abstractTree.RudiTree;
+import de.dfki.mlt.rudimant.abstractTree.TestTypeInference;
 import de.dfki.mlt.rudimant.abstractTree.TreeModelAdapter;
 import de.dfki.mlt.rudimant.abstractTree.VTestTypeVisitor;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
@@ -35,14 +38,19 @@ public class Visualize {
 
   private static final Logger logger = LoggerFactory.getLogger("viz");
 
-  public static Map<String, Object> configs = null;
+  public static Map<String, Object> configs = new HashMap<>();
   public static File confDir = null;
+
+  @BeforeClass
+  public static void setUpClass() throws FileNotFoundException {
+    TestTypeInference.setUpClass();
+  }
 
   public static String generate(String realName, InputStream in,
       String confname)
       throws IOException, WrongFormatException, TException {
     readConfig(confname);
-    RudimantCompiler rc = RudimantCompiler.init(confDir, configs, null);
+    RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
     StringWriter sw = new StringWriter();
     rc.processForReal(in, sw);
     rc.flush();
@@ -70,26 +78,31 @@ public class Visualize {
       String inputRealName = f.getName().replace(RULES_FILE_EXTENSION, "");
 
       // create the abstract syntax tree
-      Pair<GrammarFile, LinkedList<Token>> myTree =
-          RudimantCompiler.parseInput(inputRealName, in);
+      GrammarFile gf = null;
 
       // do the type checking
-      try {
-        RudimantCompiler rc = RudimantCompiler.init(confDir, configs, null);
-        rc.className = "Test";
-        new VTestTypeVisitor(rc).visitNode(myTree.first);
-      } catch (WrongFormatException ex) {
-        throw new RuntimeException(ex);
-      }
+      // create the abstract syntax tree
+      gf = parseAndTypecheck(in);
 
       // show tree
-      show(myTree.first, inputRealName, mf);
+      show(gf, inputRealName, mf);
       return true;
     }
   }
 
   public static void init() {
     Style.increaseDefaultFontSize(1.5);
+  }
+
+
+  public static GrammarFile parseAndTypecheck(InputStream input) {
+    try {
+      // create the abstract syntax tree
+      RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
+      return rc.processForReal(input, null);
+    } catch (Exception ex) {
+      throw new RuntimeException(ex);
+    }
   }
 
   @SuppressWarnings("unchecked")

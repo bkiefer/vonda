@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.Token;
 import org.junit.Test;
 
 import de.dfki.mlt.rudimant.RudimantCompiler;
+import de.dfki.mlt.rudimant.Visualize;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -56,8 +57,7 @@ GREATER: '>';
   public void testBoolean() throws IOException {
     String booleanExp = "4 < 5;";
 
-    Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("boolean", getInput(booleanExp));
-    RudiTree dtr = getNodeOfInterest(rt.first);
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(booleanExp)));
     assertTrue(dtr instanceof ExpBoolean);
   }
 
@@ -65,8 +65,7 @@ GREATER: '>';
   public void testBoolean2() throws IOException {
     String booleanExp = "4 == 5;";
 
-    Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("boolean", getInput(booleanExp));
-    RudiTree dtr = getNodeOfInterest(rt.first);
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(booleanExp)));
     assertTrue(dtr instanceof ExpBoolean);
   }
 
@@ -74,8 +73,7 @@ GREATER: '>';
   public void testBoolean3() throws IOException {
     String booleanExp = "false;";
 
-    Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("boolean", getInput(booleanExp));
-    RudiTree dtr = getNodeOfInterest(rt.first);
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(booleanExp)));
     // TODO dtr is instanceof UVariable. Is this correct?
     // dtr.getType is "boolean" as String. Is this correct?
 
@@ -87,8 +85,7 @@ GREATER: '>';
   public void testBoolean4() throws IOException {
     String booleanExp = "!(5>5);";
 
-    Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("boolean", getInput(booleanExp));
-    RudiTree dtr = getNodeOfInterest(rt.first);
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(booleanExp)));
 
     assertTrue(dtr instanceof ExpBoolean);
   }
@@ -97,8 +94,7 @@ GREATER: '>';
   public void testBoolean5() throws IOException {
     String booleanExp = "(False && False || True);";
 
-    Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("boolean", getInput(booleanExp));
-    RudiTree dtr = getNodeOfInterest(rt.first);
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(booleanExp)));
 
     assertTrue(dtr instanceof ExpBoolean);
   }
@@ -117,8 +113,7 @@ GREATER: '>';
   public void testBoolean7() throws IOException {
     String booleanExp = "(var1 != var2);";
 
-    Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("boolean", getInput(booleanExp));
-    RudiTree dtr = getNodeOfInterest(rt.first);
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(booleanExp)));
 
     assertTrue(dtr instanceof ExpBoolean);
   }
@@ -127,8 +122,7 @@ GREATER: '>';
   public void testBoolean8() throws IOException {
     String booleanExp = "(var1 >= var2 && var1 <= var2);";
 
-    Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("boolean", getInput(booleanExp));
-    RudiTree dtr = getNodeOfInterest(rt.first);
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(booleanExp)));
 
     assertTrue(dtr instanceof ExpBoolean);
   }

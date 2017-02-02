@@ -1,22 +1,26 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
+import static visitortests.SeriousTest.RESOURCE_DIR;
+
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.antlr.v4.runtime.Token;
 import org.junit.Test;
 
 import de.dfki.lt.hfc.WrongFormatException;
+import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudimant.RudimantCompiler;
-import de.dfki.mlt.rudimant.Visualize;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 
-public class TestFragment {
+public class TestCast {
 
   String header = "label: if(true) {";
   String footer = "}";
@@ -36,21 +40,11 @@ public class TestFragment {
   }
 
   @Test
-  public void test() throws IOException, WrongFormatException {
-    String conditionalExp = "true ? 1 : 2;";
-
-    GrammarFile gf = Visualize.parseAndTypecheck(getInput(conditionalExp));
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(conditionalExp)));
-    assertTrue(dtr instanceof ExpConditional);
-
-    String type_boolean = ((ExpConditional) dtr).boolexp.getType();
-    assertEquals("boolean part of conditional", "boolean", type_boolean);
-
-    String type_then = ((ExpConditional) dtr).thenexp.getType();
-    assertEquals("then part", "int", type_then);
-
-    String type_else = ((ExpConditional) dtr).elseexp.getType();
-    assertEquals("else part", "int", type_else);
+  public void testCast1() throws IOException, WrongFormatException {
+    String in = "Session c; c.hasActivities += new Idle;";
+    File confFile = new File(RESOURCE_DIR + "dipal/dipal.yml");
+    //RdfProxy prx = RudimantCompiler.startClient(confFile, new HashMap<String, Object>());
+    //RudimantCompiler rc = new RudimantCompiler("foo", "", prx);
   }
 
 }

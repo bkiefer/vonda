@@ -11,7 +11,9 @@ import java.util.LinkedList;
 import org.antlr.v4.runtime.Token;
 import org.junit.Test;
 
+import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.mlt.rudimant.RudimantCompiler;
+import de.dfki.mlt.rudimant.Visualize;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 
 /**
@@ -38,20 +40,18 @@ public class ExpNewTest {
   }
 
   @Test
-  public void testRdfType() throws IOException {
+  public void testRdfType() throws IOException, WrongFormatException {
     String conditionalExp = "new RdfType;";
 
-    Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("new", getInput(conditionalExp));
-    RudiTree dtr = getNodeOfInterest(rt.first);
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(conditionalExp)));
     assertTrue(dtr instanceof ExpNew);
   }
 
   @Test
-  public void testJavaType() throws IOException {
+  public void testJavaType() throws IOException, WrongFormatException {
     String conditionalExp = "new JavaType;";
 
-    Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("new", getInput(conditionalExp));
-    RudiTree dtr = getNodeOfInterest(rt.first);
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(conditionalExp)));
     assertTrue(dtr instanceof ExpNew);
   }
 

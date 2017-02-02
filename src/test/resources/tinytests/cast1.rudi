@@ -1,0 +1,5 @@
+fi:
+if (true) {
+Session c;
+c.hasActivities += new Idle;
+}

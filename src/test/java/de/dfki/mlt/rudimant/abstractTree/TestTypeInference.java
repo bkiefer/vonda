@@ -1,9 +1,6 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
-import static de.dfki.mlt.rudimant.Visualize.confDir;
-import static de.dfki.mlt.rudimant.Visualize.configs;
-import static de.dfki.mlt.rudimant.Visualize.generate;
-import static de.dfki.mlt.rudimant.Visualize.readConfig;
+import static de.dfki.mlt.rudimant.Visualize.*;
 import static org.junit.Assert.*;
 import static visitortests.SeriousTest.RESOURCE_DIR;
 
@@ -11,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.antlr.v4.runtime.Token;
@@ -20,43 +18,38 @@ import org.junit.Test;
 
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.mlt.rudimant.RudimantCompiler;
+import de.dfki.mlt.rudimant.Visualize;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 
 public class TestTypeInference {
 
-  String header = "";
-  String footer = "";
-  RudimantCompiler rc = null;
+  static String header = "";
+  static String footer = "";
 
-  public RudiTree getNodeOfInterest(RudiTree rt) {
-    assertTrue(rt instanceof GrammarFile);
-    GrammarFile gf = (GrammarFile) rt;
+  public static RudiTree getNodeOfInterest(GrammarFile gf, int n) {
+    assertNotNull(gf);
     GrammarRule dtr = (GrammarRule) gf.getDtrs().iterator().next();
     StatIf _if = (StatIf) dtr.getDtrs().iterator().next();
     StatAbstractBlock blk = (StatAbstractBlock) ((StatIf) _if).statblockIf;
-    return blk.getDtrs().iterator().next();
+    Iterator<? extends RudiTree> it = blk.getDtrs().iterator();
+    for (int i = 0; i < n; i++){
+      it.next();
+    }
+    return it.next();
   }
 
-  public InputStream getInput(String input) {
+  public static RudiTree getNodeOfInterest(GrammarFile rt) {
+    return getNodeOfInterest(rt, 0);
+  }
+
+  public static InputStream getInput(String input) {
     String toParse = header + input + footer;
     return new ByteArrayInputStream(toParse.getBytes());
   }
 
-  public RudiTree parseAndTypecheck(String input) throws IOException {
-    String inputRealName = "";
-
-    // create the abstract syntax tree
-    Pair<GrammarFile, LinkedList<Token>> myTree
-      = RudimantCompiler.parseInput(inputRealName, getInput(input));
-
-    // do the type checking
-    try {
-      rc = RudimantCompiler.init(confDir, configs, null);
-      new VTestTypeVisitor(rc).visitNode(myTree.first);
-    } catch (WrongFormatException ex) {
-      throw new RuntimeException(ex);
-    }
-    return myTree.first;
+  public static GrammarFile parseAndTypecheck(String in)
+      throws IOException, WrongFormatException {
+    return Visualize.parseAndTypecheck(getInput(in));
   }
 
   @BeforeClass
