@@ -665,33 +665,43 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UFieldAccess node) {
-    List<String> representation = new ArrayList<>();
-    node.parts.get(0).visitWithComments(this);
-    // getvalue branch says: (not sure what's right)
-    // representation.add(((RTExpression) (node.parts.get(0))).getType());
-    representation.add(node.representation.get(0));
+    out.append("(");
     int to = node.parts.size();
     // don't print the last field if this is in an assignment rather than an
     // access, which means that a set method is generated.
     if (notPrintLastField) {
       --to;
     }
+    // before visiting the first part, we need to create all the castings
+    // Plan: if we could determine the types of subexpressions in TypeVisitor,
+    //       we could enter them into a list and just output that list here
+    //       in reversed order - edit: let's just reverse them in the access class
+    int j = 0;
+    for (String cast : node.getTypesToCast()){
+      if(j != 0){
+        out.append("((");
+      } else {
+        out.append("(");
+      }
+      out.append(cast);
+      out.append(")");
+      j++;
+    }
+    node.parts.get(0).visitWithComments(this);
     for (int i = 1; i < to; i++) {
       if (node.parts.get(i) instanceof UPropertyAccess) {
         UPropertyAccess pa = (UPropertyAccess)node.parts.get(i);
         // then we are in the case that this is actually an rdf operation
-        representation.add(node.representation.get(i));
         out.append(pa.functional ? ".getSingleValue(" : ".getValue(");
         pa.getPropertyName(out);
+        out.append(")");
         out.append(") ");
       } else {
-        // TODO: EXPLAIN THIS IF
-//        if (! (node.parts.get(i) instanceof UVariable))
-//          representation.clear();
         out.append(".");
         node.parts.get(i).visit(this);
       }
     }
+    out.append(")");
   }
 
 

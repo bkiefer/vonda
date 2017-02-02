@@ -561,6 +561,9 @@ public class VTestTypeVisitor implements RudiVisitor {
       currentNode = node.parts.get(i);
       currentNode.visit(this);
       if (Mem.isRdfType(currentType)) {
+        // in this case we have to assume a getValue call, so remember that
+        // its result has to be casted to the actual type
+        node.addCastTo(currentType);
         if (currentNode instanceof UVariable) {
           // only a literal, delegate this because it's complicated
           UPropertyAccess acc =
