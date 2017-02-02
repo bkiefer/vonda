@@ -129,7 +129,7 @@ public class VTestTypeVisitor implements RudiVisitor {
                    }
                  }
               }
-            }        
+            }
       }
     } else {
       node.type = mem.checkRdf(node.type);
@@ -557,18 +557,19 @@ public class VTestTypeVisitor implements RudiVisitor {
     // this is dangerous, and only works if this condition can not be
     // "interrupted"
     partOfFieldAccess = true;
+    // remember whether we did sth rdf-y and should do casting
+    boolean rdfy = false;
     for(int i = 1; i < node.parts.size(); ++i) {
       currentNode = node.parts.get(i);
       currentNode.visit(this);
       if (Mem.isRdfType(currentType)) {
-        // in this case we have to assume a getValue call, so remember that
-        // its result has to be casted to the actual type
-        node.addCastTo(currentType);
+        rdfy = true;
         if (currentNode instanceof UVariable) {
           // only a literal, delegate this because it's complicated
           UPropertyAccess acc =
               treatRdfPropertyAccess(node, currentType, (UVariable)currentNode);
           node.parts.set(i, acc);
+          currentType = acc.getType();
         } else if (currentNode instanceof RTExpression) {
           // could also be a method application, possibly, what else?
           currentType = ((RTExpression)currentNode).type;
@@ -581,6 +582,14 @@ public class VTestTypeVisitor implements RudiVisitor {
         } else {
           currentType = null;
         }
+      }
+      if (rdfy) {
+        // it seems to me that we should not do this with the very first element
+        // so, as we hava to do it with the last, do it after currentType was
+        // set to its new value
+          // in this case we have to assume a getValue call, so remember that
+          // its result has to be casted to the actual type
+          node.addCastTo(currentType);
       }
     }
     node.type = currentType == null? "Object" : currentType; // the final result type

@@ -34,6 +34,10 @@ public class UFieldAccess extends RTExpLeaf {
    * @param to
    */
   void addCastTo(String to){
+    if(to == null){
+      logger.warn("adding cast to null for a field access");
+      return;
+    }
     if(to.contains("<")){
       to = (DIALOGUE_ACT_TYPE.equals(to))
             ? "DialogueAct" : "Rdf";

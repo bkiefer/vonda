@@ -665,7 +665,6 @@ public class VGenerationVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(UFieldAccess node) {
-    out.append("(");
     int to = node.parts.size();
     // don't print the last field if this is in an assignment rather than an
     // access, which means that a set method is generated.
@@ -676,16 +675,16 @@ public class VGenerationVisitor implements RudiVisitor {
     // Plan: if we could determine the types of subexpressions in TypeVisitor,
     //       we could enter them into a list and just output that list here
     //       in reversed order - edit: let's just reverse them in the access class
-    int j = 0;
+//    int j = 0;
     for (String cast : node.getTypesToCast()){
-      if(j != 0){
+//      if(j != 0){
         out.append("((");
-      } else {
-        out.append("(");
-      }
+//      } else {
+//        out.append("(");
+//      }
       out.append(cast);
       out.append(")");
-      j++;
+//      j++;
     }
     node.parts.get(0).visitWithComments(this);
     for (int i = 1; i < to; i++) {
@@ -701,7 +700,6 @@ public class VGenerationVisitor implements RudiVisitor {
         node.parts.get(i).visit(this);
       }
     }
-    out.append(")");
   }
 
 
