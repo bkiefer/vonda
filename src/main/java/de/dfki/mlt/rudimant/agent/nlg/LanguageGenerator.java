@@ -177,14 +177,14 @@ public class LanguageGenerator {
     return result;
   }
 
-  private LinkedHashMap<String, String> configs;
+  private Map<String, String> configs;
 
   /**
    * takes a configuration and sets all properties to those specified in it
    *
    * @param configs
    */
-  public void initConfig(LinkedHashMap<String, String> configs) {
-    this.configs = configs;
+  public void initConfig(Map<String, String> cfgs) {
+    this.configs = new HashMap<>(cfgs);
   }
 }

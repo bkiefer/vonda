@@ -109,21 +109,15 @@ public class RudimantCompiler {
     if (outputDirectory == null) return;
   }
 
-  private void initMem(RdfProxy proxy, String wrapperClass) {
+  private void initMem(RdfProxy proxy) {
     mem = new Mem(proxy);
-    File wrapperInit = new File(wrapperClass + ".rudi");
     mem.initializing = true;
     parent = null;
-    logger.info("initializing Agent and Java methods");
+    logger.info("initializing Agent methods");
     try {
       processForReal(RudimantCompiler.class.getResourceAsStream(agentInit), null);
-      if (wrapperInit.exists()) {
-        processForReal(new FileInputStream(wrapperInit), null);
-      } else {
-        logger.info("No method declaration file for {}", wrapperInit);
-      }
-   } catch (IOException ex) {
-      logger.error("Initializer file import: {}", ex);
+    } catch (IOException ex) {
+      logger.error("Agent initializer file import: {}", ex);
     }
     mem.initializing = false;
   }
@@ -154,7 +148,7 @@ public class RudimantCompiler {
               (String)configs.get(CFG_WRAPPER_CLASS),
               (String)configs.get(CFG_TARGET_CONSTRUCTOR));
     rc.checkOutputDirectory(configDir, configs);
-    rc.initMem(proxy, rc.wrapperClass);
+    rc.initMem(proxy);
     rc.throwExceptions = (boolean)configs.get(CFG_TYPE_ERROR_FATAL);
     rc.typeCheck = (boolean)configs.get(CFG_TYPE_CHECK);
     if (configs.containsKey(CFG_PACKAGE)) {
@@ -173,6 +167,20 @@ public class RudimantCompiler {
 
   public void process(File topLevel) throws IOException {
     inputDirectory = topLevel.getParentFile();
+    File wrapperInit = new File(inputDirectory,
+        wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + ".rudi");
+    try {
+      if (wrapperInit.exists()) {
+        mem.initializing = true;
+        processForReal(new FileInputStream(wrapperInit), null);
+      } else {
+        logger.info("No method declaration file for {}", wrapperInit);
+      }
+    } catch (IOException ex) {
+      logger.error("Initializer file import: {}", ex);
+    } finally {
+      mem.initializing = false;
+    }
     if (outputDirectory == null)
       outputDirectory = inputDirectory;
     className = computeClassName(topLevel);

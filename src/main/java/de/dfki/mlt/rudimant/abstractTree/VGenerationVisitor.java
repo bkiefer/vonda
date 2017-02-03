@@ -652,6 +652,9 @@ public class VGenerationVisitor implements RudiVisitor {
         UPropertyAccess pa = (UPropertyAccess)node.parts.get(i);
         String cast = mem.convertRdfType(pa.getType());
         out.append("((");
+        if (!pa.functional) {
+          cast = "Set<Object>";
+        }
         out.append(cast);
         out.append(")");
       }
