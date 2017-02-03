@@ -34,19 +34,6 @@ public class ExpLambdaTest {
   String header = "label: if(true) {";
   String footer = "}";
 
-  public RudiTree getNodeOfInterest(RudiTree rt) {
-    assertTrue(rt instanceof GrammarFile);
-    GrammarFile gf = (GrammarFile) rt;
-    GrammarRule dtr = (GrammarRule) gf.getDtrs().iterator().next();
-    StatIf _if = (StatIf) dtr.getDtrs().iterator().next();
-    StatAbstractBlock blk = (StatAbstractBlock)((StatIf) _if).statblockIf;
-    return blk.getDtrs().iterator().next();
-  }
-
-  public InputStream getInput(String input) {
-    String toParse = header + input + footer;
-    return new ByteArrayInputStream(toParse.getBytes());
-  }
 
     /*
     lambda_exp:

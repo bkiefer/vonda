@@ -1,18 +1,19 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
+import static de.dfki.mlt.rudimant.Visualize.setUp;
+import static de.dfki.mlt.rudimant.abstractTree.TestTypeInference.getNodeOfInterest;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
+import static visitortests.SeriousTest.RESOURCE_DIR;
 
-import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
 
-import org.antlr.v4.runtime.Token;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.dfki.mlt.rudimant.RudimantCompiler;
-import de.dfki.mlt.rudimant.agent.nlg.Pair;
+import de.dfki.lt.hfc.WrongFormatException;
+import de.dfki.mlt.rudimant.Mem;
+import de.dfki.mlt.rudimant.Visualize;
 
 /**
  *
@@ -20,38 +21,29 @@ import de.dfki.mlt.rudimant.agent.nlg.Pair;
  */
 public class ExpNewTest {
 
-  String header = "label: if(true) {";
-  String footer = "}";
+  static String header = "label: if(true) {";
+  static String footer = "}";
 
-  public RudiTree getNodeOfInterest(RudiTree rt) {
-    assertTrue(rt instanceof GrammarFile);
-    GrammarFile gf = (GrammarFile) rt;
-    GrammarRule dtr = (GrammarRule) gf.getDtrs().iterator().next();
-    StatIf _if = (StatIf) dtr.getDtrs().iterator().next();
-    StatAbstractBlock blk = (StatAbstractBlock)((StatIf) _if).statblockIf;
-    return blk.getDtrs().iterator().next();
-  }
 
-  public InputStream getInput(String input) {
-    String toParse = header + input + footer;
-    return new ByteArrayInputStream(toParse.getBytes());
+  @BeforeClass
+  public static void setUpClass() throws FileNotFoundException {
+    setUp(RESOURCE_DIR + "dipal/dipal.yml", header, footer);
   }
 
   @Test
-  public void testRdfType() throws IOException {
-    String conditionalExp = "new RdfType;";
+  public void testRdfType() throws IOException, WrongFormatException {
+    String conditionalExp = "new Activity;";
 
-    Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("new", getInput(conditionalExp));
-    RudiTree dtr = getNodeOfInterest(rt.first);
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(conditionalExp));
     assertTrue(dtr instanceof ExpNew);
+    assertTrue(Mem.isRdfType(((ExpNew)dtr).type));
   }
 
   @Test
-  public void testJavaType() throws IOException {
-    String conditionalExp = "new JavaType;";
+  public void testJavaType() throws IOException, WrongFormatException {
+    String conditionalExp = "new JavaType();";
 
-    Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("new", getInput(conditionalExp));
-    RudiTree dtr = getNodeOfInterest(rt.first);
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(conditionalExp));
     assertTrue(dtr instanceof ExpNew);
   }
 

@@ -7,11 +7,8 @@ package de.dfki.mlt.rudimant.abstractTree;
 
 import static de.dfki.mlt.rudimant.Constants.*;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -222,7 +219,7 @@ public class VGenerationVisitor implements RudiVisitor {
     String oldname = mem.getClassName();
     String oldrule = mem.getCurrentRule();
     String oldTrule = mem.getCurrentTopRule();
-    mem.enterClass(rudi.className);
+    mem.enterClass(rudi.getClassName());
 
     // tell the file in which package it lies
     String pkg = rudi.getPackageName();
@@ -241,7 +238,7 @@ public class VGenerationVisitor implements RudiVisitor {
     // maybe we need to import the class that imported us to use its variables
     out.append("import ");
     if (rudi.getParent() != null) {
-      out.append(pkg + rudi.getParent().className);
+      out.append(pkg + rudi.getParent().getClassName());
     } else {
       out.append(rudi.getWrapperClass());
     }
@@ -320,7 +317,7 @@ public class VGenerationVisitor implements RudiVisitor {
     }
     // get all those classes the toplevel rules need
     int i = 0;
-    for (String n : mem.getNeededClasses(rudi.className)) {
+    for (String n : mem.getNeededClasses(rudi.getClassName())) {
       String name = n.substring(0, 1).toLowerCase() + n.substring(1);
       if (i == 0) {
         args += n.substring(0, 1).toUpperCase() + n.substring(1) + " "
@@ -332,7 +329,7 @@ public class VGenerationVisitor implements RudiVisitor {
       declare += "this." + name + " = "  + name + ";\n";
       i++;
     }
-    out.append("public " + rudi.className + "(" + args + ") {\n"
+    out.append("public " + rudi.getClassName() + "(" + args + ") {\n"
             + "super(" + conargs + ");\n" + declare + "}\n");
 
     // finally, the main processing method that will call all rules and imports
@@ -342,7 +339,7 @@ public class VGenerationVisitor implements RudiVisitor {
     // initialize me according to the super class init
     out.append("// this.init();\n");
     // use all methods created from rules in this file
-    for (String toplevel : mem.getToplevelCalls(rudi.className)) {
+    for (String toplevel : mem.getToplevelCalls(rudi.getClassName())) {
       // is it a rule or an import?
       if (toplevel.contains("(")) {
         // an import
@@ -353,9 +350,9 @@ public class VGenerationVisitor implements RudiVisitor {
         if (ncs != null) {
           i = 0;
           for (String c : ncs) {
-            if (c.equals(rudi.className)
+            if (c.equals(rudi.getClassName())
                     || (c.substring(0, 1).toUpperCase()
-                    + c.substring(1)).equals(rudi.className)) {
+                    + c.substring(1)).equals(rudi.getClassName())) {
               c = "this";
             }
             if (i == 0) {

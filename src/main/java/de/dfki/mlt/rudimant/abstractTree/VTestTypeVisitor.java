@@ -289,15 +289,15 @@ public class VTestTypeVisitor implements RudiVisitor {
     String oldname = mem.getClassName();
     String oldrule = mem.getCurrentRule();
     String oldTrule = mem.getCurrentTopRule();
-    mem.enterClass(rudi.className);
+    mem.enterClass(rudi.getClassName());
     for (RudiTree t : node.rules) {
       t.visit(this);
     }
-    if(mem.getToplevelCalls(rudi.className) != null){
-      for (String s : mem.getToplevelCalls(rudi.className)) {
+    if(mem.getToplevelCalls(rudi.getClassName()) != null){
+      for (String s : mem.getToplevelCalls(rudi.getClassName())) {
         if(mem.getNeededClasses(s) != null){
           for (String n : mem.getNeededClasses(s)) {
-            mem.needsClass(rudi.className, n);
+            mem.needsClass(rudi.getClassName(), n);
           }
         }
       }
@@ -383,11 +383,7 @@ public class VTestTypeVisitor implements RudiVisitor {
 //    }
     mem.addImport(node.name, conargs);
     logger.info("Processing import " + node.content);
-    try {
-      RudimantCompiler.getEmbedded(rudi).process(node.content);
-    } catch (IOException ex) {
-      throw new RuntimeException(ex);
-    }
+    rudi.processImport(node.content);
   }
 
   @Override
@@ -603,7 +599,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(UFuncCall node) {
     String o = mem.getFunctionOrigin(node.content);
-    if (o != null && !rudi.className.equals(o)) {
+    if (o != null && !rudi.getClassName().equals(o)) {
       mem.needsClass(mem.getCurrentTopRule(), o);
       node.realOrigin = o;
     }

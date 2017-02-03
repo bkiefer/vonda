@@ -49,8 +49,6 @@ public class Mem {
 
   private RdfProxy _proxy;
 
-  String agentInit = "src/main/resources/Agent.rudi";
-  String wrapperInit;
   /**
    * to be able to not go down into environments for our different
    * initialization files
@@ -58,7 +56,6 @@ public class Mem {
   boolean initializing = false;
 
   public Mem(RdfProxy proxy) {
-    wrapperInit = null;
     environment = new ArrayDeque<>();
     rulesAndImports = new HashMap<>();
     _proxy = proxy;
@@ -68,6 +65,7 @@ public class Mem {
   }
 
   static Map<String, Long> typeCodes = new HashMap<>();
+  static Map<String, String> xsd2Java = new HashMap<>();
 
   static final long JAVA_TYPE = 0x10;
   static {
@@ -79,6 +77,11 @@ public class Mem {
     typeCodes.put("int",        0x111000l);
     typeCodes.put("boolean",   0x1000000l);
     typeCodes.put("null",     0x10000000l);
+    xsd2Java.put("<xsd:string>", "String");
+    xsd2Java.put("<xsd:int>", "Integer");
+    xsd2Java.put("<xsd:long>", "Long");
+    xsd2Java.put("<xsd:float>", "Float");
+    xsd2Java.put("<xsd:double>", "Double");
   }
 
   /** Indicates if this type should be compared with == or equals */
@@ -97,18 +100,10 @@ public class Mem {
    * @return
    */
   public String convertRdfType(String something){
-    if(!isRdfType(something)){
-      return something;
-    }
-    if(something.startsWith("<xsd:")){
-      String ret = something.substring(something.indexOf(":") + 1, something.indexOf(">"));
-      // TODO: which other types have to be put in correct form?
-      ret = ret.equals("string")? "String" : ret;
-      return ret;
-    } else {
-      return (DIALOGUE_ACT_TYPE.equals(something))
-                  ? "DialogueAct" : "Rdf";
-    }
+    if(!isRdfType(something)) return something;
+    String ret = xsd2Java.get(something);
+    if (ret != null) return ret;
+    return (DIALOGUE_ACT_TYPE.equals(something)) ? "DialogueAct" : "Rdf";
   }
 
   /** Return the more specific of the two types, if it exists, null otherwise */
