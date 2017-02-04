@@ -28,7 +28,7 @@ import de.dfki.mlt.rudimant.abstractTree.RudiTree;
 import de.dfki.mlt.rudimant.abstractTree.TreeModelAdapter;
 
 
-public class Visualize {
+public class Visualize extends GrammarMain {
 
   static String header = "";
   static String footer = "";
@@ -45,16 +45,17 @@ public class Visualize {
     return new ByteArrayInputStream(toParse.getBytes());
   }
 
-  public static Map<String, Object> configs = new HashMap<>();
-  public static File confDir = null;
-
-  public static String generate(String in)
-      throws IOException, WrongFormatException, TException {
-    RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
-    StringWriter sw = new StringWriter();
-    rc.processForReal(getInput(in), sw);
-    rc.flush();
-    return sw.toString();
+  public static String generate(String in) {
+    RudimantCompiler rc;
+    try {
+      rc = RudimantCompiler.init(confDir, configs);
+      StringWriter sw = new StringWriter();
+      rc.processForReal(getInput(in), sw);
+      rc.flush();
+      return sw.toString();
+    } catch (IOException | WrongFormatException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public static String normalizeSpaces(String in) {
@@ -126,31 +127,27 @@ public class Visualize {
     return parseAndTypecheck(getInput(in), out);
   }
 
-  @SuppressWarnings("unchecked")
-  public static void readConfig(String confname)
-      throws FileNotFoundException {
-    Yaml yaml = new Yaml();
-    File confFile = new File(confname);
-    confDir = confFile.getParentFile();
-    configs = (Map<String, Object>) yaml.load(new FileReader(confFile));
-  }
-
   /**
    * @param args: the file that should be parsed without ending (in args[0])
+   * @throws FileNotFoundException
    * @throws WrongFormatException
    * @throws Exception
    */
-  public static void main(String[] args)
-      throws IOException, WrongFormatException {
+  public static void main(String[] args) {
 
     File inputFile = new File(args[0]);
 
-    if (args.length > 1) { readConfig(args[1]); }
+    try {
+      if (args.length > 1) { readConfig(args[1]); }
 
-    Style.increaseDefaultFontSize(1.5);
-    MainFrame root = new MainFrame("foo");
-    root.addFileAssociation(new RudiFileHandler(), "rudi");
-    new RudiFileHandler().process(inputFile, new FileInputStream(inputFile),
-        root);
+      Style.increaseDefaultFontSize(1.5);
+      MainFrame root = new MainFrame("foo");
+      root.addFileAssociation(new RudiFileHandler(), "rudi");
+      new RudiFileHandler().process(inputFile, new FileInputStream(inputFile),
+          root);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 }

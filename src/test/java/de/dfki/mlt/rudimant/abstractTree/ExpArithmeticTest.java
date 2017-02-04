@@ -1,7 +1,7 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
-import static de.dfki.mlt.rudimant.Visualize.setUp;
-import static de.dfki.mlt.rudimant.abstractTree.TestTypeInference.getNodeOfInterest;
+import static de.dfki.mlt.rudimant.Visualize.*;
+import static de.dfki.mlt.rudimant.abstractTree.ExpAssignmentTest.getNodeOfInterest;
 import static org.junit.Assert.*;
 import static visitortests.SeriousTest.RESOURCE_DIR;
 
@@ -69,4 +69,15 @@ public class ExpArithmeticTest {
     assertEquals("type of 1 - 2", "int", type);
   }
 
+  @Test
+  public void testAssignment5() throws IOException {
+    String in = "Activity a; a.status = \"proposed\";";
+    GrammarFile gf = parseAndTypecheck(getInput(in));
+    RudiTree dtr = ExpAssignmentTest.getNodeOfInterest(gf, 0);
+    assertTrue(dtr instanceof StatVarDef);
+    assertEquals("Activity", ((StatVarDef)dtr).type);
+    dtr = ExpAssignmentTest.getNodeOfInterest(gf, 1);
+    assertTrue(dtr instanceof ExpAssignment);
+    assertEquals("String", ((ExpAssignment)dtr).type);
+  }
 }

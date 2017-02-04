@@ -8,6 +8,7 @@ package de.dfki.mlt.rudimant;
 import static de.dfki.mlt.rudimant.Constants.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -40,7 +41,8 @@ public class GrammarMain {
           + "java rudimant <directory_to_be_searched/> <paht_of_config_file/> OPTIONS\n"
           + "-o=DIRECTORY\tSpecify DIRECTORY as the output directory";
 
-  private Map<String, Object> configs;
+  public static Map<String, Object> configs;
+  public static File confDir;
 
   // rdf functionality
 
@@ -103,6 +105,15 @@ public class GrammarMain {
     }
   }
 
+  @SuppressWarnings("unchecked")
+  public static void readConfig(String confname)
+      throws FileNotFoundException {
+    Yaml yaml = new Yaml();
+    File confFile = new File(confname);
+    confDir = confFile.getParentFile();
+    configs = (Map<String, Object>) yaml.load(new FileReader(confFile));
+  }
+
   /**
    *
    * @param args: the file that should be parsed without ending (in args[0])
@@ -120,10 +131,9 @@ public class GrammarMain {
     OptionSet options = null;
 
     GrammarMain main = new GrammarMain();
-    Map<String, Object> configs;
     File outputDirectory = null;
     List files = null;
-    File configDir = new File(".");
+    confDir = new File(".");
 
     try {
       options = parser.parse(args);
@@ -133,19 +143,15 @@ public class GrammarMain {
         usage("Input file is missing");
       }
 
-      File inputDirectory = outputDirectory =
-              new File((String)files.get(0)).getParentFile();
+      outputDirectory = new File((String)files.get(0)).getParentFile();
 
       if (options.has("help") || options.has("h")) {
         System.out.println(help);
         System.exit(0);
       }
       if (options.has("c")) {
-        Yaml yaml = new Yaml();
         String confName = (String)options.valueOf("c");
-        File confFile = new File(confName);
-        configDir = confFile.getParentFile();
-        configs = (Map<String, Object>) yaml.load(new FileReader(confFile));
+        readConfig(confName);
       } else {
         configs = main.defaultConfig();
       }
@@ -170,7 +176,7 @@ public class GrammarMain {
         configs.put(CFG_OUTPUT_DIRECTORY, outputDirectory);
       }
       main.setConfig(configs);
-      process(RudimantCompiler.init(configDir, configs), files);
+      process(RudimantCompiler.init(confDir, configs), files);
       RudimantCompiler.shutdown();
       System.out.println("Parsing finished");
     } catch (OptionException ex) {

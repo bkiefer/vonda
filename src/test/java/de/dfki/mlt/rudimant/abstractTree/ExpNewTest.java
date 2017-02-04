@@ -1,7 +1,7 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import static de.dfki.mlt.rudimant.Visualize.setUp;
-import static de.dfki.mlt.rudimant.abstractTree.TestTypeInference.getNodeOfInterest;
+import static de.dfki.mlt.rudimant.abstractTree.ExpAssignmentTest.getNodeOfInterest;
 import static org.junit.Assert.assertTrue;
 import static visitortests.SeriousTest.RESOURCE_DIR;
 

@@ -189,7 +189,7 @@ public class RudimantCompiler {
       subPackage.addAll(Arrays.asList(packageName.split("\\.")));
       rootLevel = subPackage.size() - 1;
     }
-    processForReal(getOutputDirectory());
+    processForReal();
   }
 
   private void process(String importSpec) throws IOException {
@@ -204,7 +204,7 @@ public class RudimantCompiler {
     className = inputRealName.substring(0, 1).toUpperCase()
             + inputRealName.substring(1);
 
-    processForReal(getOutputDirectory());
+    processForReal();
   }
 
   public void processImport(String importSpec) {
@@ -360,7 +360,8 @@ public class RudimantCompiler {
     }
   }
 
-  private void processForReal(File outputdir) throws IOException {
+  private void processForReal() throws IOException {
+    File outputdir = getOutputDirectory();
     if (!outputdir.isDirectory()) {
       Files.createDirectories(outputdir.toPath());
     }
