@@ -1,3 +1,7 @@
+/*@
+import pal.TECS.QuizQuestion;
+@*/
+
 incoming:
 if (! lastDA()) return;
 
@@ -67,8 +71,8 @@ if (lastDA() <= #Request(AssigningRole)
   // TODO check if theme matches current activity (e.g. quiz game)
   QuizHistory turn = new QuizHistory;
   activity.hasTurns.add(turn);
-  turn.Asker = agt;
-  turn.Responder = (agt == user) ? I_ROBOT : user;
+  turn.asker = agt;
+  turn.responder = (agt == user) ? I_ROBOT : user;
   // Todo: see above, not yet implemented, always accept
   //if (true) { // accept role
   emitDA(#Accept(AssigningRole, theme=^thm, agent=^agt));
@@ -113,7 +117,7 @@ if (lastDA() <= #Inform(Answering)) {
     return;
   }
   turn = getCurrentTurn();
-  int qId = currentTurn.questionId;
+  int qId = turn.questionId;
   QuizQuestion q = questionCache.get(qId);
   int correct = q.getWhichCorrect();
   int wrong = correct + 1 + random.nextInt(q.getAnswersSize() - 1)

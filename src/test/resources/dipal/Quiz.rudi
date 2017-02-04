@@ -12,7 +12,7 @@ QuizHistory getCurrentTurn() {
   return activity.hasTurns.peekFirst();
 }
 
-String getCurrentAsker() {
+public String getCurrentAsker() {
   currentTurn = getCurrentTurn();
   if (! currentTurn)
     return null;

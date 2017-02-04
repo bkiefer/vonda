@@ -38,7 +38,7 @@ if (myLastDA() <= #Request(Name)) {
   if (activity <= Introduction) {
     String val = user.feedback.second;
     da = addLastDA(#Inform(Name, value=^val));
-    user.set(CHILD_NAME, val);
+    user.forename = val;
   } else {
     logger.warn("name request outside intro");
   }
