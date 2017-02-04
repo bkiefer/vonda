@@ -73,15 +73,20 @@ public class Mem {
     typeCodes.put("String",          0x1l);
     typeCodes.put("Rdf",           0x100l);
     typeCodes.put("double",     0x100000l);
+    typeCodes.put("Double",     0x100000l);
     typeCodes.put("float",      0x110000l);
+    typeCodes.put("Float",      0x110000l);
     typeCodes.put("int",        0x111000l);
+    typeCodes.put("Integer",    0x111000l);
     typeCodes.put("boolean",   0x1000000l);
+    typeCodes.put("Boolean",   0x1000000l);
     typeCodes.put("null",     0x10000000l);
     xsd2Java.put("<xsd:string>", "String");
     xsd2Java.put("<xsd:int>", "Integer");
     xsd2Java.put("<xsd:long>", "Long");
     xsd2Java.put("<xsd:float>", "Float");
     xsd2Java.put("<xsd:double>", "Double");
+    xsd2Java.put("<xsd:boolean>", "Boolean");
   }
 
   /** Indicates if this type should be compared with == or equals */
@@ -95,19 +100,31 @@ public class Mem {
   }
 
   /**
+   * returns a correct java type for xsd types
+   * @param something
+   * @return
+   */
+  public String convertXsdType(String something){
+    String ret = xsd2Java.get(something);
+    if (ret != null) return ret;
+    return something;
+  }
+
+  /**
    * returns a correct java type for whatever input
    * @param something
    * @return
    */
   public String convertRdfType(String something){
+    something = convertXsdType(something);
     if(!isRdfType(something)) return something;
-    String ret = xsd2Java.get(something);
-    if (ret != null) return ret;
     return (DIALOGUE_ACT_TYPE.equals(something)) ? "DialogueAct" : "Rdf";
   }
 
   /** Return the more specific of the two types, if it exists, null otherwise */
   public String mergeTypes(String left, String right) {
+    if (left == null) return right;
+    if (right == null) return left;
     // check if these are RDF types and are in a type relation.
     if (isRdfType(left) || isRdfType(right)) {
     if (isRdfType(left) && isRdfType(right))
@@ -142,7 +159,8 @@ public class Mem {
     // if is necessary, because otherwise, Object as the static type in a
     // declaration gets changed to RdfType by
     // VGenerationVisitor.visitNode(ExpAssignment node)
-    if ("Object".equals(type)){
+    if ("Object".equals(type)
+        || "String".equals(type)){ // what about Integer, int, etc.??
       return type;
     }
     RdfClass clazz = _proxy.fetchClass(type);

@@ -5,10 +5,11 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
+import static de.dfki.mlt.rudimant.Constants.DIALOGUE_ACT_TYPE;
+
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
@@ -87,82 +88,59 @@ public class VTestTypeVisitor implements RudiVisitor {
    */
   @Override
   public void visitNode(ExpAssignment node) {
-    logger.trace("Testing an assignment");
     node.right.visit(this);
-    // TODO: if this is a variable initialization, shouldn't we provide the type
-    // to left if it was given? As the type is not yet in the memory, we won't
-    // find it while visiting left and therefore get at least tons of warnings
-    // Otherwise: infer type from right
-    if(node.declaration){
-        // is this a variable declaration for an already existing variable?
-      if (mem.variableExists(node.left.toString())) {
-          rudi.typeError("Re-declaration of existing variable " + node.left, node);
-      }
-      node.left.type = node.type;
-    }
+    // make sure they become Java POD types, if xsd type
+    node.right.type = mem.convertXsdType(node.right.type);
     node.left.visit(this);
-    if (node.type == null) {
-      node.type = node.right.type;
-      if (node.type == null){  // variable declaration with another variable?
-            if (node.left instanceof UVariable) {
-              if (node.right instanceof UVariable){
-                 if (!mem.variableExists(node.right.toString())) {
-                   rudi.typeError("Assignment of a value of a non-existing variable " + node.right + "to " + node.left, node);
-                 }
-                 else{
-                   if (!mem.variableExists(node.left.toString())){
-                     node.declaration = true;
-                     node.type = mem.getVariableType(node.right.toString());
-                     node.left.type = mem.getVariableType(node.right.toString());
-                     node.right.type = mem.getVariableType(node.right.toString());
-                     mem.addVariableDeclaration(((UVariable) node.left).content,
-                node.type, mem.getClassName());
-                   }
-                   else{  // variable declaration for an already existing variable?
-                    if (node.declaration) {
-                      rudi.typeError("Re-declaration of existing variable " + node.left, node);
-                    }
-                    else{
-                      if (!mem.getVariableType(node.left.toString()).equals(mem.getVariableType(node.right.toString()))){
-                      rudi.typeError("Assignment of the value of " + node.right + "to existing variable" + node.left + ": Types do not match", node);
-                    }
-                    }
-                   }
-                 }
-              }
-            }
-      }
-    } else {
+    node.left.type = mem.convertXsdType(node.left.type);
+
+    // is this a variable declaration for an already existing variable?
+    // When we get here, if node.declaration is true, then node.type has a
+    // non-null value, and vice versa
+    if (node.declaration) {
       node.type = mem.checkRdf(node.type);
-      if (node.right.type == null) {
-        node.right.propagateType(node.type);
+      if (mem.variableExists(node.left.toString())) {
+        rudi.typeError("Re-declaration of existing variable " + node.left, node);
       } else {
-        String t = "";
-        if ((t = mem.mergeTypes(node.type, node.right.type))
-            == null) {
-          rudi.typeError("Declared type incompatible with expression: "
-                  + node.type + ", " + node.right.type, node);
-        } else {
-          node.type = t;
-        }
+        node.left.type = node.type; // the type of the declaration is in this node
       }
+      mem.addVariableDeclaration(((UVariable) node.left).content,
+          node.left.type, mem.getClassName());
+    } else if ((node.left instanceof UVariable
+        && !mem.variableExists(node.left.toString()))) {
+      node.declaration = true;
+      // node.type is null, and variable does not exist, so no type.
+      node.left.type = node.right.type;
+      mem.addVariableDeclaration(((UVariable) node.left).content,
+          node.left.type, mem.getClassName());
+    }
+    if (node.right instanceof UVariable && !mem.variableExists(node.right.toString())) {
+      rudi.typeError("Assignment of a value of a non-existing variable " + node.right + "to " + node.left, node);
     }
 
-    // enter the variable into mem if we found a type, else enter "Object"
-    if (node.left instanceof UVariable) {
-      if (!mem.variableExists(node.left.toString())) {
-        node.declaration = true;
-        if (node.type == null) {
-          rudi.typeError("Type of variable unknown: "
-                  + node.left + " in " + node, node);
-          mem.addVariableDeclaration(((UVariable) node.left).content,
-                  "Object", mem.getClassName());
-          node.type = "Object";
-          return;
-        }
-        mem.addVariableDeclaration(((UVariable) node.left).content,
-                node.type, mem.getClassName());
-      }
+    // now consolidate types
+    if (node.left.type == null && node.right.type == null) {
+      node.type = null;
+      return;  // we can't do anything more
+    }
+
+    // The type on the left side must be equal or less specific than that on
+    // the right, otherwise there is no way to properly convert one into the
+    // other. And the node type (the type resulting from the assignment)
+    // is the left type.
+    String mergeType = mem.mergeTypes(node.left.type, node.right.type);
+    if (mergeType == null || mergeType != node.left.type) {
+      node.type = null;
+      rudi.typeError("Incompatible types in assignment: "
+          + node.left.type + " := " + node.right.type, node);
+      return;
+    }
+    node.type = mergeType;
+    if (node.right.type == null) {
+      node.right.propagateType(node.type);
+    }
+    if (node.left.type == null) {
+      node.left.propagateType(node.type);
     }
   }
 
@@ -512,7 +490,12 @@ public class VTestTypeVisitor implements RudiVisitor {
     if ("String".equals(mem.getVariableType(var.content))) {
       // the literal represents a variable, so we can't determine the type of
       // the access
+      // TODO: Maybe return "Object" as type, should be correct in most cases.
       return new UPropertyAccess(var, true, null, false);
+    }
+    if (DIALOGUE_ACT_TYPE.equals(currentType)) {
+      // the return type will be string, this is a call to getSlot
+      return new UPropertyAccess(var, false, "String", true);
     }
     RdfClass clz = mem.getProxy().getClass(currentType);
     String predUri = clz.fetchProperty(var.content);

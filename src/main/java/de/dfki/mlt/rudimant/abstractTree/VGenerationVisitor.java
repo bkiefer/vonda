@@ -109,7 +109,8 @@ public class VGenerationVisitor implements RudiVisitor {
       node.left.visitWithComments(this);
       notPrintLastField = false;
       if (pa != null) {
-        out.append(functional ? ".set(" : ".setValue(");
+        //out.append(functional ? ".setSingleValue(" : ".setValue(");
+        out.append(".setValue(");  // always right.
         pa.getPropertyName(out);
         out.append(", ");
       } else {
@@ -647,6 +648,12 @@ public class VGenerationVisitor implements RudiVisitor {
     // Plan: if we could determine the types of subexpressions in TypeVisitor,
     //       we could enter them into a list and just output that list here
     //       in reversed order - edit: let's just reverse them in the access class
+
+    // TODO: THIS IS WRONG, THE CASTS HAVE TO BE CREATED IN REVERSED ORDER
+    // this cries for recursion (from end to begin), only that we have to
+    // append and prepend, which we can't do with the stream. Would have to
+    // construct it as string
+    // TODO: CONSTRUCT A TEST EXAMPLE WITH AT LEAST THREE RDF ACCESSES
     for (int i = 1; i < to; i++) {
       if (node.parts.get(i) instanceof UPropertyAccess) {
         UPropertyAccess pa = (UPropertyAccess)node.parts.get(i);
@@ -660,17 +667,29 @@ public class VGenerationVisitor implements RudiVisitor {
       }
     }
     node.parts.get(0).visitWithComments(this);
+    String currentType = ((RTExpression)node.parts.get(0)).type;
     for (int i = 1; i < to; i++) {
-      if (node.parts.get(i) instanceof UPropertyAccess) {
-        UPropertyAccess pa = (UPropertyAccess)node.parts.get(i);
+      RudiTree currentPart = node.parts.get(i);
+      if (currentPart instanceof UPropertyAccess) {
+        UPropertyAccess pa = (UPropertyAccess)currentPart;
         // then we are in the case that this is actually an rdf operation
-        out.append(pa.functional ? ".getSingleValue(" : ".getValue(");
+        if (DIALOGUE_ACT_TYPE.equals(currentType)) {
+          out.append(".getSlot(");
+        } else {
+          out.append(pa.functional ? ".getSingleValue(" : ".getValue(");
+        }
         pa.getPropertyName(out);
         out.append(")");
         out.append(") ");
+        currentType = pa.type;
       } else {
         out.append(".");
-        node.parts.get(i).visit(this);
+        currentPart.visit(this);
+        if (currentPart instanceof RTExpression) {
+          currentType = ((RTExpression)currentPart).type;
+        } else {
+          currentType = null;
+        }
       }
     }
   }
