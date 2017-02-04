@@ -31,6 +31,9 @@ import org.slf4j.LoggerFactory;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.lt.tr.dialogue.cplan.UtterancePlanner;
 import de.dfki.lt.tr.dialogue.cplan.functions.FunctionFactory;
+import static de.dfki.mlt.rudimant.agent.nlg.ConfConstants.*;
+import java.io.FileReader;
+import org.yaml.snakeyaml.Yaml;
 
 public class LanguageGenerator {
 
@@ -67,12 +70,14 @@ public class LanguageGenerator {
   private static Map<String, LanguageGenerator> _generators
           = new HashMap<String, LanguageGenerator>();
 
-  public static LanguageGenerator getGenerator(String currentLang) {
+  public static LanguageGenerator getGenerator(String currentLang,
+          String confname) throws FileNotFoundException {
     LanguageGenerator singleton = _generators.get(currentLang);
     if (singleton == null) {
       singleton = new LanguageGenerator(currentLang);
       _generators.put(currentLang, singleton);
     }
+    singleton.readConfig(confname);
     return singleton;
   }
 
@@ -91,8 +96,8 @@ public class LanguageGenerator {
       // so that all random calls to generation can be recorded, too
       // don't know if this is strictly necessary
       // FunctionFactory.register(new RecordableRandomFunction(), _ruleMapper);
-      File foo = new File(configs.get("resource.dir"),
-              configs.get("mapper.project"));
+      File foo = new File((String) configs.get(RESOURCE_DIR),
+              (String) configs.get(MAPPER_PROJECT));
       _ruleMapper.readProjectFile(foo);
     } catch (FileNotFoundException e) {
       logger.error("mapper rules not found: " + e);
@@ -112,8 +117,8 @@ public class LanguageGenerator {
     lang = lang.toLowerCase().substring(0, 3);
     cplanner
             = new CPlannerNlg(
-                    new File(configs.get("resource.dir"),
-                            configs.get("generation.project" + "." + lang)), lang);
+                    new File((String) configs.get(RESOURCE_DIR),
+              (String) configs.get("generation.project" + "." + lang)), lang);
   }
 
   public void registerAccess(String what, BaseInfoStateAccess access) {
@@ -177,14 +182,22 @@ public class LanguageGenerator {
     return result;
   }
 
-  private Map<String, String> configs;
+  private Map<String, Object> configs;
 
   /**
    * takes a configuration and sets all properties to those specified in it
    *
    * @param configs
    */
-  public void initConfig(Map<String, String> cfgs) {
+  public void initConfig(Map<String, Object> cfgs) {
     this.configs = new HashMap<>(cfgs);
+  }
+  
+  @SuppressWarnings("unchecked")
+  public void readConfig(String confname)
+      throws FileNotFoundException {
+    Yaml yaml = new Yaml();
+    File confFile = new File(confname);
+    configs = (Map<String, Object>) yaml.load(new FileReader(confFile));
   }
 }

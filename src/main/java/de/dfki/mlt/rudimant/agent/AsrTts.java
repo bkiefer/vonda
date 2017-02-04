@@ -19,10 +19,11 @@ public class AsrTts {
    */
   private LanguageGenerator _generator;
 
-  public void loadGrammar(String language, Agent agent) throws IOException {
+  public void loadGrammar(String language, Agent agent, String confFile)
+          throws IOException {
 
     //language = "english";
-    _generator = LanguageGenerator.getGenerator(language);
+    _generator = LanguageGenerator.getGenerator(language, confFile);
     _generator.registerAccess("general", new InfoStateAccess(agent));
   }
 

@@ -407,12 +407,12 @@ public abstract class Agent extends DataComparator {
 //  }
   protected abstract void processRules();
 
-  public void init(String language, RdfProxy proxy) {
+  public void init(String language, RdfProxy proxy, String confFile) {
     _proxy = proxy;
     _language = language;
     asr = new AsrTts();
     try {
-      asr.loadGrammar(language, this);
+      asr.loadGrammar(language, this, confFile);
     } catch (IOException ex) {
       logger.error("Error loading grammar: {}", ex);
       System.exit(1);
