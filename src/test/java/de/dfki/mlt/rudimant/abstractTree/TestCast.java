@@ -46,8 +46,8 @@ public class TestCast {
   public void testCast2() throws IOException, WrongFormatException {
     String in = "QuizHistory turn; boolean correct = turn.correct;";
     String r = getGeneration(in);
-    String exp = "boolean correct = (boolean) "
-        + "((Boolean)turn.getSingleValue(\"<dom:correct>\")) ; ";
+    String exp = "boolean correct = "
+        + "((boolean)turn.getSingleValue(\"<dom:correct>\")) ; ";
     assertEquals(exp, r);
   }
 

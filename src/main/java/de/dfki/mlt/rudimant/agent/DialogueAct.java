@@ -34,14 +34,34 @@ public class DialogueAct {
     return null;// TODO
   }
 
+  /** Return the argument for key slot */
+  public void setSlot(String slot, String value) {
+    // TODO
+  }
+
   /** Return the dialogue act */
   public String getDialogueAct() {
     return null;// TODO
   }
 
+  /** Return the dialogue act */
+  public void setDialogueAct(String da) {
+    // TODO
+  }
+
   /** Return the proposition */
   public String getProposition() {
     return null;// TODO
+  }
+
+  /** Return the proposition */
+  public void setProposition() {
+    // TODO
+  }
+
+  public DialogueAct copy() {
+    // TODO
+    return null;
   }
 
   // TODO

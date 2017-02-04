@@ -61,4 +61,13 @@ public class TestTypeInference {
     expected = normalizeSpaces(expected);
     assertEquals(expected, s.substring(s.length() - expected.length()));
   }
+
+  @Test
+  public void test4() {
+    String in = "Activity a; if (a == null) { }";
+    String s = generate(in); s = normalizeSpaces(s);
+    String expected = "if ((a == null)) {}} ";
+    expected = normalizeSpaces(expected);
+    assertEquals(expected, s.substring(s.length() - expected.length()));
+  }
 }

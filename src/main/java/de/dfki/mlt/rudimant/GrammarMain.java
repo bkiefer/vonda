@@ -177,12 +177,12 @@ public class GrammarMain {
       }
       main.setConfig(configs);
       process(RudimantCompiler.init(confDir, configs), files);
-      RudimantCompiler.shutdown();
-      System.out.println("Parsing finished");
     } catch (OptionException ex) {
       usage("Error parsing options: " + ex.getMessage());
     } catch (IOException ex) {
       usage("A file error occured: " + ex.getMessage());
+    } finally {
+      RudimantCompiler.shutdown();
     }
   }
 
