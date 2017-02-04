@@ -29,6 +29,21 @@ public class DialogueAct {
     return this.dag.subsumes(moreGeneral.dag);
   }
 
+  /** Return the argument for key slot */
+  public String getSlot(String slot) {
+    return null;// TODO
+  }
+
+  /** Return the dialogue act */
+  public String getDialogueAct() {
+    return null;// TODO
+  }
+
+  /** Return the proposition */
+  public String getProposition() {
+    return null;// TODO
+  }
+
   // TODO
   public static DialogueAct fromRdf(String uri) {
     return null;

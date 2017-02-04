@@ -59,4 +59,9 @@ public class UPropertyAccess extends RTExpLeaf {
     if(!propertyVariable) out.append('"');
   }
 
+  public String toString() {
+    return (propertyVariable ? ".getV(" + label.content + ")"
+        : "." + label.content) +
+        (type != null ? "[" + type + "]" : "");
+  }
 }

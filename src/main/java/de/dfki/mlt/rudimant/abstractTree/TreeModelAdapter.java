@@ -68,7 +68,7 @@ public class TreeModelAdapter extends ModelAdapter {
 */
       return ModelAdapter.SYMBOL | ModelAdapter.TREE;
     }
-    if (model instanceof String) {
+    if (model == null || model instanceof String) {
       return ModelAdapter.ATOM;
     }
     return ModelAdapter.NONE;

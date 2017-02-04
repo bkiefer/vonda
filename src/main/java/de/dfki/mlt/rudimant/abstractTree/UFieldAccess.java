@@ -5,8 +5,6 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import static de.dfki.mlt.rudimant.Constants.DIALOGUE_ACT_TYPE;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
