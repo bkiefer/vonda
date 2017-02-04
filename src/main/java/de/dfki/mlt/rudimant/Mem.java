@@ -15,11 +15,6 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import static de.dfki.mlt.rudimant.Constants.DIALOGUE_ACT_TYPE;
 import de.dfki.mlt.rudimant.abstractTree.USingleValue;
 import de.dfki.mlt.rudimant.abstractTree.UVariable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.logging.Level;
 
 /**
  * this is rudimants memory, used for type checking
@@ -65,34 +60,27 @@ public class Mem {
   }
 
   static Map<String, Long> typeCodes = new HashMap<>();
-  static Map<String, String> xsd2Java = new HashMap<>();
 
   static final long JAVA_TYPE = 0x10;
   static {
-    typeCodes.put("Object",         0x11l);
-    typeCodes.put("String",          0x1l);
-    typeCodes.put("Rdf",           0x100l);
-    typeCodes.put("double",     0x100000l);
-    typeCodes.put("Double",     0x100000l);
-    typeCodes.put("float",      0x110000l);
-    typeCodes.put("Float",      0x110000l);
-    typeCodes.put("int",        0x111000l);
-    typeCodes.put("Integer",    0x111000l);
-    typeCodes.put("boolean",   0x1000000l);
-    typeCodes.put("Boolean",   0x1000000l);
-    typeCodes.put("null",     0x10000000l);
-    xsd2Java.put("<xsd:string>", "String");
-    xsd2Java.put("<xsd:int>", "Integer");
-    xsd2Java.put("<xsd:long>", "Long");
-    xsd2Java.put("<xsd:float>", "Float");
-    xsd2Java.put("<xsd:double>", "Double");
-    xsd2Java.put("<xsd:boolean>", "Boolean");
+    typeCodes.put("Object",         0x111l);
+    typeCodes.put("String",           0x1l);
+    typeCodes.put("Rdf",             0x10l);
+    typeCodes.put("double",     0x1000000l);
+    typeCodes.put("Double",     0x1000100l);
+    typeCodes.put("float",      0x1100000l);
+    typeCodes.put("Float",      0x1100100l);
+    typeCodes.put("int",        0x1110000l);
+    typeCodes.put("Integer",    0x1110100l);
+    typeCodes.put("boolean",   0x10000000l);
+    typeCodes.put("Boolean",   0x10000100l);
+    typeCodes.put("null",     0x100000000l);
   }
 
   /** Indicates if this type should be compared with == or equals */
   public static boolean isPODType(String name) {
     Long code = typeCodes.get(name);
-    return code != null && (code & 0x11100000l) != 0;
+    return code != null && (code & 0x111100000l) != 0;
   }
 
   public static boolean isRdfType(String type) {
@@ -105,7 +93,7 @@ public class Mem {
    * @return
    */
   public String convertXsdType(String something){
-    String ret = xsd2Java.get(something);
+    String ret = RdfClass.xsdToJavaPod(something);
     if (ret != null) return ret;
     return something;
   }

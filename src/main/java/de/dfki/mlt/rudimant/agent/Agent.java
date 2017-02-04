@@ -12,6 +12,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.tr.dialogue.cplan.DagEdge;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
@@ -127,7 +128,7 @@ public abstract class Agent extends DataComparator {
   // **********************************************************************
 
   /** Generate DialogueAct from a raw speech act representation */
-  protected DialogueAct createEmitDA(DialogueAct da) {
+  public DialogueAct addToMyDA(DialogueAct da) {
     myLastDAs.addFirst(da);
     newData();
     return da;
@@ -149,20 +150,12 @@ public abstract class Agent extends DataComparator {
     return emitDA(Behaviour.DEFAULT_DELAY, da);
   }
 
-  public DialogueAct getMyLastDA() {
+  public DialogueAct myLastDA() {
     return myLastDAs.peekFirst();
   }
 
-  public DialogueAct myLastDA() {
-    return getMyLastDA();
-  }
-
   public boolean isMyLastDA(DialogueAct da) {
-    return da.subsumes(getMyLastDA());
-  }
-
-  public boolean isMyLastDA(String raw) {
-    return isMyLastDA(new DialogueAct(raw));
+    return da.subsumes(myLastDA());
   }
 
   /** Return the index of the last speech act equal or more specific than the
@@ -179,13 +172,6 @@ public abstract class Agent extends DataComparator {
     return -1;
   }
 
-  /** Return the index of the last speech act with a type equal or more specific
-   *  than the given one
-   */
-  public int lastOccurenceOfMyDA(String raw) {
-    return saidInSession(new DialogueAct(raw));
-  }
-
   /** When did i say this in this session? */
   protected int saidInSession(DialogueAct da) {
     return lastOccurence(da, myLastDAs);
@@ -199,7 +185,7 @@ public abstract class Agent extends DataComparator {
   protected boolean waitingForResponse() {
     // if my last DA was a request or a question, and there is no newer incoming
     // da, i'm waiting for an answer.
-    DialogueAct myLast = getMyLastDA();
+    DialogueAct myLast = myLastDA();
     if (myLast == null) {
       return false;
     }
@@ -318,6 +304,22 @@ public abstract class Agent extends DataComparator {
   /* *************************************************************************
    Rdf shortcuts
    ************************************************************************* */
+
+  public Rdf toRdf(String Uri) {
+    return _proxy.getRdf(Uri);
+  }
+
+  /* *************************************************************************
+  Java shortcuts
+  ************************************************************************* */
+
+  public float random() {
+    return random.nextFloat();
+  }
+
+  public int random(int bound) {
+    return random.nextInt(bound);
+  }
 
   //public boolean isSubclassOf(Rdf sub, String clz) throws TException {
   //  return sub.getClazz().isSubclassOf(_proxy.fetchRdfClass(clz));

@@ -113,11 +113,10 @@ public class RudimantCompiler {
     mem = new Mem(proxy);
     mem.initializing = true;
     parent = null;
-    logger.info("initializing Agent methods");
     try {
       processForReal(RudimantCompiler.class.getResourceAsStream(agentInit), null);
     } catch (IOException ex) {
-      logger.error("Agent initializer file import: {}", ex);
+      logger.error("Agent initializer file import fails: {}", ex);
     }
     mem.initializing = false;
   }
