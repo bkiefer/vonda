@@ -528,7 +528,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     }
     node.statblockIf.visitWithComments(this);
     if (node.statblockElse != null) {
-      out.append("else");
+      out.append("else ");
       node.statblockElse.visitWithComments(this);
     }
   }
@@ -657,7 +657,8 @@ public class VGenerationVisitor implements RTStringVisitor {
     // append and prepend, which we can't do with the stream. Would have to
     // construct it as string
     // TODO: CONSTRUCT A TEST EXAMPLE WITH AT LEAST THREE RDF ACCESSES
-    for (int i = 1; i < to; i++) {
+    // aw: changed the direction of the for loop; shouldn't this be enough??
+    for (int i = to - 1; i > 0; i--) {
       if (node.parts.get(i) instanceof UPropertyAccess) {
         UPropertyAccess pa = (UPropertyAccess)node.parts.get(i);
         String cast = mem.convertRdfType(pa.getType());
