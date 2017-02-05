@@ -26,7 +26,17 @@ public class StatWhile extends RTCondBlockStatement {
   }
   
   @Override
-  public String visitStringV(RTStringVisitor v){
-    return v.visitNode(this);
+  public String visitStringV(VGenerationVisitor v){
+    throw new UnsupportedOperationException("Nodes bigger than expressions must not return Strings but write to out!");
+  }
+
+  @Override
+  public void visitVoidV(VGenerationVisitor v) {
+    v.visitNode(this);
+  }
+  
+  @Override
+  public void visitCondPart(VRuleConditionVisitor v){
+    v.visitNode(this);
   }
 }

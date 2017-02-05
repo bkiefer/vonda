@@ -456,10 +456,10 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitField_access(RobotGrammarParser.Field_accessContext ctx) {
     ArrayList<String> representation = new ArrayList<>();
-    ArrayList<RudiTree> parts = new ArrayList<>();
+    ArrayList<RTExpression> parts = new ArrayList<>();
     for (int i = 0; i < ctx.getChildCount(); i += 2) {
       representation.add(ctx.getChild(i).getText());
-      parts.add(this.visit(ctx.getChild(i)));
+      parts.add((RTExpression)this.visit(ctx.getChild(i)));
     }
     return new UFieldAccess(ctx.getText(), parts, representation)
             .setPosition(ctx, currentClass);

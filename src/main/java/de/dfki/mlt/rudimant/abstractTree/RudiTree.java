@@ -35,10 +35,10 @@ public abstract class RudiTree {
 
   public void visitWithComments(VGenerationVisitor v) {
     int firstPos = this.positions[0];
-    checkComments(v, firstPos);
-    this.visit(v);
+    v.out.append(checkComments(v, firstPos));
+    this.visitVoidV(v);
     int endPos = this.positions[1];
-    checkComments(v, endPos);
+    v.out.append(checkComments(v, endPos));
   }
   
   boolean lookingForImport = false;
@@ -54,25 +54,41 @@ public abstract class RudiTree {
   
   /**
    * the visitMethod for the visitor that allows to return Strings
+   * ! only to be used by expressions !
    */
-  public abstract String visitStringV(RTStringVisitor v);
+  public abstract String visitStringV(VGenerationVisitor v);
+  
+  /**
+   * the visitMethod for the visitor that allows to return Strings
+   * ! for everything except expressions, they should write to out !
+   */
+  public abstract void visitVoidV(VGenerationVisitor v);
+  
+  
+  /**
+   * a visit only for the condVisitor, for parts that are sth boolean and
+   * therefor have to be mapped
+   * @return 
+   */
+  public abstract void visitCondPart(VRuleConditionVisitor v);
 
-  private void checkComments(VGenerationVisitor v, int firstPos) {
-      while (!v.collectedTokens.isEmpty() && v.collectedTokens.get(0).getTokenIndex() < firstPos) {
+  protected String checkComments(VGenerationVisitor v, int firstPos) {
+    String allcomments = "";
+    while (!v.collectedTokens.isEmpty() && v.collectedTokens.get(0).getTokenIndex() < firstPos) {
         String comment = v.collectedTokens.get(0).getText();
         // Deal with java code
         if(comment.startsWith("/*@")){
           comment = comment.substring(3, comment.length()-3);
           if(lookingForImport){
             if(!comment.contains("import")){
-              return;
+              return allcomments;
             }
           }
         }
-        v.out.append(comment);
-        v.collectedTokens.remove();
-      }
+      v.collectedTokens.remove();
     }
+    return allcomments;
+  }
 
   /**
    * setPosition is used to store the start and stop position of a Token given

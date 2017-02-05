@@ -19,7 +19,7 @@ import de.dfki.mlt.rudimant.RudimantCompiler;
  * Collects data to generate the complex boolean conditions to log the rules
  * properly.
  */
-public class VRuleConditionVisitor extends VNullVisitor {
+public class VRuleConditionVisitor implements RTStringVisitor {
 
   private String currentRule;
   // map the new variables to what they represent
@@ -31,6 +31,17 @@ public class VRuleConditionVisitor extends VNullVisitor {
 
   private RudimantCompiler rudi;
   private Mem mem;
+  
+  // a genv we can use to get our generated parts
+  private VGenerationVisitor genV;
+  
+  /**
+   * 
+   * @param v a generation visitor to help with node realization
+   */
+  public VRuleConditionVisitor(VGenerationVisitor v){
+    this.genV = v;
+  }
 
   public void renewMap(String rule, LinkedHashMap<String, String> condLog,
           LinkedHashMap<String, String> compiledLook, RudimantCompiler rudi) {
@@ -46,11 +57,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
 
   @Override
   public String visitNode(ExpArithmetic node) {
-    String r = "";
-    if (node.right != null) {
-      r = node.right.visitStringV(this);
-    }
-    return node.left.visitStringV(this) + r;
+    return genV.visitNode(node);
   }
 
   private String lastbool;
@@ -67,19 +74,7 @@ public class VRuleConditionVisitor extends VNullVisitor {
     String collectElements = "";
     if (node.right != null) {
       if (!(node.operator.equals("||") || node.operator.equals("&&"))) {
-        if (node.operator.contains("(")) {
-          collectElements = node.operator;
-          collectElements += node.left.visitStringV(this);
-          collectElements += (", ");
-          collectElements += node.right.visitStringV(this);
-          collectElements += (")");
-        } else {
-          collectElements = n + "(";
-          collectElements += node.left.visitStringV(this);
-          collectElements += node.operator + " ";
-          collectElements += node.right.visitStringV(this);
-          collectElements += (")");
-        }
+        collectElements = genV.visitNode(node);
         this.lastbool = this.currentRule + this.counter++;
         this.compiledLook.put(this.lastbool, collectElements);
         this.realLook.put(lastbool, collectElements.replaceAll("\\\\\"", "\\\""));
@@ -88,9 +83,9 @@ public class VRuleConditionVisitor extends VNullVisitor {
       }
       // if the operator is and or or, then we have to create two single
       // bool variables out of this
-      node.left.visitStringV(this);
+      node.left.visitCondPart(this);
       String l = this.lastbool;
-      node.right.visitStringV(this);
+      node.right.visitCondPart(this);
       String r = this.lastbool;
       this.lastbool = this.currentRule + this.counter++;
       this.compiledLook.put(this.lastbool, n + "("
@@ -98,14 +93,14 @@ public class VRuleConditionVisitor extends VNullVisitor {
       this.realLook.put(lastbool, n + "(" + l + node.operator + r + ")");
     } else {
       if("!".equals(node.operator)){
-        node.left.visitStringV(this);
+        node.left.visitCondPart(this);
         String l = this.lastbool;
         this.lastbool = this.currentRule + this.counter++;
         this.compiledLook.put(this.lastbool, n + l);
         this.realLook.put(lastbool, n + l);
         return null;
       }
-      String left = node.left.visitStringV(this);
+      String left = node.left.visitStringV(genV);
       this.lastbool = this.currentRule + this.counter++;
       this.compiledLook.put(this.lastbool, left);
       this.realLook.put(lastbool, left);
@@ -113,102 +108,167 @@ public class VRuleConditionVisitor extends VNullVisitor {
     return null;
   }
 
-  public String visitDaToken(RTExpression exp) {
-    if (this.enteringCondition) {
-      // we are in a case where this is a condition with one single element
-      this.enteringCondition = false;
-      String ret = this.visitNode(exp);
-      this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool, ret);
-      this.realLook.put(lastbool, ret);
-      return null;
-    }
-    if (exp instanceof UVariable) {
-      return ((UVariable) exp).content;
-    } else if (exp instanceof USingleValue
-            && ((USingleValue) exp).type.equals("String")) {
-      return ((USingleValue) exp).content;
-    } else {
-      return "\" + " + this.visitNode(exp) + " + \"";
-    }
-  }
+
 
   @Override
   public String visitNode(ExpDialogueAct node) {
-    String ret = "new DialogueAct(\"";
-    ret += visitDaToken(node.daType) + '(';
-    ret += visitDaToken(node.proposition);
-    for (int i = 0; i < node.exps.size(); i += 2) {
-      ret += ", " + visitDaToken(node.exps.get(i));
-      ret += " = " + visitDaToken(node.exps.get(i + 1));
-    }
-    ret += ")\")";
-    return ret;
-    // normally, this should not be needed here
-//    this.lastbool = this.currentRule + this.counter++;
-//    this.compiledLook.put(this.lastbool, result);
-//    this.realLook.put(lastbool, result);
+    return genV.visitNode(node);
   }
 
   @Override
   public String visitNode(UFieldAccess node) {
-    String fieldAccessPart = node.parts.get(0).visitStringV(this);
-    for (int i = 1; i < node.parts.size(); i++) {
-      if (node.parts.get(i) instanceof UPropertyAccess) {
-        UPropertyAccess pa = (UPropertyAccess) node.parts.get(i);
-        // then we are in the case that this is actually an rdf operation
-        fieldAccessPart += pa.functional ? ".getSingleValue(\"" : ".getValue(\"";
-        fieldAccessPart += node.representation.get(i) + "\") ";
-      } else {
-        fieldAccessPart += (".");
-        fieldAccessPart += node.parts.get(i).visitStringV(this);
-      }
-    }
+    return genV.visitNode(node);
     // it should be correct to never create a bool variable here, because if
     // this was a single expression resulting in a boolean, that should be
     // caught/handled with in RTExpression
-    return fieldAccessPart;
   }
 
   @Override
   public String visitNode(UFuncCall node) {
-    String funcargs = "";
-    if (node.realOrigin != null) {
-      String t = node.realOrigin;
-      funcargs = t.substring(0, 1).toLowerCase() + t.substring(1) + ".";
-    }
-    funcargs += node.content + "(";
-    for (int i = 0; i < node.exps.size(); i++) {
-      if (i > 0) {
-        funcargs += (", ");
-      }
-      funcargs += node.exps.get(i).visitStringV(this);
-    }
-    funcargs += (")");
+    return genV.visitNode(node);
     // as to why not create a bool variable here, see UFieldAccess
-    return funcargs;
   }
 
   @Override
   public String visitNode(USingleValue node) {
-    return node.content;
+    return genV.visitNode(node);
   }
 
   @Override
   public String visitNode(UVariable node) {
-    // we might need to import this variable from elsewhere
-    if (node.realOrigin != null) {
-      String t = node.realOrigin;
-      return t.substring(0, 1).toLowerCase() + t.substring(1)
-              + "." + node.content;
-    } else {
-      return node.content;
-    }
+    return genV.visitNode(node);
     // as to why not create a bool variable here, see UFieldAccess
   }
 
   @Override
   public String visitNode(UWildcard node) {
-    return "this.wildcard";
+    return genV.visitNode(node);
+  }
+
+  @Override
+  public void visitNode(RudiTree node) {
+    node.visitCondPart(this);
+  }
+
+
+  @Override
+  public String visitNode(RTExpression node) {
+// TODO: should we do this or not?
+//    if (this.enteringCondition) {
+//      // we are in a case where this is a condition with one single element
+//      this.enteringCondition = false;
+//      String ret = this.visitNode(exp);
+//      this.lastbool = this.currentRule + this.counter++;
+//      this.compiledLook.put(this.lastbool, ret);
+//      this.realLook.put(lastbool, ret);
+//      return null;
+//    }
+    node.visitCondPart(this);
+    return null;
+  }
+
+  @Override
+  public String visitNode(ExpAssignment node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public String visitNode(ExpConditional node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public String visitNode(ExpLambda node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public String visitNode(ExpNew node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(GrammarFile node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(GrammarRule node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(StatAbstractBlock node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(StatDoWhile node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(StatFor1 node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(StatFor2 node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(StatFor3 node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(StatIf node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(StatImport node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(StatListCreation node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(StatMethodDeclaration node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(StatPropose node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(StatReturn node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(StatSetOperation node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(StatSwitch node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(StatVarDef node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public void visitNode(StatWhile node) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 }

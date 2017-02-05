@@ -36,7 +36,7 @@ public class VBoolVarCreatorVisitor extends VNullVisitor {
   private boolean enteringCondition;
 
   @Override
-  public String visitNode(ExpBoolean node) {
+  public void visitNode(ExpBoolean node) {
     if (this.enteringCondition) {
       // we are at the beginning; initialize all boolean vars of this condition
       this.enteringCondition = false;
@@ -54,7 +54,6 @@ public class VBoolVarCreatorVisitor extends VNullVisitor {
         // we do not go deeper
         this.creation.append(expNames[counter] + " = " + n
                 + compiledLook.get(expNames[counter++]) + ";\n");
-        return null;
       } // else
       if (node.operator.equals("||")) {
         this.visitNode(node.left);
@@ -63,7 +62,6 @@ public class VBoolVarCreatorVisitor extends VNullVisitor {
         this.creation.append("}\n");
         this.creation.append(expNames[counter] + " = " + n
                 + compiledLook.get(expNames[counter++]) + ";\n");
-        return null;
       } else if (node.operator.equals("&&")) {
         this.visitNode(node.left);
         this.creation.append("if (" + expNames[counter - 1] + "){\n");
@@ -71,17 +69,15 @@ public class VBoolVarCreatorVisitor extends VNullVisitor {
         this.creation.append("}\n");
         this.creation.append(expNames[counter] + " = " + n
                 + compiledLook.get(expNames[counter++]) + ";\n");
-        return null;
       }
     } else {
         this.visitNode(node.left);
         this.creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter++]) + ";\n");
 
     }
-    return null;
   }
 
-  private String myVisitNode(RTExpression node) {
+  private void myVisitNode(RTExpression node) {
     if(this.enteringCondition){
 //       we are in a case where this is a condition with one single element
       this.enteringCondition = false;
@@ -91,37 +87,36 @@ public class VBoolVarCreatorVisitor extends VNullVisitor {
     // if we were not in the case above, expboolean wouldn't have looked deeper
 //    creation.append(expNames[counter] + " = " + compiledLook.get(expNames[counter]) + ";\n");
 //    condition.append(expNames[counter++]);
-    return null;
   }
 
   @Override
-  public String visitNode(ExpConditional node) {
-    return myVisitNode(node);
+  public void visitNode(ExpConditional node) {
+    myVisitNode(node);
   }
 
   @Override
-  public String visitNode(UFieldAccess node) {
-    return myVisitNode(node);
+  public void visitNode(UFieldAccess node) {
+    myVisitNode(node);
   }
 
   @Override
-  public String visitNode(UFuncCall node) {
-    return myVisitNode(node);
+  public void visitNode(UFuncCall node) {
+    myVisitNode(node);
   }
 
   @Override
-  public String visitNode(USingleValue node) {
-    return myVisitNode(node);
+  public void visitNode(USingleValue node) {
+    myVisitNode(node);
   }
 
   @Override
-  public String visitNode(UVariable node) {
-    return myVisitNode(node);
+  public void visitNode(UVariable node) {
+    myVisitNode(node);
   }
 
   @Override
-  public String visitNode(UWildcard node) {
-    return myVisitNode(node);
+  public void visitNode(UWildcard node) {
+    myVisitNode(node);
   }
 
 }

@@ -9,160 +9,160 @@ package de.dfki.mlt.rudimant.abstractTree;
  *
  * @author anna
  */
-public class VNullVisitor implements RTStringVisitor {
+public class VNullVisitor implements RudiVisitor{
 
   @Override
-  public String visitNode(RudiTree node) {
-    return node.visitStringV(this);
+  public void visitNode(RudiTree node) {
+    node.visit(this);
   }
 
   @Override
-  public String visitNode(RTExpression node) {
-    return node.visitStringV(this);
+  public void visitNode(RTExpression node) {
+    node.visit(this);
   }
 
   @Override
-  public String visitNode(ExpArithmetic node) {
+  public void visitNode(ExpArithmetic node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(ExpAssignment node) {
+  public void visitNode(ExpAssignment node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(ExpBoolean node) {
+  public void visitNode(ExpBoolean node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(ExpDialogueAct node) {
+  public void visitNode(ExpDialogueAct node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(ExpConditional node) {
+  public void visitNode(ExpConditional node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(ExpLambda node) {
+  public void visitNode(ExpLambda node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(ExpNew node) {
+  public void visitNode(ExpNew node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(GrammarFile node) {
+  public void visitNode(GrammarFile node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(GrammarRule node) {
+  public void visitNode(GrammarRule node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(StatAbstractBlock node) {
+  public void visitNode(StatAbstractBlock node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(StatDoWhile node) {
+  public void visitNode(StatDoWhile node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(StatFor1 node) {
+  public void visitNode(StatFor1 node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(StatFor2 node) {
+  public void visitNode(StatFor2 node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(StatFor3 node) {
+  public void visitNode(StatFor3 node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(StatIf node) {
+  public void visitNode(StatIf node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(StatImport node) {
+  public void visitNode(StatImport node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(StatListCreation node) {
+  public void visitNode(StatListCreation node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(StatMethodDeclaration node) {
+  public void visitNode(StatMethodDeclaration node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(StatPropose node) {
+  public void visitNode(StatPropose node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(StatReturn node) {
+  public void visitNode(StatReturn node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(StatSetOperation node) {
+  public void visitNode(StatSetOperation node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(StatSwitch node) {
+  public void visitNode(StatSwitch node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(StatVarDef node) {
+  public void visitNode(StatVarDef node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(StatWhile node) {
+  public void visitNode(StatWhile node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(UFieldAccess node) {
+  public void visitNode(UFieldAccess node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(UFuncCall node) {
+  public void visitNode(UFuncCall node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(USingleValue node) {
+  public void visitNode(USingleValue node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(UVariable node) {
+  public void visitNode(UVariable node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   @Override
-  public String visitNode(UWildcard node) {
+  public void visitNode(UWildcard node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
   
