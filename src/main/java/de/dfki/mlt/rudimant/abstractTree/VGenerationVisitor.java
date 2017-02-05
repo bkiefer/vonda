@@ -110,25 +110,25 @@ public class VGenerationVisitor implements RTStringVisitor {
       notPrintLastField = false;
       if (pa != null) {
         //out.append(functional ? ".setSingleValue(" : ".setValue(");
-        ret += (".setValue(");  // always right.
+        ret += ".setValue(";  // always right.
         ret += pa.getPropertyName();
-        ret += (", ");
+        ret += ", ";
       } else {
-        ret += (" = ");
+        ret += " = ";
       }
     } else {
       ret += node.left.visitWithSComments(this);
-      ret += (" = ");
+      ret += " = ";
     }
     if(node.type != null &&
             !node.type.equals(node.right.getType())){
       // then there is either sth wrong here, what would at least have resulted
       // in warnings in type testing, or it is possible to cast the right part
-      ret += ("(" + mem.convertRdfType(node.type) + ") ");
+      ret += "(" + mem.convertRdfType(node.type) + ") ";
     }
     ret += node.right.visitWithSComments(this);
     if (pa != null) {
-      ret += (")"); // close call to set(Single)Value()
+      ret += ")"; // close call to set(Single)Value()
     }
     return ret;
   }
@@ -140,24 +140,22 @@ public class VGenerationVisitor implements RTStringVisitor {
       node.getType();
     }
     if ("!".equals(node.operator)) {
-      ret += ("!");
+      ret += "!";
     }
     if (node.right != null) {
       if(node.operator.contains("(")){
-        ret += (node.operator);
+        ret += node.operator;
         ret += node.left.visitWithSComments(this);
-        ret += (", ");
+        ret += ", ";
         ret += node.right.visitWithSComments(this);
-        ret += (")");
+        ret += ")";
         return ret;
       }
-      ret += ("(");
+      ret += "(";
       ret += node.left.visitWithSComments(this);
-      ret += (" ");
-      ret += (node.operator);
-      ret += (" ");
+      ret += " " +  node.operator + " ";
       ret += node.right.visitWithSComments(this);
-      ret += (")");
+      ret += ")";
       return ret;
     }
     return node.left.visitWithSComments(this);
@@ -166,52 +164,45 @@ public class VGenerationVisitor implements RTStringVisitor {
   public String visitDaToken(RTExpression exp) {
     String ret = "";
     if (exp instanceof UVariable) {
-      ret += ("\" + ");
-      ret += (((UVariable) exp).fullexp);
-      ret += ("+ \"");
+      ret += "\" + " + ((UVariable) exp).fullexp + "+ \"";
     } else if (exp instanceof USingleValue
             && ((USingleValue) exp).type.equals("String")) {
       String s = ((USingleValue) exp).content;
       if (s.contains("\"")) {
         s = s.substring(1, s.length() - 1);
       }
-      ret += (s);
+      ret += s;
     } else {
-      ret += ("\" + ");
-      ret += this.visitNode(exp);
-      ret += (" + \"");
+      ret += "\" + " + this.visitNode(exp) + " + \"";
     }
     return ret;
   }
 
   @Override
   public String visitNode(ExpDialogueAct node) {
-    String ret = "";
-    ret += ("new DialogueAct(\"");
+    String ret = "new DialogueAct(\"";
     ret += visitDaToken(node.daType);
-    ret += ('(');
+    ret += '(';
     ret += visitDaToken(node.proposition);
     for (int i = 0; i < node.exps.size(); i += 2) {
-      ret += (", ");
+      ret += ", ";
       ret += visitDaToken(node.exps.get(i));
-      ret += (" = ");
+      ret += " = ";
       ret += visitDaToken(node.exps.get(i + 1));
     }
-    ret += (')');
-    ret += ("\")");
+    ret += ")\")";
     return ret;
   }
 
   @Override
   public String visitNode(ExpConditional node) {
-    String ret = "";
-    ret += ('(');
+    String ret = "(";
     ret += node.boolexp.visitWithSComments(this);
-    ret += (" ? ");
+    ret += " ? ";
     ret += node.thenexp.visitWithSComments(this);
-    ret += (" : ");
+    ret += " : ";
     ret += node.elseexp.visitWithSComments(this);
-    ret += (')');
+    ret += ')';
     return ret;
   }
 
@@ -558,7 +549,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     out.append(node.listType + " " + node.variableName + " = new ArrayList<>();");
     for (RTExpression e : node.objects) {
       out.append(node.variableName + ".add(");
-      this.visitNode(e);
+      out.append(this.visitNode(e));
       out.append(");\n");
     }
   }
@@ -569,23 +560,13 @@ public class VGenerationVisitor implements RTStringVisitor {
       return;
     }
     out.append(node.visibility + " ");
-    if (Mem.isRdfType(node.return_type)) {
-      if (node.return_type.equals(DIALOGUE_ACT_TYPE)) {
-        // <dial:DialogueAct > has to be replaced by DialogueAct
-        out.append("DialogueAct ");
-      } else {
-        // every other type starting with < has to be replaced by Rdf
-        out.append("Rdf ");
-      }
-    } else {
-      out.append(node.return_type + " ");
-    }
+    out.append(mem.convertRdfType(node.return_type) + " ");
     out.append(node.name + "(");
     for (int i = 0; i < node.parameters.size(); i++) {
       if (i != 0) {
         out.append(", ");
       }
-      out.append(node.partypes.get(i) + " " + node.parameters.get(i));
+      out.append(mem.convertRdfType(node.partypes.get(i)) + " " + node.parameters.get(i));
     }
     out.append(")\n");
     node.block.visitWithComments(this);
@@ -680,11 +661,11 @@ public class VGenerationVisitor implements RTStringVisitor {
       if (node.parts.get(i) instanceof UPropertyAccess) {
         UPropertyAccess pa = (UPropertyAccess)node.parts.get(i);
         String cast = mem.convertRdfType(pa.getType());
-        ret += ("((");
+        ret += "((";
         if (!pa.functional) {
           cast = "Set<Object>";
         }
-        ret += (cast + ")");
+        ret += cast + ")";
       }
     }
     ret += node.parts.get(0).visitWithSComments(this);
@@ -695,15 +676,15 @@ public class VGenerationVisitor implements RTStringVisitor {
         UPropertyAccess pa = (UPropertyAccess)currentPart;
         // then we are in the case that this is actually an rdf operation
         if (DIALOGUE_ACT_TYPE.equals(currentType)) {
-          ret += (".getSlot(");
+          ret += ".getSlot(";
         } else {
-          ret += (pa.functional ? ".getSingleValue(" : ".getValue(");
+          ret += pa.functional ? ".getSingleValue(" : ".getValue(";
         }
         ret += pa.getPropertyName();
-        ret += (")) ");
+        ret += ")) ";
         currentType = pa.type;
       } else {
-        ret += (".");
+        ret += ".";
         ret += currentPart.visitStringV(this);
         if (currentPart instanceof RTExpression) {
           currentType = ((RTExpression)currentPart).type;
@@ -721,16 +702,16 @@ public class VGenerationVisitor implements RTStringVisitor {
     String ret = "";
     if (node.realOrigin != null) {
       String t = node.realOrigin;
-      ret += (t.substring(0, 1).toLowerCase() + t.substring(1) + ".");
+      ret += t.substring(0, 1).toLowerCase() + t.substring(1) + ".";
     }
-    ret += (node.content + "(");
+    ret += node.content + "(";
     for (int i = 0; i < node.exps.size(); i++) {
       ret += node.exps.get(i).visitWithSComments(this);
       if (i != node.exps.size() - 1) {
-        ret += (", ");
+        ret += ", ";
       }
     }
-    ret += (")" + " ");
+    ret += ") ";
     return ret;
   }
 
