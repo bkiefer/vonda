@@ -2,7 +2,9 @@
 
 boolean equals(Object e);
 void info(String s, int i);
-
+boolean startsWith(String s);
+boolean endsWith(String s);
+String substring(int i);
 
 // all Agent methods we should know
 

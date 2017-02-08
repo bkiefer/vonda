@@ -114,8 +114,8 @@ if (activity.status == "run_wait_for_continue") {
   // TODO FIX THIS, ONLY FOR TESTING !!!!!
   if (true || getNumberOfTurns() < 5) {
     propose("continue_quiz") {
-      Rdf turn = getCurrentTurn();
-      Rdf newTurn = new QuizHistory;
+      QuizHistory turn = getCurrentTurn();
+      QuizHistory newTurn = new QuizHistory;
       // Switch roles after each turn
       newTurn.asker = turn.responder;
       newTurn.responder = turn.asker;

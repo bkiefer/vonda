@@ -120,7 +120,9 @@ public class VTestTypeVisitor implements RudiVisitor {
 
     // now consolidate types
     if (node.left.type == null && node.right.type == null) {
-      node.type = null;
+      // please, never assign null as a type, because that is no valid java type
+      // and will crash for sure
+      node.type = "Object";
       return;  // we can't do anything more
     }
 
@@ -129,13 +131,19 @@ public class VTestTypeVisitor implements RudiVisitor {
     // other. And the node type (the type resulting from the assignment)
     // is the left type.
     String mergeType = mem.mergeTypes(node.left.type, node.right.type);
-    if (mergeType == null || mergeType != node.left.type) {
+    if ((mergeType == null || mergeType != node.left.type)
+      // if on the right there is sth happening that rudimant can't understand,
+      // the type of right will be null and we get an overall type null even if
+      // we are a declaration with known type!!
+            && !("Object".equals(node.right.getType()) && node.type != null)) {
+      // attention, assigning null to type here will result in type null in output!
       node.type = null;
       rudi.typeError("Incompatible types in assignment: "
           + node.left.type + " := " + node.right.type, node);
       return;
+    } else if (mergeType != null) {
+      node.type = mergeType;
     }
-    node.type = mergeType;
     if (node.right.type == null) {
       node.right.propagateType(node.type);
     }
