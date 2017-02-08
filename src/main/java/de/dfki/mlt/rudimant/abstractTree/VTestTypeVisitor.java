@@ -110,7 +110,7 @@ public class VTestTypeVisitor implements RudiVisitor {
         && !mem.variableExists(node.left.toString()))) {
       node.declaration = true;
       // node.type is null, and variable does not exist, so no type.
-      node.left.type = node.right.type;
+      node.type = node.left.type = node.right.type;
       mem.addVariableDeclaration(((UVariable) node.left).content,
           node.left.type, mem.getClassName());
     }
