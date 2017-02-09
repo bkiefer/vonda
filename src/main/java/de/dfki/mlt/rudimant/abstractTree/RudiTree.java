@@ -40,7 +40,7 @@ public abstract class RudiTree {
     int endPos = this.positions[1];
     v.out.append(checkComments(v, endPos));
   }
-  
+
   boolean lookingForImport = false;
   /**
    * print the comment before and forget about it if -and only if- it is an
@@ -48,27 +48,27 @@ public abstract class RudiTree {
    */
   public void printImportifJava(VGenerationVisitor v){
     lookingForImport = true;
-    checkComments(v, this.positions[0]);
+    v.out.append(checkComments(v, this.positions[0]));
     lookingForImport = false;
   }
-  
+
   /**
    * the visitMethod for the visitor that allows to return Strings
    * ! only to be used by expressions !
    */
   public abstract String visitStringV(VGenerationVisitor v);
-  
+
   /**
    * the visitMethod for the visitor that allows to return Strings
    * ! for everything except expressions, they should write to out !
    */
   public abstract void visitVoidV(VGenerationVisitor v);
-  
-  
+
+
   /**
    * a visit only for the condVisitor, for parts that are sth boolean and
    * therefor have to be mapped
-   * @return 
+   * @return
    */
   public abstract void visitCondPart(VRuleConditionVisitor v);
 
@@ -85,6 +85,7 @@ public abstract class RudiTree {
             }
           }
         }
+        allcomments += comment + "\n";
       v.collectedTokens.remove();
     }
     return allcomments;
