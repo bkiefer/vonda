@@ -30,12 +30,15 @@ public abstract class RTExpression extends RudiTree {
   public void setType(String to) {
     this.type = to;
   }
-  
+
   /**
    * duplicate the method from RudiTree to ensure String return
-   * @param v 
+   * @param v
    */
   public String visitWithSComments(VGenerationVisitor v) {
+    if(v.collectingCondition){
+      return this.visitStringV(v);
+    }
     String ret = "";
     int firstPos = this.positions[0];
     ret += checkComments(v, firstPos);

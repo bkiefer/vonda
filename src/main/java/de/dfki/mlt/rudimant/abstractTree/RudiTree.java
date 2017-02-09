@@ -42,32 +42,33 @@ public abstract class RudiTree {
   }
 
   boolean lookingForImport = false;
+
   /**
    * print the comment before and forget about it if -and only if- it is an
    * import in java escapes
    */
-  public void printImportifJava(VGenerationVisitor v){
+  public void printImportifJava(VGenerationVisitor v) {
     lookingForImport = true;
     v.out.append(checkComments(v, this.positions[0]));
     lookingForImport = false;
   }
 
   /**
-   * the visitMethod for the visitor that allows to return Strings
-   * ! only to be used by expressions !
+   * the visitMethod for the visitor that allows to return Strings ! only to be
+   * used by expressions !
    */
   public abstract String visitStringV(VGenerationVisitor v);
 
   /**
-   * the visitMethod for the visitor that allows to return Strings
-   * ! for everything except expressions, they should write to out !
+   * the visitMethod for the visitor that allows to return Strings ! for
+   * everything except expressions, they should write to out !
    */
   public abstract void visitVoidV(VGenerationVisitor v);
-
 
   /**
    * a visit only for the condVisitor, for parts that are sth boolean and
    * therefor have to be mapped
+   *
    * @return
    */
   public abstract void visitCondPart(VRuleConditionVisitor v);
@@ -75,17 +76,19 @@ public abstract class RudiTree {
   protected String checkComments(VGenerationVisitor v, int firstPos) {
     String allcomments = "";
     while (!v.collectedTokens.isEmpty() && v.collectedTokens.get(0).getTokenIndex() < firstPos) {
-        String comment = v.collectedTokens.get(0).getText();
-        // Deal with java code
-        if(comment.startsWith("/*@")){
-          comment = comment.substring(3, comment.length()-3);
-          if(lookingForImport){
-            if(!comment.contains("import")){
-              return allcomments;
-            }
+      String comment = v.collectedTokens.get(0).getText();
+      // Deal with java code
+      if (comment.startsWith("/*@")) {
+        comment = comment.substring(3, comment.length() - 3);
+        if (lookingForImport) {
+          if (!comment.contains("import")) {
+            return allcomments;
           }
         }
-        allcomments += comment + "\n";
+      }
+      if (!comment.trim().isEmpty()) {
+        allcomments += comment;
+      }
       v.collectedTokens.remove();
     }
     return allcomments;
@@ -125,7 +128,7 @@ public abstract class RudiTree {
 
   public abstract Iterable<? extends RudiTree> getDtrs();
 
-  public Location getLocation(){
+  public Location getLocation() {
     return this.location;
   }
 }

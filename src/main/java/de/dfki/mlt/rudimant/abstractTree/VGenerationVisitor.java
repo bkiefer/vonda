@@ -740,6 +740,8 @@ public class VGenerationVisitor implements RTStringVisitor {
     return "this.wildcard ";   // wildcard is a local variable in resulting class
   }
 
+  boolean collectingCondition = false;
+
   /**
    * creates and prints the logging method of the given rule
    *
@@ -753,6 +755,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     if (bool_exp instanceof USingleValue && bool_exp.getType().equals("boolean")) {
       return ((USingleValue) bool_exp).content;
     }
+    collectingCondition = true;
     RTExpression bool = bool_exp;
 
     // remembers how the expressions should be realized by rudimant
@@ -781,6 +784,7 @@ public class VGenerationVisitor implements RTStringVisitor {
             + mem.getClassName() + "\");\n");
 
     out.append("}\n");
+    collectingCondition = false;
     return (String) expnames[expnames.length - 1];
   }
 
