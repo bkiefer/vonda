@@ -69,7 +69,7 @@ public class VTestTypeVisitor implements RudiVisitor {
         node.right.propagateType(node.left.type);
       } else {
         // check type compatibility
-        String type = mem.mergeTypes(node.left.type, node.right.type);
+        String type = mem.unifyTypes(node.left.type, node.right.type);
         if (type == null) {
           rudi.typeError("Incompatible types in " + node + ": "
               + node.left.type + " vs. " + node.right.type, node);
@@ -106,10 +106,20 @@ public class VTestTypeVisitor implements RudiVisitor {
       }
       mem.addVariableDeclaration(((UVariable) node.left).content,
           node.left.type, mem.getClassName());
+      if (node.right.type == null) {
+        node.right.propagateType(node.type);
+      }
     } else if ((node.left instanceof UVariable
         && !mem.variableExists(node.left.toString()))) {
       node.declaration = true;
       // node.type is null, and variable does not exist, so no type.
+      // now consolidate types
+      if (node.right.type == null) {
+        // please, never assign null as a type, because that is no valid java type
+        // and will crash for sure
+        node.right.type = "Object";
+        // TODO: ? node.right.propagateType(node.type);
+      }
       node.type = node.left.type = node.right.type;
       mem.addVariableDeclaration(((UVariable) node.left).content,
           node.left.type, mem.getClassName());
@@ -118,32 +128,19 @@ public class VTestTypeVisitor implements RudiVisitor {
       rudi.typeError("Assignment of a value of a non-existing variable " + node.right + "to " + node.left, node);
     }
 
-    // now consolidate types
-    if (node.left.type == null && node.right.type == null) {
-      // please, never assign null as a type, because that is no valid java type
-      // and will crash for sure
-      node.type = "Object";
-      return;  // we can't do anything more
-    }
 
-    // The type on the left side must be equal or less specific than that on
-    // the right, otherwise there is no way to properly convert one into the
-    // other. And the node type (the type resulting from the assignment)
-    // is the left type.
-    String mergeType = mem.mergeTypes(node.left.type, node.right.type);
-    if ((mergeType == null || mergeType != node.left.type)
-      // if on the right there is sth happening that rudimant can't understand,
-      // the type of right will be null and we get an overall type null even if
-      // we are a declaration with known type!!
-            && !("Object".equals(node.right.getType()) && node.type != null)) {
-      // attention, assigning null to type here will result in type null in output!
-      node.type = null;
+    // If the type on the left side is more specific that the one on the right,
+    // a cast must be applied during generation. if it is less specific, no
+    // special measures must be taken.
+    // if unifyTypes returns null, the types are incompatible
+    // if one of them is null, unifyTypes will return the other type
+    String mergeType = mem.unifyTypes(node.left.type, node.right.type);
+    if (mergeType == null) {
+      mergeType = "Object";
       rudi.typeError("Incompatible types in assignment: "
           + node.left.type + " := " + node.right.type, node);
-      return;
-    } else if (mergeType != null) {
-      node.type = mergeType;
     }
+    node.type = mergeType;
     if (node.right.type == null) {
       node.right.propagateType(node.type);
     }
@@ -254,7 +251,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.boolexp = node.boolexp.ensureBoolean();
     node.thenexp.visit(this);
     node.elseexp.visit(this);
-    if (mem.mergeTypes(node.thenexp.getType(), node.elseexp.getType()) == null) {
+    if (mem.unifyTypes(node.thenexp.getType(), node.elseexp.getType()) == null) {
       rudi.typeError(node.fullexp
           + " is a conditional expression where the else expression "
           + "does not have the same type as the right expression!\n("
@@ -382,7 +379,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       if (type != null) {
         String elementType = type.substring(
             type.indexOf("<") + 1, type.indexOf(">"));
-        if (mem.mergeTypes(elementType, node.objects.get(0).getType()) == null) {
+        if (mem.unifyTypes(elementType, node.objects.get(0).getType()) == null) {
           rudi.typeError("Found a list creation where the list type"
               + " doesn't fit its objects' type: " + elementType
               + " vs " + node.objects.get(0).getType(), node);

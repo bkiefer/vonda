@@ -111,7 +111,7 @@ public class Environment {
       return false;
     }
     for(String parameter: partypes){
-      if(mem.mergeTypes(parameter, functionParamaterTypes.get(funcname).get(i)) == null){
+      if(mem.unifyTypes(parameter, functionParamaterTypes.get(funcname).get(i)) == null){
         return false;
       }
       i++;

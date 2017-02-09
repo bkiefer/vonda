@@ -62,6 +62,16 @@ public class TestTypeInference {
     assertEquals(expected, s.substring(s.length() - expected.length()));
   }
 
+
+  @Test
+  public void test3a() throws IOException, WrongFormatException {
+    String in = "QuizHistory getCurrentTurn(); Rdf turn = getCurrentTurn();";
+    String s = generate(in); s = normalizeSpaces(s);
+    String expected = "Rdf turn = getCurrentTurn() } ";
+    expected = normalizeSpaces(expected);
+    assertEquals(expected, s.substring(s.length() - expected.length()));
+  }
+
   @Test
   public void test4() {
     String in = "Activity a; if (a == null) { }";
