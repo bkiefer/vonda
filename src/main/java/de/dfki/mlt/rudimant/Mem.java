@@ -111,14 +111,14 @@ public class Mem {
 
   /** Return the more specific of the two types, if it exists, null otherwise */
   public String unifyTypes(String left, String right) {
-    if (left == null) return right;
-    if (right == null) return left;
+    if (left == null || "Object".equals(left)) return right;
+    if (right == null || "Object".equals(right)) return left;
     // check if these are RDF types and are in a type relation.
     if (isRdfType(left) || isRdfType(right)) {
       if (isRdfType(left) && isRdfType(right))
         return _proxy.fetchMostSpecific(left, right);
-      if ("Rdf".equals(left) || "Object".equals(left)) return right;
-      if ("Rdf".equals(right) || "Object".equals(right)) return left;
+      if ("Rdf".equals(left)) return right;
+      if ("Rdf".equals(right)) return left;
       return null;
     }
 

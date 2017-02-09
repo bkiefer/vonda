@@ -37,30 +37,37 @@ public class TestTypes {
   public static void setUpClass() throws FileNotFoundException {
     setUp(RESOURCE_DIR + "dipal/dipal.yml", header, footer);
   }
-  
+
   @Test
   public void testType1(){
     String in = "DialogueAct reply = myLastDA().copy();";
     String r = getGeneration(in);
     assertEquals("DialogueAct reply = (DialogueAct) myLastDA() .copy() ; ", r);
   }
-  
+
   @Test
   public void testType2(){
     String in = "Rdf turn = getCurrentTurn(activity);";
     String r = getGeneration(in);
     assertEquals("Rdf turn = getCurrentTurn(activity) ; ", r);
   }
-  
+
+//  @Test
+//  public void testType3(){
+//    String in = "propose(\"continue_quiz\") {\n" +
+//              "      Rdf turn = getCurrentTurn(activity);}";
+//    String r = getGeneration(in);
+//    System.out.println(r);
+//    assertEquals("propose(\"continue_quiz\", new Proposal() {"
+//            + "public void run() {"
+//            + "Rdf turn = getCurrentTurn(activity) ; }});"
+//            , r);
+//  }
+
   @Test
-  public void testType3(){
-    String in = "propose(\"continue_quiz\") {\n" +
-              "      Rdf turn = getCurrentTurn(activity);}";
+  public void testType4(){
+    String in = "int correct = q.getWhichCorrect();";
     String r = getGeneration(in);
-    System.out.println(r);
-    assertEquals("propose(\"continue_quiz\", new Proposal() {"
-            + "public void run() {"
-            + "Rdf turn = getCurrentTurn(activity) ; }});"
-            , r);
+    assertEquals("int correct = (int) q.getWhichCorrect() ; ", r);
   }
 }
