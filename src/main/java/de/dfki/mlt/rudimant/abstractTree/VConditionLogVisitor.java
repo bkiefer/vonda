@@ -19,171 +19,163 @@ import de.dfki.mlt.rudimant.RudimantCompiler;
  * Collects data to generate the complex boolean conditions to log the rules
  * properly.
  */
-public class VRuleConditionVisitor implements RTStringVisitor {
+public class VConditionLogVisitor implements RTStringVisitor {
 
+  private VGenerationVisitor genV;
+  private boolean enteringCondition;
+  // a counter to help naming the booleans that we create
+  private int counter = 0;
   private String currentRule;
+  // the name of the last boolean we created
+  private String lastbool;
   // map the new variables to what they represent
   private LinkedHashMap<String, String> realLook;
-  // map the new variables to how they should be calculated
-  private LinkedHashMap<String, String> compiledLook;
-  private int counter;
-  private boolean enteringCondition;
 
-  private RudimantCompiler rudi;
-  private Mem mem;
-  
-  // a genv we can use to get our generated parts
-  private VGenerationVisitor genV;
-  
-  /**
-   * 
-   * @param v a generation visitor to help with node realization
-   */
-  public VRuleConditionVisitor(VGenerationVisitor v){
-    this.genV = v;
+  public VConditionLogVisitor(VGenerationVisitor v) {
+    genV = v;
   }
 
-  public void renewMap(String rule, LinkedHashMap<String, String> condLog,
-          LinkedHashMap<String, String> compiledLook, RudimantCompiler rudi) {
-    this.realLook = condLog;
-    this.compiledLook = compiledLook;
+  public void newInit(String rule, LinkedHashMap<String, String> realLook) {
+    this.enteringCondition = true;
     this.currentRule = rule;
     this.counter = 0;
-    this.rudi = rudi;
-    this.mem = rudi.getMem();
-    this.enteringCondition = true;
-    this.lastbool = null;
+    this.realLook = realLook;
+  }
+
+  @Override
+  public String visitNode(ExpBoolean node) {
+    StringBuilder retS = new StringBuilder();
+
+    if (this.enteringCondition) {
+      this.enteringCondition = false;
+    }
+    if (node.right != null) {
+      if (!(node.operator.equals("||") || node.operator.equals("&&"))) {
+        // we do not want to go deeper, both sides must be a "basic boolean"
+        String resulting = genV.visitNode(node);
+        this.lastbool = this.currentRule + this.counter++;
+        this.realLook.put(this.lastbool, resulting);
+        retS.append(this.lastbool + " = " + resulting + ";\n");
+        return retS.toString();
+      } else {
+        // visit the left node, remember its "number"
+        retS.append(this.visitNode(node.left));
+        String left = this.lastbool;
+        // visit the right node, remember its "number"
+        String resultRight = this.visitNode(node.right);
+        String right = this.lastbool;
+        this.lastbool = this.currentRule + this.counter++;
+        // TODO: we are not interested in this, are we?
+//        this.realLook.put(this.lastbool, left + node.operator + right);
+        if (node.operator.equals("||")) {
+          retS.append("if (!");
+        } else { // then we are in && mode
+          retS.append("if (");
+        }
+        retS.append(left + ") {\n");
+        retS.append(resultRight);
+        retS.append(this.lastbool + " = " + left + node.operator + right + ";\n");
+        this.realLook.put(this.lastbool, left + node.operator + right);
+        retS.append("}\n");
+      }
+    } else {
+      String resulting = "";
+      if ("!".equals(node.operator)) {
+        resulting = "!";
+      }
+      String left = this.visitNode(node.left);
+      if (left.contains(this.currentRule) && left.contains(" = ")) {
+        // TODO: find a better way to differ between a complex boolean and a
+        // simple one
+        retS.append(left);
+        resulting += this.lastbool;
+      } else {
+        resulting += left;
+      }
+      this.lastbool = this.currentRule + this.counter++;
+      this.realLook.put(this.lastbool, resulting);
+      retS.append(this.lastbool + " = " + resulting + ";\n");
+    }
+
+    return retS.toString();
+  }
+
+  @Override
+  public String visitNode(RTExpression node) {
+    return node.visitStringV(this);
+  }
+
+  /**
+   * to get the bool variable describing the whole condition this visitor went
+   * through
+   *
+   * @return
+   */
+  public String getLastBool() {
+    return this.lastbool;
+  }
+
+  private String visitMyExp(RTExpression node) {
+    return genV.visitNode(node);
   }
 
   @Override
   public String visitNode(ExpArithmetic node) {
-    return genV.visitNode(node);
-  }
-
-  private String lastbool;
-
-  @Override
-  public String visitNode(ExpBoolean node) {
-    if (this.enteringCondition) {
-      this.enteringCondition = false;
-    }
-    String n = "";
-    if ("!".equals(node.operator)) {
-      n = "!";
-    }
-    String collectElements = "";
-    if (node.right != null) {
-      if (!(node.operator.equals("||") || node.operator.equals("&&"))) {
-        collectElements = genV.visitNode(node);
-        this.lastbool = this.currentRule + this.counter++;
-        this.compiledLook.put(this.lastbool, collectElements);
-        this.realLook.put(lastbool, collectElements.replaceAll("\\\\\"", "\\\""));
-        // TODO: test: correct? (yes, as I see it)
-        return null;
-      }
-      // if the operator is and or or, then we have to create two single
-      // bool variables out of this
-      node.left.visitCondPart(this);
-      String l = this.lastbool;
-      node.right.visitCondPart(this);
-      String r = this.lastbool;
-      this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool, n + "("
-              + l + node.operator + r + ")");
-      this.realLook.put(lastbool, n + "(" + l + node.operator + r + ")");
-    } else {
-      if("!".equals(node.operator)){
-        node.left.visitCondPart(this);
-        String l = this.lastbool;
-        this.lastbool = this.currentRule + this.counter++;
-        this.compiledLook.put(this.lastbool, n + l);
-        this.realLook.put(lastbool, n + l);
-        return null;
-      }
-      String left = node.left.visitStringV(genV);
-      this.lastbool = this.currentRule + this.counter++;
-      this.compiledLook.put(this.lastbool, left);
-      this.realLook.put(lastbool, left);
-    }
-    return null;
-  }
-
-
-
-  @Override
-  public String visitNode(ExpDialogueAct node) {
-    return genV.visitNode(node);
-  }
-
-  @Override
-  public String visitNode(UFieldAccess node) {
-    return genV.visitNode(node);
-    // it should be correct to never create a bool variable here, because if
-    // this was a single expression resulting in a boolean, that should be
-    // caught/handled with in RTExpression
-  }
-
-  @Override
-  public String visitNode(UFuncCall node) {
-    return genV.visitNode(node);
-    // as to why not create a bool variable here, see UFieldAccess
-  }
-
-  @Override
-  public String visitNode(USingleValue node) {
-    return genV.visitNode(node);
-  }
-
-  @Override
-  public String visitNode(UVariable node) {
-    return genV.visitNode(node);
-    // as to why not create a bool variable here, see UFieldAccess
-  }
-
-  @Override
-  public String visitNode(UWildcard node) {
-    return genV.visitNode(node);
-  }
-
-  @Override
-  public void visitNode(RudiTree node) {
-    node.visitCondPart(this);
-  }
-
-
-  @Override
-  public String visitNode(RTExpression node) {
-// TODO: should we do this or not?
-//    if (this.enteringCondition) {
-//      // we are in a case where this is a condition with one single element
-//      this.enteringCondition = false;
-//      String ret = this.visitNode(exp);
-//      this.lastbool = this.currentRule + this.counter++;
-//      this.compiledLook.put(this.lastbool, ret);
-//      this.realLook.put(lastbool, ret);
-//      return null;
-//    }
-    node.visitCondPart(this);
-    return null;
+    return this.visitMyExp(node);
   }
 
   @Override
   public String visitNode(ExpAssignment node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return this.visitMyExp(node);
+  }
+
+  @Override
+  public String visitNode(ExpDialogueAct node) {
+    return this.visitMyExp(node);
   }
 
   @Override
   public String visitNode(ExpConditional node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return this.visitMyExp(node);
   }
 
   @Override
   public String visitNode(ExpLambda node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return this.visitMyExp(node);
   }
 
   @Override
   public String visitNode(ExpNew node) {
+    return this.visitMyExp(node);
+  }
+
+  @Override
+  public String visitNode(UFieldAccess node) {
+    return this.visitMyExp(node);
+  }
+
+  @Override
+  public String visitNode(UFuncCall node) {
+    return this.visitMyExp(node);
+  }
+
+  @Override
+  public String visitNode(USingleValue node) {
+    return this.visitMyExp(node);
+  }
+
+  @Override
+  public String visitNode(UVariable node) {
+    return this.visitMyExp(node);
+  }
+
+  @Override
+  public String visitNode(UWildcard node) {
+    return this.visitMyExp(node);
+  }
+
+  @Override
+  public void visitNode(RudiTree node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
