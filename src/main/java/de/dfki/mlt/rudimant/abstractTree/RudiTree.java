@@ -57,21 +57,13 @@ public abstract class RudiTree {
    * the visitMethod for the visitor that allows to return Strings ! only to be
    * used by expressions !
    */
-  public abstract String visitStringV(VGenerationVisitor v);
+  public abstract String visitStringV(RTStringVisitor v);
 
   /**
    * the visitMethod for the visitor that allows to return Strings ! for
    * everything except expressions, they should write to out !
    */
   public abstract void visitVoidV(VGenerationVisitor v);
-
-  /**
-   * a visit only for the condVisitor, for parts that are sth boolean and
-   * therefor have to be mapped
-   *
-   * @return
-   */
-  public abstract void visitCondPart(VRuleConditionVisitor v);
 
   protected String checkComments(VGenerationVisitor v, int firstPos) {
     String allcomments = "";

@@ -16,11 +16,11 @@ public class UWildcard extends RTExpLeaf {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
-  
+
   /**
    * if we are an expression but this method is called, we should write to out;
    * it means that the instance calling us must be a statement
-   * @param v 
+   * @param v
    */
   @Override
   public void visitVoidV(VGenerationVisitor v) {
@@ -28,12 +28,7 @@ public class UWildcard extends RTExpLeaf {
   }
 
   @Override
-  public String visitStringV(VGenerationVisitor v){
+  public String visitStringV(RTStringVisitor v){
     return v.visitNode(this);
-  }
-  
-  @Override
-  public void visitCondPart(VRuleConditionVisitor v){
-    v.visitNode(this);
   }
 }

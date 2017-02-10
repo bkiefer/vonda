@@ -31,8 +31,7 @@ public class VGenerationVisitor implements RTStringVisitor {
   RudimantCompiler out;
   private RudimantCompiler rudi;
   private Mem mem;
-  private VRuleConditionVisitor condV;
-  private VBoolVarCreatorVisitor condV2;
+  private VConditionLogVisitor condV;
   LinkedList<Token> collectedTokens;
 
   // activate this bool to get double escaped String literals
@@ -45,8 +44,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     this.rudi = r;
     this.out = r;
     this.mem = rudi.getMem();
-    condV = new VRuleConditionVisitor(this);
-    condV2 = new VBoolVarCreatorVisitor();
+    condV = new VConditionLogVisitor(this);
     this.collectedTokens = collectedTokens;
   }
 
@@ -763,14 +761,20 @@ public class VGenerationVisitor implements RTStringVisitor {
 
     // remembers how the expressions looked (for logging)
     LinkedHashMap<String, String> realLook = new LinkedHashMap<>();
-    condV.renewMap(rule, realLook, compiledLook, this.rudi);
-    condV.visitNode(bool);
-    // now create a condition from those things
-    Object[] expnames = realLook.keySet().toArray();
-    condV2.newMap(expnames, compiledLook);
-    condV2.visitNode(bool_exp);
-
-    out.append(condV2.getBoolCreation().toString());
+//    condV.renewMap(rule, realLook, compiledLook, this.rudi);
+//    condV.visitNode(bool);
+//    // now create a condition from those things
+//    Object[] expnames = realLook.keySet().toArray();
+//    condV2.newMap(expnames, compiledLook);
+//    condV2.visitNode(bool_exp);
+//
+//    out.append(condV2.getBoolCreation().toString());
+    condV.newInit(rule, realLook);
+    String result = condV.visitNode(bool_exp);
+    for (String s : realLook.keySet()){
+      out.append("boolean " + s + " = false;\n");
+    }
+    out.append(result);
 
     out.append("if (rulesToLog.contains(\"" + rule + "\")){\n");
     // do all that logging
@@ -785,7 +789,8 @@ public class VGenerationVisitor implements RTStringVisitor {
 
     out.append("}\n");
     collectingCondition = false;
-    return (String) expnames[expnames.length - 1];
+    //return (String) expnames[expnames.length - 1];
+    return condV.getLastBool();
   }
 
   public void dummyLoggingMethod(String rule, String className, Map toLog) {

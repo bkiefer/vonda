@@ -1,5 +1,5 @@
 #!/bin/sh
-set -x
+#set -x
 here=`pwd`
 script_dir=`dirname $0`
 java -Dapp.dir="$script_dir" -jar "$script_dir/target/rudimant.jar" "$@"
