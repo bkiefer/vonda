@@ -80,4 +80,14 @@ public class TestTypeInference {
     expected = normalizeSpaces(expected);
     assertEquals(expected, s.substring(s.length() - expected.length()));
   }
+
+  @Test
+  public void test5() {
+    String in = "String foo(); boolean b = foo();";
+    String s = generate(in); s = normalizeSpaces(s);
+    String expected = "boolean b = foo() == null; ";
+    expected = normalizeSpaces(expected);
+    assertEquals(expected, s.substring(s.length() - expected.length()));
+  }
+
 }
