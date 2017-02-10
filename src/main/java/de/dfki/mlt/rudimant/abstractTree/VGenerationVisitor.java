@@ -156,6 +156,9 @@ public class VGenerationVisitor implements RTStringVisitor {
       ret += ")";
       return ret;
     }
+    if(node.operator != null && node.operator.contains("(")){
+      return node.left.visitWithSComments(this) + node.operator;
+    }
     return node.left.visitWithSComments(this);
   }
 
@@ -710,7 +713,7 @@ public class VGenerationVisitor implements RTStringVisitor {
         ret += ", ";
       }
     }
-    ret += ") ";
+    ret += ")";
     return ret;
   }
 
