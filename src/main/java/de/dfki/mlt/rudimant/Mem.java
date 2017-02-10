@@ -274,11 +274,6 @@ public class Mem {
     return (current.containsKey(variable));
   }
 
-  public boolean isRdf(String variable) {
-    String type = current.get(variable);
-    return (type != null && type.charAt(0) == '<');
-  }
-
   /**
    * get the class the given variable is located
    *
