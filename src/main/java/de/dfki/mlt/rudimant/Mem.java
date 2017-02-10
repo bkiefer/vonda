@@ -384,6 +384,9 @@ public class Mem {
    */
   public void needsClass(String rule, String ruleclass) {
     //System.out.println(ruleclass);
+    if(this.curClass.toLowerCase().equals(ruleclass.toLowerCase())){
+      return;
+    }
     this.neededClasses.get(rule).add(ruleclass);
   }
 
