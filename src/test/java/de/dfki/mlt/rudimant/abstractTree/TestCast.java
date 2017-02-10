@@ -41,6 +41,15 @@ public class TestCast {
         + " .add(_proxy.getClass(\"<dom:Idle>\").getNewInstance(DEFNS)) ; ",
         r);
   }
+  
+  @Test
+  public void testCast1a() throws IOException, WrongFormatException {
+    String in = "Session c; c.hasActivities += new Idle;";
+    String r = getGeneration(in);
+    assertEquals(
+        "c.hasActivities.add(_proxy.getClass(\"null\").getNewInstance(DEFNS));",
+        r);
+  }
 
   @Test
   public void testCast2() throws IOException, WrongFormatException {
@@ -84,6 +93,61 @@ public class TestCast {
     assertEquals(exp, r);
   }
 
+  @Test
+  public void test3() throws IOException, WrongFormatException {
+    String in = "Activity activity; activity.status = \"gameProposed\";";
+    String r = getGeneration(in);
+    String exp = " activity.setValue(\"<dom:status>\", \"gameProposed\"); ";
+    assertEquals(exp, r);
+  }
+  
+  @Test
+  public void test4() throws  IOException, WrongFormatException {
+     String in = "Activity activity; bool = (activity.status == \"gameProposed\")";
+     String r = getGeneration(in);
+     String exp = "boolean bool = isEqual(((String)activity.getSingleValue(\"<dom:status>\")) , \"gameProposed\");";
+     assertEquals(exp, r);
+  }
+  
+  @Test
+  public void test5() throws IOException, WrongFormatException {
+    String in = "boolean firstEncounter(); daType = firstEncounter() ? \"a\" : \"b\";";
+    String r = getGeneration(in);
+    String exp = "String daType = (test.firstEncounter()  ? \"a\" : \"b\");";
+    assertEquals(exp, r);
+  }
+  
+  @Test
+  public void test6() throws IOException, WrongFormatException {
+    String in = "Child user; user.isLocatedAt == \"<dom:Home>\";";
+    String r = getGeneration(in);
+    String exp = "isEqual(((Rdf)user.getSingleValue(\"<dom:isLocatedAt>\")) , \"<dom:Home>\"); ";
+    assertEquals(exp, r);
+  }
+  
+  @Test
+  public void test7() throws IOException, WrongFormatException {
+    String in = "Child user; b = (user.forename == \"John\");";
+    String r = getGeneration(in);
+    String exp = "boolean b = isEqual(((Set<Object>)user.getValue(\"<dom:forename>\")) , \"John\"); ";
+    assertEquals(exp, r);
+  }
+  
+  @Test
+  public void test8() throws IOException, WrongFormatException {
+    String in = "Child user; user.forename = \"John\";";
+    String r = getGeneration(in);
+    String exp = " user.setValue(\"<dom:forename>\", \"John\"); ";
+    assertEquals(exp, r);
+  }
+ 
+  @Test
+  public void test9() throws IOException, WrongFormatException {
+    String in = "Object foo; foo.slot = 1;";
+    String r = getGeneration(in);
+    String exp = " foo.slot = 1; ";
+    assertEquals(exp, r);
+  }
 
   /* TODO: FIX THE TEST/CODE ITSELF, NOT SURE IF THE INPUT IS LEGAL AT ALL.
   @Test
