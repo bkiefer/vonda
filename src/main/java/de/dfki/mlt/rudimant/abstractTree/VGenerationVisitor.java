@@ -420,7 +420,9 @@ public class VGenerationVisitor implements RTStringVisitor {
         }
       } else {
         r.visitWithComments(this);
-        if (r instanceof RTExpression) out.append(';');
+        if(r instanceof RTExpression){
+          out.append(";");
+        }
       }
     }
 

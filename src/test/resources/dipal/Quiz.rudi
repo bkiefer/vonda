@@ -2,24 +2,29 @@ process_rules_quiz:
 if (activity == null || ! (activity <= Quiz))
   return;
 
-// todo: will the compiler try to resolve this to an RDF type??
+/* This does not work. What we need is the newest turn in the set, which is too
+   hard for now.
 QuizHistory getCurrentTurn() {
   // this tests if activity has a hasTurns property (which is relational), and
   // if so, if it has more than zero values.
   // TODO: TEST IF IT REALLY DOES!
   if (! activity.hasTurns)
     return null;
+  // This does not work. What we need is the newest turn in the set.
   return activity.hasTurns.peekFirst();
 }
+*/
+QuizHistory getCurrentTurn(Quiz quiz); // Currently in NaoAgent.java
 
-public String getCurrentAsker() {
-  currentTurn = getCurrentTurn();
+Actor getCurrentAsker() {
+  currentTurn = getCurrentTurn(activity);
   if (! currentTurn)
     return null;
   return currentTurn.asker;
 }
 
-String getCurrentResponder() {
+Actor getCurrentResponder() {
+  currentTurn = getCurrentTurn(activity);
   if (! currentTurn)
     return null;
   return currentTurn.responder;
@@ -40,9 +45,9 @@ import QuizIncoming;
 import QuizStarted;
 import QuizRunning;
 
-void assessQuizSession(String whose) {
+void assessQuizSession(Quiz quiz, String whose) {
   // Get the amount of questions answered, and the number of correct answers
-  int[] results = getAssessment(activity, I_ROBOT);
+  int[] results = getAssessment(quiz, I_ROBOT);
   int index = whose.equals("robot") ? 0 : 2;
 
   emitDA(#Inform(AssessingPerformance, theme = Answer, agent = ^whose,
@@ -53,6 +58,7 @@ void assessQuizSession(String whose) {
 
 wait_for_assessment:
 if ("wait_for_assessment".equals(activity.status)) {
+  Quiz quiz = activity;
   // Currently there should always be an assessment of the user, and maybe
   // also of the robot
   propose("AssessUserPerformance") {

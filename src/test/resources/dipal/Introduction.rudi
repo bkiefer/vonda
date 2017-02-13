@@ -17,7 +17,7 @@ if (user) {
         // TODO: USE SAME LABELS IN GRAMMAR AND DATABASE
         // Max: ERROR? TODO: there is no Request(Name) DA!
         // make sure the next DA is send only send out after 900ms pause
-        emitDelayed(-900, #Request(Name));
+        emitDA(-900, #Request(Name));
       }
     }
   }
@@ -42,7 +42,7 @@ if (saidInSession(#Salutation(Meeting)) >= 0
       // Ask for favorite hobby and color
 
     ask_user_preference:
-      if (! user.getLiking.slot
+      if (! user.hasPreference.slot
           && ! saidInSession(#Request(Liking, theme=^slot))) {
         activity.status = "active";
         propose("ask_for_preference_" + slot) {
@@ -51,7 +51,8 @@ if (saidInSession(#Salutation(Meeting)) >= 0
       }
 
     confirm_user_preference:
-      if (user.getLiking.slot && ! waitingForResponse()
+      if (user.hasPreference.slot
+          && ! waitingForResponse()
           && saidInSession(#Request(Liking, theme=^slot))
           // a nice way to express the disjunction (supertype?)
           && ! saidInSession(#Answer(Liking, theme=^slot))) {

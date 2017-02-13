@@ -1,6 +1,6 @@
 // check if we have input from the user
 check_input:
-if (! user.feedback) return;
+if (! getUserFeedback()) return;
 
 // **********************************************************************
 // INTRODUCTION
@@ -24,24 +24,26 @@ if (myLastDA() <= #Request(Liking)) {
     String th = myLastDA().theme;
     // TODO: WHAT'S THIS? it's the text coming from the user (chunks[1]),
     // see InterpretationHandler.java
-    String val = user.feedback.second;
+    String val = getUserFeedback();
     da = addLastDA(#Inform(Liking, theme=^th, value=^val));
     setLiking(user, th, val);
   } else {
     logger.warn("liking request outside intro");
   }
+  userFeedbackProcessed();
   return;
 }
 
 check_age:
 if (myLastDA() <= #Request(Name)) {
   if (activity <= Introduction) {
-    String val = user.feedback.second;
+    String val = getUserFeedback();
     da = addLastDA(#Inform(Name, value=^val));
     user.forename = val;
   } else {
     logger.warn("name request outside intro");
   }
+  userFeedbackProcessed();
   return;
 }
 
@@ -52,9 +54,8 @@ if (myLastDA() <= #Request(Name)) {
 request_answer:
 if (myLastDA() <= #Request(top)) {
   replyType = "Request";
-  switch (user.feedback.second.toLowerCase()) {
+  switch (getUserFeedback().toLowerCase()) {
   case "yes":
-  case "YES":
     replyType = "AcceptRequest";
     break;
   case "no":
@@ -66,26 +67,6 @@ if (myLastDA() <= #Request(top)) {
     reply.setDialogueAct(replyType);
     addLastDA(reply);
   }
+  userFeedbackProcessed();
 }
 
-// **********************************************************************
-// Quiz
-// **********************************************************************
-
-quiz:
-if (activity <= Quiz) {
- question_read_by_user:
-  if (activity.status == "running_wait_for_question_read") {
-    userReadsQuestion();
-  }
-
- answer_given_by_user:
-  if (activity.status == "running_wait_for_answer"
-      && getCurrentAsker() == I_ROBOT) {
-    turn = getCurrentTurn();
-    if (turn) {
-      turn.setAnswer(user.feedback.second);
-      activity.status = "running_answer_given";
-    }
-  }
-}

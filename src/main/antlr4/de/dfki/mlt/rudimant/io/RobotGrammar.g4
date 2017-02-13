@@ -114,7 +114,7 @@ list_creation
 
 // TODO: WHAT'S THIS?
 set_operation
-  : (variable | field_access) (ADD | REMOVE) number ';'
+  : (variable | field_access) (ADD | REMOVE) exp ';'
   ;
 
 

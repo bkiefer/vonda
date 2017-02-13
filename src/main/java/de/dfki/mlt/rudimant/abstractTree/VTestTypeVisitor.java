@@ -203,9 +203,11 @@ public class VTestTypeVisitor implements RudiVisitor {
       }
       if (isBooleanOperator(node.operator)) {
         node.right = node.right.ensureBoolean();
+        node.left = node.left.ensureBoolean();
       }
-    }
-    if (isBooleanOperator(node.operator)) {
+    } else {
+    // we should do this always, because if the boolean expression has only one
+    // side it may have no operator!!!!
       node.left = node.left.ensureBoolean();
     }
   }

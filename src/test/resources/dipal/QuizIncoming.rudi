@@ -2,6 +2,46 @@
 import pal.TECS.QuizQuestion;
 @*/
 
+void robotAnswers(String answerString, int answerNumber, boolean correct) {
+  if (random() > 0.5) {
+    // Robot thinks about the anser
+    emitDA(#Stalling(Answering));
+  }
+  emitDA(#Inform(Answer,
+           id=^Integer.toString(answerNumber + 1),
+           ^("string" + Integer.toString(answerNumber + 1))=^answerString));
+  activity.status = "run_answer_given";
+  turn = getCurrentTurn(activity);
+  turn.correct = correct;
+}
+
+// **********************************************************************
+// Quiz Interpretation
+// **********************************************************************
+
+quiz:
+if (activity <= Quiz && getUserFeedback()) {
+ question_read_by_user:
+  if (activity.status == "running_wait_for_question_read") {
+    userReadsQuestion();
+  }
+
+ answer_given_by_user:
+  if (activity.status == "running_wait_for_answer"
+      && getCurrentAsker() == I_ROBOT) {
+    turn = getCurrentTurn(activity);
+    if (turn) {
+      turn.answer = getUserFeedback();
+      activity.status = "running_answer_given";
+    }
+  }
+  userFeedbackProcessed();
+}
+
+// **********************************************************************
+// Quiz Incoming Dialogue Act
+// **********************************************************************
+
 incoming_quiz:
 if (! lastDA()) return;
 

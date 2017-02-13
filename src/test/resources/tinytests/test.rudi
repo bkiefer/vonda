@@ -1,12 +1,12 @@
 
-test:
-if (5 <= 1) {
-  Child u;
-  v = u.isLocatedAt;
-  String s = "Blabla";
-  s.equals("foo");
+//test:
+//if (5 <= 1) {
+//  Child u;
+//  v = u.isLocatedAt;
+//  String s = "Blabla";
+//  s.equals("foo");
 
-}
+//}
 boolean firstEncounter();
 
 
