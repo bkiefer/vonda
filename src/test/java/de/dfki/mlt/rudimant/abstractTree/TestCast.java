@@ -24,7 +24,7 @@ public class TestCast {
     return normalizeSpaces(sb.subSequence(prefix, sb.length() - suffix).toString());
   }
 
-  static String header = "label: if(true) {";
+  static String header = "boolean firstEncounter(); label: if(true) {";
   static String footer = "}";
 
   @BeforeClass
@@ -103,17 +103,17 @@ public class TestCast {
   
   @Test
   public void test4() throws  IOException, WrongFormatException {
-     String in = "Activity activity; bool = (activity.status == \"gameProposed\")";
+     String in = "Activity activity; bool = (activity.status == \"gameProposed\");";
      String r = getGeneration(in);
-     String exp = "boolean bool = isEqual(((String)activity.getSingleValue(\"<dom:status>\")) , \"gameProposed\");";
+     String exp = "boolean bool = isEqual(((String)activity.getSingleValue(\"<dom:status>\")) , \"gameProposed\"); ";
      assertEquals(exp, r);
   }
   
   @Test
-  public void test5() throws IOException, WrongFormatException {
-    String in = "boolean firstEncounter(); daType = firstEncounter() ? \"a\" : \"b\";";
+  public void test5() throws IOException, WrongFormatException {//firstEncounter() vor label if (siehe getGeneration) einfügen (darf nicht im true deklariert werden)
+    String in = "daType = firstEncounter() ? \"a\" : \"b\";";
     String r = getGeneration(in);
-    String exp = "String daType = (test.firstEncounter()  ? \"a\" : \"b\");";
+    String exp = "String daType = (firstEncounter() ? \"a\" : \"b\"); ";
     assertEquals(exp, r);
   }
   
