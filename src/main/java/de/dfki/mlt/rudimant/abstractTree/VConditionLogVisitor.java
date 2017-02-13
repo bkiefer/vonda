@@ -83,7 +83,7 @@ public class VConditionLogVisitor implements RTStringVisitor {
       if ("!".equals(node.operator)) {
         resulting = "!";
       }
-      String left = this.visitNode(node.left);
+      String left = genV.visitNode(node);
       if (left.contains(this.currentRule) && left.contains(" = ")) {
         // TODO: find a better way to differ between a complex boolean and a
         // simple one

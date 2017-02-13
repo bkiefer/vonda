@@ -1,7 +1,3 @@
-/*@
-import pal.TECS.QuizQuestion;
-@*/
-
 incoming:
 if (! lastDA()) return;
 
@@ -29,9 +25,9 @@ if ((lastDA() <= #AcceptRequest(Playing) || lastDA() <= #Confirm(Playing))
     && !(activity <= Quiz)) {
   activity = newActivity(new Quiz);
   if (! activity.status || activity.status == "none") {
-    activity.hasParticipant = user.getURI();
+    activity.hasParticipant = user;
     activity.status = "started";
-    activity.tabletOrientation = user.getURI();
+    activity.tabletOrientation = user;
   }
   lastDAprocessed();
 }
@@ -45,90 +41,3 @@ if ((lastDA() <= #RejectRequest(Playing) || lastDA() <= #Disconfirm(Playing))
   lastDAprocessed();
 }
 
-/*
-  - if role requested (see processIncomingSpeechActs)
-  - if asked for role: accept,
-  otherwise accept or reject (current roles stay)
-*/
-incoming_rolefeedback:
-if (lastDA() <= #Request(AssigningRole)
-    || lastDA() <= #AcceptRequest(AssigningRole)
-    || lastDA() <= #RejectRequest(AssigningRole)) {
-  if (!activity || ! (activity <= Quiz)) {
-    // TODO: clarification dialogue??
-    return;
-  }
-  // THIS WILL NOW START QUIZ IN EARNEST
-  String thm = lastDA().getSlot("theme");
-  String agt = lastDA().getSlot("agent");
-  if (null == agt) {
-    agt = user;
-  } else // turn agent around
-    if (lastDA() <= #RejectRequest(AssigningRole)) {
-      agt = (agt == user) ? I_ROBOT : user;
-    }
-
-  // TODO check if theme matches current activity (e.g. quiz game)
-  QuizHistory turn = new QuizHistory;
-  activity.hasTurns.add(turn);
-  turn.asker = agt;
-  turn.responder = (agt == user) ? I_ROBOT : user;
-  // Todo: see above, not yet implemented, always accept
-  //if (true) { // accept role
-  emitDA(#Accept(AssigningRole, theme=^thm, agent=^agt));
-  // This is more or less a duplication of the above
-  //emitDA(#Inform(Instructing, theme=^thm, agent=^agt, purpose=Asking);
-
-  if (! childAtHome(user)) {
-    // THIS IS ONLY THE COMMUNICATION WITH THE QUIZ LOGIC
-    // this is sending a QuizCommand(start_hospital, whereas in the home
-    // situation, this command comes from the MyPalApp
-    getHub().startQuiz(user, agt);
-  }
-  if (activity.status == "started") {
-    activity.status = "running";
-  }
-
-  lastDAprocessed();
-}
-
-
-void robotAnswers(String answerString, int answerNumber, boolean correct) {
-  if (random() > 0.5) {
-    // Robot thinks about the anser
-    emitDA(#Stalling(Answering));
-  }
-  emitDA(#Inform(Answer,
-           id=^Integer.toString(answerNumber + 1),
-           ^("string" + Integer.toString(answerNumber + 1))=^answerString));
-  activity.status = "run_answer_given";
-  turn = getCurrentTurn();
-  turn.correct = correct;
-}
-
-// TODO: THIS CONTAINS A LOT OF JAVA CODE. I DON'T KNOW IF THERE'S A BETTER WAY
-// TO DO IT.
-// The child has read question and answers, now the robot has to give an
-// answer
-incoming_answergiven:
-if (lastDA() <= #Inform(Answering)) {
-  if (! activity <= Quiz) {
-    logger.error("Answer given outside of quiz.");
-    return;
-  }
-  turn = getCurrentTurn();
-  int qId = turn.questionId;
-  QuizQuestion q = questionCache.get(qId);
-  int correct = q.getWhichCorrect();
-  int wrong = correct + 1 + random.nextInt(q.getAnswersSize() - 1)
-    % q.getAnswersSize();
-  // Answers were read by child, give an answer
-
-  propose("give_correct_answer") {
-    robotAnswers(q.getAnswers().get(correct), correct, true);
-  }
-  propose("give_wrong_answer") {
-    robotAnswers(q.getAnswers().get(wrong), wrong, false);
-  }
-  lastDAprocessed();
-}

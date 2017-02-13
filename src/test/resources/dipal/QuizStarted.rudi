@@ -1,7 +1,7 @@
 quiz_started:
 if (activity.status == "started") {
   logger.info("Quiz started {}", System.currentTimeMillis());
-  int lastInfo = lastOccurenceOfMyDA(#Inform(Instructing, theme=Quiz));
+  int lastInfo = saidInSession(#Inform(Instructing, theme=Quiz));
   if (! hasPlayedQuiz(user) && lastInfo < 0) {
     propose("inform_gamerules") {
       emitDA(#Inform(Instructing, theme=Quiz));
