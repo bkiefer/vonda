@@ -57,7 +57,7 @@ public class TestTypeInference {
   public void test3() throws IOException, WrongFormatException {
     String in = "QuizHistory getCurrentTurn(); turn = getCurrentTurn();";
     String s = generate(in); s = normalizeSpaces(s);
-    String expected = "Rdf turn = getCurrentTurn()} ";
+    String expected = "Rdf turn = getCurrentTurn();} ";
     expected = normalizeSpaces(expected);
     assertEquals(expected, s.substring(s.length() - expected.length()));
   }
@@ -67,7 +67,7 @@ public class TestTypeInference {
   public void test3a() throws IOException, WrongFormatException {
     String in = "QuizHistory getCurrentTurn(); Rdf turn = getCurrentTurn();";
     String s = generate(in); s = normalizeSpaces(s);
-    String expected = "Rdf turn = getCurrentTurn()} ";
+    String expected = "Rdf turn = getCurrentTurn();} ";
     expected = normalizeSpaces(expected);
     assertEquals(expected, s.substring(s.length() - expected.length()));
   }
@@ -83,9 +83,27 @@ public class TestTypeInference {
 
   @Test
   public void test5() {
-    String in = "String foo(); boolean b = foo();";
+    String in = "String foo(); boolean b = foo(); ";
     String s = generate(in); s = normalizeSpaces(s);
-    String expected = "boolean b = foo().isEmpty();";
+    String expected = "boolean b = foo().isEmpty();} ";
+    expected = normalizeSpaces(expected);
+    assertEquals(expected, s.substring(s.length() - expected.length()));
+  }
+
+  @Test
+  public void test6() {
+    String in = "boolean b = true; ";
+    String s = generate(in); s = normalizeSpaces(s);
+    String expected = "boolean b = true;} ";
+    expected = normalizeSpaces(expected);
+    assertEquals(expected, s.substring(s.length() - expected.length()));
+  }
+
+  @Test
+  public void test7() {
+    String in = "int b = 7; ";
+    String s = generate(in); s = normalizeSpaces(s);
+    String expected = "int b = 7;} ";
     expected = normalizeSpaces(expected);
     assertEquals(expected, s.substring(s.length() - expected.length()));
   }

@@ -406,6 +406,7 @@ public class VGenerationVisitor implements RTStringVisitor {
         for (RudiTree e : ((StatAbstractBlock) r).statblock) {
           if (e instanceof ExpAssignment) {
             if (((ExpAssignment) e).declaration) {
+              // The assignments have been treated above (first loop)
               continue;
             }
           } else if (e instanceof StatImport) {
@@ -419,6 +420,7 @@ public class VGenerationVisitor implements RTStringVisitor {
         }
       } else {
         r.visitWithComments(this);
+        if (r instanceof RTExpression) out.append(';');
       }
     }
 
