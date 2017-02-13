@@ -136,9 +136,15 @@ public class VTestTypeVisitor implements RudiVisitor {
     // if one of them is null, unifyTypes will return the other type
     String mergeType = mem.unifyTypes(node.left.type, node.right.type);
     if (mergeType == null) {
-      mergeType = "Object";
-      rudi.typeError("Incompatible types in assignment: "
-          + node.left.type + " := " + node.right.type, node);
+      if("boolean".equals(node.left.type)){
+        // in that case, we assume that this should be a test for existance
+        mergeType = "boolean";
+        node.right = node.right.ensureBoolean();
+      } else {
+        mergeType = "Object";
+        rudi.typeError("Incompatible types in assignment: "
+            + node.left.type + " := " + node.right.type, node);
+      }
     }
     node.type = mergeType;
     if (node.right.type == null) {

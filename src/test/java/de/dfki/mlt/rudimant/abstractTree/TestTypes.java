@@ -42,14 +42,14 @@ public class TestTypes {
   public void testType1(){
     String in = "DialogueAct reply = myLastDA().copy();";
     String r = getGeneration(in);
-    assertEquals("DialogueAct reply = (DialogueAct) myLastDA() .copy() ; ", r);
+    assertEquals("DialogueAct reply = (DialogueAct) myLastDA().copy(); ", r);
   }
 
   @Test
   public void testType2(){
     String in = "Rdf turn = getCurrentTurn(activity);";
     String r = getGeneration(in);
-    assertEquals("Rdf turn = getCurrentTurn(activity) ; ", r);
+    assertEquals("Rdf turn = getCurrentTurn(activity); ", r);
   }
 
 //  @Test
@@ -68,6 +68,6 @@ public class TestTypes {
   public void testType4(){
     String in = "int correct = q.getWhichCorrect();";
     String r = getGeneration(in);
-    assertEquals("int correct = (int) q.getWhichCorrect() ; ", r);
+    assertEquals("int correct = (int) q.getWhichCorrect(); ", r);
   }
 }

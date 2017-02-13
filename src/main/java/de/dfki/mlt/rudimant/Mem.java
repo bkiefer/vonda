@@ -274,11 +274,6 @@ public class Mem {
     return (current.containsKey(variable));
   }
 
-  public boolean isRdf(String variable) {
-    String type = current.get(variable);
-    return (type != null && type.charAt(0) == '<');
-  }
-
   /**
    * get the class the given variable is located
    *
@@ -384,6 +379,9 @@ public class Mem {
    */
   public void needsClass(String rule, String ruleclass) {
     //System.out.println(ruleclass);
+    if(this.curClass.toLowerCase().equals(ruleclass.toLowerCase())){
+      return;
+    }
     this.neededClasses.get(rule).add(ruleclass);
   }
 

@@ -336,7 +336,7 @@ public abstract class Agent extends DataComparator {
       int oldSize = 0;
       do {
         oldSize = pendingProposals.size();
-        processRules();
+        process();
       } while (pendingProposals.size() != oldSize);
       if (oldSize > 0) {
         sendIntentions(pendingProposals.keySet());
@@ -407,7 +407,7 @@ public abstract class Agent extends DataComparator {
 //    logger.info(fromAsr);
 //    comSys.send(".*", "SpeechActEvent", fromAsr);
 //  }
-  protected abstract void processRules();
+  protected abstract void process();
 
   public void init(String language, RdfProxy proxy, String confFile) {
     _proxy = proxy;

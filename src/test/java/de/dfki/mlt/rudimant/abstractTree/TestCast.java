@@ -38,7 +38,7 @@ public class TestCast {
     String r = getGeneration(in);
     assertEquals(
         "((Set<Object>)c.getValue(\"<dom:hasActivities>\"))"
-        + " .add(_proxy.getClass(\"<dom:Idle>\").getNewInstance(DEFNS)) ; ",
+        + " .add(_proxy.getClass(\"<dom:Idle>\").getNewInstance(DEFNS)); ",
         r);
   }
   
@@ -64,7 +64,7 @@ public class TestCast {
   public void testCast3() throws IOException, WrongFormatException {
     String in = "String th = myLastDA().theme;";
     String r = getGeneration(in);
-    assertEquals("String th = ((String)myLastDA() .getSlot(\"theme\")) ; ", r);
+    assertEquals("String th = ((String)myLastDA().getSlot(\"theme\")) ; ", r);
   }
 
   @Test
@@ -72,7 +72,7 @@ public class TestCast {
     String in = "Quiz activity; if (activity.tabletOrientation != getCurrentAsker()) {}";
     String r = getGeneration(in);
     String exp = "if ((((String)activity.getSingleValue(\"<dom:tabletOrientation>\"))"
-        + " != getCurrentAsker() )) {}";
+        + " != getCurrentAsker())) {}";
     assertEquals(exp, r);
   }
 
