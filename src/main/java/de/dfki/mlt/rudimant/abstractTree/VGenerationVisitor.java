@@ -419,6 +419,9 @@ public class VGenerationVisitor implements RTStringVisitor {
         }
       } else {
         r.visitWithComments(this);
+        if(r instanceof ExpAssignment){
+          out.append(";");
+        }
       }
     }
 

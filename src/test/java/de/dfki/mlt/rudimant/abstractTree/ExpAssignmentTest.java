@@ -80,7 +80,7 @@ public class ExpAssignmentTest {
     assertTrue(dtr instanceof ExpAssignment);
 
     String type_right = ((ExpAssignment) dtr).right.getType();
-    assertEquals("right side type of boolean test = 4+5 should be int", "int", type_right);
+    assertEquals("right side type of boolean test = 4+5 should be boolean", "boolean", type_right);
 
 //    String type_left = ((RTExpression)((ExpAssignment) dtr).left).getType();
 //    assertEquals("right side type of boolean test = 4+5 should be int", "boolean", type_left);
