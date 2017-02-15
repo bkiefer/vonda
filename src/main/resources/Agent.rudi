@@ -33,6 +33,9 @@ String getLanguage();
 boolean waitForIntention();
 //void propose(String name, Proposal p);
 void executeProposal(Intention intention);
+int random(limit int);
+float random();
+ 
 
 //!!!!!! Attention !!!!!!! This is used extensively in rudis, but not declared anywhere
 DialogueAct myLastDA();
@@ -43,7 +46,6 @@ String executedLast;
 long lastDAprocessed;
 String _language;
 double proposedRobotMood;
-Random random;
 RdfProxy _proxy;
 CommunicationHub _hub;
 AsrTts asr;
