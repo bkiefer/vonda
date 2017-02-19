@@ -28,8 +28,8 @@ public class StatementTest {
     static int prefix = 678, suffix = 5;
     static String header = "label: if(true) {";
     static String footer = "}";
-      @BeforeClass
   
+  @BeforeClass  
   public static void setUpClass() throws FileNotFoundException {
     setUp(RESOURCE_DIR + "dipal/dipal.yml", header, footer);
   }
