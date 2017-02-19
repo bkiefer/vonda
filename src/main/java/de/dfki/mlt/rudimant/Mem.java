@@ -229,8 +229,8 @@ public class Mem {
     this.current.addFunction(funcname, functype, partypes, origin, this);
   }
 
-  public String getFunctionOrigin(String funcname){
-    return current.getFunctionOrigin(funcname);
+  public String getFunctionOrigin(String funcname, ArrayList<String> partypes){
+    return current.getFunctionOrigin(funcname, partypes, this);
   }
 
   public boolean existsFunction(String funcname,
@@ -244,10 +244,8 @@ public class Mem {
    * @param funcname the name of the function
    * @return its return type or null
    */
-  public String getFunctionRetType(String funcname) {
-    // TODO: we could also identify the function by the parameter types, is this
-    // necessary?
-    return current.getFunctionRetType(funcname);
+  public String getFunctionRetType(String funcname, ArrayList<String> partypes) {
+    return current.getFunctionRetType(funcname, partypes, this);
   }
 
   /**

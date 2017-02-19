@@ -594,19 +594,19 @@ public class VTestTypeVisitor implements RudiVisitor {
    */
   @Override
   public void visitNode(UFuncCall node) {
-    String o = mem.getFunctionOrigin(node.content);
-    if (o != null && !rudi.getClassName().equals(o)) {
-      mem.needsClass(mem.getCurrentTopRule(), o);
-      node.realOrigin = o;
-    }
-    if (node.type == null) {
-      node.type = mem.getFunctionRetType(node.content);
-    }
     // test whether the given parameters are of the correct type
     ArrayList<String> partypes = new ArrayList<String>();
     for (RTExpression e : node.exps) {
       e.visit(this);
       partypes.add(e.getType());
+    }
+    String o = mem.getFunctionOrigin(node.content, partypes);
+    if (o != null && !rudi.getClassName().equals(o)) {
+      mem.needsClass(mem.getCurrentTopRule(), o);
+      node.realOrigin = o;
+    }
+    if (node.type == null) {
+      node.type = mem.getFunctionRetType(node.content, partypes);
     }
     if (!mem.existsFunction(node.content, partypes)) {
       if (partOfFieldAccess) {
