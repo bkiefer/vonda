@@ -25,7 +25,7 @@ boolean firstEncounter();
 
 boolean isFamiliar();
 boolean activityIs(String className);
-String getCurrentAsker();
+String getCurrentAskerInternal();
 int getNumberOfQuestionsCurrentAsker();
 void assessQuizSession(Quiz quiz, String whose);
 String[] getQuestionArgs(QuizQuestion q, Turn currentTurn);
