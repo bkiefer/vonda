@@ -1,17 +1,12 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
-import static de.dfki.mlt.rudimant.Visualize.setUp;
-import static de.dfki.mlt.rudimant.abstractTree.ExpAssignmentTest.getNodeOfInterest;
-import static org.junit.Assert.assertTrue;
-import static de.dfki.mlt.rudimant.abstractTree.TstUtils.RESOURCE_DIR;
+import static de.dfki.mlt.rudimant.abstractTree.TstUtils.*;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.Visualize;
 
@@ -20,18 +15,13 @@ import de.dfki.mlt.rudimant.Visualize;
  * @author max
  */
 public class ExpNewTest {
-
-  static String header = "label: if(true) {";
-  static String footer = "}";
-
-
   @BeforeClass
-  public static void setUpClass() throws FileNotFoundException {
-    setUp(RESOURCE_DIR + "dipal/dipal.yml", header, footer);
+  public static void setUpClass() {
+    setUpNonEmpty();
   }
 
   @Test
-  public void testRdfType() throws IOException, WrongFormatException {
+  public void testRdfType(){
     String conditionalExp = "new Activity;";
 
     RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(conditionalExp));
@@ -40,7 +30,7 @@ public class ExpNewTest {
   }
 
   @Test
-  public void testJavaType() throws IOException, WrongFormatException {
+  public void testJavaType() {
     String conditionalExp = "new JavaType();";
 
     RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(conditionalExp));

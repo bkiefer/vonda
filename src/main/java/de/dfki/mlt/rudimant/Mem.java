@@ -296,22 +296,12 @@ public class Mem {
    * adds a new Environment with the given depth
    */
   public void enterEnvironment() {
-//    if(initializing){
-//      return;
-//    }
     logger.trace("Enter level {}", environment.size());
-    if (current == null) {
-      current = new Environment();
-    } else {
-      environment.push(current);
-      current = current.deepCopy();
-    }
+    environment.push(current);
+    current = current.deepCopy();
   }
 
   public void leaveEnvironment() {
-//    if(initializing){
-//      return;
-//    }
     logger.trace("Leave level {}", environment.size());
     // restore the values in actual that we changed
     current = environment.isEmpty() ? null : environment.pop();
@@ -376,7 +366,6 @@ public class Mem {
    * @param ruleclass the class needed
    */
   public void needsClass(String rule, String ruleclass) {
-    //System.out.println(ruleclass);
     if(this.curClass.toLowerCase().equals(ruleclass.toLowerCase())){
       return;
     }

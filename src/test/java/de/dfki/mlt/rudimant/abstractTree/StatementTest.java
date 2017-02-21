@@ -5,42 +5,26 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import static de.dfki.mlt.rudimant.Visualize.*;
-import static de.dfki.mlt.rudimant.abstractTree.TstUtils.RESOURCE_DIR;
+import static de.dfki.mlt.rudimant.abstractTree.TstUtils.*;
 import static org.junit.Assert.*;
 
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.StringWriter;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import de.dfki.lt.hfc.WrongFormatException;
-import static de.dfki.mlt.rudimant.abstractTree.TestCast.getGeneration;
+import org.junit.*;
 
 /**
  *
  * @author sophie
  */
 public class StatementTest {
-    static int prefix = 678, suffix = 5;
-    static String header = "label: if(true) {";
-    static String footer = "}";
-  
-  @BeforeClass  
-  public static void setUpClass() throws FileNotFoundException {
-    setUp(RESOURCE_DIR + "dipal/dipal.yml", header, footer);
+  @BeforeClass
+  public static void setUpClass() {
+    setUpNonEmpty();
   }
-  
+
   @Test
-  public void StatementTest1() throws IOException, WrongFormatException {
+  public void StatementTest1() {
     String in = "Object foo; while (foo.slot == 1){foo.slot = 2;}";
     String r = getGeneration(in);
-    assertEquals(
-        "while ((foo.slot == 1)){ foo.slot = 2; }",
-        r);
+    assertEquals("while ((foo.slot == 1)){ foo.slot = 2; }", r);
   }
 
   // why does this not work?

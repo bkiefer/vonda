@@ -1,34 +1,24 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
-import static de.dfki.mlt.rudimant.Visualize.setUp;
-import static de.dfki.mlt.rudimant.abstractTree.ExpAssignmentTest.getNodeOfInterest;
+import static de.dfki.mlt.rudimant.Visualize.*;
+import static de.dfki.mlt.rudimant.abstractTree.TstUtils.*;
 import static org.junit.Assert.*;
-import static de.dfki.mlt.rudimant.abstractTree.TstUtils.RESOURCE_DIR;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.dfki.lt.hfc.WrongFormatException;
-import de.dfki.mlt.rudimant.Visualize;
-
 public class TestFragment {
 
-  static String header = "label: if(true) {";
-  static String footer = "}";
-
   @BeforeClass
-  public static void setUpClass() throws FileNotFoundException {
-    setUp(RESOURCE_DIR + "dipal/dipal.yml", header, footer);
+  public static void setUpClass() {
+    setUpNonEmpty();
   }
 
   @Test
-  public void test() throws IOException, WrongFormatException {
+  public void test() {
     String conditionalExp = "true ? 1 : 2;";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(conditionalExp));
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(conditionalExp));
     assertTrue(dtr instanceof ExpConditional);
 
     String type_boolean = ((ExpConditional) dtr).boolexp.getType();

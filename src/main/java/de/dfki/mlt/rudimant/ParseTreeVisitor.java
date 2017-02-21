@@ -581,6 +581,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visit(ParseTree pt) {
-    return pt.accept(this);
+    return pt == null ? null : pt.accept(this);
   }
 }

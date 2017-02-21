@@ -5,15 +5,10 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import static de.dfki.mlt.rudimant.Visualize.normalizeSpaces;
-import static de.dfki.mlt.rudimant.Visualize.parseAndTypecheck;
-import static de.dfki.mlt.rudimant.Visualize.setUp;
-import java.io.FileNotFoundException;
-import java.io.StringWriter;
-import static org.junit.Assert.assertEquals;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static de.dfki.mlt.rudimant.abstractTree.TstUtils.RESOURCE_DIR;
+import static de.dfki.mlt.rudimant.abstractTree.TstUtils.*;
+import static org.junit.Assert.*;
+
+import org.junit.*;
 
 /**
  *
@@ -21,21 +16,9 @@ import static de.dfki.mlt.rudimant.abstractTree.TstUtils.RESOURCE_DIR;
  */
 public class TestTypes {
 
-  static int prefix = 678, suffix = 5;
-
-  public static String getGeneration(String in) {
-    StringWriter out = new StringWriter();
-    parseAndTypecheck(in, out);
-    StringBuffer sb = out.getBuffer();
-    return normalizeSpaces(sb.subSequence(prefix, sb.length() - suffix).toString());
-  }
-
-  static String header = "label: if(true) {";
-  static String footer = "}";
-
   @BeforeClass
-  public static void setUpClass() throws FileNotFoundException {
-    setUp(RESOURCE_DIR + "dipal/dipal.yml", header, footer);
+  public static void setUpClass() {
+    setUpNonEmpty();
   }
 
   @Test

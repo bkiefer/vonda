@@ -1,24 +1,20 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import static de.dfki.mlt.rudimant.Visualize.*;
-import static de.dfki.mlt.rudimant.abstractTree.TestCast.*;
 import static org.junit.Assert.*;
-import static de.dfki.mlt.rudimant.abstractTree.TstUtils.RESOURCE_DIR;
+import static de.dfki.mlt.rudimant.abstractTree.TstUtils.*;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Iterator;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.dfki.lt.hfc.WrongFormatException;
 
 public class TestTypeInference {
 
   @BeforeClass
-  public static void setUpClass() throws FileNotFoundException {
-    setUp(RESOURCE_DIR + "dipal/dipal.yml", "", "");
+  public static void setUpClass() {
+    setUpEmpty();
   }
 
   @Test
@@ -54,7 +50,7 @@ public class TestTypeInference {
   }
 
   @Test
-  public void test3() throws IOException, WrongFormatException {
+  public void test3() {
     String in = "QuizHistory getCurrentTurn(); turn = getCurrentTurn();";
     String s = generate(in); s = normalizeSpaces(s);
     String expected = "Rdf turn = getCurrentTurn();} ";
@@ -64,7 +60,7 @@ public class TestTypeInference {
 
 
   @Test
-  public void test3a() throws IOException, WrongFormatException {
+  public void test3a() {
     String in = "QuizHistory getCurrentTurn(); Rdf turn = getCurrentTurn();";
     String s = generate(in); s = normalizeSpaces(s);
     String expected = "Rdf turn = getCurrentTurn();} ";

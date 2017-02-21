@@ -67,10 +67,6 @@ public class Environment {
     return this.variableOrigin.get(k);
   }
 
-  public boolean isRdf(String variable) {
-    return this.rdfs.contains(variable);
-  }
-
   /**
    * Add a function/method declaration, optionally with return and parameter
    * types. If the types are not known, it's assumed they are null.
@@ -174,7 +170,7 @@ public class Environment {
     public String getReturnType() {
       return this.returnType;
     }
-    
+
     public String getOrigin(){
       return this.origin;
     }

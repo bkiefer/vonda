@@ -1,28 +1,14 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import static de.dfki.mlt.rudimant.Visualize.*;
-import static de.dfki.mlt.rudimant.abstractTree.TstUtils.RESOURCE_DIR;
+import static de.dfki.mlt.rudimant.abstractTree.TstUtils.*;
 import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.StringWriter;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import de.dfki.lt.hfc.WrongFormatException;
+import org.junit.*;
 
 public class TestCast {
-
-  static int prefix = 678, suffix = 5;
-
-  public static String getGeneration(String in) {
-    StringWriter out = new StringWriter();
-    parseAndTypecheck(in, out);
-    StringBuffer sb = out.getBuffer();
-    return normalizeSpaces(sb.subSequence(prefix, sb.length() - suffix).toString());
-  }
 
   static String header = "boolean firstEncounter(); label: if(true) {";
   static String footer = "}";
@@ -33,7 +19,7 @@ public class TestCast {
   }
 
   @Test
-  public void testCast1() throws IOException, WrongFormatException {
+  public void testCast1() {
     String in = "Session c; c.hasActivities.add(new Idle);";
     String r = getGeneration(in);
     assertEquals(
@@ -41,9 +27,9 @@ public class TestCast {
         + " .add(_proxy.getClass(\"<dom:Idle>\").getNewInstance(DEFNS)); ",
         r);
   }
-  
+
   @Test
-  public void testCast1a() throws IOException, WrongFormatException {
+  public void testCast1a() {
     String in = "Session c; c.hasActivities += new Idle;";
     String r = getGeneration(in);
     assertEquals(
@@ -52,7 +38,7 @@ public class TestCast {
   }
 
   @Test
-  public void testCast2() throws IOException, WrongFormatException {
+  public void testCast2() {
     String in = "QuizHistory turn; boolean correct = turn.correct;";
     String r = getGeneration(in);
     String exp = "boolean correct = "
@@ -61,14 +47,14 @@ public class TestCast {
   }
 
   @Test
-  public void testCast3() throws IOException, WrongFormatException {
+  public void testCast3() {
     String in = "String th = myLastDA().theme;";
     String r = getGeneration(in);
     assertEquals("String th = ((String)myLastDA().getSlot(\"theme\")) ; ", r);
   }
 
   @Test
-  public void testCast4() throws IOException, WrongFormatException {
+  public void testCast4() {
     String in = "Quiz activity; if (activity.tabletOrientation != getCurrentAsker()) {}";
     String r = getGeneration(in);
     String exp = "if ((((String)activity.getSingleValue(\"<dom:tabletOrientation>\"))"
@@ -77,7 +63,7 @@ public class TestCast {
   }
 
   @Test
-  public void test1() throws IOException, WrongFormatException {
+  public void test1() {
     String in = "QuizHistory turn = new QuizHistory;";
     String r = getGeneration(in);
     String exp = "Rdf turn ="
@@ -86,7 +72,7 @@ public class TestCast {
   }
 
   @Test
-  public void test2() throws IOException, WrongFormatException {
+  public void test2() {
     String in = "QuizHistory turn; turn.asker = agt;";
     String r = getGeneration(in);
     String exp = " turn.setValue(\"<dom:asker>\", agt); ";
@@ -94,55 +80,55 @@ public class TestCast {
   }
 
   @Test
-  public void test3() throws IOException, WrongFormatException {
+  public void test3() {
     String in = "Activity activity; activity.status = \"gameProposed\";";
     String r = getGeneration(in);
     String exp = " activity.setValue(\"<dom:status>\", \"gameProposed\"); ";
     assertEquals(exp, r);
   }
-  
+
   @Test
-  public void test4() throws  IOException, WrongFormatException {
+  public void test4() {
      String in = "Activity activity; bool = (activity.status == \"gameProposed\");";
      String r = getGeneration(in);
      String exp = "boolean bool = isEqual(((String)activity.getSingleValue(\"<dom:status>\")) , \"gameProposed\"); ";
      assertEquals(exp, r);
   }
-  
+
   @Test
-  public void test5() throws IOException, WrongFormatException {//firstEncounter() vor label if (siehe getGeneration) einfügen (darf nicht im true deklariert werden)
+  public void test5() {//firstEncounter() vor label if (siehe getGeneration) einfügen (darf nicht im true deklariert werden)
     String in = "daType = firstEncounter() ? \"a\" : \"b\";";
     String r = getGeneration(in);
     String exp = "String daType = (firstEncounter() ? \"a\" : \"b\"); ";
     assertEquals(exp, r);
   }
-  
+
   @Test
-  public void test6() throws IOException, WrongFormatException {
+  public void test6() {
     String in = "Child user; user.isLocatedAt == \"<dom:Home>\";";
     String r = getGeneration(in);
     String exp = "isEqual(((Rdf)user.getSingleValue(\"<dom:isLocatedAt>\")) , \"<dom:Home>\"); ";
     assertEquals(exp, r);
   }
-  
+
   @Test
-  public void test7() throws IOException, WrongFormatException {
+  public void test7() {
     String in = "Child user; b = (user.forename == \"John\");";
     String r = getGeneration(in);
     String exp = "boolean b = isEqual(((Set<Object>)user.getValue(\"<dom:forename>\")) , \"John\"); ";
     assertEquals(exp, r);
   }
-  
+
   @Test
-  public void test8() throws IOException, WrongFormatException {
+  public void test8() {
     String in = "Child user; user.forename = \"John\";";
     String r = getGeneration(in);
     String exp = " user.setValue(\"<dom:forename>\", \"John\"); ";
     assertEquals(exp, r);
   }
- 
+
   @Test
-  public void test9() throws IOException, WrongFormatException {
+  public void test9() {
     String in = "Object foo; foo.slot = 1;";
     String r = getGeneration(in);
     String exp = " foo.slot = 1; ";
@@ -151,7 +137,7 @@ public class TestCast {
 
   /* TODO: FIX THE TEST/CODE ITSELF, NOT SURE IF THE INPUT IS LEGAL AT ALL.
   @Test
-  public void test666() throws IOException, WrongFormatException {
+  public void test666() {
     String in = "QuizHistory turn; turn.responder = (agt == user) ? I_ROBOT : user;";
     String r = getGeneration(in);
     String exp = " turn.setValue(\"<dom:responder>\", (isEqual(agt, user) ? I_ROBOT : user)); ";
