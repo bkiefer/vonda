@@ -13,7 +13,7 @@ import java.io.StringWriter;
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static visitortests.SeriousTest.RESOURCE_DIR;
+import static de.dfki.mlt.rudimant.abstractTree.TstUtils.RESOURCE_DIR;
 
 /**
  *

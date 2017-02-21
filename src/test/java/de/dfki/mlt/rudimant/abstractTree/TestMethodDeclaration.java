@@ -2,7 +2,7 @@ package de.dfki.mlt.rudimant.abstractTree;
 
 import static de.dfki.mlt.rudimant.Visualize.*;
 import static org.junit.Assert.assertEquals;
-import static visitortests.SeriousTest.RESOURCE_DIR;
+import static de.dfki.mlt.rudimant.abstractTree.TstUtils.RESOURCE_DIR;
 
 import java.io.IOException;
 

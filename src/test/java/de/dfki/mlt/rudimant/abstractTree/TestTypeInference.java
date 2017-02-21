@@ -3,7 +3,7 @@ package de.dfki.mlt.rudimant.abstractTree;
 import static de.dfki.mlt.rudimant.Visualize.*;
 import static de.dfki.mlt.rudimant.abstractTree.TestCast.*;
 import static org.junit.Assert.*;
-import static visitortests.SeriousTest.RESOURCE_DIR;
+import static de.dfki.mlt.rudimant.abstractTree.TstUtils.RESOURCE_DIR;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
