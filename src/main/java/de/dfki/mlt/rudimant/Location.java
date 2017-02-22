@@ -27,6 +27,6 @@ public class Location {
   }
 
   public String toString() {
-    return originClass + ":" + lineNumber + ":";
+    return originClass + ".rudi:" + lineNumber + ":";
   }
 }

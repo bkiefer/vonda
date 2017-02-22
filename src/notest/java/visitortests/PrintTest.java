@@ -53,11 +53,29 @@ public class PrintTest {
 //    //assertFail(GrammarMain.main(strings2));
 //  }
 //
+//  @Test
+//  public void miniTest() throws Exception {
+//    String[] strings = new String[]{
+//      "-c", "src/test/resources/rudi.config.yml", "-d",
+//      "src/test/resources/MiniTest.rudi",
+//    };
+//    GrammarMain.main(strings);
+//  }
+  
   @Test
-  public void miniTest() throws Exception {
+  public void TestCast1() throws Exception {
     String[] strings = new String[]{
       "-c", "src/test/resources/rudi.config.yml", "-d",
-      "src/test/resources/MiniTest.rudi",
+      "src/test/resources/tinytests/cast1.rudi",
+    };
+    GrammarMain.main(strings);
+  }
+  
+  @Test
+  public void TestTest() throws Exception {
+    String[] strings = new String[]{
+      "-c", "src/test/resources/rudi.config.yml", "-d",
+      "src/test/resources/tinytests/test.rudi",
     };
     GrammarMain.main(strings);
   }

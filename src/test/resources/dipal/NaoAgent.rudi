@@ -1,5 +1,8 @@
 // methods of NaoAgent we should know
 
+String getUserFeedback();
+void userFeedbackProcessed();
+
 // DialogueAct emitDA(String diaActType, String proposition, String ... args);
 void reset();
 Rdf getCurrentTurn(Rdf quiz);
@@ -16,16 +19,13 @@ String getActivityName();
 Rdf getUser();
 String getUserName();
 String getUserGender();
-Object getLiking(Rdf user, String theme);
-String getUserColor();
-String getUserHobby();
 
 // TODO: can this be rudi-fied ??? Yes, but needed for InfoState
 boolean firstEncounter();
 
 boolean isFamiliar();
 boolean activityIs(String className);
-String getCurrentAsker();
+String getCurrentAskerInternal();
 int getNumberOfQuestionsCurrentAsker();
 void assessQuizSession(Quiz quiz, String whose);
 String[] getQuestionArgs(QuizQuestion q, Turn currentTurn);
@@ -43,7 +43,7 @@ void endQuiz(Rdf quiz, String reason);
 // variables of NaoAgent we should know
 
 String DEFNS;
-String I_ROBOT;
+Actor I_ROBOT;
 Activity activity;
 Child user;
 Session currentSession;

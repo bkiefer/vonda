@@ -35,44 +35,56 @@ public abstract class RudiTree {
 
   public void visitWithComments(VGenerationVisitor v) {
     int firstPos = this.positions[0];
-    checkComments(v, firstPos);
-    this.visit(v);
+    v.out.append(checkComments(v, firstPos));
+    this.visitVoidV(v);
     int endPos = this.positions[1];
-    checkComments(v, endPos);
+    v.out.append(checkComments(v, endPos));
   }
-  
+
   boolean lookingForImport = false;
+
   /**
    * print the comment before and forget about it if -and only if- it is an
    * import in java escapes
    */
-  public void printImportifJava(VGenerationVisitor v){
+  public void printImportifJava(VGenerationVisitor v) {
     lookingForImport = true;
-    checkComments(v, this.positions[0]);
+    v.out.append(checkComments(v, this.positions[0]));
     lookingForImport = false;
   }
-  
+
   /**
-   * the visitMethod for the visitor that allows to return Strings
+   * the visitMethod for the visitor that allows to return Strings ! only to be
+   * used by expressions !
    */
   public abstract String visitStringV(RTStringVisitor v);
 
-  private void checkComments(VGenerationVisitor v, int firstPos) {
-      while (!v.collectedTokens.isEmpty() && v.collectedTokens.get(0).getTokenIndex() < firstPos) {
-        String comment = v.collectedTokens.get(0).getText();
-        // Deal with java code
-        if(comment.startsWith("/*@")){
-          comment = comment.substring(3, comment.length()-3);
-          if(lookingForImport){
-            if(!comment.contains("import")){
-              return;
-            }
+  /**
+   * the visitMethod for the visitor that allows to return Strings ! for
+   * everything except expressions, they should write to out !
+   */
+  public abstract void visitVoidV(VGenerationVisitor v);
+
+  protected String checkComments(VGenerationVisitor v, int firstPos) {
+    String allcomments = "";
+    while (!v.collectedTokens.isEmpty() && v.collectedTokens.get(0).getTokenIndex() < firstPos) {
+      String comment = v.collectedTokens.get(0).getText();
+      // Deal with java code
+      if (comment.startsWith("/*@")) {
+        comment = comment.substring(3, comment.length() - 3);
+        if (lookingForImport) {
+          if (!comment.contains("import")) {
+            return allcomments;
           }
         }
-        v.out.append(comment);
-        v.collectedTokens.remove();
       }
+      if (!comment.trim().isEmpty()) {
+        allcomments += comment;
+      }
+      v.collectedTokens.remove();
     }
+    return allcomments;
+  }
 
   /**
    * setPosition is used to store the start and stop position of a Token given
@@ -108,7 +120,7 @@ public abstract class RudiTree {
 
   public abstract Iterable<? extends RudiTree> getDtrs();
 
-  public Location getLocation(){
+  public Location getLocation() {
     return this.location;
   }
 }

@@ -34,7 +34,17 @@ public class ExpDialogueAct extends RTExpression {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
-  
+
+  /**
+   * if we are an expression but this method is called, we should write to out;
+   * it means that the instance calling us must be a statement
+   * @param v
+   */
+  @Override
+  public void visitVoidV(VGenerationVisitor v) {
+    v.out.append(v.visitNode(this));
+  }
+
   @Override
   public String visitStringV(RTStringVisitor v){
     return v.visitNode(this);

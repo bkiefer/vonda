@@ -1,12 +1,12 @@
 
-test:
-if (5 <= 1) {
-  Child u;
-  v = u.isLocatedAt;
-  String s = "Blabla";
-  s.equals("foo");
+//test:
+//if (5 <= 1) {
+//  Child u;
+//  v = u.isLocatedAt;
+//  String s = "Blabla";
+//  s.equals("foo");
 
-}
+//}
 boolean firstEncounter();
 
 
@@ -42,4 +42,13 @@ if (true) {
   Object foo;
   foo.slot = 1;
 
+  while (foo.slot == 1){
+    foo.slot = 2;
+  }
+
+  //do {foo.slot = 1;} while (foo.slot == 2);
+
+  //for (int i = 1; i <= 2; i++){
+      //foo.slot = 1;
+  //}
 }

@@ -1,17 +1,11 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
-import static de.dfki.mlt.rudimant.Visualize.setUp;
-import static de.dfki.mlt.rudimant.abstractTree.ExpAssignmentTest.getNodeOfInterest;
+import static de.dfki.mlt.rudimant.Visualize.*;
+import static de.dfki.mlt.rudimant.abstractTree.TstUtils.*;
 import static org.junit.Assert.*;
-import static visitortests.SeriousTest.RESOURCE_DIR;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import de.dfki.mlt.rudimant.Visualize;
 
 /**
  *
@@ -34,35 +28,33 @@ GREATER_EQUAL: '>=';
 GREATER: '>';
 
    */
-  static String header = "label: if(true) {";
-  static String footer = "}";
 
   @BeforeClass
-  public static void setUpClass() throws FileNotFoundException {
-    setUp(RESOURCE_DIR + "dipal/dipal.yml", header, footer);
+  public static void setUpClass() {
+    setUpNonEmpty();
   }
 
   @Test
-  public void testBoolean() throws IOException {
+  public void testBoolean() {
     String booleanExp = "4 < 5;";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(booleanExp));
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
     assertTrue(dtr instanceof ExpBoolean);
   }
 
   @Test
-  public void testBoolean2() throws IOException {
+  public void testBoolean2() {
     String booleanExp = "4 == 5;";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(booleanExp));
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
     assertTrue(dtr instanceof ExpBoolean);
   }
 
   @Test
-  public void testBoolean3() throws IOException {
+  public void testBoolean3() {
     String booleanExp = "false;";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(booleanExp));
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
     // TODO dtr is instanceof UVariable. Is this correct?
     // dtr.getType is "boolean" as String. Is this correct?
 
@@ -71,47 +63,46 @@ GREATER: '>';
   }
 
   @Test
-  public void testBoolean4() throws IOException {
+  public void testBoolean4() {
     String booleanExp = "!(5>5);";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(booleanExp));
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
 
     assertTrue(dtr instanceof ExpBoolean);
   }
 
   @Test
-  public void testBoolean5() throws IOException {
+  public void testBoolean5() {
     String booleanExp = "(False && False || True);";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(booleanExp));
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
 
     assertTrue(dtr instanceof ExpBoolean);
   }
 
   @Test
-  public void testBoolean6() throws IOException {
-    String booleanExp = "(False & False | True);";
-// TODO should this work? we get a nullpointer here.
+  public void testArith6() {
+    String intExp = "(3 & 1 | 8);";
 
-//    Pair<GrammarFile, LinkedList<Token>> rt = RudimantCompiler.parseInput("boolean", booleanExp));
-//    RudiTree dtr = getNodeOfInterest(rt.first);
-//     assertTrue(dtr instanceof ExpBoolean);
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(intExp));
+
+    assertTrue(dtr instanceof ExpArithmetic);
   }
 
   @Test
-  public void testBoolean7() throws IOException {
+  public void testBoolean7() {
     String booleanExp = "(var1 != var2);";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(booleanExp));
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
 
     assertTrue(dtr instanceof ExpBoolean);
   }
 
   @Test
-  public void testBoolean8() throws IOException {
+  public void testBoolean8() {
     String booleanExp = "(var1 >= var2 && var1 <= var2);";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(booleanExp));
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
 
     assertTrue(dtr instanceof ExpBoolean);
   }

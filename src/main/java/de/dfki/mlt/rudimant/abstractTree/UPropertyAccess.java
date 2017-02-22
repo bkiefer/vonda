@@ -43,6 +43,16 @@ public class UPropertyAccess extends RTExpLeaf {
     v.visitNode(this);
   }
 
+  /**
+   * if we are an expression but this method is called, we should write to out;
+   * it means that the instance calling us must be a statement
+   * @param v
+   */
+  @Override
+  public void visitVoidV(VGenerationVisitor v) {
+    v.out.append(v.visitNode(this));
+  }
+
   @Override
   public String visitStringV(RTStringVisitor v){
     return v.visitNode(this);
@@ -53,10 +63,12 @@ public class UPropertyAccess extends RTExpLeaf {
     return Arrays.asList(dtrs);
   }
 
-  void getPropertyName(RudimantCompiler out) {
-    if(!propertyVariable) out.append('"');
-    out.append(label.content);
-    if(!propertyVariable) out.append('"');
+  String getPropertyName() {
+    String ret = "";
+    if(!propertyVariable) ret += ('"');
+    ret += (label.content);
+    if(!propertyVariable) ret += ('"');
+    return ret;
   }
 
   public String toString() {

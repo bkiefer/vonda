@@ -417,6 +417,9 @@ public class RudimantCompiler {
       // then there is nothing to write to; we are in a memory initialization
       return gf;
     }
+    if (visualise) {
+      Visualize.show(gf, inputRealName);
+    }
     // generate the output
     VGenerationVisitor gv = new VGenerationVisitor(this, pair.second);
     // tell the file its name (for class definition)

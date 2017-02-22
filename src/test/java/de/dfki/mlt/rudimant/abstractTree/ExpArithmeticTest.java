@@ -1,19 +1,14 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import static de.dfki.mlt.rudimant.Visualize.*;
-import static de.dfki.mlt.rudimant.abstractTree.ExpAssignmentTest.getNodeOfInterest;
+import static de.dfki.mlt.rudimant.abstractTree.TstUtils.*;
 import static org.junit.Assert.*;
-import static visitortests.SeriousTest.RESOURCE_DIR;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import de.dfki.mlt.rudimant.Visualize;
 
 /**
  *
@@ -21,24 +16,16 @@ import de.dfki.mlt.rudimant.Visualize;
  */
 public class ExpArithmeticTest {
 
-  static String header = "label: if(true) {";
-  static String footer = "}";
-
   @BeforeClass
   public static void setUpClass() throws FileNotFoundException {
-    setUp(RESOURCE_DIR + "dipal/dipal.yml", header, footer);
-  }
-
-  public InputStream getInput(String input) {
-    String toParse = header + input + footer;
-    return new ByteArrayInputStream(toParse.getBytes());
+    setUpNonEmpty();
   }
 
   @Test
   public void testArithmetic() throws IOException {
     String arithmeticExp = "1 + 2;";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(arithmeticExp)));
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(getInput(arithmeticExp)));
     assertTrue(dtr instanceof ExpArithmetic);
   }
 
@@ -46,7 +33,7 @@ public class ExpArithmeticTest {
   public void testArithmetic2() throws IOException {
     String arithmeticExp = "1 * 2;";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(arithmeticExp)));
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(getInput(arithmeticExp)));
     assertTrue(dtr instanceof ExpArithmetic);
   }
 
@@ -54,7 +41,7 @@ public class ExpArithmeticTest {
   public void testArithmetic3() throws IOException {
     String arithmeticExp = "1 / 2;";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(arithmeticExp)));
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(getInput(arithmeticExp)));
     assertTrue(dtr instanceof ExpArithmetic);
   }
 
@@ -62,7 +49,7 @@ public class ExpArithmeticTest {
   public void testArithmetic4() throws IOException {
     String arithmeticExp = "1 - 2;";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(getInput(arithmeticExp)));
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(getInput(arithmeticExp)));
     assertTrue(dtr instanceof ExpArithmetic);
 
     String type = ((ExpArithmetic) dtr).getType();
@@ -73,10 +60,10 @@ public class ExpArithmeticTest {
   public void testAssignment5() throws IOException {
     String in = "Activity a; a.status = \"proposed\";";
     GrammarFile gf = parseAndTypecheck(getInput(in));
-    RudiTree dtr = ExpAssignmentTest.getNodeOfInterest(gf, 0);
+    RudiTree dtr = getNodeOfInterest(gf, 0);
     assertTrue(dtr instanceof StatVarDef);
     assertEquals("Activity", ((StatVarDef)dtr).type);
-    dtr = ExpAssignmentTest.getNodeOfInterest(gf, 1);
+    dtr = getNodeOfInterest(gf, 1);
     assertTrue(dtr instanceof ExpAssignment);
     assertEquals("String", ((ExpAssignment)dtr).type);
   }

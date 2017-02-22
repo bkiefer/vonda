@@ -29,10 +29,15 @@ public class StatVarDef extends RTStatement {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
-  
+
   @Override
   public String visitStringV(RTStringVisitor v){
-    return v.visitNode(this);
+    throw new UnsupportedOperationException("Nodes bigger than expressions must not return Strings but write to out!");
+  }
+
+  @Override
+  public void visitVoidV(VGenerationVisitor v) {
+    v.visitNode(this);
   }
 
   public String toString() { return type + " " + variable +";"; }

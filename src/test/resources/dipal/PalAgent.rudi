@@ -1,9 +1,5 @@
 
-Activity activity;
-Child user;
-Actor I_ROBOT;
 Introduction intro;
-Session currentSession;
 
 Logger logger;
 

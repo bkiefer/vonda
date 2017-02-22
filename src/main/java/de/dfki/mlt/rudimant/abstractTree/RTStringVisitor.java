@@ -7,71 +7,69 @@ package de.dfki.mlt.rudimant.abstractTree;
 
 /**
  *
- * @author anna
- * a visitor interface that allows to create a RudiTree visitor where the
- * single visits can return Strings
+ * @author Anna Welker, anna.welker@dfki.de
  */
 public interface RTStringVisitor {
+
+  public void visitNode(RudiTree node);
   
-  String visitNode(RudiTree node);
-   
-  String visitNode(RTExpression node);
+  public String visitNode(RTExpression node);
 
-  String visitNode(ExpArithmetic node);
+  public String visitNode(ExpArithmetic node);
 
-  String visitNode(ExpAssignment node);
+  public String visitNode(ExpAssignment node);
 
-  String visitNode(ExpBoolean node);
+  public String visitNode(ExpBoolean node);
 
-  String visitNode(ExpDialogueAct node);
+  public String visitNode(ExpDialogueAct node);
 
-  String visitNode(ExpConditional node);
+  public String visitNode(ExpConditional node);
 
-  String visitNode(ExpLambda node);
+  public String visitNode(ExpLambda node);
   
-  String visitNode(ExpNew node);
+  public String visitNode(ExpNew node);
 
-  String visitNode(GrammarFile node);
+  public void visitNode(GrammarFile node);
 
-  String visitNode(GrammarRule node);
+  public void visitNode(GrammarRule node);
 
-  String visitNode(StatAbstractBlock node);
+  public void visitNode(StatAbstractBlock node);
 
-  String visitNode(StatDoWhile node);
+  public void visitNode(StatDoWhile node);
 
-  String visitNode(StatFor1 node);
+  public void visitNode(StatFor1 node);
 
-  String visitNode(StatFor2 node);
+  public void visitNode(StatFor2 node);
 
-  String visitNode(StatFor3 node);
+  public void visitNode(StatFor3 node);
 
-  String visitNode(StatIf node);
+  public void visitNode(StatIf node);
 
-  String visitNode(StatImport node);
+  public void visitNode(StatImport node);
 
-  String visitNode(StatListCreation node);
+  public void visitNode(StatListCreation node);
 
-  String visitNode(StatMethodDeclaration node);
+  public void visitNode(StatMethodDeclaration node);
 
-  String visitNode(StatPropose node);
+  public void visitNode(StatPropose node);
 
-  String visitNode(StatReturn node);
+  public void visitNode(StatReturn node);
 
-  String visitNode(StatSetOperation node);
+  public void visitNode(StatSetOperation node);
 
-  String visitNode(StatSwitch node);
+  public void visitNode(StatSwitch node);
 
-  String visitNode(StatVarDef node);
+  public void visitNode(StatVarDef node);
 
-  String visitNode(StatWhile node);
+  public void visitNode(StatWhile node);
 
-  String visitNode(UFieldAccess node);
+  public String visitNode(UFieldAccess node);
 
-  String visitNode(UFuncCall node);
+  public String visitNode(UFuncCall node);
 
-  String visitNode(USingleValue node);
+  public String visitNode(USingleValue node);
 
-  String visitNode(UVariable node);
+  public String visitNode(UVariable node);
 
-  String visitNode(UWildcard node);
+  public String visitNode(UWildcard node);
 }

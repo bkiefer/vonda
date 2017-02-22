@@ -31,6 +31,23 @@ public abstract class RTExpression extends RudiTree {
     this.type = to;
   }
 
+  /**
+   * duplicate the method from RudiTree to ensure String return
+   * @param v
+   */
+  public String visitWithSComments(VGenerationVisitor v) {
+    if(v.collectingCondition){
+      return this.visitStringV(v);
+    }
+    String ret = "";
+    int firstPos = this.positions[0];
+    ret += checkComments(v, firstPos);
+    ret += this.visitStringV(v);
+    int endPos = this.positions[1];
+    ret += checkComments(v, endPos);
+    return ret;
+  }
+
   // Return true if this is represents an RDF type or a DialogueAct
   // TODO: maybe has to be split up.
   public boolean isRdfType() {

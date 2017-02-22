@@ -110,12 +110,12 @@ public class Mem {
   }
 
   /** Return the more specific of the two types, if it exists, null otherwise */
-  public String mergeTypes(String left, String right) {
-    if (left == null) return right;
-    if (right == null) return left;
+  public String unifyTypes(String left, String right) {
+    if (left == null || "Object".equals(left)) return right;
+    if (right == null || "Object".equals(right)) return left;
     // check if these are RDF types and are in a type relation.
     if (isRdfType(left) || isRdfType(right)) {
-    if (isRdfType(left) && isRdfType(right))
+      if (isRdfType(left) && isRdfType(right))
         return _proxy.fetchMostSpecific(left, right);
       if ("Rdf".equals(left)) return right;
       if ("Rdf".equals(right)) return left;
@@ -229,8 +229,8 @@ public class Mem {
     this.current.addFunction(funcname, functype, partypes, origin, this);
   }
 
-  public String getFunctionOrigin(String funcname){
-    return current.getFunctionOrigin(funcname);
+  public String getFunctionOrigin(String funcname, ArrayList<String> partypes){
+    return current.getFunctionOrigin(funcname, partypes, this);
   }
 
   public boolean existsFunction(String funcname,
@@ -244,10 +244,8 @@ public class Mem {
    * @param funcname the name of the function
    * @return its return type or null
    */
-  public String getFunctionRetType(String funcname) {
-    // TODO: we could also identify the function by the parameter types, is this
-    // necessary?
-    return current.getFunctionRetType(funcname);
+  public String getFunctionRetType(String funcname, ArrayList<String> partypes) {
+    return current.getFunctionRetType(funcname, partypes, this);
   }
 
   /**
@@ -274,11 +272,6 @@ public class Mem {
     return (current.containsKey(variable));
   }
 
-  public boolean isRdf(String variable) {
-    String type = current.get(variable);
-    return (type != null && type.charAt(0) == '<');
-  }
-
   /**
    * get the class the given variable is located
    *
@@ -303,22 +296,12 @@ public class Mem {
    * adds a new Environment with the given depth
    */
   public void enterEnvironment() {
-//    if(initializing){
-//      return;
-//    }
     logger.trace("Enter level {}", environment.size());
-    if (current == null) {
-      current = new Environment();
-    } else {
-      environment.push(current);
-      current = current.deepCopy();
-    }
+    environment.push(current);
+    current = current.deepCopy();
   }
 
   public void leaveEnvironment() {
-//    if(initializing){
-//      return;
-//    }
     logger.trace("Leave level {}", environment.size());
     // restore the values in actual that we changed
     current = environment.isEmpty() ? null : environment.pop();
@@ -383,7 +366,9 @@ public class Mem {
    * @param ruleclass the class needed
    */
   public void needsClass(String rule, String ruleclass) {
-    //System.out.println(ruleclass);
+    if(this.curClass.toLowerCase().equals(ruleclass.toLowerCase())){
+      return;
+    }
     this.neededClasses.get(rule).add(ruleclass);
   }
 

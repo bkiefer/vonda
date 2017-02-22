@@ -46,7 +46,7 @@ if (isTimedOut("TurnTabletToResponder")) {
 }
 
 question_asked:
-if (! getCurrentTurn().QuestionId
+if (! getCurrentTurn(activity).QuestionId
     && activity.status != "run_wait_for_question"
     && activity.status != "run_wait_for_continue") {
   asker = getCurrentAsker();
@@ -63,7 +63,7 @@ if (activity.status == "run_wait_for_tablet"
   // tablet orientation is OK, question will be posed by robot or child
   if (getCurrentAsker() == I_ROBOT) {
     propose("give_next_question") {
-      turn = getCurrentTurn();
+      turn = getCurrentTurn(activity);
       sendQuestionDA(turn);
       sendAnswersDA(turn);
 
@@ -90,7 +90,7 @@ if (activity.status == "run_wait_for_tablet"
 
 answer_given:
 if (activity.status == "run_answer_given") {
-  turn = getCurrentTurn();
+  turn = getCurrentTurn(activity);
 
   boolean correct = turn.correct;
   String responder = turn.responder == I_ROBOT ? "robot" : "user";
@@ -112,10 +112,10 @@ if (activity.status == "run_answer_given") {
 wait_for_continue:
 if (activity.status == "run_wait_for_continue") {
   // TODO FIX THIS, ONLY FOR TESTING !!!!!
-  if (true || getNumberOfTurns() < 5) {
+  if (true || getNumberOfTurns(activity) < 5) {
     propose("continue_quiz") {
-      Rdf turn = getCurrentTurn();
-      Rdf newTurn = new QuizHistory;
+      QuizHistory turn = getCurrentTurn(activity);
+      QuizHistory newTurn = new QuizHistory;
       // Switch roles after each turn
       newTurn.asker = turn.responder;
       newTurn.responder = turn.asker;
