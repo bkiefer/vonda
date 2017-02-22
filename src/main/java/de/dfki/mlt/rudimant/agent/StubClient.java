@@ -71,6 +71,11 @@ public class StubClient implements CommunicationHub {
   }
 
   private void onEvent(Event evt) {
+    // TODO: implement agent processing Event
+  }
+  
+  private void returnToReaction() {
+    //TODO: Transform Event back to String, return back to Reaction.java
   }
 
   private void sendThis(Event e) {
