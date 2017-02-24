@@ -1,12 +1,15 @@
 package de.dfki.mlt.rudimant.agent;
 
+import static de.dfki.mlt.rudimant.agent.nlg.ConfConstants.*;
+
 import java.io.IOException;
+import java.util.Map;
 import java.util.regex.Pattern;
 
+import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.mlt.rudimant.agent.nlg.InfoStateAccess;
 import de.dfki.mlt.rudimant.agent.nlg.LanguageGenerator;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
-import de.dfki.lt.tr.dialogue.cplan.DagNode;
 
 public class AsrTts {
   // public static final Logger logger = Logger.getLogger("asrlogger");
@@ -19,12 +22,20 @@ public class AsrTts {
    */
   private LanguageGenerator _generator;
 
-  public void loadGrammar(String language, Agent agent, String confFile)
-          throws IOException {
 
-    //language = "english";
-    _generator = LanguageGenerator.getGenerator(language, confFile);
-    _generator.registerAccess("general", new InfoStateAccess(agent));
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+  public void loadGrammar(String language, Agent agent, Map configs)
+      throws IOException {
+
+    Map nlgConfig = (Map)configs.get(NLG_KEY);
+    Map nluConfig = (Map)configs.get(NLU_KEY);
+
+    if (nlgConfig  != null && nlgConfig.containsKey(language)) {
+      //language = "english";
+      _generator = LanguageGenerator.getGenerator(language,
+          (Map<String, Object>)nlgConfig.get(language));
+      _generator.registerAccess("general", new InfoStateAccess(agent));
+    }
   }
 
   private static final Pattern toEscape = Pattern.compile("[^0-9a-zA-Z_-]");
