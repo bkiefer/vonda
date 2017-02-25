@@ -24,10 +24,11 @@ incoming_acceptplay:
 if ((lastDA() <= #AcceptRequest(Playing) || lastDA() <= #Confirm(Playing))
     && !(activity <= Quiz)) {
   activity = newActivity(new Quiz);
-  if (! activity.status || activity.status == "none") {
-    activity.hasParticipant = user;
-    activity.status = "started";
-    activity.tabletOrientation = user;
+  Quiz quiz = activity;
+  if (! quiz.status || quiz.status == "none") {
+    quiz.hasParticipant = user;
+    quiz.status = "started";
+    quiz.tabletOrientation = user;
   }
   lastDAprocessed();
 }
@@ -40,4 +41,3 @@ if ((lastDA() <= #RejectRequest(Playing) || lastDA() <= #Disconfirm(Playing))
   newActivity(new Closing);
   lastDAprocessed();
 }
-

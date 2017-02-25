@@ -10,8 +10,8 @@ void robotAnswers(String answerString, int answerNumber, boolean correct) {
   emitDA(#Inform(Answer,
            id=^Integer.toString(answerNumber + 1),
            ^("string" + Integer.toString(answerNumber + 1))=^answerString));
-  activity.status = "run_answer_given";
-  turn = getCurrentTurn(activity);
+  quiz.status = "run_answer_given";
+  turn = getCurrentTurn(quiz);
   turn.correct = correct;
 }
 
@@ -20,19 +20,19 @@ void robotAnswers(String answerString, int answerNumber, boolean correct) {
 // **********************************************************************
 
 quiz:
-if (activity <= Quiz && getUserFeedback()) {
+if (quiz <= Quiz && getUserFeedback()) {
  question_read_by_user:
-  if (activity.status == "running_wait_for_question_read") {
+  if (quiz.status == "running_wait_for_question_read") {
     userReadsQuestion();
   }
 
  answer_given_by_user:
-  if (activity.status == "running_wait_for_answer"
+  if (quiz.status == "running_wait_for_answer"
       && getCurrentAsker() == I_ROBOT) {
-    turn = getCurrentTurn(activity);
+    turn = getCurrentTurn(quiz);
     if (turn) {
-      turn.answer = getUserFeedback();
-      activity.status = "running_answer_given";
+      turn.answerId = getAnswerId(getUserFeedback());
+      quiz.status = "running_answer_given";
     }
   }
   userFeedbackProcessed();
@@ -54,7 +54,7 @@ incoming_rolefeedback:
 if (lastDA() <= #Request(AssigningRole)
     || lastDA() <= #AcceptRequest(AssigningRole)
     || lastDA() <= #RejectRequest(AssigningRole)) {
-  if (!activity || ! (activity <= Quiz)) {
+  if (!quiz || ! (quiz <= Quiz)) {
     // TODO: clarification dialogue??
     return;
   }
@@ -70,9 +70,9 @@ if (lastDA() <= #Request(AssigningRole)
       agt = (agt == user) ? I_ROBOT : user;
     }
 
-  // TODO check if theme matches current activity (e.g. quiz game)
+  // TODO check if theme matches current quiz (e.g. quiz game)
   QuizHistory turn = new QuizHistory;
-  activity.hasTurns.add(turn);
+  quiz.hasHistory.add(turn);
   turn.asker = agt;
   turn.responder = (agt == user) ? I_ROBOT : user;
   // Todo: see above, not yet implemented, always accept
@@ -87,8 +87,8 @@ if (lastDA() <= #Request(AssigningRole)
     // situation, this command comes from the MyPalApp
     getHub().startQuiz(user, agt);
   }
-  if (activity.status == "started") {
-    activity.status = "running";
+  if (quiz.status == "started") {
+    quiz.status = "running";
   }
 
   lastDAprocessed();
@@ -100,15 +100,15 @@ if (lastDA() <= #Request(AssigningRole)
 // answer
 incoming_answergiven:
 if (lastDA() <= #Inform(Answering)) {
-  if (! activity <= Quiz) {
+  if (! quiz <= Quiz) {
     logger.error("Answer given outside of quiz.");
     return;
   }
-  turn = getCurrentTurn(activity);
+  turn = getCurrentTurn(quiz);
   int qId = turn.questionId;
   QuizQuestion q = questionCache.get(qId);
   int correct = q.getWhichCorrect();
-  int wrong = correct + 1 + random.nextInt(q.getAnswersSize() - 1)
+  int wrong = correct + 1 + random(q.getAnswersSize() - 1)
     % q.getAnswersSize();
   // Answers were read by child, give an answer
 

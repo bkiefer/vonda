@@ -1,15 +1,15 @@
 //String stat = activity.status; // see if the one below does work
 process_rules_quiz_running:
-if (! activity.status.startsWith("run"))
+if (! quiz.status.startsWith("run"))
   return;
 
 just_started:
-if (activity.status == "run_started"
-    && activity.tabletOrientation != getCurrentAsker()) {
+if (quiz.status == "run_started"
+    && quiz.tabletOrientation != getCurrentAsker()) {
   if (childAtHome()) {
-    activity.tabletOrientation = getCurrentAsker();
+    quiz.tabletOrientation = getCurrentAsker();
     logger.info("Turn tablet to asker in home version here.");
-    activity.status = "run_wait_for_tablet";
+    quiz.status = "run_wait_for_tablet";
   } else {
     newTimeout("TurnTabletToAsker", 10000);
   }
@@ -18,7 +18,7 @@ if (activity.status == "run_started"
 tablet_to_asker:
 if (isTimedOut("TurnTabletToAsker")) {
   removeTimeout("TurnTabletToAsker");
-  if (activity.tabletOrientation != getCurrentAsker()) {
+  if (quiz.tabletOrientation != getCurrentAsker()) {
     propose("request_turn_tablet") {
       emitDA(#Request(Turning, theme=Tablet));
     }
@@ -28,12 +28,12 @@ if (isTimedOut("TurnTabletToAsker")) {
 tablet_to_responder:
 if (isTimedOut("TurnTabletToResponder")) {
   removeTimeout("TurnTabletToResponder");
-  if (activity.tabletOrientation == getCurrentAsker()) {
+  if (quiz.tabletOrientation == getCurrentAsker()) {
     // Change the tablet orientation automatically in the home version.
     if (childAtHome()) {
       if (getCurrentResponder() == I_ROBOT) {
         // simulate turning the tablet to the robot in home version
-        activity.tabletOrientation = getCurrentResponder();
+        quiz.tabletOrientation = getCurrentResponder();
         logger.info("Turn tablet to robot in home version");
         userReadsQuestion();
       }
@@ -46,24 +46,24 @@ if (isTimedOut("TurnTabletToResponder")) {
 }
 
 question_asked:
-if (! getCurrentTurn(activity).QuestionId
-    && activity.status != "run_wait_for_question"
-    && activity.status != "run_wait_for_continue") {
+if (! getCurrentTurn(quiz).questionId
+    && quiz.status != "run_wait_for_question"
+    && quiz.status != "run_wait_for_continue") {
   asker = getCurrentAsker();
   responder = (asker == I_ROBOT) ? user : I_ROBOT;
   logger.info("REQUEST NEW QUESTION, THE CURRENT ASKER IS {}, THE CURRENT RESPONDER IS {}",
               asker, responder);
   getHub().requestNextQuestion(asker);
-  activity.status = "run_wait_for_question";
+  quiz.status = "run_wait_for_question";
 }
 
 asker_tablet_wait:
-if (activity.status == "run_wait_for_tablet"
-    && activity.tabletOrientation == getCurrentAsker()) {
+if (quiz.status == "run_wait_for_tablet"
+    && quiz.tabletOrientation == getCurrentAsker()) {
   // tablet orientation is OK, question will be posed by robot or child
   if (getCurrentAsker() == I_ROBOT) {
     propose("give_next_question") {
-      turn = getCurrentTurn(activity);
+      turn = getCurrentTurn(quiz);
       sendQuestionDA(turn);
       sendAnswersDA(turn);
 
@@ -74,23 +74,23 @@ if (activity.status == "run_wait_for_tablet"
         emitDA(turnTabletDA);
         newTimeout("TurnTabletToResponder", 20000);
       }
-      activity.status = "run_wait_for_answer";
+      quiz.status = "run_wait_for_answer";
     }
   } else {
     // current asker is user
 
     // wait for the user to finish reading the question and answers,
     // if we have a real robot
-    if (activity.status != "run_wait_for_question_read") {
-      activity.status = "run_wait_for_question_read";
+    if (quiz.status != "run_wait_for_question_read") {
+      quiz.status = "run_wait_for_question_read";
       newTimeout("TurnTabletToResponder", 10000);
     }
   }
 }
 
 answer_given:
-if (activity.status == "run_answer_given") {
-  turn = getCurrentTurn(activity);
+if (quiz.status == "run_answer_given") {
+  turn = getCurrentTurn(quiz);
 
   boolean correct = turn.correct;
   String responder = turn.responder == I_ROBOT ? "robot" : "user";
@@ -105,22 +105,22 @@ if (activity.status == "run_answer_given") {
       emitDA(#^daType(BeingCorrect, theme=Quiz, agent=robot));
       robotGivesSolution(correct, turn);
     }
-    activity.status = "run_wait_for_continue";
+    quiz.status = "run_wait_for_continue";
   }
 }
 
 wait_for_continue:
-if (activity.status == "run_wait_for_continue") {
+if (quiz.status == "run_wait_for_continue") {
   // TODO FIX THIS, ONLY FOR TESTING !!!!!
-  if (true || getNumberOfTurns(activity) < 5) {
+  if (true || getNumberOfTurns(quiz) < 5) {
     propose("continue_quiz") {
-      QuizHistory turn = getCurrentTurn(activity);
+      QuizHistory turn = getCurrentTurn(quiz);
       QuizHistory newTurn = new QuizHistory;
       // Switch roles after each turn
       newTurn.asker = turn.responder;
       newTurn.responder = turn.asker;
-      activity.hasTurns.add(newTurn);
-      activity.status = "running";
+      quiz.hasHistory.add(newTurn);
+      quiz.status = "running";
     }
   }
 
