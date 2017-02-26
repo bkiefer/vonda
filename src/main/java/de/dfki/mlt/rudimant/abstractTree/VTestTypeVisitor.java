@@ -88,7 +88,6 @@ public class VTestTypeVisitor implements RudiVisitor {
    */
   @Override
   public void visitNode(ExpAssignment node) {
-    if(rudi.getClassName().equals("QuizIncoming"))
     node.right.visit(this);
     // make sure they become Java POD types, if xsd type
     node.right.type = mem.convertXsdType(node.right.type);
@@ -435,7 +434,6 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
   }
 
-
   /* **********************************************************************
    * Statements where one part must be a bool exp (if, do, while, for)
    * where bool exp must be guaranteed
@@ -553,10 +551,6 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(UFieldAccess node) {
     String currentType = null;
-
-    if(node.fullexp.equals("turn.correct")){
-      int j = 0;
-    }
     RudiTree currentNode = node.parts.get(0); // can not be empty
     currentNode.visit(this);
     // The type to which the next field access item is applied
