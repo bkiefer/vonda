@@ -5,11 +5,11 @@ void userFeedbackProcessed();
 
 // DialogueAct emitDA(String diaActType, String proposition, String ... args);
 void reset();
-Rdf getCurrentTurn(Rdf quiz);
+QuizHistory getCurrentTurn(Rdf quiz);
 int getNumberOfTurns(Rdf quiz);
 void setAnswer(Rdf t, String answerResponse);
 int[] getAssessment(Rdf quiz, String robot);
-Rdf newTurn(Rdf quiz);
+Turn newTurn(Rdf quiz);
 void setAsker(Rdf turn, String askerUri, String responderUri);
 boolean hasPlayedGame(Rdf user);
 void setLiking(Rdf user, String theme, String value);

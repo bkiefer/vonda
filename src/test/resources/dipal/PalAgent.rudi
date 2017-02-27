@@ -6,7 +6,6 @@ Logger logger;
 // General methods of Agent
 DialogueAct emitDelayed(int delay, DialogueAct da);
 void addToMyDA(DialogueAct da);
-QuizHistory getCurrentTurn();
 
 int getInteger(String s);
 

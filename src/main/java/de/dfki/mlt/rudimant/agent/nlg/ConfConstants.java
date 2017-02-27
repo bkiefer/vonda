@@ -10,8 +10,13 @@ package de.dfki.mlt.rudimant.agent.nlg;
  * @author anna
  */
 public interface ConfConstants {
-  public static final String RESOURCE_DIR = "resourceDir";
+
+  public static final String NLG_KEY = "NLG";
+
+  public static final String NLU_KEY = "NLU";
+
   public static final String MAPPER_PROJECT = "mapperProject";
+
   public static final String GENERATION_PROJECT = "generationProject";
-  
+
 }

@@ -44,6 +44,8 @@ public class LanguageGenerator {
   private static Logger logger
           = LoggerFactory.getLogger(LanguageGenerator.class);
 
+  private Map<String, Object> configs;
+
   private CPlannerNlg cplanner;
 
   private UtterancePlanner _ruleMapper;
@@ -71,13 +73,12 @@ public class LanguageGenerator {
           = new HashMap<String, LanguageGenerator>();
 
   public static LanguageGenerator getGenerator(String currentLang,
-          String confname) throws FileNotFoundException {
+      Map<String, Object> langConfig) throws FileNotFoundException {
     LanguageGenerator singleton = _generators.get(currentLang);
     if (singleton == null) {
-      singleton = new LanguageGenerator(currentLang);
+      singleton = new LanguageGenerator(currentLang, langConfig);
       _generators.put(currentLang, singleton);
     }
-    singleton.readConfig(confname);
     return singleton;
   }
 
@@ -87,7 +88,8 @@ public class LanguageGenerator {
    * @param lang a three-character ISO language code for the number conversion
    * functionality
    */
-  private LanguageGenerator(String lang) {
+  private LanguageGenerator(String lang, Map<String, Object> cfgs) {
+    configs = new HashMap<>(cfgs);
     try {
       setLanguage(lang);
       _ruleMapper = getPlanner();
@@ -96,8 +98,7 @@ public class LanguageGenerator {
       // so that all random calls to generation can be recorded, too
       // don't know if this is strictly necessary
       // FunctionFactory.register(new RecordableRandomFunction(), _ruleMapper);
-      File foo = new File((String) configs.get(RESOURCE_DIR),
-              (String) configs.get(MAPPER_PROJECT));
+      File foo = new File((String) configs.get(MAPPER_PROJECT));
       _ruleMapper.readProjectFile(foo);
     } catch (FileNotFoundException e) {
       logger.error("mapper rules not found: " + e);
@@ -114,11 +115,8 @@ public class LanguageGenerator {
    * @throws IOException
    */
   private void setLanguage(String lang) throws IOException {
-    lang = lang.toLowerCase().substring(0, 3);
-    cplanner
-            = new CPlannerNlg(
-                    new File((String) configs.get(RESOURCE_DIR),
-              (String) configs.get("generation.project" + "." + lang)), lang);
+    cplanner = new CPlannerNlg(
+        new File((String) configs.get(GENERATION_PROJECT)), lang);
   }
 
   public void registerAccess(String what, BaseInfoStateAccess access) {
@@ -182,8 +180,6 @@ public class LanguageGenerator {
     return result;
   }
 
-  private Map<String, Object> configs;
-
   /**
    * takes a configuration and sets all properties to those specified in it
    *
@@ -192,7 +188,7 @@ public class LanguageGenerator {
   public void initConfig(Map<String, Object> cfgs) {
     this.configs = new HashMap<>(cfgs);
   }
-  
+
   @SuppressWarnings("unchecked")
   public void readConfig(String confname)
       throws FileNotFoundException {

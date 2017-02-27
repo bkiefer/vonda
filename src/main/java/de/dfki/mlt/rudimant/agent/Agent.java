@@ -1,5 +1,6 @@
 package de.dfki.mlt.rudimant.agent;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
@@ -409,12 +411,15 @@ public abstract class Agent extends DataComparator {
 //  }
   protected abstract void process();
 
+  @SuppressWarnings("rawtypes")
   public void init(String language, RdfProxy proxy, String confFile) {
     _proxy = proxy;
     _language = language;
     asr = new AsrTts();
     try {
-      asr.loadGrammar(language, this, confFile);
+      Yaml yaml = new Yaml();
+      Object o = yaml.load(new FileReader(confFile));
+      asr.loadGrammar(language, this, (Map)o);
     } catch (IOException ex) {
       logger.error("Error loading grammar: {}", ex);
       System.exit(1);

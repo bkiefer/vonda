@@ -151,7 +151,8 @@ variable
   ;
 
 exp
-  : complex_exp
+  : '(' VARIABLE ')' exp
+  |complex_exp
   | if_exp
   | string_expression
   | boolean_exp

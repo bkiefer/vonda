@@ -2,6 +2,7 @@ process_rules_quiz:
 if (activity == null || ! (activity <= Quiz))
   return;
 
+Quiz quiz = activity;
 /* This does not work. What we need is the newest turn in the set, which is too
    hard for now.
 QuizHistory getCurrentTurn() {
@@ -11,20 +12,20 @@ QuizHistory getCurrentTurn() {
   if (! activity.hasTurns)
     return null;
   // This does not work. What we need is the newest turn in the set.
-  return activity.hasTurns.peekFirst();
+  return quiz.hasTurns.peekFirst();
 }
 */
 QuizHistory getCurrentTurn(Quiz quiz); // Currently in NaoAgent.java
 
 Actor getCurrentAsker() {
-  currentTurn = getCurrentTurn(activity);
+  currentTurn = getCurrentTurn(quiz);
   if (! currentTurn)
     return null;
   return currentTurn.asker;
 }
 
 Actor getCurrentResponder() {
-  currentTurn = getCurrentTurn(activity);
+  currentTurn = getCurrentTurn(quiz);
   if (! currentTurn)
     return null;
   return currentTurn.responder;
@@ -35,11 +36,11 @@ void endQuiz(String reason) {
       && ! (myLastDA() <= #Salutation(Meeting))) {
     emitDA(#Breaking(Playing, Reason=^reason));
 
-    activity.status = "wait_for_assessment";
+    quiz.status = "wait_for_assessment";
   }
 }
 
-//logger.info("Quiz status: {}, Asker: {}", activity.status, getCurrentasker());
+//logger.info("Quiz status: {}, Asker: {}", quiz.status, getCurrentasker());
 
 import QuizIncoming;
 import QuizStarted;
@@ -53,12 +54,11 @@ void assessQuizSession(Quiz quiz, String whose) {
   emitDA(#Inform(AssessingPerformance, theme = Answer, agent = ^whose,
                  total = ^Integer.toString(results[index]),
                  correct = ^Integer.toString(results[index + 1])));
-  activity.status = "wait_for_ending";
+  quiz.status = "wait_for_ending";
 }
 
 wait_for_assessment:
-if ("wait_for_assessment".equals(activity.status)) {
-  Quiz quiz = activity;
+if ("wait_for_assessment".equals(quiz.status)) {
   // Currently there should always be an assessment of the user, and maybe
   // also of the robot
   propose("AssessUserPerformance") {
@@ -71,21 +71,21 @@ if ("wait_for_assessment".equals(activity.status)) {
   }
   /*
   propose("NoAssessment") {
-    activity.status = "wait_for_ending";
+    quiz.status = "wait_for_ending";
   }
   */
 }
 
 // TODO: THIS MUST BE REWORKED COMPLETELY
 quiz_ending:
-if (activity.status == "wait_for_ending"
-    || activity.status == "ended_by_user") {
+if (quiz.status == "wait_for_ending"
+    || quiz.status == "ended_by_user") {
   propose("end_quiz") {
     // This should say sth. like "It was nice playing with you"
     String daType =
       firstEncounter() && ! childAtHome() ? "InitialGoodbye" : "ReturnGoodbye";
     DialogueAct close = emitDA(#^daType(Meeting, theme=Quiz));
-    if (activity.status == "wait_for_ending") {
+    if (quiz.status == "wait_for_ending") {
       // otherwise this comes from the user / app
       getHub().stopQuiz(getCurrentAsker());
     }
