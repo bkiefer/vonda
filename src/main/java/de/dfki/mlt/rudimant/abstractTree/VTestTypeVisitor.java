@@ -336,7 +336,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     if (node.varType == null) {
       String et = node.exp.getType();
       if (et.contains("<")) {
-        node.varType = et.substring(et.indexOf("<"), et.indexOf(">"));
+        node.varType = et.substring(et.indexOf("<")+1, et.indexOf(">"));
       }
     }
     mem.addVariableDeclaration(node.var.toString(), node.varType, node.position);
