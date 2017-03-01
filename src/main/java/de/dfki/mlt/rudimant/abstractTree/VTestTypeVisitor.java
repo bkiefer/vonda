@@ -43,7 +43,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     this.mem = rudi.getMem();
   }
 
- /**
+  /**
    * If that is a binary expression, the resulting type should be the more
    * specific of both. If they are incompatible there should be a warning. Maybe
    * the type could be pushed down if there is only a non-empty type on one
@@ -72,7 +72,7 @@ public class VTestTypeVisitor implements RudiVisitor {
         String type = mem.unifyTypes(node.left.type, node.right.type);
         if (type == null) {
           rudi.typeError("Incompatible types in " + node + ": "
-              + node.left.type + " vs. " + node.right.type, node);
+                  + node.left.type + " vs. " + node.right.type, node);
         }
       }
     }
@@ -105,12 +105,12 @@ public class VTestTypeVisitor implements RudiVisitor {
         node.left.type = node.type; // the type of the declaration is in this node
       }
       mem.addVariableDeclaration(((UVariable) node.left).content,
-          node.left.type, mem.getClassName());
+              node.left.type, mem.getClassName());
       if (node.right.type == null) {
         node.right.propagateType(node.type);
       }
     } else if ((node.left instanceof UVariable
-        && !mem.variableExists(node.left.toString()))) {
+            && !mem.variableExists(node.left.toString()))) {
       node.declaration = true;
       // node.type is null, and variable does not exist, so no type.
       // now consolidate types
@@ -122,12 +122,11 @@ public class VTestTypeVisitor implements RudiVisitor {
       }
       node.type = node.left.type = node.right.type;
       mem.addVariableDeclaration(((UVariable) node.left).content,
-          node.left.type, mem.getClassName());
+              node.left.type, mem.getClassName());
     }
     if (node.right instanceof UVariable && !mem.variableExists(node.right.toString())) {
       rudi.typeError("Assignment of a value of a non-existing variable " + node.right + "to " + node.left, node);
     }
-
 
     // If the type on the left side is more specific that the one on the right,
     // a cast must be applied during generation. if it is less specific, no
@@ -136,14 +135,14 @@ public class VTestTypeVisitor implements RudiVisitor {
     // if one of them is null, unifyTypes will return the other type
     String mergeType = mem.unifyTypes(node.left.type, node.right.type);
     if (mergeType == null) {
-      if("boolean".equals(node.left.type)){
+      if ("boolean".equals(node.left.type)) {
         // in that case, we assume that this should be a test for existance
         mergeType = "boolean";
         node.right = node.right.ensureBoolean();
       } else {
         mergeType = "Object";
         rudi.typeError("Incompatible types in assignment: "
-            + node.left.type + " := " + node.right.type, node);
+                + node.left.type + " := " + node.right.type, node);
       }
     }
     node.type = mergeType;
@@ -168,7 +167,6 @@ public class VTestTypeVisitor implements RudiVisitor {
             || ("<>".indexOf(operator.charAt(0)) >= 0 && operator.length() == 1);
   }
 
-
   /**
    * In principle the same as ExpArithmetic, with boolean only. The one
    * difference is that there are unary expressions which serve as boolean
@@ -181,9 +179,9 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.left.visit(this);
     if (node.right != null) {
       node.right.visit(this);
-      if(! Mem.isPODType(node.left.getType())
-          && ! Mem.isPODType(node.right.getType())) {
-        switch(node.operator){
+      if (!Mem.isPODType(node.left.getType())
+              && !Mem.isPODType(node.right.getType())) {
+        switch (node.operator) {
           case "==":
             node.operator = "isEqual(";
             break;
@@ -206,8 +204,8 @@ public class VTestTypeVisitor implements RudiVisitor {
         node.left = node.left.ensureBoolean();
       }
     } else {
-    // we should do this always, because if the boolean expression has only one
-    // side it may have no operator!!!!
+      // we should do this always, because if the boolean expression has only one
+      // side it may have no operator!!!!
       node.left = node.left.ensureBoolean();
     }
   }
@@ -261,10 +259,10 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.elseexp.visit(this);
     if (mem.unifyTypes(node.thenexp.getType(), node.elseexp.getType()) == null) {
       rudi.typeError(node.fullexp
-          + " is a conditional expression where the else expression "
-          + "does not have the same type as the right expression!\n("
-          + "comparing types " + node.thenexp.getType() + " on left and "
-          + node.elseexp.getType() + " on right)", node);
+              + " is a conditional expression where the else expression "
+              + "does not have the same type as the right expression!\n("
+              + "comparing types " + node.thenexp.getType() + " on left and "
+              + node.elseexp.getType() + " on right)", node);
     }
     node.type = node.thenexp.getType();
   }
@@ -284,9 +282,9 @@ public class VTestTypeVisitor implements RudiVisitor {
     for (RudiTree t : node.rules) {
       t.visit(this);
     }
-    if(mem.getToplevelCalls(rudi.getClassName()) != null){
+    if (mem.getToplevelCalls(rudi.getClassName()) != null) {
       for (String s : mem.getToplevelCalls(rudi.getClassName())) {
-        if(mem.getNeededClasses(s) != null){
+        if (mem.getNeededClasses(s) != null) {
           for (String n : mem.getNeededClasses(s)) {
             mem.needsClass(rudi.getClassName(), n);
           }
@@ -336,7 +334,8 @@ public class VTestTypeVisitor implements RudiVisitor {
     if (node.varType == null) {
       String et = node.exp.getType();
       if (et.contains("<")) {
-        node.varType = et.substring(et.indexOf("<")+1, et.indexOf(">"));
+        node.varType = mem.checkRdf(
+            et.substring(et.indexOf("<") + 1, et.indexOf(">")));
       }
     }
     mem.addVariableDeclaration(node.var.toString(), node.varType, node.position);
@@ -386,11 +385,11 @@ public class VTestTypeVisitor implements RudiVisitor {
       String type = node.listType;
       if (type != null) {
         String elementType = type.substring(
-            type.indexOf("<") + 1, type.indexOf(">"));
+                type.indexOf("<") + 1, type.indexOf(">"));
         if (mem.unifyTypes(elementType, node.objects.get(0).getType()) == null) {
           rudi.typeError("Found a list creation where the list type"
-              + " doesn't fit its objects' type: " + elementType
-              + " vs " + node.objects.get(0).getType(), node);
+                  + " doesn't fit its objects' type: " + elementType
+                  + " vs " + node.objects.get(0).getType(), node);
         }
         mem.addVariableDeclaration(node.variableName, type, node.origin);
       } else {
@@ -488,15 +487,17 @@ public class VTestTypeVisitor implements RudiVisitor {
   // on a java object, so we probably do not wanna throw an error here
   boolean partOfFieldAccess = false;
 
-  /** treat the case that an RDF is accessed with a label, which can result in
-   *  a lot of different things:
-   *  setValue, getValue, setSingleValue, getSingleValue, has
+  /**
+   * treat the case that an RDF is accessed with a label, which can result in a
+   * lot of different things: setValue, getValue, setSingleValue,
+   * getSingleValue, has
+   *
    * @param node
    * @param currentType
    * @param label
    */
   UPropertyAccess treatRdfPropertyAccess(UFieldAccess node, String currentType,
-      UVariable var) {
+          UVariable var) {
     // only a literal: check if it is a property of clz, and update the
     // current type
     if ("String".equals(mem.getVariableType(var.content))) {
@@ -510,7 +511,10 @@ public class VTestTypeVisitor implements RudiVisitor {
       return new UPropertyAccess(var, false, "String", true);
     }
     RdfClass clz = mem.getProxy().getClass(currentType);
-    String predUri = clz.fetchProperty(var.content);
+    String predUri = null;
+    if (clz != null) {
+      predUri = clz.fetchProperty(var.content);
+    }
     // warning / error if property not found
     if (predUri == null) {
       rudi.typeError("No property found for " + var.content, node);
@@ -526,16 +530,16 @@ public class VTestTypeVisitor implements RudiVisitor {
     if (currentType == null) {
       // WARNING / error
       rudi.typeError("No range type defined for property "
-          + predUri, node);
+              + predUri, node);
       if (var.getType() != null) {
         rudi.typeWarning("empty range: type defined instead: "
-            + var.getType(), node);
+                + var.getType(), node);
       }
     }
-    if (var.getType() != null && ! var.getType().equals(currentType)) {
-      rudi.typeError("Overwriting type " + var.type +
-          "  of partial field access for " + var.content + " to " +
-          currentType, node);
+    if (var.getType() != null && !var.getType().equals(currentType)) {
+      rudi.typeError("Overwriting type " + var.type
+              + "  of partial field access for " + var.content + " to "
+              + currentType, node);
     }
     // TODO: an access will always return sth of type Object, so to not get null
     // I'll set the type of this to Object by default
@@ -554,35 +558,35 @@ public class VTestTypeVisitor implements RudiVisitor {
     RudiTree currentNode = node.parts.get(0); // can not be empty
     currentNode.visit(this);
     // The type to which the next field access item is applied
-    currentType = ((RTExpression)currentNode).type;
+    currentType = ((RTExpression) currentNode).type;
     // this is dangerous, and only works if this condition can not be
     // "interrupted"
     partOfFieldAccess = true;
-    for(int i = 1; i < node.parts.size(); ++i) {
+    for (int i = 1; i < node.parts.size(); ++i) {
       currentNode = node.parts.get(i);
       currentNode.visit(this);
       if (Mem.isRdfType(currentType)) {
         if (currentNode instanceof UVariable) {
           // only a literal, delegate this because it's complicated
-          UPropertyAccess acc =
-              treatRdfPropertyAccess(node, currentType, (UVariable)currentNode);
+          UPropertyAccess acc
+                  = treatRdfPropertyAccess(node, currentType, (UVariable) currentNode);
           node.parts.set(i, acc);
           currentType = acc.getType();
         } else if (currentNode instanceof RTExpression) {
           // could also be a method application, possibly, what else?
-          currentType = ((RTExpression)currentNode).type;
+          currentType = ((RTExpression) currentNode).type;
         } else {
           currentType = null;
         }
       } else { // unknown or Java type, let's try with the accessor type
         if (currentNode instanceof RTExpression) {
-          currentType = ((RTExpression)currentNode).type;
+          currentType = ((RTExpression) currentNode).type;
         } else {
           currentType = null;
         }
       }
     }
-    node.type = currentType == null? "Object" : currentType; // the final result type
+    node.type = currentType == null ? "Object" : currentType; // the final result type
     partOfFieldAccess = false;
   }
 
@@ -643,7 +647,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     RdfClass cl = mem.getProxy().fetchClass(node.content);
     if (cl != null) {
       node.type = cl.toString();
-      if(!mem.variableExists(node.content)){
+      if (!mem.variableExists(node.content)) {
         node.content = "\"" + node.content + "\"";
       }
     }
@@ -671,7 +675,7 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatReturn node) {
-    if (!mem.isExistingRule(node.lit) && node.toRet != null){
+    if (!mem.isExistingRule(node.lit) && node.toRet != null) {
       node.toRet.visit(this);
     }
   }
