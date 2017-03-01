@@ -497,9 +497,9 @@ public class VGenerationVisitor implements RTStringVisitor {
   @Override
   public void visitNode(StatFor2 node) {
     if (node.varType == null) {
-      node.varType = ((RTExpression) node.exp).getType();
+      node.varType = node.exp.getType();
     }
-    out.append("for (" + node.varType + " ");
+    out.append("for (" + mem.convertRdfType(node.varType) + " ");
     node.var.visitWithComments(this);
     out.append(": ");
     node.exp.visitWithComments(this);

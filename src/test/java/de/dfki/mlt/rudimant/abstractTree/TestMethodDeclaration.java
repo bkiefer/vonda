@@ -30,7 +30,7 @@ public class TestMethodDeclaration {
     String usage = "if(true){foo();}";
     String s = generate(methdecl1 + methdecl2 + usage);
     s = normalizeSpaces(s);
-    System.out.println(s);
+    //System.out.println(s);
     String expected = "void foo() {int i = 1; } String foo(int a) {int i = 1; }if (true) {foo(); }} ";
     assertEquals(expected, s.substring(s.length() - expected.length()));
   }
