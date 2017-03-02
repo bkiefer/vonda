@@ -142,6 +142,30 @@ public class TestCast {
     String exp = " foo.slot = 1; ";
     assertEquals(exp, r);
   }
+  
+  @Test
+  public void test10() {
+    String in = "DialogueAct a; DialogueAct b; boolean isSmaller; isSmaller = a<b;";
+    String r = getGeneration(in);
+    String exp = " isSmaller = isSmaller(a, b); ";
+    assertEquals(exp, r);
+  }
+  
+  @Test
+  public void test11() {
+    String in = "int i; boolean i; i = 2; ";
+    String r = getGeneration(in);
+    String exp = " i = 2; ";
+     assertEquals(exp, r);
+  }
+  
+  @Test
+  public void test12() {
+    String in = "int i; i = false;";
+    String r= getGeneration(in);
+    String exp = " i = (Object) false; ";
+    assertEquals(exp, r);
+  }
 
   /* TODO: FIX THE TEST/CODE ITSELF, NOT SURE IF THE INPUT IS LEGAL AT ALL.
   @Test

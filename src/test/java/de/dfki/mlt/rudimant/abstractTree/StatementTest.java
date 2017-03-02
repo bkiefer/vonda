@@ -63,10 +63,19 @@ public class StatementTest {
 //   String r = getGeneration(in);
 //   assertEquals("switch (truth){case(truth):; i = 2; case(truth==false):; i = 1; }", r);
 // }
- // @Test
- //  public void StatementTestx(){
- //    String in = "Object foo; for (int i = 1; i <= 2; i++){foo.slot = 1;}";
- //    String r = getGeneration(in);
- //    assertEquals("for (int i = 1; i <= 2; i++){foo.slot = 1;}", r);
+  @Test
+   public void StatementTestx(){     
+     String in = "Object foo; int i; for (int i = 1; i <= 2; i = i+1){foo.slot = 1;}";
+     String r = getGeneration(in);
+     //TODO: this is no proper Java code, find out what's wrong here
+     assertEquals("for (Object[] o : i = (i+1)) { Object ; = o[0]{ foo.slot = 1; }}", r);
+  }
+
+//    @Test
+//   public void StatementTestxy(){  
+//     String in = "Object foo; int i; for (int i = 1; i <= 2; ++i){foo.slot = 1;}";
+//     String r = getGeneration(in);
+//     //TODO: this is no proper Java code, find out what's wrong here
+//     assertEquals("for (int i = 1; i <= 2; ++i) {foo.slot =1;}", r);
 //  }
 }
