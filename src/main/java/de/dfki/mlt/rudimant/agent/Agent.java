@@ -315,6 +315,10 @@ public abstract class Agent extends DataComparator {
     return _proxy.getRdf(Uri);
   }
 
+  public String toUri(Rdf rdf) {
+    return rdf.getURI();
+  }
+
   /* *************************************************************************
   Java shortcuts
   ************************************************************************* */

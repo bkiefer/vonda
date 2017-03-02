@@ -3,24 +3,12 @@ package de.dfki.mlt.rudimant;
 import static de.dfki.mlt.rudimant.Constants.*;
 import static de.dfki.mlt.rudimant.io.RobotGrammarParser.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Writer;
+import java.io.*;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -164,6 +152,7 @@ public class RudimantCompiler {
     handler.shutdown();
   }
 
+  /** Process the top-level rudi file */
   public void process(File topLevel) throws IOException {
     inputDirectory = topLevel.getParentFile();
     File wrapperInit = new File(inputDirectory,
@@ -191,6 +180,7 @@ public class RudimantCompiler {
     processForReal();
   }
 
+  /** Process an imported rudi file */
   private void process(String importSpec) throws IOException {
     inputDirectory = parent.inputDirectory;
     outputDirectory = parent.outputDirectory;
@@ -375,8 +365,8 @@ public class RudimantCompiler {
     uncrustify(outputFile);
   }
 
-  private static Pair<GrammarFile, LinkedList<Token>> parseInput(String realName,
-      InputStream in) throws IOException {
+  private static Pair<GrammarFile, LinkedList<Token>> parseInput(
+      final String realName, InputStream in) throws IOException {
     // initialise the lexer with given input file
     RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(in));
 
@@ -387,9 +377,21 @@ public class RudimantCompiler {
     // initialise the parser
     RobotGrammarParser parser = new RobotGrammarParser(
         new CommonTokenStream(collector));
+    final boolean[] errorOccured = { false };
+    parser.addErrorListener(new BaseErrorListener() {
+      @Override
+      public void syntaxError(Recognizer<?, ?> recognizer,
+          Object offendingSymbol, int line, int charPositionInLine, String msg,
+          RecognitionException e) {
+        errorOccured[0] = true;
+        logger.error("{}.rudi:{}:{}: {}", realName, line, charPositionInLine, msg);
+      }
+    });
 
     // create a parse tree; grammar_file is the start rule
     ParseTree tree = parser.grammar_file();
+    if (errorOccured[0])
+      return null;
 
     // initialise the visitor that will do all the work
     ParseTreeVisitor visitor = new ParseTreeVisitor(realName,

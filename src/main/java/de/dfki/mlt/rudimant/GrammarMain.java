@@ -46,12 +46,17 @@ public class GrammarMain {
 
   // rdf functionality
 
-  public static void process(RudimantCompiler rc, List<String> files)
+  public static boolean process(RudimantCompiler rc, List<String> files)
       throws IOException {
-
-    for (String file : files) {
-      rc.process(new File(file));
+    try {
+      for (String file : files) {
+        rc.process(new File(file));
+      }
+    } catch (UnsupportedOperationException ex) {
+      if (ex.getMessage().startsWith("Parsing")) return true;
+      throw(ex);
     }
+    return false;
   }
 
   /** For unit tests */
@@ -176,7 +181,10 @@ public class GrammarMain {
         configs.put(CFG_OUTPUT_DIRECTORY, outputDirectory);
       }
       main.setConfig(configs);
-      process(RudimantCompiler.init(confDir, configs), files);
+      if (process(RudimantCompiler.init(confDir, configs), files)) {
+        System.out.println("Parsing failed");
+        System.exit(1);
+      }
     } catch (OptionException ex) {
       usage("Error parsing options: " + ex.getMessage());
     } catch (IOException ex) {
