@@ -6,8 +6,7 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import static de.dfki.mlt.rudimant.Visualize.generate;
-import static de.dfki.mlt.rudimant.Visualize.normalizeSpaces;
-import static de.dfki.mlt.rudimant.abstractTree.TstUtils.setUpEmpty;
+import static de.dfki.mlt.rudimant.abstractTree.TstUtils.*;
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,17 +26,11 @@ public class TestForStatements {
   public void test1() {
     String ifstat = "Seat getSeats();\n" +
                     "Iterator<DialogueAct> lastDAs();\n" +
-                    "initiate_greet:\n" +
-                    "  if(true){\n" +
-                    "    for(seat : getSeats()){}}";
+                    "initiate_greet: if(true){ for(seat : getSeats()){} }";
     String s = generate(ifstat);
-    s = normalizeSpaces(s);
-    //System.out.println(s);
     String expected = "public void initiate_greet(){"
-            + " initiate_greet: if (true) {"
-            + "for (Seat seat: getSeats()) {}}"
-            + "} } ";
-    assertEquals(expected, s.substring(s.length() - expected.length()));
+            + " initiate_greet: if (true) {for (Seat seat: getSeats()) {}}}";
+    assertEquals(expected, getForEmpty(s, expected));
   }
 
   @Test
@@ -48,13 +41,10 @@ public class TestForStatements {
                     "  if(true){\n" +
                     "    for(k : kids()){}}";
     String s = generate(ifstat);
-    s = normalizeSpaces(s);
-    //System.out.println(s);
     String expected = "public void initiate_greet(){"
             + " initiate_greet: if (true) {"
-            + "for (Rdf k: kids()) {}}"
-            + "} } ";
-    assertEquals(expected, s.substring(s.length() - expected.length()));
+            + "for (Rdf k: kids()) {}}}";
+    assertEquals(expected, getForEmpty(s, expected));
   }
 
 }

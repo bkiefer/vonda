@@ -238,7 +238,7 @@ public class Mem {
    * @param origin first element class, second rule origin
    */
   public void addFunction(String funcname, String functype,
-          ArrayList<String> partypes, String origin) {
+          List<String> partypes, String origin) {
     if(initializing){
       origin = null;
     }

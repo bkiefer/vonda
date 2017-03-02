@@ -48,9 +48,9 @@ public class TestCast {
 
   @Test
   public void testCast3() {
-    String in = "String th = myLastDA().theme;";
+    String in = "String th = getMyLastDA().theme;";
     String r = getGeneration(in);
-    assertEquals("String th = ((String)myLastDA().getSlot(\"theme\")) ; ", r);
+    assertEquals("String th = ((String)getMyLastDA().getSlot(\"theme\")) ; ", r);
   }
 
   @Test

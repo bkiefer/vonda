@@ -20,12 +20,9 @@ public class TestTypeInference {
   @Test
   public void test() {
     String boolexp = "void foo() { b = 5 < 1; }";
-
     String s = generate(boolexp);
-    s = normalizeSpaces(s);
-    String expected = "void foo() {boolean b = (5 < 1); }} ";
-    expected = normalizeSpaces(expected);
-    assertEquals(expected, s.substring(s.length() - expected.length()));
+    String expected = "void foo() {boolean b = (5 < 1); }";
+    assertEquals(expected, getForEmpty(s, expected));
 
 
     // can't be tested like that because the memory is now handled correctly
@@ -51,57 +48,51 @@ public class TestTypeInference {
 
   @Test
   public void test3() {
-    String in = "QuizHistory getCurrentTurn(); turn = getCurrentTurn();";
-    String s = generate(in); s = normalizeSpaces(s);
-    String expected = "Rdf turn = getCurrentTurn();} ";
-    expected = normalizeSpaces(expected);
-    assertEquals(expected, s.substring(s.length() - expected.length()));
+    String in = "QuizHistory getCurrentTurn(); turn = getCurrentTurn(); ";
+    String s = generate(in);
+    String expected = "Rdf turn = getCurrentTurn();";
+    assertEquals(expected, getForEmptyAssign(s, expected));
   }
 
 
   @Test
   public void test3a() {
     String in = "QuizHistory getCurrentTurn(); Rdf turn = getCurrentTurn();";
-    String s = generate(in); s = normalizeSpaces(s);
-    String expected = "Rdf turn = getCurrentTurn();} ";
-    expected = normalizeSpaces(expected);
-    assertEquals(expected, s.substring(s.length() - expected.length()));
+    String s = generate(in);
+    String expected = "Rdf turn = getCurrentTurn();";
+    assertEquals(expected, getForEmptyAssign(s, expected));
   }
 
   @Test
   public void test4() {
     String in = "Activity a; if (a == null) { }";
-    String s = generate(in); s = normalizeSpaces(s);
-    String expected = "if ((a == null)) {}} ";
-    expected = normalizeSpaces(expected);
-    assertEquals(expected, s.substring(s.length() - expected.length()));
+    String s = generate(in);
+    String expected = "if ((a == null)) {}}";
+    assertEquals(expected, getForEmpty(s, expected));
   }
 
   @Test
   public void test5() {
     String in = "String foo(); boolean b = foo(); ";
-    String s = generate(in); s = normalizeSpaces(s);
-    String expected = "boolean b = foo().isEmpty();} ";
-    expected = normalizeSpaces(expected);
-    assertEquals(expected, s.substring(s.length() - expected.length()));
+    String s = generate(in);
+    String expected = "boolean b = foo().isEmpty();";
+    assertEquals(expected, getForEmptyAssign(s, expected));
   }
 
   @Test
   public void test6() {
     String in = "boolean b = true; ";
-    String s = generate(in); s = normalizeSpaces(s);
-    String expected = "boolean b = true;} ";
-    expected = normalizeSpaces(expected);
-    assertEquals(expected, s.substring(s.length() - expected.length()));
+    String s = generate(in);
+    String expected = "boolean b = true;";
+    assertEquals(expected, getForEmptyAssign(s, expected));
   }
 
   @Test
   public void test7() {
     String in = "int b = 7; ";
-    String s = generate(in); s = normalizeSpaces(s);
-    String expected = "int b = 7;} ";
-    expected = normalizeSpaces(expected);
-    assertEquals(expected, s.substring(s.length() - expected.length()));
+    String s = generate(in);
+    String expected = "int b = 7;";
+    assertEquals(expected, getForEmptyAssign(s, expected));
   }
 
 }

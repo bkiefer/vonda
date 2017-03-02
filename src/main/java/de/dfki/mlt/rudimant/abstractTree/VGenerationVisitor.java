@@ -7,10 +7,7 @@ package de.dfki.mlt.rudimant.abstractTree;
 
 import static de.dfki.mlt.rudimant.Constants.*;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
@@ -284,20 +281,16 @@ public class VGenerationVisitor implements RTStringVisitor {
     // initialize all class attributes before the main process method,
     // do all those import things now - but before that, we have to know about
     // all the variables declared here
-    for (RudiTree r : node.rules) {
-      if (r instanceof StatAbstractBlock) {
-        for (RudiTree e : ((StatAbstractBlock) r).statblock) {
-          if (e instanceof ExpAssignment) {
-            if (((ExpAssignment) e).declaration) {
-              ((ExpAssignment) e).visitWithComments(this);
-              out.append(";");
-            }
-          } else if (e instanceof StatVarDef
-                  || (e instanceof StatMethodDeclaration
-                  && ((StatMethodDeclaration) e).block == null)) {
-            e.visitWithComments(this);
-          }
+    for (RudiTree e : node.rules) {
+      if (e instanceof ExpAssignment) {
+        if (((ExpAssignment) e).declaration) {
+          e.visitWithComments(this);
+          out.append(";");
         }
+      } else if (e instanceof StatVarDef
+          || (e instanceof StatMethodDeclaration
+              && ((StatMethodDeclaration) e).block == null)) {
+        e.visitWithComments(this);
       }
     }
     for (RudiTree r : node.rules) {
@@ -346,6 +339,51 @@ public class VGenerationVisitor implements RTStringVisitor {
     }
     out.append("public " + rudi.getClassName() + "(" + args + ") {\n"
             + "super(" + conargs + ");\n" + declare + "}\n");
+
+    // Now, only get those statements that are not assignments of class attributes
+    for (RudiTree r : node.rules) {
+      if (r instanceof StatAbstractBlock) {
+        for (RudiTree e : ((StatAbstractBlock) r).statblock) {
+          if (e instanceof ExpAssignment) {
+            if (((ExpAssignment) e).declaration) {
+              // The assignments have been treated above (first loop)
+              continue;
+            }
+          } else if (e instanceof StatImport) {
+            continue;
+          } else if (e instanceof StatVarDef
+                  || (e instanceof StatMethodDeclaration
+                  && ((StatMethodDeclaration) e).block == null)) {
+            continue;
+          }
+          e.visitWithComments(this);
+        }
+      } else {
+        if ((r instanceof ExpAssignment && ((ExpAssignment) r).declaration)
+            || r instanceof StatImport
+            || r instanceof StatVarDef
+            || (r instanceof StatMethodDeclaration
+                && ((StatMethodDeclaration) r).block == null)) {
+          continue;
+        } else if (r instanceof GrammarRule ||
+            (r instanceof StatMethodDeclaration
+                && ((StatMethodDeclaration) r).block != null)) {
+          r.visitWithComments(this);
+        } else {
+          // we have something that shouldn't be without a block, create
+          // a stub rule
+          String fname = out.getClassName() + node.rules.indexOf(r);
+          out.append("public void ").append(fname).append("(){");
+          r.visitWithComments(this);
+          if (r instanceof RTExpression) {
+            out.append(";");
+          }
+          out.append("}");
+          List<String> l = Collections.emptyList();
+          mem.addFunction(fname, "void", l, rudi.getClassName());
+        }
+      }
+    }
 
     // finally, the main processing method that will call all rules and imports
     // declared in this file
@@ -401,53 +439,6 @@ public class VGenerationVisitor implements RTStringVisitor {
       }
     }
     out.append("}\n");
-    // Now, only get those statements that are not assignments of class attributes
-    for (RudiTree r : node.rules) {
-      if (r instanceof StatAbstractBlock) {
-        for (RudiTree e : ((StatAbstractBlock) r).statblock) {
-          if (e instanceof ExpAssignment) {
-            if (((ExpAssignment) e).declaration) {
-              // The assignments have been treated above (first loop)
-              continue;
-            }
-          } else if (e instanceof StatImport) {
-            continue;
-          } else if (e instanceof StatVarDef
-                  || (e instanceof StatMethodDeclaration
-                  && ((StatMethodDeclaration) e).block == null)) {
-            continue;
-          }
-          e.visitWithComments(this);
-        }
-      } else {
-        if (r instanceof ExpAssignment) {
-          if (((ExpAssignment) r).declaration) {
-            // The assignments have been treated above (first loop)
-            continue;
-          }
-        } else if (r instanceof StatImport) {
-          continue;
-        } else if (r instanceof StatVarDef
-                || (r instanceof StatMethodDeclaration
-                && ((StatMethodDeclaration) r).block == null)) {
-          continue;
-        } else if (r instanceof GrammarRule ||
-                (r instanceof StatMethodDeclaration
-                && ((StatMethodDeclaration) r).block != null)) {
-          r.visitWithComments(this);
-        } else {
-          // we have something that shouldn't be without a block, create
-          // a stub rule
-          out.append("public void " + out.getClassName()
-                  + node.rules.indexOf(r) + "(){");
-          r.visitWithComments(this);
-          if (r instanceof RTExpression) {
-            out.append(";");
-          }
-          out.append("}");
-        }
-      }
-    }
 
     out.append("}\n");
     mem.leaveClass(oldname, oldrule, oldTrule);
