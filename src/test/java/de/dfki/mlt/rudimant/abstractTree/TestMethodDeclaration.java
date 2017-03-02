@@ -24,6 +24,16 @@ public class TestMethodDeclaration {
   }
 
   @Test
+  public void testParType() {
+    String methdecl = "void foo(List<Child> cs) { i = 1; }";
+
+    String s = generate(methdecl);
+    s = normalizeSpaces(s);
+    String expected = "void foo(List<Rdf> cs) {int i = 1; }} ";
+    assertEquals(expected, s.substring(s.length() - expected.length()));
+  }
+
+  @Test
   public void testMethodOverload(){
     String methdecl1 = "void foo() { i = 1; }\n";
     String methdecl2 = "String foo(int a) { i = 1; }\n";

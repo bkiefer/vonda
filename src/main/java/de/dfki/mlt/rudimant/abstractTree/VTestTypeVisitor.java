@@ -416,6 +416,9 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatMethodDeclaration node) {
+    for(int i = 0; i < node.partypes.size(); i++){
+      node.partypes.set(i, mem.checkRdf(node.partypes.get(i)));
+    }
     mem.addFunction(node.name, node.return_type, node.partypes, node.position);
     node.return_type = mem.checkRdf(node.return_type);
     if (node.block != null) {
