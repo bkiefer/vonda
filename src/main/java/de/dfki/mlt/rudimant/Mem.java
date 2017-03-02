@@ -105,7 +105,16 @@ public class Mem {
    */
   public String convertRdfType(String something){
     something = convertXsdType(something);
-    if(!isRdfType(something)) return something;
+    if(!isRdfType(something)) {
+      if(something.contains("<")){
+        // might be sth like List<Child>
+        something = something.substring(0, something.indexOf("<") + 1)
+                + convertRdfType(something.substring(something.indexOf("<")
+                        + 1, something.lastIndexOf(">")))
+                + ">";
+      }
+      return something;
+    }
     return (DIALOGUE_ACT_TYPE.equals(something)) ? "DialogueAct" : "Rdf";
   }
 

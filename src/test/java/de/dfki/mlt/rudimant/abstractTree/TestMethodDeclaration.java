@@ -19,7 +19,17 @@ public class TestMethodDeclaration {
 
     String s = generate(methdecl);
     s = normalizeSpaces(s);
-    String expected = "void foo() {int i = 1; }} ";
+    String expected = "void foo() {int i = 1; } ";
+    assertEquals(expected, s.substring(s.length() - expected.length()));
+  }
+
+  @Test
+  public void testParType() {
+    String methdecl = "void foo(List<Child> cs) { i = 1; }";
+
+    String s = generate(methdecl);
+    s = normalizeSpaces(s);
+    String expected = "void foo(List<Rdf> cs) {int i = 1; } ";
     assertEquals(expected, s.substring(s.length() - expected.length()));
   }
 
