@@ -291,6 +291,10 @@ public abstract class Agent extends DataComparator {
     timeouts.remove(name);
   }
 
+  protected boolean hasActiveTimeout(String name) {
+    return timeouts.activeTimeout(name);
+  }
+
   public void newData() {
     newData = true;
   }
