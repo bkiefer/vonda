@@ -571,7 +571,8 @@ public class VGenerationVisitor implements RTStringVisitor {
       if (i != 0) {
         out.append(", ");
       }
-      out.append(mem.convertRdfType(node.partypes.get(i)) + " " + node.parameters.get(i));
+      out.append(mem.convertRdfType(node.partypes.get(i))
+              + " " + node.parameters.get(i));
     }
     out.append(")\n");
     node.block.visitWithComments(this);
