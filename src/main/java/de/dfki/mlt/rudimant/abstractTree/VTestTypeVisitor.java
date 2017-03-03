@@ -281,6 +281,18 @@ public class VTestTypeVisitor implements RudiVisitor {
     mem.enterClass(rudi.getClassName());
     for (RudiTree t : node.rules) {
       t.visit(this);
+      // if t will lateron be put into a stub function in GenerationVisitor,
+      // we should add its predicted name to the mem so the method is called in
+      // the correct position between the imports
+      if(!(t instanceof StatAbstractBlock || t instanceof StatImport ||
+              (t instanceof ExpAssignment && ((ExpAssignment) t).declaration) ||
+              t instanceof StatVarDef || t instanceof StatMethodDeclaration ||
+              t instanceof GrammarRule)){
+          String fname = rudi.getClassName() + node.rules.indexOf(t);
+          // add the function to our mem as if it was a rule, so it is called in
+          // the process function
+          mem.addRule(fname, true);
+      }
     }
     if (mem.getToplevelCalls(rudi.getClassName()) != null) {
       for (String s : mem.getToplevelCalls(rudi.getClassName())) {

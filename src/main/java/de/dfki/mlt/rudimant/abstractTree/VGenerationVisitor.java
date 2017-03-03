@@ -372,6 +372,8 @@ public class VGenerationVisitor implements RTStringVisitor {
         } else {
           // we have something that shouldn't be without a block, create
           // a stub rule
+          // Attention! if you change the method naming here, also change it in
+          // TestTypeVisitor!
           String fname = out.getClassName() + node.rules.indexOf(r);
           out.append("public void ").append(fname).append("(){");
           r.visitWithComments(this);
@@ -380,7 +382,6 @@ public class VGenerationVisitor implements RTStringVisitor {
           }
           out.append("}");
           List<String> l = Collections.emptyList();
-          mem.addFunction(fname, "void", l, rudi.getClassName());
         }
       }
     }
