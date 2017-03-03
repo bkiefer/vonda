@@ -7,10 +7,7 @@ package de.dfki.mlt.rudimant.abstractTree;
 
 import static de.dfki.mlt.rudimant.Constants.*;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
@@ -97,10 +94,11 @@ public class VGenerationVisitor implements RTStringVisitor {
     UPropertyAccess pa = null;
     boolean functional = false;
     if (node.left instanceof UFieldAccess) {
-      UFieldAccess acc = (UFieldAccess)node.left;
+      UFieldAccess acc = (UFieldAccess) node.left;
       RudiTree lastPart = acc.parts.get(acc.parts.size() - 1);
-      if (lastPart instanceof UPropertyAccess)
-        pa = (UPropertyAccess)lastPart;
+      if (lastPart instanceof UPropertyAccess) {
+        pa = (UPropertyAccess) lastPart;
+      }
       functional = pa != null && pa.functional;
       // don't print the last field since is will be replaced by a set...(a, b)
       notPrintLastField = pa != null;
@@ -118,8 +116,8 @@ public class VGenerationVisitor implements RTStringVisitor {
       ret += node.left.visitWithSComments(this);
       ret += " = ";
     }
-    if(node.type != null &&
-            !node.type.equals(node.right.getType())){
+    if (node.type != null
+            && !node.type.equals(node.right.getType())) {
       // then there is either sth wrong here, what would at least have resulted
       // in warnings in type testing, or it is possible to cast the right part
       ret += "(" + mem.convertRdfType(node.type) + ") ";
@@ -141,7 +139,7 @@ public class VGenerationVisitor implements RTStringVisitor {
       ret += "!";
     }
     if (node.right != null) {
-      if(node.operator.contains("(")){
+      if (node.operator.contains("(")) {
         ret += node.operator;
         ret += node.left.visitWithSComments(this);
         ret += ", ";
@@ -151,12 +149,12 @@ public class VGenerationVisitor implements RTStringVisitor {
       }
       ret += "(";
       ret += node.left.visitWithSComments(this);
-      ret += " " +  node.operator + " ";
+      ret += " " + node.operator + " ";
       ret += node.right.visitWithSComments(this);
       ret += ")";
       return ret;
     }
-    if(node.operator != null && node.operator.contains("(")){
+    if (node.operator != null && node.operator.contains("(")) {
       return node.left.visitWithSComments(this) + node.operator;
     }
     return node.left.visitWithSComments(this);
@@ -221,8 +219,8 @@ public class VGenerationVisitor implements RTStringVisitor {
     } else {
       // TODO: how to do rdf generation?????
       ret += "_proxy.getClass(\""
-          + mem.getProxy().getClass(node.type)
-          + "\").getNewInstance(DEFNS)";
+              + mem.getProxy().getClass(node.type)
+              + "\").getNewInstance(DEFNS)";
     }
     return ret;
   }
@@ -277,26 +275,22 @@ public class VGenerationVisitor implements RTStringVisitor {
     for (String n : mem.getNeededClasses(node.classname)) {
       out.append("private final ");
       out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-                    + n.substring(0, 1).toLowerCase() + n.substring(1));
+              + n.substring(0, 1).toLowerCase() + n.substring(1));
       out.append(";\n");
     }
     // initialize all class attributes before the main process method,
     // do all those import things now - but before that, we have to know about
     // all the variables declared here
-    for (RudiTree r : node.rules) {
-      if (r instanceof StatAbstractBlock) {
-        for (RudiTree e : ((StatAbstractBlock) r).statblock) {
-          if (e instanceof ExpAssignment) {
-            if (((ExpAssignment) e).declaration) {
-              ((ExpAssignment) e).visitWithComments(this);
-              out.append(";");
-            }
-          } else if (e instanceof StatVarDef
-                  || (e instanceof StatMethodDeclaration
-                  && ((StatMethodDeclaration) e).block == null)) {
-            e.visitWithComments(this);
-          }
+    for (RudiTree e : node.rules) {
+      if (e instanceof ExpAssignment) {
+        if (((ExpAssignment) e).declaration) {
+          e.visitWithComments(this);
+          out.append(";");
         }
+      } else if (e instanceof StatVarDef
+          || (e instanceof StatMethodDeclaration
+              && ((StatMethodDeclaration) e).block == null)) {
+        e.visitWithComments(this);
       }
     }
     for (RudiTree r : node.rules) {
@@ -340,11 +334,57 @@ public class VGenerationVisitor implements RTStringVisitor {
         args += ", " + n.substring(0, 1).toUpperCase() + n.substring(1) + " "
                 + name;
       }
-      declare += "this." + name + " = "  + name + ";\n";
+      declare += "this." + name + " = " + name + ";\n";
       i++;
     }
     out.append("public " + rudi.getClassName() + "(" + args + ") {\n"
             + "super(" + conargs + ");\n" + declare + "}\n");
+
+    // Now, only get those statements that are not assignments of class attributes
+    for (RudiTree r : node.rules) {
+      if (r instanceof StatAbstractBlock) {
+        for (RudiTree e : ((StatAbstractBlock) r).statblock) {
+          if (e instanceof ExpAssignment) {
+            if (((ExpAssignment) e).declaration) {
+              // The assignments have been treated above (first loop)
+              continue;
+            }
+          } else if (e instanceof StatImport) {
+            continue;
+          } else if (e instanceof StatVarDef
+                  || (e instanceof StatMethodDeclaration
+                  && ((StatMethodDeclaration) e).block == null)) {
+            continue;
+          }
+          e.visitWithComments(this);
+        }
+      } else {
+        if ((r instanceof ExpAssignment && ((ExpAssignment) r).declaration)
+            || r instanceof StatImport
+            || r instanceof StatVarDef
+            || (r instanceof StatMethodDeclaration
+                && ((StatMethodDeclaration) r).block == null)) {
+          continue;
+        } else if (r instanceof GrammarRule ||
+            (r instanceof StatMethodDeclaration
+                && ((StatMethodDeclaration) r).block != null)) {
+          r.visitWithComments(this);
+        } else {
+          // we have something that shouldn't be without a block, create
+          // a stub rule
+          // Attention! if you change the method naming here, also change it in
+          // TestTypeVisitor!
+          String fname = out.getClassName() + node.rules.indexOf(r);
+          out.append("public void ").append(fname).append("(){");
+          r.visitWithComments(this);
+          if (r instanceof RTExpression) {
+            out.append(";");
+          }
+          out.append("}");
+          List<String> l = Collections.emptyList();
+        }
+      }
+    }
 
     // finally, the main processing method that will call all rules and imports
     // declared in this file
@@ -366,7 +406,7 @@ public class VGenerationVisitor implements RTStringVisitor {
           for (String c : ncs) {
             if (c.equals(rudi.getClassName())
                     || (c.substring(0, 1).toUpperCase()
-                    + c.substring(1)).equals(rudi.getClassName())) {
+                            + c.substring(1)).equals(rudi.getClassName())) {
               c = "this";
             }
             if (i == 0) {
@@ -400,31 +440,6 @@ public class VGenerationVisitor implements RTStringVisitor {
       }
     }
     out.append("}\n");
-    // Now, only get those statements that are not assignments of class attributes
-    for (RudiTree r : node.rules) {
-      if (r instanceof StatAbstractBlock) {
-        for (RudiTree e : ((StatAbstractBlock) r).statblock) {
-          if (e instanceof ExpAssignment) {
-            if (((ExpAssignment) e).declaration) {
-              // The assignments have been treated above (first loop)
-              continue;
-            }
-          } else if (e instanceof StatImport) {
-            continue;
-          } else if (e instanceof StatVarDef
-                  || (e instanceof StatMethodDeclaration
-                  && ((StatMethodDeclaration) e).block == null)) {
-            continue;
-          }
-          e.visitWithComments(this);
-        }
-      } else {
-        r.visitWithComments(this);
-        if(r instanceof RTExpression){
-          out.append(";");
-        }
-      }
-    }
 
     out.append("}\n");
     mem.leaveClass(oldname, oldrule, oldTrule);
@@ -497,9 +512,9 @@ public class VGenerationVisitor implements RTStringVisitor {
   @Override
   public void visitNode(StatFor2 node) {
     if (node.varType == null) {
-      node.varType = ((RTExpression) node.exp).getType();
+      node.varType = node.exp.getType();
     }
-    out.append("for (" + node.varType + " ");
+    out.append("for (" + mem.convertRdfType(node.varType) + " ");
     node.var.visitWithComments(this);
     out.append(": ");
     node.exp.visitWithComments(this);
@@ -571,7 +586,8 @@ public class VGenerationVisitor implements RTStringVisitor {
       if (i != 0) {
         out.append(", ");
       }
-      out.append(mem.convertRdfType(node.partypes.get(i)) + " " + node.parameters.get(i));
+      out.append(mem.convertRdfType(node.partypes.get(i))
+              + " " + node.parameters.get(i));
     }
     out.append(")\n");
     node.block.visitWithComments(this);
@@ -665,7 +681,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     // aw: changed the direction of the for loop; shouldn't this be enough??
     for (int i = to - 1; i > 0; i--) {
       if (node.parts.get(i) instanceof UPropertyAccess) {
-        UPropertyAccess pa = (UPropertyAccess)node.parts.get(i);
+        UPropertyAccess pa = (UPropertyAccess) node.parts.get(i);
         String cast = mem.convertRdfType(pa.getType());
         ret += "((";
         if (!pa.functional) {
@@ -675,11 +691,11 @@ public class VGenerationVisitor implements RTStringVisitor {
       }
     }
     ret += node.parts.get(0).visitWithSComments(this);
-    String currentType = ((RTExpression)node.parts.get(0)).type;
+    String currentType = ((RTExpression) node.parts.get(0)).type;
     for (int i = 1; i < to; i++) {
       RudiTree currentPart = node.parts.get(i);
       if (currentPart instanceof UPropertyAccess) {
-        UPropertyAccess pa = (UPropertyAccess)currentPart;
+        UPropertyAccess pa = (UPropertyAccess) currentPart;
         // then we are in the case that this is actually an rdf operation
         if (DIALOGUE_ACT_TYPE.equals(currentType)) {
           ret += ".getSlot(";
@@ -693,7 +709,7 @@ public class VGenerationVisitor implements RTStringVisitor {
         ret += ".";
         ret += currentPart.visitStringV(this);
         if (currentPart instanceof RTExpression) {
-          currentType = ((RTExpression)currentPart).type;
+          currentType = ((RTExpression) currentPart).type;
         } else {
           currentType = null;
         }
@@ -701,7 +717,6 @@ public class VGenerationVisitor implements RTStringVisitor {
     }
     return ret;
   }
-
 
   @Override
   public String visitNode(UFuncCall node) {
@@ -778,7 +793,7 @@ public class VGenerationVisitor implements RTStringVisitor {
 //    out.append(condV2.getBoolCreation().toString());
     condV.newInit(rule, realLook);
     String result = condV.visitNode(bool_exp);
-    for (String s : realLook.keySet()){
+    for (String s : realLook.keySet()) {
       out.append("boolean " + s + " = false;\n");
     }
     out.append(result);

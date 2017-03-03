@@ -22,7 +22,7 @@ public class TstUtils {
     return it.next();
   }
 
-  static int prefix = 678, suffix = 5;
+  static int prefix = 628, suffix = 55;
 
   public static String getGeneration(String in) {
     StringWriter out = new StringWriter();
@@ -52,6 +52,27 @@ public class TstUtils {
     catch (FileNotFoundException fex) {
       throw new RuntimeException(fex);
     }
+  }
+
+
+  /** Extract the right string if there is no global if-rule, and in case it's
+   *  not only a variable declaration (then, there is also the constructor)
+   */
+  public static String getForEmpty(String s, String exp) {
+    s = normalizeSpaces(s);
+    exp = normalizeSpaces(exp);
+    int end = s.lastIndexOf("public void process()") - 1  ;
+    return normalizeSpaces(s.substring(end - exp.length(), end));
+  }
+
+  /** Extract the right string if there is no global if-rule, and in case it's
+   *  not only a variable declaration (then, there is also the constructor)
+   */
+  public static String getForEmptyAssign(String s, String exp) {
+    s = normalizeSpaces(s);
+    exp = normalizeSpaces(exp);
+    int end = s.lastIndexOf("public null()");
+    return normalizeSpaces(s.substring(end - exp.length(), end));
   }
 
 }

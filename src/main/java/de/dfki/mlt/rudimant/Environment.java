@@ -5,11 +5,8 @@
  */
 package de.dfki.mlt.rudimant;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,13 +21,11 @@ public class Environment {
 
   private Map<String, String> variableToType;
   private Map<String, String> variableOrigin;
-  private HashSet<String> rdfs;
   private HashMap<String, Set<Function>> functions;
 
   public Environment() {
     this.variableToType = new HashMap<>();
     this.variableOrigin = new HashMap<>();
-    this.rdfs = new HashSet<>();
     this.functions = new HashMap<>();
   }
 
@@ -77,7 +72,7 @@ public class Environment {
    * @param origin first element class, second rule origin
    */
   public void addFunction(String funcname, String functype,
-          ArrayList<String> partypes, String origin, Mem mem) {
+          List<String> partypes, String origin, Mem mem) {
     functype = mem.checkRdf(functype);
     for (int i = 0; i < partypes.size(); ++i) {
       partypes.set(i, mem.checkRdf(partypes.get(i)));
@@ -105,7 +100,7 @@ public class Environment {
                 partypes));
   }
 
-  public String getFunctionOrigin(String funcname, ArrayList<String> partypes,
+  public String getFunctionOrigin(String funcname, List<String> partypes,
           Mem mem) {
     if (functions.keySet().contains(funcname)) {
       for (Function f : functions.get(funcname)) {
@@ -117,8 +112,7 @@ public class Environment {
     return null;
   }
 
-  public boolean existsFunction(String funcname,
-          ArrayList<String> partypes, Mem mem) {
+  public boolean existsFunction(String funcname, List<String> partypes, Mem mem) {
     if (!functions.containsKey(funcname)) {
       return false;
     }
@@ -136,7 +130,7 @@ public class Environment {
    * @param funcname the name of the function
    * @return its return type or null
    */
-  public String getFunctionRetType(String funcname, ArrayList<String> partypes,
+  public String getFunctionRetType(String funcname, List<String> partypes,
           Mem mem) {
     if(!functions.containsKey(funcname)){
       return null;
@@ -154,9 +148,10 @@ public class Environment {
     private String name;
     private String origin;
     private String returnType;
-    private ArrayList<String> parameterTypes;
+    private List<String> parameterTypes;
 
-    public Function(String name, String origin, String returnType, ArrayList<String> parameterTypes) {
+    public Function(String name, String origin, String returnType,
+        List<String> parameterTypes) {
       this.name = name;
       this.origin = origin;
       this.returnType = returnType;
@@ -184,7 +179,7 @@ public class Environment {
             || mem.unifyTypes(this.returnType, type) != null;
     }
 
-    public boolean areParametertypes(ArrayList<String> partypes, Mem mem) {
+    public boolean areParametertypes(List<String> partypes, Mem mem) {
       if (this.parameterTypes.size() != partypes.size()) {
         return false;
       }

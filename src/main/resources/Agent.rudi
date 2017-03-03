@@ -1,57 +1,50 @@
 // all standard Java methods that we should remember
 
 boolean equals(Object e);
-void info(String s, int i);
 boolean startsWith(String s);
 boolean endsWith(String s);
 String substring(int i);
 
 // all Agent methods we should know
 
-void sendBehaviour(Object obj);
-void reset();
+// Rdf(Proxy) methods
+Rdf toRdf(String uri);
+String toUri(Rdf rdf);
+
+// DialogueAct methods
 DialogueAct createEmitDA(DialogueAct da);
 DialogueAct emitDA(int delay, DialogueAct da);
 DialogueAct emitDA(DialogueAct da);
-DialogueAct getMyLastDA();
+DialogueAct myLastDA();
 boolean isMyLastDA(DialogueAct da);
-boolean isMyLastDA(String raw);
 int lastOccurence(DialogueAct da, Iterable<DialogueAct> daList);
 int lastOccurenceOfMyDA(String raw);
 int saidInSession(DialogueAct da);
 boolean waitingForResponse();
 int receivedInSession(DialogueAct da);
+
 DialogueAct lastDA();
 DialogueAct addLastDA(DialogueAct newDA);
 boolean isLastDA(String raw);
 void lastDAprocessed();
+
+// Timeout methods
 void newTimeout(String name, int millis);
 boolean isTimedOut(String name);
 void removeTimeout(String name);
-void newData();
+boolean hasActiveTimeout(String name);
+
 String getLanguage();
-boolean waitForIntention();
-//void propose(String name, Proposal p);
-void executeProposal(Intention intention);
+
+// Math methods
 int random(limit int);
 float random();
+
+// logging methods
+void info(String s, int i);
  
-
-//!!!!!! Attention !!!!!!! This is used extensively in rudis, but not declared anywhere
-DialogueAct myLastDA();
-
 // all Agent variables we should know
 
-String executedLast;
-long lastDAprocessed;
-String _language;
-double proposedRobotMood;
 RdfProxy _proxy;
 CommunicationHub _hub;
 AsrTts asr;
-Deque<DialogueAct> myLastDAs;
-Deque<DialogueAct> lastDAs;
-Timeouts timeouts;
-boolean newData;
-//Map<String, Proposal> pendingProposals;
-boolean proposalsSent;

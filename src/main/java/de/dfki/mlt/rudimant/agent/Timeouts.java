@@ -44,13 +44,15 @@ public class Timeouts {
     t.timer = new Timer(timeToFire, new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        if ("fired".equals(e.getActionCommand())
-                || e.getActionCommand() == null) {
-          pendingTimeouts.get(id).timer.stop();
-          pendingTimeouts.remove(id);
-          occuredTimeouts.add(id);
-          logger.info("timeout fired: " + id);
-          timeoutOccured = true;
+        synchronized(pendingTimeouts) {
+          if ("fired".equals(e.getActionCommand())
+              || e.getActionCommand() == null) {
+            pendingTimeouts.get(id).timer.stop();
+            pendingTimeouts.remove(id);
+            occuredTimeouts.add(id);
+            logger.info("timeout fired: " + id);
+            timeoutOccured = true;
+          }
         }
       }
     });
@@ -72,4 +74,9 @@ public class Timeouts {
     return result;
   }
 
+  public boolean activeTimeout(String id) {
+    synchronized(pendingTimeouts) {
+      return pendingTimeouts.containsKey(id);
+    }
+  }
 }

@@ -105,7 +105,16 @@ public class Mem {
    */
   public String convertRdfType(String something){
     something = convertXsdType(something);
-    if(!isRdfType(something)) return something;
+    if(!isRdfType(something)) {
+      if(something.contains("<")){
+        // might be sth like List<Child>
+        something = something.substring(0, something.indexOf("<") + 1)
+                + convertRdfType(something.substring(something.indexOf("<")
+                        + 1, something.lastIndexOf(">")))
+                + ">";
+      }
+      return something;
+    }
     return (DIALOGUE_ACT_TYPE.equals(something)) ? "DialogueAct" : "Rdf";
   }
 
@@ -147,9 +156,16 @@ public class Mem {
     // if is necessary, because otherwise, Object as the static type in a
     // declaration gets changed to RdfType by
     // VGenerationVisitor.visitNode(ExpAssignment node)
-    if ("Object".equals(type)
+    if ("Object".equals(type) || null == type
         || "String".equals(type)){ // what about Integer, int, etc.??
       return type;
+    }
+    if(!type.startsWith("<") && type.contains("<")){
+      // might be sth like List<Child>
+      type = type.substring(0, type.indexOf("<") + 1)
+              + checkRdf(type.substring(type.indexOf("<")
+                      + 1, type.lastIndexOf(">")))
+              + ">";
     }
     RdfClass clazz = _proxy.fetchClass(type);
     if (clazz != null) {
@@ -222,7 +238,7 @@ public class Mem {
    * @param origin first element class, second rule origin
    */
   public void addFunction(String funcname, String functype,
-          ArrayList<String> partypes, String origin) {
+          List<String> partypes, String origin) {
     if(initializing){
       origin = null;
     }

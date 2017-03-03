@@ -1,4 +1,4 @@
-
+void foo(List<Child> cs) { i = 1; }
 DialogueAct activity;
 
 bla:

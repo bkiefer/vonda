@@ -62,13 +62,13 @@ public class TestCast {
     assertEquals(exp, r);
   }
 
-  @Test
-  public void testCast5() {
-    String in = "t = (QuizHistory) a;";
-    String r = getGeneration(in);
-    String exp = "QuizHistory t = a; ";
-    assertEquals(exp, r);
-  }
+//  @Test
+//  public void testCast5() {
+//    String in = "t = (QuizHistory) a;";
+//    String r = getGeneration(in);
+//    String exp = "Rdf t = a;";
+//    assertEquals(exp, r);
+//  }
 
   @Test
   public void test1() {

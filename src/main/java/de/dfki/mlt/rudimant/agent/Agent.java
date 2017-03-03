@@ -291,6 +291,10 @@ public abstract class Agent extends DataComparator {
     timeouts.remove(name);
   }
 
+  protected boolean hasActiveTimeout(String name) {
+    return timeouts.activeTimeout(name);
+  }
+
   public void newData() {
     newData = true;
   }
@@ -309,6 +313,10 @@ public abstract class Agent extends DataComparator {
 
   public Rdf toRdf(String Uri) {
     return _proxy.getRdf(Uri);
+  }
+
+  public String toUri(Rdf rdf) {
+    return rdf.getURI();
   }
 
   /* *************************************************************************
@@ -409,7 +417,7 @@ public abstract class Agent extends DataComparator {
 //    logger.info(fromAsr);
 //    comSys.send(".*", "SpeechActEvent", fromAsr);
 //  }
-  protected abstract void process();
+  public abstract void process();
 
   @SuppressWarnings("rawtypes")
   public void init(String language, RdfProxy proxy, String confFile) {
