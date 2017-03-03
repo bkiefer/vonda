@@ -35,17 +35,17 @@ public class TestTypes {
     assertEquals("Rdf turn = getCurrentTurn(activity); ", r);
   }
 
-//  @Test
-//  public void testType3(){
-//    String in = "propose(\"continue_quiz\") {\n" +
-//              "      Rdf turn = getCurrentTurn(activity);}";
-//    String r = getGeneration(in);
-//    System.out.println(r);
-//    assertEquals("propose(\"continue_quiz\", new Proposal() {"
-//            + "public void run() {"
-//            + "Rdf turn = getCurrentTurn(activity) ; }});"
-//            , r);
-//  }
+  @Test
+  public void testType3(){
+    String in = "propose(\"continue_quiz\") {\n" +
+              "      Rdf turn = getCurrentTurn(activity);}";
+    String r = getGeneration(in);
+    System.out.println(r);
+    assertEquals("propose(\"continue_quiz\", new Proposal() {"
+            + "public void run() {"
+            + "Rdf turn = getCurrentTurn(activity); }});"
+            , r);
+  }
 
   @Test
   public void testType4(){

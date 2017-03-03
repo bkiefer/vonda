@@ -156,7 +156,7 @@ public class TestCast {
     String in = "int i; boolean i; i = 2; ";
     String r = getGeneration(in);
     String exp = " i = 2; ";
-     assertEquals(exp, r);
+    assertEquals(exp, r);
   }
   
   @Test
@@ -164,6 +164,14 @@ public class TestCast {
     String in = "int i; i = false;";
     String r= getGeneration(in);
     String exp = " i = (Object) false; ";
+    assertEquals(exp, r);
+  }
+  
+  @Test
+  public void test13() {
+    String in = "DialogueAct a; DialogueAct b; boolean isGreater; isGreater = a>b;";
+    String r = getGeneration(in);
+    String exp = " isGreater = isGreater(a, b); ";
     assertEquals(exp, r);
   }
 

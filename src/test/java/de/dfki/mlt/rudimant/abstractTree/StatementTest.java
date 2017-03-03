@@ -49,14 +49,14 @@ public class StatementTest {
     assertEquals("do{ foo.slot = 2; }while ((foo.slot == 1));", r);
   }
   
-  // not supported yet; not sure whether this is syntactically correct
-//  @Test
-//  public void StatementTest5(){
-//    String in = "propose(\"hello\"){};";
-//    String r = getGeneration(in);
-//    assertEquals("", r);
-//  }
- 
+  @Test
+  public void StatementTest5(){
+    String in = "int i; i = 1; return i;";
+    String r = getGeneration(in);
+    assertEquals(" i = 1; return i; ", r);
+  }
+  
+  
 // @Test
 // public void StatementTest6(){
 //   String in = "int i; boolean truth; switch(truth){case (truth): i=2;  case(truth==false): i=1;}";
@@ -65,17 +65,23 @@ public class StatementTest {
 // }
   @Test
    public void StatementTestx(){     
-     String in = "Object foo; int i; for (int i = 1; i <= 2; i = i+1){foo.slot = 1;}";
+     String in = "Object foo; for (int i = 1; i <= 2; i = i+1){foo.slot = 1;}";
      String r = getGeneration(in);
      //TODO: this is no proper Java code, find out what's wrong here
      assertEquals("for (Object[] o : i = (i+1)) { Object ; = o[0]{ foo.slot = 1; }}", r);
   }
 
-//    @Test
+//   @Test
 //   public void StatementTestxy(){  
-//     String in = "Object foo; int i; for (int i = 1; i <= 2; ++i){foo.slot = 1;}";
+//     String in = "Object foo; for (int i = 1; i <= 2; ++i){foo.slot = 1;}";
 //     String r = getGeneration(in);
-//     //TODO: this is no proper Java code, find out what's wrong here
 //     assertEquals("for (int i = 1; i <= 2; ++i) {foo.slot =1;}", r);
+//  }
+//   
+//  @Test
+//  public void StatementTestxx(){
+//    String in = "Object foo; for (int i = 1; i <= 2; i++){foo.slot = 1;}";
+//    String r = getGeneration(in);
+//    assertEquals("", r);
 //  }
 }
