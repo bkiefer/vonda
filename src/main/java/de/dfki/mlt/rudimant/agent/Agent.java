@@ -417,7 +417,7 @@ public abstract class Agent extends DataComparator {
 //    logger.info(fromAsr);
 //    comSys.send(".*", "SpeechActEvent", fromAsr);
 //  }
-  protected abstract void process();
+  public abstract void process();
 
   @SuppressWarnings("rawtypes")
   public void init(String language, RdfProxy proxy, String confFile) {
