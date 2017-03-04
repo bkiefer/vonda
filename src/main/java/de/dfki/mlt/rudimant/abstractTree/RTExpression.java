@@ -69,6 +69,13 @@ public abstract class RTExpression extends RudiTree {
         || (type.endsWith(">") && ! isRdfType()));
   }
 
+  /** Return the "inner" type of a complex type expression */
+  public String getInnerType() {
+    int left = type.indexOf('<');
+    int right = type.lastIndexOf('>');
+    return type.substring(left + 1, right);
+  }
+
   public RTExpression ensureBoolean() {
     ExpBoolean result = null;
     USingleValue right = null;

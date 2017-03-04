@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -77,6 +78,8 @@ public abstract class Agent extends DataComparator {
    *  incoming events into the event queue
    */
   protected boolean proposalsSent;
+
+  protected Set<String> rulesToLog = new HashSet<>();
 
   /** Send something out to the world */
   protected void sendBehaviour(Object obj) {

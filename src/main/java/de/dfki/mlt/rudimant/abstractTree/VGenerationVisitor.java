@@ -92,21 +92,19 @@ public class VGenerationVisitor implements RTStringVisitor {
     }
     ret += (' ');
     UPropertyAccess pa = null;
-    boolean functional = false;
     if (node.left instanceof UFieldAccess) {
       UFieldAccess acc = (UFieldAccess) node.left;
       RudiTree lastPart = acc.parts.get(acc.parts.size() - 1);
       if (lastPart instanceof UPropertyAccess) {
         pa = (UPropertyAccess) lastPart;
       }
-      functional = pa != null && pa.functional;
       // don't print the last field since is will be replaced by a set...(a, b)
       notPrintLastField = pa != null;
       ret += node.left.visitWithSComments(this);
       notPrintLastField = false;
       if (pa != null) {
         //out.append(functional ? ".setSingleValue(" : ".setValue(");
-        ret += ".setValue(";  // always right.
+        ret += ".setValue(";  // always right!
         ret += pa.getPropertyName();
         ret += ", ";
       } else {
@@ -217,7 +215,6 @@ public class VGenerationVisitor implements RTStringVisitor {
       ret += "new ";
       ret += node.construct.visitStringV(this);
     } else {
-      // TODO: how to do rdf generation?????
       ret += "_proxy.getClass(\""
               + mem.getProxy().getClass(node.type)
               + "\").getNewInstance(DEFNS)";
@@ -256,19 +253,9 @@ public class VGenerationVisitor implements RTStringVisitor {
     }
     out.append(";\n");
 
-    out.append("import java.util.ArrayList;\n"
-            + "import java.util.List;\n"
-            + "import java.util.Set;\n"
-            + "import java.util.HashSet;\n"
-            + "import java.util.HashMap;\n"
-            + "import org.slf4j.Logger;\n"
-            + "import org.slf4j.LoggerFactory;\n\n");
+    out.append("import java.util.*;\n\n");
     out.append("public class " + node.classname + " extends "
             + rudi.getWrapperClass() + "{\n");
-    out.append("public static Logger logger = LoggerFactory.getLogger("
-            + mem.getClassName() + ".class);\n");
-    out.append("// add to this set the name of all rules you want to be logged\n");
-    out.append("private Set<String> rulesToLog = new HashSet<>();\n");
 
     // create variable fields for all those classes whose concrete instances we
     // will need
@@ -381,7 +368,6 @@ public class VGenerationVisitor implements RTStringVisitor {
             out.append(";");
           }
           out.append("}");
-          List<String> l = Collections.emptyList();
         }
       }
     }
@@ -424,18 +410,6 @@ public class VGenerationVisitor implements RTStringVisitor {
       } else {
         // a rule
         out.append(toplevel + "(");
-//        // don't forget the needed class instances here
-//        i = 0;
-//        for (String n : mem.getNeededClasses(toplevel)) {
-//          if (i == 0) {
-//            out.append(n.substring(0, 1).toLowerCase()
-//                    + n.substring(1));
-//          } else {
-//            out.append(", " + n.substring(0, 1).toLowerCase()
-//                    + n.substring(1));
-//          }
-//          i++;
-//        }
         out.append(");");
       }
     }
@@ -555,13 +529,7 @@ public class VGenerationVisitor implements RTStringVisitor {
 
   @Override
   public void visitNode(StatImport node) {
-    // moved to type visitor
-//    logger.info("Processing import " + node.content);
-//    try {
-//      RudimantCompiler.getEmbedded(rudi).process(node.content);
-//    } catch (IOException ex) {
-//      throw new RuntimeException(ex);
-//    }
+    // all necessary things are done in the type visitor
   }
 
   @Override
@@ -668,26 +636,16 @@ public class VGenerationVisitor implements RTStringVisitor {
     if (notPrintLastField) {
       --to;
     }
-    // before visiting the first part, we need to create all the castings
-    // Plan: if we could determine the types of subexpressions in TypeVisitor,
-    //       we could enter them into a list and just output that list here
-    //       in reversed order - edit: let's just reverse them in the access class
 
-    // TODO: THIS IS WRONG, THE CASTS HAVE TO BE CREATED IN REVERSED ORDER
-    // this cries for recursion (from end to begin), only that we have to
-    // append and prepend, which we can't do with the stream. Would have to
-    // construct it as string
-    // TODO: CONSTRUCT A TEST EXAMPLE WITH AT LEAST THREE RDF ACCESSES
-    // aw: changed the direction of the for loop; shouldn't this be enough??
+    // changed the direction of the for loop; should be enough
     for (int i = to - 1; i > 0; i--) {
       if (node.parts.get(i) instanceof UPropertyAccess) {
         UPropertyAccess pa = (UPropertyAccess) node.parts.get(i);
         String cast = mem.convertRdfType(pa.getType());
+        //ret += "((" + cast + ")";
         ret += "((";
-        if (!pa.functional) {
-          cast = "Set<Object>";
-        }
-        ret += cast + ")";
+        ret += (!pa.functional) ? "Set<Object>" : cast;
+        ret += ")";
       }
     }
     ret += node.parts.get(0).visitWithSComments(this);
@@ -776,21 +734,10 @@ public class VGenerationVisitor implements RTStringVisitor {
       return ((USingleValue) bool_exp).content;
     }
     collectingCondition = true;
-    RTExpression bool = bool_exp;
-
-    // remembers how the expressions should be realized by rudimant
-    LinkedHashMap<String, String> compiledLook = new LinkedHashMap<>();
 
     // remembers how the expressions looked (for logging)
     LinkedHashMap<String, String> realLook = new LinkedHashMap<>();
-//    condV.renewMap(rule, realLook, compiledLook, this.rudi);
-//    condV.visitNode(bool);
-//    // now create a condition from those things
-//    Object[] expnames = realLook.keySet().toArray();
-//    condV2.newMap(expnames, compiledLook);
-//    condV2.visitNode(bool_exp);
-//
-//    out.append(condV2.getBoolCreation().toString());
+
     condV.newInit(rule, realLook);
     String result = condV.visitNode(bool_exp);
     for (String s : realLook.keySet()) {

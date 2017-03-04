@@ -344,10 +344,12 @@ public class VTestTypeVisitor implements RudiVisitor {
   public void visitNode(StatFor2 node) {
     node.exp.visit(this);
     if (node.varType == null) {
-      String et = node.exp.getType();
-      if (et.contains("<")) {
-        node.varType = mem.checkRdf(
-            et.substring(et.indexOf("<") + 1, et.indexOf(">")));
+      if (node.exp.type != null && node.exp.isComplexType()) {
+        node.varType = mem.checkRdf(node.exp.getInnerType());
+      } else {
+        rudi.typeError("Iterable for loop type is unknown or not generic, but: "
+            + node.exp.getType(), node);
+        node.varType = "Object";
       }
     }
     mem.addVariableDeclaration(node.var.toString(), node.varType, node.position);
@@ -415,7 +417,23 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatSetOperation node) {
-    // TODO: test whether the set accepts variables of this type??
+    // First call type checks for components, then perform the possible local
+    // tests: The parameter type of the set should be compatible with what's
+    // added.
+    node.left.visit(this);
+    node.right.visit(this);
+    if (! ((RTExpression)node.left).isComplexType()) {
+      rudi.typeError("Left side of a set operation is not a set, but "
+          + ((RTExpression)node.left).getType(), node);
+      return;
+    }
+    String inner = ((RTExpression)node.left).getInnerType();
+    String res = mem.unifyTypes(inner, ((RTExpression)node.right).type);
+    if (res == null) {
+      rudi.typeError("Incompatible types in set operation: "
+          + ((RTExpression)node.left).getType() + " <> " +
+          ((RTExpression)node.right).type, node);
+    }
   }
 
   /* **********************************************************************
@@ -538,8 +556,6 @@ public class VTestTypeVisitor implements RudiVisitor {
 
     var.content = predUri; // replace plain name by URI
     int predType = clz.getPropertyType(predUri);
-    // TODO: Set<Bla> vs Bla distinction, not that i know what to do with it.
-    boolean isFunctional = (predType & RdfClass.FUNCTIONAL_PROPERTY) != 0;
     // TODO: CONVERT XSD TYPES TO JAVA, WHERE POSSIBLE
     currentType = clz.getPropertyRange(predUri);
     if (currentType == null) {
@@ -556,8 +572,14 @@ public class VTestTypeVisitor implements RudiVisitor {
               + "  of partial field access for " + var.content + " to "
               + currentType, node);
     }
-    // TODO: an access will always return sth of type Object, so to not get null
-    // I'll set the type of this to Object by default
+    // Set<Bla> vs Bla distinction, unfortunately, Java can not reason about
+    // parameter types, so this must be Object
+    boolean isFunctional = (predType & RdfClass.FUNCTIONAL_PROPERTY) != 0;
+    if (! isFunctional) {
+      //currentType = "Set<"+currentType+">";
+      currentType="Set<Object>";
+    }
+    // the type of this is set to Object by default (not null)
     return new UPropertyAccess(var, false, currentType, isFunctional);
   }
 
