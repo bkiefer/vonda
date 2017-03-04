@@ -297,6 +297,7 @@
 <http://www.dfki.de/lt/onto/pal/domain.owl#karate> <http://www.dfki.de/lt/onto/pal/domain.owl#name> "Karate"@nl .
 <http://www.dfki.de/lt/onto/pal/domain.owl#karate> <http://www.dfki.de/lt/onto/pal/domain.owl#name> "Karate"@it .
 <http://www.dfki.de/lt/onto/pal/domain.owl#forename> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#DiachronicProperty> .
+<http://www.dfki.de/lt/onto/pal/domain.owl#forename> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
 <http://www.dfki.de/lt/onto/pal/domain.owl#forename> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
 <http://www.dfki.de/lt/onto/pal/domain.owl#forename> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/domain.owl#Animate> .
 <http://www.dfki.de/lt/onto/pal/domain.owl#forename> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .

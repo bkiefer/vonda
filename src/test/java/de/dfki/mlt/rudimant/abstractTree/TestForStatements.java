@@ -24,12 +24,12 @@ public class TestForStatements {
 
   @Test
   public void test1() {
-    String ifstat = "Seat getSeats();\n" +
+    String ifstat = "List<Child> getSeats();\n" +
                     "Iterator<DialogueAct> lastDAs();\n" +
                     "initiate_greet: if(true){ for(seat : getSeats()){} }";
     String s = generate(ifstat);
     String expected = "public void initiate_greet(){"
-            + " initiate_greet: if (true) {for (Seat seat: getSeats()) {}}}";
+            + " initiate_greet: if (true) {for (Rdf seat: getSeats()) {}}}";
     assertEquals(expected, getForEmpty(s, expected));
   }
 

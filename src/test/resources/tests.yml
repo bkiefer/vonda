@@ -1,0 +1,9 @@
+outputDirectory:    ../../../target/generated
+wrapperClass:       de.dfki.dialogue.NaoAgent
+ontologyFile:       ontos/pal.ini
+failOnError:        false
+targetConstructor:
+rootPackage:        de.dfki.dialogue
+nameToURI:
+  Activity : "<dom:Activity>"
+  Child : "<dom:Child>"

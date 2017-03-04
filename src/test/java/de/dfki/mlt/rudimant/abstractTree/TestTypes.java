@@ -53,4 +53,12 @@ public class TestTypes {
     String r = getGeneration(in);
     assertEquals("int correct = (int) q.getWhichCorrect(); ", r);
   }
+
+  @Test
+  public void testReturnSetType() {
+    String in = "Child c; docs = c.isTreatedBy;";
+    String r = getGeneration(in);
+    assertEquals("Set<Object> docs = ((Set<Object>)c.getValue(\"<dom:isTreatedBy>\")) ; ", r);
+  }
+
 }

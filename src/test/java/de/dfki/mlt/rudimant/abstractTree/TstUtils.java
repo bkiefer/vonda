@@ -9,6 +9,8 @@ import java.util.Iterator;
 
 public class TstUtils {
   public static final String RESOURCE_DIR = "src/test/resources/";
+  public static final String TESTCONF = RESOURCE_DIR + "tests.yml";
+
 
   public static RudiTree getNodeOfInterest(GrammarFile gf, int n) {
     assertNotNull(gf);
@@ -22,11 +24,18 @@ public class TstUtils {
     return it.next();
   }
 
-  static int prefix = 628, suffix = 55;
+  static int prefix = 286, suffix = 55;
 
   public static String getGeneration(String in) {
     StringWriter out = new StringWriter();
     parseAndTypecheck(in, out);
+    StringBuffer sb = out.getBuffer();
+    return normalizeSpaces(sb.subSequence(prefix, sb.length() - suffix).toString());
+  }
+
+  public static String getTypeError(String in) throws Throwable {
+    StringWriter out = new StringWriter();
+    parseAndTypecheckWithError(in, out);
     StringBuffer sb = out.getBuffer();
     return normalizeSpaces(sb.subSequence(prefix, sb.length() - suffix).toString());
   }
@@ -37,7 +46,7 @@ public class TstUtils {
 
   public static void setUpNonEmpty() {
     try {
-      setUp(RESOURCE_DIR + "dipal/dipal.yml", "label: if(true) {", "}");
+      setUp(TESTCONF, "label: if(true) {", "}");
     }
     catch (FileNotFoundException fex) {
       throw new RuntimeException(fex);
@@ -47,7 +56,7 @@ public class TstUtils {
 
   public static void setUpEmpty() {
     try {
-      setUp(RESOURCE_DIR + "dipal/dipal.yml", "", "");
+      setUp(TESTCONF, "", "");
     }
     catch (FileNotFoundException fex) {
       throw new RuntimeException(fex);
