@@ -130,7 +130,7 @@ public class GrammarMain {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
-    OptionParser parser = new OptionParser("hvedr:w:c:o:");
+    OptionParser parser = new OptionParser("hver:w:c:o:");
     parser.accepts("help");
     OptionSet options = null;
 
@@ -196,7 +196,7 @@ public class GrammarMain {
   private static void usage(String message) {
     System.out.println(message);
     System.out.println(
-          "java rudimant -h<elp> -v<isualize> -e<rrorstops> -d<ypecheck>\n"
+          "java rudimant -h<elp> -v<isualize> -e<rrorstops>\n"
         + "              -r ontos.ini -w WrapperClass -c config.yaml\n"
         + "              -o outputDir toplevelfile.rudi (file.rudi)*\n"
         + "For help see rumdimant -help\n");
