@@ -63,10 +63,10 @@ public class TestTypes {
 
   @Test
   public void testLambdaExp() {
-    String in = "Set<Child> cs; cs.contains((c) -> c.foreName.equals(\"John\");";
+    String in = "Set<Child> cs; cs.contains((c) -> c.foreName.equals(\"John\"));";
     String r = getGeneration(in);
-    assertEquals("public void Test1(){      cs.contains((c) -> "
-            + "((Set <Object> )c.getValue(\"foreName\")).equals(\"John\"));}", r);
+    assertEquals("cs.contains((c) -> "
+            + "((Set<Object>)c.getValue(\"foreName\")).equals(\"John\")); ", r);
   }
 
 }
