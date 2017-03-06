@@ -33,7 +33,7 @@ public class TestAdditionalEmpty {
   @Test
   public void testForExp() {
     String in = "lab: if(true) for(s : child.sessions) 23;";
-    String exp = "public void lab(){ void lab(){ lab: if (true) for (Object s_outer : child.sessions) { Object s = (Object)s_outer; 23; }}";
+    String exp = "public void lab(){ lab: if (true) for (Object s_outer : child.sessions) { Object s = (Object)s_outer; 23; }}";
     String r = getGenerationEmpty(in, exp);
     assertEquals(exp, r);
   }

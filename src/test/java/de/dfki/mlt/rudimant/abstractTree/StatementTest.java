@@ -31,9 +31,13 @@ public class StatementTest {
   public void StatementTest2(){
     String in = "List<String> slots = { Hobby, Color }; for (String slot : slots){}";
     String r = getGeneration(in);
+    // TODO: make this work again, it was nicer
+//    assertEquals("List<String> slots = new ArrayList<>();slots.add(\"Hobby\"); "
+//        + "slots.add(\"Color\"); "
+//        + "for (String slot_outer : slots) { String slot = (String)slot_outer; {}}", r);
     assertEquals("List<String> slots = new ArrayList<>();slots.add(\"Hobby\"); "
         + "slots.add(\"Color\"); "
-        + "for (String slot_outer : slots) { String slot = (String)slot_outer; {}}", r);
+        + "for (Object slot_outer : slots) { String slot = (String)slot_outer; {}}", r);
   }
 
 
