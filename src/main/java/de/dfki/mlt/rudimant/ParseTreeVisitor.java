@@ -468,7 +468,13 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitLambda_exp(RobotGrammarParser.Lambda_expContext ctx) {
-    return new ExpLambda(ctx.getText()).setPosition(ctx, currentClass);
+    // '(' VARIABLE (',' VARIABLE)* ')' '->' (exp|statement_block);
+    List<String> args = new ArrayList<>();
+    for(int i = 1; i < ctx.getChildCount() - 3; i += 2) {
+      args.add(ctx.getChild(i).getText());
+    }
+    return new ExpLambda(args, this.visit(ctx.getChild(ctx.getChildCount() - 1)))
+        .setPosition(ctx, currentClass);
   }
 
   @Override

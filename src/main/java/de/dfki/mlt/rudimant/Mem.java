@@ -90,12 +90,28 @@ public class Mem {
     return (type != null && type.charAt(0) == '<');
   }
 
+  public static boolean isComplexType(String type) {
+    if (type == null) return false;
+    return ("String".equals(type)
+        || type.startsWith("Map")
+        || type.startsWith("Set")
+        || type.startsWith("RdfSet")
+        || type.startsWith("RdfList")
+        || (type.endsWith(">") && ! isRdfType(type)));
+  }
+
+  /** Return the "inner" type of a complex type expression */
+  public static String getInnerType(String type) {
+    int left = type.indexOf('<');
+    int right = type.lastIndexOf('>');
+    return type.substring(left + 1, right);
+  }
   /**
    * returns a correct java type for xsd types
    * @param something
    * @return
    */
-  public String convertXsdType(String something){
+  public static String convertXsdType(String something){
     String ret = RdfClass.xsdToJavaPod(something);
     if (ret != null) return ret;
     return something;
@@ -106,7 +122,7 @@ public class Mem {
    * @param something
    * @return
    */
-  public String convertRdfType(String something){
+  public static String convertRdfType(String something){
     something = convertXsdType(something);
     if(!isRdfType(something)) {
       if(something.contains("<")){

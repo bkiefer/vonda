@@ -269,7 +269,10 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpLambda node) {
-    // nothing to do
+    this.visitNode(node.body);
+    if (node.body instanceof RTExpression) {
+      node.return_type = ((RTExpression)node.body).getType();
+    }
   }
 
   @Override
@@ -631,10 +634,18 @@ public class VTestTypeVisitor implements RudiVisitor {
           currentType = null;
         }
       } else { // unknown or Java type, let's try with the accessor type
-        if (currentNode instanceof RTExpression) {
-          currentType = ((RTExpression) currentNode).type;
+        if (Mem.isComplexType(currentType)
+            && currentNode instanceof UFuncCall
+            && ! ((UFuncCall)currentNode).exps.isEmpty()
+            && ((UFuncCall)currentNode).exps.get(0) instanceof ExpLambda) {
+          ((ExpLambda)((UFuncCall)currentNode).exps.get(0)).parType =
+              Mem.getInnerType(currentType);
         } else {
-          currentType = null;
+          if (currentNode instanceof RTExpression) {
+            currentType = ((RTExpression) currentNode).type;
+          } else {
+            currentType = null;
+          }
         }
       }
     }

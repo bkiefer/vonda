@@ -157,6 +157,7 @@ exp
   | string_expression
   | boolean_exp
   | new_exp
+  | lambda_exp
   ;
 
 complex_exp
@@ -201,8 +202,9 @@ new_exp
   | NEW function_call
   ;
 
-// TODO: IS THIS STILL USED?
-lambda_exp: '(' (DEC_VAR? VARIABLE (',' DEC_VAR? VARIABLE)*)? ')' ARROW exp;
+//lambda_exp: '(' DEC_VAR? VARIABLE (',' DEC_VAR? VARIABLE)* ')'
+//    '->' (exp|statement_block);
+lambda_exp: '(' VARIABLE (',' VARIABLE)* ')' '->' (exp|statement_block);
 
 string_expression : (complex_exp|if_exp) '+' exp | (complex_exp|if_exp) ;
 

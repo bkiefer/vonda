@@ -94,6 +94,8 @@ public class TreeModelAdapter extends ModelAdapter {
       result = "propose";
     } else if (model instanceof UFieldAccess) {
       result = "FieldAcc";
+    } else if (model instanceof ExpLambda) {
+      result = " -> ";
     } else if (model instanceof StatMethodDeclaration) {
       StatMethodDeclaration md = (StatMethodDeclaration)model;
       result = "meth " + ((md.return_type != null) ? md.return_type + " ": "")
