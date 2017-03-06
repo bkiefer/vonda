@@ -205,7 +205,14 @@ public class VGenerationVisitor implements RTStringVisitor {
 
   @Override
   public String visitNode(ExpLambda node) {
-    return node.content;
+    String ret = "(" + node.parameters.get(0);
+    for(int i = 1; i < node.parameters.size(); i++){
+      ret += ", " + node.parameters.get(i);
+    }
+    ret += ") -> ";
+    // TODO: this will not work with blocks ::::(
+    ret += node.body.visitStringV(this);
+    return ret;
   }
 
   @Override
@@ -665,7 +672,7 @@ public class VGenerationVisitor implements RTStringVisitor {
           ret += pa.functional ? ".getSingleValue(" : ".getValue(";
         }
         ret += pa.getPropertyName();
-        ret += ")) ";
+        ret += "))";
         currentType = pa.type;
       } else {
         ret += ".";

@@ -269,10 +269,15 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpLambda node) {
+    mem.enterEnvironment();
+    for(String arg : node.parameters){
+      mem.addVariableDeclaration(arg, node.parType, mem.getClassName());
+    }
     this.visitNode(node.body);
     if (node.body instanceof RTExpression) {
       node.return_type = ((RTExpression)node.body).getType();
     }
+    mem.leaveEnvironment();
   }
 
   @Override
@@ -283,6 +288,19 @@ public class VTestTypeVisitor implements RudiVisitor {
     String oldTrule = mem.getCurrentTopRule();
     mem.enterClass(rudi.getClassName());
     for (RudiTree t : node.rules) {
+      // learn about all defs before visiting the other statements!!
+      if(t instanceof StatVarDef || (t instanceof StatMethodDeclaration
+                                    && ((StatMethodDeclaration)t).block == null)
+              || (t instanceof ExpAssignment && ((ExpAssignment) t).declaration)){
+        t.visit(this);
+      }
+    }
+    for (RudiTree t : node.rules) {
+      if(t instanceof StatVarDef || (t instanceof StatMethodDeclaration
+                                    && ((StatMethodDeclaration)t).block == null)
+              || (t instanceof ExpAssignment && ((ExpAssignment) t).declaration)){
+        continue;
+      }
       if(t instanceof GrammarRule){
         mem.ontop = true;
       }
@@ -291,8 +309,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       // we should add its predicted name to the mem so the method is called in
       // the correct position between the imports
       if(!(t instanceof StatAbstractBlock || t instanceof UImport ||
-              (t instanceof ExpAssignment && ((ExpAssignment) t).declaration) ||
-              t instanceof StatVarDef || t instanceof StatMethodDeclaration ||
+              t instanceof StatMethodDeclaration ||
               t instanceof GrammarRule)){
           String fname = rudi.getClassName() + node.rules.indexOf(t);
           // add the function to our mem as if it was a rule, so it is called in
@@ -619,6 +636,13 @@ public class VTestTypeVisitor implements RudiVisitor {
     partOfFieldAccess = true;
     for (int i = 1; i < node.parts.size(); ++i) {
       currentNode = node.parts.get(i);
+      if (Mem.isComplexType(currentType)
+          && currentNode instanceof UFuncCall
+          && ! ((UFuncCall)currentNode).exps.isEmpty()
+          && ((UFuncCall)currentNode).exps.get(0) instanceof ExpLambda) {
+        ((ExpLambda)((UFuncCall)currentNode).exps.get(0)).parType =
+            Mem.getInnerType(currentType);
+      }
       currentNode.visit(this);
       if (Mem.isRdfType(currentType)) {
         if (currentNode instanceof UVariable) {
@@ -634,18 +658,10 @@ public class VTestTypeVisitor implements RudiVisitor {
           currentType = null;
         }
       } else { // unknown or Java type, let's try with the accessor type
-        if (Mem.isComplexType(currentType)
-            && currentNode instanceof UFuncCall
-            && ! ((UFuncCall)currentNode).exps.isEmpty()
-            && ((UFuncCall)currentNode).exps.get(0) instanceof ExpLambda) {
-          ((ExpLambda)((UFuncCall)currentNode).exps.get(0)).parType =
-              Mem.getInnerType(currentType);
+        if (currentNode instanceof RTExpression) {
+          currentType = ((RTExpression) currentNode).type;
         } else {
-          if (currentNode instanceof RTExpression) {
-            currentType = ((RTExpression) currentNode).type;
-          } else {
-            currentType = null;
-          }
+          currentType = null;
         }
       }
     }

@@ -25,6 +25,7 @@ imports
 
 statement
   : statement_block
+  | var_def
   | exp ';'
   | list_creation
   | grammar_rule
@@ -35,7 +36,6 @@ statement
   | while_statement
   | for_statement
   | switch_statement
-  | var_def
   | CONTINUE ';'
   | BREAK ';'
   ;

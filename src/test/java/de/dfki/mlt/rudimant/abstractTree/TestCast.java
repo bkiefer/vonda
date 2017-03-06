@@ -24,7 +24,7 @@ public class TestCast {
     String r = getGeneration(in);
     assertEquals(
         "((Set<Object>)c.getValue(\"<dom:hasActivities>\"))"
-        + " .add(_proxy.getClass(\"<dom:Idle>\").getNewInstance(DEFNS)); ",
+        + ".add(_proxy.getClass(\"<dom:Idle>\").getNewInstance(DEFNS)); ",
         r);
   }
 
@@ -33,7 +33,7 @@ public class TestCast {
     String in = "Session c; c.hasActivities += new Idle;";
     String r = getGeneration(in);
     assertEquals(
-        "((Set<Object>)c.getValue(\"<dom:hasActivities>\")) .add(_proxy.getClass(\"<dom:Idle>\").getNewInstance(DEFNS));",
+        "((Set<Object>)c.getValue(\"<dom:hasActivities>\")).add(_proxy.getClass(\"<dom:Idle>\").getNewInstance(DEFNS));",
         r);
   }
 
@@ -42,7 +42,7 @@ public class TestCast {
     String in = "QuizHistory turn; boolean correct = turn.correct;";
     String r = getGeneration(in);
     String exp = "boolean correct = "
-        + "((boolean)turn.getSingleValue(\"<dom:correct>\")) ; ";
+        + "((boolean)turn.getSingleValue(\"<dom:correct>\")); ";
     assertEquals(exp, r);
   }
 
@@ -50,7 +50,7 @@ public class TestCast {
   public void testCast3() {
     String in = "String th = myLastDA().theme;";
     String r = getGeneration(in);
-    assertEquals("String th = ((String)myLastDA().getSlot(\"theme\")) ; ", r);
+    assertEquals("String th = ((String)myLastDA().getSlot(\"theme\")); ", r);
   }
 
   @Test
@@ -99,7 +99,7 @@ public class TestCast {
   public void test4() {
      String in = "Activity activity; bool = (activity.status == \"gameProposed\");";
      String r = getGeneration(in);
-     String exp = "boolean bool = isEqual(((String)activity.getSingleValue(\"<dom:status>\")) , \"gameProposed\"); ";
+     String exp = "boolean bool = isEqual(((String)activity.getSingleValue(\"<dom:status>\")), \"gameProposed\"); ";
      assertEquals(exp, r);
   }
 
@@ -115,7 +115,7 @@ public class TestCast {
   public void test6() {
     String in = "Child user; user.isLocatedAt == \"<dom:Home>\";";
     String r = getGeneration(in);
-    String exp = "isEqual(((Rdf)user.getSingleValue(\"<dom:isLocatedAt>\")) , \"<dom:Home>\"); ";
+    String exp = "isEqual(((Rdf)user.getSingleValue(\"<dom:isLocatedAt>\")), \"<dom:Home>\"); ";
     assertEquals(exp, r);
   }
 
@@ -123,7 +123,7 @@ public class TestCast {
   public void test6a() {
     String in = "Child user; docs = user.isTreatedBy;";
     String r = getGeneration(in);
-    String exp = "Set<Object> docs = ((Set<Object>)user.getValue(\"<dom:isTreatedBy>\")) ; ";
+    String exp = "Set<Object> docs = ((Set<Object>)user.getValue(\"<dom:isTreatedBy>\")); ";
     assertEquals(exp, r);
   }
 
@@ -131,7 +131,7 @@ public class TestCast {
   public void test7() {
     String in = "Child user; b = (user.forename == \"John\");";
     String r = getGeneration(in);
-    String exp = "boolean b = isEqual(((String)user.getSingleValue(\"<dom:forename>\")) , \"John\"); ";
+    String exp = "boolean b = isEqual(((String)user.getSingleValue(\"<dom:forename>\")), \"John\"); ";
     assertEquals(exp, r);
   }
 
@@ -189,7 +189,7 @@ public class TestCast {
   public void testMultipleRdfAccess() {
     String in = "Quiz c ; b = c.hasHistory.correct;";
     String r = getGeneration(in);
-    String exp = "boolean b = ((boolean)((Rdf)c.getSingleValue(\"<dom:hasHistory>\")) .getSingleValue(\"<dom:correct>\")) ; ";
+    String exp = "boolean b = ((boolean)((Rdf)c.getSingleValue(\"<dom:hasHistory>\")).getSingleValue(\"<dom:correct>\")) ; ";
     assertEquals(exp, r);
   }
 
