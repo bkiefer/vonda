@@ -47,4 +47,25 @@ public class TestForStatements {
     assertEquals(expected, getForEmpty(s, expected));
   }
 
+  @Test
+  public void test3() {
+    String ifstat = "Set<Object> getI(); for(s : getI()){"
+            + "label: if(true) {s = null;}}";
+    String s = generate(ifstat);
+    String expected = "public void null1(){for (Object s: getI()) {" +
+              "//Rule label " +
+              "label: " +
+              "if (true) { s = null; }}}";
+    System.out.println(getForEmpty(s, expected));
+    assertEquals(expected, getForEmpty(s, expected));
+  }
+//  public void null1(){for (Object s: getI()) {public void label(){
+//label:
+//if (true) { s = null;
+//}}
+//}}	public void process(){
+//// this.init();
+//label();null1();}
+//}
+
 }

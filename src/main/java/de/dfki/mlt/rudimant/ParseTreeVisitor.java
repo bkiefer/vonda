@@ -35,8 +35,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   // as this was created for another design, use currentClass instead
   // private String currentRule;
   private String currentClass;
-  // same for the current toplevel rule
-  private int curDepth;
 
   /**
    * constructor; the visitor needs to know in which rule/file we're in
@@ -55,7 +53,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // imports* (comment (grammar_rule | ...))* comment
     ArrayList<RudiTree> rules = new ArrayList<RudiTree>();
     for (int i = 0; i < ctx.getChildCount(); i++) {
-      curDepth = 0;
       rules.add(this.visit(ctx.getChild(i)));
     }
     return new GrammarFile(rules).setPosition(ctx, currentClass);
@@ -98,10 +95,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
     //  label if_statement
     String ruleName = ctx.getChild(0).getText();
-    boolean toplevel = (curDepth == 0); // then this is a toplevel rule
-    curDepth++;
     return new GrammarRule(ruleName,
-            (StatIf) this.visit(ctx.getChild(2)), toplevel)
+            (StatIf) this.visit(ctx.getChild(2)))
             .setPosition(ctx, currentClass);
   }
 

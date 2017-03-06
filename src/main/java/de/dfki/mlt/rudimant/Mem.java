@@ -44,6 +44,9 @@ public class Mem {
 
   private RdfProxy _proxy;
 
+  // to be set by grammarfile if a toplevel rule is expected
+  public boolean ontop = false;
+
   /**
    * to be able to not go down into environments for our different
    * initialization files
@@ -330,8 +333,9 @@ public class Mem {
    * @param toplevel
    * @return the rule's number, to be used in bitwise if markers
    */
-  public void addRule(String rule, boolean toplevel) {
-    if (toplevel) {
+  public void addRule(String rule) {
+    if (ontop) {
+      ontop = false;
       this.rulesAndImports.get(this.curClass).add(rule);
       this.ruleNumber = 1;
       curTopRule = rule;

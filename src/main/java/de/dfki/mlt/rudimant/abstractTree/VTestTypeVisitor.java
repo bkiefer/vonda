@@ -280,6 +280,9 @@ public class VTestTypeVisitor implements RudiVisitor {
     String oldTrule = mem.getCurrentTopRule();
     mem.enterClass(rudi.getClassName());
     for (RudiTree t : node.rules) {
+      if(t instanceof GrammarRule){
+        mem.ontop = true;
+      }
       t.visit(this);
       // if t will lateron be put into a stub function in GenerationVisitor,
       // we should add its predicted name to the mem so the method is called in
@@ -291,7 +294,8 @@ public class VTestTypeVisitor implements RudiVisitor {
           String fname = rudi.getClassName() + node.rules.indexOf(t);
           // add the function to our mem as if it was a rule, so it is called in
           // the process function
-          mem.addRule(fname, true);
+          mem.ontop = true;
+          mem.addRule(fname);
       }
     }
     if (mem.getToplevelCalls(rudi.getClassName()) != null) {
@@ -310,7 +314,8 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(GrammarRule node) {
-    mem.addRule(node.label, node.toplevel);
+    node.toplevel = mem.ontop;
+    mem.addRule(node.label);
     // we step down into a new environment (later turned to a method) whose
     //  variables cannot be seen from the outside
     if (node.toplevel) {
