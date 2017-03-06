@@ -189,7 +189,7 @@ public class TestCast {
   public void testMultipleRdfAccess() {
     String in = "Quiz c ; b = c.hasHistory.correct;";
     String r = getGeneration(in);
-    String exp = "boolean b = ((boolean)((Rdf)c.getSingleValue(\"<dom:hasHistory>\")).getSingleValue(\"<dom:correct>\")) ; ";
+    String exp = "boolean b = ((boolean)((Rdf)c.getSingleValue(\"<dom:hasHistory>\")).getSingleValue(\"<dom:correct>\")); ";
     assertEquals(exp, r);
   }
 
