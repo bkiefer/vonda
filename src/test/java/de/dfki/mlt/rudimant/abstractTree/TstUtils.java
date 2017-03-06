@@ -71,7 +71,8 @@ public class TstUtils {
     s = normalizeSpaces(s);
     exp = normalizeSpaces(exp);
     int end = s.lastIndexOf("public void process()") - 1  ;
-    return normalizeSpaces(s.substring(end - exp.length(), end));
+    int start = 246; //end - exp.length();
+    return normalizeSpaces(s.substring(start, end));
   }
 
   public static String getGenerationEmpty(String in, String exp) {

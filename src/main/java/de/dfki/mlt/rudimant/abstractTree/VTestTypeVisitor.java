@@ -348,13 +348,23 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatFor2 node) {
     node.exp.visit(this);
+    String innerIterableType;
+    if (node.exp.type != null && node.exp.isComplexType()) {
+      innerIterableType = mem.checkRdf(node.exp.getInnerType());
+    } else {
+      rudi.typeError("Iterable for loop type is unknown or not generic, but: "
+          + node.exp.getType(), node);
+      innerIterableType= "Object";
+    }
     if (node.varType == null) {
-      if (node.exp.type != null && node.exp.isComplexType()) {
-        node.varType = mem.checkRdf(node.exp.getInnerType());
-      } else {
-        rudi.typeError("Iterable for loop type is unknown or not generic, but: "
-            + node.exp.getType(), node);
-        node.varType = "Object";
+      node.varType = innerIterableType;
+    } else {
+      node.varType = mem.checkRdf(node.varType);
+      String mergeType = mem.unifyTypes(node.varType, innerIterableType);
+      if (mergeType == null) {
+        rudi.typeError("Incompatible types in short for loop: "
+            + node.varType + " : " + innerIterableType, node);
+        node.varType = innerIterableType;
       }
     }
     mem.addVariableDeclaration(node.var.toString(), node.varType, node.position);

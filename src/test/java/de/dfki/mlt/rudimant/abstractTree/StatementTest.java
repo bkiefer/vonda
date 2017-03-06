@@ -31,32 +31,34 @@ public class StatementTest {
   public void StatementTest2(){
     String in = "List<String> slots = { Hobby, Color }; for (String slot : slots){}";
     String r = getGeneration(in);
-    assertEquals("List<String> slots = new ArrayList<>();slots.add(\"Hobby\"); slots.add(\"Color\"); for (String slot: slots) {}", r);
+    assertEquals("List<String> slots = new ArrayList<>();slots.add(\"Hobby\"); "
+        + "slots.add(\"Color\"); "
+        + "for (String slot_outer : slots) { String slot = (String)slot_outer; {}}", r);
   }
-  
-  
+
+
   @Test
   public void StatementTest3(){
     String in = "Object foo; if (foo.slot == 1){foo.slot = 2;} else {foo.slot = 1;}";
     String r = getGeneration(in);
     assertEquals("if ((foo.slot == 1)) { foo.slot = 2; }else { foo.slot = 1; }", r);
   }
-  
+
   @Test
   public void StatementTest4(){
     String in = "Object foo; do {foo.slot = 2;} while (foo.slot == 1)";
     String r = getGeneration(in);
     assertEquals("do{ foo.slot = 2; }while ((foo.slot == 1));", r);
   }
-  
+
   @Test
   public void StatementTest5(){
     String in = "int i; i = 1; return i;";
     String r = getGeneration(in);
     assertEquals(" i = 1; return i; ", r);
   }
-  
-  
+
+
 // @Test
 // public void StatementTest6(){
 //   String in = "int i; boolean truth; switch(truth){case (truth): i=2;  case(truth==false): i=1;}";
@@ -64,7 +66,7 @@ public class StatementTest {
 //   assertEquals("switch (truth){case(truth):; i = 2; case(truth==false):; i = 1; }", r);
 // }
   @Test
-   public void StatementTestx(){     
+   public void StatementTestx(){
      String in = "Object foo; for (int i = 1; i <= 2; i = i+1){foo.slot = 1;}";
      String r = getGeneration(in);
      //TODO: this is no proper Java code, find out what's wrong here
@@ -72,12 +74,12 @@ public class StatementTest {
   }
 
 //   @Test
-//   public void StatementTestxy(){  
+//   public void StatementTestxy(){
 //     String in = "Object foo; for (int i = 1; i <= 2; ++i){foo.slot = 1;}";
 //     String r = getGeneration(in);
 //     assertEquals("for (int i = 1; i <= 2; ++i) {foo.slot =1;}", r);
 //  }
-//   
+//
 //  @Test
 //  public void StatementTestxx(){
 //    String in = "Object foo; for (int i = 1; i <= 2; i++){foo.slot = 1;}";

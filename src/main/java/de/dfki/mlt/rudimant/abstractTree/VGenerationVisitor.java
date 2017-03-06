@@ -487,15 +487,17 @@ public class VGenerationVisitor implements RTStringVisitor {
 
   @Override
   public void visitNode(StatFor2 node) {
-    if (node.varType == null) {
-      node.varType = node.exp.getType();
-    }
-    out.append("for (" + mem.convertRdfType(node.varType) + " ");
-    node.var.visitWithComments(this);
-    out.append(": ");
+    out.append("for (Object ");
+    String var = node.var.visitWithSComments(this);
+    out.append(var).append("_outer : ");
     node.exp.visitWithComments(this);
-    out.append(") ");
+    out.append(") { ")
+       .append(mem.convertRdfType(node.varType))
+       .append(" ").append(var);
+    out.append(" = (").append(mem.convertRdfType(node.varType)).append(")")
+       .append(var).append("_outer;\n");
     visitStatementOrExpression(node.statblock);
+    out.append("}");
   }
 
   @Override

@@ -16,7 +16,7 @@ public class TestAdditional {
   public void testDontKnowType(){
     String in = "for(seat : getSeats()){}";
     String r = getGeneration(in);
-    assertEquals("for (Object seat: getSeats()) {}", r);
+    assertEquals("for (Object seat_outer : getSeats()) { Object seat = (Object)seat_outer; {}}", r);
   }
 
   // check for type error
