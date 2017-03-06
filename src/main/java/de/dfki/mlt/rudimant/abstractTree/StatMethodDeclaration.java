@@ -15,7 +15,7 @@ import java.util.Collections;
  *
  * @author Anna Welker
  */
-public class StatMethodDeclaration extends RudiTree {
+public class StatMethodDeclaration extends RTStatement {
 
   String visibility;
   String return_type;

@@ -238,13 +238,10 @@ public class VGenerationVisitor implements RTStringVisitor {
       out.append("package " + pkg + ";\n");
       pkg += ".";
     }
-    // Let's import our supersuper class
+    out.append("import java.util.*;\n\n");
     out.append("import de.dfki.mlt.rudimant.agent.DialogueAct;\n");
     out.append("import de.dfki.lt.hfc.db.rdfProxy.Rdf;\n");
-    // we also need all imports that might be hidden in /*@ in the rudi
-    // so, look for it in the comment before the first element we've got
-    node.rules.get(0).printImportifJava(this);
-    // maybe we need to import the class that imported us to use its variables
+    // Let's import our supersuper class
     out.append("import ");
     if (rudi.getParent() != null) {
       out.append(pkg + rudi.getParent().getClassName());
@@ -253,7 +250,11 @@ public class VGenerationVisitor implements RTStringVisitor {
     }
     out.append(";\n");
 
-    out.append("import java.util.*;\n\n");
+    // we also need all imports that might be hidden in /*@ in the rudi
+    // so, look for it in the comment before the first element we've got
+    node.rules.get(0).printImportifJava(this);
+    // maybe we need to import the class that imported us to use its variables
+
     out.append("public class " + node.classname + " extends "
             + rudi.getWrapperClass() + "{\n");
 
@@ -283,7 +284,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     for (RudiTree r : node.rules) {
       if (r instanceof StatAbstractBlock) {
         for (RudiTree e : ((StatAbstractBlock) r).statblock) {
-          if (e instanceof StatImport) {
+          if (e instanceof UImport) {
             r.visitWithComments(this);
           }
         }
@@ -336,7 +337,7 @@ public class VGenerationVisitor implements RTStringVisitor {
               // The assignments have been treated above (first loop)
               continue;
             }
-          } else if (e instanceof StatImport) {
+          } else if (e instanceof UImport) {
             continue;
           } else if (e instanceof StatVarDef
                   || (e instanceof StatMethodDeclaration
@@ -347,7 +348,7 @@ public class VGenerationVisitor implements RTStringVisitor {
         }
       } else {
         if ((r instanceof ExpAssignment && ((ExpAssignment) r).declaration)
-            || r instanceof StatImport
+            || r instanceof UImport
             || r instanceof StatVarDef
             || (r instanceof StatMethodDeclaration
                 && ((StatMethodDeclaration) r).block == null)) {
@@ -440,6 +441,12 @@ public class VGenerationVisitor implements RTStringVisitor {
     }
   }
 
+  public void visitStatementOrExpression(RudiTree rt) {
+    rt.visitWithComments(this);
+    if (rt instanceof RTExpression)
+      out.append(";\n");
+  }
+
   @Override
   public void visitNode(StatAbstractBlock node) {
     if (node.braces) {
@@ -448,12 +455,7 @@ public class VGenerationVisitor implements RTStringVisitor {
       out.append("{");
     }
     for (RudiTree stat : node.statblock) {
-      if (stat instanceof RTExpression) {
-        stat.visitWithComments(this);
-        out.append(";\n");
-        continue;
-      }
-      stat.visitWithComments(this);
+      visitStatementOrExpression(stat);
     }
     if (node.braces) {
       out.append("}");
@@ -463,7 +465,7 @@ public class VGenerationVisitor implements RTStringVisitor {
   @Override
   public void visitNode(StatDoWhile node) {
     out.append("do");
-    node.block.visitWithComments(this);
+    visitStatementOrExpression(node.block);
     out.append("while (");
     node.condition.visitWithComments(this);
     out.append(");");
@@ -480,7 +482,7 @@ public class VGenerationVisitor implements RTStringVisitor {
       node.arithmetic.visitWithComments(this);
     }
     out.append(");");
-    node.statblock.visitWithComments(this);
+    visitStatementOrExpression(node.statblock);
   }
 
   @Override
@@ -493,7 +495,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     out.append(": ");
     node.exp.visitWithComments(this);
     out.append(") ");
-    node.statblock.visitWithComments(this);
+    visitStatementOrExpression(node.statblock);
   }
 
   @Override
@@ -505,7 +507,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     for (String s : node.variables) {
       out.append("\nObject " + s + " = o[" + count++ + "]");
     }
-    node.statblock.visitWithComments(this);
+    visitStatementOrExpression(node.statblock);
     out.append("}");
   }
 
@@ -520,15 +522,15 @@ public class VGenerationVisitor implements RTStringVisitor {
       node.condition.visitWithComments(this);
       out.append(") ");
     }
-    node.statblockIf.visitWithComments(this);
+    visitStatementOrExpression(node.statblockIf);
     if (node.statblockElse != null) {
       out.append("else ");
-      node.statblockElse.visitWithComments(this);
+      visitStatementOrExpression(node.statblockElse);
     }
   }
 
   @Override
-  public void visitNode(StatImport node) {
+  public void visitNode(UImport node) {
     // all necessary things are done in the type visitor
   }
 
@@ -616,7 +618,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     out.append("while (");
     node.condition.visitWithComments(this);
     out.append(")");
-    node.block.visitWithComments(this);
+    visitStatementOrExpression(node.block);
   }
 
   @Override

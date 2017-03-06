@@ -284,7 +284,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       // if t will lateron be put into a stub function in GenerationVisitor,
       // we should add its predicted name to the mem so the method is called in
       // the correct position between the imports
-      if(!(t instanceof StatAbstractBlock || t instanceof StatImport ||
+      if(!(t instanceof StatAbstractBlock || t instanceof UImport ||
               (t instanceof ExpAssignment && ((ExpAssignment) t).declaration) ||
               t instanceof StatVarDef || t instanceof StatMethodDeclaration ||
               t instanceof GrammarRule)){
@@ -372,7 +372,7 @@ public class VTestTypeVisitor implements RudiVisitor {
    * TODO: WHAT HAPPENS HERE? IS IT STILL NEEDED?
    */
   @Override
-  public void visitNode(StatImport node) {
+  public void visitNode(UImport node) {
     String conargs = "";
 //    if (null != rudi.getConstructorArgs()
 //            && !rudi.getConstructorArgs().isEmpty()) {

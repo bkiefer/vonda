@@ -19,11 +19,11 @@ public class StatFor3 extends RTStatement {
 
   List<String> variables;
   RudiTree exp;
-  RTStatement statblock;
+  RudiTree statblock;
   String position;
 
   public StatFor3(List<String> variables, RudiTree exp,
-      RTStatement block, String position) {
+      RudiTree block, String position) {
     this.variables = variables;
     this.exp = exp;
     this.statblock = block;

@@ -45,7 +45,7 @@ public interface RudiVisitor {
 
   public void visitNode(StatIf node);
 
-  public void visitNode(StatImport node);
+  public void visitNode(UImport node);
 
   public void visitNode(StatListCreation node);
 

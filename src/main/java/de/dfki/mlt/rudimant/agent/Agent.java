@@ -159,10 +159,6 @@ public abstract class Agent extends DataComparator {
     return myLastDAs.peekFirst();
   }
 
-  public boolean isMyLastDA(DialogueAct da) {
-    return da.subsumes(myLastDA());
-  }
-
   /** Return the index of the last speech act equal or more specific than the
    *  given one
    */
@@ -236,14 +232,6 @@ public abstract class Agent extends DataComparator {
     lastDAs.addFirst(newDA);
     newData();
     return newDA;
-  }
-
-  // todo: RAUS!
-  public boolean isLastDA(String raw) {
-    if (lastDA() == null) {
-      return false;
-    }
-    return new DialogueAct(raw).subsumes(lastDA());
   }
 
   public void lastDAprocessed() {
@@ -440,8 +428,7 @@ public abstract class Agent extends DataComparator {
 
   protected void propose(String name, Proposal p) {
     // add the proposal to the pending proposals, but not twice
-    if (!pendingProposals.containsKey(name) //&& name != executedLast
-            ) {
+    if (!pendingProposals.containsKey(name)) {
       p.name = name;
       pendingProposals.put(name, p);
     }
@@ -463,13 +450,28 @@ public abstract class Agent extends DataComparator {
     }
   }
 
+  public void logRule(String name) {
+    rulesToLog.add(name);
+  }
+
+  public void unLogRule(String name) {
+    rulesToLog.remove(name);
+  }
+
   /**
    * function that logs (rule) conditions
    * @param values the parts of the condition, mapped to true or false
    * @param rule the name of the rule whose condition this is
    * @param file the file the rule is in
    */
-  public void LoggerFunction(HashMap<String,Boolean> values, String rule, String file){
-    // TODO: do sth useful with information
+  public void LoggerFunction(Map<String,Boolean> values, String rule, String file){
+    if (rulesToLog.contains(rule)) {
+      StringBuffer sb = new StringBuffer();
+      for (Map.Entry<String, Boolean> e : values.entrySet()) {
+        sb.append("  ")
+          .append(e.getKey()).append(": ").append(e.getValue()).append('\n');
+      }
+      logger.debug("Rule {}:{}\n{}", file, rule, sb.toString());
+    }
   }
 }

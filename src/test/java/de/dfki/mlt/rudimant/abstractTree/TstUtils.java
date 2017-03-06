@@ -74,6 +74,11 @@ public class TstUtils {
     return normalizeSpaces(s.substring(end - exp.length(), end));
   }
 
+  public static String getGenerationEmpty(String in, String exp) {
+    String s = generate(in);
+    return getForEmpty(s, exp);
+  }
+
   /** Extract the right string if there is no global if-rule, and in case it's
    *  not only a variable declaration (then, there is also the constructor)
    */

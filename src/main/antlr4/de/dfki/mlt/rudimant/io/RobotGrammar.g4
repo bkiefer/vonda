@@ -62,15 +62,15 @@ if_exp
   ;
 
 while_statement
-  : WHILE '(' boolean_exp ')' statement_block
-  | DO statement_block WHILE '(' boolean_exp ')'
+  : WHILE '(' boolean_exp ')' statement
+  | DO statement WHILE '(' boolean_exp ')'
   ;
 
 for_statement
-  : FOR '(' assignment? ';' exp? ';' exp? ')' statement_block
-  | FOR '(' (DEC_VAR | type_spec)? VARIABLE ':' exp ')' statement_block
+  : FOR '(' assignment? ';' exp? ';' exp? ')' statement
+  | FOR '(' (DEC_VAR | type_spec)? VARIABLE ':' exp ')' statement
   // for loop with destructuring into a tuple
-  | FOR '(' '(' VARIABLE ( ',' VARIABLE )+ ')' ':' exp ')' statement_block
+  | FOR '(' '(' VARIABLE ( ',' VARIABLE )+ ')' ':' exp ')' statement
   ;
 
 propose_statement

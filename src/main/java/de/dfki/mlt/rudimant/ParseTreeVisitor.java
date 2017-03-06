@@ -65,7 +65,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitImports(RobotGrammarParser.ImportsContext ctx) {
     // IMPORT VARIABLE SEMICOLON
     String file = ctx.getChild(1).getText();
-    return new StatImport(file).setPosition(ctx, currentClass);
+    return new UImport(file).setPosition(ctx, currentClass);
   }
 
   @Override
@@ -383,12 +383,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // IF LPAR boolean_exp RPAR statement (ELSE statement)?
     if (ctx.getChildCount() == 5) {   // no else
       return new StatIf(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)),
-              (RTStatement) this.visit(ctx.getChild(4)), null).setPosition(ctx, currentClass);
+          this.visit(ctx.getChild(4)), null).setPosition(ctx, currentClass);
     }
     // if there is an else
     return new StatIf(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)),
-            (RTStatement) this.visit(ctx.getChild(4)),
-            (RTStatement) this.visit(ctx.getChild(6))).setPosition(ctx, currentClass);
+        this.visit(ctx.getChild(4)),
+        this.visit(ctx.getChild(6))).setPosition(ctx, currentClass);
   }
 
   @Override
@@ -411,7 +411,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       UVariable var = new UVariable(ctx.getChild(2).getText(), currentClass);
       var.setPosition(ctx.VARIABLE(0), currentClass);
       return new StatFor2(var, exp,
-              (RTStatement) this.visit(ctx.getChild(6)), currentClass).setPosition(ctx, currentClass);
+          this.visit(ctx.getChild(6)), currentClass).setPosition(ctx, currentClass);
     } else if (ctx.getChild(4).getText().equals(":")) {
       // with type specification
       UVariable var = new UVariable(ctx.getChild(2).getText(),
@@ -421,7 +421,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       // FOR '(' (DEC_VAR | type_spec) VARIABLE ':' exp ')' loop_statement_block
       return new StatFor2(ctx.getChild(2).getText(), var,
               (RTExpression) this.visit(ctx.getChild(5)),
-              (RTStatement) this.visit(ctx.getChild(7)), currentClass).setPosition(ctx, currentClass);
+              this.visit(ctx.getChild(7)), currentClass).setPosition(ctx, currentClass);
     } else if (ctx.getChild(2).equals(";") || ctx.getChild(3).equals(";")) {
       // statement looks like "FOR LPAR assignment SEMICOLON exp SEMICOLON exp RPAR loop_statement_block"
       // all expressions are optional!
@@ -434,7 +434,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
         }
         ++i;
       }
-      RTStatement block = (RTStatement) this.visit(ctx.getChild(i));
+      RudiTree block = this.visit(ctx.getChild(i));
 
       return new StatFor1((ExpAssignment) forExps[0], (ExpBoolean) forExps[1],
               (RTExpression) forExps[2], block, currentClass).setPosition(ctx, currentClass);
