@@ -386,6 +386,10 @@ public class VGenerationVisitor implements RTStringVisitor {
     out.append("){\n");
     // initialize me according to the super class init
     out.append("// this.init();\n");
+    // if there was a precondition defined for this class, call it first
+    if(mem.existsFunction("precond", new ArrayList<String>())){
+      out.append("if (!precond()) return;\n");
+    }
     // use all methods created from rules in this file
     for (String toplevel : mem.getToplevelCalls(rudi.getClassName())) {
       // is it a rule or an import?
