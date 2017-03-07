@@ -42,9 +42,9 @@ if (true) {
   Object foo;
   foo.slot = 1;
 
-  while (foo.slot == 1){
-    foo.slot = 2;
-  }
+  //while (foo.slot == 1){
+    //foo.slot = 2;
+  //}
 
   //do {foo.slot = 1;} while (foo.slot == 2);
 
