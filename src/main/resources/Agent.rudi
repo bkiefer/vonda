@@ -15,17 +15,20 @@ String toUri(Rdf rdf);
 DialogueAct createEmitDA(DialogueAct da);
 DialogueAct emitDA(int delay, DialogueAct da);
 DialogueAct emitDA(DialogueAct da);
+
+// my last outgoing resp. the last incoming dialogue act
 DialogueAct myLastDA();
-boolean isMyLastDA(DialogueAct da);
-int lastOccurence(DialogueAct da, Iterable<DialogueAct> daList);
+DialogueAct lastDA();
+
 int lastOccurenceOfMyDA(String raw);
+// did i say something like ta in this session (subsumption)? If so, how many
+// utterances back was it? (otherwise, -1 is returned)
 int saidInSession(DialogueAct da);
-boolean waitingForResponse();
+// like saidInSession, only for incoming dialogue acts
 int receivedInSession(DialogueAct da);
 
-DialogueAct lastDA();
+boolean waitingForResponse();
 DialogueAct addLastDA(DialogueAct newDA);
-boolean isLastDA(String raw);
 void lastDAprocessed();
 
 // Timeout methods

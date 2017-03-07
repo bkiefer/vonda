@@ -14,7 +14,7 @@ public class StatWhile extends RTCondBlockStatement {
 
   String currentRule;
 
-  public StatWhile(RTExpression condition, StatAbstractBlock statblock, String position) {
+  public StatWhile(RTExpression condition, RudiTree statblock, String position) {
     this.condition = condition;
     this.block = statblock;
     this.currentRule = position;

@@ -53,4 +53,20 @@ public class TestTypes {
     String r = getGeneration(in);
     assertEquals("int correct = (int) q.getWhichCorrect(); ", r);
   }
+
+  @Test
+  public void testReturnSetType() {
+    String in = "Child c; docs = c.isTreatedBy;";
+    String r = getGeneration(in);
+    assertEquals("Set<Object> docs = ((Set<Object>)c.getValue(\"<dom:isTreatedBy>\")); ", r);
+  }
+
+  @Test
+  public void testLambdaExp() {
+    String in = "Set<Child> cs; cs.contains((c) -> c.foreName.equals(\"John\"));";
+    String r = getGeneration(in);
+    assertEquals("cs.contains((c) -> "
+            + "((Set<Object>)c.getValue(\"foreName\")).equals(\"John\")); ", r);
+  }
+
 }

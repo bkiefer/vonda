@@ -21,10 +21,9 @@ public class GrammarRule extends RudiTree {
   // remember whether you are toplevel
   boolean toplevel;
 
-  public GrammarRule(String label, StatIf ifstat, boolean toplevel) {
+  public GrammarRule(String label, StatIf ifstat) {
     this.label = label;
     this.ifstat = ifstat;
-    this.toplevel = toplevel;
   }
 
   @Override

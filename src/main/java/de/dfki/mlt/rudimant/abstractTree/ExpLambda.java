@@ -5,6 +5,9 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * just to be able to deal with lambda expressions if someone should use them,
  * but there is nothing like type checking implemented yet
@@ -13,8 +16,14 @@ package de.dfki.mlt.rudimant.abstractTree;
  */
 public class ExpLambda extends RTExpLeaf {
 
-  public ExpLambda(String exp) {
-    content = fullexp = exp;
+  String return_type;
+  List<String> parameters;
+  String parType;
+  RudiTree body;
+
+  public ExpLambda(List<String> args, RudiTree b) {
+    parameters = args;
+    body = b;
   }
 
   @Override
@@ -35,5 +44,15 @@ public class ExpLambda extends RTExpLeaf {
   @Override
   public String visitStringV(RTStringVisitor v){
     return v.visitNode(this);
+  }
+
+  public Iterable<? extends RudiTree> getDtrs() {
+    StringBuilder sb = new StringBuilder();
+    sb.append('(').append(parameters.get(0));
+    for (int i = 1; i < parameters.size(); ++i)
+      sb.append(',').append(parameters.get(i));
+    sb.append(")");
+    RudiTree[] dtrs = { new USingleValue(sb.toString(), parType), body };
+    return Arrays.asList(dtrs);
   }
 }

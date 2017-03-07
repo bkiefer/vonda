@@ -117,8 +117,30 @@ public class Visualize extends GrammarMain {
     }
   }
 
-  public static GrammarFile parseAndTypecheck(String in, Writer out) {
+  public static GrammarFile parseAndTypecheck(String in, Writer out){
     return parseAndTypecheck(getInput(in), out);
+  }
+
+  public static GrammarFile parseAndTypecheckWithError(InputStream in, Writer out)
+      throws Throwable {
+    try {
+      // create the abstract syntax tree
+      RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
+      rc.throwTypeErrors();
+      return rc.processForReal(in, out);
+    } catch (RuntimeException ex) {
+      if (ex.getCause() instanceof TypeException)
+        throw ex.getCause();
+      else
+        throw ex;
+    } catch (Exception ex) {
+      throw new RuntimeException(ex);
+    }
+  }
+
+  public static GrammarFile parseAndTypecheckWithError(String in, Writer out)
+      throws Throwable {
+    return parseAndTypecheckWithError(getInput(in), out);
   }
 
   /**

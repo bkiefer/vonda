@@ -14,8 +14,8 @@ import java.util.Arrays;
 public class StatIf extends RTStatement {
 
   RTExpression condition;
-  RTStatement statblockIf;
-  RTStatement statblockElse;
+  RudiTree statblockIf;
+  RudiTree statblockElse;
   String currentRule;
   String conditionString;
   // if the boolexp is no boolexp, type visitor should set this to the correct
@@ -31,8 +31,8 @@ public class StatIf extends RTStatement {
    * @param statblockElse the else block if existing
    * @param position
    */
-  public StatIf(String conditionString, RTExpression condition, RTStatement statblockIf,
-          RTStatement statblockElse) {
+  public StatIf(String conditionString, RTExpression condition, RudiTree statblockIf,
+          RudiTree statblockElse) {
     this.condition = condition;
     this.statblockIf = statblockIf;
     this.statblockElse = statblockElse;

@@ -269,7 +269,15 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpLambda node) {
-    // nothing to do
+    mem.enterEnvironment();
+    for(String arg : node.parameters){
+      mem.addVariableDeclaration(arg, node.parType, mem.getClassName());
+    }
+    this.visitNode(node.body);
+    if (node.body instanceof RTExpression) {
+      node.return_type = ((RTExpression)node.body).getType();
+    }
+    mem.leaveEnvironment();
   }
 
   @Override
@@ -280,18 +288,34 @@ public class VTestTypeVisitor implements RudiVisitor {
     String oldTrule = mem.getCurrentTopRule();
     mem.enterClass(rudi.getClassName());
     for (RudiTree t : node.rules) {
+      // learn about all defs before visiting the other statements!!
+      if(t instanceof StatVarDef || (t instanceof StatMethodDeclaration
+                                    && ((StatMethodDeclaration)t).block == null)
+              || (t instanceof ExpAssignment && ((ExpAssignment) t).declaration)){
+        t.visit(this);
+      }
+    }
+    for (RudiTree t : node.rules) {
+      if(t instanceof StatVarDef || (t instanceof StatMethodDeclaration
+                                    && ((StatMethodDeclaration)t).block == null)
+              || (t instanceof ExpAssignment && ((ExpAssignment) t).declaration)){
+        continue;
+      }
+      if(t instanceof GrammarRule){
+        mem.ontop = true;
+      }
       t.visit(this);
       // if t will lateron be put into a stub function in GenerationVisitor,
       // we should add its predicted name to the mem so the method is called in
       // the correct position between the imports
-      if(!(t instanceof StatAbstractBlock || t instanceof StatImport ||
-              (t instanceof ExpAssignment && ((ExpAssignment) t).declaration) ||
-              t instanceof StatVarDef || t instanceof StatMethodDeclaration ||
+      if(!(t instanceof StatAbstractBlock || t instanceof UImport ||
+              t instanceof StatMethodDeclaration ||
               t instanceof GrammarRule)){
           String fname = rudi.getClassName() + node.rules.indexOf(t);
           // add the function to our mem as if it was a rule, so it is called in
           // the process function
-          mem.addRule(fname, true);
+          mem.ontop = true;
+          mem.addRule(fname);
       }
     }
     if (mem.getToplevelCalls(rudi.getClassName()) != null) {
@@ -310,7 +334,8 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(GrammarRule node) {
-    mem.addRule(node.label, node.toplevel);
+    node.toplevel = mem.ontop;
+    mem.addRule(node.label);
     // we step down into a new environment (later turned to a method) whose
     //  variables cannot be seen from the outside
     if (node.toplevel) {
@@ -343,11 +368,23 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatFor2 node) {
     node.exp.visit(this);
+    String innerIterableType;
+    if (node.exp.type != null && node.exp.isComplexType()) {
+      innerIterableType = mem.checkRdf(node.exp.getInnerType());
+    } else {
+      rudi.typeError("Iterable for loop type is unknown or not generic, but: "
+          + node.exp.getType(), node);
+      innerIterableType= "Object";
+    }
     if (node.varType == null) {
-      String et = node.exp.getType();
-      if (et.contains("<")) {
-        node.varType = mem.checkRdf(
-            et.substring(et.indexOf("<") + 1, et.indexOf(">")));
+      node.varType = innerIterableType;
+    } else {
+      node.varType = mem.checkRdf(node.varType);
+      String mergeType = mem.unifyTypes(node.varType, innerIterableType);
+      if (mergeType == null) {
+        rudi.typeError("Incompatible types in short for loop: "
+            + node.varType + " : " + innerIterableType, node);
+        node.varType = innerIterableType;
       }
     }
     mem.addVariableDeclaration(node.var.toString(), node.varType, node.position);
@@ -370,7 +407,7 @@ public class VTestTypeVisitor implements RudiVisitor {
    * TODO: WHAT HAPPENS HERE? IS IT STILL NEEDED?
    */
   @Override
-  public void visitNode(StatImport node) {
+  public void visitNode(UImport node) {
     String conargs = "";
 //    if (null != rudi.getConstructorArgs()
 //            && !rudi.getConstructorArgs().isEmpty()) {
@@ -415,7 +452,23 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatSetOperation node) {
-    // TODO: test whether the set accepts variables of this type??
+    // First call type checks for components, then perform the possible local
+    // tests: The parameter type of the set should be compatible with what's
+    // added.
+    node.left.visit(this);
+    node.right.visit(this);
+    if (! ((RTExpression)node.left).isComplexType()) {
+      rudi.typeError("Left side of a set operation is not a set, but "
+          + ((RTExpression)node.left).getType(), node);
+      return;
+    }
+    String inner = ((RTExpression)node.left).getInnerType();
+    String res = mem.unifyTypes(inner, ((RTExpression)node.right).type);
+    if (res == null) {
+      rudi.typeError("Incompatible types in set operation: "
+          + ((RTExpression)node.left).getType() + " <> " +
+          ((RTExpression)node.right).type, node);
+    }
   }
 
   /* **********************************************************************
@@ -538,8 +591,6 @@ public class VTestTypeVisitor implements RudiVisitor {
 
     var.content = predUri; // replace plain name by URI
     int predType = clz.getPropertyType(predUri);
-    // TODO: Set<Bla> vs Bla distinction, not that i know what to do with it.
-    boolean isFunctional = (predType & RdfClass.FUNCTIONAL_PROPERTY) != 0;
     // TODO: CONVERT XSD TYPES TO JAVA, WHERE POSSIBLE
     currentType = clz.getPropertyRange(predUri);
     if (currentType == null) {
@@ -556,8 +607,14 @@ public class VTestTypeVisitor implements RudiVisitor {
               + "  of partial field access for " + var.content + " to "
               + currentType, node);
     }
-    // TODO: an access will always return sth of type Object, so to not get null
-    // I'll set the type of this to Object by default
+    // Set<Bla> vs Bla distinction, unfortunately, Java can not reason about
+    // parameter types, so this must be Object
+    boolean isFunctional = (predType & RdfClass.FUNCTIONAL_PROPERTY) != 0;
+    if (! isFunctional) {
+      //currentType = "Set<"+currentType+">";
+      currentType="Set<Object>";
+    }
+    // the type of this is set to Object by default (not null)
     return new UPropertyAccess(var, false, currentType, isFunctional);
   }
 
@@ -579,6 +636,13 @@ public class VTestTypeVisitor implements RudiVisitor {
     partOfFieldAccess = true;
     for (int i = 1; i < node.parts.size(); ++i) {
       currentNode = node.parts.get(i);
+      if (Mem.isComplexType(currentType)
+          && currentNode instanceof UFuncCall
+          && ! ((UFuncCall)currentNode).exps.isEmpty()
+          && ((UFuncCall)currentNode).exps.get(0) instanceof ExpLambda) {
+        ((ExpLambda)((UFuncCall)currentNode).exps.get(0)).parType =
+            Mem.getInnerType(currentType);
+      }
       currentNode.visit(this);
       if (Mem.isRdfType(currentType)) {
         if (currentNode instanceof UVariable) {

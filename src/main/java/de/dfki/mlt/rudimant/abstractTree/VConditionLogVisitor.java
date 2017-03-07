@@ -220,7 +220,7 @@ public class VConditionLogVisitor implements RTStringVisitor {
   }
 
   @Override
-  public void visitNode(StatImport node) {
+  public void visitNode(UImport node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 

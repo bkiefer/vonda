@@ -30,7 +30,6 @@ public class RudimantCompiler {
 
   private static HfcDbHandler handler;
 
-  private boolean throwExceptions = true;
   private boolean typeCheck = true;
   private boolean visualise = false;
 
@@ -69,7 +68,6 @@ public class RudimantCompiler {
     constructorArgs = parentCompiler.getConstructorArgs();
     mem = parentCompiler.mem;
     parent = parentCompiler;
-    this.throwExceptions = parentCompiler.throwExceptions;
     this.typeCheck = parentCompiler.typeCheck;
     this.packageName = parent.getPackageName();
     this.rootLevel = parent.rootLevel;
@@ -136,8 +134,7 @@ public class RudimantCompiler {
               (String)configs.get(CFG_TARGET_CONSTRUCTOR));
     rc.checkOutputDirectory(configDir, configs);
     rc.initMem(proxy);
-    rc.throwExceptions = (boolean)configs.get(CFG_TYPE_ERROR_FATAL);
-    rc.typeCheck = (boolean)configs.get(CFG_TYPE_CHECK);
+    rc.typeCheck = (boolean)configs.get(CFG_TYPE_ERROR_FATAL);
     if (configs.containsKey(CFG_PACKAGE)) {
       rc.packageName = (String) configs.get(CFG_PACKAGE);
     }
@@ -150,6 +147,10 @@ public class RudimantCompiler {
 
   public static void shutdown() {
     handler.shutdown();
+  }
+
+  public void throwTypeErrors() {
+    typeCheck = true;
   }
 
   /** Process the top-level rudi file */

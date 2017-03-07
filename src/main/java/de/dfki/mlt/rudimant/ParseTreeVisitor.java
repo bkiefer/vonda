@@ -35,8 +35,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   // as this was created for another design, use currentClass instead
   // private String currentRule;
   private String currentClass;
-  // same for the current toplevel rule
-  private int curDepth;
 
   /**
    * constructor; the visitor needs to know in which rule/file we're in
@@ -55,7 +53,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // imports* (comment (grammar_rule | ...))* comment
     ArrayList<RudiTree> rules = new ArrayList<RudiTree>();
     for (int i = 0; i < ctx.getChildCount(); i++) {
-      curDepth = 0;
       rules.add(this.visit(ctx.getChild(i)));
     }
     return new GrammarFile(rules).setPosition(ctx, currentClass);
@@ -65,7 +62,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitImports(RobotGrammarParser.ImportsContext ctx) {
     // IMPORT VARIABLE SEMICOLON
     String file = ctx.getChild(1).getText();
-    return new StatImport(file).setPosition(ctx, currentClass);
+    return new UImport(file).setPosition(ctx, currentClass);
   }
 
   @Override
@@ -98,10 +95,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitGrammar_rule(RobotGrammarParser.Grammar_ruleContext ctx) {
     //  label if_statement
     String ruleName = ctx.getChild(0).getText();
-    boolean toplevel = (curDepth == 0); // then this is a toplevel rule
-    curDepth++;
     return new GrammarRule(ruleName,
-            (StatIf) this.visit(ctx.getChild(2)), toplevel)
+            (StatIf) this.visit(ctx.getChild(2)))
             .setPosition(ctx, currentClass);
   }
 
@@ -383,12 +378,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // IF LPAR boolean_exp RPAR statement (ELSE statement)?
     if (ctx.getChildCount() == 5) {   // no else
       return new StatIf(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)),
-              (RTStatement) this.visit(ctx.getChild(4)), null).setPosition(ctx, currentClass);
+          this.visit(ctx.getChild(4)), null).setPosition(ctx, currentClass);
     }
     // if there is an else
     return new StatIf(ctx.getChild(2).getText(), (RTExpression) this.visit(ctx.getChild(2)),
-            (RTStatement) this.visit(ctx.getChild(4)),
-            (RTStatement) this.visit(ctx.getChild(6))).setPosition(ctx, currentClass);
+        this.visit(ctx.getChild(4)),
+        this.visit(ctx.getChild(6))).setPosition(ctx, currentClass);
   }
 
   @Override
@@ -411,7 +406,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       UVariable var = new UVariable(ctx.getChild(2).getText(), currentClass);
       var.setPosition(ctx.VARIABLE(0), currentClass);
       return new StatFor2(var, exp,
-              (RTStatement) this.visit(ctx.getChild(6)), currentClass).setPosition(ctx, currentClass);
+          this.visit(ctx.getChild(6)), currentClass).setPosition(ctx, currentClass);
     } else if (ctx.getChild(4).getText().equals(":")) {
       // with type specification
       UVariable var = new UVariable(ctx.getChild(2).getText(),
@@ -421,7 +416,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       // FOR '(' (DEC_VAR | type_spec) VARIABLE ':' exp ')' loop_statement_block
       return new StatFor2(ctx.getChild(2).getText(), var,
               (RTExpression) this.visit(ctx.getChild(5)),
-              (RTStatement) this.visit(ctx.getChild(7)), currentClass).setPosition(ctx, currentClass);
+              this.visit(ctx.getChild(7)), currentClass).setPosition(ctx, currentClass);
     } else if (ctx.getChild(2).equals(";") || ctx.getChild(3).equals(";")) {
       // statement looks like "FOR LPAR assignment SEMICOLON exp SEMICOLON exp RPAR loop_statement_block"
       // all expressions are optional!
@@ -434,7 +429,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
         }
         ++i;
       }
-      RTStatement block = (RTStatement) this.visit(ctx.getChild(i));
+      RudiTree block = this.visit(ctx.getChild(i));
 
       return new StatFor1((ExpAssignment) forExps[0], (ExpBoolean) forExps[1],
               (RTExpression) forExps[2], block, currentClass).setPosition(ctx, currentClass);
@@ -473,7 +468,13 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitLambda_exp(RobotGrammarParser.Lambda_expContext ctx) {
-    return new ExpLambda(ctx.getText()).setPosition(ctx, currentClass);
+    // '(' VARIABLE (',' VARIABLE)* ')' '->' (exp|statement_block);
+    List<String> args = new ArrayList<>();
+    for(int i = 1; i < ctx.getChildCount() - 3; i += 2) {
+      args.add(ctx.getChild(i).getText());
+    }
+    return new ExpLambda(args, this.visit(ctx.getChild(ctx.getChildCount() - 1)))
+        .setPosition(ctx, currentClass);
   }
 
   @Override

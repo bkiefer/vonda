@@ -1,8 +1,0 @@
-String activity = "j";
-Child user;
-
-import bla;
-rule:
-  if(1){
-      activity = "blabla";
-  }

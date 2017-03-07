@@ -1,41 +1,26 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import static org.junit.Assert.*;
 import static de.dfki.mlt.rudimant.abstractTree.TstUtils.*;
+import static org.junit.Assert.*;
+
+import java.io.File;
 
 import org.junit.*;
 
-/**
- *
- * @author sophie
- */
+import de.dfki.lt.hfc.WrongFormatException;
+import de.dfki.mlt.rudimant.GrammarMain;
+import de.dfki.mlt.rudimant.TypeException;
+
 public class TestImport {
-  
-  @BeforeClass
-  public static void setUpClass() {
-    setUpEmpty();
+
+  @Test
+  public void testImport() throws WrongFormatException {
+    GrammarMain.main(new String[]{
+        "-o", "target/generated/",
+        "-r", RESOURCE_DIR + "ontos/pal.ini",
+        RESOURCE_DIR + "main.rudi"
+    });
+    assertTrue(new File("target/generated/Main.java").exists());
+    assertTrue(new File("target/generated/Import.java").exists());
   }
-  
-//  //generates the empty string
-//  @Test
-//  public void test(){
-//    String in = "import basic.MaxTest1;";
-//    String r = getGeneration(in);
-//    String exp = "import basic.MaxTest1;";
-//    assertEquals(exp, r);
-//  }
-//  
-//  //throws a FileNotFoundException
-//  @Test
-//  public void test2(){
-//    String in = "import MaxTest1;";
-//    String r = getGeneration(in);
-//    String exp = "import MaxTest1;";   
-//  }
-  
 }

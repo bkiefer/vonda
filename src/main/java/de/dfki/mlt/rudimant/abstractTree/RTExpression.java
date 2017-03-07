@@ -10,6 +10,8 @@ import static de.dfki.mlt.rudimant.Constants.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.mlt.rudimant.Mem;
+
 /**
  * a special kind of the RudiTree is an expression; expressions can have types
  *
@@ -50,24 +52,11 @@ public abstract class RTExpression extends RudiTree {
 
   // Return true if this is represents an RDF type or a DialogueAct
   // TODO: maybe has to be split up.
-  public boolean isRdfType() {
-    return isRdfType(type);
-  }
+  public boolean isRdfType() { return Mem.isRdfType(type); }
 
-  // easier for recursion if we can also give the method a type
-  public boolean isRdfType(String type) {
-    return type != null && type.charAt(0) == '<';
-  }
+  public boolean isComplexType() { return Mem.isComplexType(type); }
 
-  public boolean isComplexType() {
-    if (type == null) return false;
-    return ("String".equals(type)
-        || type.startsWith("Map")
-        || type.startsWith("Set")
-        || type.startsWith("RdfSet")
-        || type.startsWith("RdfList")
-        || (type.endsWith(">") && ! isRdfType()));
-  }
+  public String getInnerType() { return Mem.getInnerType(type); }
 
   public RTExpression ensureBoolean() {
     ExpBoolean result = null;

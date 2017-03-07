@@ -14,12 +14,12 @@ package de.dfki.mlt.rudimant.abstractTree;
  *
  * @author Anna Welker
  */
-public class StatImport extends RTLeaf {
+public class UImport extends RTLeaf {
 
   // IMPORT VARIABLE SEMICOLON
   String name;
 
-  public StatImport(String text) {
+  public UImport(String text) {
     this.content = text;
     if (text.contains(".")) {
       name = text.substring(text.lastIndexOf("."));

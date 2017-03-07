@@ -1,0 +1,3 @@
+Set<Child> cs;
+
+cs.contains((c) -> c.foreName.equals("John"));

@@ -25,6 +25,7 @@ imports
 
 statement
   : statement_block
+  | var_def
   | exp ';'
   | list_creation
   | grammar_rule
@@ -35,7 +36,6 @@ statement
   | while_statement
   | for_statement
   | switch_statement
-  | var_def
   | CONTINUE ';'
   | BREAK ';'
   ;
@@ -62,15 +62,15 @@ if_exp
   ;
 
 while_statement
-  : WHILE '(' boolean_exp ')' statement_block
-  | DO statement_block WHILE '(' boolean_exp ')'
+  : WHILE '(' boolean_exp ')' statement
+  | DO statement WHILE '(' boolean_exp ')'
   ;
 
 for_statement
-  : FOR '(' assignment? ';' exp? ';' exp? ')' statement_block
-  | FOR '(' (DEC_VAR | type_spec)? VARIABLE ':' exp ')' statement_block
+  : FOR '(' assignment? ';' exp? ';' exp? ')' statement
+  | FOR '(' (DEC_VAR | type_spec)? VARIABLE ':' exp ')' statement
   // for loop with destructuring into a tuple
-  | FOR '(' '(' VARIABLE ( ',' VARIABLE )+ ')' ':' exp ')' statement_block
+  | FOR '(' '(' VARIABLE ( ',' VARIABLE )+ ')' ':' exp ')' statement
   ;
 
 propose_statement
@@ -157,6 +157,7 @@ exp
   | string_expression
   | boolean_exp
   | new_exp
+  | lambda_exp
   ;
 
 complex_exp
@@ -201,8 +202,9 @@ new_exp
   | NEW function_call
   ;
 
-// TODO: IS THIS STILL USED?
-lambda_exp: '(' (DEC_VAR? VARIABLE (',' DEC_VAR? VARIABLE)*)? ')' ARROW exp;
+//lambda_exp: '(' DEC_VAR? VARIABLE (',' DEC_VAR? VARIABLE)* ')'
+//    '->' (exp|statement_block);
+lambda_exp: '(' VARIABLE (',' VARIABLE)* ')' '->' (exp|statement_block);
 
 string_expression : (complex_exp|if_exp) '+' exp | (complex_exp|if_exp) ;
 
