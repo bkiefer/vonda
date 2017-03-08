@@ -2,12 +2,14 @@ package de.dfki.mlt.rudimant.agent;
 
 import static de.dfki.mlt.rudimant.agent.nlg.ConfConstants.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.mlt.rudimant.agent.nlg.InfoStateAccess;
+import de.dfki.mlt.rudimant.agent.nlg.Interpreter;
 import de.dfki.mlt.rudimant.agent.nlg.LanguageGenerator;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 
@@ -22,9 +24,11 @@ public class AsrTts {
    */
   private LanguageGenerator _generator;
 
+  private Interpreter _interpreter;
+
 
   @SuppressWarnings({ "rawtypes", "unchecked" })
-  public void loadGrammar(String language, Agent agent, Map configs)
+  public void loadGrammar(File configDir, String language, Agent agent, Map configs)
       throws IOException {
 
     Map nlgConfig = (Map)configs.get(NLG_KEY);
@@ -32,9 +36,14 @@ public class AsrTts {
 
     if (nlgConfig  != null && nlgConfig.containsKey(language)) {
       //language = "english";
-      _generator = LanguageGenerator.getGenerator(language,
+      _generator = LanguageGenerator.getGenerator(configDir, language,
           (Map<String, Object>)nlgConfig.get(language));
       _generator.registerAccess("general", new InfoStateAccess(agent));
+    }
+
+    if (nluConfig != null && nluConfig.containsKey(language)) {
+      _interpreter = Interpreter.getInterpreter(configDir, language,
+          (Map)nluConfig.get(language));
     }
   }
 
@@ -80,24 +89,10 @@ public class AsrTts {
     return toSay;
   }
 
-  /**
-   * Transform the semantic representation of the best hypothesis into a speech
-   * act event and return it.
-   *
-   * @param utt
-   * @return the speech act event corresponding to the semantic content in the
-   * best hypothesis
-   *
-   * public static SpeechActEvent utterance2SpeechActEvent(UserTextFeedback utt)
-   * { // TODO: DO PARSING OF TEXT MESSAGE Map<String, String> tokens = new
-   * HashMap<>(); SpeechActEvent sa = new SpeechActEvent(); sa.arguments = new
-   * HashMap<String, String>(); for (Map.Entry<String, String> keyVal :
-   * tokens.entrySet()) { switch (keyVal.getKey()) { case "speechact":
-   * sa.speechact = keyVal.getValue(); break; case "proposition": sa.proposition
-   * = keyVal.getValue(); break; case "sender": sa.sender = keyVal.getValue();
-   * break; case "addressee": sa.addressee = keyVal.getValue(); break; case
-   * "id": sa.id = App.generateId(); break; default:
-   * sa.arguments.put(keyVal.getKey(), keyVal.getValue()); break; } } if
-   * (!sa.isSetId()) { sa.setId(App.generateId()); } return sa; }
-   */
+  public DialogueAct interpret(String text) {
+    if (_interpreter != null) {
+      return _interpreter.analyse(text);
+    }
+    return null;
+  }
 }

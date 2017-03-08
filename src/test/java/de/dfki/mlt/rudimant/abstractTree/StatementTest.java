@@ -63,12 +63,13 @@ public class StatementTest {
   }
 
 
-// @Test
-// public void StatementTest6(){
-//   String in = "int i; boolean truth; switch(truth){case (truth): i=2;  case(truth==false): i=1;}";
-//   String r = getGeneration(in);
-//   assertEquals("switch (truth){case(truth):; i = 2; case(truth==false):; i = 1; }", r);
-// }
+ @Test
+ public void StatementTest6(){
+   String in = "int i; boolean truth; switch(truth){case (truth): i=2;  case(truth==false): i=1;}";
+   String r = getGeneration(in);
+   assertEquals("switch (truth){case(truth):; i = 2; case(truth==false):; i = 1; }", r);
+ }
+  
   @Test
    public void StatementTestx(){
      String in = "Object foo; for (int i = 1; i <= 2; i = i+1){foo.slot = 1;}";
