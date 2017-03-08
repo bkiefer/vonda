@@ -288,30 +288,6 @@ public class VGenerationVisitor implements RTStringVisitor {
               + n.substring(0, 1).toLowerCase() + n.substring(1));
       out.append(";\n");
     }
-    // initialize all class attributes before the main process method,
-    // do all those import things now - but before that, we have to know about
-    // all the variables declared here
-    for (RudiTree e : node.rules) {
-      if (e instanceof ExpAssignment) {
-        if (((ExpAssignment) e).declaration) {
-          e.visitWithComments(this);
-          out.append(";");
-        }
-      } else if (e instanceof StatVarDef
-          || (e instanceof StatMethodDeclaration
-              && ((StatMethodDeclaration) e).block == null)) {
-        e.visitWithComments(this);
-      }
-    }
-    for (RudiTree r : node.rules) {
-      if (r instanceof StatAbstractBlock) {
-        for (RudiTree e : ((StatAbstractBlock) r).statblock) {
-          if (e instanceof UImport) {
-            r.visitWithComments(this);
-          }
-        }
-      }
-    }
     // now, we should add a constructor, including constructor parameters if
     // specified in configs
     // also, to use them for imports, declare those parameters class attributes
@@ -351,72 +327,38 @@ public class VGenerationVisitor implements RTStringVisitor {
     out.append("public " + rudi.getClassName() + "(" + args + ") {\n"
             + "super(" + conargs + ");\n" + declare + "}\n");
 
-    // Now, only get those statements that are not assignments of class attributes
-    for (RudiTree r : node.rules) {
-      if (r instanceof StatAbstractBlock) {
-        for (RudiTree e : ((StatAbstractBlock) r).statblock) {
-          if (e instanceof ExpAssignment) {
-            if (((ExpAssignment) e).declaration) {
-              // The assignments have been treated above (first loop)
-              continue;
-            }
-          } else if (e instanceof UImport) {
-            continue;
-          } else if (e instanceof StatVarDef
-                  || (e instanceof StatMethodDeclaration
-                  && ((StatMethodDeclaration) e).block == null)) {
-            continue;
-          }
-          e.visitWithComments(this);
-        }
-      } else {
-        if ((r instanceof ExpAssignment && ((ExpAssignment) r).declaration)
-            || r instanceof UImport
-            || r instanceof StatVarDef
-            || (r instanceof StatMethodDeclaration
-                && ((StatMethodDeclaration) r).block == null)) {
-          continue;
-        } else if (r instanceof GrammarRule ||
-            (r instanceof StatMethodDeclaration
-                && ((StatMethodDeclaration) r).block != null)) {
-          r.visitWithComments(this);
-        } else {
-          // we have something that shouldn't be without a block, create
-          // a stub rule
-          // Attention! if you change the method naming here, also change it in
-          // TestTypeVisitor!
-          String fname = out.getClassName() + node.rules.indexOf(r);
-          out.append("public void ").append(fname).append("(){");
-          r.visitWithComments(this);
-          if (r instanceof RTExpression) {
-            out.append(";");
-          }
-          out.append("}");
-        }
-      }
-    }
-
     // finally, the main processing method that will call all rules and imports
     // declared in this file
+    writeRuleList(node.rules);
+
+    out.append("}\n");
+    mem.leaveClass(oldname, oldrule, oldTrule);
+    mem.leaveEnvironment();
+  }
+
+  public void writeRuleList(List<RudiTree> rules){
+    Set<RudiTree> later = new HashSet<>();
+    // create the process method
     out.append("\tpublic void process(");
     out.append("){\n");
     // initialize me according to the super class init
     out.append("// this.init();\n");
-    // if there was a precondition defined for this class, call it first
-    if(mem.existsFunction("precond", new ArrayList<String>())){
-      out.append("if (!precond()) return;\n");
-    }
     // use all methods created from rules in this file
-    for (String toplevel : mem.getToplevelCalls(rudi.getClassName())) {
-      // is it a rule or an import?
-      if (toplevel.contains("(")) {
-        // an import
-        out.append(toplevel);
-
-        String t = toplevel.substring(toplevel.indexOf(" ") + 1, toplevel.indexOf(" ="));
-        List<String> ncs = mem.getNeededClasses(t);
+    for(RudiTree r : rules){
+      // rules, method declarations and imports are a special case
+      if (r instanceof GrammarRule){
+        out.append(((GrammarRule)r).label + "();\n");
+        later.add(r);
+      } else if (r instanceof StatMethodDeclaration){
+        later.add(r);
+      } else if (r instanceof UImport){
+        String impor = ((UImport)r).name;
+        String importn = impor.substring(0, 1).toUpperCase() + impor.substring(1);
+        out.append(importn + " " + impor
+                + " = new " + importn + "(");
+        List<String> ncs = mem.getNeededClasses(impor);
         if (ncs != null) {
-          i = 0;
+          int i = 0;
           for (String c : ncs) {
             if (c.equals(rudi.getClassName())
                     || (c.substring(0, 1).toUpperCase()
@@ -433,24 +375,16 @@ public class VGenerationVisitor implements RTStringVisitor {
             i++;
           }
         }
-        out.append(");\n");
-        out.append(t + ".process();\n");
+        out.append(").process();\n");
       } else {
-        // a rule
-        out.append(toplevel + "(");
-        out.append(");");
+        this.visitNode(r);
       }
     }
     out.append("}\n");
-
-    out.append("}\n");
-    mem.leaveClass(oldname, oldrule, oldTrule);
-    mem.leaveEnvironment();
-  }
-
-  public void writeRuleList(List<RudiTree> rules){
-    // create the process method
-    // rules, method declarations and imports are a special case
+    // now, add everything that we did not want in the process method
+    for(RudiTree t : later){
+      this.visitNode(t);
+    }
   }
 
   @Override
