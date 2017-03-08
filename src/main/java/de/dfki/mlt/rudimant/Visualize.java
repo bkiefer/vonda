@@ -43,6 +43,8 @@ public class Visualize extends GrammarMain {
     RudimantCompiler rc;
     try {
       rc = RudimantCompiler.init(confDir, configs);
+      rc.initMem(new File("test.rudi"));
+      rc.setClassName("test");
       StringWriter sw = new StringWriter();
       rc.processForReal(getInput(in), sw);
       rc.flush();
@@ -97,6 +99,8 @@ public class Visualize extends GrammarMain {
     try {
       // create the abstract syntax tree
       RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
+      rc.initMem(new File("test.rudi"));
+      rc.setClassName("test");
       return rc.processForReal(in, null);
     } catch (Exception ex) {
       throw new RuntimeException(ex);
@@ -111,6 +115,8 @@ public class Visualize extends GrammarMain {
     try {
       // create the abstract syntax tree
       RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
+      rc.initMem(new File("test.rudi"));
+      rc.setClassName("test");
       return rc.processForReal(in, out);
     } catch (Exception ex) {
       throw new RuntimeException(ex);
@@ -126,6 +132,8 @@ public class Visualize extends GrammarMain {
     try {
       // create the abstract syntax tree
       RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
+      rc.initMem(new File("test.rudi"));
+      rc.setClassName("test");
       rc.throwTypeErrors();
       return rc.processForReal(in, out);
     } catch (RuntimeException ex) {

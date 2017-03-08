@@ -201,6 +201,15 @@ public class Mem {
     return type;
   }
 
+    /**
+   * ATTENTION!! This method is only to be used to set a classname for testing
+   * purposes!!!!!!!!!!!!!!
+   * @param name
+   */
+  public void setClassName(String name){
+    this.curClass = name;
+  }
+
   /**
    * enter a new (imported) class. please store the old values of
    * getcurrentClass() and getCurrentRule in your visitor and use leaveClass()
@@ -224,7 +233,11 @@ public class Mem {
    * @return
    */
   public String getClassName() {
-    return this.curClass;
+    if(this.curClass != null){
+      return this.curClass;
+    } else {
+      return this.upperRudi;
+    }
   }
 
   /**

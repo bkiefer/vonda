@@ -86,7 +86,7 @@ public class TstUtils {
   public static String getForEmptyAssign(String s, String exp) {
     s = normalizeSpaces(s);
     exp = normalizeSpaces(exp);
-    int end = s.lastIndexOf("public null()");
+    int end = s.lastIndexOf("public test()");
     return normalizeSpaces(s.substring(end - exp.length(), end));
   }
 

@@ -84,6 +84,16 @@ public class RudimantCompiler {
     mem = new Mem(proxy);
   }
 
+  /**
+   * ATTENTION!! This method is only to be used to set a classname for testing
+   * purposes!!!!!!!!!!!!!!
+   * @param name
+   */
+  public void setClassName(String name){
+    this.className = name;
+    mem.setClassName(name);
+  }
+
   private void checkOutputDirectory(File configDir, Map<String, Object> configs)
       throws IOException {
     if (configs.containsKey(CFG_OUTPUT_DIRECTORY)) {
@@ -100,7 +110,7 @@ public class RudimantCompiler {
     if (outputDirectory == null) return;
   }
 
-  private void initMem(File topLevel) {
+  public void initMem(File topLevel) {
     String name = topLevel.getName();
     name = name.substring(0, name.length() - RULES_FILE_EXTENSION.length());
     mem.setToplevelFile(name);

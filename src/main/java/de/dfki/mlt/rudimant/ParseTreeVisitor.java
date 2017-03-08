@@ -88,7 +88,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
             (hasVisibilitySpec == 0 ? "" : ctx.getChild(0).getText()),
             ctx.getChild(0 + hasVisibilitySpec).getText(),
             ctx.getChild(1 + hasVisibilitySpec).getText(),
-            parameters, partypes, block, currentClass).setPosition(ctx, currentClass);
+            parameters, partypes, block).setPosition(ctx, currentClass);
   }
 
   @Override
@@ -500,7 +500,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // type_spec VARIABLE SEMICOLON
     // type_spec is either a boring normal type or a type of form Rdf<Child>
     String type = ctx.getChild(0).getText();
-    return new StatVarDef(type, ctx.getChild(1).getText(), currentClass)
+    return new StatVarDef(type, ctx.getChild(1).getText())
             .setPosition(ctx, currentClass);
   }
 

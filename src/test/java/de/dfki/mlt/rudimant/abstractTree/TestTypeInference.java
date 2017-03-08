@@ -67,7 +67,7 @@ public class TestTypeInference {
   public void test4() {
     String in = "Activity a; if (a == null) { }";
     String s = generate(in);
-    String expected = "public void null1(){if ((a == null)) {}}";
+    String expected = "public void test1(){if ((a == null)) {}}";
     assertEquals(expected, getForEmpty(s, expected));
   }
 

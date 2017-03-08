@@ -53,7 +53,7 @@ public class TestForStatements {
     String ifstat = "Set<Object> getI(); for(s : getI()){"
             + "label: if(true) {s = null;}}";
     String s = generate(ifstat);
-    String expected = "public void null1(){for (Object s_outer : getI()) " +
+    String expected = "public void test1(){for (Object s_outer : getI()) " +
               "{ Object s = (Object)s_outer; {" +
               "//Rule label " +
               "label: " +

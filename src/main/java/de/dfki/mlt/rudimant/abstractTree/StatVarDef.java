@@ -17,12 +17,10 @@ public class StatVarDef extends RTStatement {
 
   String variable;
   String type;
-  String position;
 
-  public StatVarDef(String type, String variable, String position) {
+  public StatVarDef(String type, String variable) {
     this.type = type;
     this.variable = variable;
-    this.position = position;
   }
 
   @Override

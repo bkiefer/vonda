@@ -23,18 +23,16 @@ public class StatMethodDeclaration extends RTStatement {
   ArrayList<String> parameters;
   ArrayList<String> partypes;
   RudiTree block;
-  String position;
 
   public StatMethodDeclaration(String visibility, String return_type, String name,
           ArrayList<String> parameters, ArrayList<String> partypes,
-          RudiTree block, String position) {
+          RudiTree block) {
     this.visibility = visibility;
     this.return_type = return_type;
     this.name = name;
     this.parameters = parameters;
     this.partypes = partypes;
     this.block = block;
-    this.position = position;
   }
 
   @Override

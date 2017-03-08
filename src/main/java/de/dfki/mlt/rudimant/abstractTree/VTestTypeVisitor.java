@@ -476,7 +476,7 @@ public class VTestTypeVisitor implements RudiVisitor {
    * ********************************************************************* */
   @Override
   public void visitNode(StatVarDef node) {
-    mem.addVariableDeclaration(node.variable, node.type, node.position);
+    mem.addVariableDeclaration(node.variable, node.type, mem.getClassName());
   }
 
   @Override
@@ -484,7 +484,8 @@ public class VTestTypeVisitor implements RudiVisitor {
     for(int i = 0; i < node.partypes.size(); i++){
       node.partypes.set(i, mem.checkRdf(node.partypes.get(i)));
     }
-    mem.addFunction(node.name, node.return_type, node.partypes, node.position);
+    mem.addFunction(node.name, node.return_type, node.partypes,
+            mem.getClassName());
     node.return_type = mem.checkRdf(node.return_type);
     if (node.block != null) {
       // The following variables (function parameters) are local to the method
@@ -494,7 +495,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       for (int i = 0; i < node.parameters.size(); i++) {
         // add parameters to environment
         mem.addVariableDeclaration(node.parameters.get(i), node.partypes.get(i),
-                node.position);
+                mem.getClassName());
       }
       node.block.visit(this);
       mem.leaveEnvironment();
@@ -732,7 +733,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       }
     }
 
-    if (o != null && !node.originClass.equals(o)) {
+    if (o != null && node.originClass != null && !node.originClass.equals(o)) {
       mem.needsClass(mem.getCurrentTopRule(), o);
       node.realOrigin = o;
     }
