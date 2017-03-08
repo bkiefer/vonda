@@ -63,6 +63,8 @@ public class RudimantCompiler {
   // Definitions for methods and variables in Agent.java
   private static final String agentInit = "/Agent.rudi";
 
+
+  /** Constructor for imports */
   private RudimantCompiler(RudimantCompiler parentCompiler) {
     wrapperClass = parentCompiler.wrapperClass;
     constructorArgs = parentCompiler.getConstructorArgs();
@@ -74,9 +76,12 @@ public class RudimantCompiler {
     this.visualise = parent.visualise;
   }
 
-  private RudimantCompiler(String wrapper, String targetConstructor){
+  /** Constructor for top-level file */
+  private RudimantCompiler(RdfProxy proxy, String wrapper,
+      String targetConstructor){
     wrapperClass = wrapper;
     constructorArgs = targetConstructor;
+    mem = new Mem(proxy);
   }
 
   private void checkOutputDirectory(File configDir, Map<String, Object> configs)
@@ -95,8 +100,10 @@ public class RudimantCompiler {
     if (outputDirectory == null) return;
   }
 
-  private void initMem(RdfProxy proxy, String upperRudi) {
-    mem = new Mem(proxy, upperRudi);
+  private void initMem(File topLevel) {
+    String name = topLevel.getName();
+    name = name.substring(0, name.length() - RULES_FILE_EXTENSION.length());
+    mem.setToplevelFile(name);
     mem.initializing = true;
     parent = null;
     try {
@@ -120,7 +127,7 @@ public class RudimantCompiler {
 
   @SuppressWarnings("unchecked")
   public static RudimantCompiler init(File configDir,
-          Map<String, Object> configs, String upperRudi)
+      Map<String, Object> configs)
       throws IOException, WrongFormatException {
     if(configs.get(CFG_WRAPPER_CLASS) == null) {
       logger.error("No implementation class specified, exiting.");
@@ -130,11 +137,10 @@ public class RudimantCompiler {
     if (configs.containsKey(CFG_NAME_TO_URI)) {
       proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
     }
-    RudimantCompiler rc = new RudimantCompiler(
+    RudimantCompiler rc = new RudimantCompiler(proxy,
               (String)configs.get(CFG_WRAPPER_CLASS),
               (String)configs.get(CFG_TARGET_CONSTRUCTOR));
     rc.checkOutputDirectory(configDir, configs);
-    rc.initMem(proxy, upperRudi);
     rc.typeCheck = (boolean)configs.get(CFG_TYPE_ERROR_FATAL);
     if (configs.containsKey(CFG_PACKAGE)) {
       rc.packageName = (String) configs.get(CFG_PACKAGE);
@@ -156,9 +162,10 @@ public class RudimantCompiler {
 
   /** Process the top-level rudi file */
   public void process(File topLevel) throws IOException {
+    initMem(topLevel);
     inputDirectory = topLevel.getParentFile();
     File wrapperInit = new File(inputDirectory,
-        wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + ".rudi");
+        wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + RULES_FILE_EXTENSION);
     try {
       if (wrapperInit.exists()) {
         mem.initializing = true;

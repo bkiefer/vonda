@@ -54,10 +54,9 @@ public class Mem {
   boolean initializing = false;
 
   // the rudi file that represents the Agent
-  private final String upperRudi;
+  private String upperRudi;
 
-  public Mem(RdfProxy proxy, String upperRudi) {
-    this.upperRudi = upperRudi;
+  public Mem(RdfProxy proxy) {
     environment = new ArrayDeque<>();
     rulesAndImports = new HashMap<>();
     _proxy = proxy;
@@ -65,6 +64,11 @@ public class Mem {
     // enter our very first environment,
     this.enterEnvironment();
   }
+
+  public void setToplevelFile(String name) {
+    upperRudi = name;
+  }
+
 
   static Map<String, Long> typeCodes = new HashMap<>();
 

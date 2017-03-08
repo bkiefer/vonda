@@ -42,7 +42,7 @@ public class Visualize extends GrammarMain {
   public static String generate(String in) {
     RudimantCompiler rc;
     try {
-      rc = RudimantCompiler.init(confDir, configs, "SomeAgent");
+      rc = RudimantCompiler.init(confDir, configs);
       StringWriter sw = new StringWriter();
       rc.processForReal(getInput(in), sw);
       rc.flush();
@@ -96,7 +96,7 @@ public class Visualize extends GrammarMain {
   public static GrammarFile parseAndTypecheck(InputStream in) {
     try {
       // create the abstract syntax tree
-      RudimantCompiler rc = RudimantCompiler.init(confDir, configs, "SomeAgent");
+      RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
       return rc.processForReal(in, null);
     } catch (Exception ex) {
       throw new RuntimeException(ex);
@@ -110,7 +110,7 @@ public class Visualize extends GrammarMain {
   public static GrammarFile parseAndTypecheck(InputStream in, Writer out) {
     try {
       // create the abstract syntax tree
-      RudimantCompiler rc = RudimantCompiler.init(confDir, configs, "SomeAgent");
+      RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
       return rc.processForReal(in, out);
     } catch (Exception ex) {
       throw new RuntimeException(ex);
@@ -125,7 +125,7 @@ public class Visualize extends GrammarMain {
       throws Throwable {
     try {
       // create the abstract syntax tree
-      RudimantCompiler rc = RudimantCompiler.init(confDir, configs, "SomeAgent");
+      RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
       rc.throwTypeErrors();
       return rc.processForReal(in, out);
     } catch (RuntimeException ex) {
