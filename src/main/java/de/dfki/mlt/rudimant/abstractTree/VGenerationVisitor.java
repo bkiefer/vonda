@@ -378,6 +378,9 @@ public class VGenerationVisitor implements RTStringVisitor {
         out.append(").process();\n");
       } else {
         this.visitNode(r);
+        if(!(r instanceof RTStatement)){
+          out.append(";\n");
+        }
       }
     }
     out.append("}\n");
