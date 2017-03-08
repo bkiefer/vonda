@@ -1,5 +1,6 @@
 package de.dfki.mlt.rudimant.agent;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Deque;
@@ -353,6 +354,9 @@ public abstract class Agent extends DataComparator {
     proposalsSent = true;
   }
 
+  public DialogueAct analyse(String input) {
+    return asr.interpret(input);
+  }
 
 //  /**
 //   * Interpret what he's saying and create the proper reaction
@@ -411,14 +415,12 @@ public abstract class Agent extends DataComparator {
   public abstract void process();
 
   @SuppressWarnings("rawtypes")
-  public void init(String language, RdfProxy proxy, String confFile) {
+  public void init(File configDir, String language, RdfProxy proxy, Map configs) {
     _proxy = proxy;
     _language = language;
     asr = new AsrTts();
     try {
-      Yaml yaml = new Yaml();
-      Object o = yaml.load(new FileReader(confFile));
-      asr.loadGrammar(language, this, (Map)o);
+      asr.loadGrammar(configDir, language, this, configs);
     } catch (IOException ex) {
       logger.error("Error loading grammar: {}", ex);
       System.exit(1);
