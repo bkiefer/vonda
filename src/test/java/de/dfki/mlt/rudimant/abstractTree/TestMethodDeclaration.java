@@ -39,13 +39,13 @@ public class TestMethodDeclaration {
     assertEquals(expected, getForEmpty(s, expected));
   }
 
-// causes a NullPointerException  
+// causes a NullPointerException
 //  @Test
 //  public void testEmptyReturn(){
 //    String methdecl = "void foo() { return; }";
 //    String s = generate(methdecl);
 //    String expected = "void foo() {return; }";
-//    assertEquals(expected, getForEmpty(s, expected));    
+//    assertEquals(expected, getForEmpty(s, expected));
 //  }
 
 }

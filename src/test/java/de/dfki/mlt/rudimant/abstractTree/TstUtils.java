@@ -24,7 +24,7 @@ public class TstUtils {
     return it.next();
   }
 
-  static int prefix = 286, suffix = 55;
+  static int prefix = 252, suffix = 55;
 
   public static String getGeneration(String in) {
     StringWriter out = new StringWriter();
@@ -71,7 +71,7 @@ public class TstUtils {
     s = normalizeSpaces(s);
     exp = normalizeSpaces(exp);
     int end = s.lastIndexOf("public void process()") - 1  ;
-    int start = 246; //end - exp.length();
+    int start = 212; //end - exp.length();
     return normalizeSpaces(s.substring(start, end));
   }
 

@@ -262,8 +262,10 @@ public class VGenerationVisitor implements RTStringVisitor {
     node.rules.get(0).printImportifJava(this);
     // maybe we need to import the class that imported us to use its variables
 
-    out.append("public class " + node.classname + " extends "
-            + rudi.getWrapperClass() + "{\n");
+    out.append("public class " + node.classname
+            // don't need this anymore
+            //+ " extends " + rudi.getWrapperClass()
+            + "{\n");
 
     // create variable fields for all those classes whose concrete instances we
     // will need
