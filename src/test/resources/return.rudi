@@ -1,0 +1,8 @@
+void foo(){
+  return; 
+}
+
+ret:
+if (true){
+  foo();
+}

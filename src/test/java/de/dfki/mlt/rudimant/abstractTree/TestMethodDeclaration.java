@@ -1,8 +1,11 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
+import de.dfki.mlt.rudimant.GrammarMain;
 import static de.dfki.mlt.rudimant.Visualize.*;
 import static org.junit.Assert.*;
 import static de.dfki.mlt.rudimant.abstractTree.TstUtils.*;
+import java.io.File;
+import de.dfki.lt.hfc.WrongFormatException;
 
 import org.junit.*;
 
@@ -39,13 +42,23 @@ public class TestMethodDeclaration {
     assertEquals(expected, getForEmpty(s, expected));
   }
 
-// causes a NullPointerException  
-//  @Test
-//  public void testEmptyReturn(){
-//    String methdecl = "void foo() { return; }";
-//    String s = generate(methdecl);
-//    String expected = "void foo() {return; }";
-//    assertEquals(expected, getForEmpty(s, expected));    
-//  }
+// TODO: check generated code for sanity
+  @Test
+  public void testEmptyReturn() throws WrongFormatException {
+    GrammarMain.main(new String[]{
+        "-o", "target/generated/",
+        "-r", RESOURCE_DIR + "ontos/pal.ini",
+        RESOURCE_DIR + "return.rudi"
+    });
+    assertTrue(new File("target/generated/Return.java").exists());  
+  }
 
+  
+  @Test
+  public void testMethodMultipleParameters(){
+    String methdecl = "void foo(int i, String s) { i = 1; }";
+    String s = generate(methdecl);
+    String expected = "void foo(int i, String s) { i = 1; }";
+    assertEquals(expected, getForEmpty(s, expected));
+  }
 }
