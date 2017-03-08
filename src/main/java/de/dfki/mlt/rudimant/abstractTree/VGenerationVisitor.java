@@ -448,6 +448,11 @@ public class VGenerationVisitor implements RTStringVisitor {
     mem.leaveEnvironment();
   }
 
+  public void writeRuleList(List<RudiTree> rules){
+    // create the process method
+    // rules, method declarations and imports are a special case
+  }
+
   @Override
   public void visitNode(GrammarRule node) {
     if (node.toplevel) {
@@ -600,7 +605,12 @@ public class VGenerationVisitor implements RTStringVisitor {
     }
     out.append("propose(");
     node.arg.visitWithComments(this);
-    out.append(", new Proposal() {public void run()\n");
+    out.append(",");
+    if(!mem.getClassName().toLowerCase().equals(
+            mem.getToplevelInstance().toLowerCase())){
+      out.append(mem.getToplevelInstance()).append(".");
+    }
+    out.append("new Proposal() {public void run()\n");
     node.block.visitWithComments(this);
     out.append("});");
   }
