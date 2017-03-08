@@ -1,8 +1,11 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
+import de.dfki.mlt.rudimant.GrammarMain;
 import static de.dfki.mlt.rudimant.Visualize.*;
 import static org.junit.Assert.*;
 import static de.dfki.mlt.rudimant.abstractTree.TstUtils.*;
+import java.io.File;
+import de.dfki.lt.hfc.WrongFormatException;
 
 import org.junit.*;
 
@@ -48,4 +51,11 @@ public class TestMethodDeclaration {
 //    assertEquals(expected, getForEmpty(s, expected));
 //  }
 
+  @Test
+  public void testMethodMultipleParameters(){
+    String methdecl = "void foo(int i, String s) { i = 1; }";
+    String s = generate(methdecl);
+    String expected = "void foo(int i, String s) { i = 1; }";
+    assertEquals(expected, getForEmpty(s, expected));
+  }
 }

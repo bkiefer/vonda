@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
+import static de.dfki.mlt.rudimant.Visualize.parseAndTypecheck;
 import static de.dfki.mlt.rudimant.abstractTree.TstUtils.*;
 import static org.junit.Assert.*;
 
@@ -62,6 +63,14 @@ public class StatementTest {
     assertEquals(" i = 1; return i; ", r);
   }
 
+  @Test
+  public void StatementTest5Iterator(){
+    String in = "int i; i = 1; return i;";
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(in), 2);
+    assertTrue(dtr instanceof StatReturn);
+    assertTrue(((StatReturn)dtr).getDtrs().iterator().next()
+        instanceof UVariable);
+  }
 
  @Test
  public void StatementTest6(){
