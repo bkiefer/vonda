@@ -37,7 +37,7 @@ public class Mem {
   private String curRule;
   private String curClass;
   private String curTopRule;
-  private HashMap<String, HashSet<String>> neededClasses = new HashMap<>();
+  private HashMap<String, List<String>> neededClasses = new HashMap<>();
 
   // remember the toplevel rules and imports in the correct order
   private Map<String, List<String>> rulesAndImports;
@@ -69,6 +69,9 @@ public class Mem {
     upperRudi = name;
   }
 
+  public String getToplevelInstance() {
+    return upperRudi.substring(0, 1).toLowerCase() + upperRudi.substring(1);
+  }
 
   static Map<String, Long> typeCodes = new HashMap<>();
 
@@ -222,7 +225,7 @@ public class Mem {
     this.curRule = classname;
     if (ruleNums.get(classname) == null) {
       this.ruleNums.put(classname, new HashMap<String, Integer>());
-      this.neededClasses.put(classname, new HashSet<String>());
+      this.neededClasses.put(classname, new ArrayList<String>());
       this.rulesAndImports.put(classname, new ArrayList<String>());
     }
   }
@@ -279,7 +282,10 @@ public class Mem {
    */
   public void addFunction(String funcname, String functype,
           List<String> partypes, String origin) {
-    if(initializing){
+    if(funcname.equals("equals") || funcname.equals("startsWith")
+            || funcname.equals("endsWith") || funcname.equals("substring")){
+      origin = null;
+    } else if(initializing){
       origin = upperRudi;
     }
     this.current.addFunction(funcname, functype, partypes, origin, this);
@@ -381,7 +387,7 @@ public class Mem {
     }
     this.ruleNums.get(curClass).put(rule, ruleNumber);
     curRule = rule;
-    this.neededClasses.put(rule, new HashSet<String>());
+    this.neededClasses.put(rule, new ArrayList<String>());
   }
 
   public void addImport(String importName, String conargs) {
@@ -423,13 +429,14 @@ public class Mem {
    * @param ruleclass the class needed
    */
   public void needsClass(String rule, String ruleclass) {
-    if(this.curClass.toLowerCase().equals(ruleclass.toLowerCase())){
+    if(this.curClass.toLowerCase().equals(ruleclass.toLowerCase())
+            || this.neededClasses.get(rule).contains(ruleclass)){
       return;
     }
     this.neededClasses.get(rule).add(ruleclass);
   }
 
-  public Set<String> getNeededClasses(String ruleOrClass) {
+  public List<String> getNeededClasses(String ruleOrClass) {
     return this.neededClasses.get(ruleOrClass);
   }
 

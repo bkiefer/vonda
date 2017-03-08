@@ -1,5 +1,6 @@
 // all standard Java methods that we should remember
-
+// adding functions to be performed on objects here will not work anymore;
+// add them directly to the list of special cases in mem.addFunction
 boolean equals(Object e);
 boolean startsWith(String s);
 boolean endsWith(String s);
@@ -51,3 +52,4 @@ void info(String s, int i);
 RdfProxy _proxy;
 CommunicationHub _hub;
 AsrTts asr;
+Set<String> rulesToLog;

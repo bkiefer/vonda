@@ -11,6 +11,7 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -181,21 +182,26 @@ public class VTestTypeVisitor implements RudiVisitor {
       node.right.visit(this);
       if (!Mem.isPODType(node.left.getType())
               && !Mem.isPODType(node.right.getType())) {
+        String or = "";
+        if(!mem.getClassName().toLowerCase().equals(
+                mem.getToplevelInstance().toLowerCase())){
+          or = mem.getToplevelInstance() + ".";
+        }
         switch (node.operator) {
           case "==":
-            node.operator = "isEqual(";
+            node.operator = or + "isEqual(";
             break;
           case "<":
-            node.operator = "isSmaller(";
+            node.operator = or + "isSmaller(";
             break;
           case ">":
-            node.operator = "isGreater(";
+            node.operator = or + "isGreater(";
             break;
           case "<=":
-            node.operator = "isSmallerEqual(";
+            node.operator = or + "isSmallerEqual(";
             break;
           case ">=":
-            node.operator = "isGreaterEqual(";
+            node.operator = or + "isGreaterEqual(";
             break;
         }
       }
@@ -286,7 +292,10 @@ public class VTestTypeVisitor implements RudiVisitor {
     String oldname = mem.getClassName();
     String oldrule = mem.getCurrentRule();
     String oldTrule = mem.getCurrentTopRule();
-    mem.enterClass(rudi.getClassName());
+    if(rudi.getClassName() != null){
+      node.setClassName(rudi.getClassName());
+      mem.enterClass(rudi.getClassName());
+    }
     for (RudiTree t : node.rules) {
       // learn about all defs before visiting the other statements!!
       if(t instanceof StatVarDef || (t instanceof StatMethodDeclaration
@@ -320,6 +329,9 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
     if (mem.getToplevelCalls(rudi.getClassName()) != null) {
       for (String s : mem.getToplevelCalls(rudi.getClassName())) {
+        if(s.contains("(")){
+          s = s.substring(s.indexOf("=") + 6, s.indexOf("("));
+        }
         if (mem.getNeededClasses(s) != null) {
           for (String n : mem.getNeededClasses(s)) {
             mem.needsClass(rudi.getClassName(), n);
@@ -684,7 +696,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
     String o = mem.getFunctionOrigin(node.content, partypes);
     if (o != null && rudi.getClassName() != null &&
-            !rudi.getClassName().equals(o)) {
+            !rudi.getClassName().toLowerCase().equals(o.toLowerCase())) {
       mem.needsClass(mem.getCurrentTopRule(), o);
       node.realOrigin = o;
     }
@@ -733,7 +745,9 @@ public class VTestTypeVisitor implements RudiVisitor {
       }
     }
 
-    if (o != null && node.originClass != null && !node.originClass.equals(o)) {
+    if (o != null && (node.originClass != null &&
+            !node.originClass.toLowerCase().equals(o.toLowerCase()))) {
+//      System.out.println(node.fullexp + " : " + o + " : " + mem.getClassName());
       mem.needsClass(mem.getCurrentTopRule(), o);
       node.realOrigin = o;
     }

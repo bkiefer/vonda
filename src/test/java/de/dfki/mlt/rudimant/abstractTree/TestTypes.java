@@ -40,7 +40,6 @@ public class TestTypes {
     String in = "propose(\"continue_quiz\") {\n" +
               "      Rdf turn = getCurrentTurn(activity);}";
     String r = getGeneration(in);
-    System.out.println(r);
     assertEquals("propose(\"continue_quiz\", new Proposal() {"
             + "public void run() {"
             + "Rdf turn = getCurrentTurn(activity); }});"

@@ -222,9 +222,18 @@ public class VGenerationVisitor implements RTStringVisitor {
       ret += "new ";
       ret += node.construct.visitStringV(this);
     } else {
+      if(!mem.getClassName().toLowerCase().equals(
+              mem.getToplevelInstance().toLowerCase())){
+        ret += mem.getToplevelInstance() + ".";
+      }
       ret += "_proxy.getClass(\""
               + mem.getProxy().getClass(node.type)
-              + "\").getNewInstance(DEFNS)";
+              + "\").getNewInstance(";
+      if(!mem.getClassName().toLowerCase().equals(
+              mem.getToplevelInstance().toLowerCase())){
+        ret += mem.getToplevelInstance() + ".";
+      }
+      ret += "DEFNS)";
     }
     return ret;
   }
@@ -261,15 +270,19 @@ public class VGenerationVisitor implements RTStringVisitor {
     // so, look for it in the comment before the first element we've got
     node.rules.get(0).printImportifJava(this);
     // maybe we need to import the class that imported us to use its variables
-
+    String ext = "";
+    if(node.classname.toLowerCase()
+            .equals(mem.getToplevelInstance().toLowerCase())){
+      ext = " extends " + rudi.getWrapperClass();
+    }
     out.append("public class " + node.classname
-            // don't need this anymore
-            //+ " extends " + rudi.getWrapperClass()
+            + ext
             + "{\n");
 
     // create variable fields for all those classes whose concrete instances we
     // will need
     for (String n : mem.getNeededClasses(node.classname)) {
+      if(n.equals(rudi.getClassName())) continue;
       out.append("private final ");
       out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
               + n.substring(0, 1).toLowerCase() + n.substring(1));
@@ -323,6 +336,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     // get all those classes the toplevel rules need
     int i = 0;
     for (String n : mem.getNeededClasses(rudi.getClassName())) {
+      if(n.equals(rudi.getClassName())) continue;
       String name = n.substring(0, 1).toLowerCase() + n.substring(1);
       if (i == 0) {
         args += n.substring(0, 1).toUpperCase() + n.substring(1) + " "
@@ -400,7 +414,7 @@ public class VGenerationVisitor implements RTStringVisitor {
         out.append(toplevel);
 
         String t = toplevel.substring(toplevel.indexOf(" ") + 1, toplevel.indexOf(" ="));
-        Set<String> ncs = mem.getNeededClasses(t);
+        List<String> ncs = mem.getNeededClasses(t);
         if (ncs != null) {
           i = 0;
           for (String c : ncs) {
@@ -580,6 +594,10 @@ public class VGenerationVisitor implements RTStringVisitor {
 
   @Override
   public void visitNode(StatPropose node) {
+    if(!mem.getClassName().toLowerCase().equals(
+            mem.getToplevelInstance().toLowerCase())){
+      out.append(mem.getToplevelInstance()).append(".");
+    }
     out.append("propose(");
     node.arg.visitWithComments(this);
     out.append(", new Proposal() {public void run()\n");
@@ -762,14 +780,22 @@ public class VGenerationVisitor implements RTStringVisitor {
     }
     out.append(result);
 
-    out.append("if (rulesToLog.contains(\"" + rule + "\")){\n");
+    out.append("if (");
+    if(!mem.getClassName().toLowerCase().equals(
+            mem.getToplevelInstance().toLowerCase())){
+      out.append(mem.getToplevelInstance()).append(".");
+    }
+    out.append("rulesToLog.contains(\"" + rule + "\")){\n");
     // do all that logging
 
     out.append("HashMap<String, Boolean> " + rule + " = new HashMap<>();\n");
     for (String var : realLook.keySet()) {
       out.append(rule + ".put(\"" + realLook.get(var).replaceAll("\\\"", "\\\\\"") + "\", " + var + ");\n");
     }
-
+    if(!mem.getClassName().toLowerCase().equals(
+            mem.getToplevelInstance().toLowerCase())){
+      out.append(mem.getToplevelInstance()).append(".");
+    }
     out.append("LoggerFunction(" + rule + ", \"" + rule + "\", \""
             + mem.getClassName() + "\");\n");
 

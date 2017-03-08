@@ -30,14 +30,14 @@ public class TstUtils {
     StringWriter out = new StringWriter();
     parseAndTypecheck(in, out);
     StringBuffer sb = out.getBuffer();
-    return normalizeSpaces(sb.subSequence(prefix, sb.length() - suffix).toString());
+    return normalizeSpaces(sb.subSequence(prefix + 34, sb.length() - suffix).toString());
   }
 
   public static String getTypeError(String in) throws Throwable {
     StringWriter out = new StringWriter();
     parseAndTypecheckWithError(in, out);
     StringBuffer sb = out.getBuffer();
-    return normalizeSpaces(sb.subSequence(prefix, sb.length() - suffix).toString());
+    return normalizeSpaces(sb.subSequence(prefix + 34, sb.length() - suffix).toString());
   }
 
   public static RudiTree getNodeOfInterest(GrammarFile rt) {
@@ -71,7 +71,7 @@ public class TstUtils {
     s = normalizeSpaces(s);
     exp = normalizeSpaces(exp);
     int end = s.lastIndexOf("public void process()") - 1  ;
-    int start = 212; //end - exp.length();
+    int start = 246; //end - exp.length();
     return normalizeSpaces(s.substring(start, end));
   }
 
