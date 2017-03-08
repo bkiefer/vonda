@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
+import static de.dfki.mlt.rudimant.Visualize.*;
 import static de.dfki.mlt.rudimant.abstractTree.TstUtils.*;
 import static org.junit.Assert.*;
 
@@ -18,54 +19,59 @@ public class TestTypes {
 
   @BeforeClass
   public static void setUpClass() {
-    setUpNonEmpty();
+    setUpEmpty();
   }
 
   @Test
   public void testType1(){
     String in = "DialogueAct reply = myLastDA().copy();";
-    String r = getGeneration(in);
-    assertEquals("DialogueAct reply = (DialogueAct) myLastDA().copy(); ", r);
+    String r = generate(in);
+    String expected = "DialogueAct reply = (DialogueAct) myLastDA().copy();";
+    assertEquals(expected, getForEmptyAssign(r, expected));
   }
 
   @Test
   public void testType2(){
     String in = "Rdf turn = getCurrentTurn(activity);";
-    String r = getGeneration(in);
-    assertEquals("Rdf turn = getCurrentTurn(activity); ", r);
+    String r = generate(in);
+    String expected = "Rdf turn = getCurrentTurn(activity);";
+    assertEquals(expected, getForEmptyAssign(r, expected));
   }
 
   @Test
   public void testType3(){
     String in = "propose(\"continue_quiz\") {\n" +
               "      Rdf turn = getCurrentTurn(activity);}";
-    String r = getGeneration(in);
-    assertEquals("propose(\"continue_quiz\", new Proposal() {"
+    String r = generate(in);
+    String expected = "propose(\"continue_quiz\",new Proposal() {"
             + "public void run() {"
-            + "Rdf turn = getCurrentTurn(activity); }});"
-            , r);
+            + "Rdf turn = getCurrentTurn(activity); }});";
+    assertEquals(expected, getForEmptyAssign(r, expected));
   }
 
   @Test
   public void testType4(){
     String in = "int correct = q.getWhichCorrect();";
-    String r = getGeneration(in);
-    assertEquals("int correct = (int) q.getWhichCorrect(); ", r);
+    String r = generate(in);
+    String expected = "int correct = (int) q.getWhichCorrect();";
+    assertEquals(expected, getForEmptyAssign(r, expected));
   }
 
   @Test
   public void testReturnSetType() {
     String in = "Child c; docs = c.isTreatedBy;";
-    String r = getGeneration(in);
-    assertEquals("Set<Object> docs = ((Set<Object>)c.getValue(\"<dom:isTreatedBy>\")); ", r);
+    String r = generate(in);
+    String expected = "Set<Object> docs = ((Set<Object>)c.getValue(\"<dom:isTreatedBy>\"));";
+    assertEquals(expected, getForEmptyAssign(r, expected));
   }
 
   @Test
   public void testLambdaExp() {
     String in = "Set<Child> cs; cs.contains((c) -> c.foreName.equals(\"John\"));";
-    String r = getGeneration(in);
-    assertEquals("cs.contains((c) -> "
-            + "((Set<Object>)c.getValue(\"foreName\")).equals(\"John\")); ", r);
+    String r = generate(in);
+    String expected = "cs.contains((c) -> "
+            + "((Set<Object>)c.getValue(\"foreName\")).equals(\"John\"));";
+    assertEquals(expected, getForEmptyAssign(r, expected));
   }
 
 }

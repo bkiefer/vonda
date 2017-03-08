@@ -70,9 +70,9 @@ public class TstUtils {
   public static String getForEmpty(String s, String exp) {
     s = normalizeSpaces(s);
     exp = normalizeSpaces(exp);
-    int end = s.lastIndexOf("public void process()") - 1  ;
-    int start = 246; //end - exp.length();
-    return normalizeSpaces(s.substring(start, end));
+    int end = s.lastIndexOf("}") - 1;
+    int start = s.indexOf("// this.init();") + 18;
+    return normalizeSpaces(s.substring(start, end).trim());
   }
 
   public static String getGenerationEmpty(String in, String exp) {
@@ -86,8 +86,8 @@ public class TstUtils {
   public static String getForEmptyAssign(String s, String exp) {
     s = normalizeSpaces(s);
     exp = normalizeSpaces(exp);
-    int end = s.lastIndexOf("public test()");
-    return normalizeSpaces(s.substring(end - exp.length(), end));
+    int end = s.lastIndexOf("}") - 3;
+    return normalizeSpaces(s.substring(end - exp.length() - 1, end).trim());
   }
 
 }

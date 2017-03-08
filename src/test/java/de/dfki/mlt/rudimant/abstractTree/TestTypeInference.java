@@ -21,7 +21,7 @@ public class TestTypeInference {
   public void test() {
     String boolexp = "void foo() { b = 5 < 1; }";
     String s = generate(boolexp);
-    String expected = "void foo() {boolean b = (5 < 1); }";
+    String expected = "void foo() {boolean b = (5 < 1);";
     assertEquals(expected, getForEmpty(s, expected));
 
 
@@ -67,8 +67,8 @@ public class TestTypeInference {
   public void test4() {
     String in = "Activity a; if (a == null) { }";
     String s = generate(in);
-    String expected = "public void test1(){if ((a == null)) {}}";
-    assertEquals(expected, getForEmpty(s, expected));
+    String expected = "if ((a == null)) {}";
+    assertEquals(expected, getForEmptyAssign(s, expected));
   }
 
   @Test

@@ -494,6 +494,7 @@ public class VGenerationVisitor implements RTStringVisitor {
       out.append(") ");
     }
     visitStatementOrExpression(node.statblockIf);
+    out.append("\n");
     if (node.statblockElse != null) {
       out.append("else ");
       visitStatementOrExpression(node.statblockElse);
@@ -549,7 +550,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     }
     out.append("new Proposal() {public void run()\n");
     node.block.visitWithComments(this);
-    out.append("});");
+    out.append("});\n");
   }
 
   @Override
