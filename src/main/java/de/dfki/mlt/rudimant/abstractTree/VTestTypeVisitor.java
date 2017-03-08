@@ -682,7 +682,8 @@ public class VTestTypeVisitor implements RudiVisitor {
       partypes.add(e.getType());
     }
     String o = mem.getFunctionOrigin(node.content, partypes);
-    if (o != null && !rudi.getClassName().equals(o)) {
+    if (o != null && rudi.getClassName() != null &&
+            !rudi.getClassName().equals(o)) {
       mem.needsClass(mem.getCurrentTopRule(), o);
       node.realOrigin = o;
     }

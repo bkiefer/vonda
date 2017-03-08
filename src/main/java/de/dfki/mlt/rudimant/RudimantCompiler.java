@@ -95,8 +95,8 @@ public class RudimantCompiler {
     if (outputDirectory == null) return;
   }
 
-  private void initMem(RdfProxy proxy) {
-    mem = new Mem(proxy);
+  private void initMem(RdfProxy proxy, String upperRudi) {
+    mem = new Mem(proxy, upperRudi);
     mem.initializing = true;
     parent = null;
     try {
@@ -119,7 +119,8 @@ public class RudimantCompiler {
   }
 
   @SuppressWarnings("unchecked")
-  public static RudimantCompiler init(File configDir, Map<String, Object> configs)
+  public static RudimantCompiler init(File configDir,
+          Map<String, Object> configs, String upperRudi)
       throws IOException, WrongFormatException {
     if(configs.get(CFG_WRAPPER_CLASS) == null) {
       logger.error("No implementation class specified, exiting.");
@@ -133,7 +134,7 @@ public class RudimantCompiler {
               (String)configs.get(CFG_WRAPPER_CLASS),
               (String)configs.get(CFG_TARGET_CONSTRUCTOR));
     rc.checkOutputDirectory(configDir, configs);
-    rc.initMem(proxy);
+    rc.initMem(proxy, upperRudi);
     rc.typeCheck = (boolean)configs.get(CFG_TYPE_ERROR_FATAL);
     if (configs.containsKey(CFG_PACKAGE)) {
       rc.packageName = (String) configs.get(CFG_PACKAGE);

@@ -53,7 +53,11 @@ public class Mem {
    **/
   boolean initializing = false;
 
-  public Mem(RdfProxy proxy) {
+  // the rudi file that represents the Agent
+  private final String upperRudi;
+
+  public Mem(RdfProxy proxy, String upperRudi) {
+    this.upperRudi = upperRudi;
     environment = new ArrayDeque<>();
     rulesAndImports = new HashMap<>();
     _proxy = proxy;
@@ -259,7 +263,7 @@ public class Mem {
   public void addFunction(String funcname, String functype,
           List<String> partypes, String origin) {
     if(initializing){
-      origin = null;
+      origin = upperRudi;
     }
     this.current.addFunction(funcname, functype, partypes, origin, this);
   }
@@ -295,7 +299,7 @@ public class Mem {
       return false;
     }
     if(initializing){
-      origin = null;
+      origin = upperRudi;
     }
     type = checkRdf(type);
     current.put(variable, type, origin);

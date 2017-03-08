@@ -180,7 +180,13 @@ public class GrammarMain {
         configs.put(CFG_OUTPUT_DIRECTORY, outputDirectory);
       }
       main.setConfig(configs);
-      if (process(RudimantCompiler.init(confDir, configs), files)) {
+      String s = "";
+      if(files.get(0) != null){
+        s = (String)files.get(0);
+      }
+      if (process(RudimantCompiler.init(confDir, configs,
+              s.substring(s.lastIndexOf("/") + 1, s.indexOf("."))),
+              files)) {
         System.out.println("Parsing failed");
         System.exit(1);
       }

@@ -21,6 +21,7 @@ public class PrintTest {
     String[] strings = new String[]{
       "-c", "src/test/resources/tests.yml",
       "src/test/resources/Test.rudi",
+      //"../herbea/poc/src/main/rudi/Kaefer.rudi"
     };
     GrammarMain.main(strings);
   }
