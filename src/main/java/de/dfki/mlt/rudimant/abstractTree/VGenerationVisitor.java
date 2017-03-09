@@ -354,8 +354,7 @@ public class VGenerationVisitor implements RTStringVisitor {
       } else if (r instanceof UImport){
         String impor = ((UImport)r).name;
         String importn = impor.substring(0, 1).toUpperCase() + impor.substring(1);
-        out.append(importn + " " + impor
-                + " = new " + importn + "(");
+        out.append("new " + importn + "(");
         List<String> ncs = mem.getNeededClasses(impor);
         if (ncs != null) {
           int i = 0;

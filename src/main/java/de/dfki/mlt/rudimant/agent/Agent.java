@@ -80,7 +80,7 @@ public abstract class Agent extends DataComparator {
    */
   protected boolean proposalsSent;
 
-  protected Set<String> rulesToLog = new HashSet<>();
+  public Set<String> rulesToLog = new HashSet<>();
 
   /** Send something out to the world */
   protected void sendBehaviour(Object obj) {
@@ -143,7 +143,7 @@ public abstract class Agent extends DataComparator {
   /** Generate text and motion from a raw speech act representation and send it
    * to the Behaviourmanager
    */
-  protected DialogueAct emitDA(int delay, DialogueAct da) {
+  public DialogueAct emitDA(int delay, DialogueAct da) {
     Pair<String, String> toSay = asr.generate(da.dag);
     _hub.sendBehaviour(new Behaviour(toSay.first, toSay.second, delay));
     return da;
@@ -152,7 +152,7 @@ public abstract class Agent extends DataComparator {
   /** Generate text and motion from a raw speech act representation and send it
    * to the Behaviourmanager
    */
-  protected DialogueAct emitDA(DialogueAct da) {
+  public DialogueAct emitDA(DialogueAct da) {
     return emitDA(Behaviour.DEFAULT_DELAY, da);
   }
 
@@ -175,7 +175,7 @@ public abstract class Agent extends DataComparator {
   }
 
   /** When did i say this in this session? */
-  protected int saidInSession(DialogueAct da) {
+  public int saidInSession(DialogueAct da) {
     return lastOccurence(da, myLastDAs);
   }
 
@@ -184,7 +184,7 @@ public abstract class Agent extends DataComparator {
    *  was a question or a request.
    * @return true if i'm waiting for a response.
    */
-  protected boolean waitingForResponse() {
+  public boolean waitingForResponse() {
     // if my last DA was a request or a question, and there is no newer incoming
     // da, i'm waiting for an answer.
     DialogueAct myLast = myLastDA();
@@ -207,7 +207,7 @@ public abstract class Agent extends DataComparator {
   /** Return the index of the last speech act equal or more specific than the
    *  given one
    */
-  protected int receivedInSession(DialogueAct da) {
+  public int receivedInSession(DialogueAct da) {
     return lastOccurence(da, lastDAs);
   }
 
@@ -271,19 +271,19 @@ public abstract class Agent extends DataComparator {
     }
   };
 
-  protected void newTimeout(String name, int millis) {
+  public void newTimeout(String name, int millis) {
     timeouts.newTimeout(name, millis);
   }
 
-  protected boolean isTimedOut(String name) {
+  public boolean isTimedOut(String name) {
     return timeouts.isTimedout(name);
   }
 
-  protected void removeTimeout(String name) {
+  public void removeTimeout(String name) {
     timeouts.remove(name);
   }
 
-  protected boolean hasActiveTimeout(String name) {
+  public boolean hasActiveTimeout(String name) {
     return timeouts.activeTimeout(name);
   }
 
@@ -428,7 +428,7 @@ public abstract class Agent extends DataComparator {
     reset();
   }
 
-  protected void propose(String name, Proposal p) {
+  public void propose(String name, Proposal p) {
     // add the proposal to the pending proposals, but not twice
     if (!pendingProposals.containsKey(name)) {
       p.name = name;

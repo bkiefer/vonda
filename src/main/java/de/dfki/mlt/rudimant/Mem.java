@@ -283,7 +283,8 @@ public class Mem {
   public void addFunction(String funcname, String functype,
           List<String> partypes, String origin) {
     if(funcname.equals("equals") || funcname.equals("startsWith")
-            || funcname.equals("endsWith") || funcname.equals("substring")){
+            || funcname.equals("endsWith") || funcname.equals("substring")
+            || funcname.equals("info")){
       origin = null;
     } else if(initializing){
       origin = upperRudi;
