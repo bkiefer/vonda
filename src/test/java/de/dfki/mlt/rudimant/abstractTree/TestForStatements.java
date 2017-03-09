@@ -30,8 +30,8 @@ public class TestForStatements {
     String s = generate(ifstat);
     String expected = "public void initiate_greet(){"
             + " initiate_greet: if (true) {for (Object seat_outer : getSeats()) "
-            + "{ Rdf seat = (Rdf)seat_outer; {}}}}";
-    assertEquals(expected, getForEmpty(s, expected));
+            + "{ Rdf seat = (Rdf)seat_outer; {}}}";
+    assertEquals(expected, getForMarked(s, expected));
   }
 
   @Test
@@ -44,22 +44,23 @@ public class TestForStatements {
     String s = generate(ifstat);
     String expected = "public void initiate_greet(){"
             + " initiate_greet: if (true) {"
-            + "for (Object k_outer : kids()) { Rdf k = (Rdf)k_outer; {}}}}";
-    assertEquals(expected, getForEmpty(s, expected));
+            + "for (Object k_outer : kids()) { Rdf k = (Rdf)k_outer; {}}}";
+    assertEquals(expected, getForMarked(s, expected));
   }
 
   @Test
   public void test3() {
-    String ifstat = "Set<Object> getI(); for(s : getI()){"
+    String ifstat = "Set<Object> getI(); " +
+            "for(s : getI()){"
             + "label: if(true) {s = null;}}";
     String s = generate(ifstat);
-    String expected = "public void test1(){for (Object s_outer : getI()) " +
-              "{ Object s = (Object)s_outer; {" +
-              "//Rule label " +
+    String expected = "for (Object s_outer : getI()) {"
+            + " Object s = (Object)s_outer; " +
+              "{//Rule label " +
               "label: " +
-              "if (true) { s = null; }}}}";
-    System.out.println(getForEmpty(s, expected));
-    assertEquals(expected, getForEmpty(s, expected));
+              "if (true) { s = null; " +
+              "}";
+    assertEquals(expected, getForMarked(s, expected));
   }
 
 }

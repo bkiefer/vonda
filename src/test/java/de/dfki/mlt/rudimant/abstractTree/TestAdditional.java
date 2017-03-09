@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 import de.dfki.mlt.rudimant.TypeException;
+import static de.dfki.mlt.rudimant.Visualize.generate;
 
 public class TestAdditional {
   @BeforeClass
@@ -14,9 +15,11 @@ public class TestAdditional {
 
   @Test
   public void testDontKnowType(){
-    String in = "for(seat : getSeats()){}";
-    String r = getGeneration(in);
-    assertEquals("for (Object seat_outer : getSeats()) { Object seat = (Object)seat_outer; {}}", r);
+    String in = " for(seat : getSeats()){}";
+    String r = generate(in);
+    String expected = "for (Object seat_outer : getSeats()) {"
+            + " Object seat = (Object)seat_outer; {}}";
+    assertEquals(expected, getForMarked(r, expected));
   }
 
   // check for type error

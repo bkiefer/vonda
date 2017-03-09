@@ -46,7 +46,7 @@ public class TstUtils {
 
   public static void setUpNonEmpty() {
     try {
-      setUp(TESTCONF, "label: if(true) {", "}");
+      setUp(TESTCONF, "label: if(true) {// hello test\n", "}");
     }
     catch (FileNotFoundException fex) {
       throw new RuntimeException(fex);
@@ -56,38 +56,18 @@ public class TstUtils {
 
   public static void setUpEmpty() {
     try {
-      setUp(TESTCONF, "", "");
+      setUp(TESTCONF, "int asdf;// hello test\n", "");
     }
     catch (FileNotFoundException fex) {
       throw new RuntimeException(fex);
     }
   }
 
-
-  /** Extract the right string if there is no global if-rule, and in case it's
-   *  not only a variable declaration (then, there is also the constructor)
-   */
-  public static String getForEmpty(String s, String exp) {
+  public static String getForMarked(String s, String exp) {
     s = normalizeSpaces(s);
     exp = normalizeSpaces(exp);
-    int end = s.lastIndexOf("}") - 1;
-    int start = s.indexOf("// this.init();") + 18;
-    return normalizeSpaces(s.substring(start, end).trim());
+    //int end = s.lastIndexOf("}") - 2;
+    int start = s.indexOf("// hello test") + 14;
+    return normalizeSpaces(s.substring(start, start + exp.length()).trim());
   }
-
-  public static String getGenerationEmpty(String in, String exp) {
-    String s = generate(in);
-    return getForEmpty(s, exp);
-  }
-
-  /** Extract the right string if there is no global if-rule, and in case it's
-   *  not only a variable declaration (then, there is also the constructor)
-   */
-  public static String getForEmptyAssign(String s, String exp) {
-    s = normalizeSpaces(s);
-    exp = normalizeSpaces(exp);
-    int end = s.lastIndexOf("}") - 3;
-    return normalizeSpaces(s.substring(end - exp.length() - 1, end).trim());
-  }
-
 }

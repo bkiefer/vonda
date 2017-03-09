@@ -337,7 +337,7 @@ public class VGenerationVisitor implements RTStringVisitor {
   }
 
   public void writeRuleList(List<RudiTree> rules){
-    Set<RudiTree> later = new HashSet<>();
+    List<RudiTree> later = new ArrayList<>();
     // create the process method
     out.append("\tpublic void process(");
     out.append("){\n");
