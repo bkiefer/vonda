@@ -48,7 +48,7 @@
     <dependency>
       <groupId>de.dfki.lt.hfc</groupId>
       <artifactId>hfc-db</artifactId>
-      <version>1.1-SNAPSHOT</version>
+      <version>1.2-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
 
@@ -86,7 +86,7 @@
   </dependencies>
 
   <build>
-    <plugins> 
+    <plugins>
       <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
@@ -106,7 +106,7 @@
               </execution>
           </executions>
       </plugin>
-        
+
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.5.3</version>

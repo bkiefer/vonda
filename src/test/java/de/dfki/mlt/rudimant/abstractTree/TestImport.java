@@ -17,7 +17,7 @@ public class TestImport {
   public void testImport() throws WrongFormatException {
     GrammarMain.main(new String[]{
         "-o", "target/generated/",
-        "-r", RESOURCE_DIR + "ontos/pal.ini",
+        "-r", RESOURCE_DIR + "ontos/pal.quads.ini",
         RESOURCE_DIR + "main.rudi"
     });
     assertTrue(new File("target/generated/Main.java").exists());

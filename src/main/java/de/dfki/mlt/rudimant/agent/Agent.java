@@ -323,11 +323,6 @@ public abstract class Agent extends DataComparator {
     return random.nextInt(bound);
   }
 
-  //public boolean isSubclassOf(Rdf sub, String clz) throws TException {
-  //  return sub.getClazz().isSubclassOf(_proxy.fetchRdfClass(clz));
-  //}
-
-
   /**
    * If new data arrived, start the rules processing until no new proposals are
    * added and send the final set to the decision process. After that, the flag
@@ -426,6 +421,10 @@ public abstract class Agent extends DataComparator {
       System.exit(1);
     }
     reset();
+  }
+
+  public void setCommunicationHub(CommunicationHub hub) {
+    _hub = hub;
   }
 
   public void propose(String name, Proposal p) {
