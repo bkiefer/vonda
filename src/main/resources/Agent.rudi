@@ -32,6 +32,8 @@ boolean waitingForResponse();
 DialogueAct addLastDA(DialogueAct newDA);
 void lastDAprocessed();
 
+void newData();
+
 // Timeout methods
 void newTimeout(String name, int millis);
 boolean isTimedOut(String name);
@@ -52,4 +54,3 @@ void info(String s, int i);
 RdfProxy _proxy;
 CommunicationHub _hub;
 AsrTts asr;
-Set<String> rulesToLog;

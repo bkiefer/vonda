@@ -1,7 +1,6 @@
 package de.dfki.mlt.rudimant.agent;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.HashMap;
@@ -14,12 +13,9 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.lt.tr.dialogue.cplan.DagEdge;
-import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 
 /**
@@ -80,7 +76,10 @@ public abstract class Agent extends DataComparator {
    */
   protected boolean proposalsSent;
 
+  /** The next two variable determine which rudi rules are logged */
   public Set<String> rulesToLog = new HashSet<>();
+  public boolean logAllRules = false;
+
 
   /** Send something out to the world */
   protected void sendBehaviour(Object obj) {
@@ -144,7 +143,7 @@ public abstract class Agent extends DataComparator {
    * to the Behaviourmanager
    */
   public DialogueAct emitDA(int delay, DialogueAct da) {
-    Pair<String, String> toSay = asr.generate(da.dag);
+    Pair<String, String> toSay = asr.generate(da.getDag());
     _hub.sendBehaviour(new Behaviour(toSay.first, toSay.second, delay));
     return da;
   }
@@ -166,7 +165,7 @@ public abstract class Agent extends DataComparator {
   protected int lastOccurence(DialogueAct da, Iterable<DialogueAct> daList) {
     int i = 0;
     for (DialogueAct evt : daList) {
-      if (da.dag.subsumes(evt.dag)) {
+      if (da.subsumes(evt)) {
         return i;
       }
       ++i;
@@ -240,27 +239,11 @@ public abstract class Agent extends DataComparator {
   }
 
   public static String getSlot(DialogueAct diaAct, String feature) {
-    DagNode da = diaAct.dag;
-    DagEdge e = da.getEdge(DagNode.getFeatureId(feature));
-    if (e == null) {
-      return null;
-    }
-    DagNode node = e.getValue();
-    if (node.getType() == DagNode.TOP_ID) {
-      e = node.getEdge(DagNode.PROP_FEAT_ID);
-      if (e == null) {
-        return DagNode.TOP_TYPE;
-      }
-      return e.getValue().getTypeName();
-    }
-    return node.getTypeName();
+    return diaAct.getSlot(feature);
   }
 
   public static String getDialogueAct(DialogueAct diaAct) {
-    DagNode da = diaAct.dag;
-    DagEdge e = da.getEdge(DagNode.TYPE_FEAT_ID);
-    String result = e.getValue().getTypeName();
-    return result;
+    return diaAct.getDialogueActType();
   }
 
   // **********************************************************************
@@ -451,12 +434,34 @@ public abstract class Agent extends DataComparator {
     }
   }
 
+  // ######################################################################
+  // Rule logging for debugging
+  // ######################################################################
+
+  /** log all rules */
+  public void logAllRules() {
+    logAllRules = true;
+  }
+
+  /** Reset logging to false for all rules */
+  public void resetLogging() {
+    logAllRules = false;
+    rulesToLog.clear();
+  }
+
+  /** Start logging a specific rule */
   public void logRule(String name) {
     rulesToLog.add(name);
   }
 
+  /** Stop logging a specific rule */
   public void unLogRule(String name) {
     rulesToLog.remove(name);
+  }
+
+  /** For the compiled code, to determine if a rule should be logged */
+  public boolean shouldLog(String name) {
+    return rulesToLog.contains(name);
   }
 
   /**
@@ -465,14 +470,12 @@ public abstract class Agent extends DataComparator {
    * @param rule the name of the rule whose condition this is
    * @param file the file the rule is in
    */
-  public void LoggerFunction(Map<String,Boolean> values, String rule, String file){
-    if (rulesToLog.contains(rule)) {
-      StringBuffer sb = new StringBuffer();
-      for (Map.Entry<String, Boolean> e : values.entrySet()) {
-        sb.append("  ")
-          .append(e.getKey()).append(": ").append(e.getValue()).append('\n');
-      }
-      logger.debug("Rule {}:{}\n{}", file, rule, sb.toString());
+  public void logRule(Map<String,Boolean> values, String rule, String file){
+    StringBuffer sb = new StringBuffer();
+    for (Map.Entry<String, Boolean> e : values.entrySet()) {
+      sb.append("  ")
+      .append(e.getKey()).append(": ").append(e.getValue()).append('\n');
     }
+    logger.debug("Rule {}:{}\n{}", file, rule, sb.toString());
   }
 }
