@@ -161,10 +161,10 @@ public class VGenerationVisitor implements RTStringVisitor {
   public String visitDaToken(RTExpression exp) {
     String ret = "";
     if (exp instanceof UVariable) {
-      ret += "\" + " + ((UVariable) exp).fullexp + "+ \"";
+      ret += "\" + " + ((UVariable) exp).visitStringV(this) + "+ \"";
     } else if (exp instanceof USingleValue
             && ((USingleValue) exp).type.equals("String")) {
-      String s = ((USingleValue) exp).content;
+      String s = ((USingleValue) exp).visitStringV(this);
       if (s.contains("\"")) {
         s = s.substring(1, s.length() - 1);
       }
@@ -338,6 +338,16 @@ public class VGenerationVisitor implements RTStringVisitor {
 
   public void writeRuleList(List<RudiTree> rules){
     List<RudiTree> later = new ArrayList<>();
+    // do all assignments on toplevel here, those are class attributes
+    for(RudiTree r : rules){
+      if(r instanceof ExpAssignment){
+        if(((ExpAssignment)r).declaration){
+          out.append(mem.convertRdfType(((ExpAssignment)r).type) + " " 
+                  + ((ExpAssignment)r).left.fullexp + ";\n");
+          ((ExpAssignment)r).declaration = false;
+        }
+      }
+    }
     // create the process method
     out.append("\tpublic void process(");
     out.append("){\n");
