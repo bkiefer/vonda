@@ -16,13 +16,15 @@ import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import de.dfki.lt.hfc.db.server.HfcDbHandler;
+import de.dfki.lt.hfc.db.server.StreamingClient;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 
 /**
  *
  * @author chbu02, Bernd Kiefer
  */
-public abstract class Agent extends DataComparator {
+public abstract class Agent extends DataComparator implements StreamingClient {
 
   public static final Logger logger = LoggerFactory.getLogger(Agent.class);
 
@@ -126,6 +128,19 @@ public abstract class Agent extends DataComparator {
 
   // Constructors ************************************************************
   // public Agent() {}
+
+  // **********************************************************************
+  // StreamingClient init() & compute() function to register changes in DB
+  // **********************************************************************
+  @Override
+  public void init(HfcDbHandler handler) {
+    // nothing to do
+  }
+
+  @Override
+  public void compute() {
+    newData();
+  }
 
 
   // **********************************************************************
@@ -395,6 +410,7 @@ public abstract class Agent extends DataComparator {
   @SuppressWarnings("rawtypes")
   public void init(File configDir, String language, RdfProxy proxy, Map configs) {
     _proxy = proxy;
+    _proxy.registerStreamingClient(this);
     _language = language;
     asr = new AsrTts();
     try {

@@ -1,25 +1,8 @@
-* Tree building
-  - Get rid of the minus field in ExpArithmetic, and treat it like negation
-    in the boolean case
-  - Rename ExpFuncOnObject to ExpMethodApplication
-  - Give the ExpFor nodes more speaking names
-
-* Type reasoning / computation
-  - Are parameter types of function declarations used for type computation?
-  - Type check of function parameters in UFuncCall ??
-
 * Dialogue Acts
   - hierarchy of DAs and Frames from the ontology with access functions
   - functionality: integrate jtfs for subsumption etc.
 
-* java functions
-  - implement everything that is in greet_user.rudi
-  - code /defs
-
 * processor / abstract processor
-  - event-loop (independent of communication infrastructure, e.g., TECS)
-  - Agent code
-  - timeouts
   - behaviour sync with optional delays
 
 * Application examples
