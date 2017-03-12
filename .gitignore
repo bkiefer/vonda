@@ -1,6 +1,14 @@
-target
+/target
 .classpath
 .project
 .settings
 **/*~
 /nbproject/
+/0howto
+/Java8.g4
+/doc/quiz-abstract.txt
+/functionalities.org.commented by HUK
+/old/
+/rulesproto.java.commented by HUK
+runtest
+test.rudi
