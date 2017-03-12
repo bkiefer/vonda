@@ -88,7 +88,7 @@ public class VGenerationVisitor implements RTStringVisitor {
   public String visitNode(ExpAssignment node) {
     String ret = "";
     if (node.declaration) {
-      ret += (mem.convertRdfType(node.type));
+      ret += (Mem.convertRdfType(node.type));
     }
     ret += (' ');
     UPropertyAccess pa = null;
@@ -118,7 +118,7 @@ public class VGenerationVisitor implements RTStringVisitor {
             && !node.type.equals(node.right.getType())) {
       // then there is either sth wrong here, what would at least have resulted
       // in warnings in type testing, or it is possible to cast the right part
-      ret += "(" + mem.convertRdfType(node.type) + ") ";
+      ret += "(" + Mem.convertRdfType(node.type) + ") ";
     }
     ret += node.right.visitWithSComments(this);
     if (pa != null) {
@@ -470,9 +470,9 @@ public class VGenerationVisitor implements RTStringVisitor {
     out.append(var).append("_outer : ");
     node.exp.visitWithComments(this);
     out.append(") { ")
-       .append(mem.convertRdfType(node.varType))
+       .append(Mem.convertRdfType(node.varType))
        .append(" ").append(var);
-    out.append(" = (").append(mem.convertRdfType(node.varType)).append(")")
+    out.append(" = (").append(Mem.convertRdfType(node.varType)).append(")")
        .append(var).append("_outer;\n");
     visitStatementOrExpression(node.statblock);
     out.append("}");
@@ -495,7 +495,7 @@ public class VGenerationVisitor implements RTStringVisitor {
   public void visitNode(StatIf node) {
     if (this.ruleIf != null) {
       out.append("if (" + ruleIf + ") ");
-//      out.append("if (rulesToLog.contains(\"" + node.currentRule + "\") ? wholeCondition : ");
+//      out.append("if (shouldLog(\"" + node.currentRule + "\") ? wholeCondition : ");
       ruleIf = null;
     } else {
       out.append("if (");
@@ -531,13 +531,13 @@ public class VGenerationVisitor implements RTStringVisitor {
       return;
     }
     out.append(node.visibility + " ");
-    out.append(mem.convertRdfType(node.return_type) + " ");
+    out.append(Mem.convertRdfType(node.return_type) + " ");
     out.append(node.name + "(");
     for (int i = 0; i < node.parameters.size(); i++) {
       if (i != 0) {
         out.append(", ");
       }
-      out.append(mem.convertRdfType(node.partypes.get(i))
+      out.append(Mem.convertRdfType(node.partypes.get(i))
               + " " + node.parameters.get(i));
     }
     out.append(")\n");
@@ -633,7 +633,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     for (int i = to - 1; i > 0; i--) {
       if (node.parts.get(i) instanceof UPropertyAccess) {
         UPropertyAccess pa = (UPropertyAccess) node.parts.get(i);
-        String cast = mem.convertRdfType(pa.getType());
+        String cast = Mem.convertRdfType(pa.getType());
         //ret += "((" + cast + ")";
         ret += "((";
         ret += (!pa.functional) ? "Set<Object>" : cast;
@@ -742,7 +742,7 @@ public class VGenerationVisitor implements RTStringVisitor {
             mem.getToplevelInstance().toLowerCase())){
       out.append(mem.getToplevelInstance()).append(".");
     }
-    out.append("rulesToLog.contains(\"" + rule + "\")){\n");
+    out.append("shouldLog(\"" + rule + "\")){\n");
     // do all that logging
 
     out.append("HashMap<String, Boolean> " + rule + " = new HashMap<>();\n");
@@ -753,16 +753,12 @@ public class VGenerationVisitor implements RTStringVisitor {
             mem.getToplevelInstance().toLowerCase())){
       out.append(mem.getToplevelInstance()).append(".");
     }
-    out.append("LoggerFunction(" + rule + ", \"" + rule + "\", \""
+    out.append("logRule(" + rule + ", \"" + rule + "\", \""
             + mem.getClassName() + "\");\n");
 
     out.append("}\n");
     collectingCondition = false;
     //return (String) expnames[expnames.length - 1];
     return condV.getLastBool();
-  }
-
-  public void dummyLoggingMethod(String rule, String className, Map toLog) {
-    // log this very extensive
   }
 }
