@@ -228,6 +228,7 @@ public class Mem {
       this.neededClasses.put(classname, new ArrayList<String>());
       this.rulesAndImports.put(classname, new ArrayList<String>());
     }
+    this.needsClass(classname, this.upperRudi);
   }
 
   /**
