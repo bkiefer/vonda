@@ -711,6 +711,9 @@ public class VTestTypeVisitor implements RudiVisitor {
       rudi.typeError("The function call to " + node.content
               + " refers to a function that wasn't declared", node);
     }
+    if(node.newexp){
+      node.content = mem.checkRdf(node.content);
+    }
   }
 
   /**

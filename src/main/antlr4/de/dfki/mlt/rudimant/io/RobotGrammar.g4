@@ -199,7 +199,11 @@ simple_b_exp
 
 new_exp
   : NEW VARIABLE
-  | NEW function_call
+  | NEW spec_func_call
+  ;
+
+spec_func_call
+  : type_spec '(' ( exp ( ',' exp )* )? ')'
   ;
 
 //lambda_exp: '(' DEC_VAR? VARIABLE (',' DEC_VAR? VARIABLE)* ')'

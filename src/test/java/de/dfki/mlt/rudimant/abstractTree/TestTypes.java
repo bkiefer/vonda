@@ -61,6 +61,15 @@ public class TestTypes {
   }
 
   @Test
+  public void testType5(){
+    String in = "List<String> a = new List<String>();";
+    String r = generate(in);
+    String expected = "a = new List<String>();";
+    assertEquals(expected, getForMarked(r, expected));
+    assertTrue(r.contains("List<String> a;"));
+  }
+
+  @Test
   public void testReturnSetType() {
     String in = "Child c;  docs = c.isTreatedBy;";
     String r = generate(in);

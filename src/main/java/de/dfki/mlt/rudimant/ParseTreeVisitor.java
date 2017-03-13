@@ -124,7 +124,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       i += 2;   // skip comma
     }
     return new UFuncCall(ctx.getText(), ctx.getChild(0).getText(),
-            expList).setPosition(ctx, currentClass);
+            expList, false).setPosition(ctx, currentClass);
   }
 
   private RudiTree arithExp(ParserRuleContext ctx) {
@@ -589,5 +589,17 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visit(ParseTree pt) {
     return pt == null ? null : pt.accept(this);
+  }
+
+  @Override
+  public RudiTree visitSpec_func_call(RobotGrammarParser.Spec_func_callContext ctx) {
+    // type_spec LPAR exp? (COMMA exp)* RPAR
+    ArrayList<RTExpression> expList = new ArrayList<RTExpression>();
+    for (int i = 2; i < ctx.getChildCount() - 1;) {
+      expList.add((RTExpression) this.visit(ctx.getChild(i)));
+      i += 2;   // skip comma
+    }
+    return new UFuncCall(ctx.getText(), ctx.getChild(0).getText(),
+            expList, true).setPosition(ctx, currentClass);
   }
 }

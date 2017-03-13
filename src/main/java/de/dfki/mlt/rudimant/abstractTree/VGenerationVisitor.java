@@ -115,7 +115,8 @@ public class VGenerationVisitor implements RTStringVisitor {
       ret += " = ";
     }
     if (node.type != null
-            && !node.type.equals(node.right.getType())) {
+            && !node.type.equals(node.right.getType())
+            && !(node.right instanceof ExpNew)) {
       // then there is either sth wrong here, what would at least have resulted
       // in warnings in type testing, or it is possible to cast the right part
       ret += "(" + Mem.convertRdfType(node.type) + ") ";
@@ -342,7 +343,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     for(RudiTree r : rules){
       if(r instanceof ExpAssignment){
         if(((ExpAssignment)r).declaration){
-          out.append(mem.convertRdfType(((ExpAssignment)r).type) + " " 
+          out.append(mem.convertRdfType(((ExpAssignment)r).type) + " "
                   + ((ExpAssignment)r).left.fullexp + ";\n");
           ((ExpAssignment)r).declaration = false;
         }
@@ -675,7 +676,11 @@ public class VGenerationVisitor implements RTStringVisitor {
       String t = node.realOrigin;
       ret += t.substring(0, 1).toLowerCase() + t.substring(1) + ".";
     }
-    ret += node.content + "(";
+    if(node.newexp){
+      ret += mem.convertRdfType(node.content) + "(";
+    } else {
+      ret += node.content + "(";
+    }
     for (int i = 0; i < node.exps.size(); i++) {
       ret += node.exps.get(i).visitWithSComments(this);
       if (i != node.exps.size() - 1) {
