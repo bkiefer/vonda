@@ -156,7 +156,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     if (node.operator != null && node.operator.contains("(")) {
       return node.left.visitWithSComments(this) + node.operator;
     }
-    return node.left.visitWithSComments(this);
+    return ret + node.left.visitWithSComments(this);
   }
 
   public String visitDaToken(RTExpression exp) {

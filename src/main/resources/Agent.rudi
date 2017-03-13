@@ -48,6 +48,10 @@ float random();
 
 // logging methods
 void info(String s, int i);
+
+// lambda
+boolean contains(Collection coll, Predicate pred);
+boolean all(Collection coll, Predicate pred);
  
 // all Agent variables we should know
 

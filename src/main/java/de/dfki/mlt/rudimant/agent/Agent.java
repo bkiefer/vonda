@@ -2,14 +2,8 @@ package de.dfki.mlt.rudimant.agent;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -448,6 +442,22 @@ public abstract class Agent extends DataComparator implements StreamingClient {
     finally {
       proposalsSent = false;
     }
+  }
+
+  // ######################################################################
+  // Collection + lambda methods
+  // ######################################################################
+
+  <T> boolean contains(Collection<T> coll, Predicate<? super T> p) {
+    for(T elt : coll)
+      if (p.test(elt)) return true;
+    return false;
+  }
+
+  <T> boolean all(Collection<T> coll, Predicate<? super T> p) {
+    for(T elt : coll)
+      if (! p.test(elt)) return false;
+    return true;
   }
 
   // ######################################################################
