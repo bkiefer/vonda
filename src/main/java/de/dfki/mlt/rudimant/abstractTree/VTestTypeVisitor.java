@@ -415,23 +415,10 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
   }
 
-  /**
-   * TODO: WHAT HAPPENS HERE? IS IT STILL NEEDED?
-   */
+  /** Process import statement */
   @Override
   public void visitNode(UImport node) {
     String conargs = "";
-//    if (null != rudi.getConstructorArgs()
-//            && !rudi.getConstructorArgs().isEmpty()) {
-//      int i = 0;
-//      for (String a : rudi.getConstructorArgs().split(",")) {
-//        if (i > 0) {
-//          conargs += ", ";
-//        }
-//        conargs += a.trim().split(" ")[1];
-//        i++;
-//      }
-//    }
     mem.addImport(node.name, conargs);
     logger.info("Processing import " + node.content);
     rudi.processImport(node.content);

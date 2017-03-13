@@ -83,7 +83,7 @@ public class TestTypeInference {
     String in = "String foo(); "
             + "boolean b = foo(); ";
     String s = generate(in);
-    String expected = "b = foo().isEmpty();";
+    String expected = "b = foo().isEmpty() == false;";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("boolean b;"));
   }
@@ -104,6 +104,14 @@ public class TestTypeInference {
     String expected = "b = 7;";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("int b;"));
+  }
+
+  @Test
+  public void testUnknownBoolean() {
+    String in = "Rdf r; if(r.has(\"prop\")) i = 1;";
+    String s = generate(in);
+    String expected = "if (r.has(\"prop\")) int i = 1; ";
+    assertEquals(expected, getForMarked(s, expected));
   }
 
 }

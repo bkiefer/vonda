@@ -79,7 +79,7 @@ public abstract class RTExpression extends RudiTree {
     // method call returning a boolean
     // TODO check if there's something missing for RDF types
     if (isComplexType()) {
-      result = new ExpBoolean(fullexp, this, null, ".isEmpty()");
+      result = new ExpBoolean(fullexp, this, null, ".isEmpty() == false");
       result.positions = positions;
       return result;
     }
