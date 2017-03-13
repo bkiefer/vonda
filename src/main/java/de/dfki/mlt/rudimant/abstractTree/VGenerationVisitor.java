@@ -460,7 +460,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     if (node.arithmetic != null) {
       node.arithmetic.visitWithComments(this);
     }
-    out.append(");");
+    out.append(")");
     visitStatementOrExpression(node.statblock);
   }
 

@@ -97,9 +97,7 @@ public class StatementTest {
      String in = "Object foo;  "
              + "for (int i = 1; i <= 2; i = i+1){foo.slot = 1;}";
     String r = generate(in);
-     //TODO: this is no proper Java code, find out what's wrong here
-    String expected = "for (Object[] o : i = (i+1)) {"
-            + " Object ; = o[0]{ foo.slot = 1; }}";
+    String expected = "for ( int i = 1; (i <= 2); i = (i+1)){ foo.slot = 1; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 

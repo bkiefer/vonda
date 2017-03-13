@@ -233,6 +233,7 @@ assignment
 // either a number or a term containing at least one operator
 arithmetic
   : term ('-'|'+'|'|') arithmetic
+  | term ('++'|'--')
   | term
   ;
 
