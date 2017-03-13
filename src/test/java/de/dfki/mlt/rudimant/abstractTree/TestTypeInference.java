@@ -53,8 +53,9 @@ public class TestTypeInference {
     String in = "QuizHistory getCurrentTurn();"
             + " turn = getCurrentTurn(); ";
     String s = generate(in);
-    String expected = "Rdf turn = getCurrentTurn();";
+    String expected = "turn = getCurrentTurn();";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("Rdf turn;"));
   }
 
 
@@ -63,8 +64,9 @@ public class TestTypeInference {
     String in = "QuizHistory getCurrentTurn(); "
             + "Rdf turn = getCurrentTurn();";
     String s = generate(in);
-    String expected = "Rdf turn = getCurrentTurn();";
+    String expected = "turn = getCurrentTurn();";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("Rdf turn;"));
   }
 
   @Test
@@ -81,24 +83,27 @@ public class TestTypeInference {
     String in = "String foo(); "
             + "boolean b = foo(); ";
     String s = generate(in);
-    String expected = "boolean b = foo().isEmpty();";
+    String expected = "b = foo().isEmpty();";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("boolean b;"));
   }
 
   @Test
   public void test6() {
     String in = " boolean b = true; ";
     String s = generate(in);
-    String expected = "boolean b = true;";
+    String expected = "b = true;";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("boolean b;"));
   }
 
   @Test
   public void test7() {
     String in = " int b = 7; ";
     String s = generate(in);
-    String expected = "int b = 7;";
+    String expected = "b = 7;";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("int b;"));
   }
 
 }

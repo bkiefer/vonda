@@ -26,16 +26,18 @@ public class TestTypes {
   public void testType1(){
     String in = " DialogueAct reply = myLastDA().copy();";
     String r = generate(in);
-    String expected = "DialogueAct reply = (DialogueAct) myLastDA().copy();";
+    String expected = "reply = (DialogueAct) myLastDA().copy();";
     assertEquals(expected, getForMarked(r, expected));
+    assertTrue(r.contains("DialogueAct reply;"));
   }
 
   @Test
   public void testType2(){
     String in = " Rdf turn = getCurrentTurn(activity);";
     String r = generate(in);
-    String expected = "Rdf turn = getCurrentTurn(activity);";
+    String expected = "turn = getCurrentTurn(activity);";
     assertEquals(expected, getForMarked(r, expected));
+    assertTrue(r.contains("Rdf turn;"));
   }
 
   @Test
@@ -53,16 +55,18 @@ public class TestTypes {
   public void testType4(){
     String in = " int correct = q.getWhichCorrect();";
     String r = generate(in);
-    String expected = "int correct = (int) q.getWhichCorrect();";
+    String expected = "correct = (int) q.getWhichCorrect();";
     assertEquals(expected, getForMarked(r, expected));
+    assertTrue(r.contains("int correct;"));
   }
 
   @Test
   public void testReturnSetType() {
     String in = "Child c;  docs = c.isTreatedBy;";
     String r = generate(in);
-    String expected = "Set<Object> docs = ((Set<Object>)c.getValue(\"<dom:isTreatedBy>\"));";
+    String expected = "docs = ((Set<Object>)c.getValue(\"<dom:isTreatedBy>\"));";
     assertEquals(expected, getForMarked(r, expected));
+    assertTrue(r.contains("Set<Object> docs;"));
   }
 
   @Test
