@@ -131,6 +131,15 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     RudiTree result;
     if (ctx.getChildCount() == 1) {
       result = this.visit(ctx.getChild(0));
+    } else if (ctx.getChildCount() == 2) {
+      // it had a ++ or --
+      RTExpression left = (RTExpression) this.visit(ctx.getChild(0));
+      RTExpression right = (RTExpression) new ExpArithmetic(ctx.getText(), left,
+               (RTExpression) new USingleValue("1", "int")
+                       .setPosition(ctx, currentClass),
+               ctx.getChild(1).getText().equals("++")? "+" : "-")
+              .setPosition(ctx, currentClass);
+      result = new ExpAssignment(ctx.getText(), left, right);
     } else { // 3 children
       result = new ExpArithmetic(ctx.getText(),
               (RTExpression) this.visit(ctx.getChild(0)),
@@ -142,7 +151,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitArithmetic(RobotGrammarParser.ArithmeticContext ctx) {
-    // term ('-'|'+') boolean_exp | term
+    // term ('-'|'+') boolean_exp | term ('++'|'--') | term
     return arithExp(ctx);
   }
 
@@ -396,8 +405,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitFor_statement(RobotGrammarParser.For_statementContext ctx) {
-    ctx.VARIABLE(0);
-
     if (ctx.getChild(3).getText().equals(":")) {
       // FOR '(' VARIABLE ':' exp ')' loop_statement_block
       // TODO: or should we check here that the type of the variable in assignment
@@ -417,7 +424,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       return new StatFor2(ctx.getChild(2).getText(), var,
               (RTExpression) this.visit(ctx.getChild(5)),
               this.visit(ctx.getChild(7)), currentClass).setPosition(ctx, currentClass);
-    } else if (ctx.getChild(2).equals(";") || ctx.getChild(3).equals(";")) {
+    } else if (ctx.getChild(3).getText().equals(";") ||
+            ctx.getChild(5).getText().equals(";")) {
       // statement looks like "FOR LPAR assignment SEMICOLON exp SEMICOLON exp RPAR loop_statement_block"
       // all expressions are optional!
       int i = 2;

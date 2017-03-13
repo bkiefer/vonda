@@ -22,44 +22,52 @@ public class TestForStatements {
     setUpEmpty();
   }
 
-  @Test
-  public void test1() {
-    String ifstat = "List<Child> getSeats();\n" +
-                    "Iterator<DialogueAct> lastDAs();\n" +
-                    "initiate_greet: if(true){ for(seat : getSeats()){} }";
-    String s = generate(ifstat);
-    String expected = "public void initiate_greet(){"
-            + " initiate_greet: if (true) {for (Object seat_outer : getSeats()) "
-            + "{ Rdf seat = (Rdf)seat_outer; {}}}";
-    assertEquals(expected, getForMarked(s, expected));
-  }
+//  @Test
+//  public void test1() {
+//    String ifstat = "List<Child> getSeats();\n" +
+//                    "Iterator<DialogueAct> lastDAs();\n" +
+//                    "initiate_greet: if(true){ for(seat : getSeats()){} }";
+//    String s = generate(ifstat);
+//    String expected = "public void initiate_greet(){"
+//            + " initiate_greet: if (true) {for (Object seat_outer : getSeats()) "
+//            + "{ Rdf seat = (Rdf)seat_outer; {}}}";
+//    assertEquals(expected, getForMarked(s, expected));
+//  }
+//
+//  @Test
+//  public void test2() {
+//    String ifstat = "Seat getSeats();\n" +
+//                    "Iterator<Child> kids();\n" +
+//                    "initiate_greet:\n" +
+//                    "  if(true){\n" +
+//                    "    for(k : kids()){}}";
+//    String s = generate(ifstat);
+//    String expected = "public void initiate_greet(){"
+//            + " initiate_greet: if (true) {"
+//            + "for (Object k_outer : kids()) { Rdf k = (Rdf)k_outer; {}}}";
+//    assertEquals(expected, getForMarked(s, expected));
+//  }
+//
+//  @Test
+//  public void test3() {
+//    String ifstat = "Set<Object> getI(); " +
+//            "for(s : getI()){"
+//            + "label: if(true) {s = null;}}";
+//    String s = generate(ifstat);
+//    String expected = "for (Object s_outer : getI()) {"
+//            + " Object s = (Object)s_outer; " +
+//              "{//Rule label " +
+//              "label: " +
+//              "if (true) { s = null; " +
+//              "}";
+//    assertEquals(expected, getForMarked(s, expected));
+//  }
 
   @Test
-  public void test2() {
-    String ifstat = "Seat getSeats();\n" +
-                    "Iterator<Child> kids();\n" +
-                    "initiate_greet:\n" +
-                    "  if(true){\n" +
-                    "    for(k : kids()){}}";
-    String s = generate(ifstat);
-    String expected = "public void initiate_greet(){"
-            + " initiate_greet: if (true) {"
-            + "for (Object k_outer : kids()) { Rdf k = (Rdf)k_outer; {}}}";
-    assertEquals(expected, getForMarked(s, expected));
-  }
-
-  @Test
-  public void test3() {
-    String ifstat = "Set<Object> getI(); " +
-            "for(s : getI()){"
-            + "label: if(true) {s = null;}}";
-    String s = generate(ifstat);
-    String expected = "for (Object s_outer : getI()) {"
-            + " Object s = (Object)s_outer; " +
-              "{//Rule label " +
-              "label: " +
-              "if (true) { s = null; " +
-              "}";
+  public void test4() {
+    String stat = "for (int i = 0; i < 10; i++){}";
+    String s = generate(stat);
+    String expected = "for ( int i = 0; (i < 10); i = (i+1)){}";
     assertEquals(expected, getForMarked(s, expected));
   }
 
