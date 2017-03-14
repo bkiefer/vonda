@@ -677,6 +677,9 @@ public class VTestTypeVisitor implements RudiVisitor {
   public void visitNode(UFuncCall node) {
     // test whether the given parameters are of the correct type
     ArrayList<String> partypes = new ArrayList<String>();
+    if(node.content.equals("getDistance")){
+      int j = 1;
+    }
     for (RTExpression e : node.exps) {
       e.visit(this);
       partypes.add(e.getType());

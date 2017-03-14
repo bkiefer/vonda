@@ -294,6 +294,9 @@ public class Mem {
   }
 
   public String getFunctionOrigin(String funcname, ArrayList<String> partypes){
+    for (int i = 0; i < partypes.size(); i++) {
+      partypes.set(i, convertXsdType(partypes.get(i)));
+    }
     return current.getFunctionOrigin(funcname, partypes, this);
   }
 

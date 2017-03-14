@@ -179,6 +179,8 @@ public class RudimantCompiler {
     try {
       if (wrapperInit.exists()) {
         mem.initializing = true;
+        String name = topLevel.getName();
+        mem.setToplevelFile(name.substring(0, name.length() - RULES_FILE_EXTENSION.length()));
         processForReal(new FileInputStream(wrapperInit), null);
       } else {
         logger.info("No method declaration file for {}", wrapperInit);

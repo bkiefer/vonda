@@ -19,11 +19,13 @@ public class PrintTest {
   public void Test() throws Exception {
     // enter here the file whose compilation you'd like to debug
     String[] strings = new String[]{
-      "-c", "src/test/resources/tests.yml",
+      "-c",
+      "src/test/resources/tests.yml",
+      //"../herbea/poc/herbea.yml",
       "src/test/resources/Test.rudi",
       //"../herbea/poc/src/main/rudi/Kaefer.rudi"
       //"../dipal/src/main/rudi/PalAgent.rudi"
     };
-    GrammarMain.main(strings);
+    //GrammarMain.main(strings);
   }
 }
