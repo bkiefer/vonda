@@ -154,7 +154,8 @@ public class VGenerationVisitor implements RTStringVisitor {
       return ret;
     }
     if (node.operator != null && node.operator.contains("(")) {
-      return ret + node.left.visitWithSComments(this) + node.operator;
+      return ret + mem.getToplevelInstance() + "." +
+              node.operator + node.left.visitWithSComments(this) + ")";
     }
     return ret + node.left.visitWithSComments(this);
   }
