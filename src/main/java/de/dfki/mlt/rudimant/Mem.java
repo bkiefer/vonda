@@ -152,6 +152,8 @@ public class Mem {
   public String unifyTypes(String left, String right) {
     if (left == null || "Object".equals(left)) return right;
     if (right == null || "Object".equals(right)) return left;
+    left = convertXsdType(left);
+    right = convertXsdType(right);
     // check if these are RDF types and are in a type relation.
     if (isRdfType(left) || isRdfType(right)) {
       if (isRdfType(left) && isRdfType(right))

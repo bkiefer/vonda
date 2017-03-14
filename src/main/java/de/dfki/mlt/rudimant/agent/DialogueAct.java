@@ -39,6 +39,11 @@ public class DialogueAct {
     return this._dag.subsumes(moreGeneral._dag);
   }
 
+  /** Return true if the given slot (argument) is available */
+  public boolean hasSlot(String slot) {
+    return _dag.getEdge(DagNode.getFeatureId(slot)) != null;
+  }
+
   /** Return the argument for key slot */
   public String getSlot(String slot) {
     DagEdge e = _dag.getEdge(DagNode.getFeatureId(slot));
