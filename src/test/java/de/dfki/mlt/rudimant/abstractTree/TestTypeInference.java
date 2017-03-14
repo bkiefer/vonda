@@ -118,9 +118,9 @@ public class TestTypeInference {
   public void test9() {
     String in = " Quiz q; if(q.tabletOrientation) i = 7; ";
     String s = generate(in);
-    String expected = "if (agent.exists(q.getSingleValue(\"<dom:tabletOrientation>\"))) i = 7;";
+    String expected = "if (test.exists(((String)q.getSingleValue(\"<dom:tabletOrientation>\"))))"
+        + " int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
-    assertTrue(s.contains("int b;"));
   }
 
   /** TODO: Fix this problem (issue #55)

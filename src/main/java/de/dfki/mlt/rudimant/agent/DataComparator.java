@@ -28,10 +28,9 @@ public class DataComparator {
   public static boolean exists(Object s) {
     if (s == null) return false;
     if (s instanceof String) return ! ((String)s).isEmpty();
+    if (s instanceof Boolean) return (Boolean)s;
     return true;
   }
-
-
 
   public static boolean isEqual(DialogueAct left, DialogueAct right){
     return (left.isSubsumedBy(right) && right.isSubsumedBy(left));
