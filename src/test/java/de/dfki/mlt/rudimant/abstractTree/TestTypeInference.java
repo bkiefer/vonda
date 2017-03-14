@@ -108,9 +108,9 @@ public class TestTypeInference {
 
   @Test
   public void test8() {
-    String in = " Quiz q; if(q.tObool) i = 7; ";
+    String in = " Quiz q; if(q.quizbool) i = 7; ";
     String s = generate(in);
-    String expected = "if (test.exists(((Boolean)q.getSingleValue(\"<dom:tObool>\")))) int i = 7;";
+    String expected = "if (test.exists(((Boolean)q.getSingleValue(\"<dom:quizbool>\")))) int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
   }
 
