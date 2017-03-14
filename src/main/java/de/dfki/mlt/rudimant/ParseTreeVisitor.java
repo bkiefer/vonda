@@ -560,26 +560,24 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitList_creation(RobotGrammarParser.List_creationContext ctx) {
-    // (VARIABLE SMALLER VARIABLE GREATER)? variable ASSIGN LBRACE (VARIABLE (COMMA VARIABLE)*)? SEMICOLON
+    // type_spec? variable ASSIGN LBRACE (VARIABLE (COMMA VARIABLE)*)? SEMICOLON
+    int start = 4;
     if (ctx.getChild(1).getText().equals("=")) {
-      // get all the elements to be added to the list
-      ArrayList<RTExpression> elements = new ArrayList<>();
-      for (int i = 3; i <= ctx.getChildCount() - 2;) {
-        elements.add((RTExpression) this.visit(ctx.getChild(i)));
-        i += 2;
-      }
+      start = 3;
+    }
+    // get all the elements to be added to the list
+    ArrayList<RTExpression> elements = new ArrayList<>();
+    for (int i = start; i < ctx.getChildCount() - 2;) {
+      elements.add((RTExpression) this.visit(ctx.getChild(i)));
+      i += 2;
+    }
+    if(start == 3){
       return new StatListCreation(ctx.getChild(0).getText(), elements, currentClass)
               .setPosition(ctx, currentClass);
     } else {
-      // get all the elements to be added to the list
-      ArrayList<RTExpression> elements = new ArrayList<>();
-      for (int i = 7; i <= ctx.getChildCount() - 2;) {
-        elements.add((RTExpression) this.visit(ctx.getChild(i)));
-        i += 2;
-      }
-      return new StatListCreation(ctx.getChild(4).getText(), elements,
-              currentClass, ctx.getChild(0).getText() + "<"
-              + ctx.getChild(2).getText() + ">").setPosition(ctx, currentClass);
+      return new StatListCreation(ctx.getChild(1).getText(), elements,
+              currentClass, ctx.getChild(0).getText())
+              .setPosition(ctx, currentClass);
     }
   }
 

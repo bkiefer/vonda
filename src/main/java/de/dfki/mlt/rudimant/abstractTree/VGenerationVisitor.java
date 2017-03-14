@@ -519,6 +519,9 @@ public class VGenerationVisitor implements RTStringVisitor {
   @Override
   public void visitNode(StatListCreation node) {
     out.append(node.listType + " " + node.variableName + " = new ArrayList<>();");
+    if(node.objects.isEmpty()) {
+      return;
+    }
     for (RTExpression e : node.objects) {
       out.append(node.variableName + ".add(");
       out.append(this.visitNode(e));

@@ -426,7 +426,7 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(StatListCreation node) {
-    if (!(node.objects == null)) {
+    if (!(node.objects.isEmpty())) {
       for (RTExpression e : node.objects) {
         this.visitNode(e);
       }

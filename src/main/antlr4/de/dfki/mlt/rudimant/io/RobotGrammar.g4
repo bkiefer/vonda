@@ -106,7 +106,7 @@ method_declaration
   ;
 
 list_creation
-  : (VARIABLE '<' type_spec '>')?
+  : type_spec?
     variable '=' '{' ((variable | STRING | INT | FLOAT)
                       (',' (variable | STRING | INT | FLOAT))*)?
                  '}' ';'

@@ -92,6 +92,14 @@ public class StatementTest {
     assertEquals(expected, getForMarked(r, expected));
  }
 
+ @Test
+ public void StatementTest7(){
+   String in = "List<String> a = {};";
+    String r = generate(in);
+    String expected = "List<String> a = new ArrayList<>();";
+    assertEquals(expected, getForMarked(r, expected));
+ }
+
   @Test
    public void StatementTestx(){
      String in = "Object foo;  "
