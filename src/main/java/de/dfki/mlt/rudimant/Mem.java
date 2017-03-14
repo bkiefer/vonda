@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudimant;
 
+
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -117,6 +118,7 @@ public class Mem {
     int right = type.lastIndexOf('>');
     return type.substring(left + 1, right);
   }
+
   /**
    * returns a correct java type for xsd types
    * @param something

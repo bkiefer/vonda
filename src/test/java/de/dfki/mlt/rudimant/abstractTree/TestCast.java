@@ -42,7 +42,7 @@ public class TestCast {
     String in = "QuizHistory turn; boolean correct = turn.correct;";
     String s = generate(in);
     String expected = "boolean correct = "
-        + "((boolean)turn.getSingleValue(\"<dom:correct>\"));";
+        + "((Boolean)turn.getSingleValue(\"<dom:correct>\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -196,7 +196,7 @@ public class TestCast {
   public void testMultipleRdfAccess() {
     String in = "Quiz c ; b = c.hasHistory.correct;";
     String s = generate(in);
-    String expected = "boolean b = ((boolean)((Rdf)c"
+    String expected = "boolean b = ((Boolean)((Rdf)c"
             + ".getSingleValue(\"<dom:hasHistory>\"))"
             + ".getSingleValue(\"<dom:correct>\"));";
     assertEquals(expected, getForMarked(s, expected));

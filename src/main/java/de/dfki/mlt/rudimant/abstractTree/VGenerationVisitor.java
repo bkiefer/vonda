@@ -6,6 +6,7 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import static de.dfki.mlt.rudimant.Constants.*;
+import static de.dfki.mlt.rudimant.Utils.*;
 
 import java.util.*;
 
@@ -639,6 +640,10 @@ public class VGenerationVisitor implements RTStringVisitor {
       if (node.parts.get(i) instanceof UPropertyAccess) {
         UPropertyAccess pa = (UPropertyAccess) node.parts.get(i);
         String cast = Mem.convertRdfType(pa.getType());
+        if ("int".equals(cast))
+          cast = "Integer";
+        else
+          cast = capitalize(cast);
         //ret += "((" + cast + ")";
         ret += "((";
         ret += (!pa.functional) ? "Set<Object>" : cast;
