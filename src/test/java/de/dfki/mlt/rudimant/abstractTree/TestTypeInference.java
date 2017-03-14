@@ -115,6 +115,15 @@ public class TestTypeInference {
     assertTrue(s.contains("int b;"));
   }
 
+  @Test
+  public void test9() {
+    String in = " Quiz q; if(q.tabletOrientation) i = 7; ";
+    String s = generate(in);
+    String expected = "if (agent.exists(q.getSingleValue(\"<dom:tabletOrientation>\"))) i = 7;";
+    assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("int b;"));
+  }
+
   /** TODO: Fix this problem (issue #55)
   @Test
   public void testUnknownBoolean() {
