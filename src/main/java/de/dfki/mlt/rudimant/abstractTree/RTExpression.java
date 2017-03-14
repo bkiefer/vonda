@@ -91,22 +91,29 @@ public abstract class RTExpression extends RudiTree {
       newSingle.positions = newLeft.positions = newRight.positions
           = new int[]{ lastpos, lastpos };
       */
-      result = new ExpBoolean(fullexp, this, null, ".isEmpty() == false");
+      result = new ExpBoolean(fullexp, this, null, "exists(");
       result.positions = positions;
       return result;
     }
     if (type == null) {
       right = new USingleValue("null", "Object");
     } else {
-      switch (type) {
-      case "int":
-      case "float":
-      case "double":
-        right = new USingleValue("0", type);
-        break;
-      default:
-        right = new USingleValue("null", "Object");
-        break;
+      String cleanType = Mem.convertXsdType(type);
+      if (! type.equals(cleanType)) {
+        result = new ExpBoolean(fullexp, this, null, "exists(");
+        result.positions = positions;
+        return result;
+      } else {
+        switch (type) {
+        case "int":
+        case "float":
+        case "double":
+          right = new USingleValue("0", type);
+          break;
+        default:
+          right = new USingleValue("null", "Object");
+          break;
+        }
       }
     }
     // we assume it's just an Object

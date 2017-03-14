@@ -25,6 +25,14 @@ public class DataComparator {
 //  public boolean isSmallerEqual(){}
 //  public boolean isGreaterEqual(){}
 
+  public static boolean exists(Object s) {
+    if (s == null) return false;
+    if (s instanceof String) return ! ((String)s).isEmpty();
+    return true;
+  }
+
+
+
   public static boolean isEqual(DialogueAct left, DialogueAct right){
     return (left.isSubsumedBy(right) && right.isSubsumedBy(left));
   }
