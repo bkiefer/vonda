@@ -83,7 +83,7 @@ public class TestTypeInference {
     String in = "String foo(); "
             + "boolean b = foo(); ";
     String s = generate(in);
-    String expected = "b = foo().isEmpty() == false;";
+    String expected = "b = test.exists(foo());";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("boolean b;"));
   }
@@ -110,9 +110,8 @@ public class TestTypeInference {
   public void test8() {
     String in = " Quiz q; if(q.tObool) i = 7; ";
     String s = generate(in);
-    String expected = "if (agent.exists(q.getSingleValue(\"<dom:tObool>\"))) i = 7;";
+    String expected = "if (test.exists(((boolean)q.getSingleValue(\"<dom:tObool>\")))) int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
-    assertTrue(s.contains("int b;"));
   }
 
   @Test
