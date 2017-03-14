@@ -56,6 +56,10 @@ public abstract class RTExpression extends RudiTree {
 
   public boolean isComplexType() { return Mem.isComplexType(type); }
 
+  public boolean isStringOrComplexType() {
+    return "String".equals(type) || isComplexType();
+  }
+
   public String getInnerType() { return Mem.getInnerType(type); }
 
   public RTExpression ensureBoolean() {
@@ -78,7 +82,7 @@ public abstract class RTExpression extends RudiTree {
     // this is some other kind of expression, turn it into a comparison or
     // method call returning a boolean
     // TODO check if there's something missing for RDF types
-    if (isComplexType()) {
+    if (isStringOrComplexType()) {
       /* TODO: MAKE THIS WORK PROPERLY. If it's a function call, it must
        * be treated differently
       USingleValue newSingle = new USingleValue("null", "Object");

@@ -104,19 +104,26 @@ public class Mem {
 
   public static boolean isComplexType(String type) {
     if (type == null) return false;
-    return ("String".equals(type)
-        || type.startsWith("Map")
+    return (type.startsWith("Map")
         || type.startsWith("Set")
+        || type.startsWith("List")
         || type.startsWith("RdfSet")
         || type.startsWith("RdfList")
-        || (type.endsWith(">") && ! isRdfType(type)));
+        || ((type.endsWith(">") && ! isRdfType(type))));
   }
 
   /** Return the "inner" type of a complex type expression */
   public static String getInnerType(String type) {
     int left = type.indexOf('<');
+    if (left < 0) return "Object";
     int right = type.lastIndexOf('>');
     return type.substring(left + 1, right);
+  }
+
+  public static String getOuterType(String type) {
+    int i = type.indexOf('<');
+    if (i < 0) return type;
+    return type.substring(0, i);
   }
 
   /**

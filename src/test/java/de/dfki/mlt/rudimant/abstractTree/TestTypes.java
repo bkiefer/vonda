@@ -88,4 +88,13 @@ public class TestTypes {
     assertEquals(expected, getForMarked(r, expected));
   }
 
+  @Test
+  public void testListRdftype() {
+    String in = "List<Quiz> q = {};";
+    String r = generate(in);
+    String expected = "List<Rdf> q = new ArrayList<>();";
+    assertEquals(expected, getForMarked(r, expected));
+
+  }
+
 }

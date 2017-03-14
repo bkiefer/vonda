@@ -520,7 +520,13 @@ public class VGenerationVisitor implements RTStringVisitor {
 
   @Override
   public void visitNode(StatListCreation node) {
-    out.append(node.listType + " " + node.variableName + " = new ArrayList<>();");
+    out.append(Mem.convertRdfType(node.listType)).append(' ')
+       .append(node.variableName);
+    if (node.listType.startsWith("List")) {
+      out.append(" = new ArrayList<>();");
+    } else if (node.listType.startsWith("Set")) {
+      out.append(" = new HashSet<>();");
+    }
     if(node.objects.isEmpty()) {
       return;
     }

@@ -432,8 +432,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       }
       String type = node.listType;
       if (type != null) {
-        String elementType = type.substring(
-                type.indexOf("<") + 1, type.indexOf(">"));
+        String elementType = Mem.getInnerType(type);
         if (mem.unifyTypes(elementType, node.objects.get(0).getType()) == null) {
           rudi.typeError("Found a list creation where the list type"
                   + " doesn't fit its objects' type: " + elementType
@@ -446,7 +445,12 @@ public class VTestTypeVisitor implements RudiVisitor {
       }
     } else if (node.listType == null) {
       node.listType = "List<Object>";
+    } else {
+      String elementType = mem.checkRdf(Mem.getInnerType(node.listType));
+      String collType = Mem.getOuterType(node.listType);
+      node.listType = collType + '<' + elementType + '>';
     }
+
   }
 
   @Override
