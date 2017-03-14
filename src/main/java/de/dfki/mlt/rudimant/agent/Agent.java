@@ -487,7 +487,7 @@ public abstract class Agent extends DataComparator implements StreamingClient {
 
   /** For the compiled code, to determine if a rule should be logged */
   public boolean shouldLog(String name) {
-    return rulesToLog.contains(name);
+    return logAllRules || rulesToLog.contains(name);
   }
 
   /**
