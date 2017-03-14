@@ -80,8 +80,7 @@ public class TestTypes {
 
   @Test
   public void testLambdaExp() {
-    String in = " "
-            + "Set<Child> cs; cs.contains((c) -> c.foreName.equals(\"John\"));";
+    String in = "Set<Child> cs; cs.contains((c) -> c.foreName.equals(\"John\"));";
     String r = generate(in);
     String expected = "cs.contains((c) -> "
             + "((Set<Object>)c.getValue(\"foreName\")).equals(\"John\"));";
@@ -94,7 +93,33 @@ public class TestTypes {
     String r = generate(in);
     String expected = "List<Rdf> q = new ArrayList<>();";
     assertEquals(expected, getForMarked(r, expected));
-
   }
 
+  @Test
+  public void testBooleanRdfExists() {
+    String in = "Child c; if (!c.hasMother) int i = 0;";
+    String r = generate(in);
+    String expected =
+        "if (!(((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null)) int i = 0;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void testBooleanRdfExists2() {
+    String in = "Child c; a: if (!c.hasMother) int i = 0;";
+    String r = generate(in);
+    String expected =
+        "a(); } public void a(){ boolean a0 = false; a0 = !(((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null);";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  /* TODO: THIS PRODUCES TOTAL JUNK. To be fixed tomorrow
+  @Test
+  public void testBooleanRdfExists3() {
+    String in = "Child c; a: if (true && false) int i = 0;";
+    String r = generate(in);
+    String expected =
+        "a(); } public void a(){ boolean a0 = false; a0 = !(((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null)) int i = 0;";
+    assertEquals(expected, getForMarked(r, expected));
+  }*/
 }

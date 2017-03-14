@@ -498,10 +498,13 @@ public abstract class Agent extends DataComparator implements StreamingClient {
    */
   public void logRule(Map<String,Boolean> values, String rule, String file){
     StringBuffer sb = new StringBuffer();
+    sb.append("Rule ").append(file).append(":").append(rule).append('\n');
     for (Map.Entry<String, Boolean> e : values.entrySet()) {
       sb.append("  ")
       .append(e.getKey()).append(": ").append(e.getValue()).append('\n');
     }
-    logger.debug("Rule {}:{}\n{}", file, rule, sb.toString());
+    System.out.println(sb.toString());
+    // does not work for unknown reasons
+    //logger.debug("Rule {}:{} {}", (Object)file, rule, sb.toString());
   }
 }
