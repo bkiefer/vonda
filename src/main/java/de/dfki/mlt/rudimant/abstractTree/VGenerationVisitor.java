@@ -259,7 +259,8 @@ public class VGenerationVisitor implements RTStringVisitor {
     }
     out.append("import java.util.*;\n\n");
     out.append("import de.dfki.mlt.rudimant.agent.DialogueAct;\n");
-    out.append("import de.dfki.lt.hfc.db.rdfProxy.Rdf;\n");
+    out.append("import de.dfki.lt.hfc.db.rdfProxy.*;\n");
+    out.append("import de.dfki.lt.hfc.types.*;\n");
     // Let's import our supersuper class
     out.append("import ");
     if (rudi.getParent() != null) {
