@@ -132,33 +132,33 @@ public class VGenerationVisitor implements RTStringVisitor {
   @Override
   public String visitNode(ExpBoolean node) {
     String ret = "";
-    if (node.type == null) {
-      node.getType();
-    }
-    if ("!".equals(node.operator)) {
-      ret += "!";
-    }
-    if (node.right != null) {
-      if (node.operator.contains("(")) {
-        ret += node.operator;
-        ret += node.left.visitWithSComments(this);
+    if (node.operator != null && node.operator.contains("(")) {
+      // other operator, is it sth. like "exists("
+      if (! mem.getToplevelInstance().equalsIgnoreCase(rudi.getClassName())) {
+        ret += mem.getToplevelInstance() + ".";
+      }
+      ret += node.operator;
+      ret += node.left.visitWithSComments(this);
+      if (node.right != null) {
         ret += ", ";
         ret += node.right.visitWithSComments(this);
-        ret += ")";
-        return ret;
       }
-      ret += "(";
-      ret += node.left.visitWithSComments(this);
-      ret += " " + node.operator + " ";
-      ret += node.right.visitWithSComments(this);
       ret += ")";
-      return ret;
+    } else {
+      if (node.right != null) {
+        ret += "(";
+        ret += node.left.visitWithSComments(this);
+        ret += " " + node.operator + " ";
+        ret += node.right.visitWithSComments(this);
+        ret += ")";
+      } else {
+        if (null != node.operator) {
+          ret += node.operator;
+        }
+        ret += node.left.visitWithSComments(this);
+      }
     }
-    if (node.operator != null && node.operator.contains("(")) {
-      return ret + mem.getToplevelInstance() + "." +
-              node.operator + node.left.visitWithSComments(this) + ")";
-    }
-    return ret + node.left.visitWithSComments(this);
+    return ret;
   }
 
   public String visitDaToken(RTExpression exp) {

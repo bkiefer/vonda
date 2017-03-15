@@ -183,10 +183,12 @@ public class VTestTypeVisitor implements RudiVisitor {
       if (!Mem.isPODType(node.left.getType())
               && !Mem.isPODType(node.right.getType())) {
         String or = "";
+        /*
         if(!mem.getClassName().toLowerCase().equals(
                 mem.getToplevelInstance().toLowerCase())){
           or = mem.getToplevelInstance() + ".";
         }
+        */
         switch (node.operator) {
           case "==":
             node.operator = or + "isEqual(";
