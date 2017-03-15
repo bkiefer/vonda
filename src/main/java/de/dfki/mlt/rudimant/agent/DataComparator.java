@@ -33,6 +33,8 @@ public class DataComparator {
   }
 
   public static boolean isEqual(DialogueAct left, DialogueAct right){
+    if (left == null || right == null)
+      return (left == null && right == null);
     return (left.isSubsumedBy(right) && right.isSubsumedBy(left));
   }
   public static boolean isSmaller(DialogueAct left, DialogueAct right){
@@ -49,6 +51,8 @@ public class DataComparator {
   }
 
   public static boolean isEqual(String left, DialogueAct right){
+    if (left == null || right == null)
+      return (left == null && right == null);
     return isEqual(new DialogueAct(left), right);
   }
 
@@ -67,6 +71,8 @@ public class DataComparator {
   }
 
   public static boolean isEqual(DialogueAct left, String right){
+    if (left == null || right == null)
+      return (left == null && right == null);
     return isEqual(left, new DialogueAct(right));
   }
   public static boolean isSmaller(DialogueAct left, String right){
@@ -82,7 +88,8 @@ public class DataComparator {
     return isGreaterEqual(left, new DialogueAct(right));
   }
 
-    public static boolean isEqual(Rdf left, Rdf right){
+  public static boolean isEqual(Rdf left, Rdf right){
+    if (left == null || right == null) return left == right;
     return isEqual(left.getClazz(), right.getClazz());
   }
   public static boolean isSmaller(Rdf left, Rdf right){
