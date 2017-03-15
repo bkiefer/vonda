@@ -132,6 +132,11 @@ public class VConditionLogVisitor implements RTStringVisitor {
   }
 
   @Override
+  public String visitNode(ExpCast node) {
+    return this.visitMyExp(node);
+  }
+
+  @Override
   public String visitNode(ExpDialogueAct node) {
     return this.visitMyExp(node);
   }

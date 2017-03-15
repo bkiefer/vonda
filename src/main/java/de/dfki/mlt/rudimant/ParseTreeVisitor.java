@@ -220,9 +220,10 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     if (ctx.getChildCount() == 1) {
       return (RTExpression) this.visit(ctx.getChild(0)).setPosition(ctx, currentClass);
     } else {
-      RTExpression ret = (RTExpression) this.visit(ctx.getChild(3)).setPosition(ctx, currentClass);
-      ret.setType(ctx.getChild(1).getText());
-      return ret;
+      RTExpression ret =
+          (RTExpression) this.visit(ctx.getChild(3)).setPosition(ctx, currentClass);
+      return new ExpCast(ctx.getText(), ctx.getChild(1).getText(),
+          ret).setPosition(ctx, currentClass);
     }
   }
 
@@ -466,7 +467,13 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitField_access(RobotGrammarParser.Field_accessContext ctx) {
     ArrayList<String> representation = new ArrayList<>();
     ArrayList<RTExpression> parts = new ArrayList<>();
-    for (int i = 0; i < ctx.getChildCount(); i += 2) {
+    int i = 0;
+    if (ctx.getChild(0).getText().equals("(")) {
+      representation.add(ctx.getChild(1).getText());
+      parts.add((RTExpression) this.visit(ctx.getChild(1)));
+      i = 4;
+    }
+    for (;i < ctx.getChildCount(); i += 2) {
       representation.add(ctx.getChild(i).getText());
       parts.add((RTExpression) this.visit(ctx.getChild(i)));
     }

@@ -161,6 +161,12 @@ public class VGenerationVisitor implements RTStringVisitor {
     return ret;
   }
 
+  @Override
+  public String visitNode(ExpCast node) {
+    return "((" + Mem.convertRdfType(node.type) + ")"
+        + this.visitNode(node.construct) + ")";
+  }
+
   public String visitDaToken(RTExpression exp) {
     String ret = "";
     if (exp instanceof UVariable) {

@@ -218,6 +218,18 @@ public class VTestTypeVisitor implements RudiVisitor {
     }
   }
 
+  @Override
+  public void visitNode(ExpCast node) {
+    node.type = mem.checkRdf(node.type);
+    this.visitNode(node.construct);
+    String mergeType = mem.unifyTypes(node.type, node.construct.type);
+    if (mergeType == null) {
+      rudi.typeError("Incompatible types : " + node.construct.type + " casted to "
+          + node.type, node);
+    }
+    node.construct.type = node.type;
+  }
+
   /**
    * This should have type "DialogueAct" already, which should be a constant
    * What we have to do is finding out which tokens are actual variables and

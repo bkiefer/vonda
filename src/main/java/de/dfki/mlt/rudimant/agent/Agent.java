@@ -448,13 +448,13 @@ public abstract class Agent extends DataComparator implements StreamingClient {
   // Collection + lambda methods
   // ######################################################################
 
-  <T> boolean contains(Collection<T> coll, Predicate<? super T> p) {
+  public <T> boolean contains(Collection<T> coll, Predicate<? super T> p) {
     for(T elt : coll)
       if (p.test(elt)) return true;
     return false;
   }
 
-  <T> boolean all(Collection<T> coll, Predicate<? super T> p) {
+  public <T> boolean all(Collection<T> coll, Predicate<? super T> p) {
     for(T elt : coll)
       if (! p.test(elt)) return false;
     return true;

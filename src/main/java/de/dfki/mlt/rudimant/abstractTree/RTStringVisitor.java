@@ -12,7 +12,7 @@ package de.dfki.mlt.rudimant.abstractTree;
 public interface RTStringVisitor {
 
   public void visitNode(RudiTree node);
-  
+
   public String visitNode(RTExpression node);
 
   public String visitNode(ExpArithmetic node);
@@ -21,12 +21,14 @@ public interface RTStringVisitor {
 
   public String visitNode(ExpBoolean node);
 
+  public String visitNode(ExpCast node);
+
   public String visitNode(ExpDialogueAct node);
 
   public String visitNode(ExpConditional node);
 
   public String visitNode(ExpLambda node);
-  
+
   public String visitNode(ExpNew node);
 
   public void visitNode(GrammarFile node);
