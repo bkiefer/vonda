@@ -303,6 +303,10 @@ public abstract class Agent extends DataComparator implements StreamingClient {
     return rdf.getURI();
   }
 
+  public String classUri(Rdf rdf) {
+    return rdf.getClazz().toString();
+  }
+
   /* *************************************************************************
   Java shortcuts
   ************************************************************************* */
@@ -458,6 +462,19 @@ public abstract class Agent extends DataComparator implements StreamingClient {
     for(T elt : coll)
       if (! p.test(elt)) return false;
     return true;
+  }
+
+  public <T> List<T> filter(Collection<T> coll, Predicate<? super T> p) {
+    List<T> result = new ArrayList<>();
+    for(T elt : coll)
+      if (p.test(elt)) result.add(elt);
+    return result;
+  }
+
+  public <T> List<T> sort(Collection<T> coll,  Comparator<? super T> c) {
+    List<T> l = new ArrayList<>(coll);
+    Collections.sort(l, c);
+    return l;
   }
 
   // ######################################################################

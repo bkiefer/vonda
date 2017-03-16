@@ -11,6 +11,7 @@ String substring(int i);
 // Rdf(Proxy) methods
 Rdf toRdf(String uri);
 String toUri(Rdf rdf);
+String classUri(Rdf rdf);
 
 // DialogueAct methods
 DialogueAct createEmitDA(DialogueAct da);
@@ -52,7 +53,9 @@ void info(String s, int i);
 // lambda
 boolean contains(Collection coll, Predicate pred);
 boolean all(Collection coll, Predicate pred);
- 
+List<Object> filter(Collection coll, Predicate pred);
+List<Object> sort(Collection coll, Comparator c);
+
 // all Agent variables we should know
 
 RdfProxy _proxy;
