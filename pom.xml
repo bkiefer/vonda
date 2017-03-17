@@ -23,10 +23,12 @@
       <name>BSNSOFT</name>
       <url>http://www.bsnsoft.de/nexus/content/groups/public/</url>
     </repository>
+    <!--
     <repository>
       <id>local-repo</id>
       <url>file://${basedir}/repo</url>
-    </repository>
+      </repository>
+      -->
   </repositories>
 
   <dependencies>
@@ -114,15 +116,13 @@
       <artifactId>hfc</artifactId>
       <version>1.2.0-SNAPSHOT</version>
       <type>jar</type>
-      <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>de.dfki.mlt</groupId>   
-      <artifactId>graff</artifactId>   
-      <version>0.4-SNAPSHOT</version>   
+      <groupId>de.dfki.mlt</groupId>
+      <artifactId>graff</artifactId>
+      <version>0.4-SNAPSHOT</version>
       <type>jar</type>
-      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -130,7 +130,6 @@
       <artifactId>libthrift</artifactId>
       <version>0.9.3</version>
       <type>jar</type>
-      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -138,7 +137,6 @@
       <artifactId>trove4j</artifactId>
       <version>3.0.3</version>
       <type>jar</type>
-      <scope>test</scope>
     </dependency>
 
    </dependencies>

@@ -109,12 +109,8 @@ public class VGenerationVisitor implements RTStringVisitor {
             ((USingleValue)node.right).content.equals("null")) {
           return ret + ".clearValue(" + pa.getPropertyName() + ")";
         }
-        if (node.left.type.equals(DIALOGUE_ACT_TYPE)) {
-          ret += ".setSlot(";
-        } else {
-          //out.append(functional ? ".setSingleValue(" : ".setValue(");
-          ret += ".setValue(";  // always right!
-        }
+        //out.append(functional ? ".setSingleValue(" : ".setValue(");
+        ret += ".setValue(";  // always right!
         ret += pa.getPropertyName();
         ret += ", ";
       } else {
@@ -684,7 +680,7 @@ public class VGenerationVisitor implements RTStringVisitor {
         UPropertyAccess pa = (UPropertyAccess) currentPart;
         // then we are in the case that this is actually an rdf operation
         if (DIALOGUE_ACT_TYPE.equals(currentType)) {
-          ret += ".getSlot(";
+          ret += ".getValue(";
         } else {
           ret += pa.functional ? ".getSingleValue(" : ".getValue(";
         }

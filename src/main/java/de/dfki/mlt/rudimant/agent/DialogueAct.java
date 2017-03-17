@@ -27,7 +27,7 @@ public class DialogueAct {
     this();
     _dag = DagNode.parseLfString(da + "(" + prop + ")");
     for (int i = 0; i < args.length; i+=2) {
-      setSlot(args[i], args[i+1]);
+      setValue(args[i], args[i+1]);
     }
     System.out.println(_dag);
   }
@@ -60,7 +60,7 @@ public class DialogueAct {
   }
 
   /** Return the argument for key slot */
-  public String getSlot(String slot) {
+  public String getValue(String slot) {
     DagEdge e = _dag.getEdge(DagNode.getFeatureId(slot));
     if (e == null) {
       return null;
@@ -77,7 +77,7 @@ public class DialogueAct {
   }
 
   /** Set the argument for key slot */
-  public void setSlot(String slot, String value) {
+  public void setValue(String slot, String value) {
     _dag.addEdge(DagNode.getFeatureId(slot),
         new DagNode(DagNode.PROP_FEAT_ID, new DagNode(value)));
   }
