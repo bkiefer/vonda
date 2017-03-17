@@ -30,22 +30,25 @@ public class VConditionLogVisitor implements RTStringVisitor {
   private String lastbool;
   // map the new variables to what they represent
   private LinkedHashMap<String, String> realLook;
+  // map the new variables to the rudi expressions they come from
+  private LinkedHashMap<String, String> rudiLook;
 
   public VConditionLogVisitor(VGenerationVisitor v) {
     genV = v;
   }
 
-  public void newInit(String rule, LinkedHashMap<String, String> realLook) {
+  public void newInit(String rule, LinkedHashMap<String, String> realLook,
+          LinkedHashMap<String, String> rudiLook) {
     this.enteringCondition = true;
     this.currentRule = rule;
     this.counter = 0;
     this.realLook = realLook;
+    this.rudiLook = rudiLook;
   }
 
   @Override
   public String visitNode(ExpBoolean node) {
     StringBuilder retS = new StringBuilder();
-
     if (this.enteringCondition) {
       this.enteringCondition = false;
     }
@@ -55,6 +58,7 @@ public class VConditionLogVisitor implements RTStringVisitor {
         String resulting = genV.visitNode(node);
         this.lastbool = this.currentRule + this.counter++;
         this.realLook.put(this.lastbool, resulting);
+        this.rudiLook.put(this.lastbool, node.fullexp);
         retS.append(this.lastbool + " = " + resulting + ";\n");
         return retS.toString();
       } else {
@@ -96,6 +100,7 @@ public class VConditionLogVisitor implements RTStringVisitor {
       }
       this.lastbool = this.currentRule + this.counter++;
       this.realLook.put(this.lastbool, resulting);
+      this.rudiLook.put(this.lastbool, node.fullexp);
       retS.append(this.lastbool + " = " + resulting + ";\n");
     }
 

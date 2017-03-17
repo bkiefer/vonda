@@ -23,8 +23,6 @@ public abstract class RTExpression extends RudiTree {
 
   protected String type;
 
-  String fullexp;
-
   public String getType() {
     return type;
   }
@@ -74,9 +72,10 @@ public abstract class RTExpression extends RudiTree {
       } else {
         // if this is a funccall with type boolean, we'd still like to have it
         // as a boolean, at least wrapped up
-        result = new ExpBoolean(fullexp, this, null, null);
-      result.positions = positions;
-      return result;
+        result = new ExpBoolean(this, null, null);
+        result.fullexp = fullexp;
+        result.positions = positions;
+        return result;
       }
     }
     // this is some other kind of expression, turn it into a comparison or
@@ -95,8 +94,9 @@ public abstract class RTExpression extends RudiTree {
       newSingle.positions = newLeft.positions = newRight.positions
           = new int[]{ lastpos, lastpos };
       */
-      result = new ExpBoolean(fullexp, this, null, "exists(");
+      result = new ExpBoolean(this, null, "exists(");
       result.positions = positions;
+      result.fullexp = fullexp;
       return result;
     }
     if (type == null) {
@@ -104,8 +104,9 @@ public abstract class RTExpression extends RudiTree {
     } else {
       String cleanType = Mem.convertXsdType(type);
       if (! type.equals(cleanType)) {
-        result = new ExpBoolean(fullexp, this, null, "exists(");
+        result = new ExpBoolean(this, null, "exists(");
         result.positions = positions;
+      result.fullexp = fullexp;
         return result;
       } else {
         switch (type) {
@@ -121,8 +122,9 @@ public abstract class RTExpression extends RudiTree {
       }
     }
     // we assume it's just an Object
-    result = new ExpBoolean(fullexp, this, right, "!=");
+    result = new ExpBoolean(this, right, "!=");
     result.positions = positions;
+      result.fullexp = fullexp;
     if (right != null) {
       int lastpos = positions[positions.length - 1];
       right.positions = new int[]{ lastpos, lastpos };

@@ -18,12 +18,11 @@ public class ExpConditional extends RTExpression {
   RTExpression thenexp;
   RTExpression elseexp;
 
-  public ExpConditional(String fullexp, RTExpression bool, RTExpression thenexp,
+  public ExpConditional(RTExpression bool, RTExpression thenexp,
           RTExpression elseexp) {
     this.boolexp = bool;
     this.thenexp = thenexp;
     this.elseexp = elseexp;
-    this.fullexp = fullexp;
   }
 
   @Override

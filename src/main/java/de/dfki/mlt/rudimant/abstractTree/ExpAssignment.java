@@ -20,8 +20,7 @@ public class ExpAssignment extends RTExpression {
   boolean declaration;
   String position;
 
-  public ExpAssignment(String full, RTExpression left, RTExpression right) {
-    fullexp = full;
+  public ExpAssignment(RTExpression left, RTExpression right) {
     this.left = left;
     this.right = right;
     this.declaration = false;
@@ -34,9 +33,9 @@ public class ExpAssignment extends RTExpression {
    * @param right
    * @param position
    */
-  public ExpAssignment(String full, String actualType, RTExpression left,
+  public ExpAssignment(String actualType, RTExpression left,
           RTExpression right) {
-    this(full, left, right);
+    this(left, right);
     this.declaration = true;
     this.type = actualType;
   }

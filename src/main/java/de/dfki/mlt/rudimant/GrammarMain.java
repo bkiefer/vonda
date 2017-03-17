@@ -68,7 +68,7 @@ public class GrammarMain {
     { CFG_TYPE_ERROR_FATAL, true, "e" },
     { CFG_VISUALISE, false , "v" },
     { CFG_TARGET_CONSTRUCTOR, "", "CA" },
-    { CFG_WRAPPER_CLASS, "w", "DummyAgent" }
+    { CFG_WRAPPER_CLASS, "w", "DummyAgent" },
   };
 
   public Map<String, Object> defaultConfig() {
@@ -130,7 +130,7 @@ public class GrammarMain {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
-    OptionParser parser = new OptionParser("hver:w:c:o:");
+    OptionParser parser = new OptionParser("hlver:w:c:o:");
     parser.accepts("help");
     OptionSet options = null;
 
@@ -169,6 +169,9 @@ public class GrammarMain {
       if (options.has("w")) {
         configs.put(CFG_WRAPPER_CLASS, options.valueOf("w"));
       }
+      if (options.has("l")) {
+        configs.put(CFG_WRAPPER_CLASS, false);
+      }
       if (options.has("v")) {
         configs.put(CFG_VISUALISE, true);
       }
@@ -199,6 +202,7 @@ public class GrammarMain {
           "java rudimant -h<elp> -v<isualize> -e<rrorstops>\n"
         + "              -r ontos.ini -w WrapperClass -c config.yaml\n"
         + "              -o outputDir toplevelfile.rudi (file.rudi)*\n"
+        + "              -l log with java, not rudi look of code\n"
         + "For help see rumdimant -help\n");
   }
 

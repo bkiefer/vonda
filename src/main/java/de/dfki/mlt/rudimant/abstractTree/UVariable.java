@@ -23,13 +23,13 @@ public class UVariable extends RTExpLeaf {
   }
 
   public UVariable(String representation, String originClass) {
-    content = fullexp = representation;
+    content = representation;
     this.originClass = originClass;
   }
 
   @Override
   public String toString() {
-    return this.fullexp;
+    return this.content;
   }
 
   @Override

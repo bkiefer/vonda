@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
+import java.io.StringWriter;
+import java.io.Writer;
 
 /**
  * this visitor generates the java code
@@ -225,8 +227,13 @@ public class VGenerationVisitor implements RTStringVisitor {
       ret += ", " + node.parameters.get(i);
     }
     ret += ") -> ";
-    // TODO: this will not work with blocks ::::(
-    ret += node.body.visitStringV(this);
+    // this is the rare occasion where sth of class statement is allowed to
+    // be inside an expression, prevent it from printing directly to out
+    Writer old = out.out;
+    out.out = new StringWriter();
+    node.body.visitVoidV(this);
+    ret += out.out.toString();
+    out.out = old;
     return ret;
   }
 
@@ -762,8 +769,9 @@ public class VGenerationVisitor implements RTStringVisitor {
 
     // remembers how the expressions looked (for logging)
     LinkedHashMap<String, String> realLook = new LinkedHashMap<>();
+    LinkedHashMap<String, String> rudiLook = new LinkedHashMap<>();
 
-    condV.newInit(rule, realLook);
+    condV.newInit(rule, realLook, rudiLook);
     String result = condV.visitNode(bool_exp);
     for (String s : realLook.keySet()) {
       out.append("boolean " + s + " = false;\n");
@@ -777,10 +785,26 @@ public class VGenerationVisitor implements RTStringVisitor {
     }
     out.append("shouldLog(\"" + rule + "\")){\n");
     // do all that logging
-
     out.append("HashMap<String, Boolean> " + rule + " = new HashMap<>();\n");
-    for (String var : realLook.keySet()) {
-      out.append(rule + ".put(\"" + realLook.get(var).replaceAll("\\\"", "\\\\\"") + "\", " + var + ");\n");
+
+    LinkedHashMap<String, String> logging;
+      out.append(rule + ".put(\"CONDITION of " + rule
+              + " evaluated to: \", " + condV.getLastBool() + ");\n");
+    if(out.logRudi()){
+      logging = rudiLook;
+    } else {
+      logging = realLook;
+    }
+    int i = 0;
+    for (String var : logging.keySet()) {
+      // do not print the very last bool, it was printed before
+      if(i == logging.keySet().size() - 1) {
+        if (i > 0) {
+          break;
+        }
+      }
+      i++;
+      out.append(rule + ".put(\"" + logging.get(var).replaceAll("\\\"", "\\\\\"") + "\", " + var + ");\n");
     }
     if(!mem.getClassName().toLowerCase().equals(
             mem.getToplevelInstance().toLowerCase())){
