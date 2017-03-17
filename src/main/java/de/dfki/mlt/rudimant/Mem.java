@@ -86,7 +86,9 @@ public class Mem {
     typeCodes.put("float",      0x1100000l);
     typeCodes.put("Float",      0x1100100l);
     typeCodes.put("int",        0x1110000l);
+    typeCodes.put("long",       0x1111000l);
     typeCodes.put("Integer",    0x1110100l);
+    typeCodes.put("Long",       0x1111100l);
     typeCodes.put("boolean",   0x10000000l);
     typeCodes.put("Boolean",   0x10000100l);
     typeCodes.put("null",     0x100000000l);
