@@ -23,6 +23,10 @@
       <name>BSNSOFT</name>
       <url>http://www.bsnsoft.de/nexus/content/groups/public/</url>
     </repository>
+    <repository>
+      <id>local-repo</id>
+      <url>file://${basedir}/repo</url>
+    </repository>
   </repositories>
 
   <dependencies>
