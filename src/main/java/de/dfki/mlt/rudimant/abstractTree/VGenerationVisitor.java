@@ -107,6 +107,7 @@ public class VGenerationVisitor implements RTStringVisitor {
       if (replaceLastWithFuncall) {
         if (node.right instanceof USingleValue &&
             ((USingleValue)node.right).content.equals("null")) {
+          replaceLastWithFuncall = false;
           return ret + ".clearValue(" + pa.getPropertyName() + ")";
         }
         //out.append(functional ? ".setSingleValue(" : ".setValue(");

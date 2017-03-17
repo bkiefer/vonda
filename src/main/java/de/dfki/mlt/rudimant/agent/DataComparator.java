@@ -1,5 +1,7 @@
 package de.dfki.mlt.rudimant.agent;
 
+import java.util.Collection;
+
 import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
@@ -29,6 +31,7 @@ public class DataComparator {
     if (s == null) return false;
     if (s instanceof String) return ! ((String)s).isEmpty();
     if (s instanceof Boolean) return (Boolean)s;
+    if (s instanceof Collection) return ((Collection)s).isEmpty();
     return true;
   }
 
