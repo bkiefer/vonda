@@ -31,7 +31,7 @@ public class DataComparator {
     if (s == null) return false;
     if (s instanceof String) return ! ((String)s).isEmpty();
     if (s instanceof Boolean) return (Boolean)s;
-    if (s instanceof Collection) return ((Collection)s).isEmpty();
+    if (s instanceof Collection) return !((Collection)s).isEmpty();
     return true;
   }
 
