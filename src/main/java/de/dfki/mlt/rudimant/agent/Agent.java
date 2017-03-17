@@ -295,8 +295,9 @@ public abstract class Agent extends DataComparator implements StreamingClient {
    Rdf shortcuts
    ************************************************************************* */
 
-  public Rdf toRdf(String Uri) {
-    return _proxy.getRdf(Uri);
+  public Rdf toRdf(String uri) {
+    if (uri.startsWith("\"")) uri = uri.substring(1, uri.length() -1);
+    return _proxy.getRdf(uri);
   }
 
   public String toUri(Rdf rdf) {

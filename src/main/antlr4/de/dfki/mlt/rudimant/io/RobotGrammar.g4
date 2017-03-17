@@ -286,7 +286,7 @@ NEW: 'new';
 CHARACTER: '\''.'\'';
 
 /// string (starting with " ):
-STRING: '\"'.*?'\"';
+STRING: '\"'(~('\\'|'"')|'\\"')*'\"';
 
 /// assignments
 ASSIGN: '=';

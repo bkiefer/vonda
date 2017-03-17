@@ -1,9 +1,14 @@
 package de.dfki.mlt.rudimant.agent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.dfki.lt.tr.dialogue.cplan.DagEdge;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 
 public class DialogueAct {
+
+  private static Logger logger = LoggerFactory.getLogger(DialogueAct.class);
 
   public long timeStamp;
 
@@ -18,9 +23,19 @@ public class DialogueAct {
     _dag = da;
   }
 
+  public DialogueAct(String da, String prop, String ... args) {
+    this();
+    _dag = DagNode.parseLfString(da + "(" + prop + ")");
+    for (int i = 0; i < args.length; i+=2) {
+      setSlot(args[i], args[i+1]);
+    }
+    System.out.println(_dag);
+  }
+
   public DialogueAct(String s) {
     this();
     _dag = DagNode.parseLfString(s);
+    if (_dag == null) logger.error("Wrong syntax creating DialogueAct: {}", s);
   }
 
   public DagNode getDag() {

@@ -17,7 +17,7 @@ public class TestAdditionalEmpty {
   public void testIfThenExp() {
     String in = "lab: if(true) emitDA(#InitialGreeting(Greet));";
     String exp = "public void lab(){ lab: if (true) "
-            + "emitDA(new DialogueAct(\"InitialGreeting(Greet)\")); }";
+            + "emitDA(new DialogueAct(\"InitialGreeting\", \"Greet\")); }";
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));
   }
@@ -27,7 +27,7 @@ public class TestAdditionalEmpty {
   public void testIfThenElseExp() {
     String in = "lab: if(true) b=1; else emitDA(#InitialGreeting(Greet));";
     String exp = "public void lab(){ lab: if (true) int b = 1; "
-            + "else emitDA(new DialogueAct(\"InitialGreeting(Greet)\")); }";
+            + "else emitDA(new DialogueAct(\"InitialGreeting\", \"Greet\")); }";
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));
   }
@@ -44,4 +44,14 @@ public class TestAdditionalEmpty {
   }
 
   // TODO: COMPLETE FOR ALL FOR LOOPS, WHILE, AND DO ... WHILE
+
+
+  // exp to statement in else of if
+  @Test
+  public void testDialogAct() {
+    String in = "int x=27;emitDA(#I(Greet, val=^x));";
+    String exp = "x = 27; emitDA(new DialogueAct(\"I\", \"Greet\", \"val\", x)); }";
+    String s = generate(in);
+    assertEquals(exp, getForMarked(s, exp));
+  }
 }
