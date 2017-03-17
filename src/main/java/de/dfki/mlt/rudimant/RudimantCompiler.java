@@ -170,7 +170,9 @@ public class RudimantCompiler {
   }
 
   public static void shutdown() {
-    handler.shutdown();
+    if (handler != null) {
+      handler.shutdown();
+    }
   }
 
   public void throwTypeErrors() {

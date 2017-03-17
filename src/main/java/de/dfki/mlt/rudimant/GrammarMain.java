@@ -145,6 +145,7 @@ public class GrammarMain {
 
       if (files.isEmpty()) {
         usage("Input file is missing");
+        return;
       }
 
       outputDirectory = new File((String)files.get(0)).getParentFile();
