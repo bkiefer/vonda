@@ -141,9 +141,16 @@ public class VTestTypeVisitor implements RudiVisitor {
         mergeType = "boolean";
         node.right = node.right.ensureBoolean();
       } else {
-        mergeType = "Object";
-        rudi.typeError("Incompatible types in assignment: "
-                + node.left.type + " := " + node.right.type, node);
+        if ((node.left instanceof UFieldAccess) &&
+            node.right instanceof USingleValue &&
+            ((USingleValue)node.right).content.equals("null")) {
+          // this is a "clear" operation, to be resolved later.
+          mergeType = node.left.type;
+        } else {
+          mergeType = "Object";
+          rudi.typeError("Incompatible types in assignment: "
+              + node.left.type + " := " + node.right.type, node);
+        }
       }
     }
     node.type = mergeType;

@@ -83,7 +83,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     return ret;
   }
 
-  boolean notPrintLastField = false;
+  boolean replaceLastWithFuncall = false;
 
   @Override
   public String visitNode(ExpAssignment node) {
@@ -100,17 +100,25 @@ public class VGenerationVisitor implements RTStringVisitor {
         pa = (UPropertyAccess) lastPart;
       }
       // don't print the last field since is will be replaced by a set...(a, b)
-      notPrintLastField = pa != null;
+      replaceLastWithFuncall = pa != null;
       ret += node.left.visitWithSComments(this);
-      notPrintLastField = false;
-      if (pa != null) {
-        //out.append(functional ? ".setSingleValue(" : ".setValue(");
-        ret += ".setValue(";  // always right!
+      if (replaceLastWithFuncall) {
+        if (node.right instanceof USingleValue &&
+            ((USingleValue)node.right).content.equals("null")) {
+          return ret + ".clearValue(" + pa.getPropertyName() + ")";
+        }
+        if (node.left.type.equals(DIALOGUE_ACT_TYPE)) {
+          ret += ".setSlot(";
+        } else {
+          //out.append(functional ? ".setSingleValue(" : ".setValue(");
+          ret += ".setValue(";  // always right!
+        }
         ret += pa.getPropertyName();
         ret += ", ";
       } else {
         ret += " = ";
       }
+      replaceLastWithFuncall = false;
     } else {
       ret += node.left.visitWithSComments(this);
       ret += " = ";
@@ -169,34 +177,32 @@ public class VGenerationVisitor implements RTStringVisitor {
 
   public String visitDaToken(RTExpression exp) {
     String ret = "";
-    if (exp instanceof UVariable) {
-      ret += "\" + " + ((UVariable) exp).visitStringV(this) + "+ \"";
-    } else if (exp instanceof USingleValue
-            && ((USingleValue) exp).type.equals("String")) {
+    if (exp instanceof USingleValue
+        && ((USingleValue) exp).type.equals("String")) {
       String s = ((USingleValue) exp).visitStringV(this);
-      if (s.contains("\"")) {
-        s = s.substring(1, s.length() - 1);
-      }
-      ret += s;
+      if (! s.startsWith("\"")) {
+        ret += "\"" + s + "\"";
+      } else
+        ret += s;
     } else {
-      ret += "\" + " + this.visitNode(exp) + " + \"";
+      ret +=  this.visitNode(exp);
     }
     return ret;
   }
 
   @Override
   public String visitNode(ExpDialogueAct node) {
-    String ret = "new DialogueAct(\"";
+    String ret = "new DialogueAct(";
     ret += visitDaToken(node.daType);
-    ret += '(';
+    ret += ", ";
     ret += visitDaToken(node.proposition);
     for (int i = 0; i < node.exps.size(); i += 2) {
       ret += ", ";
       ret += visitDaToken(node.exps.get(i));
-      ret += " = ";
+      ret += ", ";
       ret += visitDaToken(node.exps.get(i + 1));
     }
-    ret += ")\")";
+    ret += ")";
     return ret;
   }
 
@@ -644,7 +650,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     int to = node.parts.size();
     // don't print the last field if this is in an assignment rather than an
     // access, which means that a set method is generated.
-    if (notPrintLastField) {
+    if (replaceLastWithFuncall) {
       --to;
     }
 
