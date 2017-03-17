@@ -22,9 +22,8 @@ public class ExpDialogueAct extends RTExpression {
   RTExpression proposition;
   List<RTExpression> exps;
 
-  public ExpDialogueAct(String full, RTExpression daType,
+  public ExpDialogueAct(RTExpression daType,
       RTExpression proposition, List<RTExpression> exps) {
-    this.fullexp = full;
     this.daType = daType;
     this.proposition = proposition;
     this.exps = exps;

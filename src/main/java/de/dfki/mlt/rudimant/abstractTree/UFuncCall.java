@@ -22,9 +22,8 @@ public class UFuncCall extends RTExpLeaf {
   // remember whether this is used by new
   boolean newexp;
 
-  public UFuncCall(String full, String representation,
+  public UFuncCall(String representation,
           List<RTExpression> exps, boolean newexp) {
-    this.fullexp = full;
     this.content = representation;
     this.exps = exps;
     this.newexp = newexp;

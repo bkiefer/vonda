@@ -63,6 +63,9 @@ public class RudimantCompiler {
   // Definitions for methods and variables in Agent.java
   private static final String agentInit = "/Agent.rudi";
 
+  // what should be logged in the rules (true = rudi code vs false = java code)
+  private boolean versionToLog = true;
+
 
   /** Constructor for imports */
   private RudimantCompiler(RudimantCompiler parentCompiler) {
@@ -74,6 +77,7 @@ public class RudimantCompiler {
     this.packageName = parent.getPackageName();
     this.rootLevel = parent.rootLevel;
     this.visualise = parent.visualise;
+    this.versionToLog = parent.versionToLog;
   }
 
   /** Constructor for top-level file */
@@ -158,6 +162,9 @@ public class RudimantCompiler {
     if (configs.containsKey(CFG_VISUALISE)) {
       if (rc.visualise = (boolean) configs.get(CFG_VISUALISE))
         Visualize.init();
+    }
+    if (configs.containsKey(CFG_LOGGING)) {
+      rc.versionToLog = false;
     }
     return rc;
   }
@@ -253,6 +260,10 @@ public class RudimantCompiler {
       result = new File(result, s);
     }
     return result;
+  }
+
+  public boolean logRudi(){
+    return this.versionToLog;
   }
 
   public String getPackageName() {

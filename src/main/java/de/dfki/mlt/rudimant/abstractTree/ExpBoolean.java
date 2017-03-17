@@ -23,13 +23,12 @@ public class ExpBoolean extends RTBinaryExp {
    * @param right right part
    * @param operator operator in between
    */
-  public ExpBoolean(String fullexp, RTExpression left,
+  public ExpBoolean(RTExpression left,
           RTExpression right, String operator) {
     this.left = left;
     this.right = right;
     this.operator = operator;
     this.type = "boolean";
-    this.fullexp = fullexp;
   }
 
   @Override

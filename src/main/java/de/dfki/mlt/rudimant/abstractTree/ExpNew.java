@@ -24,10 +24,9 @@ public class ExpNew extends RTExpression {
    * @param construct set to the function call that represents the java creation
    *                  (to null if no java creation)
    */
-  public ExpNew(String fullexp, String toCreate, RTExpression construct){
+  public ExpNew(String toCreate, RTExpression construct){
     this.type = toCreate;
     this.construct = construct;
-    this.fullexp = fullexp;
   }
 
   @Override

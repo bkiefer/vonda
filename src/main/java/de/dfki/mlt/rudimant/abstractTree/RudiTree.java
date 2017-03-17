@@ -28,6 +28,8 @@ public abstract class RudiTree {
    */
   public Location location;
 
+  public String fullexp;
+
   /**
    * visitor method
    */
@@ -99,6 +101,7 @@ public abstract class RudiTree {
       context.getStop().getTokenIndex()
     };
     this.location = new Location(originClass, context.getStart().getLine());
+    this.fullexp = context.getText();
     return this;
   }
 
@@ -115,6 +118,7 @@ public abstract class RudiTree {
       tn.getSymbol().getTokenIndex()
     };
     this.location = new Location(originClass, tn.getSymbol().getTokenIndex());
+    this.fullexp = tn.getText();
     return this;
   }
 
