@@ -782,7 +782,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     }
     out.append("shouldLog(\"" + rule + "\")){\n");
     // do all that logging
-    out.append("HashMap<String, Boolean> " + rule + " = new HashMap<>();\n");
+    out.append("Map<String, Boolean> " + rule + " = new LinkedHashMap<>();\n");
 
     LinkedHashMap<String, String> logging;
       out.append(rule + ".put(\"CONDITION of " + rule
@@ -794,13 +794,6 @@ public class VGenerationVisitor implements RTStringVisitor {
     }
     int i = 0;
     for (String var : logging.keySet()) {
-      // do not print the very last bool, it was printed before
-      if(i == logging.keySet().size() - 1) {
-        if (i > 0) {
-          break;
-        }
-      }
-      i++;
       out.append(rule + ".put(\"" + logging.get(var).replaceAll("\\\"", "\\\\\"") + "\", " + var + ");\n");
     }
     if(!mem.getClassName().toLowerCase().equals(

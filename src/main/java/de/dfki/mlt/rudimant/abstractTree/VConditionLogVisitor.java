@@ -80,7 +80,8 @@ public class VConditionLogVisitor implements RTStringVisitor {
         retS.append(resultRight);
         retS.append(this.lastbool + " = " + left + node.operator + right + ";\n");
         this.realLook.put(this.lastbool, left + node.operator + right);
-        retS.append("}\n");
+        retS.append("} else {\n");
+        retS.append(this.lastbool + " = " + left + ";\n}\n");
       }
     } else {
       String resulting = "";
