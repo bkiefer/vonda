@@ -41,7 +41,7 @@ public class RudimantCompiler {
   private String inputRealName;
 
 //  private StringBuffer out;
-  Writer out;
+  public Writer out;
 
   private Mem mem;
 

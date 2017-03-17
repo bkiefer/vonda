@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
+import java.io.StringWriter;
+import java.io.Writer;
 
 /**
  * this visitor generates the java code
@@ -219,8 +221,13 @@ public class VGenerationVisitor implements RTStringVisitor {
       ret += ", " + node.parameters.get(i);
     }
     ret += ") -> ";
-    // TODO: this will not work with blocks ::::(
-    ret += node.body.visitStringV(this);
+    // this is the rare occasion where sth of class statement is allowed to
+    // be inside an expression, prevent it from printing directly to out
+    Writer old = out.out;
+    out.out = new StringWriter();
+    node.body.visitVoidV(this);
+    ret += out.out.toString();
+    out.out = old;
     return ret;
   }
 

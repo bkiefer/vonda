@@ -88,6 +88,15 @@ public class TestTypes {
   }
 
   @Test
+  public void testComplexLambdaExp() {
+    String in = "Set<Child> cs; cs.contains((c) -> {c.foreName.equals(\"John\");});";
+    String r = generate(in);
+    String expected = "cs.contains((c) -> {"
+            + "((Set<Object>)c.getValue(\"foreName\")).equals(\"John\"); });";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
   public void testListRdftype() {
     String in = "List<Quiz> q = {};";
     String r = generate(in);
