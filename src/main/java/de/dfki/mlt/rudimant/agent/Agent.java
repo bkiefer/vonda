@@ -473,7 +473,7 @@ public abstract class Agent extends DataComparator implements StreamingClient {
   }
 
   public <T> List<T> sort(Collection<T> coll,  Comparator<? super T> c) {
-    List<T> l = new ArrayList<>(coll);
+    List<T> l = new LinkedList<>(coll);
     Collections.sort(l, c);
     return l;
   }
@@ -516,12 +516,20 @@ public abstract class Agent extends DataComparator implements StreamingClient {
    */
   public void logRule(Map<String,Boolean> values, String rule, String file){
     StringBuffer sb = new StringBuffer();
-    sb.append("Rule ").append(file).append(":").append(rule).append('\n');
+    //sb.append("Rule ").append(file).append(":").append(rule).append('\n');
+    boolean first = true;
     for (Map.Entry<String, Boolean> e : values.entrySet()) {
-      sb.append("  ")
-      .append(e.getKey()).append(": ").append(e.getValue()).append('\n');
+      if (first) {
+        sb.append("[").append(file).append("|").append(rule).append("] ")
+          .append(e.getValue().toString().toUpperCase())
+          .append(": ").append(e.getKey()).append('\n');
+        first = false;
+      } else {
+        sb.append("   ")
+        .append(e.getKey()).append(": ").append(e.getValue()).append('\n');
+      }
     }
-    System.out.println(sb.toString());
+    System.out.print(sb.toString());
     // does not work for unknown reasons
     //logger.debug("Rule {}:{} {}", (Object)file, rule, sb.toString());
   }

@@ -749,6 +749,9 @@ public class VGenerationVisitor implements RTStringVisitor {
 
   boolean collectingCondition = false;
 
+  String stringEscape(String in) {
+    return in.replaceAll("\\\"", "\\\\\"");
+  }
   /**
    * creates and prints the logging method of the given rule
    *
@@ -785,8 +788,8 @@ public class VGenerationVisitor implements RTStringVisitor {
     out.append("Map<String, Boolean> " + rule + " = new LinkedHashMap<>();\n");
 
     LinkedHashMap<String, String> logging;
-      out.append(rule + ".put(\"CONDITION of " + rule
-              + " evaluated to: \", " + condV.getLastBool() + ");\n");
+      out.append(rule + ".put(\"" + stringEscape(bool_exp.fullexp) + "\", "
+          + condV.getLastBool() + ");\n");
     if(out.logRudi()){
       logging = rudiLook;
     } else {
@@ -794,7 +797,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     }
     int i = 0;
     for (String var : logging.keySet()) {
-      out.append(rule + ".put(\"" + logging.get(var).replaceAll("\\\"", "\\\\\"") + "\", " + var + ");\n");
+      out.append(rule + ".put(\"" + stringEscape(logging.get(var)) + "\", " + var + ");\n");
     }
     if(!mem.getClassName().toLowerCase().equals(
             mem.getToplevelInstance().toLowerCase())){
