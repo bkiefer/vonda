@@ -29,7 +29,6 @@ public class DialogueAct {
     for (int i = 0; i < args.length; i+=2) {
       setValue(args[i], args[i+1]);
     }
-    System.out.println(_dag);
   }
 
   public DialogueAct(String s) {

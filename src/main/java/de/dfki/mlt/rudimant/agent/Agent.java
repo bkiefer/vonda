@@ -172,14 +172,14 @@ public abstract class Agent extends DataComparator implements StreamingClient {
    *  given one
    */
   protected int lastOccurence(DialogueAct da, Iterable<DialogueAct> daList) {
-    int i = 0;
+    int i = 1;
     for (DialogueAct evt : daList) {
       if (da.subsumes(evt)) {
         return i;
       }
       ++i;
     }
-    return -1;
+    return 0;
   }
 
   /** When did i say this in this session? */
