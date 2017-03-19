@@ -12,6 +12,7 @@ import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import de.dfki.lt.hfc.db.server.StreamingClient;
+import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 
 /**
@@ -411,6 +412,7 @@ public abstract class Agent extends DataComparator implements StreamingClient {
     _proxy = proxy;
     _proxy.registerStreamingClient(this);
     _language = language;
+    DagNode.init(new DiaHierarchy(_proxy));
     asr = new AsrTts();
     try {
       asr.loadGrammar(configDir, language, this, configs);

@@ -9,6 +9,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import com.ibm.icu.text.RuleBasedNumberFormat;
 
 import de.dfki.lt.tr.dialogue.cplan.BatchTest;
@@ -16,12 +18,12 @@ import de.dfki.lt.tr.dialogue.cplan.BatchTest.BatchType;
 import de.dfki.lt.tr.dialogue.cplan.CcgUtterancePlanner;
 import de.dfki.lt.tr.dialogue.cplan.DagEdge;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
+import de.dfki.lt.tr.dialogue.cplan.UtterancePlanner;
 import de.dfki.lt.tr.dialogue.cplan.functions.FunctionFactory;
-import org.apache.log4j.Logger;
 
 public class CPlannerNlg {
 
-  CcgUtterancePlanner _planner;
+  UtterancePlanner _planner;
 
   Logger logger = Logger.getLogger(CPlannerNlg.class);
 
@@ -43,7 +45,16 @@ public class CPlannerNlg {
    */
   public CPlannerNlg(File pluginDirectory, File projectFile, String language)
           throws FileNotFoundException, IOException {
-    _planner = new CcgUtterancePlanner();
+    _planner = new UtterancePlanner() {
+      /** Load all things contained in the configuration in the right way */
+      protected void load() {
+        // initHierachy();
+        /** First load the plugins, then the rules */
+        loadPlugins();
+        loadRules();
+      }
+    };
+
     _planner.readProjectFile(projectFile);
 
     if (null != pluginDirectory) {
@@ -161,7 +172,7 @@ public class CPlannerNlg {
         logger.trace("Canned text: " + result);
       }
     } else {
-      result = _planner.realize(cplanOutput).trim();
+      // result = _planner.realize(cplanOutput).trim();
       if (result == null || result.isEmpty()) {
         if (!emptyRealizations.contains(input)) {
           emptyRealizations.add(input);
@@ -175,6 +186,7 @@ public class CPlannerNlg {
     return result;
   }
 
+  /*
   public BatchTest batchProcess(File file, BatchType generation)
           throws IOException {
     return _planner.batchProcess(file, generation);
@@ -183,5 +195,5 @@ public class CPlannerNlg {
   public CcgUtterancePlanner getPlanner() {
     return _planner;
   }
-
+   */
 }

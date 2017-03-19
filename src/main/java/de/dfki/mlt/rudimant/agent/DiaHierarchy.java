@@ -9,12 +9,14 @@ import de.dfki.lt.tr.dialogue.cplan.util.ShortIDMap;
  *
  * @author kiefer
  */
-public class DiaHierarchy extends RdfHierarchy implements Hierarchy {
+public class DiaHierarchy implements Hierarchy {
 
   protected ShortIDMap<String> nameToFeature = new ShortIDMap<String>();
 
+  RdfHierarchy _hier;
+
   public DiaHierarchy(RdfProxy proxy) {
-    super(proxy);
+    _hier = proxy.getHierarchy();
   }
 
   @Override
@@ -37,16 +39,21 @@ public class DiaHierarchy extends RdfHierarchy implements Hierarchy {
 
   @Override
   public int getTypeId(String name) {
-    int id = getVertex(name);
+    int id = _hier.getVertex(name);
     if (id < 0) {
-      id = addNewSingleton(name);
+      id = _hier.addNewSingleton(name);
     }
     return id;
   }
 
   @Override
   public String getTypeName(int type) {
-    return getVertexName(type);
+    return _hier.getVertexName(type);
+  }
+
+  @Override
+  public boolean subsumes(int type1, int type2) {
+    return _hier.subsumes(type1, type2);
   }
 
 }
