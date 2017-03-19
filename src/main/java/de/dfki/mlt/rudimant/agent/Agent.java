@@ -520,9 +520,9 @@ public abstract class Agent extends DataComparator implements StreamingClient {
     boolean first = true;
     for (Map.Entry<String, Boolean> e : values.entrySet()) {
       if (first) {
-        sb.append("[").append(file).append("|").append(rule).append("] ")
-          .append(e.getValue().toString().toUpperCase())
-          .append(": ").append(e.getKey()).append('\n');
+        sb.append(e.getValue().toString().toUpperCase())
+          .append(":[").append(file).append("|").append(rule).append("] ")
+          .append(e.getKey()).append('\n');
         first = false;
       } else {
         sb.append("   ")
