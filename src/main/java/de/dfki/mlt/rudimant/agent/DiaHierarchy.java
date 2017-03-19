@@ -48,11 +48,14 @@ public class DiaHierarchy implements Hierarchy {
 
   @Override
   public String getTypeName(int type) {
+    if (type == -2) return "top";
     return _hier.getVertexName(type);
   }
 
   @Override
   public boolean subsumes(int type1, int type2) {
+    if (type1 == -2) return true;
+    if (type2 == -2) return false;
     return _hier.subsumes(type1, type2);
   }
 
