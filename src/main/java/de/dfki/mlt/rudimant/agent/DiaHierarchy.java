@@ -39,9 +39,16 @@ public class DiaHierarchy implements Hierarchy {
 
   @Override
   public int getTypeId(String name) {
-    int id = _hier.getVertex(name);
+    int id = -1;
+    if (! name.startsWith("<")) {
+      String daname = "<dial:"+name+">";
+      id = _hier.getVertex(daname);
+    }
     if (id < 0) {
-      id = _hier.addNewSingleton(name);
+      id = _hier.getVertex(name);
+      if (id < 0) {
+        id = _hier.addNewSingleton(name);
+      }
     }
     return id;
   }

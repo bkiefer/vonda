@@ -155,7 +155,7 @@ public abstract class Agent extends DataComparator implements StreamingClient {
   public DialogueAct emitDA(int delay, DialogueAct da) {
     Pair<String, String> toSay = asr.generate(da.getDag());
     _hub.sendBehaviour(new Behaviour(toSay.first, toSay.second, delay));
-    return da;
+    return addToMyDA(da);
   }
 
   /** Generate text and motion from a raw speech act representation and send it
@@ -231,13 +231,9 @@ public abstract class Agent extends DataComparator implements StreamingClient {
   }
 
   public DialogueAct addLastDA(DialogueAct newDA) {
-    try {
-      if (newDA == null) {
-        throw new IllegalArgumentException("NULL dialogueact");
-      }
-    } catch (IllegalArgumentException ex) {
-      ex.printStackTrace();
-      // throw ex;
+    if (newDA == null) {
+      logger.error("input DA is null");
+      return null;
     }
     lastDAs.addFirst(newDA);
     newData();

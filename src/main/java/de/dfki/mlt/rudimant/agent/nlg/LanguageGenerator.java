@@ -66,7 +66,15 @@ public class LanguageGenerator {
   }
 
   private UtterancePlanner getPlanner() {
-    return new UtterancePlanner();
+    return new UtterancePlanner() {
+      /** Load all things contained in the configuration in the right way */
+      protected void load() {
+        // initHierachy();
+        /** First load the plugins, then the rules */
+        loadPlugins();
+        loadRules();
+      }
+    };
   }
 
   private static Map<String, LanguageGenerator> _generators

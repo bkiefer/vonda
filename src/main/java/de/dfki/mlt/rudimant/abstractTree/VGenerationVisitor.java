@@ -670,7 +670,7 @@ public class VGenerationVisitor implements RTStringVisitor {
         //ret += "((" + cast + ")";
         ret += "((";
         ret += (!pa.functional) ? "Set<Object>" : cast;
-        ret += ")";
+        ret += ")(";
       }
     }
     ret += node.parts.get(0).visitWithSComments(this);
@@ -686,7 +686,7 @@ public class VGenerationVisitor implements RTStringVisitor {
           ret += pa.functional ? ".getSingleValue(" : ".getValue(";
         }
         ret += pa.getPropertyName();
-        ret += "))";
+        ret += ")))";
         currentType = pa.type;
       } else {
         ret += ".";
