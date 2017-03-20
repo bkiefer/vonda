@@ -188,7 +188,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     if (node.right != null) {
       node.right.visit(this);
       if (!Mem.isPODType(node.left.getType())
-              && !Mem.isPODType(node.right.getType())) {
+          && !Mem.isPODType(node.right.getType())) {
         String or = "";
         /*
         if(!mem.getClassName().toLowerCase().equals(

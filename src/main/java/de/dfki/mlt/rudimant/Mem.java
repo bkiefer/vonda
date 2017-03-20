@@ -78,24 +78,25 @@ public class Mem {
 
   static final long JAVA_TYPE = 0x10;
   static {
-    typeCodes.put("Object",         0x111l);
-    typeCodes.put("String",           0x1l);
-    typeCodes.put("Rdf",             0x10l);
-    typeCodes.put("double",     0x1000000l);
-    typeCodes.put("Double",     0x1000100l);
-    typeCodes.put("float",      0x1100000l);
-    typeCodes.put("Float",      0x1100100l);
-    typeCodes.put("int",        0x1110000l);
-    typeCodes.put("long",       0x1111000l);
-    typeCodes.put("Integer",    0x1110100l);
-    typeCodes.put("Long",       0x1111100l);
-    typeCodes.put("boolean",   0x10000000l);
-    typeCodes.put("Boolean",   0x10000100l);
-    typeCodes.put("null",     0x100000000l);
+    typeCodes.put("Object",               0x111l);
+    typeCodes.put("String",                 0x1l);
+    typeCodes.put("Rdf",                   0x10l);
+    typeCodes.put("double",           0x1000000l);
+    typeCodes.put("Double",           0x1000100l);
+    typeCodes.put("float",            0x1100000l);
+    typeCodes.put("Float",            0x1100100l);
+    typeCodes.put("int",              0x1110000l);
+    typeCodes.put("Integer",          0x1110100l);
+    typeCodes.put("long",             0x1111000l);
+    typeCodes.put("Long",             0x1111100l);
+    typeCodes.put("boolean",         0x10000000l);
+    typeCodes.put("Boolean",         0x10000100l);
+    typeCodes.put("null",           0x100000000l);
   }
 
   /** Indicates if this type should be compared with == or equals */
   public static boolean isPODType(String name) {
+    name = RdfClass.xsdToJavaPod(name);
     Long code = typeCodes.get(name);
     return code != null && (code & 0x111100000l) != 0;
   }
