@@ -476,6 +476,13 @@ public abstract class Agent extends DataComparator implements StreamingClient {
     return l;
   }
 
+  public <T> int count(Collection<T> coll, Predicate<? super T> p) {
+    int result = 0;
+    for(T elt : coll)
+      if (p.test(elt)) ++result;
+    return result;
+  }
+
   // ######################################################################
   // Rule logging for debugging
   // ######################################################################
