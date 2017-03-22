@@ -93,7 +93,7 @@ public class DataComparator {
 
   public static boolean isEqual(Rdf left, Rdf right){
     if (left == null || right == null) return left == right;
-    return isEqual(left.getClazz(), right.getClazz());
+    return left.equals(right);
   }
   public static boolean isSmaller(Rdf left, Rdf right){
     return (isSmallerEqual(left, right) && !isSmallerEqual(right, left));

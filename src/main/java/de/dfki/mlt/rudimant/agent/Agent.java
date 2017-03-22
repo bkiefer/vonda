@@ -208,7 +208,7 @@ public abstract class Agent extends DataComparator implements StreamingClient {
         new DialogueAct("Request(top)"),
         new DialogueAct("IndirectRequest(top)")
     };
-    if (myLast.timeStamp < lastDA.timeStamp)
+    if (lastDA != null && myLast.timeStamp < lastDA.timeStamp)
       return false;
     for (DialogueAct req : requests) {
       RdfClass my = _proxy.getClass(myLast.getDialogueActType());
