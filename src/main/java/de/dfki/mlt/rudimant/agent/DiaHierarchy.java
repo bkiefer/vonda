@@ -2,6 +2,7 @@ package de.dfki.mlt.rudimant.agent;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfHierarchy;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.lt.tr.dialogue.cplan.Hierarchy;
 import de.dfki.lt.tr.dialogue.cplan.util.ShortIDMap;
 
@@ -39,6 +40,8 @@ public class DiaHierarchy implements Hierarchy {
 
   @Override
   public int getTypeId(String name) {
+    if (DagNode.TOP_TYPE.equals(name))
+      return DagNode.TOP_ID;
     int id = -1;
     if (! name.startsWith("<")) {
       String daname = "<dial:"+name+">";

@@ -1,3 +1,6 @@
+* Queries aus .rudi abfeuern
+* Timeouts mit "Argumenten", die spezifische Instanzen beackern.
+
 * Dialogue Acts
   - hierarchy of DAs and Frames from the ontology with access functions
   - functionality: integrate jtfs for subsumption etc.

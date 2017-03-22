@@ -48,6 +48,7 @@ int random(limit int);
 float random();
 
 // logging methods
+Logger logger;
 void info(String s, int i);
 
 // lambda

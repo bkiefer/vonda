@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.Rdf;
+import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import de.dfki.lt.hfc.db.server.StreamingClient;
@@ -197,18 +198,24 @@ public abstract class Agent extends DataComparator implements StreamingClient {
     // if my last DA was a request or a question, and there is no newer incoming
     // da, i'm waiting for an answer.
     DialogueAct myLast = myLastDA();
+    //logger.error("waitResp: {} ", myLast);
     if (myLast == null) {
       return false;
     }
     DialogueAct lastDA = lastDA();
     final DialogueAct[] requests = {
-        new DialogueAct("Question(Frame)"),
-        new DialogueAct("Request(Frame)")
+        new DialogueAct("Question(top)"),
+        new DialogueAct("Request(top)"),
+        new DialogueAct("IndirectRequest(top)")
     };
     if (myLast.timeStamp < lastDA.timeStamp)
       return false;
     for (DialogueAct req : requests) {
-      if (myLast.isSubsumedBy(req)) return true;
+      RdfClass my = _proxy.getClass(myLast.getDialogueActType());
+      RdfClass r = _proxy.getClass(req.getDialogueActType());
+      //logger.error("waitResp: {} <= {}", my, r);
+      if (my.isSubclassOf(r)) return true;
+      //if (myLast.isSubsumedBy(req)) return true;
     }
     return false;
   }
@@ -265,7 +272,9 @@ public abstract class Agent extends DataComparator implements StreamingClient {
   }
 
   public boolean isTimedOut(String name) {
-    return timeouts.isTimedout(name);
+    boolean result = timeouts.isTimedout(name);
+    if (result) removeTimeout(name);
+    return result;
   }
 
   public void removeTimeout(String name) {
