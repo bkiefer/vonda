@@ -155,7 +155,7 @@ public abstract class Agent extends DataComparator implements StreamingClient {
    */
   public DialogueAct emitDA(int delay, DialogueAct da) {
     Pair<String, String> toSay = asr.generate(da.getDag());
-    _hub.sendBehaviour(new Behaviour(toSay.first, toSay.second, delay));
+    _hub.sendBehaviour(new Behaviour(toSay.second, toSay.first, delay));
     return addToMyDA(da);
   }
 
@@ -202,7 +202,9 @@ public abstract class Agent extends DataComparator implements StreamingClient {
     if (myLast == null) {
       return false;
     }
-    DialogueAct lastDA = lastDA();
+    // Do not use lastDA() here! it may return null because of lastDAprocessed(),
+    // not because the queue is empty
+    DialogueAct lastDA = lastDAs.peekFirst();
     final DialogueAct[] requests = {
         new DialogueAct("Question(top)"),
         new DialogueAct("Request(top)"),
