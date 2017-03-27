@@ -192,6 +192,22 @@ public class DataComparator {
   }
 
   public boolean isEqual(String left, String right){
+    return left.equals(right);
+  }
+  public boolean isSmaller(String left, String right){
+    return left.compareTo(right) < 0;
+  }
+  public boolean isGreater(String left, String right){
+    return left.compareTo(right) > 0;
+  }
+  public boolean isSmallerEqual(String left, String right){
+    return left.compareTo(right) <= 0;
+  }
+  public boolean isGreaterEqual(String left, String right){
+    return left.compareTo(right) >= 0;
+  }
+  /*
+  public boolean isEqual(String left, String right){
     //try to find out whether left and right are DialogueActs or Rdf objects
     RdfClass leftRdf = _proxy.getRdfClass(left);
     RdfClass rightRdf = _proxy.getRdfClass(right);
@@ -237,6 +253,7 @@ public class DataComparator {
     }
     return isGreaterEqual(leftRdf, rightRdf);
   }
+  */
 
   public boolean isEqual(Object left, Object right){
     if (left instanceof String) {

@@ -349,8 +349,7 @@ public abstract class Agent extends DataComparator implements StreamingClient {
 
   /** Send the list of possible intentions to the communication hub */
   void sendIntentions(Set<String> strings) {
-    // TODO: implement it, maybe using a listener
-
+    _hub.sendIntentions(strings);
     proposalsSent = true;
   }
 
