@@ -312,10 +312,6 @@ public abstract class Agent extends DataComparator implements StreamingClient {
     return rdf.getURI();
   }
 
-  public String classUri(Rdf rdf) {
-    return rdf.getClazz().toString();
-  }
-
   /* *************************************************************************
   Java shortcuts
   ************************************************************************* */
