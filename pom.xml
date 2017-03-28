@@ -19,9 +19,9 @@
 
   <repositories>
     <repository>
-      <id>BSNSOFT</id>
-      <name>BSNSOFT</name>
-      <url>http://www.bsnsoft.de/nexus/content/groups/public/</url>
+      <id>FORSCHUNGSSOFTWARE</id>
+      <name>FORSCHUNGSSOFTWARE</name>
+      <url>http://www.forschungssoftware.de/nexus/content/groups/public/</url>
     </repository>
     <repository> 
       <id>local-repo</id>

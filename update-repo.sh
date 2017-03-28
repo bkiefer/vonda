@@ -25,7 +25,7 @@ mvi de.dfki.lt.hfc hfc-db "$HFC_DB_VERSION"
 
 mvi de.dfki.mlt srgs-parser "$SRGS2XML_VERSION"
 
-# the following stuff is in http://www.bsnsoft.de/nexus/content/groups/public/
+# the following stuff is in http://www.forschungssoftware.de/nexus/content/groups/public/
 # but it's not reliable, so we hope it's in the system wide repo from where we
 # put it into our local repo
 CPLAN_CCG_VERSION=1.1-SNAPSHOT
