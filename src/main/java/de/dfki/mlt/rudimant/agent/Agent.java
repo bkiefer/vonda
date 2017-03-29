@@ -533,15 +533,14 @@ public abstract class Agent extends DataComparator implements StreamingClient {
       if (first) {
         sb.append(e.getValue().toString().toUpperCase())
           .append(":[").append(file).append("|").append(rule).append("] ")
-          .append(e.getKey()).append('\n');
+          .append(e.getKey());
         first = false;
       } else {
-        sb.append("   ")
-        .append(e.getKey()).append(": ").append(e.getValue()).append('\n');
+        sb.append("\n   ")
+        .append(e.getKey()).append(": ").append(e.getValue());
       }
     }
-    System.out.print(sb.toString());
-    // does not work for unknown reasons
-    //logger.debug("Rule {}:{} {}", (Object)file, rule, sb.toString());
+    //logger.debug("{}", sb.toString());
+    System.err.println(sb.toString());
   }
 }
