@@ -84,6 +84,11 @@ public abstract class Agent extends DataComparator implements StreamingClient {
     // TODO implement it, possibly with a Listener.
   }
 
+  // TODO: we need sth like this to use the dialogue history; is this the right way?
+  protected Deque<DialogueAct> getLastDAs(){
+    return lastDAs;
+  }
+
   // TODO: Why does this already resetted to LinkedList before Deque was removed?
   protected void reset() {
     myLastDAs = new LinkedList<DialogueAct>();
