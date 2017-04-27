@@ -151,7 +151,7 @@ variable
   ;
 
 exp
-  : '(' VARIABLE ')' exp
+  : '(' type_spec ')' exp
   | complex_exp
   | if_exp
   | string_expression

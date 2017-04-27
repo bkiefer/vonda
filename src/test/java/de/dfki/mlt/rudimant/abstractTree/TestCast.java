@@ -191,6 +191,15 @@ public class TestCast {
     assertEquals(expected, getForMarked(s, expected));
   }
 
+  @Test
+  public void test14(){
+    // Test cast with parameterized types
+    String in = "LinkedList<String> b; LinkedList<String> l = (LinkedList<String>) b;";
+    String s = generate(in);
+    String expected = "LinkedList<String> l = ((LinkedList<String>)b);";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
   // TODO: CONSTRUCT A TEST EXAMPLE WITH AT LEAST THREE RDF ACCESSES
   @Test
   public void testMultipleRdfAccess() {
