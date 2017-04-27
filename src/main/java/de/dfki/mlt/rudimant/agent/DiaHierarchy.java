@@ -18,6 +18,7 @@ public class DiaHierarchy implements Hierarchy {
 
   public DiaHierarchy(RdfProxy proxy) {
     _hier = proxy.getHierarchy();
+    assert(_hier.getVertex(DagNode.TOP_TYPE) == DagNode.TOP_ID);
   }
 
   @Override
