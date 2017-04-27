@@ -1,3 +1,2 @@
-Set<Child> cs;
 
-cs.contains((c) -> c.foreName.equals("John"));
+agent.heard = new XsdString(lastDA().toString(), null);

@@ -709,7 +709,7 @@ public class VGenerationVisitor implements RTStringVisitor {
       ret += t.substring(0, 1).toLowerCase() + t.substring(1) + ".";
     }
     if(node.newexp){
-      ret += mem.convertRdfType(node.content) + "(";
+      ret += mem.convertRdfType(node.type) + "(";
     } else {
       ret += node.content + "(";
     }

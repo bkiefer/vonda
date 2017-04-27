@@ -700,6 +700,11 @@ public class VTestTypeVisitor implements RudiVisitor {
    */
   @Override
   public void visitNode(UFuncCall node) {
+    // if this was used in a new Expression, handle it accordingly
+    if(node.newexp){
+      node.type = mem.checkRdf(node.content);
+      return;
+    }
     // test whether the given parameters are of the correct type
     ArrayList<String> partypes = new ArrayList<String>();
     for (RTExpression e : node.exps) {
@@ -722,9 +727,6 @@ public class VTestTypeVisitor implements RudiVisitor {
       }
       rudi.typeError("The function call to " + node.content
               + " refers to a function that wasn't declared", node);
-    }
-    if(node.newexp){
-      node.content = mem.checkRdf(node.content);
     }
   }
 
@@ -802,11 +804,12 @@ public class VTestTypeVisitor implements RudiVisitor {
       // insert proper rdf type
       node.type = mem.checkRdf(node.type);
     } else {
-      String f = node.fullexp;
-      // the type is the java object created
-      // TODO: shouldn't that be indexOf("w") + 1 ??
-      node.type = f.substring(f.indexOf("w"), f.indexOf("("));
+      if(node.construct instanceof UFuncCall){
+        ((UFuncCall)node.construct).newexp = true;
+      }
       node.construct.visit(this);
+      // the type is the (java) object created
+      node.type = node.construct.type;
     }
   }
 }
