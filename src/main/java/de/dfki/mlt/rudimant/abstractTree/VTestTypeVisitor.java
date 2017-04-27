@@ -627,11 +627,15 @@ public class VTestTypeVisitor implements RudiVisitor {
                 + var.getType(), node);
       }
     }
+    // TODO: this resulted in weird warnings if the property has the same name
+    // 		as a local variable; is there any case in which it makes sense?
+    /*
     if (var.getType() != null && !var.getType().equals(currentType)) {
       rudi.typeError("Overwriting type " + var.type
               + "  of partial field access for " + var.content + " to "
               + currentType, node);
-    }
+    }*/
+    
     // Set<Bla> vs Bla distinction, unfortunately, Java can not reason about
     // parameter types, so this must be Object
     boolean isFunctional = (predType & RdfClass.FUNCTIONAL_PROPERTY) != 0;
@@ -651,6 +655,9 @@ public class VTestTypeVisitor implements RudiVisitor {
    */
   @Override
   public void visitNode(UFieldAccess node) {
+	if (node.fullexp.equals("clarifyRel.driver")){
+		int i=1;
+	}
     String currentType = null;
     RudiTree currentNode = node.parts.get(0); // can not be empty
     currentNode.visit(this);
@@ -683,7 +690,10 @@ public class VTestTypeVisitor implements RudiVisitor {
           currentType = null;
         }
       } else { // unknown or Java type, let's try with the accessor type
-        if (currentNode instanceof RTExpression) {
+    	  // TODO: think about this. we definitely want this in case of currentNode being a function call, but
+    	  //		if it is a variable we get either nothing or - worse - the type of some unrelated local variable;
+    	  //		which other expressions need to be handled cautiously?
+        if (currentNode instanceof RTExpression && !(currentNode instanceof UVariable)) {
           currentType = ((RTExpression) currentNode).type;
         } else {
           currentType = null;

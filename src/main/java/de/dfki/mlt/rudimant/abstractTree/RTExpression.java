@@ -106,7 +106,7 @@ public abstract class RTExpression extends RudiTree {
       if (! type.equals(cleanType)) {
         result = new ExpBoolean(this, null, "exists(");
         result.positions = positions;
-      result.fullexp = fullexp;
+        result.fullexp = fullexp;
         return result;
       } else {
         switch (type) {
