@@ -628,7 +628,9 @@ public class VTestTypeVisitor implements RudiVisitor {
       }
     }
     // TODO: this resulted in weird warnings if the property has the same name
-    // 		as a local variable; is there any case in which it makes sense?
+    // 		as a local variable; this should be a "parameterized" property
+    // access, where the name of the property is stored in the variable,
+    // which seems too complicated anyway.
     /*
     if (var.getType() != null && !var.getType().equals(currentType)) {
       rudi.typeError("Overwriting type " + var.type
@@ -699,6 +701,7 @@ public class VTestTypeVisitor implements RudiVisitor {
           currentType = null;
         }
       }
+      ((RTExpression) currentNode).type = currentType;
     }
     node.type = currentType == null ? "Object" : currentType; // the final result type
     partOfFieldAccess = false;

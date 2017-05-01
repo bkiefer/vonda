@@ -1,2 +1,7 @@
-
-agent.heard = new XsdString(lastDA().toString(), null);
+Person driver = driverSeat.occupant.person;
+      Person otherOccupant = c.user.person;
+      if (! contains(driver.relations,
+                     (r) -> (((Relation)r).partner == otherOccupant))) {
+        clarifyRel = new ClarifyRelationDesire;
+        clarifyRel.driver = driverSeat.occupant;
+      }

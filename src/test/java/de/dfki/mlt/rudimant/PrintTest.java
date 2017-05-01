@@ -21,11 +21,11 @@ public class PrintTest {
     String[] strings = new String[]{
       "-c",
       //"src/test/resources/tests.yml",
-      //"../herbea/poc/herbea.yml",
-      //"src/test/resources/Test.rudi",
+      "../herbea/poc/herbea.yml",
+      "src/test/resources/Test.rudi",
       //"../herbea/poc/src/main/rudi/Kaefer.rudi"
       //"../dipal/src/main/rudi/PalAgent.rudi"
     };
-    //GrammarMain.main(strings);
+    GrammarMain.main(strings);
   }
 }

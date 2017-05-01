@@ -7,10 +7,16 @@ package de.dfki.mlt.rudimant.abstractTree;
 
 import static de.dfki.mlt.rudimant.Constants.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.mlt.rudimant.Constants;
 import de.dfki.mlt.rudimant.Mem;
+import de.dfki.mlt.rudimant.agent.DialogueAct;
 
 /**
  * a special kind of the RudiTree is an expression; expressions can have types
@@ -71,11 +77,14 @@ public abstract class RTExpression extends RudiTree {
         return this;
       } else {
         // if this is a funccall with type boolean, we'd still like to have it
-        // as a boolean, at least wrapped up
+        // as a boolean, at least wrapped up; if it is a fieldaccess kind of funccall, we have
+    	// to go on testing for each part if it is null
         result = new ExpBoolean(this, null, null);
-        result.fullexp = fullexp;
-        result.positions = positions;
-        return result;
+        if(!(this instanceof UFieldAccess)){
+          result.positions = positions;
+          result.fullexp = fullexp;
+          return result;
+        }
       }
     }
     // this is some other kind of expression, turn it into a comparison or
@@ -95,40 +104,63 @@ public abstract class RTExpression extends RudiTree {
           = new int[]{ lastpos, lastpos };
       */
       result = new ExpBoolean(this, null, "exists(");
-      result.positions = positions;
-      result.fullexp = fullexp;
-      return result;
-    }
-    if (type == null) {
-      right = new USingleValue("null", "Object");
     } else {
-      String cleanType = Mem.convertXsdType(type);
-      if (! type.equals(cleanType)) {
-        result = new ExpBoolean(this, null, "exists(");
-        result.positions = positions;
-        result.fullexp = fullexp;
-        return result;
+      if (type == null) {
+        right = new USingleValue("null", "Object");
+        right.positions = positions;
+        right.fullexp = fullexp;
+        result = new ExpBoolean(this, right, "!=");
       } else {
-        switch (type) {
-        case "int":
-        case "float":
-        case "double":
-          right = new USingleValue("0", type);
-          break;
-        default:
-          right = new USingleValue("null", "Object");
-          break;
+        String cleanType = Mem.convertXsdType(type);
+        if (! type.equals(cleanType)) {
+          result = new ExpBoolean(this, null, "exists(");
+        } else {
+          switch (type) {
+          case "int":
+          case "float":
+          case "double":
+            right = new USingleValue("0", type);
+            break;
+          default:
+            right = new USingleValue("null", "Object");
+            break;
+          }
+          right.positions = positions;
+          right.fullexp = fullexp;
+          result = new ExpBoolean(this, right, "!=");
         }
       }
     }
-    // we assume it's just an Object
-    result = new ExpBoolean(this, right, "!=");
-    result.positions = positions;
-      result.fullexp = fullexp;
-    if (right != null) {
-      int lastpos = positions[positions.length - 1];
-      right.positions = new int[]{ lastpos, lastpos };
+    if(this instanceof UFieldAccess){
+        int s = ((UFieldAccess)this).parts.size();
+        if(((UFieldAccess)this).parts.get(s - 2).type != null && 
+      		  ((UFieldAccess)this).parts.get(s - 2).type.equals(Constants.DIALOGUE_ACT_TYPE)){
+    	    result = new ExpBoolean(((UFieldAccess)this).parts.get(s - 2), new USingleValue("\"" + 
+      		    		  	((UFieldAccess)this).parts.get(s - 1).fullexp + "\"", "String"), "hasSlot(");
+        }
+        result.positions = positions;
+        result.fullexp = fullexp;
+        if(s > 2){
+  	      // to avoid NullPointerexceptions, test on null on all levels
+  	      List<RTExpression> smaller = new ArrayList<>();
+  	      smaller.addAll(((UFieldAccess)this).parts);
+  	      smaller.remove(s - 1);
+  	      List<String> smallerRep = new ArrayList<>();
+  	      smallerRep.addAll(((UFieldAccess)this).representation);
+  	      smallerRep.remove(s - 1);
+  	      UFieldAccess partAccess = new UFieldAccess(smaller, smallerRep);
+  	      partAccess.positions = positions;
+  	      partAccess.fullexp = fullexp;
+  	      result = new ExpBoolean(partAccess.ensureBoolean(), result, "&&");
+        } else {
+          RTExpression first = ((UFieldAccess)this).parts.get(0);
+  	      first.positions = positions;
+  	      first.fullexp = fullexp;
+  	      result = new ExpBoolean(first.ensureBoolean(), result, "&&");
+        }
     }
+    result.positions = positions;
+    result.fullexp = fullexp;
     return result;
   }
 
