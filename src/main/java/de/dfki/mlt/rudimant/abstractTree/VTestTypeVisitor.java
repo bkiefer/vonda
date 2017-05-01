@@ -597,11 +597,11 @@ public class VTestTypeVisitor implements RudiVisitor {
       // the literal represents a variable, so we can't determine the type of
       // the access
       // TODO: Maybe return "Object" as type, should be correct in most cases.
-      return new UPropertyAccess(var, true, null, false);
+      return new UPropertyAccess(var.fullexp, var, true, null, false);
     }
     if (DIALOGUE_ACT_TYPE.equals(currentType)) {
       // the return type will be string, this is a call to getSlot
-      return new UPropertyAccess(var, false, "String", true);
+      return new UPropertyAccess(var.fullexp, var, false, "String", true);
     }
     RdfClass clz = mem.getProxy().getClass(currentType);
     String predUri = null;
@@ -611,7 +611,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     // warning / error if property not found
     if (predUri == null) {
       rudi.typeError("No property found for " + var.content, node);
-      return new UPropertyAccess(var, false, null, false);
+      return new UPropertyAccess(var.fullexp, var, false, null, false);
     }
 
     var.content = predUri; // replace plain name by URI
@@ -646,7 +646,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       currentType="Set<Object>";
     }
     // the type of this is set to Object by default (not null)
-    return new UPropertyAccess(var, false, currentType, isFunctional);
+    return new UPropertyAccess(var.fullexp, var, false, currentType, isFunctional);
   }
 
   /**

@@ -20,14 +20,14 @@ public class TestFieldAccesses {
 	  public static void setUpClass() throws FileNotFoundException {
 	    setUp(RESOURCE_DIR + "tests.yml", header, footer);
 	  }
-/*
+
 	  @Test
 	  public void testFieldAccess1() {
-	    String in = "";
+	    String in = "if (lastDA().name){}";
 	    String s = generate(in);
-	    String expected = "";
+	    String expected = "if (((lastDA() != null) && hasSlot(lastDA(), \"name\"))";
 	    assertEquals(expected, getForMarked(s, expected));
-	  }*/
+	  }
 
 	  @Test
 	  public void testFieldAccess2() {

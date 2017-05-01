@@ -23,7 +23,7 @@ public class UPropertyAccess extends RTExpLeaf {
   boolean functional;
 
 
-  public UPropertyAccess(UVariable l, boolean var, String rt,
+  public UPropertyAccess(String fullexp, UVariable l, boolean var, String rt,
       boolean func) {
     // an access will always return sth of type Object, so to not get null
     // I'll set the type of this to Object by default
@@ -36,6 +36,7 @@ public class UPropertyAccess extends RTExpLeaf {
     propertyVariable = var;
     rangeType = rt;
     functional = func;
+    this.fullexp = fullexp;
   }
 
   @Override

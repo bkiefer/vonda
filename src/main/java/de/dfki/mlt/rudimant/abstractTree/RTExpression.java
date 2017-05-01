@@ -135,8 +135,11 @@ public abstract class RTExpression extends RudiTree {
         int s = ((UFieldAccess)this).parts.size();
         if(((UFieldAccess)this).parts.get(s - 2).type != null && 
       		  ((UFieldAccess)this).parts.get(s - 2).type.equals(Constants.DIALOGUE_ACT_TYPE)){
-    	    result = new ExpBoolean(((UFieldAccess)this).parts.get(s - 2), new USingleValue("\"" + 
-      		    		  	((UFieldAccess)this).parts.get(s - 1).fullexp + "\"", "String"), "hasSlot(");
+        	USingleValue property = new USingleValue("\"" + 
+		    		  	((UFieldAccess)this).parts.get(s - 1).fullexp + "\"", "String");
+    	    property.positions = positions;
+      	    property.fullexp = fullexp;
+    	    result = new ExpBoolean(((UFieldAccess)this).parts.get(s - 2), property, "hasSlot(");
         }
         result.positions = positions;
         result.fullexp = fullexp;
