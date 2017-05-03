@@ -104,8 +104,8 @@ public abstract class RTExpression extends RudiTree {
           = new int[]{ lastpos, lastpos };
       */
       result = new ExpBoolean(this, null, "exists(");
-    } else {
-      if (type == null) {
+    } else if (result == null){
+      if (!"boolean".equals(type)) {
         right = new USingleValue("null", "Object");
         right.positions = positions;
         right.fullexp = fullexp;
