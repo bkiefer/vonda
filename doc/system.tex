@@ -1,0 +1,106 @@
+\section{Rudimant-Kompiler und Laufzeitsystem}
+
+Der Rudimant-Kompiler übersetzt Regeldateien mit Extension \texttt{.rudi} in
+Java-Dateien. Dazu braucht er eine Ontologie, in der die RDF Klassen und
+Prädikate, die im \texttt{.rudi}-Code verwandt werden, spezifiziert sind.
+
+Im Fall des POC liegen die Quelldateien in \texttt{src/main/rudi} und die
+dazugehörende Ontologie in \texttt{src/main/resources/ontology}. Damit HFC
+die Ontologie benutzen kann, muss sie im ntriples-Format vorliegen. Die
+derzeitige Ontologie wird mit Protégé erstellt und aus dem OWL-XML Format
+mit Hilfe des \texttt{rapper}-Tools in eine \texttt{.nt} ntriples Datei
+übersetzt. \texttt{rapper} ist Teil des Ubuntu-Package \texttt{raptor2-utils},
+das Script \texttt{ntcreate} im \texttt{poc} Verzeichnis updated alle nicht
+aktuellen \texttt{.nt} Files aus den \texttt{.owl} Versionen.
+
+Weitere settings, die für die Kompilation wichtig sind, finden sich in der
+Datei \texttt{herbea.yml}, die von \texttt{compile} Skript benutzt wird. Auch
+hier sind alle relativen Pfade relativ zum Verzeichnis, in dem die
+\texttt{.yml} Datei liegt.
+
+Für standalone Mockup-Tests kann der POC auch isoliert mit dem \texttt{run.sh}
+script gestartet werden, die ``Sensordaten'' werden dann nach und nach in
+der main-Methode eingespielt.
+
+Der folgende Text ist leider unvollständig und muss noch ergänzt werden. Für
+die meisten Konstrukte gibt es einige Beispiele in den \texttt{rudi}
+Quelldateien.
+
+\subsection{Rudimant Regeln}
+
+TODO:
+\begin{itemize}
+\item ``Globale'' Funktionen und Variablen
+\item RDF Zugriff, funktionale vs. relationale Prädikate
+  \texttt{+=}, \texttt{-=}
+\item Regeln und Labels
+%\item \texttt{propose}
+\item Dialogakte und\ {\Large\verb|^|}
+\item Typinferenz
+\item Überladene Vergleichsoperatoren und Tests
+\item Funktionale Konstrukte (lambda)
+\begin{verbatim}
+boolean contains(Collection coll, Predicate pred);
+boolean all(Collection coll, Predicate pred);
+List<Object> filter(Collection coll, Predicate pred);
+List<Object> sort(Collection coll, Comparator c);
+\end{verbatim}
+\item \texttt{import}
+\end{itemize}
+
+\subsection{Struktur des POC Rudimant-Projekts}
+
+TODO: Siehe Bild für Softprak, Beschreibung von HerbeaAgent.rudi
+vs. HerbeaAgent.java und Rolle von HerbeaClient
+
+Die Basisklassen von Herbea sind \texttt{HerbeaClient}, der die Kommunikation
+mit der Außenwelt herstellt, und \texttt{HerbeaAgent}, der Java-Funktionalität
+zur Verfügung stellt, die sich nicht ohne weiteres in \texttt{rudi} Dateien
+implementieren lässt (komplexe Queries an die Datenbank, etc.).
+
+Zu \texttt{HerbeaAgent.java} gehört noch eine Datei \texttt{HerbeaAgent.rudi},
+die sozusagen das Interface beschreibt, auf das der \texttt{rudi} Quellcode
+zugreifen kann. Hier können auch statt der generischen Klasse \texttt{Rdf} die
+Klassen aus der Ontologie spezifiziert werden, wenn diese genauer angegeben
+werden können. Das hilft dem Kompiler bei der Typinferenz und dem richtigen
+Zugriff mit RDF-Prädikaten.
+
+\subsection{Default-Funktionalität im Laufzeitsystem}
+Alles was in \texttt{Agent} bereitgestellt wird. Die aktuelle Liste der
+bereitgestellten Funktionen finden sich in \texttt{rudimant} unter
+\texttt{src/main/resources/Agent.rudi}.
+
+\begin{itemize}
+\item timeouts
+\begin{verbatim}
+void newTimeout(String name, int millis);
+boolean isTimedOut(String name);
+void removeTimeout(String name);
+boolean hasActiveTimeout(String name);
+\end{verbatim}
+\item Senden von Dialogakten an die Generierung
+\begin{verbatim}
+DialogueAct emitDA(int delay, DialogueAct da);
+DialogueAct emitDA(DialogueAct da);
+\end{verbatim}
+\item Zugriff auf DialogAkte aus der Session
+\begin{verbatim}
+// my last outgoing resp. the last incoming dialogue act
+DialogueAct myLastDA();
+DialogueAct lastDA();
+
+// did i say something like ta in this session (subsumption)? If so, how many
+// utterances back was it? (otherwise, -1 is returned)
+int saidInSession(DialogueAct da);
+// like saidInSession, only for incoming dialogue acts
+int receivedInSession(DialogueAct da);
+
+boolean waitingForResponse();
+void lastDAprocessed();
+\end{verbatim}
+\end{itemize}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "master"
+%%% End:
