@@ -263,6 +263,10 @@ public abstract class Agent extends DataComparator implements StreamingClient {
     return diaAct.getValue(feature);
   }
 
+  public static boolean hasSlot(DialogueAct diaAct, String feature) {
+    return diaAct.hasSlot(feature);
+  }
+
   public static String getDialogueAct(DialogueAct diaAct) {
     return diaAct.getDialogueActType();
   }
