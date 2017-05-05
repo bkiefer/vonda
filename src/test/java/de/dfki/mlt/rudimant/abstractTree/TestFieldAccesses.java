@@ -44,5 +44,15 @@ public class TestFieldAccesses {
 	    		+ " && (c.user.personality.nonchalance != null)))";
 	    assertEquals(expected, getForMarked(s, expected));
 	  }
+	  
+	  @Test
+	  public void testFieldAccess3() {
+	    String in = "Child c; yesterday = \"Lukas\"; if(c.name.equals(yesterday)){}";
+	    String s = generate(in);
+	    String expected = "String yesterday = \"Lukas\"; if ((((c != null) &&"
+	    		+ " (((Set<Object>)c.getValue(\"<upper:name>\")) != null)) &&"
+	    		+ " ((Set<Object>)c.getValue(\"<upper:name>\")).equals(yesterday))";
+	    assertEquals(expected, getForMarked(s, expected));
+	  }
 
 }
