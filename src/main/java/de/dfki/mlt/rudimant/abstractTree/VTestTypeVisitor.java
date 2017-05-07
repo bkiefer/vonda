@@ -508,7 +508,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     for(int i = 0; i < node.partypes.size(); i++){
       node.partypes.set(i, mem.checkRdf(node.partypes.get(i)));
     }
-    mem.addFunction(node.name, node.return_type, node.partypes,
+    mem.addFunction(node.name, node.return_type, node.calledUpon, node.partypes,
             mem.getClassName());
     node.return_type = mem.checkRdf(node.return_type);
     if (node.block != null) {
@@ -657,9 +657,6 @@ public class VTestTypeVisitor implements RudiVisitor {
    */
   @Override
   public void visitNode(UFieldAccess node) {
-	if (node.fullexp.equals("clarifyRel.driver")){
-		int i=1;
-	}
     String currentType = null;
     RudiTree currentNode = node.parts.get(0); // can not be empty
     currentNode.visit(this);
@@ -676,6 +673,10 @@ public class VTestTypeVisitor implements RudiVisitor {
           && ((UFuncCall)currentNode).exps.get(0) instanceof ExpLambda) {
         ((ExpLambda)((UFuncCall)currentNode).exps.get(0)).parType =
             Mem.getInnerType(currentType);
+      }
+      // if this is a funccall performed on anything, tell the function the type it was called on
+      if(currentNode instanceof UFuncCall && currentType != null){
+    	  ((UFuncCall)currentNode).calledUpon = Mem.convertRdfType(currentType);
       }
       currentNode.visit(this);
       if (Mem.isRdfType(currentType)) {
@@ -731,7 +732,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       node.realOrigin = o;
     }
     if (node.type == null) {
-      node.type = mem.getFunctionRetType(node.content, partypes);
+      node.type = mem.getFunctionRetType(node.content, node.calledUpon, partypes);
     }
     if (!mem.existsFunction(node.content, partypes)) {
       if (partOfFieldAccess) {

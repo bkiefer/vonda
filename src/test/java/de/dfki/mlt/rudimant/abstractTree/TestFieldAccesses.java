@@ -54,5 +54,5 @@ public class TestFieldAccesses {
 	    		+ " ((Set<Object>)c.getValue(\"<upper:name>\")).equals(yesterday))";
 	    assertEquals(expected, getForMarked(s, expected));
 	  }
-
+	  
 }

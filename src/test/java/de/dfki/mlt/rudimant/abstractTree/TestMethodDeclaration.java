@@ -60,4 +60,14 @@ public class TestMethodDeclaration {
     String expected = "void foo(int i, String s) { i = 1; }";
     assertEquals(expected, getForMarked(s, expected));
   }
+  
+  @Test
+  public void testCallUpon1(){
+    String methdecl = " [List<T>]. T get(int a); List<String> l;"
+    		+ "x = l.get(0);";
+    String s = generate(methdecl);
+    String expected = "String x = l.get(0);";
+    System.out.println(s);
+    assertEquals(expected, getForMarked(s, expected));
+  }
 }

@@ -67,15 +67,21 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitMethod_declaration(RobotGrammarParser.Method_declarationContext ctx) {
+	// ('[' type_spec ']' '.')?
     // (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | VARIABLE) VARIABLE LPAR
     // ((VARIABLE | DEC_VAR) VARIABLE (COMMA (VARIABLE | DEC_VAR) VARIABLE)*) RPAR statement_block
-
-    int hasVisibilitySpec = ctx.getChild(3).getText().equals("(") ? 1 : 0;
+	String callSpec = null;
+	int callS = 0;
+	if(ctx.getChild(0).getText().equals("[")){
+		callSpec = ctx.getChild(1).getText();
+		callS = 4;
+	}
+    int hasVisibilitySpec = ctx.getChild(3 + callS).getText().equals("(") ? 1 : 0;
 
     ArrayList<String> parameters = new ArrayList<>();
     ArrayList<String> partypes = new ArrayList<>();
     // get all the parameters of the function
-    for (int i = 3 + hasVisibilitySpec; i < ctx.getChildCount() - 2;) {
+    for (int i = 3 + hasVisibilitySpec + callS; i < ctx.getChildCount() - 2;) {
       partypes.add(ctx.getChild(i).getText());
       parameters.add(ctx.getChild(++i).getText());
       i += 2;
@@ -85,9 +91,10 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       block = this.visit(ctx.getChild(ctx.getChildCount() - 1));
     }
     return new StatMethodDeclaration(
-            (hasVisibilitySpec == 0 ? "" : ctx.getChild(0).getText()),
-            ctx.getChild(0 + hasVisibilitySpec).getText(),
-            ctx.getChild(1 + hasVisibilitySpec).getText(),
+            (hasVisibilitySpec == 0 ? "" : ctx.getChild(callS).getText()),
+            ctx.getChild(0 + hasVisibilitySpec + callS).getText(),
+            callSpec,
+            ctx.getChild(1 + hasVisibilitySpec + callS).getText(),
             parameters, partypes, block).setPosition(ctx, currentClass);
   }
 

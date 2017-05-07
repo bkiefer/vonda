@@ -295,7 +295,7 @@ public class Mem {
    * @param partypes the parameter types of the function's parameters
    * @param origin first element class, second rule origin
    */
-  public void addFunction(String funcname, String functype,
+  public void addFunction(String funcname, String functype, String calledUpon,
           List<String> partypes, String origin) {
     if(funcname.equals("equals") || funcname.equals("startsWith")
             || funcname.equals("endsWith") || funcname.equals("substring")
@@ -304,7 +304,7 @@ public class Mem {
     } else if(initializing){
       origin = upperRudi;
     }
-    this.current.addFunction(funcname, functype, partypes, origin, this);
+    this.current.addFunction(funcname, functype, calledUpon, partypes, origin, this);
   }
 
   public String getFunctionOrigin(String funcname, ArrayList<String> partypes){
@@ -322,8 +322,8 @@ public class Mem {
    * @param funcname the name of the function
    * @return its return type or null
    */
-  public String getFunctionRetType(String funcname, ArrayList<String> partypes) {
-    return current.getFunctionRetType(funcname, partypes, this);
+  public String getFunctionRetType(String funcname, String calledUpon, ArrayList<String> partypes) {
+    return current.getFunctionRetType(funcname, calledUpon, partypes, this);
   }
 
   /**

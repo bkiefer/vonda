@@ -21,6 +21,8 @@ public class UFuncCall extends RTExpLeaf {
   String realOrigin;
   // remember whether this is used by new
   boolean newexp;
+  // the type of object this function was called upon (null if nothing)
+  String calledUpon;
 
   public UFuncCall(String representation,
           List<RTExpression> exps, boolean newexp) {

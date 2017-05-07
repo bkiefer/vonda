@@ -5,8 +5,13 @@
  */
 package de.dfki.mlt.rudimant;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +76,7 @@ public class Environment {
    * @param partypes the parameter types of the function's parameters
    * @param origin first element class, second rule origin
    */
-  public void addFunction(String funcname, String functype,
+  public void addFunction(String funcname, String functype, String calledUpon,
           List<String> partypes, String origin, Mem mem) {
     functype = mem.checkRdf(functype);
     for (int i = 0; i < partypes.size(); ++i) {
@@ -80,12 +85,13 @@ public class Environment {
     // test whether we already have an entry for this method
     if (functions.keySet().contains(funcname)) {
       for (Function f : functions.get(funcname)) {
-        if (f.areParametertypes(partypes, mem)) {
+        if (f.areParametertypes(partypes, mem) &&
+        		(calledUpon != null && calledUpon.equals(f.calledUpon))) {
           // in this case we have an obvious error
           if (!f.isReturnType(functype, mem)) {
             // TODO: add a description about where we are in the input file
             logger.warn("redeclaring function " + funcname
-                    + " with new return type - was: " + f.getReturnType()
+                    + " with new return type - was: " + f.getReturnType(calledUpon)
                     + " is: " + functype);
           }
           return;
@@ -97,7 +103,7 @@ public class Environment {
       functions.put(funcname, new HashSet<Function>());
     }
     functions.get(funcname).add(new Function(funcname, origin, functype,
-                partypes));
+                partypes, calledUpon));
   }
 
   public String getFunctionOrigin(String funcname, List<String> partypes,
@@ -130,14 +136,19 @@ public class Environment {
    * @param funcname the name of the function
    * @return its return type or null
    */
-  public String getFunctionRetType(String funcname, List<String> partypes,
-          Mem mem) {
+  public String getFunctionRetType(String funcname, String calledUpon,
+		  List<String> partypes, Mem mem) {
     if(!functions.containsKey(funcname)){
       return null;
     }
     for (Function f : functions.get(funcname)) {
       if (f.areParametertypes(partypes, mem)) {
-        return f.getReturnType();
+    	if(calledUpon != null){
+    	  if(!f.canCallUpon(calledUpon, mem)){
+    		continue;
+    	  }
+    	}
+        return f.getReturnType(calledUpon);
       }
     }
     return null;
@@ -149,20 +160,39 @@ public class Environment {
     private String origin;
     private String returnType;
     private List<String> parameterTypes;
+    private String calledUpon;
 
     public Function(String name, String origin, String returnType,
-        List<String> parameterTypes) {
+        List<String> parameterTypes, String calledUpon) {
       this.name = name;
       this.origin = origin;
       this.returnType = returnType;
       this.parameterTypes = parameterTypes;
+      this.calledUpon = calledUpon;
     }
 
-    public String getName() {
+    public boolean canCallUpon(String calledOn, Mem mem) {
+      // TODO: this is probably not accurate enough; find a more
+      // sophisticated way to do this
+	  return this.calledUpon != null &&
+			  (this.calledUpon.contains("<T>") ||
+					  this.calledUpon.equals("T")) ||
+			  mem.unifyTypes(this.calledUpon, calledOn) != null;
+	}
+
+	public String getName() {
       return this.name;
     }
 
-    public String getReturnType() {
+    public String getReturnType(String calledUpon) {
+      // TODO: extensively test this magic
+      if(this.returnType.contains("<T>") ||
+			this.returnType.equals("T")){
+    	int from = StringUtils.indexOfDifference(this.returnType, calledUpon);
+    	int to = calledUpon.length() - 1 - StringUtils.indexOfDifference(
+    			StringUtils.reverse(this.returnType), StringUtils.reverse(calledUpon));
+    	return calledUpon.substring(from, to);
+      }
       return this.returnType;
     }
 

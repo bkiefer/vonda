@@ -23,16 +23,20 @@ public class StatMethodDeclaration extends RTStatement {
   ArrayList<String> parameters;
   ArrayList<String> partypes;
   RudiTree block;
+  // the type this method should be called upon; null if the method
+  // is rudi-defined!
+  String calledUpon;
 
-  public StatMethodDeclaration(String visibility, String return_type, String name,
-          ArrayList<String> parameters, ArrayList<String> partypes,
-          RudiTree block) {
+  public StatMethodDeclaration(String visibility, String return_type,
+		  String calledUpon, String name, ArrayList<String> parameters,
+		  ArrayList<String> partypes, RudiTree block) {
     this.visibility = visibility;
     this.return_type = return_type;
     this.name = name;
     this.parameters = parameters;
     this.partypes = partypes;
     this.block = block;
+    this.calledUpon = calledUpon;
   }
 
   @Override

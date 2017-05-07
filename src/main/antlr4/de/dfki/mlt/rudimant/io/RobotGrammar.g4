@@ -100,7 +100,8 @@ var_def
   ;
 
 method_declaration
-  : (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | type_spec) VARIABLE '('
+  : ('[' type_spec ']' '.')?
+    (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | type_spec) VARIABLE '('
     ((type_spec | DEC_VAR) VARIABLE (',' (type_spec | DEC_VAR) VARIABLE)*)?
     ')' (statement_block |';')
   ;
