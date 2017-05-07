@@ -105,31 +105,31 @@ public abstract class RTExpression extends RudiTree {
       */
       result = new ExpBoolean(this, null, "exists(");
     } else if (result == null){
-      if (!"boolean".equals(type)) {
+      if (type == null) {
         right = new USingleValue("null", "Object");
         right.positions = positions;
         right.fullexp = fullexp;
         result = new ExpBoolean(this, right, "!=");
-      } else {
-        String cleanType = Mem.convertXsdType(type);
-        if (! type.equals(cleanType)) {
-          result = new ExpBoolean(this, null, "exists(");
-        } else {
-          switch (type) {
-          case "int":
-          case "float":
-          case "double":
-            right = new USingleValue("0", type);
-            break;
-          default:
-            right = new USingleValue("null", "Object");
-            break;
-          }
-          right.positions = positions;
-          right.fullexp = fullexp;
-          result = new ExpBoolean(this, right, "!=");
-        }
-      }
+	  } else { 
+	    String cleanType = Mem.convertXsdType(type);
+	    if (! type.equals(cleanType)) {
+	      result = new ExpBoolean(this, null, "exists(");
+	    } else {
+	      switch (type) {
+	      case "int":
+	      case "float":
+	      case "double":
+	        right = new USingleValue("0", type);
+	        break;
+	      default:
+	        right = new USingleValue("null", "Object");
+	        break;
+	      }
+	      right.positions = positions;
+	      right.fullexp = fullexp;
+	      result = new ExpBoolean(this, right, "!=");
+	    }
+	  }
     }
     if(this instanceof UFieldAccess){
         int s = ((UFieldAccess)this).parts.size();
