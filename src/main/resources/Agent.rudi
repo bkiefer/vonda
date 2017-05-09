@@ -5,6 +5,7 @@ boolean equals(Object e);
 boolean startsWith(String s);
 boolean endsWith(String s);
 String substring(int i);
+[List<T>]. T get(int a);
 
 // all Agent methods we should know
 
