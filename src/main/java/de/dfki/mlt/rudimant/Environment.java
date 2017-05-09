@@ -188,10 +188,19 @@ public class Environment {
       // TODO: extensively test this magic
       if(this.returnType.contains("<T>") ||
 			this.returnType.equals("T")){
-    	int from = StringUtils.indexOfDifference(this.returnType, calledUpon);
-    	int to = calledUpon.length() - 1 - StringUtils.indexOfDifference(
-    			StringUtils.reverse(this.returnType), StringUtils.reverse(calledUpon));
-    	return calledUpon.substring(from, to);
+    	int from = StringUtils.indexOfDifference(this.calledUpon, calledUpon);
+    	int to = calledUpon.length() - StringUtils.indexOfDifference(
+    			StringUtils.reverse(this.calledUpon), StringUtils.reverse(calledUpon));
+    	String ret = calledUpon.substring(from, to);
+    	if(!this.returnType.equals("T")){
+    	  // don't miss anything that is wrapped around <T>
+    	  int before = this.returnType.indexOf("<T>");
+    	  int after = before + 3;
+    	  ret = this.returnType.substring(0, before) 
+    			  + ret
+    			  + this.returnType.substring(after);
+    	}
+    	return ret;
       }
       return this.returnType;
     }

@@ -91,9 +91,9 @@ public class VTestTypeVisitor implements RudiVisitor {
   public void visitNode(ExpAssignment node) {
     node.right.visit(this);
     // make sure they become Java POD types, if xsd type
-    node.right.type = mem.convertXsdType(node.right.type);
+    node.right.type = Mem.convertXsdType(node.right.type);
     node.left.visit(this);
-    node.left.type = mem.convertXsdType(node.left.type);
+    node.left.type = Mem.convertXsdType(node.left.type);
 
     // is this a variable declaration for an already existing variable?
     // When we get here, if node.declaration is true, then node.type has a
