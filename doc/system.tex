@@ -28,25 +28,116 @@ Quelldateien.
 
 \subsection{Rudimant Regeln}
 
-TODO:
-\begin{itemize}
-\item ``Globale'' Funktionen und Variablen
-\item RDF Zugriff, funktionale vs. relationale Prädikate
-  \texttt{+=}, \texttt{-=}
-\item Regeln und Labels
-%\item \texttt{propose}
-\item Dialogakte und\ {\Large\verb|^|}
-\item Typinferenz
-\item Überladene Vergleichsoperatoren und Tests
-\item Funktionale Konstrukte (lambda)
+{\Huge TODO: testen, ob alle Beispiele so funktionieren, wie sie sollen !!!!!!}
+
+\subsubsection{''Globale'' Funktionen und Variablen}
+
+Für Funktionen, die nicht oder nur umständlich in rudi-Code implementiert werden können, sollte der Nutzer eine Javaklasse MyAgent von der abstrakten Klasse Agent ableiten. Funktionen und Variablen, die in dieser Klasse deklariert wurden und später im rudi-Code benutzt werden sollen, müssen mit vollständiger Typangabe in einer Datei MyAgent.rudi registriert werden, sodass die Typinferenz von rudimant sie korrekt berücksichtigen kann (zur Syntax siehe \ref{rudimant-Typinferenz}).\\
+Die Klasse MyAgent mitsamt Packagenamen muss in der config.yml Datei eines Projektes unter dem Eintrag ''wrapperClass'' spezifiziert werden, um im Compile-Schritt einen Effekt zu zeigen. Rudimant nutzt die Klasse MyAgent dann als Superklasse der im Compile-Schritt angegebenen Datei im rudi-Format und verlinkt Funktionsaufrufe und Variablennutzungen in allen untergeordneten rudi-Dateien auf diese, sodass korrekte Aufrufe im resultierenden Java-Code gewährleistet sind.
+
+\subsubsection{RDF Zugriff, funktionale vs. relationale Prädikate
+  \texttt{+=}, \texttt{-=}}
+
+\begin{minipage}{0.4\textwidth}
+\begin{verbatim}
+Child c;
+String name = c.name;
+c.name = "new name";
+\end{verbatim}
+\end{minipage}
+\begin{minipage}{0.6\textwidth}
+\begin{verbatim}
+String name = (String)c.getValue("<upper:name>");
+c.setValue("<upper:name>", "new name");
+\end{verbatim}
+\end{minipage}
+
+Durch die Verbindung zu hfc während des Compile-Vorganges hat rudimant vollen Zugriff auf die Datenbank und kann nicht nur Rdf-Objekte anhand ihrer Typen erkennen, sondern auch erkennen, wann ein Feldzugriff auf ein Rdf-Objekt erfolgt und ihn in solchen Fällen in einen Zugriff auf die Datenbank umwandeln. Dies ist sowohl für Zugriffe auf Properties als auch für Änderungen ihres Inhalts möglich und lässt sich, sofern dies in der verwendeten Ontologie möglich ist, beliebig oft hintereinander ausführen.\\
+
+TODO: funktional vs relational?
+  
+\subsubsection{Regeln und Labels}
+
+\begin{verbatim}
+introduction:
+  if (introduction){
+    if (user.unknown){
+      ask_for_name:
+        if (talkative) {
+          askForName();
+        }
+    } else {
+      greetUser();
+    }
+  }
+\end{verbatim}
+
+%\subsubsection{Propose}
+
+\subsubsection{Dialogakte und Hütchen} \ {\Large\verb|^|}
+
+\begin{verbatim}
+emitDA(#Inform(Answer, what=^solution));
+\end{verbatim}
+
+\subsubsection{Typinferenz} \label{rudimant-Typinferenz}
+
+\subsubsection{Überladene Vergleichsoperatoren und Tests}
+
+\begin{minipage}{0.4\textwidth}
+\begin{verbatim}
+if (speechAct <= #Question){
+  ...
+}
+\end{verbatim}
+\end{minipage}
+\begin{minipage}{0.6\textwidth}
+\begin{verbatim}
+if (isSmallerEqual(speechAct, new DialogueAct("Question")) {
+  ...
+}
+\end{verbatim}
+\end{minipage}
+
+\begin{minipage}{0.4\textwidth}
+\begin{verbatim}
+if (! c.user.personality.nonchalance){
+  ...
+}
+\end{verbatim}
+\end{minipage}
+\begin{minipage}{0.6\textwidth}
+\begin{verbatim}
+if (!((((c != null) && (c.user != null))
+      && (c.user.personality != null))
+      && (c.user.personality.nonchalance != null))) {
+  ...
+}
+\end{verbatim}
+\end{minipage}
+
+\subsubsection{Funktionale Konstrukte (lambda)}
 \begin{verbatim}
 boolean contains(Collection coll, Predicate pred);
 boolean all(Collection coll, Predicate pred);
 List<Object> filter(Collection coll, Predicate pred);
 List<Object> sort(Collection coll, Comparator c);
 \end{verbatim}
-\item \texttt{import}
-\end{itemize}
+
+\subsubsection{\texttt{import}}
+
+%\begin{itemize}
+%\item ``Globale'' Funktionen und Variablen
+%\item RDF Zugriff, funktionale vs. relationale Prädikate
+%  \texttt{+=}, \texttt{-=}
+%\item Regeln und Labels
+%%\item \texttt{propose}
+%\item Dialogakte und\ {\Large\verb|^|}
+%\item Typinferenz
+%\item Überladene Vergleichsoperatoren und Tests
+%\item Funktionale Konstrukte (lambda)
+%\item \texttt{import}
+%\end{itemize}
 
 \subsection{Struktur des POC Rudimant-Projekts}
 
