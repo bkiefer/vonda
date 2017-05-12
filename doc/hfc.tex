@@ -1,7 +1,7 @@
 \section{HFC Rdf-Datenbank}
 
 Die Queries, die an die Datenbank stellen kann haben folgende Syntax (EBNF):
-\begin{table}[h]
+\begin{table}[htbp]
   \centering\small
 \begin{verbatim}
 <query>     ::= <select> <where> [<filter>] [<aggregate>] | ASK <groundtuple>
@@ -62,7 +62,7 @@ Einträgen ein Resultat. Weil der Typ von Aggregaten und Filter-Funktionen nicht
 Typen, z.B. F für \texttt{float}, L für \texttt{long}, D für \texttt{double}, I
 für \texttt{int}, S für \texttt{String}.
 
-\begin{table}[h]
+\begin{table}[htbp]
   \centering
  \begin{tabular}{lll}
    CountDistinct&  FSum&             LMax\\
@@ -80,7 +80,7 @@ Außer \verb|==| und \verb|!=| können in den \texttt{filter} Ausdrücken
 auch funktionale Operatoren benutzt werden. Auch hier gibt es viele
 Versionen der gleichen Funktion für unterschiedliche Datentypen.
 
-\begin{table}[h]
+\begin{table}[htbp]
   \centering\small
 \begin{tabular}{llll}
 CardinalityNotEqual &        FNotEqual &               IntStringToBoolean &      LMin \\
