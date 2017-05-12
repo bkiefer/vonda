@@ -28,7 +28,7 @@ Quelldateien.
 
 \subsection{Rudimant Regeln}
 
-{\Huge TODO: testen, ob alle Beispiele so funktionieren, wie sie sollen !!!!!!}
+%{\Huge TODO: testen, ob alle Beispiele so funktionieren, wie sie sollen !!!!!!}
 
 \subsubsection{''Globale'' Funktionen und Variablen}
 
@@ -51,10 +51,12 @@ String name = (String)c.getValue("<upper:name>");
 c.setValue("<upper:name>", "new name");
 \end{verbatim}
 \end{minipage}
-
+\newline
 Durch die Verbindung zu hfc während des Compile-Vorganges hat rudimant vollen Zugriff auf die Datenbank und kann nicht nur Rdf-Objekte anhand ihrer Typen erkennen, sondern auch erkennen, wann ein Feldzugriff auf ein Rdf-Objekt erfolgt und ihn in solchen Fällen in einen Zugriff auf die Datenbank umwandeln. Dies ist sowohl für Zugriffe auf Properties als auch für Änderungen ihres Inhalts möglich und lässt sich, sofern dies in der verwendeten Ontologie möglich ist, beliebig oft hintereinander ausführen.\\
 
 TODO: funktional vs relational?
+
+Die beiden Operatoren \texttt{+=} und \texttt{-=} sind in rudimant überladen. Sie können sowohl wie in Java zum Rechnen mit Integer, float und double verwendet werden, als auch im Zusammenspiel mit Sets und Listen. $ a += b $ wird hierbei in $ a.add(b) $ umgewandelt, $ a-= b $ resultiert in $ a.remove(b) $.
   
 \subsubsection{Regeln und Labels}
 
@@ -72,7 +74,17 @@ introduction:
   }
 \end{verbatim}
 
+Das Kernstück von rudimant sind die Dialogregeln. Eine Regel beginnt mit ihrem Namen, einem möglichst aussagekräftigen Label, gefolgt von einem Doppelpunkt. Anschließend folgt ein if-statement. Die Clause des Statements drückt die Bedingung aus, unter der die Regel ausgeführt werden soll, im Body steht der auszuführende Code.\\
+Aussagekräftige Labels sind zum Debugging wichtig. Der generierte Code kann zur Laufzeit debuggt werden, indem man in Agent den Flag ... setzt. Der Output des Loggers wird dann das Label jeder Regel, die evaluiert wird, zusammen mit der Auswertung der Bedingung angeben.\\
+% Bsp debugging-output
+Regeln können beliebig tief geschachtelt werden, d.h., jede Regel kann wiederum Subregeln in ihrem Body haben.
+
 %\subsubsection{Propose}
+
+\subsubsection{Struktur einer Datei im rudi-Format}
+
+Anders als Java stellt rudimant nicht den Anspruch, dass die Einträge in einer Datei in irgendeine Form von übergeordneter Struktur gefasst werden. Die Regeln können ebenso wie Funktionsdeklarationen direkt in die Datei geschrieben werden. Dasselbe gilt für jede Art valider (Java-) Statements, wie etwa Zuweisungen, for-Schleifen usw.. Rudimant wird bei der Kompilation eine Java-Klasse erstellen, in die es die Funktionen sowie die Regeln, zu Funktionen transformiert, einträgt. Alle weiteren Statements werden in der korrekten Reihenfolge in die erzeugte Methode process() verschoben, wobei generierte Aufrufe an die Regelfunktionen zwischen ihnen gewährleisten, dass die Regeln und Statements in der Reihenfolge ausgeführt werden, die im rudi-Code spezifiziert war. Dies ermöglicht also, nicht in Regeln gefasste Abbruchbedingungen einzubauen, unter denen die Ausführung der ganzen Datei - und möglicher importierter Dateien - sofort beendet werden soll.\\
+Auf diese Art deklarierte Variablen werden als Klassenvariablen angelegt.
 
 \subsubsection{Dialogakte und Hütchen} \ {\Large\verb|^|}
 
@@ -81,6 +93,10 @@ emitDA(#Inform(Answer, what=^solution));
 \end{verbatim}
 
 \subsubsection{Typinferenz} \label{rudimant-Typinferenz}
+
+Rudimant erlaubt statische Typzuweisungen sowie Casting, beides ist jedoch nicht zwingend notwendig.\\
+Ist beispielsweise der Typ der rechten Seite einer Variablendeklaration mit Zuweisung bekannt oder inferierbar, so ist es nicht notwendig, den Typ der Variablen explizit anzugeben.\\
+Als zeitsparendes Feature bietet rudimant insbesondere das automatische Vervollständingen von bool'schen Ausdrücken in den Clauses von if, while und for an. Da in diesem Fall bekannt ist, dass das Ergebnis boolean sein muss, ergänzt rudimant automatisch den Test auf die Existenz eines Objektes in der Clause, sollte dieses nicht Typ boolean sein. Bei Feldzugriffen testet es für jeden Teilzugriff, dass das erhaltene Objekt nicht null ist, um einer NullPointerException zur Laufzeit des generierten Codes vorzubeugen.
 
 \subsubsection{Überladene Vergleichsoperatoren und Tests}
 
@@ -98,6 +114,8 @@ if (isSmallerEqual(speechAct, new DialogueAct("Question")) {
 }
 \end{verbatim}
 \end{minipage}
+\newline
+
 
 \begin{minipage}{0.4\textwidth}
 \begin{verbatim}
