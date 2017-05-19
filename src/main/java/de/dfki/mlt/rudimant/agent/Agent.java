@@ -12,7 +12,6 @@ import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.hfc.db.server.HfcDbApiHandler;
-import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import de.dfki.lt.hfc.db.server.StreamingClient;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
@@ -37,17 +36,8 @@ public abstract class Agent extends DataComparator implements StreamingClient {
 
   protected Random random = new Random(System.currentTimeMillis());
 
-  public class Proposal {
-
-    public void run() throws Exception {}
-
+  public abstract class Proposal implements Runnable {
     public String name;
-
-    public void go() throws Exception {
-      executedLast = name;
-      pendingProposals.clear();
-      run();
-    }
   }
 
   /** The object that is responsible for outgoing communication */
@@ -55,6 +45,9 @@ public abstract class Agent extends DataComparator implements StreamingClient {
 
   /** A class that cares about ASR events and interpretation */
   protected AsrTts asr;
+
+  /** Is new data in the repository */
+  private boolean newData = false;
 
   /** The DAs I emitted, newest first */
   protected Deque<DialogueAct> myLastDAs;
@@ -64,8 +57,10 @@ public abstract class Agent extends DataComparator implements StreamingClient {
 
   private Timeouts timeouts = new Timeouts();
 
-  /** Is new data in the repository */
-  private boolean newData = false;
+  /** Proposals to be executed in the next round, coming from fired timeouts
+   *  or other triggers, like finished behaviours
+   */
+  protected Deque<Proposal> proposalsToExecute;
 
   /** The set of all proposals generated in one (fixpoint) run of the rules */
   public Map<String, Proposal> pendingProposals = new HashMap<>();
@@ -280,7 +275,14 @@ public abstract class Agent extends DataComparator implements StreamingClient {
   };
 
   public void newTimeout(String name, int millis) {
-    timeouts.newTimeout(name, millis);
+    timeouts.newTimeout(name, millis, emptyProposal);
+  }
+
+  protected void newTimeout(String name, int millis, final Proposal p) {
+    timeouts.newTimeout(name, millis,
+        new Proposal(){ public void run(){
+          proposalsToExecute.offerLast(p);
+        }});
   }
 
   public boolean isTimedOut(String name) {
@@ -294,8 +296,16 @@ public abstract class Agent extends DataComparator implements StreamingClient {
   }
 
   public boolean hasActiveTimeout(String name) {
-    return timeouts.activeTimeout(name);
+    return timeouts.hasActiveTimeout(name);
   }
+
+  protected void cancelTimeout(String name) {
+    timeouts.cancelTimeout(name);
+  }
+
+  /* *************************************************************************
+
+  ************************************************************************* */
 
   public void newData() {
     newData = true;
@@ -332,31 +342,6 @@ public abstract class Agent extends DataComparator implements StreamingClient {
 
   public int random(int bound) {
     return random.nextInt(bound);
-  }
-
-  /**
-   * If new data arrived, start the rules processing until no new proposals are
-   * added and send the final set to the decision process. After that, the flag
-   * signalling that new data arrived is reset
-   */
-  public void actOnNewData() {
-    if (newData || timeouts.timeoutOccured()) {
-      int oldSize = 0;
-      do {
-        oldSize = pendingProposals.size();
-        process();
-      } while (pendingProposals.size() != oldSize);
-      if (oldSize > 0) {
-        sendIntentions(pendingProposals.keySet());
-      }
-      newData = false;
-    }
-  }
-
-  /** Send the list of possible intentions to the communication hub */
-  void sendIntentions(Set<String> strings) {
-    _hub.sendIntentions(strings);
-    proposalsSent = true;
   }
 
   public DialogueAct analyse(String input) {
@@ -439,6 +424,185 @@ public abstract class Agent extends DataComparator implements StreamingClient {
     _hub = hub;
   }
 
+  // ######################################################################
+  // behaviour handling --> move to another class!
+  // ######################################################################
+  /** How much time in milliseconds must pass between two behaviours, if
+   *  no message came back that the previous behaviour was finished.
+   */
+  public static long MIN_TIME_BETWEEN_BEHAVIOURS = 10000;
+
+  /** The minimum pause after we got a signal that the previous behaviour
+   *  was finished.
+   */
+  public static long MIN_PAUSE_FOR_FINISHED_BEHAVIOURS = 500;
+
+  protected String lastBehaviourId = null;
+
+  /** Don't send the next behaviour before this point in time is reached */
+  private long behaviourNotBefore = 0;
+
+  // to estimate the duration per word/motion behaviour, can change during session
+  protected long sumOfDurations = 400;
+  protected long numberOfItems = 1;
+
+  protected class BHContainer {
+    public long delayBefore, delayAfter, issued;
+    public int items; // no of words and motion behaviours in this container
+    String id;
+    Behaviour b;
+  }
+
+  /** The queue of unfinished behaviours already sent out */
+  protected Deque<BHContainer> _pendingBehaviours = new ArrayDeque<>();
+
+  private IdentityHashMap<Behaviour, Integer> _customDelay = new IdentityHashMap<>();
+
+
+  Map<String, Pair<Proposal, Integer>> behaviourTriggers = new HashMap<>();
+
+  protected void lastBehaviourTrigger(int maxWait, Proposal p) {
+    synchronized(behaviourTriggers) {
+      behaviourTriggers.put(lastBehaviourId,
+          new Pair<Proposal, Integer>(p, maxWait));
+      /*timeouts.newTimeout(lastBehaviourId, maxWait, new Proposal() {
+        public void run() {
+          synchronized(behaviourTriggers) { executeTrigger(lastBehaviourId); }
+        }
+      });
+      */
+    }
+  }
+
+  protected void startLastBehaviourTriggerTimeout(String behaviourId) {
+    Pair<Proposal, Integer> p = behaviourTriggers.get(behaviourId);
+    if (p != null && ! timeouts.hasActiveTimeout(behaviourId)) {
+      timeouts.newTimeout(lastBehaviourId, p.second, new Proposal() {
+        public void run() {
+          synchronized(behaviourTriggers) { executeTrigger(lastBehaviourId); }
+        }
+      });
+    }
+  }
+
+
+
+  protected void executeTrigger(String behaviourId) {
+    synchronized(behaviourTriggers) {
+      timeouts.cancelTimeout(behaviourId);
+      if (behaviourTriggers.containsKey(behaviourId)) {
+        proposalsToExecute.offerLast(behaviourTriggers.get(behaviourId).first);
+        behaviourTriggers.remove(behaviourId);
+      }
+    }
+  }
+
+  /** Seems agnostic to implementation --> Agent ?? */
+  boolean waitForBehaviours(Object message) {
+    long currentTime = System.currentTimeMillis();
+    if (currentTime < behaviourNotBefore) {
+      return true;
+    } else {
+      //TODO: check if that does the trick
+      long delay = MIN_TIME_BETWEEN_BEHAVIOURS;
+      if (_customDelay.containsKey(message)) {
+        delay = _customDelay.get(message);
+        _customDelay.remove(message);
+      }
+      behaviourNotBefore = currentTime + delay;
+    }
+    return false;
+  }
+
+  double estimatedTime(int items) {
+    return items * ((double)sumOfDurations / numberOfItems);
+  }
+
+  // Uses BHContainer
+  public boolean waitForBehaviours() {
+    long currentTime = System.currentTimeMillis();
+    while (!_pendingBehaviours.isEmpty()) {
+      BHContainer bc = _pendingBehaviours.peek();
+      long timeUsed = currentTime - bc.issued;
+      double timeEstimated = estimatedTime(bc.items);
+      if (timeUsed > 3 * timeEstimated) {
+        _pendingBehaviours.pop();
+        executeTrigger(bc.id);
+        logger.info("removing overdue behaviour {} (ETA {}/{}), was {}", bc.id,
+            timeEstimated, bc.items, timeUsed);
+      } else {
+        // logger.info("Waiting for behaviour {} to finish", bc.id);
+        break;
+      }
+    }
+    return (! _pendingBehaviours.isEmpty());
+  }
+
+  /** Put the behaviour into a waiting queue to see when it's finished.
+   *  There will be a SystemInfo "finished" message that contains the id of the
+   *  behaviour
+   * @param c the message containing the behaviour
+   */
+  public void enqueueBehaviour(Behaviour b) {
+    startLastBehaviourTriggerTimeout(b.getId());
+
+    BHContainer bc = new BHContainer();
+    bc.items = b.getText().split("  *").length + b.getMotion().split("\\|").length;
+    bc.id = b.getId();
+    bc.b = b;
+    bc.issued = System.currentTimeMillis();
+    /*
+    if (minTime < 0) {
+      bc.delayBefore = - minTime;
+    } else if (minTime > 0) {
+      bc.delayAfter = minTime;
+    }
+    */
+    logger.info("enqueueing behaviour {} (ETA {}/{})", bc.id,
+        (long)estimatedTime(bc.items), bc.items);
+    _pendingBehaviours.push(bc);
+  }
+
+  /**
+   * A low level NAO command (or a timeout) signalled that the NAO finished
+   * speaking / moving
+   *
+   * If event sending was blocked while waiting for this signal, unblock it now.
+   */
+  public void setBehaviourFinished(String behaviourId) {
+    if (_pendingBehaviours.isEmpty()) return;
+    int i = 0;
+    for (BHContainer b : _pendingBehaviours) {
+      if (b.id.equals(behaviourId)) {
+        long timeNeeded = System.currentTimeMillis() - b.issued;
+        logger.info("behaviour {} (ETA {}/{}), was {}", b.id,
+            (long) estimatedTime(b.items), b.items, timeNeeded);
+        sumOfDurations += timeNeeded;
+        numberOfItems += b.items;
+        break;
+      }
+      ++i;
+    }
+    if (i == _pendingBehaviours.size()) {
+      logger.warn("no matching behaviour found for: {}", behaviourId);
+      return;
+    } else if (i > 0) {
+      logger.warn("Receiving behaviour id in wrong order: in: {} pending: {}"
+          , behaviourId, _pendingBehaviours.peek().id);
+    }
+    while (i >= 0) {
+      BHContainer bc = _pendingBehaviours.pop();
+      executeTrigger(bc.id);
+      logger.info("removing behaviour {}", bc.id);
+      --i;
+    }
+  }
+
+  // ######################################################################
+  // proposal handling and main loop functions
+  // ######################################################################
+
+
   public void propose(String name, Proposal p) {
     // add the proposal to the pending proposals, but not twice
     if (!pendingProposals.containsKey(name)) {
@@ -450,16 +614,53 @@ public abstract class Agent extends DataComparator implements StreamingClient {
   public void executeProposal(Intention intention) throws Exception {
     String continuationName = intention.getContent();
     Proposal p = pendingProposals.get(continuationName);
-    try {
-      if (p != null) {
-        logger.info("Execute intention: {}", continuationName);
-        p.go();
-      } else {
-        logger.error("Inactive intention: {}", continuationName);
-      }
-    }
-    finally {
+    if (p != null) {
+      logger.info("Execute intention: {}", continuationName);
+      executedLast = p.name;
+      pendingProposals.clear();
+      // this is the first thing to execute in the next round
+      proposalsToExecute.offerFirst(p);
       proposalsSent = false;
+    } else {
+      logger.error("Inactive intention: {}", continuationName);
+    }
+  }
+
+  /** Send the list of possible intentions to the communication hub */
+  void sendIntentions(Set<String> strings) {
+    _hub.sendIntentions(strings);
+    proposalsSent = true;
+  }
+
+  /**
+   * If new data arrived, start the rules processing until no new proposals are
+   * added and send the final set to the decision process. After that, the flag
+   * signalling that new data arrived is reset
+   */
+  private void actOnNewData() {
+    if (newData || timeouts.timeoutOccured()) {
+      int oldSize = 0;
+      do {
+        oldSize = pendingProposals.size();
+        process();
+      } while (pendingProposals.size() != oldSize);
+      if (oldSize > 0) {
+        sendIntentions(pendingProposals.keySet());
+      }
+      newData = false;
+    }
+  }
+
+  public void processRules() {
+    synchronized (this) {
+      // execute code injected from timeouts or external triggers
+      while (!proposalsToExecute.isEmpty()) {
+        proposalsToExecute.pollFirst().run();
+        newData();
+      }
+      if (newData) {
+        actOnNewData();
+      }
     }
   }
 

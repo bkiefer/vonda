@@ -2,18 +2,16 @@ package de.dfki.mlt.rudimant.agent;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.swing.Timer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Timeouts {
+import de.dfki.mlt.rudimant.agent.Agent.Proposal;
 
+public class Timeouts {
   private static final Logger logger = LoggerFactory.getLogger(Timeouts.class);
 
   private Map<String, MyTimer> pendingTimeouts = new HashMap<>();
@@ -23,12 +21,11 @@ public class Timeouts {
   private boolean timeoutOccured = false;
 
   private class MyTimer {
-
     Timer timer;
     long started;
   }
 
-  public void newTimeout(final String id, int millis) {
+  public synchronized void newTimeout(final String id, int millis, Proposal p) {
     MyTimer t = pendingTimeouts.get(id);
     int timeToFire = millis;
     if (t == null) {
@@ -44,15 +41,16 @@ public class Timeouts {
     t.timer = new Timer(timeToFire, new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        synchronized(pendingTimeouts) {
-          if ("fired".equals(e.getActionCommand())
-              || e.getActionCommand() == null) {
-            pendingTimeouts.get(id).timer.stop();
-            pendingTimeouts.remove(id);
-            occuredTimeouts.add(id);
-            logger.info("timeout fired: " + id);
-            timeoutOccured = true;
-          }
+        if ("fired".equals(e.getActionCommand())
+                || e.getActionCommand() == null) {
+          pendingTimeouts.get(id).timer.stop();
+          pendingTimeouts.remove(id);
+          occuredTimeouts.add(id);
+          logger.info("timeout fired: " + id);
+          // TODO clean this up. This is certainly not doing the exact same
+          // thing as go, but run may be not enough.
+          p.run();
+          timeoutOccured = true;
         }
       }
     });
@@ -64,7 +62,19 @@ public class Timeouts {
     return occuredTimeouts.contains(id);
   }
 
-  public void remove(String id) {
+  public boolean hasActiveTimeout(String id) {
+    return pendingTimeouts.containsKey(id);
+  }
+
+  public synchronized boolean cancelTimeout(String id) {
+    MyTimer t = pendingTimeouts.get(id);
+    if (t == null) return false;
+    t.timer.stop();
+    pendingTimeouts.remove(id);
+    return true;
+  }
+
+  public synchronized void remove(String id) {
     occuredTimeouts.remove(id);
   }
 
@@ -74,9 +84,4 @@ public class Timeouts {
     return result;
   }
 
-  public boolean activeTimeout(String id) {
-    synchronized(pendingTimeouts) {
-      return pendingTimeouts.containsKey(id);
-    }
-  }
 }
