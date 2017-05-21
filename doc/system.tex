@@ -90,19 +90,58 @@ Regeln können beliebig tief geschachtelt werden, d.h., jede Regel kann wiederum
 Anders als Java stellt rudimant nicht den Anspruch, dass die Einträge in einer Datei in irgendeine Form von übergeordneter Struktur gefasst werden. Die Regeln können ebenso wie Funktionsdeklarationen direkt in die Datei geschrieben werden. Dasselbe gilt für jede Art valider (Java-) Statements, wie etwa Zuweisungen, for-Schleifen usw.. Rudimant wird bei der Kompilation eine Java-Klasse erstellen, in die es die Funktionen sowie die Regeln, zu Funktionen transformiert, einträgt. Alle weiteren Statements werden in der korrekten Reihenfolge in die erzeugte Methode process() verschoben, wobei generierte Aufrufe an die Regelfunktionen zwischen ihnen gewährleisten, dass die Regeln und Statements in der Reihenfolge ausgeführt werden, die im rudi-Code spezifiziert war. Dies ermöglicht also, nicht in Regeln gefasste Abbruchbedingungen einzubauen, unter denen die Ausführung der ganzen Datei - und möglicher importierter Dateien - sofort beendet werden soll.\\
 Datei-global deklarierte Variablen werden als Klassenvariablen angelegt.
 
-\subsubsection{Dialogakte und Hütchen} \ {\Large\verb|^|}
+\subsubsection{Dialogakte und Hütchen} %\ {\Large\verb|^|}
 
 \begin{small}
 \begin{verbatim}
 emitDA(#Inform(Answer, what=^solution));
 \end{verbatim}
 \end{small}
+Eine wichtige Aufgabe eines Dialogsystems ist zweifellos die Ausgabe von Dialogakten, die von der Generierungskomponente zu Kommunikation mit dem Nutzer verarbeitet werden können. In rudimant ist die Funktion \texttt{emitDA} hierfür zuständig.\\
+Argument von \texttt{emitDA} ist ein Dialogakt in der oben gezeigten Form. Dass es sich bei \texttt{Inform}\verb|(...)| nicht um einen Funktionsaufruf, sondern um einen Dialogakt handelt, wird  hier und an allen anderen Stellen, an denen man einen Dialogakt benutzen möchte, durch das \verb|#| gekennzeichnet. Rudimant wird so erkennen, dass im Java-Code eine neue Instanz der Klasse DialogueAct mit den entsprechenden Modifikationen erstellt werden muss. Hierbei kommt dem Marker {\Large\verb|^|} eine besondere Bedeutung zu: Per default werden alle in den Klammern angegebenen Argumente, egal, ob sie rechts oder links eines $=$ stehen, als Strings an den neuen DialogueAct übergeben. Möchte man explizit den Inhalt einer Variablen übergeben, so ist die Benutzung von {\Large\verb|^|} vor der entsprechenden rechten Seite einer Zuweisung notwendig.
 
-\subsubsection{Typinferenz} \label{rudimant-Typinferenz}
+\subsubsection{Typinferenz und überladene Vergleichsoperatoren} \label{rudimant-Typinferenz}
 
 Rudimant erlaubt statische Typzuweisungen sowie Casting, beides ist jedoch nicht zwingend notwendig.\\
-Ist beispielsweise der Typ der rechten Seite einer Variablendeklaration mit Zuweisung bekannt oder inferierbar, so ist es nicht notwendig, den Typ der Variablen explizit anzugeben.\\
-Als zeitsparendes Feature bietet rudimant insbesondere das automatische Vervollständingen von bool'schen Ausdrücken in den Clauses von if, while und for an. Da in diesem Fall bekannt ist, dass das Ergebnis boolean sein muss, ergänzt rudimant automatisch den Test auf die Existenz eines Objektes in der Clause, sollte dieses nicht Typ boolean sein. Bei Feldzugriffen testet es für jeden Teilzugriff, dass das erhaltene Objekt nicht null ist, um einer NullPointerException zur Laufzeit des generierten Codes vorzubeugen.
+Ist beispielsweise der Typ der rechten Seite einer Variablendeklaration mit Zuweisung bekannt oder inferierbar, so ist es nicht notwendig, den Typ der Variablen explizit anzugeben.\\ \vspace*{10pt}
+\begin{footnotesize}
+\begin{minipage}{0.4\textwidth}
+\begin{verbatim}
+if (! c.user.personality.nonchalance){
+  ...
+}
+\end{verbatim}
+\end{minipage}
+\begin{minipage}{0.6\textwidth}
+\begin{verbatim}
+if (!((((c != null) && (c.user != null))
+      && (c.user.personality != null))
+      && (c.user.personality.nonchalance != null))) {
+  ...
+}
+\end{verbatim}
+\end{minipage}
+\end{footnotesize}
+Als zeitsparendes Feature bietet rudimant insbesondere das automatische Vervollständingen von bool'schen Ausdrücken in den Clauses von if, while und for an. Da in diesem Fall bekannt ist, dass das Ergebnis boolean sein muss, ergänzt rudimant automatisch den Test auf die Existenz eines Objektes in der Clause, sollte dieses nicht Typ boolean sein. Bei Feldzugriffen testet es für jeden Teilzugriff, dass das erhaltene Objekt nicht null ist, um einer NullPointerException zur Laufzeit des generierten Codes vorzubeugen.\\
+\vspace*{10pt}
+\begin{footnotesize}
+\begin{minipage}{0.4\textwidth}
+\begin{verbatim}
+if (speechAct <= #Question){
+  ...
+}
+\end{verbatim}
+\end{minipage}
+\begin{minipage}{0.6\textwidth}
+\begin{verbatim}
+if (isSmallerEqual(speechAct, new DialogueAct("Question")) {
+  ...
+}
+\end{verbatim}
+\end{minipage}
+\end{footnotesize}
+
+Die Vergleichsoperatoren in rudimant sind überladen. Neben den aus Java bekannten Anwendungen als Vergleichsoperatoren können sie auch auf Dialogakte angewendet werden. In diesen Fällen werden sie zu Subsumptionsoperatoren.
 
 \paragraph{Rudimant Typinformationen zur Verfügung stellen}
 
@@ -124,47 +163,8 @@ Stelle, für gewöhnlich jedoch in der Datei MyAgent.rudi (siehe
 
 Wichtig ist: Diese Deklarationen werden nur für die Berechnung der Typen durch rudimant angegeben und werden nicht in den kompilierten Code übernommen. Insbesondere Zeilen wie \texttt{int i;} oder \texttt{void someFunction();} entsprechen damit nicht einer gleich aussehenden Deklaration im Java-Code. Falls es einen Grund geben sollte, dass die Zeilen als im Compile-Ergebnis als dringend erforderlich betrachtet werden, hilft die in Kapitel \ref{rudi-verbatim} beschriebene Methode.
 
-\subsubsection{Überladene Vergleichsoperatoren und Tests}
-
-\begin{small}
-\begin{minipage}{0.4\textwidth}
-\begin{verbatim}
-if (speechAct <= #Question){
-  ...
-}
-\end{verbatim}
-\end{minipage}
-\begin{minipage}{0.6\textwidth}
-\begin{verbatim}
-if (isSmallerEqual(speechAct, new DialogueAct("Question")) {
-  ...
-}
-\end{verbatim}
-\end{minipage}
-\end{small}
-
-Die Vergleichsoperatoren in rudimant sind überladen. Neben den aus Java bekannten Anwendungen als Vergleichsoperatoren können sie auch auf Dialogakte angewendet werden. In diesen Fällen werden sie zu Subsumptionsoperatoren.
-
-\begin{small}
-\begin{minipage}{0.4\textwidth}
-\begin{verbatim}
-if (! c.user.personality.nonchalance){
-  ...
-}
-\end{verbatim}
-\end{minipage}
-\begin{minipage}{0.6\textwidth}
-\begin{verbatim}
-if (!((((c != null) && (c.user != null))
-      && (c.user.personality != null))
-      && (c.user.personality.nonchalance != null))) {
-  ...
-}
-\end{verbatim}
-\end{minipage}
-\end{small}
-
-Dies überschneidet sich mit dem Doku-Teil zur Typinferenz; wohin damit?
+%\subsubsection{Überladene Vergleichsoperatoren und Tests}
+%Dies überschneidet sich in großen Teilen mit dem Doku-Teil zur Typinferenz; wurde dort untergebracht
 
 \subsubsection{Funktionale Konstrukte (lambda)}
 
@@ -177,7 +177,12 @@ List<Object> sort(Collection coll, Comparator c);
 \end{verbatim}
 \end{small}
 
+Rudimant erlaubt die Verwendung von lambda-Konstrukten in den angegebenen vier Funktionen.
+
 \subsubsection{\texttt{import}}
+
+\texttt{import} ist ein Schlüsselwort in rudimant. Eine Zeile ''\texttt{import File;}'' auf globaler Ebene, an einer  beliebigen Stelle zwischenn den Regeln, bedeutet die Inklusion der Datei File.rudi an exakt dieser Stelle. Hiermit wird zum einen erreicht, dass rudimant auch diese Datei zu ausführbarem Java-Code kompiliert, sodass nicht alle Dateien eines Projektes separat kompiliert werden müssen. Zum anderen wird das vollständige Regelinventar der Datei an der entsprechenden Stelle im Java-Code mithilfe ihrer process-Methode aufgerufen und durchgearbeitet.\\
+\texttt{import} ermöglicht es also, das Regelinventar für ein Projekt auf mehrere Dateien bzw. mehrere Module aufzuteilen und diese zusammenzustecken, sodass ein einziger Aufruf ausreicht, um sie zu kompilieren und später auch, um die Auswertung der Regeln anzustoßen. Dies ist nicht nur nützlich zur Übersichtlichkeit und Strukturierung des Projektes, sondern fördert auch die Modularität, da verschiedene 'Unterbäume' der \texttt{import}-Hierarchie leicht ausgeklinkt oder aus anderen Projekten wiederverwendet werden können.
 
 \subsubsection{Verbatim für rudi} \label{rudi-verbatim}
 
