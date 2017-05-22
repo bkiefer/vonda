@@ -38,11 +38,11 @@ public class TestTypeInference {
   @Test
   public void testPredefFn() {
     String in = "boolean firstEncounter(); b = firstEncounter();";
-    RudiTree rt = parseAndTypecheck(in, null);
-    Iterator<? extends RudiTree> it = rt.getDtrs().iterator();
+    GrammarFile gf = parseAndTypecheck(in, null);
+    Iterator<? extends RudiTree> it = gf.getDtrs().iterator();
     it.next();
     it.next();
-    rt = it.next();
+    RudiTree rt = it.next();
     assertTrue(rt instanceof ExpAssignment);
     ExpAssignment ass = (ExpAssignment)rt;
     assertEquals("boolean", ass.left.type);

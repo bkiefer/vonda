@@ -19,7 +19,6 @@ import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import de.dfki.mlt.rudimant.abstractTree.GrammarFile;
 import de.dfki.mlt.rudimant.abstractTree.RudiTree;
 import de.dfki.mlt.rudimant.abstractTree.VGenerationVisitor;
-import de.dfki.mlt.rudimant.abstractTree.VTestTypeVisitor;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
@@ -225,6 +224,7 @@ public class RudimantCompiler {
   }
 
   public void processImport(String importSpec) {
+    logger.info("Processing import {}", importSpec);
     try {
       RudimantCompiler result = new RudimantCompiler(this);
       result.process(importSpec);
@@ -232,6 +232,7 @@ public class RudimantCompiler {
       throw new RuntimeException(ex);
     }
   }
+
   /**
    * Return the inputfile, which is relative to inputDirectory, the subdirectory
    * is specified by the subPackage, and the last entry of subPackage, which is
@@ -244,11 +245,8 @@ public class RudimantCompiler {
         result = new File(result, s);
       }
     }
-    if (inputRealName != null) {
-      return new File(result, inputRealName + RULES_FILE_EXTENSION);
-    } else {
-      return new File(result, className + RULES_FILE_EXTENSION);
-    }
+    return new File(result,
+        (inputRealName != null ? inputRealName : className) + RULES_FILE_EXTENSION);
   }
 
   /**
@@ -445,8 +443,7 @@ public class RudimantCompiler {
 
     GrammarFile gf = pair.first;
     // do the type checking
-    VTestTypeVisitor ttv = new VTestTypeVisitor(this);
-    ttv.visitNode(gf);
+    gf.startTypeInference(this);
     if (output == null) {
       // then there is nothing to write to; we are in a memory initialization
       return gf;
@@ -454,11 +451,10 @@ public class RudimantCompiler {
     if (visualise) {
       Visualize.show(gf, inputRealName);
     }
-    // generate the output
-    VGenerationVisitor gv = new VGenerationVisitor(this, pair.second);
     // tell the file its name (for class definition)
     gf.setClassName(className);
-    gv.visitNode(gf);
+    // generate the output
+    gf.startGeneration(this, new VGenerationVisitor(this, pair.second));
     logger.info("Done parsing");
     return gf;
   }

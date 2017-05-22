@@ -10,10 +10,8 @@ import static de.dfki.mlt.rudimant.Utils.capitalize;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
@@ -28,7 +26,7 @@ import de.dfki.mlt.rudimant.Type;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class VGenerationVisitor implements RTStringVisitor {
+public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
   public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
@@ -246,7 +244,7 @@ public class VGenerationVisitor implements RTStringVisitor {
       ret += node.construct.visitStringV(this);
     } else {
       if(!mem.getClassName().toLowerCase().equals(
-              mem.getToplevelInstance().toLowerCase())){
+          mem.getToplevelInstance().toLowerCase())){
         ret += mem.getToplevelInstance() + ".";
       }
       ret += "_proxy.getClass(\""
@@ -259,168 +257,6 @@ public class VGenerationVisitor implements RTStringVisitor {
       ret += "DEFNS)";
     }
     return ret;
-  }
-
-  @Override
-  public void visitNode(GrammarFile node) {
-
-    String oldname = mem.getClassName();
-    String oldrule = mem.getCurrentRule();
-    String oldTrule = mem.getCurrentTopRule();
-    mem.enterClass(rudi.getClassName());
-
-    // tell the file in which package it lies
-    String pkg = rudi.getPackageName();
-    if (pkg == null) {
-      pkg = "";
-    } else {
-      out.append("package " + pkg + ";\n");
-      pkg += ".";
-    }
-    out.append("import java.util.*;\n\n");
-    out.append("import de.dfki.mlt.rudimant.agent.DialogueAct;\n");
-    out.append("import de.dfki.lt.hfc.db.rdfProxy.*;\n");
-    out.append("import de.dfki.lt.hfc.types.*;\n");
-    // Let's import our supersuper class
-    out.append("import ");
-    if (rudi.getParent() != null) {
-      out.append(pkg + rudi.getParent().getClassName());
-    } else {
-      out.append(rudi.getWrapperClass());
-    }
-    out.append(";\n");
-
-    // we also need all imports that might be hidden in /*@ in the rudi
-    // so, look for it in the comment before the first element we've got
-    node.rules.get(0).printImportifJava(this);
-    // maybe we need to import the class that imported us to use its variables
-    String ext = "";
-    if(node.classname.toLowerCase()
-            .equals(mem.getToplevelInstance().toLowerCase())){
-      ext = " extends " + rudi.getWrapperClass();
-    }
-    out.append("public class " + node.classname
-            + ext
-            + "{\n");
-
-    // create variable fields for all those classes whose concrete instances we
-    // will need
-    for (String n : mem.getNeededClasses(node.classname)) {
-      if(n.equals(rudi.getClassName())) continue;
-      out.append("private final ");
-      out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-              + n.substring(0, 1).toLowerCase() + n.substring(1));
-      out.append(";\n");
-    }
-    // now, we should add a constructor, including constructor parameters if
-    // specified in configs
-    // also, to use them for imports, declare those parameters class attributes
-    String conargs = "";
-    String declare = "";
-    String args = rudi.getConstructorArgs();
-    if (null != args && !args.isEmpty()) {
-      int i = 0;
-      for (String a : args.split(",")) {
-        if (i > 0) {
-          conargs += ", ";
-        }
-        String s = a.trim().split(" ")[1];
-        out.append("private final " + a + ";\n");
-        declare += "this." + s + " = " + s + ";\n";
-        conargs += a.trim().split(" ")[1];
-        i++;
-      }
-    } else {
-      args = "";
-    }
-    // get all those classes the toplevel rules need
-    int i = 0;
-    for (String n : mem.getNeededClasses(rudi.getClassName())) {
-      if(n.equals(rudi.getClassName())) continue;
-      String name = n.substring(0, 1).toLowerCase() + n.substring(1);
-      if (i == 0) {
-        args += n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-                + name;
-      } else {
-        args += ", " + n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-                + name;
-      }
-      declare += "this." + name + " = " + name + ";\n";
-      i++;
-    }
-    out.append("public " + rudi.getClassName() + "(" + args + ") {\n"
-            + "super(" + conargs + ");\n" + declare + "}\n");
-
-    // finally, the main processing method that will call all rules and imports
-    // declared in this file
-    writeRuleList(node.rules);
-
-    out.append("}\n");
-    mem.leaveClass(oldname, oldrule, oldTrule);
-    mem.leaveEnvironment();
-  }
-
-  public void writeRuleList(List<RudiTree> rules){
-    List<RudiTree> later = new ArrayList<>();
-    // do all assignments on toplevel here, those are class attributes
-    for(RudiTree r : rules){
-      if(r instanceof ExpAssignment){
-        if(((ExpAssignment)r).declaration){
-          out.append(Type.convertRdfType(((ExpAssignment)r).type) + " "
-                  + ((ExpAssignment)r).left.fullexp + ";\n");
-          ((ExpAssignment)r).declaration = false;
-        }
-      }
-    }
-    // create the process method
-    out.append("\tpublic void process(");
-    out.append("){\n");
-    // initialize me according to the super class init
-    out.append("// this.init();\n");
-    // use all methods created from rules in this file
-    for(RudiTree r : rules){
-      // rules, method declarations and imports are a special case
-      if (r instanceof GrammarRule){
-        out.append(((GrammarRule)r).label + "();\n");
-        later.add(r);
-      } else if (r instanceof StatMethodDeclaration){
-        later.add(r);
-      } else if (r instanceof UImport){
-        String impor = ((UImport)r).name;
-        String importn = impor.substring(0, 1).toUpperCase() + impor.substring(1);
-        out.append("new " + importn + "(");
-        List<String> ncs = mem.getNeededClasses(impor);
-        if (ncs != null) {
-          int i = 0;
-          for (String c : ncs) {
-            if (c.equals(rudi.getClassName())
-                    || (c.substring(0, 1).toUpperCase()
-                            + c.substring(1)).equals(rudi.getClassName())) {
-              c = "this";
-            }
-            if (i == 0) {
-              out.append(c.substring(0, 1).toLowerCase()
-                      + c.substring(1));
-            } else {
-              out.append(", " + c.substring(0, 1).toLowerCase()
-                      + c.substring(1));
-            }
-            i++;
-          }
-        }
-        out.append(").process();\n");
-      } else {
-        this.visitNode(r);
-        if(!(r instanceof RTStatement)){
-          out.append(";\n");
-        }
-      }
-    }
-    out.append("}\n");
-    // now, add everything that we did not want in the process method
-    for(RudiTree t : later){
-      this.visitNode(t);
-    }
   }
 
   @Override
@@ -523,11 +359,6 @@ public class VGenerationVisitor implements RTStringVisitor {
       out.append("else ");
       visitStatementOrExpression(node.statblockElse);
     }
-  }
-
-  @Override
-  public void visitNode(UImport node) {
-    // all necessary things are done in the type visitor
   }
 
   @Override

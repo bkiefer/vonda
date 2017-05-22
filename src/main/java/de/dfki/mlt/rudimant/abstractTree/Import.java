@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
+import java.util.Collections;
+
 /**
  * represents an import statement; each import statement will cause the imported
  * .rudi file to be parsed and translated. While parsing the imported file,
@@ -14,34 +16,21 @@ package de.dfki.mlt.rudimant.abstractTree;
  *
  * @author Anna Welker
  */
-public class UImport extends RTLeaf {
+public class Import extends RudiTree {
 
   // IMPORT VARIABLE SEMICOLON
+  String content;
   String name;
 
-  public UImport(String text) {
+  public Import(String text) {
     this.content = text;
-    if (text.contains(".")) {
-      name = text.substring(text.lastIndexOf("."));
-    } else {
-      name = text;
-    }
-  }
-
-  @Override
-  public void visit(RudiVisitor v) {
-    v.visitNode(this);
-  }
-
-  @Override
-  public String visitStringV(RTStringVisitor v){
-    throw new UnsupportedOperationException("Nodes bigger than expressions must not return Strings but write to out!");
-  }
-
-  @Override
-  public void visitVoidV(VGenerationVisitor v) {
-    v.visitNode(this);
+    int lastDotPos = text.lastIndexOf(".");
+    name = (lastDotPos >= 0 ? text.substring(lastDotPos) : text);
   }
 
   public String toString() { return "import " + content; }
+
+  public Iterable<? extends RudiTree> getDtrs() {
+    return Collections.emptyList();
+  }
 }

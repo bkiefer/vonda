@@ -60,7 +60,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitImports(RobotGrammarParser.ImportsContext ctx) {
     // IMPORT VARIABLE SEMICOLON
     String file = ctx.getChild(1).getText();
-    return new UImport(file).setPosition(ctx, currentClass);
+    return new Import(file).setPosition(ctx, currentClass);
   }
 
   @Override

@@ -11,9 +11,7 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import static de.dfki.mlt.rudimant.Constants.DIALOGUE_ACT_TYPE;
 import de.dfki.mlt.rudimant.abstractTree.USingleValue;
 import de.dfki.mlt.rudimant.abstractTree.UVariable;
 
@@ -168,12 +166,12 @@ public class Mem {
     this.current.addFunction(funcname, functype, calledUpon, partypes, origin, this);
   }
 
-  public String getFunctionOrigin(String funcname, ArrayList<String> partypes){
+  public String getFunctionOrigin(String funcname, List<String> partypes){
     return current.getFunctionOrigin(funcname, partypes, this);
   }
 
   public boolean existsFunction(String funcname,
-          ArrayList<String> partypes) {
+          List<String> partypes) {
     return current.existsFunction(funcname, partypes, this);
   }
 
@@ -183,7 +181,7 @@ public class Mem {
    * @param funcname the name of the function
    * @return its return type or null
    */
-  public String getFunctionRetType(String funcname, String calledUpon, ArrayList<String> partypes) {
+  public String getFunctionRetType(String funcname, String calledUpon, List<String> partypes) {
     return current.getFunctionRetType(funcname, calledUpon, partypes, this);
   }
 

@@ -8,6 +8,7 @@ package de.dfki.mlt.rudimant.abstractTree;
 import static de.dfki.mlt.rudimant.Constants.DIALOGUE_ACT_TYPE;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ import de.dfki.mlt.rudimant.Type;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class VTestTypeVisitor implements RudiVisitor {
+public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor {
 
   public static final Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
@@ -308,63 +309,6 @@ public class VTestTypeVisitor implements RudiVisitor {
     mem.leaveEnvironment();
   }
 
-  @Override
-  public void visitNode(GrammarFile node) {
-    mem.enterEnvironment();
-    String oldname = mem.getClassName();
-    String oldrule = mem.getCurrentRule();
-    String oldTrule = mem.getCurrentTopRule();
-    if(rudi.getClassName() != null){
-      node.setClassName(rudi.getClassName());
-      mem.enterClass(rudi.getClassName());
-    }
-    for (RudiTree t : node.rules) {
-      // learn about all defs before visiting the other statements!!
-      if(t instanceof StatVarDef || (t instanceof StatMethodDeclaration
-                                    && ((StatMethodDeclaration)t).block == null)
-              || (t instanceof ExpAssignment && ((ExpAssignment) t).declaration)){
-        t.visit(this);
-      }
-    }
-    for (RudiTree t : node.rules) {
-      if(t instanceof StatVarDef || (t instanceof StatMethodDeclaration
-                                    && ((StatMethodDeclaration)t).block == null)
-              || (t instanceof ExpAssignment && ((ExpAssignment) t).declaration)){
-        continue;
-      }
-      if(t instanceof GrammarRule){
-        mem.ontop = true;
-      }
-      t.visit(this);
-      // if t will lateron be put into a stub function in GenerationVisitor,
-      // we should add its predicted name to the mem so the method is called in
-      // the correct position between the imports
-      if(!(t instanceof StatAbstractBlock || t instanceof UImport ||
-              t instanceof StatMethodDeclaration ||
-              t instanceof GrammarRule)){
-          String fname = rudi.getClassName() + node.rules.indexOf(t);
-          // add the function to our mem as if it was a rule, so it is called in
-          // the process function
-          mem.ontop = true;
-          mem.addRule(fname);
-      }
-    }
-    if (mem.getToplevelCalls(rudi.getClassName()) != null) {
-      for (String s : mem.getToplevelCalls(rudi.getClassName())) {
-        if(s.contains("(")){
-          s = s.substring(s.indexOf("=") + 6, s.indexOf("("));
-        }
-        if (mem.getNeededClasses(s) != null) {
-          for (String n : mem.getNeededClasses(s)) {
-            mem.needsClass(rudi.getClassName(), n);
-          }
-        }
-      }
-    }
-    // do not leave the environment, we are still in it! (but remember to leave
-    // it once the generation is done)
-    mem.leaveClass(oldname, oldrule, oldTrule);
-  }
 
   @Override
   public void visitNode(GrammarRule node) {
@@ -435,15 +379,6 @@ public class VTestTypeVisitor implements RudiVisitor {
     for (String s : node.variables) {
       mem.addVariableDeclaration(s, "Object", node.position);
     }
-  }
-
-  /** Process import statement */
-  @Override
-  public void visitNode(UImport node) {
-    String conargs = "";
-    mem.addImport(node.name, conargs);
-    logger.info("Processing import " + node.content);
-    rudi.processImport(node.content);
   }
 
   @Override
@@ -711,7 +646,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       return;
     }
     // test whether the given parameters are of the correct type
-    ArrayList<String> partypes = new ArrayList<String>();
+    List<String> partypes = new ArrayList<String>();
     for (RTExpression e : node.exps) {
       e.visit(this);
       partypes.add(e.getType());
