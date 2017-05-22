@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -143,107 +142,14 @@ public class Environment {
     }
     for (Function f : functions.get(funcname)) {
       if (f.areParametertypes(partypes, mem)) {
-    	if(calledUpon != null){
-    	  if(!f.canCallUpon(calledUpon, mem)){
-    		continue;
-    	  }
-    	}
+        if(calledUpon != null){
+          if(!f.canCallUpon(calledUpon, mem)) {
+            continue;
+          }
+        }
         return f.getReturnType(calledUpon);
       }
     }
     return null;
-  }
-
-  private class Function {
-
-    private String name;
-    private String origin;
-    private String returnType;
-    private List<String> parameterTypes;
-    private String calledUpon;
-
-    public Function(String name, String origin, String returnType,
-        List<String> parameterTypes, String calledUpon) {
-      this.name = name;
-      this.origin = origin;
-      this.returnType = returnType;
-      this.parameterTypes = parameterTypes;
-      this.calledUpon = calledUpon;
-    }
-
-    public boolean canCallUpon(String calledOn, Mem mem) {
-      // TODO: this is probably not accurate enough; find a more
-      // sophisticated way to do this
-	  return this.calledUpon != null &&
-			  (this.calledUpon.contains("<T>") ||
-					  this.calledUpon.equals("T")) ||
-			  mem.unifyTypes(this.calledUpon, calledOn) != null;
-	}
-
-	public String getName() {
-      return this.name;
-    }
-
-    public String getReturnType(String calledUpon) {
-      // TODO: extensively test this magic
-      if(this.returnType.contains("<T>") ||
-			this.returnType.equals("T")){
-    	int from = StringUtils.indexOfDifference(this.calledUpon, calledUpon);
-    	int to = calledUpon.length() - StringUtils.indexOfDifference(
-    			StringUtils.reverse(this.calledUpon), StringUtils.reverse(calledUpon));
-    	String ret = calledUpon.substring(from, to);
-    	if(!this.returnType.equals("T")){
-    	  // don't miss anything that is wrapped around <T>
-    	  int before = this.returnType.indexOf("<T>");
-    	  int after = before + 3;
-    	  ret = this.returnType.substring(0, before) 
-    			  + ret
-    			  + this.returnType.substring(after);
-    	}
-    	return ret;
-      }
-      return this.returnType;
-    }
-
-    public String getOrigin(){
-      return this.origin;
-    }
-
-    public boolean isName(String name) {
-      return this.name.equals(name);
-    }
-
-    public boolean isReturnType(String type, Mem mem) {
-      return this.returnType.equals(type)
-            || mem.unifyTypes(this.returnType, type) != null;
-    }
-
-    public boolean areParametertypes(List<String> partypes, Mem mem) {
-      if (this.parameterTypes.size() != partypes.size()) {
-        return false;
-      }
-      for (int i = 0; i < this.parameterTypes.size(); i++) {
-        if (!(this.parameterTypes.get(i).equals(partypes.get(i))
-                || mem.unifyTypes(this.parameterTypes.get(i), partypes.get(i)) != null)) {
-          return false;
-        }
-      }
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      return parameterTypes.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object fun) {
-      if (!(fun instanceof Function)) {
-        return false;
-      }
-      return this.name.equals(((Function) fun).name)
-              && this.returnType.equals(((Function) fun).returnType)
-              && this.parameterTypes.equals(((Function) fun).parameterTypes);
-    }
   }
 }
