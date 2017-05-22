@@ -37,8 +37,6 @@ public interface RudiVisitor {
 
   public void visitNode(StatAbstractBlock node);
 
-  public void visitNode(StatDoWhile node);
-
   public void visitNode(StatFor1 node);
 
   public void visitNode(StatFor2 node);
@@ -72,6 +70,4 @@ public interface RudiVisitor {
   public void visitNode(USingleValue node);
 
   public void visitNode(UVariable node);
-
-  public void visitNode(UWildcard node);
 }

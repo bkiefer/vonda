@@ -7,8 +7,6 @@ package de.dfki.mlt.rudimant.abstractTree;
 
 import java.util.Arrays;
 
-import de.dfki.mlt.rudimant.RudimantCompiler;
-
 /**
  * this represents an access to the ontology (will result in an rdf object in
  * output)

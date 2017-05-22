@@ -1,13 +1,12 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 import static de.dfki.mlt.rudimant.abstractTree.TstUtils.*;
-
 import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.dfki.mlt.rudimant.Mem;
+import de.dfki.mlt.rudimant.Type;
 import de.dfki.mlt.rudimant.Visualize;
 
 /**
@@ -26,7 +25,7 @@ public class ExpNewTest {
 
     RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(conditionalExp));
     assertTrue(dtr instanceof ExpNew);
-    assertTrue(Mem.isRdfType(((ExpNew)dtr).type));
+    assertTrue(Type.isRdfType(((ExpNew)dtr).type));
   }
 
   @Test

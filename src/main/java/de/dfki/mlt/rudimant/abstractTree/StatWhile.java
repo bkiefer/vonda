@@ -12,13 +12,15 @@ package de.dfki.mlt.rudimant.abstractTree;
  */
 public class StatWhile extends RTCondBlockStatement {
 
-  String currentRule;
+  private boolean whileDo;
 
-  public StatWhile(RTExpression condition, RudiTree statblock, String position) {
+  public StatWhile(RTExpression condition, RudiTree statblock, boolean isWhileDo) {
     this.condition = condition;
     this.block = statblock;
-    this.currentRule = position;
+    this.whileDo = isWhileDo;
   }
+
+  public boolean isWhileDo() { return whileDo; }
 
   @Override
   public void visit(RudiVisitor v) {

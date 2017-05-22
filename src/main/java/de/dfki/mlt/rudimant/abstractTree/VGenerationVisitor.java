@@ -5,10 +5,15 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import static de.dfki.mlt.rudimant.Constants.*;
-import static de.dfki.mlt.rudimant.Utils.*;
+import static de.dfki.mlt.rudimant.Constants.DIALOGUE_ACT_TYPE;
+import static de.dfki.mlt.rudimant.Utils.capitalize;
 
-import java.util.*;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
@@ -16,8 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
-import java.io.StringWriter;
-import java.io.Writer;
+import de.dfki.mlt.rudimant.Type;
 
 /**
  * this visitor generates the java code
@@ -91,7 +95,7 @@ public class VGenerationVisitor implements RTStringVisitor {
   public String visitNode(ExpAssignment node) {
     String ret = "";
     if (node.declaration) {
-      ret += (Mem.convertRdfType(node.type));
+      ret += (Type.convertRdfType(node.type));
     }
     ret += (' ');
     UPropertyAccess pa = null;
@@ -127,7 +131,7 @@ public class VGenerationVisitor implements RTStringVisitor {
             && !(node.right instanceof ExpNew)) {
       // then there is either sth wrong here, what would at least have resulted
       // in warnings in type testing, or it is possible to cast the right part
-      ret += "(" + Mem.convertRdfType(node.type) + ") ";
+      ret += "(" + Type.convertRdfType(node.type) + ") ";
     }
     ret += node.right.visitWithSComments(this);
     if (pa != null) {
@@ -170,7 +174,7 @@ public class VGenerationVisitor implements RTStringVisitor {
 
   @Override
   public String visitNode(ExpCast node) {
-    return "((" + Mem.convertRdfType(node.type) + ")"
+    return "((" + Type.convertRdfType(node.type) + ")"
         + this.visitNode(node.construct) + ")";
   }
 
@@ -362,7 +366,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     for(RudiTree r : rules){
       if(r instanceof ExpAssignment){
         if(((ExpAssignment)r).declaration){
-          out.append(mem.convertRdfType(((ExpAssignment)r).type) + " "
+          out.append(Type.convertRdfType(((ExpAssignment)r).type) + " "
                   + ((ExpAssignment)r).left.fullexp + ";\n");
           ((ExpAssignment)r).declaration = false;
         }
@@ -461,15 +465,6 @@ public class VGenerationVisitor implements RTStringVisitor {
   }
 
   @Override
-  public void visitNode(StatDoWhile node) {
-    out.append("do");
-    visitStatementOrExpression(node.block);
-    out.append("while (");
-    node.condition.visitWithComments(this);
-    out.append(");");
-  }
-
-  @Override
   public void visitNode(StatFor1 node) {
     out.append("for ( ");
     node.assignment.visitWithComments(this);
@@ -490,9 +485,9 @@ public class VGenerationVisitor implements RTStringVisitor {
     out.append(var).append("_outer : ");
     node.exp.visitWithComments(this);
     out.append(") { ")
-       .append(Mem.convertRdfType(node.varType))
+       .append(Type.convertRdfType(node.varType))
        .append(" ").append(var);
-    out.append(" = (").append(Mem.convertRdfType(node.varType)).append(")")
+    out.append(" = (").append(Type.convertRdfType(node.varType)).append(")")
        .append(var).append("_outer;\n");
     visitStatementOrExpression(node.statblock);
     out.append("}");
@@ -537,7 +532,7 @@ public class VGenerationVisitor implements RTStringVisitor {
 
   @Override
   public void visitNode(StatListCreation node) {
-    out.append(Mem.convertRdfType(node.listType)).append(' ')
+    out.append(Type.convertRdfType(node.listType)).append(' ')
        .append(node.variableName);
     if (node.listType.startsWith("List")) {
       out.append(" = new ArrayList<>();");
@@ -560,13 +555,13 @@ public class VGenerationVisitor implements RTStringVisitor {
       return;
     }
     out.append(node.visibility + " ");
-    out.append(Mem.convertRdfType(node.return_type) + " ");
+    out.append(Type.convertRdfType(node.return_type) + " ");
     out.append(node.name + "(");
     for (int i = 0; i < node.parameters.size(); i++) {
       if (i != 0) {
         out.append(", ");
       }
-      out.append(Mem.convertRdfType(node.partypes.get(i))
+      out.append(Type.convertRdfType(node.partypes.get(i))
               + " " + node.parameters.get(i));
     }
     out.append(")\n");
@@ -634,10 +629,18 @@ public class VGenerationVisitor implements RTStringVisitor {
 
   @Override
   public void visitNode(StatWhile node) {
-    out.append("while (");
-    node.condition.visitWithComments(this);
-    out.append(")");
-    visitStatementOrExpression(node.block);
+    if (node.isWhileDo()) {
+      out.append("while (");
+      node.condition.visitWithComments(this);
+      out.append(")");
+      visitStatementOrExpression(node.block);
+    } else {
+      out.append("do");
+      visitStatementOrExpression(node.block);
+      out.append("while (");
+      node.condition.visitWithComments(this);
+      out.append(");");
+    }
   }
 
   @Override
@@ -662,7 +665,7 @@ public class VGenerationVisitor implements RTStringVisitor {
     for (int i = to - 1; i > 0; i--) {
       if (node.parts.get(i) instanceof UPropertyAccess) {
         UPropertyAccess pa = (UPropertyAccess) node.parts.get(i);
-        String cast = Mem.convertRdfType(pa.getType());
+        String cast = Type.convertRdfType(pa.getType());
         if ("int".equals(cast))
           cast = "Integer";
         else
@@ -709,7 +712,7 @@ public class VGenerationVisitor implements RTStringVisitor {
       ret += t.substring(0, 1).toLowerCase() + t.substring(1) + ".";
     }
     if(node.newexp){
-      ret += mem.convertRdfType(node.type) + "(";
+      ret += Type.convertRdfType(node.type) + "(";
     } else {
       ret += node.content + "(";
     }
@@ -740,11 +743,6 @@ public class VGenerationVisitor implements RTStringVisitor {
     } else {
       return node.content;
     }
-  }
-
-  @Override
-  public String visitNode(UWildcard node) {
-    return "this.wildcard ";   // wildcard is a local variable in resulting class
   }
 
   boolean collectingCondition = false;
@@ -795,7 +793,6 @@ public class VGenerationVisitor implements RTStringVisitor {
     } else {
       logging = realLook;
     }
-    int i = 0;
     for (String var : logging.keySet()) {
       out.append(rule + ".put(\"" + stringEscape(logging.get(var)) + "\", " + var + ");\n");
     }

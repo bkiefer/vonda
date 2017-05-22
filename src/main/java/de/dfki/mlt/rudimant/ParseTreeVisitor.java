@@ -31,9 +31,7 @@ import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
  */
 public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
-  // a container to always remember in which rule we are
-  // as this was created for another design, use currentClass instead
-  // private String currentRule;
+  // What's the class we're currently working on
   private String currentClass;
 
   /**
@@ -206,19 +204,19 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     }
   }
 
-  // testpush
+  // TODO: IN PRINCIPLE POSSIBLE WITHOUT CURLY BRACES
   @Override
   public RudiTree visitWhile_statement(RobotGrammarParser.While_statementContext ctx) {
     // WHILE LPAR boolean_exp RPAR loop_statement_block
     if (ctx.getChildCount() == 5) {
       return new StatWhile((RTExpression) this.visit(ctx.getChild(2)),
-              (StatAbstractBlock) this.visit(ctx.getChild(4)), currentClass)
-              .setPosition(ctx, currentClass);
+          (StatAbstractBlock) this.visit(ctx.getChild(4)), true)
+          .setPosition(ctx, currentClass);
     } // DO loop_statement_block WHILE LPAR boolean_exp RPAR
     else {
-      return new StatDoWhile((RTExpression) this.visit(ctx.getChild(4)),
-              (StatAbstractBlock) this.visit(ctx.getChild(1)), currentClass)
-              .setPosition(ctx, currentClass);
+      return new StatWhile((RTExpression) this.visit(ctx.getChild(4)),
+          (StatAbstractBlock) this.visit(ctx.getChild(1)), false)
+          .setPosition(ctx, currentClass);
     }
   }
 
@@ -254,9 +252,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // '('exp')' | variable | function_call | field_access | STRING | FALSE | TRUE | NULL
     RudiTree result;
     switch (ctx.getChildCount()) {
-      /*case 2: // NOT simple_exp
-       result = new ExpBoolean(ctx.getChild(1).getText(),
-       (RTExpression) this.visit(ctx.getChild(1)), null, "!"); break;*/
       case 3: // '(' exp ')'
         result = this.visit(ctx.getChild(1));
         break;
@@ -463,13 +458,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     }
   }
 
-  /*@Override
-   public RudiTree visitFunccall_on_object(RobotGrammarParser.Funccall_on_objectContext ctx) {
-   // variable DOT function_call
-   return new ExpFuncOnObject(ctx.getText(),
-   (RTExpression) this.visit(ctx.getChild(0)),
-   (RTExpression) this.visit(ctx.getChild(2))).setPosition(ctx);
-   }*/
   @Override
   public RudiTree visitField_access(RobotGrammarParser.Field_accessContext ctx) {
     ArrayList<String> representation = new ArrayList<>();
@@ -555,8 +543,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       // representation of Strings has to explicitly have a " to be put in "")
       case RobotGrammarLexer.ANNOTATION:  // token is an annotation
         return new USingleValue(tn.getText() + "\n", "annotation");
-      case RobotGrammarLexer.WILDCARD:  //token is wildcard
-        return new UWildcard();
       case RobotGrammarLexer.VARIABLE:  // token is variable
         return new UVariable(tn.getText(), currentClass);
       case RobotGrammarLexer.BREAK:

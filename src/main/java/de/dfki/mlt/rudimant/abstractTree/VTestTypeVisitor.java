@@ -7,14 +7,15 @@ package de.dfki.mlt.rudimant.abstractTree;
 
 import static de.dfki.mlt.rudimant.Constants.DIALOGUE_ACT_TYPE;
 
-import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
-import de.dfki.mlt.rudimant.Mem;
-import de.dfki.mlt.rudimant.RudimantCompiler;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
+import de.dfki.mlt.rudimant.Mem;
+import de.dfki.mlt.rudimant.RudimantCompiler;
+import de.dfki.mlt.rudimant.Type;
 
 /**
  * this visitor calculates the types of nodes and checks whether the types are
@@ -70,7 +71,7 @@ public class VTestTypeVisitor implements RudiVisitor {
         node.right.propagateType(node.left.type);
       } else {
         // check type compatibility
-        String type = mem.unifyTypes(node.left.type, node.right.type);
+        String type = Type.unifyTypes(node.left.type, node.right.type);
         if (type == null) {
           rudi.typeError("Incompatible types in " + node + ": "
                   + node.left.type + " vs. " + node.right.type, node);
@@ -91,15 +92,15 @@ public class VTestTypeVisitor implements RudiVisitor {
   public void visitNode(ExpAssignment node) {
     node.right.visit(this);
     // make sure they become Java POD types, if xsd type
-    node.right.type = Mem.convertXsdType(node.right.type);
+    node.right.type = Type.convertXsdType(node.right.type);
     node.left.visit(this);
-    node.left.type = Mem.convertXsdType(node.left.type);
+    node.left.type = Type.convertXsdType(node.left.type);
 
     // is this a variable declaration for an already existing variable?
     // When we get here, if node.declaration is true, then node.type has a
     // non-null value, and vice versa
     if (node.declaration) {
-      node.type = mem.checkRdf(node.type);
+      node.type = Type.checkRdf(node.type);
       if (mem.variableExists(node.left.toString())) {
         rudi.typeError("Re-declaration of existing variable " + node.left, node);
       } else {
@@ -134,7 +135,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     // special measures must be taken.
     // if unifyTypes returns null, the types are incompatible
     // if one of them is null, unifyTypes will return the other type
-    String mergeType = mem.unifyTypes(node.left.type, node.right.type);
+    String mergeType = Type.unifyTypes(node.left.type, node.right.type);
     if (mergeType == null) {
       if ("boolean".equals(node.left.type)) {
         // in that case, we assume that this should be a test for existance
@@ -187,8 +188,8 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.left.visit(this);
     if (node.right != null) {
       node.right.visit(this);
-      if (!Mem.isPODType(node.left.getType())
-          && !Mem.isPODType(node.right.getType())) {
+      if (!Type.isPODType(node.left.getType())
+          && !Type.isPODType(node.right.getType())) {
         String or = "";
         /*
         if(!mem.getClassName().toLowerCase().equals(
@@ -227,9 +228,9 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   @Override
   public void visitNode(ExpCast node) {
-    node.type = mem.checkRdf(node.type);
+    node.type = Type.checkRdf(node.type);
     this.visitNode(node.construct);
-    String mergeType = mem.unifyTypes(node.type, node.construct.type);
+    String mergeType = Type.unifyTypes(node.type, node.construct.type);
     if (mergeType == null) {
       rudi.typeError("Incompatible types : " + node.construct.type + " casted to "
           + node.type, node);
@@ -284,7 +285,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.boolexp = node.boolexp.ensureBoolean();
     node.thenexp.visit(this);
     node.elseexp.visit(this);
-    if (mem.unifyTypes(node.thenexp.getType(), node.elseexp.getType()) == null) {
+    if (Type.unifyTypes(node.thenexp.getType(), node.elseexp.getType()) == null) {
       rudi.typeError(node.fullexp
               + " is a conditional expression where the else expression "
               + "does not have the same type as the right expression!\n("
@@ -403,7 +404,7 @@ public class VTestTypeVisitor implements RudiVisitor {
     node.exp.visit(this);
     String innerIterableType;
     if (node.exp.type != null && node.exp.isComplexType()) {
-      innerIterableType = mem.checkRdf(node.exp.getInnerType());
+      innerIterableType = Type.checkRdf(node.exp.getInnerType());
     } else {
       rudi.typeError("Iterable for loop type is unknown or not generic, but: "
           + node.exp.getType(), node);
@@ -412,8 +413,8 @@ public class VTestTypeVisitor implements RudiVisitor {
     if (node.varType == null) {
       node.varType = innerIterableType;
     } else {
-      node.varType = mem.checkRdf(node.varType);
-      String mergeType = mem.unifyTypes(node.varType, innerIterableType);
+      node.varType = Type.checkRdf(node.varType);
+      String mergeType = Type.unifyTypes(node.varType, innerIterableType);
       if (mergeType == null) {
         rudi.typeError("Incompatible types in short for loop: "
             + node.varType + " : " + innerIterableType, node);
@@ -453,8 +454,8 @@ public class VTestTypeVisitor implements RudiVisitor {
       }
       String type = node.listType;
       if (type != null) {
-        String elementType = Mem.getInnerType(type);
-        if (mem.unifyTypes(elementType, node.objects.get(0).getType()) == null) {
+        String elementType = Type.getInnerType(type);
+        if (Type.unifyTypes(elementType, node.objects.get(0).getType()) == null) {
           rudi.typeError("Found a list creation where the list type"
                   + " doesn't fit its objects' type: " + elementType
                   + " vs " + node.objects.get(0).getType(), node);
@@ -467,8 +468,8 @@ public class VTestTypeVisitor implements RudiVisitor {
     } else if (node.listType == null) {
       node.listType = "List<Object>";
     } else {
-      String elementType = mem.checkRdf(Mem.getInnerType(node.listType));
-      String collType = Mem.getOuterType(node.listType);
+      String elementType = Type.checkRdf(Type.getInnerType(node.listType));
+      String collType = Type.getOuterType(node.listType);
       node.listType = collType + '<' + elementType + '>';
     }
 
@@ -487,7 +488,7 @@ public class VTestTypeVisitor implements RudiVisitor {
       return;
     }
     String inner = ((RTExpression)node.left).getInnerType();
-    String res = mem.unifyTypes(inner, ((RTExpression)node.right).type);
+    String res = Type.unifyTypes(inner, ((RTExpression)node.right).type);
     if (res == null) {
       rudi.typeError("Incompatible types in set operation: "
           + ((RTExpression)node.left).getType() + " <> " +
@@ -506,11 +507,11 @@ public class VTestTypeVisitor implements RudiVisitor {
   @Override
   public void visitNode(StatMethodDeclaration node) {
     for(int i = 0; i < node.partypes.size(); i++){
-      node.partypes.set(i, mem.checkRdf(node.partypes.get(i)));
+      node.partypes.set(i, Type.checkRdf(node.partypes.get(i)));
     }
     mem.addFunction(node.name, node.return_type, node.calledUpon, node.partypes,
             mem.getClassName());
-    node.return_type = mem.checkRdf(node.return_type);
+    node.return_type = Type.checkRdf(node.return_type);
     if (node.block != null) {
       // The following variables (function parameters) are local to the method
       // block we now step into; we don't want them to be reachable them from
@@ -549,16 +550,6 @@ public class VTestTypeVisitor implements RudiVisitor {
    */
   @Override
   public void visitNode(StatWhile node) {
-    node.condition.visit(this);
-    node.block.visit(this);
-    node.condition = node.condition.ensureBoolean();
-  }
-
-  /**
-   * condition is a boolean exp anyway, and has the right type
-   */
-  @Override
-  public void visitNode(StatDoWhile node) {
     node.condition.visit(this);
     node.block.visit(this);
     node.condition = node.condition.ensureBoolean();
@@ -637,7 +628,7 @@ public class VTestTypeVisitor implements RudiVisitor {
               + "  of partial field access for " + var.content + " to "
               + currentType, node);
     }*/
-    
+
     // Set<Bla> vs Bla distinction, unfortunately, Java can not reason about
     // parameter types, so this must be Object
     boolean isFunctional = (predType & RdfClass.FUNCTIONAL_PROPERTY) != 0;
@@ -667,19 +658,19 @@ public class VTestTypeVisitor implements RudiVisitor {
     partOfFieldAccess = true;
     for (int i = 1; i < node.parts.size(); ++i) {
       currentNode = node.parts.get(i);
-      if (Mem.isComplexType(currentType)
+      if (Type.isComplexType(currentType)
           && currentNode instanceof UFuncCall
           && ! ((UFuncCall)currentNode).exps.isEmpty()
           && ((UFuncCall)currentNode).exps.get(0) instanceof ExpLambda) {
         ((ExpLambda)((UFuncCall)currentNode).exps.get(0)).parType =
-            Mem.getInnerType(currentType);
+            Type.getInnerType(currentType);
       }
       // if this is a funccall performed on anything, tell the function the type it was called on
       if(currentNode instanceof UFuncCall && currentType != null){
-    	  ((UFuncCall)currentNode).calledUpon = Mem.convertRdfType(currentType);
+    	  ((UFuncCall)currentNode).calledUpon = Type.convertRdfType(currentType);
       }
       currentNode.visit(this);
-      if (Mem.isRdfType(currentType)) {
+      if (Type.isRdfType(currentType)) {
         if (currentNode instanceof UVariable) {
           // only a literal, delegate this because it's complicated
           UPropertyAccess acc
@@ -716,7 +707,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   public void visitNode(UFuncCall node) {
     // if this was used in a new Expression, handle it accordingly
     if(node.newexp){
-      node.type = mem.checkRdf(node.content);
+      node.type = Type.checkRdf(node.content);
       return;
     }
     // test whether the given parameters are of the correct type
@@ -786,12 +777,7 @@ public class VTestTypeVisitor implements RudiVisitor {
 
   /* **********************************************************************
    * Nodes without special treatment
-   *
    * ********************************************************************* */
-  @Override
-  public void visitNode(UWildcard node) {
-    // nothing to do
-  }
 
   @Override
   public void visitNode(StatPropose node) {
@@ -816,7 +802,7 @@ public class VTestTypeVisitor implements RudiVisitor {
   public void visitNode(ExpNew node) {
     if (node.construct == null) {
       // insert proper rdf type
-      node.type = mem.checkRdf(node.type);
+      node.type = Type.checkRdf(node.type);
     } else {
       if(node.construct instanceof UFuncCall){
         ((UFuncCall)node.construct).newexp = true;

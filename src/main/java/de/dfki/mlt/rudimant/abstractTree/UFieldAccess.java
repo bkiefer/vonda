@@ -5,7 +5,6 @@
  */
 package de.dfki.mlt.rudimant.abstractTree;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.dfki.mlt.rudimant.Constants;

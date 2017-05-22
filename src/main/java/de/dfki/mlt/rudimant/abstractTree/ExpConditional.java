@@ -18,6 +18,7 @@ public class ExpConditional extends RTExpression {
   RTExpression thenexp;
   RTExpression elseexp;
 
+  // TODO: WHY IS THE FIRST NOT EXPBOOLEAN (AS LONG AS WE KEEP THAT)
   public ExpConditional(RTExpression bool, RTExpression thenexp,
           RTExpression elseexp) {
     this.boolexp = bool;

@@ -8,7 +8,7 @@ package de.dfki.mlt.rudimant.abstractTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.mlt.rudimant.Mem;
+import de.dfki.mlt.rudimant.Type;
 
 /**
  * a special kind of the RudiTree is an expression; expressions can have types
@@ -48,15 +48,15 @@ public abstract class RTExpression extends RudiTree {
 
   // Return true if this is represents an RDF type or a DialogueAct
   // TODO: maybe has to be split up.
-  public boolean isRdfType() { return Mem.isRdfType(type); }
+  public boolean isRdfType() { return Type.isRdfType(type); }
 
-  public boolean isComplexType() { return Mem.isComplexType(type); }
+  public boolean isComplexType() { return Type.isComplexType(type); }
 
   public boolean isStringOrComplexType() {
     return "String".equals(type) || isComplexType();
   }
 
-  public String getInnerType() { return Mem.getInnerType(type); }
+  public String getInnerType() { return Type.getInnerType(type); }
 
   public RTExpression fixFields(RTExpression b) {
     b.positions = positions;
@@ -96,7 +96,7 @@ public abstract class RTExpression extends RudiTree {
       right.fullexp = fullexp;
       result = fixFields(new ExpBoolean(this, right, "!="));
     } else {
-      String cleanType = Mem.convertXsdType(type);
+      String cleanType = Type.convertXsdType(type);
       if (! type.equals(cleanType)) {
         result = fixFields(new ExpBoolean(this, null, "exists("));
       } else {

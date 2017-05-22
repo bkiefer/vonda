@@ -13,7 +13,6 @@ import java.util.ArrayList;
  */
 public class StatListCreation extends RTStatement {
 
-  //RTExpression left;
   ArrayList<RTExpression> objects;
   String origin;
   String variableName;

@@ -37,8 +37,6 @@ public interface RTStringVisitor {
 
   public void visitNode(StatAbstractBlock node);
 
-  public void visitNode(StatDoWhile node);
-
   public void visitNode(StatFor1 node);
 
   public void visitNode(StatFor2 node);
@@ -72,6 +70,4 @@ public interface RTStringVisitor {
   public String visitNode(USingleValue node);
 
   public String visitNode(UVariable node);
-
-  public String visitNode(UWildcard node);
 }

@@ -77,9 +77,9 @@ public class Environment {
    */
   public void addFunction(String funcname, String functype, String calledUpon,
           List<String> partypes, String origin, Mem mem) {
-    functype = mem.checkRdf(functype);
+    functype = Type.checkRdf(functype);
     for (int i = 0; i < partypes.size(); ++i) {
-      partypes.set(i, mem.checkRdf(partypes.get(i)));
+      partypes.set(i, Type.checkRdf(partypes.get(i)));
     }
     // test whether we already have an entry for this method
     if (functions.keySet().contains(funcname)) {

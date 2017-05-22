@@ -61,6 +61,7 @@ public class Mem {
     environment = new ArrayDeque<>();
     rulesAndImports = new HashMap<>();
     _proxy = proxy;
+    Type.setProxy(proxy);
     current = new Environment();
     // enter our very first environment,
     this.enterEnvironment();
@@ -74,151 +75,11 @@ public class Mem {
     return upperRudi.substring(0, 1).toLowerCase() + upperRudi.substring(1);
   }
 
-  static Map<String, Long> typeCodes = new HashMap<>();
-
-  static final long JAVA_TYPE = 0x10;
-  static {
-    typeCodes.put("Object",               0x111l);
-    typeCodes.put("String",                 0x1l);
-    typeCodes.put("Rdf",                   0x10l);
-    typeCodes.put("double",           0x1000000l);
-    typeCodes.put("Double",           0x1000100l);
-    typeCodes.put("float",            0x1100000l);
-    typeCodes.put("Float",            0x1100100l);
-    typeCodes.put("int",              0x1110000l);
-    typeCodes.put("Integer",          0x1110100l);
-    typeCodes.put("long",             0x1111000l);
-    typeCodes.put("Long",             0x1111100l);
-    typeCodes.put("boolean",         0x10000000l);
-    typeCodes.put("Boolean",         0x10000100l);
-    typeCodes.put("null",           0x100000000l);
-  }
-
-  /** Indicates if this type should be compared with == or equals */
-  public static boolean isPODType(String name) {
-    name = RdfClass.xsdToJavaPod(name);
-    Long code = typeCodes.get(name);
-    return code != null && (code & 0x111100000l) != 0;
-  }
-
-  public static boolean isRdfType(String type) {
-    return (type != null && type.charAt(0) == '<');
-  }
-
-  public static boolean isComplexType(String type) {
-    if (type == null) return false;
-    return (type.startsWith("Map")
-        || type.startsWith("Set")
-        || type.startsWith("List")
-        || type.startsWith("RdfSet")
-        || type.startsWith("RdfList")
-        || ((type.endsWith(">") && ! isRdfType(type))));
-  }
-
-  /** Return the "inner" type of a complex type expression */
-  public static String getInnerType(String type) {
-    int left = type.indexOf('<');
-    if (left < 0) return "Object";
-    int right = type.lastIndexOf('>');
-    return type.substring(left + 1, right);
-  }
-
-  public static String getOuterType(String type) {
-    int i = type.indexOf('<');
-    if (i < 0) return type;
-    return type.substring(0, i);
-  }
-
-  /**
-   * returns a correct java type for xsd types
-   * @param something
-   * @return
-   */
-  public static String convertXsdType(String something){
-    String ret = RdfClass.xsdToJavaPod(something);
-    if (ret != null) return ret;
-    return something;
-  }
-
-  /**
-   * returns a correct java type for whatever input
-   * @param something
-   * @return
-   */
-  public static String convertRdfType(String something){
-    something = convertXsdType(something);
-    if(!isRdfType(something)) {
-      if(something.contains("<")){
-        // might be sth like List<Child>
-        something = something.substring(0, something.indexOf("<") + 1)
-                + convertRdfType(something.substring(something.indexOf("<")
-                        + 1, something.lastIndexOf(">")))
-                + ">";
-      }
-      return something;
-    }
-    return (DIALOGUE_ACT_TYPE.equals(something)) ? "DialogueAct" : "Rdf";
-  }
-
-  /** Return the more specific of the two types, if it exists, null otherwise */
-  public String unifyTypes(String left, String right) {
-    if (left == null || "Object".equals(left)) return right;
-    if (right == null || "Object".equals(right)) return left;
-    left = convertXsdType(left);
-    right = convertXsdType(right);
-    // check if these are RDF types and are in a type relation.
-    if (isRdfType(left) || isRdfType(right)) {
-      if (isRdfType(left) && isRdfType(right))
-        return _proxy.fetchMostSpecific(left, right);
-      if ("Rdf".equals(left)) return right;
-      if ("Rdf".equals(right)) return left;
-      return null;
-    }
-
-    // this should return the more specific of the two, or null if they are
-    // incompatible
-    Long leftCode = typeCodes.get(left);
-    if (leftCode == null) leftCode = JAVA_TYPE;
-    Long rightCode = typeCodes.get(right);
-    if (rightCode == null) rightCode = JAVA_TYPE;
-
-    long common = leftCode & rightCode;
-    if (common == leftCode) {
-      return left;
-    }
-    if (common == rightCode) {
-      return right;
-    }
-    return null;
-  }
-
   public RdfProxy getProxy() {
     return _proxy;
   }
 
-  public String checkRdf(String type) {
-    // if is necessary, because otherwise, Object as the static type in a
-    // declaration gets changed to RdfType by
-    // VGenerationVisitor.visitNode(ExpAssignment node)
-    if ("Object".equals(type) || null == type
-        || "String".equals(type)){ // what about Integer, int, etc.??
-      return type;
-    }
-    if(!type.startsWith("<") && type.contains("<")){
-      // might be sth like List<Child>
-      type = type.substring(0, type.indexOf("<") + 1)
-              + checkRdf(type.substring(type.indexOf("<")
-                      + 1, type.lastIndexOf(">")))
-              + ">";
-    }
-    RdfClass clazz = _proxy.fetchClass(type);
-    if (clazz != null) {
-      type = clazz.toString(); // the URI of the class
-    }
-    return type;
-  }
-
-    /**
+  /**
    * ATTENTION!! This method is only to be used to set a classname for testing
    * purposes!!!!!!!!!!!!!!
    * @param name
@@ -340,7 +201,7 @@ public class Mem {
     if(initializing){
       origin = upperRudi;
     }
-    type = checkRdf(type);
+    type = Type.checkRdf(type);
     current.put(variable, type, origin);
     logger.trace("Add var {}:{} [{}]", environment.size(), variable, type);
     return true;

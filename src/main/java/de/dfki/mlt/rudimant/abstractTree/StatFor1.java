@@ -20,15 +20,12 @@ public class StatFor1 extends RTStatement {
   RTExpression arithmetic;
   RudiTree statblock;
 
-  String currentRule;
-
   public StatFor1(ExpAssignment assignment, ExpBoolean condition,
           RTExpression arithmetic, RudiTree statblock, String position) {
     this.assignment = assignment;
     this.condition = condition;
     this.arithmetic = arithmetic;
     this.statblock = statblock;
-    this.currentRule = position;
   }
 
   @Override

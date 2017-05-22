@@ -26,6 +26,7 @@ public class ExpArithmetic extends RTBinaryExp {
     this.left = left;
     this.right = right;
     this.operator = operator;
+    // TODO: TYPE UNION OF LEFT AND RIGHT
     this.type = left.getType();
   }
 

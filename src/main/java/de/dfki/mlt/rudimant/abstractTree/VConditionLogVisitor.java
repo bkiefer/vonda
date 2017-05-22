@@ -183,11 +183,6 @@ public class VConditionLogVisitor implements RTStringVisitor {
   }
 
   @Override
-  public String visitNode(UWildcard node) {
-    return this.visitMyExp(node);
-  }
-
-  @Override
   public void visitNode(RudiTree node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
@@ -204,11 +199,6 @@ public class VConditionLogVisitor implements RTStringVisitor {
 
   @Override
   public void visitNode(StatAbstractBlock node) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  public void visitNode(StatDoWhile node) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
