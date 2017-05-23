@@ -28,12 +28,12 @@ public class StatIf extends RTStatement {
    * @param statblockElse the else block if existing
    * @param position
    */
-  public StatIf(String conditionString, RTExpression condition, RTStatement statblockIf,
-          RTStatement statblockElse) {
-    this.condition = condition;
-    this.statblockIf = statblockIf;
-    this.statblockElse = statblockElse;
-    this.conditionString = conditionString;
+  public StatIf(String condString, RTExpression cond, RTStatement statIf,
+          RTStatement statElse) {
+    condition = cond;
+    statblockIf = statIf;
+    statblockElse = statElse;
+    conditionString = condString;
   }
 
   @Override

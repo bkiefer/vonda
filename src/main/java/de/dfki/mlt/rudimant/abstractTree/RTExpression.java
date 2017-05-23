@@ -1,6 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change license header, choose License Headers in Project Properties.
+ * To change template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package de.dfki.mlt.rudimant.abstractTree;
@@ -26,7 +26,7 @@ public abstract class RTExpression extends RudiTree {
   }
 
   public void setType(String to) {
-    this.type = to;
+    type = to;
   }
 
   /**
@@ -40,13 +40,13 @@ public abstract class RTExpression extends RudiTree {
    */
   public String visitWithSComments(VGenerationVisitor v) {
     if(v.collectingCondition){
-      return this.visitStringV(v);
+      return visitStringV(v);
     }
     String ret = "";
-    int firstPos = this.positions[0];
+    int firstPos = positions[0];
     ret += checkComments(v, firstPos);
-    ret += this.visitStringV(v);
-    int endPos = this.positions[1];
+    ret += visitStringV(v);
+    int endPos = positions[1];
     ret += checkComments(v, endPos);
     return ret;
   }
@@ -63,7 +63,7 @@ public abstract class RTExpression extends RudiTree {
    */
   public abstract void visitVoidV(VGenerationVisitor v);
 
-  // Return true if this is represents an RDF type or a DialogueAct
+  // Return true if is represents an RDF type or a DialogueAct
   // TODO: maybe has to be split up.
   public boolean isRdfType() { return Type.isRdfType(type); }
 
@@ -84,14 +84,14 @@ public abstract class RTExpression extends RudiTree {
       if(this instanceof ExpUSingleValue){
         return this;
       } else {
-        // if this is a funccall with type boolean, we'd still like to have it
+        // if is a funccall with type boolean, we'd still like to have it
         // as a boolean, at least wrapped up; if it is a fieldaccess kind of funccall, we have
         // to go on testing for each part if it is null
         return fixFields(new ExpBoolean(this, null, null));
       }
     }
 
-    // this is some other kind of expression, turn it into a comparison or
+    // is some other kind of expression, turn it into a comparison or
     // method call returning a boolean
     // TODO check if there's something missing for RDF types
     if (isStringOrComplexType()) {

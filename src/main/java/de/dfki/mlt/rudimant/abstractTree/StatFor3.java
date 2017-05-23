@@ -18,16 +18,15 @@ import java.util.List;
 public class StatFor3 extends RTStatement {
 
   List<String> variables;
-  RudiTree initialization;
-  RudiTree statblock;
+  RTExpression initialization;
+  RTStatement statblock;
   String position;
 
-  public StatFor3(List<String> variables, RudiTree exp,
-      RudiTree block, String position) {
-    this.variables = variables;
-    this.initialization = exp;
-    this.statblock = block;
-    this.position = position;
+  public StatFor3(List<String> vars, RTExpression exp, RTStatement block, String pos) {
+    variables = vars;
+    initialization = exp;
+    statblock = block;
+    position = pos;
   }
 
   @Override

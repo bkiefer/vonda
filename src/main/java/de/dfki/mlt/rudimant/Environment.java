@@ -28,34 +28,34 @@ public class Environment {
   private HashMap<String, Set<Function>> functions;
 
   public Environment() {
-    this.variableToType = new HashMap<>();
-    this.variableOrigin = new HashMap<>();
-    this.functions = new HashMap<>();
+    variableToType = new HashMap<>();
+    variableOrigin = new HashMap<>();
+    functions = new HashMap<>();
   }
 
   public Environment deepCopy() {
     Environment newEnv = new Environment();
-    newEnv.variableOrigin.putAll(this.variableOrigin);
-    newEnv.variableToType.putAll(this.variableToType);
-    newEnv.functions.putAll(this.functions);
+    newEnv.variableOrigin.putAll(variableOrigin);
+    newEnv.variableToType.putAll(variableToType);
+    newEnv.functions.putAll(functions);
     return newEnv;
   }
 
   public void put(String v, String t) {
-    this.variableToType.put(v, t);
+    variableToType.put(v, t);
   }
 
   public void put(String v, String t, String o) {
     put(v, t);
-    this.variableOrigin.put(v, o);
+    variableOrigin.put(v, o);
   }
 
   public boolean containsKey(String k) {
-    return this.variableToType.containsKey(k);
+    return variableToType.containsKey(k);
   }
 
   public String get(String k) {
-    return this.variableToType.get(k);
+    return variableToType.get(k);
   }
 
   /**
@@ -63,7 +63,7 @@ public class Environment {
    * top level, in which case the origin is not of our concern
    */
   public String getOrigin(String k) {
-    return this.variableOrigin.get(k);
+    return variableOrigin.get(k);
   }
 
   /**
@@ -85,7 +85,7 @@ public class Environment {
     if (functions.keySet().contains(funcname)) {
       for (Function f : functions.get(funcname)) {
         if (f.areParametertypes(partypes, mem) &&
-        		(calledUpon != null && calledUpon.equals(f.calledUpon))) {
+        		(calledUpon != null && calledUpon.equals(f.getCalledUpon()))) {
           // in this case we have an obvious error
           if (!f.isReturnType(functype, mem)) {
             // TODO: add a description about where we are in the input file

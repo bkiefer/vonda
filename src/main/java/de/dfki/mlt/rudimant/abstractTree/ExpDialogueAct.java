@@ -22,12 +22,12 @@ public class ExpDialogueAct extends RTExpression {
   RTExpression proposition;
   List<RTExpression> exps;
 
-  public ExpDialogueAct(RTExpression daType,
-      RTExpression proposition, List<RTExpression> exps) {
-    this.daType = daType;
-    this.proposition = proposition;
-    this.exps = exps;
-    this.type = DIALOGUE_ACT_TYPE;
+  public ExpDialogueAct(RTExpression da,
+      RTExpression prop, List<RTExpression> args) {
+    daType = da;
+    proposition = prop;
+    exps = args;
+    type = DIALOGUE_ACT_TYPE;
   }
 
   public void visit(RTExpressionVisitor v) {

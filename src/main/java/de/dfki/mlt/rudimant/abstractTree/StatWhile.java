@@ -14,10 +14,10 @@ public class StatWhile extends RTCondBlockStatement {
 
   private boolean whileDo;
 
-  public StatWhile(RTExpression condition, RTStatement statblock, boolean isWhileDo) {
-    this.condition = condition;
-    this.block = statblock;
-    this.whileDo = isWhileDo;
+  public StatWhile(RTExpression cond, RTStatement blk, boolean isWhileDo) {
+    condition = cond;
+    block = blk;
+    whileDo = isWhileDo;
   }
 
   public boolean isWhileDo() { return whileDo; }

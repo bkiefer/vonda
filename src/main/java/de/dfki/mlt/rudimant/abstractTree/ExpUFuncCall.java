@@ -24,11 +24,11 @@ public class ExpUFuncCall extends RTExpLeaf {
   // the type of object this function was called upon (null if nothing)
   String calledUpon;
 
-  public ExpUFuncCall(String representation,
-          List<RTExpression> exps, boolean newexp) {
-    this.content = representation;
-    this.exps = exps;
-    this.newexp = newexp;
+  public ExpUFuncCall(String representation, List<RTExpression> expressions,
+      boolean newexpression) {
+    content = representation;
+    exps = expressions;
+    newexp = newexpression;
   }
 
   @Override

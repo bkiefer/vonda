@@ -31,9 +31,9 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   private RudimantCompiler rudi;
   private Mem mem;
 
-  public VTestTypeVisitor(RudimantCompiler rudi) {
-    this.rudi = rudi;
-    this.mem = rudi.getMem();
+  public VTestTypeVisitor(RudimantCompiler comp) {
+    rudi = comp;
+    mem = rudi.getMem();
   }
 
   public void visitNode(RTExpression node) {
@@ -228,7 +228,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   @Override
   public void visitNode(ExpCast node) {
     node.type = Type.checkRdf(node.type);
-    this.visitNode(node.construct);
+    visitNode(node.construct);
     String mergeType = Type.unifyTypes(node.type, node.construct.type);
     if (mergeType == null) {
       rudi.typeError("Incompatible types : " + node.construct.type + " casted to "
@@ -300,7 +300,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     for(String arg : node.parameters){
       mem.addVariableDeclaration(arg, node.parType, mem.getClassName());
     }
-    this.visitNode(node.body);
+    visitNode(node.body);
     if (node.body instanceof StatExpression) {
       node.return_type = ((StatExpression)node.body).expression.getType();
     }
@@ -383,7 +383,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   public void visitNode(StatListCreation node) {
     if (!(node.objects.isEmpty())) {
       for (RTExpression e : node.objects) {
-        this.visitNode(e);
+        visitNode(e);
       }
       String type = node.listType;
       if (type != null) {

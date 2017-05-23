@@ -1,6 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change license header, choose License Headers in Project Properties.
+ * To change template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package de.dfki.mlt.rudimant.abstractTree;
@@ -23,7 +23,7 @@ public class Import extends RudiTree {
   String name;
 
   public Import(String text) {
-    this.content = text;
+    content = text;
     int lastDotPos = text.lastIndexOf(".");
     name = (lastDotPos >= 0 ? text.substring(lastDotPos) : text);
   }

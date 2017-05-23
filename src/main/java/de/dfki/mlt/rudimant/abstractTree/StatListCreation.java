@@ -18,19 +18,19 @@ public class StatListCreation extends RTStatement {
   String variableName;
   String listType;
 
-  public StatListCreation(String variableName, ArrayList<RTExpression> objects,
-          String origin) {
-    this.objects = objects;
-    this.origin = origin;
-    this.variableName = variableName;
+  public StatListCreation(String varName, ArrayList<RTExpression> objs,
+          String orig) {
+    objects = objs;
+    origin = orig;
+    variableName = varName;
   }
 
-  public StatListCreation(String variableName, ArrayList<RTExpression> objects,
-          String origin, String listType) {
-    this.objects = objects;
-    this.origin = origin;
-    this.variableName = variableName;
-    this.listType = listType;
+  public StatListCreation(String varName, ArrayList<RTExpression> objs,
+          String orig, String lType) {
+    objects = objs;
+    origin = orig;
+    variableName = varName;
+    listType = lType;
   }
 
   @Override

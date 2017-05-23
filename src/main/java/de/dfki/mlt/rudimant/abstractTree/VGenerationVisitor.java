@@ -1,6 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change license header, choose License Headers in Project Properties.
+ * To change template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package de.dfki.mlt.rudimant.abstractTree;
@@ -22,7 +22,7 @@ import de.dfki.mlt.rudimant.RudimantCompiler;
 import de.dfki.mlt.rudimant.Type;
 
 /**
- * this visitor generates the java code
+ * visitor generates the java code
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
@@ -36,18 +36,18 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   private VConditionLogVisitor condV;
   LinkedList<Token> collectedTokens;
 
-  // activate this bool to get double escaped String literals
+  // activate bool to get double escaped String literals
   private boolean escape = false;
 
   // flag to tell the if if is a real rule if (contains the condition that was calculated)
   private String ruleIf = null;
 
-  public VGenerationVisitor(RudimantCompiler r, LinkedList<Token> collectedTokens) {
-    this.rudi = r;
-    this.out = r;
-    this.mem = rudi.getMem();
+  public VGenerationVisitor(RudimantCompiler r, LinkedList<Token> tokens) {
+    rudi = r;
+    out = r;
+    mem = rudi.getMem();
     condV = new VConditionLogVisitor(this);
-    this.collectedTokens = collectedTokens;
+    collectedTokens = tokens;
   }
 
   @Override
@@ -173,7 +173,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   @Override
   public String visitNode(ExpCast node) {
     return "((" + Type.convertRdfType(node.type) + ")"
-        + this.visitNode(node.construct) + ")";
+        + visitNode(node.construct) + ")";
   }
 
   public String visitDaToken(RTExpression exp) {
@@ -186,7 +186,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       } else
         ret += s;
     } else {
-      ret +=  this.visitNode(exp);
+      ret +=  visitNode(exp);
     }
     return ret;
   }
@@ -226,7 +226,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       ret += ", " + node.parameters.get(i);
     }
     ret += ") -> ";
-    // this is the rare occasion where sth of class statement is allowed to
+    // is the rare occasion where sth of class statement is allowed to
     // be inside an expression, prevent it from printing directly to out
     Writer old = out.out;
     out.out = new StringWriter();
@@ -262,18 +262,18 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   @Override
   public void visitNode(StatGrammarRule node) {
     if (node.toplevel) {
-      // this is a toplevel rule and will be converted to a method
+      // is a toplevel rule and will be converted to a method
       out.append("public void " + node.label + "(");
       out.append("){\n");
-      this.ruleIf = this.printRuleLogger(node.label, node.ifstat.condition);
+      ruleIf = printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
       node.ifstat.visitWithComments(this);
       out.append("}\n");
     } else {
-      // this is a sublevel rule and will get an if to determine whether it
+      // is a sublevel rule and will get an if to determine whether it
       // should be executed
       out.append("//Rule " + node.label + "\n");
-      this.ruleIf = this.printRuleLogger(node.label, node.ifstat.condition);
+      ruleIf = printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
       node.ifstat.visitWithComments(this);
     }
@@ -338,7 +338,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatIf node) {
-    if (this.ruleIf != null) {
+    if (ruleIf != null) {
       out.append("if (" + ruleIf + ") ");
 //      out.append("if (shouldLog(\"" + node.currentRule + "\") ? wholeCondition : ");
       ruleIf = null;
@@ -369,7 +369,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     }
     for (RTExpression e : node.objects) {
       out.append(node.variableName + ".add(");
-      out.append(this.visitNode(e));
+      out.append(visitNode(e));
       out.append(");\n");
     }
   }
@@ -480,7 +480,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   public String visitNode(ExpUFieldAccess node) {
     String ret = "";
     int to = node.parts.size();
-    // don't print the last field if this is in an assignment rather than an
+    // don't print the last field if is in an assignment rather than an
     // access, which means that a set method is generated.
     if (replaceLastWithFuncall) {
       --to;
@@ -507,7 +507,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       RTExpression currentPart = node.parts.get(i);
       if (currentPart instanceof ExpUPropertyAccess) {
         ExpUPropertyAccess pa = (ExpUPropertyAccess) currentPart;
-        // then we are in the case that this is actually an rdf operation
+        // then we are in the case that is actually an rdf operation
         if (DIALOGUE_ACT_TYPE.equals(currentType)) {
           ret += ".getValue(";
         } else {
@@ -555,7 +555,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public String visitNode(ExpUSingleValue node) {
-    if ("String".equals(node.type) && this.escape) {
+    if ("String".equals(node.type) && escape) {
       // properly escape if needed
       return "\\" + node.content.substring(0, node.content.length() - 1) + "\\\" ";
     }

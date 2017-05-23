@@ -72,11 +72,11 @@ public class RudimantCompiler {
     constructorArgs = parentCompiler.getConstructorArgs();
     mem = parentCompiler.mem;
     parent = parentCompiler;
-    this.typeCheck = parentCompiler.typeCheck;
-    this.packageName = parent.getPackageName();
-    this.rootLevel = parent.rootLevel;
-    this.visualise = parent.visualise;
-    this.versionToLog = parent.versionToLog;
+    typeCheck = parentCompiler.typeCheck;
+    packageName = parent.getPackageName();
+    rootLevel = parent.rootLevel;
+    visualise = parent.visualise;
+    versionToLog = parent.versionToLog;
   }
 
   /** Constructor for top-level file */
@@ -93,7 +93,7 @@ public class RudimantCompiler {
    * @param name
    */
   public void setClassName(String name){
-    this.className = name;
+    className = name;
     mem.setClassName(name);
   }
 
@@ -263,11 +263,11 @@ public class RudimantCompiler {
   }
 
   public boolean logRudi(){
-    return this.versionToLog;
+    return versionToLog;
   }
 
   public String getPackageName() {
-    return this.packageName;
+    return packageName;
   }
 
   public String getWrapperClass() {
@@ -319,7 +319,7 @@ public class RudimantCompiler {
   public String computeClassName(File inputFile) {
     // remember the real name, without upper case transformation, so getInputFile()
     // won't crash
-    this.inputRealName = inputFile.getName().replace(RULES_FILE_EXTENSION, "");
+    inputRealName = inputFile.getName().replace(RULES_FILE_EXTENSION, "");
     String classname = null;
     try {
       classname = inputRealName.substring(0, 1).toUpperCase()
@@ -391,7 +391,7 @@ public class RudimantCompiler {
     logger.info("parsing " + inputFile.getName() + " to " + outputFile);
     if (processForReal(new FileInputStream(inputFile), output) == null)
       throw new UnsupportedOperationException("Parsing failed.");
-    this.flush();
+    flush();
     uncrustify(outputFile);
   }
 
@@ -468,7 +468,7 @@ public class RudimantCompiler {
    */
   public void typeError(String errorMessage, RudiTree node) {
     String newErrorMessage = node.getLocation() + " " + errorMessage;
-    if (this.typeCheck) {
+    if (typeCheck) {
       // throw a real Exception
       throw new TypeException(newErrorMessage);
     } else {

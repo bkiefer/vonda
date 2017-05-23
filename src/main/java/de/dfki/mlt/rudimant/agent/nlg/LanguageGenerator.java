@@ -12,7 +12,7 @@
 // Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public
-// License along with this program; if not, write to the Free Software
+// License along with program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 // =================================================================
@@ -101,7 +101,7 @@ public class LanguageGenerator {
   }
 
   /**
-   * Implement this as a singleton
+   * Implement as a singleton
    *
    * @param lang a three-character ISO language code for the number conversion
    * functionality
@@ -115,7 +115,7 @@ public class LanguageGenerator {
       _infoState = new InfoStateFunction();
       FunctionFactory.register(_infoState, _ruleMapper);
       // so that all random calls to generation can be recorded, too
-      // don't know if this is strictly necessary
+      // don't know if is strictly necessary
       // FunctionFactory.register(new RecordableRandomFunction(), _ruleMapper);
       File mapperProj = new File(configDir, (String) configs.get(MAPPER_PROJECT));
       _ruleMapper.readProjectFile(mapperProj);
@@ -150,7 +150,7 @@ public class LanguageGenerator {
    * Put the data from the user model into the generic dialogue act received
    * from the state machine
    *
-   * TODO: this will be an improved version of the old
+   * TODO: will be an improved version of the old
    * LanuageGenerator.getSurfaceFormExtendedLf
    *
    * @param genericDialogueAct
@@ -205,7 +205,7 @@ public class LanguageGenerator {
    * @param configs
    */
   public void initConfig(Map<String, Object> cfgs) {
-    this.configs = new HashMap<>(cfgs);
+    configs = new HashMap<>(cfgs);
   }
 
   @SuppressWarnings("unchecked")

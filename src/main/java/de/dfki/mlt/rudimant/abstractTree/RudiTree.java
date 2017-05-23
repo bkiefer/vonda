@@ -1,6 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change license header, choose License Headers in Project Properties.
+ * To change template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package de.dfki.mlt.rudimant.abstractTree;
@@ -23,17 +23,17 @@ public abstract class RudiTree {
    */
   public int[] positions;
 
-  /** contains the origin file and the line this Rudi Tree started on */
+  /** contains the origin file and the line Rudi Tree started on */
   public Location location;
 
-  /** The input string that is covered by this node */
+  /** The input string that is covered by node */
   public String fullexp;
 
   public void visitWithComments(VGenerationVisitor v) {
-    int firstPos = this.positions[0];
+    int firstPos = positions[0];
     v.out.append(checkComments(v, firstPos));
-    this.visitVoidV(v);
-    int endPos = this.positions[1];
+    visitVoidV(v);
+    int endPos = positions[1];
     v.out.append(checkComments(v, endPos));
   }
 
@@ -58,7 +58,7 @@ public abstract class RudiTree {
    */
   public void printImportifJava(VGenerationVisitor v) {
     lookingForImport = true;
-    v.out.append(checkComments(v, this.positions[0]));
+    v.out.append(checkComments(v, positions[0]));
     lookingForImport = false;
   }
 
@@ -107,8 +107,8 @@ public abstract class RudiTree {
       context.getStart().getTokenIndex(),
       context.getStop().getTokenIndex()
     };
-    this.location = new Location(originClass, context.getStart().getLine());
-    this.fullexp = context.getText();
+    location = new Location(originClass, context.getStart().getLine());
+    fullexp = context.getText();
     return this;
   }
 
@@ -124,14 +124,14 @@ public abstract class RudiTree {
       tn.getSymbol().getTokenIndex(),
       tn.getSymbol().getTokenIndex()
     };
-    this.location = new Location(originClass, tn.getSymbol().getTokenIndex());
-    this.fullexp = tn.getText();
+    location = new Location(originClass, tn.getSymbol().getTokenIndex());
+    fullexp = tn.getText();
     return this;
   }
 
   public abstract Iterable<? extends RudiTree> getDtrs();
 
   public Location getLocation() {
-    return this.location;
+    return location;
   }
 }

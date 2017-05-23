@@ -21,7 +21,7 @@ public class StatReturn extends RTStatement {
   String curRuleLabel;
 
   public StatReturn() {
-    this.toRet = null;
+    toRet = null;
   }
 
   /**
@@ -31,9 +31,9 @@ public class StatReturn extends RTStatement {
    * @param exp
    * @param lit
    */
-  public StatReturn(RTExpression exp, String lit) {
-    this.toRet = exp;
-    this.lit = lit;
+  public StatReturn(RTExpression exp, String orig) {
+    toRet = exp;
+    lit = orig;
   }
 
   @Override

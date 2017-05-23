@@ -13,9 +13,9 @@ public class Location {
   String originClass;
   int lineNumber;
 
-  public Location(String originClass, int lineNumber) {
-    this.originClass = originClass;
-    this.lineNumber = lineNumber;
+  public Location(String origin, int lineNo) {
+    originClass = origin;
+    lineNumber = lineNo;
   }
 
   public String getOriginClass() {

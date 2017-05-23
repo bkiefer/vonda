@@ -46,11 +46,11 @@ public class DialogueAct {
   }
 
   public boolean isSubsumedBy(DialogueAct moreGeneral) {
-    return this._dag.isSubsumedBy(moreGeneral._dag);
+    return _dag.isSubsumedBy(moreGeneral._dag);
   }
 
   public boolean subsumes(DialogueAct moreGeneral) {
-    return this._dag.subsumes(moreGeneral._dag);
+    return _dag.subsumes(moreGeneral._dag);
   }
 
   /** Return true if the given slot (argument) is available */
@@ -114,7 +114,7 @@ public class DialogueAct {
   }
 
   public DialogueAct copy() {
-    return new DialogueAct(this._dag.copySafely());
+    return new DialogueAct(_dag.copySafely());
   }
 
   // TODO

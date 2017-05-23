@@ -32,40 +32,40 @@ public class VConditionLogVisitor implements RTStringVisitor {
     genV = v;
   }
 
-  public void newInit(String rule, LinkedHashMap<String, String> realLook,
-          LinkedHashMap<String, String> rudiLook) {
-    this.enteringCondition = true;
-    this.currentRule = rule;
-    this.counter = 0;
-    this.realLook = realLook;
-    this.rudiLook = rudiLook;
+  public void newInit(String rule, LinkedHashMap<String, String> real,
+          LinkedHashMap<String, String> rudi) {
+    enteringCondition = true;
+    currentRule = rule;
+    counter = 0;
+    realLook = real;
+    rudiLook = rudi;
   }
 
   @Override
   public String visitNode(ExpBoolean node) {
     StringBuilder retS = new StringBuilder();
-    if (this.enteringCondition) {
-      this.enteringCondition = false;
+    if (enteringCondition) {
+      enteringCondition = false;
     }
     if (node.right != null) {
       if (!(node.operator.equals("||") || node.operator.equals("&&"))) {
         // we do not want to go deeper, both sides must be a "basic boolean"
         String resulting = genV.visitNode(node);
-        this.lastbool = this.currentRule + this.counter++;
-        this.realLook.put(this.lastbool, resulting);
-        this.rudiLook.put(this.lastbool, node.fullexp);
-        retS.append(this.lastbool + " = " + resulting + ";\n");
+        lastbool = currentRule + counter++;
+        realLook.put(lastbool, resulting);
+        rudiLook.put(lastbool, node.fullexp);
+        retS.append(lastbool + " = " + resulting + ";\n");
         return retS.toString();
       } else {
         // visit the left node, remember its "number"
-        retS.append(this.visitNode(node.left));
-        String left = this.lastbool;
+        retS.append(visitNode(node.left));
+        String left = lastbool;
         // visit the right node, remember its "number"
-        String resultRight = this.visitNode(node.right);
-        String right = this.lastbool;
-        this.lastbool = this.currentRule + this.counter++;
+        String resultRight = visitNode(node.right);
+        String right = lastbool;
+        lastbool = currentRule + counter++;
         // TODO: we are not interested in this, are we?
-//        this.realLook.put(this.lastbool, left + node.operator + right);
+//        realLook.put(lastbool, left + node.operator + right);
         if (node.operator.equals("||")) {
           retS.append("if (!");
         } else { // then we are in && mode
@@ -73,10 +73,10 @@ public class VConditionLogVisitor implements RTStringVisitor {
         }
         retS.append(left + ") {\n");
         retS.append(resultRight);
-        retS.append(this.lastbool + " = " + left + node.operator + right + ";\n");
-        this.realLook.put(this.lastbool, left + node.operator + right);
+        retS.append(lastbool + " = " + left + node.operator + right + ";\n");
+        realLook.put(lastbool, left + node.operator + right);
         retS.append("} else {\n");
-        retS.append(this.lastbool + " = " + left + ";\n}\n");
+        retS.append(lastbool + " = " + left + ";\n}\n");
       }
     } else {
       String resulting = "";
@@ -86,18 +86,18 @@ public class VConditionLogVisitor implements RTStringVisitor {
       }
       */
       String left = genV.visitNode(node);
-      if (left.contains(this.currentRule) && left.contains(" = ")) {
+      if (left.contains(currentRule) && left.contains(" = ")) {
         // TODO: find a better way to differ between a complex boolean and a
         // simple one
         retS.append(left);
-        resulting += this.lastbool;
+        resulting += lastbool;
       } else {
         resulting += left;
       }
-      this.lastbool = this.currentRule + this.counter++;
-      this.realLook.put(this.lastbool, resulting);
-      this.rudiLook.put(this.lastbool, node.fullexp);
-      retS.append(this.lastbool + " = " + resulting + ";\n");
+      lastbool = currentRule + counter++;
+      realLook.put(lastbool, resulting);
+      rudiLook.put(lastbool, node.fullexp);
+      retS.append(lastbool + " = " + resulting + ";\n");
     }
 
     return retS.toString();
@@ -115,7 +115,7 @@ public class VConditionLogVisitor implements RTStringVisitor {
    * @return
    */
   public String getLastBool() {
-    return this.lastbool;
+    return lastbool;
   }
 
   private String visitMyExp(RTExpression node) {
@@ -124,56 +124,56 @@ public class VConditionLogVisitor implements RTStringVisitor {
 
   @Override
   public String visitNode(ExpArithmetic node) {
-    return this.visitMyExp(node);
+    return visitMyExp(node);
   }
 
   @Override
   public String visitNode(ExpAssignment node) {
-    return this.visitMyExp(node);
+    return visitMyExp(node);
   }
 
   @Override
   public String visitNode(ExpCast node) {
-    return this.visitMyExp(node);
+    return visitMyExp(node);
   }
 
   @Override
   public String visitNode(ExpDialogueAct node) {
-    return this.visitMyExp(node);
+    return visitMyExp(node);
   }
 
   @Override
   public String visitNode(ExpConditional node) {
-    return this.visitMyExp(node);
+    return visitMyExp(node);
   }
 
   @Override
   public String visitNode(ExpLambda node) {
-    return this.visitMyExp(node);
+    return visitMyExp(node);
   }
 
   @Override
   public String visitNode(ExpNew node) {
-    return this.visitMyExp(node);
+    return visitMyExp(node);
   }
 
   @Override
   public String visitNode(ExpUFieldAccess node) {
-    return this.visitMyExp(node);
+    return visitMyExp(node);
   }
 
   @Override
   public String visitNode(ExpUFuncCall node) {
-    return this.visitMyExp(node);
+    return visitMyExp(node);
   }
 
   @Override
   public String visitNode(ExpUSingleValue node) {
-    return this.visitMyExp(node);
+    return visitMyExp(node);
   }
 
   @Override
   public String visitNode(ExpUVariable node) {
-    return this.visitMyExp(node);
+    return visitMyExp(node);
   }
 }

@@ -21,26 +21,26 @@ public class StatFor2 extends RTStatement {
   RTStatement statblock;
   String position;
 
-  public StatFor2(ExpUVariable var, RTExpression exp, RTStatement statblock,
-      String position) {
-    this.var = var;
-    this.initialization = exp;
-    this.statblock = statblock;
-    this.varType = null;
-    this.position = position;
+  public StatFor2(ExpUVariable v, RTExpression e, RTStatement stat,
+      String pos) {
+    var = v;
+    initialization = e;
+    statblock = stat;
+    varType = null;
+    position = pos;
   }
 
-  public StatFor2(String varType, ExpUVariable var, RTExpression exp,
-      RTStatement statblock, String position) {
-    this.var = var;
-    this.initialization = exp;
-    this.statblock = statblock;
-    if (varType.equals("var")) {
-      this.varType = null;
+  public StatFor2(String vType, ExpUVariable v, RTExpression exp,
+      RTStatement stat, String pos) {
+    var = v;
+    initialization = exp;
+    statblock = stat;
+    if (vType.equals("var")) {
+      varType = null;
     } else {
-      this.varType = varType;
+      varType = vType;
     }
-    this.position = position;
+    position = pos;
   }
 
   @Override

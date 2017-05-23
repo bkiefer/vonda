@@ -27,16 +27,16 @@ public class StatMethodDeclaration extends RTStatement {
   // is rudi-defined!
   String calledUpon;
 
-  public StatMethodDeclaration(String visibility, String return_type,
-		  String calledUpon, String name, ArrayList<String> parameters,
-		  ArrayList<String> partypes, RTStatement block) {
-    this.visibility = visibility;
-    this.return_type = return_type;
-    this.name = name;
-    this.parameters = parameters;
-    this.partypes = partypes;
-    this.block = block;
-    this.calledUpon = calledUpon;
+  public StatMethodDeclaration(String vis, String ret_type,
+		  String calledUpn, String nm, ArrayList<String> parms,
+		  ArrayList<String> parmTypes, RTStatement blk) {
+    visibility = vis;
+    return_type = ret_type;
+    name = nm;
+    parameters = parms;
+    partypes = parmTypes;
+    block = blk;
+    calledUpon = calledUpn;
   }
 
   @Override

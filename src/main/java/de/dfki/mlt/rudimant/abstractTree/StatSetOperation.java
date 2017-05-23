@@ -19,10 +19,10 @@ public class StatSetOperation extends RTStatement {
   boolean add;
   RTExpression right;
 
-  public StatSetOperation(RTExpression left, boolean add, RTExpression right) {
-    this.left = left;
-    this.add = add;
-    this.right = right;
+  public StatSetOperation(RTExpression l, boolean a, RTExpression r) {
+    left = l;
+    add = a;
+    right = r;
   }
 
   @Override

@@ -19,11 +19,11 @@ public class ExpConditional extends RTExpression {
   RTExpression elseexp;
 
   // TODO: WHY IS THE FIRST NOT EXPBOOLEAN (AS LONG AS WE KEEP THAT)
-  public ExpConditional(RTExpression bool, RTExpression thenexp,
-          RTExpression elseexp) {
-    this.boolexp = bool;
-    this.thenexp = thenexp;
-    this.elseexp = elseexp;
+  public ExpConditional(RTExpression bool, RTExpression thn,
+          RTExpression els) {
+    boolexp = bool;
+    thenexp = thn;
+    elseexp = els;
   }
 
   @Override

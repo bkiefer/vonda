@@ -20,24 +20,23 @@ public class ExpAssignment extends RTExpression {
   boolean declaration;
   String position;
 
-  public ExpAssignment(RTExpression left, RTExpression right) {
-    this.left = left;
-    this.right = right;
-    this.declaration = false;
+  public ExpAssignment(RTExpression l, RTExpression r) {
+    left = l;
+    right = r;
+    declaration = false;
   }
 
   /** This is called in case this is a combined variable declaration with
    * initial assignment
    * @param actualType the declared type
-   * @param left
-   * @param right
+   * @param l
+   * @param r
    * @param position
    */
-  public ExpAssignment(String actualType, RTExpression left,
-          RTExpression right) {
-    this(left, right);
-    this.declaration = true;
-    this.type = actualType;
+  public ExpAssignment(String actualType, RTExpression l, RTExpression r) {
+    this(l, r);
+    declaration = true;
+    type = actualType;
   }
 
   @Override

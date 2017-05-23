@@ -18,7 +18,7 @@ public class StatExpression extends RTStatement {
 
   @Override
   public String visitStringV(RTStringVisitor v) {
-    return v.visitNode(this.expression);
+    return v.visitNode(expression);
   }
 
   @Override

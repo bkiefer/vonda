@@ -24,9 +24,9 @@ public class ExpCast extends RTExpression {
    * @param construct set to the function call that represents the java creation
    *                  (to null if no java creation)
    */
-  public ExpCast(String type, RTExpression construct){
-    this.type = type;
-    this.construct = construct;
+  public ExpCast(String t, RTExpression con){
+    type = t;
+    construct = con;
   }
 
   @Override

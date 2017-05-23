@@ -62,7 +62,7 @@ public class Mem {
     Type.setProxy(proxy);
     current = new Environment();
     // enter our very first environment,
-    this.enterEnvironment();
+    enterEnvironment();
   }
 
   public void setToplevelFile(String name) {
@@ -83,7 +83,7 @@ public class Mem {
    * @param name
    */
   public void setClassName(String name){
-    this.curClass = name;
+    curClass = name;
   }
 
   /**
@@ -94,14 +94,14 @@ public class Mem {
    * @param classname of the new class
    */
   public void enterClass(String classname) {
-    this.curClass = classname;
-    this.curRule = classname;
+    curClass = classname;
+    curRule = classname;
     if (ruleNums.get(classname) == null) {
-      this.ruleNums.put(classname, new HashMap<String, Integer>());
-      this.neededClasses.put(classname, new ArrayList<String>());
-      this.rulesAndImports.put(classname, new ArrayList<String>());
+      ruleNums.put(classname, new HashMap<String, Integer>());
+      neededClasses.put(classname, new ArrayList<String>());
+      rulesAndImports.put(classname, new ArrayList<String>());
     }
-    this.needsClass(classname, this.upperRudi);
+    needsClass(classname, upperRudi);
   }
 
   /**
@@ -110,10 +110,10 @@ public class Mem {
    * @return
    */
   public String getClassName() {
-    if(this.curClass != null){
-      return this.curClass;
+    if(curClass != null){
+      return curClass;
     } else {
-      return this.upperRudi;
+      return upperRudi;
     }
   }
 
@@ -123,25 +123,25 @@ public class Mem {
    * @return
    */
   public String getCurrentRule() {
-    return this.curRule;
+    return curRule;
   }
 
   public String getCurrentTopRule() {
-    if (this.curTopRule == null) {
-      return this.curClass;
+    if (curTopRule == null) {
+      return curClass;
     }
-    return this.curTopRule;
+    return curTopRule;
   }
 
   public void leaveClass(String oldClassName, String oldCurRule, String oldCurTRule) {
     if (oldClassName != null) {
-      this.curClass = oldClassName;
+      curClass = oldClassName;
       if (oldCurRule != null) {
-        this.curRule = oldCurRule;
-        this.curTopRule = oldCurTRule;
+        curRule = oldCurRule;
+        curTopRule = oldCurTRule;
       } else {
-        this.curRule = oldClassName;
-        this.curTopRule = oldClassName;
+        curRule = oldClassName;
+        curTopRule = oldClassName;
       }
     }
   }
@@ -163,7 +163,7 @@ public class Mem {
     } else if(initializing){
       origin = upperRudi;
     }
-    this.current.addFunction(funcname, functype, calledUpon, partypes, origin, this);
+    current.addFunction(funcname, functype, calledUpon, partypes, origin, this);
   }
 
   public String getFunctionOrigin(String funcname, List<String> partypes){
@@ -254,20 +254,20 @@ public class Mem {
   public void addRule(String rule) {
     if (ontop) {
       ontop = false;
-      this.rulesAndImports.get(this.curClass).add(rule);
-      this.ruleNumber = 1;
+      rulesAndImports.get(curClass).add(rule);
+      ruleNumber = 1;
       curTopRule = rule;
     } else {
-      this.ruleNumber *= 2;
+      ruleNumber *= 2;
     }
-    this.ruleNums.get(curClass).put(rule, ruleNumber);
+    ruleNums.get(curClass).put(rule, ruleNumber);
     curRule = rule;
-    this.neededClasses.put(rule, new ArrayList<String>());
+    neededClasses.put(rule, new ArrayList<String>());
   }
 
   public void addImport(String importName, String conargs) {
     String importClassName = importName.substring(0, 1).toUpperCase() + importName.substring(1);
-    this.rulesAndImports.get(this.curClass).add(importClassName + " "
+    rulesAndImports.get(curClass).add(importClassName + " "
             + importName + " = new " + importClassName + "(");
   }
 
@@ -278,7 +278,7 @@ public class Mem {
    * @return
    */
   public List<String> getToplevelCalls(String classname) {
-    return this.rulesAndImports.get(classname);
+    return rulesAndImports.get(classname);
   }
 
   /**
@@ -288,8 +288,8 @@ public class Mem {
    */
   public Set<String> getTopLevelRules(String classname) {
     HashSet<String> rs = new HashSet<>();
-    for (String k : this.ruleNums.get(classname).keySet()) {
-      if (this.ruleNums.get(classname).get(k) == 1) {
+    for (String k : ruleNums.get(classname).keySet()) {
+      if (ruleNums.get(classname).get(k) == 1) {
         rs.add(k);
       }
     }
@@ -304,19 +304,19 @@ public class Mem {
    * @param ruleclass the class needed
    */
   public void needsClass(String rule, String ruleclass) {
-    if(this.curClass.toLowerCase().equals(ruleclass.toLowerCase())
-            || this.neededClasses.get(rule).contains(ruleclass)){
+    if(curClass.toLowerCase().equals(ruleclass.toLowerCase())
+        || neededClasses.get(rule).contains(ruleclass)){
       return;
     }
-    this.neededClasses.get(rule).add(ruleclass);
+    neededClasses.get(rule).add(ruleclass);
   }
 
   public List<String> getNeededClasses(String ruleOrClass) {
-    return this.neededClasses.get(ruleOrClass);
+    return neededClasses.get(ruleOrClass);
   }
 
   public boolean isExistingRule(String rule) {
-    return ruleNums.get(this.curClass).containsKey(rule);
+    return ruleNums.get(curClass).containsKey(rule);
   }
 
   public ExpUSingleValue degradeToString(ExpUVariable variable){
