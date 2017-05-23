@@ -33,4 +33,16 @@ public class Import extends RudiTree {
   public Iterable<? extends RudiTree> getDtrs() {
     return Collections.emptyList();
   }
+
+  @Override
+  public String visitStringV(RTStringVisitor v) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public void visitVoidV(VGenerationVisitor v) {
+    // TODO Auto-generated method stub
+
+  }
 }

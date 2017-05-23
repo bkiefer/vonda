@@ -30,7 +30,7 @@ public class ExpDialogueAct extends RTExpression {
     this.type = DIALOGUE_ACT_TYPE;
   }
 
-  public void visit(RudiVisitor v) {
+  public void visit(RTExpressionVisitor v) {
     v.visitNode(this);
   }
 

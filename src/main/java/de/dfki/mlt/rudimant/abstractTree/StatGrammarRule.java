@@ -13,7 +13,7 @@ import java.util.Arrays;
  *
  * @author Anna Welker
  */
-public class GrammarRule extends RudiTree {
+public class StatGrammarRule extends RTStatement {
 
   // comment label comment if_statement
   String label;
@@ -21,13 +21,12 @@ public class GrammarRule extends RudiTree {
   // remember whether you are toplevel
   boolean toplevel;
 
-  public GrammarRule(String label, StatIf ifstat) {
+  public StatGrammarRule(String label, StatIf ifstat) {
     this.label = label;
     this.ifstat = ifstat;
   }
 
-  @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTStatementVisitor v) {
     v.visitNode(this);
   }
 

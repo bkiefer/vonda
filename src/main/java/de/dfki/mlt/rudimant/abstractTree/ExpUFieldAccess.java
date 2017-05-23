@@ -15,19 +15,19 @@ import de.dfki.mlt.rudimant.Constants;
  *
  * @author Anna Welker
  */
-public class UFieldAccess extends RTExpLeaf {
+public class ExpUFieldAccess extends RTExpLeaf {
 
   List<RTExpression> parts;
   List<String> representation;
   boolean asked = false;
 
-  public UFieldAccess(List<RTExpression> parts, List<String> representation) {
+  public ExpUFieldAccess(List<RTExpression> parts, List<String> representation) {
     this.parts = parts;
     this.representation = representation;
   }
 
   @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTExpressionVisitor v) {
     v.visitNode(this);
   }
 
@@ -56,15 +56,11 @@ public class UFieldAccess extends RTExpLeaf {
 
     List<RTExpression> smaller = parts.subList(0, s);
     List<String> smallerRep = representation.subList(0, s);
-    UFieldAccess first = new UFieldAccess(smaller, smallerRep);
-    first.positions = positions;
-    first.fullexp = fullexp;
+    ExpUFieldAccess first = fixFields(new ExpUFieldAccess(smaller, smallerRep));
     RTExpression right;
     if (Constants.DIALOGUE_ACT_TYPE.equals(parts.get(s - 1).type)) {
-      USingleValue property = new USingleValue("\"" +
-          parts.get(s).fullexp + "\"", "String");
-      property.positions = positions;
-      property.fullexp = fullexp;
+      ExpUSingleValue property = fixFields(new ExpUSingleValue("\"" +
+          parts.get(s).fullexp + "\"", "String"));
       right = fixFields(new ExpBoolean(first, property, "hasSlot("));
     } else {
       right = this.ensureBooleanBasic();

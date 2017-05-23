@@ -80,8 +80,8 @@ public class TreeModelAdapter extends ModelAdapter {
       result = ((RTBinaryExp)model).operator;
     } else if (model instanceof StatReturn) {
       result = "return";
-    } else if (model instanceof GrammarRule) {
-      result = ((GrammarRule)model).label + ":";
+    } else if (model instanceof StatGrammarRule) {
+      result = ((StatGrammarRule)model).label + ":";
     } else if (model instanceof StatIf) {
       result = "if";
     } else if (model instanceof ExpDialogueAct) {
@@ -92,7 +92,7 @@ public class TreeModelAdapter extends ModelAdapter {
       result = "_ ? _ : _";
     } else if (model instanceof StatPropose) {
       result = "propose";
-    } else if (model instanceof UFieldAccess) {
+    } else if (model instanceof ExpUFieldAccess) {
       result = "FieldAcc";
     } else if (model instanceof ExpLambda) {
       result = " -> ";
@@ -115,8 +115,8 @@ public class TreeModelAdapter extends ModelAdapter {
         result = "{ _ }";
       else
         result = "block";
-    } else if (model instanceof UFuncCall) {
-      result = ((UFuncCall)model).content + "( )";
+    } else if (model instanceof ExpUFuncCall) {
+      result = ((ExpUFuncCall)model).content + "( )";
     } else {
       if (null == model) {
         result = "<null>";

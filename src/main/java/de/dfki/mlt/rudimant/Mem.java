@@ -12,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.mlt.rudimant.abstractTree.USingleValue;
-import de.dfki.mlt.rudimant.abstractTree.UVariable;
+import de.dfki.mlt.rudimant.abstractTree.ExpUSingleValue;
+import de.dfki.mlt.rudimant.abstractTree.ExpUVariable;
 
 /**
  * this is rudimants memory, used for type checking
@@ -319,7 +319,7 @@ public class Mem {
     return ruleNums.get(this.curClass).containsKey(rule);
   }
 
-  public USingleValue degradeToString(UVariable variable){
-    return new USingleValue(variable.toString(), "String");
+  public ExpUSingleValue degradeToString(ExpUVariable variable){
+    return new ExpUSingleValue(variable.toString(), "String");
   }
 }

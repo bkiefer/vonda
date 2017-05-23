@@ -31,7 +31,7 @@ public class ExpArithmetic extends RTBinaryExp {
   }
 
   @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTExpressionVisitor v) {
     v.visitNode(this);
   }
 

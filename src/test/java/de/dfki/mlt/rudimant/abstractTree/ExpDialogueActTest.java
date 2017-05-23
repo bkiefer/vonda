@@ -25,8 +25,8 @@ public class ExpDialogueActTest {
   public void test() throws IOException {
     String in = "emitDA(#Inform(Answer, what=solution));";
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(in));
-    assertTrue(dtr instanceof UFuncCall);
-    assertTrue(((UFuncCall)dtr).getDtrs().iterator().next()
+    assertTrue(dtr instanceof ExpUFuncCall);
+    assertTrue(((ExpUFuncCall)dtr).getDtrs().iterator().next()
         instanceof ExpDialogueAct);
 
   }

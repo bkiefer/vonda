@@ -51,7 +51,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   }
 
   @Override
-  public void visitNode(RudiTree node) {
+  public void visitNode(RTStatement node) {
     node.visitWithComments(this);
   }
 
@@ -96,19 +96,19 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       ret += (Type.convertRdfType(node.type));
     }
     ret += (' ');
-    UPropertyAccess pa = null;
-    if (node.left instanceof UFieldAccess) {
-      UFieldAccess acc = (UFieldAccess) node.left;
+    ExpUPropertyAccess pa = null;
+    if (node.left instanceof ExpUFieldAccess) {
+      ExpUFieldAccess acc = (ExpUFieldAccess) node.left;
       RudiTree lastPart = acc.parts.get(acc.parts.size() - 1);
-      if (lastPart instanceof UPropertyAccess) {
-        pa = (UPropertyAccess) lastPart;
+      if (lastPart instanceof ExpUPropertyAccess) {
+        pa = (ExpUPropertyAccess) lastPart;
       }
       // don't print the last field since is will be replaced by a set...(a, b)
       replaceLastWithFuncall = pa != null;
       ret += node.left.visitWithSComments(this);
       if (replaceLastWithFuncall) {
-        if (node.right instanceof USingleValue &&
-            ((USingleValue)node.right).content.equals("null")) {
+        if (node.right instanceof ExpUSingleValue &&
+            ((ExpUSingleValue)node.right).content.equals("null")) {
           replaceLastWithFuncall = false;
           return ret + ".clearValue(" + pa.getPropertyName() + ")";
         }
@@ -178,9 +178,9 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
   public String visitDaToken(RTExpression exp) {
     String ret = "";
-    if (exp instanceof USingleValue
-        && ((USingleValue) exp).type.equals("String")) {
-      String s = ((USingleValue) exp).visitStringV(this);
+    if (exp instanceof ExpUSingleValue
+        && ((ExpUSingleValue) exp).type.equals("String")) {
+      String s = ((ExpUSingleValue) exp).visitStringV(this);
       if (! s.startsWith("\"")) {
         ret += "\"" + s + "\"";
       } else
@@ -230,7 +230,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     // be inside an expression, prevent it from printing directly to out
     Writer old = out.out;
     out.out = new StringWriter();
-    node.body.visitVoidV(this);
+    node.body.visit(this);
     ret += out.out.toString();
     out.out = old;
     return ret;
@@ -260,7 +260,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   }
 
   @Override
-  public void visitNode(GrammarRule node) {
+  public void visitNode(StatGrammarRule node) {
     if (node.toplevel) {
       // this is a toplevel rule and will be converted to a method
       out.append("public void " + node.label + "(");
@@ -279,12 +279,6 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     }
   }
 
-  public void visitStatementOrExpression(RudiTree rt) {
-    rt.visitWithComments(this);
-    if (rt instanceof RTExpression)
-      out.append(";\n");
-  }
-
   @Override
   public void visitNode(StatAbstractBlock node) {
     if (node.braces) {
@@ -293,7 +287,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       out.append("{");
     }
     for (RudiTree stat : node.statblock) {
-      visitStatementOrExpression(stat);
+      stat.visitWithComments(this);
     }
     if (node.braces) {
       out.append("}");
@@ -303,15 +297,15 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   @Override
   public void visitNode(StatFor1 node) {
     out.append("for ( ");
-    node.assignment.visitWithComments(this);
+    node.initialization.visitWithComments(this);
     out.append("; ");
     node.condition.visitWithComments(this);
     out.append(";");
-    if (node.arithmetic != null) {
-      node.arithmetic.visitWithComments(this);
+    if (node.increment != null) {
+      node.increment.visitWithComments(this);
     }
     out.append(")");
-    visitStatementOrExpression(node.statblock);
+    node.statblock.visitWithComments(this);
   }
 
   @Override
@@ -319,26 +313,26 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     out.append("for (Object ");
     String var = node.var.visitWithSComments(this);
     out.append(var).append("_outer : ");
-    node.exp.visitWithComments(this);
+    node.initialization.visitWithComments(this);
     out.append(") { ")
        .append(Type.convertRdfType(node.varType))
        .append(" ").append(var);
     out.append(" = (").append(Type.convertRdfType(node.varType)).append(")")
        .append(var).append("_outer;\n");
-    visitStatementOrExpression(node.statblock);
+    node.statblock.visitWithComments(this);
     out.append("}");
   }
 
   @Override
   public void visitNode(StatFor3 node) {
     out.append("for (Object[] o : ");
-    node.exp.visitWithComments(this);
+    node.initialization.visitWithComments(this);
     out.append(") {");
     int count = 0;
     for (String s : node.variables) {
       out.append("\nObject " + s + " = o[" + count++ + "]");
     }
-    visitStatementOrExpression(node.statblock);
+    node.statblock.visitWithComments(this);
     out.append("}");
   }
 
@@ -353,11 +347,11 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       node.condition.visitWithComments(this);
       out.append(") ");
     }
-    visitStatementOrExpression(node.statblockIf);
+    node.statblockIf.visitWithComments(this);
     out.append("\n");
     if (node.statblockElse != null) {
       out.append("else ");
-      visitStatementOrExpression(node.statblockElse);
+      node.statblockElse.visitWithComments(this);
     }
   }
 
@@ -464,10 +458,10 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       out.append("while (");
       node.condition.visitWithComments(this);
       out.append(")");
-      visitStatementOrExpression(node.block);
+      node.block.visitWithComments(this);
     } else {
       out.append("do");
-      visitStatementOrExpression(node.block);
+      node.block.visitWithComments(this);
       out.append("while (");
       node.condition.visitWithComments(this);
       out.append(");");
@@ -483,7 +477,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   }
 
   @Override
-  public String visitNode(UFieldAccess node) {
+  public String visitNode(ExpUFieldAccess node) {
     String ret = "";
     int to = node.parts.size();
     // don't print the last field if this is in an assignment rather than an
@@ -494,8 +488,8 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
     // changed the direction of the for loop; should be enough
     for (int i = to - 1; i > 0; i--) {
-      if (node.parts.get(i) instanceof UPropertyAccess) {
-        UPropertyAccess pa = (UPropertyAccess) node.parts.get(i);
+      if (node.parts.get(i) instanceof ExpUPropertyAccess) {
+        ExpUPropertyAccess pa = (ExpUPropertyAccess) node.parts.get(i);
         String cast = Type.convertRdfType(pa.getType());
         if ("int".equals(cast))
           cast = "Integer";
@@ -510,9 +504,9 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     ret += node.parts.get(0).visitWithSComments(this);
     String currentType = ((RTExpression) node.parts.get(0)).type;
     for (int i = 1; i < to; i++) {
-      RudiTree currentPart = node.parts.get(i);
-      if (currentPart instanceof UPropertyAccess) {
-        UPropertyAccess pa = (UPropertyAccess) currentPart;
+      RTExpression currentPart = node.parts.get(i);
+      if (currentPart instanceof ExpUPropertyAccess) {
+        ExpUPropertyAccess pa = (ExpUPropertyAccess) currentPart;
         // then we are in the case that this is actually an rdf operation
         if (DIALOGUE_ACT_TYPE.equals(currentType)) {
           ret += ".getValue(";
@@ -525,18 +519,14 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       } else {
         ret += ".";
         ret += currentPart.visitStringV(this);
-        if (currentPart instanceof RTExpression) {
-          currentType = ((RTExpression) currentPart).type;
-        } else {
-          currentType = null;
-        }
+        currentType = ((RTExpression) currentPart).type;
       }
     }
     return ret;
   }
 
   @Override
-  public String visitNode(UFuncCall node) {
+  public String visitNode(ExpUFuncCall node) {
     String ret = "";
     if (node.realOrigin != null) {
       String t = node.realOrigin;
@@ -558,7 +548,13 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   }
 
   @Override
-  public String visitNode(USingleValue node) {
+  public void visitNode(StatExpression rt) {
+    rt.expression.visitWithComments(this);
+    out.append(";\n");
+  }
+
+  @Override
+  public String visitNode(ExpUSingleValue node) {
     if ("String".equals(node.type) && this.escape) {
       // properly escape if needed
       return "\\" + node.content.substring(0, node.content.length() - 1) + "\\\" ";
@@ -567,7 +563,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   }
 
   @Override
-  public String visitNode(UVariable node) {
+  public String visitNode(ExpUVariable node) {
     if (node.realOrigin != null) {
       String t = node.realOrigin;
       return t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.content;
@@ -591,8 +587,8 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     // TODO BK: bool_exp can be a simple expression, in which case it
     // has to be turned into a comparison with zero, null or a call to
     // the has(...) method
-    if (bool_exp instanceof USingleValue && bool_exp.getType().equals("boolean")) {
-      return ((USingleValue) bool_exp).content;
+    if (bool_exp instanceof ExpUSingleValue && bool_exp.getType().equals("boolean")) {
+      return ((ExpUSingleValue) bool_exp).content;
     }
     collectingCondition = true;
 
@@ -639,4 +635,5 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     //return (String) expnames[expnames.length - 1];
     return condV.getLastBool();
   }
+
 }

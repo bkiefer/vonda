@@ -34,6 +34,25 @@ public class GrammarFile extends RudiTree {
     this.classname = name;
   }
 
+  public boolean containsDefinition(RudiTree t) {
+    if (t instanceof StatVarDef
+        || (t instanceof StatMethodDeclaration
+            && ((StatMethodDeclaration)t).block == null)) return true;
+    if (t instanceof StatExpression) {
+      RTExpression ex = ((StatExpression) t).expression;
+      return (ex instanceof ExpAssignment) && ((ExpAssignment) ex).declaration;
+    }
+    return false;
+  }
+
+  private void visitTypeInference(RudiTree t, VTestTypeVisitor ttv) {
+    if (t instanceof RTStatement) {
+      ((RTStatement)t).visit(ttv);
+    } else if (t instanceof RTExpression) {
+      ((RTExpression)t).visit(ttv);
+    }
+  }
+
   public void startTypeInference(RudimantCompiler rudi) {
     VTestTypeVisitor ttv = new VTestTypeVisitor(rudi);
     Mem mem = rudi.getMem();
@@ -47,18 +66,17 @@ public class GrammarFile extends RudiTree {
     }
     List<RudiTree> nonDefs = new ArrayList<>(rules.size());
     // learn about all definitions before visiting the other statements!!
+    // TODO: WHY? IF WE REQUIRE THE DEFINITION ALWAYS PRECEDING THE USE, THEN
+    // WHY IS THIS NECESSARY?
     for (RudiTree t : rules) {
-      if(t instanceof StatVarDef
-         || (t instanceof StatMethodDeclaration
-             && ((StatMethodDeclaration)t).block == null)
-         || (t instanceof ExpAssignment && ((ExpAssignment) t).declaration)){
-        t.visit(ttv);
+      if(containsDefinition(t)) {
+        visitTypeInference(t, ttv);
       } else {
         nonDefs.add(t);
       }
     }
     for (RudiTree t : nonDefs) {
-      if(t instanceof GrammarRule){
+      if(t instanceof StatGrammarRule){
         mem.ontop = true;
       }
       if (t instanceof Import) {
@@ -67,7 +85,7 @@ public class GrammarFile extends RudiTree {
         mem.addImport(node.name, conargs);
         rudi.processImport(node.content);
       }
-      t.visit(ttv);
+      visitTypeInference(t, ttv);
       // if t will later on be put into a stub function in GenerationVisitor,
       // we should add its predicted name to the mem so the method is called in
       // the correct position between the imports
@@ -76,7 +94,7 @@ public class GrammarFile extends RudiTree {
       if(!(t instanceof StatAbstractBlock
            || t instanceof Import
            || t instanceof StatMethodDeclaration
-           || t instanceof GrammarRule)){
+           || t instanceof StatGrammarRule)){
         String fname = rudi.getClassName() + rules.indexOf(t);
         // add the function to our mem as if it was a rule, so it is called in
         // the process function
@@ -104,13 +122,13 @@ public class GrammarFile extends RudiTree {
 
   public void writeRuleList(RudimantCompiler out, VGenerationVisitor gv){
     Mem mem = out.getMem();
-    List<RudiTree> later = new ArrayList<>();
+    List<RTStatement> later = new ArrayList<>();
     // do all assignments on toplevel here, those are class attributes
     for(RudiTree r : rules){
       if(r instanceof ExpAssignment){
-        if(((ExpAssignment)r).declaration){
+        if(((ExpAssignment)r).declaration) {
           out.append(Type.convertRdfType(((ExpAssignment)r).type) + " "
-                  + ((ExpAssignment)r).left.fullexp + ";\n");
+              + ((ExpAssignment)r).left.fullexp + ";\n");
           ((ExpAssignment)r).declaration = false;
         }
       }
@@ -123,11 +141,11 @@ public class GrammarFile extends RudiTree {
     // use all methods created from rules in this file
     for(RudiTree r : rules){
       // rules, method declarations and imports are a special case
-      if (r instanceof GrammarRule){
-        out.append(((GrammarRule)r).label + "();\n");
-        later.add(r);
+      if (r instanceof StatGrammarRule){
+        out.append(((StatGrammarRule)r).label + "();\n");
+        later.add((StatGrammarRule)r);
       } else if (r instanceof StatMethodDeclaration){
-        later.add(r);
+        later.add((StatMethodDeclaration)r);
       } else if (r instanceof Import){
         String impor = ((Import)r).name;
         String importn = impor.substring(0, 1).toUpperCase() + impor.substring(1);
@@ -153,15 +171,12 @@ public class GrammarFile extends RudiTree {
         }
         out.append(").process();\n");
       } else {
-        gv.visitNode(r);
-        if(!(r instanceof RTStatement)){
-          out.append(";\n");
-        }
+        gv.visitNode((RTStatement)r);
       }
     }
     out.append("}\n");
     // now, add everything that we did not want in the process method
-    for(RudiTree t : later){
+    for(RTStatement t : later){
       gv.visitNode(t);
     }
   }
@@ -271,4 +286,17 @@ public class GrammarFile extends RudiTree {
   public Iterable<? extends RudiTree> getDtrs() {
     return rules;
   }
+
+  @Override
+  public String visitStringV(RTStringVisitor v) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public void visitVoidV(VGenerationVisitor v) {
+    // TODO Auto-generated method stub
+
+  }
+
 }

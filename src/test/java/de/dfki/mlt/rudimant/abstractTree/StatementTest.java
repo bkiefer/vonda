@@ -79,7 +79,7 @@ public class StatementTest {
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(in), 2);
     assertTrue(dtr instanceof StatReturn);
     assertTrue(((StatReturn)dtr).getDtrs().iterator().next()
-        instanceof UVariable);
+        instanceof ExpUVariable);
   }
 
  @Test

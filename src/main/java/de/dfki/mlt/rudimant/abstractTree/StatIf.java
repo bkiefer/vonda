@@ -14,8 +14,8 @@ import java.util.Arrays;
 public class StatIf extends RTStatement {
 
   RTExpression condition;
-  RudiTree statblockIf;
-  RudiTree statblockElse;
+  RTStatement statblockIf;
+  RTStatement statblockElse;
   String currentRule;
   String conditionString;
 
@@ -28,8 +28,8 @@ public class StatIf extends RTStatement {
    * @param statblockElse the else block if existing
    * @param position
    */
-  public StatIf(String conditionString, RTExpression condition, RudiTree statblockIf,
-          RudiTree statblockElse) {
+  public StatIf(String conditionString, RTExpression condition, RTStatement statblockIf,
+          RTStatement statblockElse) {
     this.condition = condition;
     this.statblockIf = statblockIf;
     this.statblockElse = statblockElse;
@@ -37,7 +37,7 @@ public class StatIf extends RTStatement {
   }
 
   @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTStatementVisitor v) {
     v.visitNode(this);
   }
 

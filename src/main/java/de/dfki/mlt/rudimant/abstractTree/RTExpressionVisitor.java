@@ -29,11 +29,11 @@ public interface RTExpressionVisitor {
 
   public void visitNode(ExpNew node);
 
-  public void visitNode(UFieldAccess node);
+  public void visitNode(ExpUFieldAccess node);
 
-  public void visitNode(UFuncCall node);
+  public void visitNode(ExpUFuncCall node);
 
-  public void visitNode(USingleValue node);
+  public void visitNode(ExpUSingleValue node);
 
-  public void visitNode(UVariable node);
+  public void visitNode(ExpUVariable node);
 }

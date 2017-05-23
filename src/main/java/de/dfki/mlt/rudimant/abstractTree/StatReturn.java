@@ -16,7 +16,7 @@ import java.util.Collections;
  */
 public class StatReturn extends RTStatement {
 
-  RudiTree toRet;
+  RTExpression toRet;
   String lit;
   String curRuleLabel;
 
@@ -31,13 +31,13 @@ public class StatReturn extends RTStatement {
    * @param exp
    * @param lit
    */
-  public StatReturn(RudiTree exp, String lit) {
+  public StatReturn(RTExpression exp, String lit) {
     this.toRet = exp;
     this.lit = lit;
   }
 
   @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTStatementVisitor v) {
     v.visitNode(this);
   }
 

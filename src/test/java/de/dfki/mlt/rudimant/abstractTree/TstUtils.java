@@ -14,14 +14,16 @@ public class TstUtils {
 
   public static RudiTree getNodeOfInterest(GrammarFile gf, int n) {
     assertNotNull(gf);
-    GrammarRule dtr = (GrammarRule) gf.getDtrs().iterator().next();
+    StatGrammarRule dtr = (StatGrammarRule) gf.getDtrs().iterator().next();
     StatIf _if = (StatIf) dtr.getDtrs().iterator().next();
     StatAbstractBlock blk = (StatAbstractBlock) ((StatIf) _if).statblockIf;
     Iterator<? extends RudiTree> it = blk.getDtrs().iterator();
     for (int i = 0; i < n; i++){
       it.next();
     }
-    return it.next();
+    RudiTree r = it.next();
+    if (r instanceof StatExpression) return ((StatExpression)r).expression;
+    return r;
   }
 
   static int prefix = 252, suffix = 55;

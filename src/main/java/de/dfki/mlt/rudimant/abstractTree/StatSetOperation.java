@@ -15,18 +15,18 @@ import java.util.Arrays;
  */
 public class StatSetOperation extends RTStatement {
 
-  RudiTree left;
+  RTExpression left;
   boolean add;
-  RudiTree right;
+  RTExpression right;
 
-  public StatSetOperation(RudiTree left, boolean add, RudiTree right) {
+  public StatSetOperation(RTExpression left, boolean add, RTExpression right) {
     this.left = left;
     this.add = add;
     this.right = right;
   }
 
   @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTStatementVisitor v) {
     v.visitNode(this);
   }
 

@@ -14,7 +14,7 @@ import java.util.Arrays;
  */
 public abstract class RTCondBlockStatement extends RTStatement {
   RTExpression condition;
-  RudiTree block;
+  RTStatement block;
 
   public Iterable<? extends RudiTree> getDtrs() {
     RudiTree[] dtrs = { condition, block };

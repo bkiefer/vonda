@@ -10,19 +10,19 @@ package de.dfki.mlt.rudimant.abstractTree;
  *
  * @author Anna Welker
  */
-public class UVariable extends RTExpLeaf {
+public class ExpUVariable extends RTExpLeaf {
 
   String originClass;
   // set to the class whose attribute this variable is; null if the variable
   // is declared in originClass
   String realOrigin;
 
-  public UVariable(String type, String representation, String originClass) {
+  public ExpUVariable(String type, String representation, String originClass) {
     this(representation, originClass);
     this.type = type;
   }
 
-  public UVariable(String representation, String originClass) {
+  public ExpUVariable(String representation, String originClass) {
     content = representation;
     this.originClass = originClass;
   }
@@ -33,7 +33,7 @@ public class UVariable extends RTExpLeaf {
   }
 
   @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTExpressionVisitor v) {
     v.visitNode(this);
   }
 

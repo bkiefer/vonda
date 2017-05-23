@@ -18,20 +18,20 @@ import java.util.List;
 public class StatFor3 extends RTStatement {
 
   List<String> variables;
-  RudiTree exp;
+  RudiTree initialization;
   RudiTree statblock;
   String position;
 
   public StatFor3(List<String> variables, RudiTree exp,
       RudiTree block, String position) {
     this.variables = variables;
-    this.exp = exp;
+    this.initialization = exp;
     this.statblock = block;
     this.position = position;
   }
 
   @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTStatementVisitor v) {
     v.visitNode(this);
   }
 
@@ -46,7 +46,7 @@ public class StatFor3 extends RTStatement {
   }
 
   public Iterable<? extends RudiTree> getDtrs() {
-    RudiTree[] dtrs = { exp, statblock };
+    RudiTree[] dtrs = { initialization, statblock };
     return Arrays.asList(dtrs);
   }
 }

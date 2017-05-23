@@ -14,7 +14,7 @@ public class StatWhile extends RTCondBlockStatement {
 
   private boolean whileDo;
 
-  public StatWhile(RTExpression condition, RudiTree statblock, boolean isWhileDo) {
+  public StatWhile(RTExpression condition, RTStatement statblock, boolean isWhileDo) {
     this.condition = condition;
     this.block = statblock;
     this.whileDo = isWhileDo;
@@ -23,7 +23,7 @@ public class StatWhile extends RTCondBlockStatement {
   public boolean isWhileDo() { return whileDo; }
 
   @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTStatementVisitor v) {
     v.visitNode(this);
   }
 

@@ -16,24 +16,24 @@ import java.util.Arrays;
 public class StatFor2 extends RTStatement {
 
   String varType;
-  UVariable var;
-  RTExpression exp;
-  RudiTree statblock;
+  ExpUVariable var;
+  RTExpression initialization;
+  RTStatement statblock;
   String position;
 
-  public StatFor2(UVariable var, RTExpression exp, RudiTree statblock,
+  public StatFor2(ExpUVariable var, RTExpression exp, RTStatement statblock,
       String position) {
     this.var = var;
-    this.exp = exp;
+    this.initialization = exp;
     this.statblock = statblock;
     this.varType = null;
     this.position = position;
   }
 
-  public StatFor2(String varType, UVariable var, RTExpression exp,
-      RudiTree statblock, String position) {
+  public StatFor2(String varType, ExpUVariable var, RTExpression exp,
+      RTStatement statblock, String position) {
     this.var = var;
-    this.exp = exp;
+    this.initialization = exp;
     this.statblock = statblock;
     if (varType.equals("var")) {
       this.varType = null;
@@ -44,7 +44,7 @@ public class StatFor2 extends RTStatement {
   }
 
   @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTStatementVisitor v) {
     v.visitNode(this);
   }
 
@@ -59,7 +59,7 @@ public class StatFor2 extends RTStatement {
   }
 
   public Iterable<? extends RudiTree> getDtrs() {
-    RudiTree[] dtrs = { var, exp, statblock };
+    RudiTree[] dtrs = { var, initialization, statblock };
     return Arrays.asList(dtrs);
   }
 }

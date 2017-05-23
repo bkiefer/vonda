@@ -35,7 +35,7 @@ public class ExpNew extends RTExpression {
   }
 
   @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTExpressionVisitor v) {
     v.visitNode(this);
   }
 

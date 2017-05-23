@@ -23,7 +23,7 @@ public class StatSwitch extends RTCondBlockStatement {
   }
 
   @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTStatementVisitor v) {
     v.visitNode(this);
   }
 

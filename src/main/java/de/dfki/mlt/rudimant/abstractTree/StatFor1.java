@@ -15,21 +15,21 @@ import java.util.Arrays;
  */
 public class StatFor1 extends RTStatement {
 
-  ExpAssignment assignment;
+  ExpAssignment initialization;
   RTExpression condition;
-  RTExpression arithmetic;
-  RudiTree statblock;
+  RTExpression increment;
+  RTStatement statblock;
 
   public StatFor1(ExpAssignment assignment, ExpBoolean condition,
-          RTExpression arithmetic, RudiTree statblock, String position) {
-    this.assignment = assignment;
+          RTExpression arithmetic, RTStatement statblock, String position) {
+    this.initialization = assignment;
     this.condition = condition;
-    this.arithmetic = arithmetic;
+    this.increment = arithmetic;
     this.statblock = statblock;
   }
 
   @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTStatementVisitor v) {
     v.visitNode(this);
   }
 
@@ -44,7 +44,7 @@ public class StatFor1 extends RTStatement {
   }
 
   public Iterable<? extends RudiTree> getDtrs() {
-    RudiTree[] dtrs = { assignment, condition, arithmetic, statblock };
+    RudiTree[] dtrs = { initialization, condition, increment, statblock };
     return Arrays.asList(dtrs);
   }
 }

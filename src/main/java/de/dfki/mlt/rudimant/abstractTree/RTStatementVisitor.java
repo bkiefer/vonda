@@ -1,9 +1,9 @@
 package de.dfki.mlt.rudimant.abstractTree;
 
 public interface RTStatementVisitor {
-  public void visitNode(RudiTree node);
+  public void visitNode(RTStatement node);
 
-  public void visitNode(GrammarRule node);
+  public void visitNode(StatGrammarRule node);
 
   public void visitNode(StatAbstractBlock node);
 
@@ -30,4 +30,6 @@ public interface RTStatementVisitor {
   public void visitNode(StatVarDef node);
 
   public void visitNode(StatWhile node);
+
+  public void visitNode(StatExpression node);
 }

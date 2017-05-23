@@ -13,15 +13,15 @@ import java.util.Arrays;
  *
  * @author Anna Welker
  */
-public class UPropertyAccess extends RTExpLeaf {
+public class ExpUPropertyAccess extends RTExpLeaf {
 
-  UVariable label;
+  ExpUVariable label;
   boolean propertyVariable = false;
   String rangeType;
   boolean functional;
 
 
-  public UPropertyAccess(String fullexp, UVariable l, boolean var, String rt,
+  public ExpUPropertyAccess(String fullexp, ExpUVariable l, boolean var, String rt,
       boolean func) {
     // an access will always return sth of type Object, so to not get null
     // I'll set the type of this to Object by default
@@ -38,7 +38,7 @@ public class UPropertyAccess extends RTExpLeaf {
   }
 
   @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTExpressionVisitor v) {
     v.visitNode(this);
   }
 

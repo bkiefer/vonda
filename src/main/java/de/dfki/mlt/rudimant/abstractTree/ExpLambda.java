@@ -19,15 +19,15 @@ public class ExpLambda extends RTExpLeaf {
   String return_type;
   List<String> parameters;
   String parType;
-  RudiTree body;
+  RTStatement body;
 
-  public ExpLambda(List<String> args, RudiTree b) {
+  public ExpLambda(List<String> args, RTStatement b) {
     parameters = args;
     body = b;
   }
 
   @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTExpressionVisitor v) {
     v.visitNode(this);
   }
 
@@ -52,7 +52,7 @@ public class ExpLambda extends RTExpLeaf {
     for (int i = 1; i < parameters.size(); ++i)
       sb.append(',').append(parameters.get(i));
     sb.append(")");
-    RudiTree[] dtrs = { new USingleValue(sb.toString(), parType), body };
+    RudiTree[] dtrs = { new ExpUSingleValue(sb.toString(), parType), body };
     return Arrays.asList(dtrs);
   }
 }

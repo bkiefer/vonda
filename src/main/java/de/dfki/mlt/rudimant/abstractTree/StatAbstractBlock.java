@@ -15,16 +15,16 @@ import java.util.List;
  */
 public class StatAbstractBlock extends RTStatement {
 
-  List<RudiTree> statblock;
+  List<RTStatement> statblock;
   final boolean braces;
 
-  public StatAbstractBlock(List<RudiTree> statblock, boolean braces) {
+  public StatAbstractBlock(List<RTStatement> statblock, boolean braces) {
     this.statblock = statblock;
     this.braces = braces;
   }
 
   @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTStatementVisitor v) {
     v.visitNode(this);
   }
 

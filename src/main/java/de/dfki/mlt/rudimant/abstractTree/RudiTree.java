@@ -23,17 +23,11 @@ public abstract class RudiTree {
    */
   public int[] positions;
 
-  /**
-   * contains the origin file and the line this Rudi Tree started on
-   */
+  /** contains the origin file and the line this Rudi Tree started on */
   public Location location;
 
+  /** The input string that is covered by this node */
   public String fullexp;
-
-  /**
-   * visitor method
-   */
-  public abstract void visit(RudiVisitor v);
 
   public void visitWithComments(VGenerationVisitor v) {
     int firstPos = this.positions[0];
@@ -41,6 +35,19 @@ public abstract class RudiTree {
     this.visitVoidV(v);
     int endPos = this.positions[1];
     v.out.append(checkComments(v, endPos));
+  }
+
+  public <T extends RudiTree> T fixFields(T b) {
+    b.positions = positions;
+    b.fullexp = fullexp;
+    return b;
+  }
+
+  public RTStatement ensureStatement() {
+    if (this instanceof RTExpression) {
+      return fixFields(new StatExpression((RTExpression)this));
+    }
+    return (RTStatement)this;
   }
 
   boolean lookingForImport = false;

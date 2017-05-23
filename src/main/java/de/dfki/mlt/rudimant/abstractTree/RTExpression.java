@@ -30,6 +30,11 @@ public abstract class RTExpression extends RudiTree {
   }
 
   /**
+   * visitor method
+   */
+  public abstract void visit(RTExpressionVisitor v);
+
+  /**
    * duplicate the method from RudiTree to ensure String return
    * @param v
    */
@@ -46,6 +51,18 @@ public abstract class RTExpression extends RudiTree {
     return ret;
   }
 
+  /**
+   * the visitMethod for the visitor that allows to return Strings ! only to be
+   * used by expressions !
+   */
+  public abstract String visitStringV(RTStringVisitor v);
+
+  /**
+   * the visitMethod for the visitor that allows to return Strings ! for
+   * everything except expressions, they should write to out !
+   */
+  public abstract void visitVoidV(VGenerationVisitor v);
+
   // Return true if this is represents an RDF type or a DialogueAct
   // TODO: maybe has to be split up.
   public boolean isRdfType() { return Type.isRdfType(type); }
@@ -58,19 +75,13 @@ public abstract class RTExpression extends RudiTree {
 
   public String getInnerType() { return Type.getInnerType(type); }
 
-  public RTExpression fixFields(RTExpression b) {
-    b.positions = positions;
-    b.fullexp = fullexp;
-    return b;
-  }
-
   public RTExpression ensureBooleanBasic() {
     if (this instanceof ExpBoolean) {
       return this;
     }
 
     if ("boolean".equals(type)){
-      if(this instanceof USingleValue){
+      if(this instanceof ExpUSingleValue){
         return this;
       } else {
         // if this is a funccall with type boolean, we'd still like to have it
@@ -88,12 +99,10 @@ public abstract class RTExpression extends RudiTree {
     }
 
     RTExpression result = null;
-    USingleValue right = null;
+    ExpUSingleValue right = null;
 
     if (type == null) {
-      right = new USingleValue("null", "Object");
-      right.positions = positions;
-      right.fullexp = fullexp;
+      right = fixFields(new ExpUSingleValue("null", "Object"));
       result = fixFields(new ExpBoolean(this, right, "!="));
     } else {
       String cleanType = Type.convertXsdType(type);
@@ -104,14 +113,12 @@ public abstract class RTExpression extends RudiTree {
         case "int":
         case "float":
         case "double":
-          right = new USingleValue("0", type);
+          right = fixFields(new ExpUSingleValue("0", type));
           break;
         default:
-          right = new USingleValue("null", "Object");
+          right = fixFields(new ExpUSingleValue("null", "Object"));
           break;
         }
-        right.positions = positions;
-        right.fullexp = fullexp;
         result = fixFields(new ExpBoolean(this, right, "!="));
       }
     }
@@ -119,8 +126,8 @@ public abstract class RTExpression extends RudiTree {
   }
 
   public RTExpression ensureBoolean() {
-    if (this instanceof UFieldAccess) {
-      UFieldAccess ufa = (UFieldAccess)this;
+    if (this instanceof ExpUFieldAccess) {
+      ExpUFieldAccess ufa = (ExpUFieldAccess)this;
       return ufa.ensureBooleanUFA();
     }
     return ensureBooleanBasic();

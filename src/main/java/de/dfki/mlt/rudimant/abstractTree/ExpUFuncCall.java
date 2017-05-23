@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author Anna Welker
  */
-public class UFuncCall extends RTExpLeaf {
+public class ExpUFuncCall extends RTExpLeaf {
 
   List<RTExpression> exps;
   String realOrigin;
@@ -24,7 +24,7 @@ public class UFuncCall extends RTExpLeaf {
   // the type of object this function was called upon (null if nothing)
   String calledUpon;
 
-  public UFuncCall(String representation,
+  public ExpUFuncCall(String representation,
           List<RTExpression> exps, boolean newexp) {
     this.content = representation;
     this.exps = exps;
@@ -32,7 +32,7 @@ public class UFuncCall extends RTExpLeaf {
   }
 
   @Override
-  public void visit(RudiVisitor v) {
+  public void visit(RTExpressionVisitor v) {
     v.visitNode(this);
   }
 
