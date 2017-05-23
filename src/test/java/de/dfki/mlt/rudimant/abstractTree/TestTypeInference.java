@@ -43,8 +43,9 @@ public class TestTypeInference {
     it.next();
     it.next();
     RudiTree rt = it.next();
-    assertTrue(rt instanceof ExpAssignment);
-    ExpAssignment ass = (ExpAssignment)rt;
+    assertTrue(rt instanceof StatExpression);
+    assertTrue(((StatExpression)rt).expression instanceof ExpAssignment);
+    ExpAssignment ass = (ExpAssignment)((StatExpression)rt).expression;
     assertEquals("boolean", ass.left.type);
   }
 

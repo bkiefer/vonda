@@ -19,9 +19,9 @@ public class ExpLambda extends RTExpLeaf {
   String return_type;
   List<String> parameters;
   String parType;
-  RTStatement body;
+  RudiTree body;
 
-  public ExpLambda(List<String> args, RTStatement b) {
+  public ExpLambda(List<String> args, RudiTree b) {
     parameters = args;
     body = b;
   }

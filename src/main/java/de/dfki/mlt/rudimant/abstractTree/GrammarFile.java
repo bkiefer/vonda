@@ -125,11 +125,13 @@ public class GrammarFile extends RudiTree {
     List<RTStatement> later = new ArrayList<>();
     // do all assignments on toplevel here, those are class attributes
     for(RudiTree r : rules){
-      if(r instanceof ExpAssignment){
-        if(((ExpAssignment)r).declaration) {
-          out.append(Type.convertRdfType(((ExpAssignment)r).type) + " "
-              + ((ExpAssignment)r).left.fullexp + ";\n");
-          ((ExpAssignment)r).declaration = false;
+      if(r instanceof StatExpression &&
+          ((StatExpression)r).expression instanceof ExpAssignment){
+        ExpAssignment ass = (ExpAssignment)((StatExpression)r).expression;
+        if(ass.declaration) {
+          out.append(Type.convertRdfType(ass.type)).append(" ")
+             .append(ass.left.fullexp).append(";\n");
+          ass.declaration = false;
         }
       }
     }

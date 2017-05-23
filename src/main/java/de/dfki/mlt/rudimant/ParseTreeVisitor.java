@@ -485,8 +485,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     for(int i = 1; i < ctx.getChildCount() - 3; i += 2) {
       args.add(ctx.getChild(i).getText());
     }
-    return new ExpLambda(args,
-        visit(ctx.getChild(ctx.getChildCount() - 1)).ensureStatement())
+    return new ExpLambda(args, visit(ctx.getChild(ctx.getChildCount() - 1)))
         .setPosition(ctx, currentClass);
   }
 

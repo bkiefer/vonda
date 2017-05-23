@@ -190,12 +190,6 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
       if (!Type.isPODType(node.left.getType())
           && !Type.isPODType(node.right.getType())) {
         String or = "";
-        /*
-        if(!mem.getClassName().toLowerCase().equals(
-                mem.getToplevelInstance().toLowerCase())){
-          or = mem.getToplevelInstance() + ".";
-        }
-        */
         switch (node.operator) {
           case "==":
             node.operator = or + "isEqual(";
@@ -300,9 +294,12 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     for(String arg : node.parameters){
       mem.addVariableDeclaration(arg, node.parType, mem.getClassName());
     }
-    visitNode(node.body);
-    if (node.body instanceof StatExpression) {
-      node.return_type = ((StatExpression)node.body).expression.getType();
+    if (node.body instanceof RTExpression) {
+      RTExpression exp = (RTExpression)node.body;
+      visitNode(exp);
+      node.return_type = exp.getType();
+    } else {
+      visitNode((StatAbstractBlock)node.body);
     }
     mem.leaveEnvironment();
   }
@@ -701,8 +698,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     }
 
     if (o != null && (node.originClass != null &&
-            !node.originClass.toLowerCase().equals(o.toLowerCase()))) {
-//      System.out.println(node.fullexp + " : " + o + " : " + mem.getClassName());
+        !node.originClass.toLowerCase().equals(o.toLowerCase()))) {
       mem.needsClass(mem.getCurrentTopRule(), o);
       node.realOrigin = o;
     }

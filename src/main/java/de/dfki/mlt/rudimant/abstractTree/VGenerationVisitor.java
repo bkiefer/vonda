@@ -228,9 +228,15 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     ret += ") -> ";
     // is the rare occasion where sth of class statement is allowed to
     // be inside an expression, prevent it from printing directly to out
+    // TODO: WHAT? EXAMPLE!
     Writer old = out.out;
     out.out = new StringWriter();
-    node.body.visit(this);
+    if (node.body instanceof RTExpression)
+      ((RTExpression)node.body).visitVoidV(this);
+    else { // this must be an AbstractBlock
+      assert(node.body instanceof StatAbstractBlock);
+      ((StatAbstractBlock)node.body).visit(this);
+    }
     ret += out.out.toString();
     out.out = old;
     return ret;
