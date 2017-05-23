@@ -1,2 +1,7 @@
 name:
 if (q.correct == true) { logger.info("It's correct"); }
+
+List<Child> cl;
+Child c = cl.get(0);
+
+import Import2;

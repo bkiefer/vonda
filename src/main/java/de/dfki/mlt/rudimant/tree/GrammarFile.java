@@ -291,14 +291,12 @@ public class GrammarFile extends RudiTree {
 
   @Override
   public String visitStringV(RTStringVisitor v) {
-    // TODO Auto-generated method stub
-    return null;
+    throw new UnsupportedOperationException("not supported");
   }
 
   @Override
   public void visitVoidV(VGenerationVisitor v) {
-    // TODO Auto-generated method stub
-
+    throw new UnsupportedOperationException("not supported");
   }
 
 }

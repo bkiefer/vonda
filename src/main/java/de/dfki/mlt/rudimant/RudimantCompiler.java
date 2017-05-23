@@ -1,6 +1,7 @@
 package de.dfki.mlt.rudimant;
 
 import static de.dfki.mlt.rudimant.Constants.*;
+import static de.dfki.mlt.rudimant.Utils.*;
 import static de.dfki.mlt.rudimant.io.RobotGrammarParser.*;
 
 import java.io.*;
@@ -217,8 +218,7 @@ public class RudimantCompiler {
     subPackage = parent.subPackage;
     subPackage.addAll(Arrays.asList(elements).subList(0, elements.length - 1));
 
-    className = inputRealName.substring(0, 1).toUpperCase()
-            + inputRealName.substring(1);
+    className = capitalize(inputRealName);
 
     processForReal();
   }

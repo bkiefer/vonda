@@ -1,0 +1,3 @@
+if (cl.get(0)) return;
+
+if (q.correct == true) { logger.info("It's correct"); }

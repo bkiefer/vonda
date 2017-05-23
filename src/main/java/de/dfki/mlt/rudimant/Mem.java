@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudimant;
 
+import static de.dfki.mlt.rudimant.Utils.*;
 
 import java.util.*;
 
@@ -70,7 +71,7 @@ public class Mem {
   }
 
   public String getToplevelInstance() {
-    return upperRudi.substring(0, 1).toLowerCase() + upperRudi.substring(1);
+    return lowerCaseFirst(upperRudi);
   }
 
   public RdfProxy getProxy() {
@@ -266,7 +267,7 @@ public class Mem {
   }
 
   public void addImport(String importName, String conargs) {
-    String importClassName = importName.substring(0, 1).toUpperCase() + importName.substring(1);
+    String importClassName = capitalize(importName);
     rulesAndImports.get(curClass).add(importClassName + " "
             + importName + " = new " + importClassName + "(");
   }
