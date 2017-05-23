@@ -17,9 +17,9 @@ import de.dfki.lt.loot.gui.MainFrame;
 import de.dfki.lt.loot.gui.Style;
 import de.dfki.lt.loot.gui.layouts.CompactLayout;
 import de.dfki.lt.loot.gui.util.ObjectHandler;
-import de.dfki.mlt.rudimant.abstractTree.GrammarFile;
-import de.dfki.mlt.rudimant.abstractTree.RudiTree;
-import de.dfki.mlt.rudimant.abstractTree.TreeModelAdapter;
+import de.dfki.mlt.rudimant.tree.GrammarFile;
+import de.dfki.mlt.rudimant.tree.RudiTree;
+import de.dfki.mlt.rudimant.tree.TreeModelAdapter;
 
 
 public class Visualize extends GrammarMain {

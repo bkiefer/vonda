@@ -16,12 +16,12 @@ import org.slf4j.LoggerFactory;
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.hfc.db.server.HfcDbHandler;
-import de.dfki.mlt.rudimant.abstractTree.GrammarFile;
-import de.dfki.mlt.rudimant.abstractTree.RudiTree;
-import de.dfki.mlt.rudimant.abstractTree.VGenerationVisitor;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
+import de.dfki.mlt.rudimant.tree.GrammarFile;
+import de.dfki.mlt.rudimant.tree.RudiTree;
+import de.dfki.mlt.rudimant.tree.VGenerationVisitor;
 
 public class RudimantCompiler {
 

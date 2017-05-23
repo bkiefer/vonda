@@ -15,7 +15,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import de.dfki.mlt.rudimant.abstractTree.*;
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Da_tokenContext;
@@ -23,6 +22,7 @@ import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_blockContext;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_groupContext;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_labelContext;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_statementContext;
+import de.dfki.mlt.rudimant.tree.*;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
 
 /**
