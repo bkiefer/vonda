@@ -16,8 +16,6 @@ public class StatIf extends RTStatement {
   RTExpression condition;
   RTStatement statblockIf;
   RTStatement statblockElse;
-  String currentRule;
-  String conditionString;
 
   /**
    * if there is no else case, set statblockElse to null
@@ -28,12 +26,10 @@ public class StatIf extends RTStatement {
    * @param statblockElse the else block if existing
    * @param position
    */
-  public StatIf(String condString, RTExpression cond, RTStatement statIf,
-          RTStatement statElse) {
+  public StatIf(RTExpression cond, RTStatement statIf, RTStatement statElse) {
     condition = cond;
     statblockIf = statIf;
     statblockElse = statElse;
-    conditionString = condString;
   }
 
   @Override

@@ -13,8 +13,6 @@ package de.dfki.mlt.rudimant.tree;
  */
 public class ExpBoolean extends RTBinaryExp {
 
-  String rule;
-
   /**
    * if the expression consists of only one part, set right and operator to null
    *

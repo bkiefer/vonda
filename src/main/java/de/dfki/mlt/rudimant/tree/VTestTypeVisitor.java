@@ -183,7 +183,6 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
    */
   @Override
   public void visitNode(ExpBoolean node) {
-    node.rule = mem.getCurrentRule();
     node.left.visit(this);
     if (node.right != null) {
       node.right.visit(this);
@@ -466,7 +465,6 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
    */
   @Override
   public void visitNode(StatIf node) {
-    node.currentRule = mem.getCurrentRule();
     node.condition.visit(this);
     node.statblockIf.visit(this);
     if (node.statblockElse != null) {

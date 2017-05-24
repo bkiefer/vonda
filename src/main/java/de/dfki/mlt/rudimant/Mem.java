@@ -194,7 +194,7 @@ public class Mem {
    * @return
    */
   public boolean addVariableDeclaration(String variable, String type, String origin) {
-    if (current.containsKey(variable)) {
+    if (current.isVarDefined(variable)) {
       return false;
     }
     if(initializing){
@@ -207,7 +207,7 @@ public class Mem {
   }
 
   public boolean variableExists(String variable) {
-    return (current.containsKey(variable));
+    return (current.isVarDefined(variable));
   }
 
   /**
@@ -227,7 +227,7 @@ public class Mem {
    * @return the variable's type
    */
   public String getVariableType(String variable) {
-    return current.get(variable);
+    return current.getType(variable);
   }
 
   /**

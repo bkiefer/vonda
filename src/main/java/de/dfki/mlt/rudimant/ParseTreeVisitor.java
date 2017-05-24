@@ -391,11 +391,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitIf_statement(RobotGrammarParser.If_statementContext ctx) {
     // IF LPAR boolean_exp RPAR statement (ELSE statement)?
     if (ctx.getChildCount() == 5) {   // no else
-      return new StatIf(ctx.getChild(2).getText(), (RTExpression) visit(ctx.getChild(2)),
+      return new StatIf((RTExpression) visit(ctx.getChild(2)),
           visit(ctx.getChild(4)).ensureStatement(), null).setPosition(ctx, currentClass);
     }
     // if there is an else
-    return new StatIf(ctx.getChild(2).getText(), (RTExpression) visit(ctx.getChild(2)),
+    return new StatIf((RTExpression) visit(ctx.getChild(2)),
         visit(ctx.getChild(4)).ensureStatement(),
         visit(ctx.getChild(6)).ensureStatement()).setPosition(ctx, currentClass);
   }

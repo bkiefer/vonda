@@ -14,14 +14,16 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * represents a namespace (to be used by the memory=
+/** represents a variable/function scope, e.g., in a file / block
  *
  * @author Anna Welker
  */
 public class Environment {
 
   private static Logger logger = LoggerFactory.getLogger(Environment.class);
+
+  // The file that we're currently in
+  private String origin;
 
   private Map<String, String> variableToType;
   private Map<String, String> variableOrigin;
@@ -41,20 +43,17 @@ public class Environment {
     return newEnv;
   }
 
-  public void put(String v, String t) {
-    variableToType.put(v, t);
+  /** Set the type t and origin o (from which file) for variable v */
+  public void put(String var, String type, String origin) {
+    variableToType.put(var, type);
+    variableOrigin.put(var, origin);
   }
 
-  public void put(String v, String t, String o) {
-    put(v, t);
-    variableOrigin.put(v, o);
-  }
-
-  public boolean containsKey(String k) {
+  public boolean isVarDefined(String k) {
     return variableToType.containsKey(k);
   }
 
-  public String get(String k) {
+  public String getType(String k) {
     return variableToType.get(k);
   }
 
