@@ -48,7 +48,7 @@ public class RudimantCompiler {
   private List<String> subPackage = new ArrayList<>();
   private int rootLevel = 0;
 
-  private String className;
+  // private String className;
 
   private String packageName;
 
@@ -92,11 +92,11 @@ public class RudimantCompiler {
    * ATTENTION!! This method is only to be used to set a classname for testing
    * purposes!!!!!!!!!!!!!!
    * @param name
-   */
+   *
   public void setClassName(String name){
-    className = name;
+    // className = name;
     mem.setClassName(name);
-  }
+  }*/
 
   private void checkOutputDirectory(File configDir, Map<String, Object> configs)
       throws IOException {
@@ -114,18 +114,20 @@ public class RudimantCompiler {
     if (outputDirectory == null) return;
   }
 
-  public void initMem(File topLevel) {
-    String name = topLevel.getName();
-    name = name.substring(0, name.length() - RULES_FILE_EXTENSION.length());
-    mem.setToplevelFile(name);
-    mem.initializing = true;
+  /** Process the Agent.rudi, treating all definitions as if they came from
+   *  the toplevel rudi file.
+   * @param topLevel
+   */
+  public void initMem(String className) {
+    mem.setToplevelFile(className);
+    //mem.initializing = true;
     parent = null;
     try {
       processForReal(RudimantCompiler.class.getResourceAsStream(agentInit), null);
     } catch (IOException ex) {
       logger.error("Agent initializer file import fails: {}", ex);
     }
-    mem.initializing = false;
+    //mem.initializing = false;
   }
 
   private static RdfProxy startClient(File configDir, Map<String, Object> configs)
@@ -181,13 +183,15 @@ public class RudimantCompiler {
 
   /** Process the top-level rudi file */
   public void process(File topLevel) throws IOException {
-    initMem(topLevel);
+    String className = computeClassName(topLevel);
+    mem.enterClass(className);
+    initMem(className);
     inputDirectory = topLevel.getParentFile();
     File wrapperInit = new File(inputDirectory,
         wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + RULES_FILE_EXTENSION);
     try {
       if (wrapperInit.exists()) {
-        mem.initializing = true;
+        //mem.initializing = true;
         processForReal(new FileInputStream(wrapperInit), null);
       } else {
         logger.info("No method declaration file for {}", wrapperInit);
@@ -195,17 +199,17 @@ public class RudimantCompiler {
     } catch (IOException ex) {
       logger.error("Initializer file import: {}", ex);
     } finally {
-      mem.initializing = false;
+      //mem.initializing = false;
     }
     if (outputDirectory == null)
       outputDirectory = inputDirectory;
-    className = computeClassName(topLevel);
 
     if (packageName != null && !packageName.isEmpty()) {
       subPackage.addAll(Arrays.asList(packageName.split("\\.")));
       rootLevel = subPackage.size() - 1;
     }
     processForReal();
+    mem.leaveClass();
   }
 
   /** Process an imported rudi file */
@@ -218,9 +222,9 @@ public class RudimantCompiler {
     subPackage = parent.subPackage;
     subPackage.addAll(Arrays.asList(elements).subList(0, elements.length - 1));
 
-    className = capitalize(inputRealName);
-
+    mem.enterClass(capitalize(inputRealName));
     processForReal();
+    mem.leaveClass();
   }
 
   public void processImport(String importSpec) {
@@ -246,7 +250,8 @@ public class RudimantCompiler {
       }
     }
     return new File(result,
-        (inputRealName != null ? inputRealName : className) + RULES_FILE_EXTENSION);
+        (inputRealName != null ? inputRealName : mem.getClassName())
+        + RULES_FILE_EXTENSION);
   }
 
   /**
@@ -286,10 +291,6 @@ public class RudimantCompiler {
     return parent;
   }
 
-  public String getClassName() {
-    return className;
-  }
-
   public RudimantCompiler append(char c) {
     try {
       out.append(c);
@@ -316,14 +317,13 @@ public class RudimantCompiler {
     }
   }
 
-  public String computeClassName(File inputFile) {
+  private String computeClassName(File inputFile) {
     // remember the real name, without upper case transformation, so getInputFile()
     // won't crash
     inputRealName = inputFile.getName().replace(RULES_FILE_EXTENSION, "");
     String classname = null;
     try {
-      classname = inputRealName.substring(0, 1).toUpperCase()
-              + inputRealName.substring(1);
+      classname = capitalize(inputRealName);
     } catch (StringIndexOutOfBoundsException e) {
       logger.error("Could not find class name " + inputFile.getName());
     }
@@ -384,7 +384,7 @@ public class RudimantCompiler {
     if (!outputdir.isDirectory()) {
       Files.createDirectories(outputdir.toPath());
     }
-    File outputFile = new File(outputdir, className + ".java");
+    File outputFile = new File(outputdir, mem.getClassName() + ".java");
     Writer output = Files.newBufferedWriter(outputFile.toPath());
 
     File inputFile = getInputFile();
@@ -434,6 +434,13 @@ public class RudimantCompiler {
     return new Pair<>((GrammarFile)myTree, collector.getCollectedTokens());
   }
 
+  /** Prerequisite: mem.enterClass(<className>) has been called, and
+   *  mem.leaveClass(<className>) is called afterwards.
+   * @param in
+   * @param output
+   * @return
+   * @throws IOException
+   */
   public GrammarFile processForReal(InputStream in, Writer output)
       throws IOException {
     out = output;
@@ -442,19 +449,17 @@ public class RudimantCompiler {
       return null;
 
     GrammarFile gf = pair.first;
-    // do the type checking
+    // do the type checking, which also adds function and variable definitions
+    // to Mem
     gf.startTypeInference(this);
-    if (output == null) {
-      // then there is nothing to write to; we are in a memory initialization
-      return gf;
-    }
+
     if (visualise) {
       Visualize.show(gf, inputRealName);
     }
-    // tell the file its name (for class definition)
-    gf.setClassName(className);
-    // generate the output
-    gf.startGeneration(this, new VGenerationVisitor(this, pair.second));
+    if (output != null) {
+      // generate the output
+      gf.startGeneration(this, new VGenerationVisitor(this, pair.second));
+    }
     logger.info("Done parsing");
     return gf;
   }

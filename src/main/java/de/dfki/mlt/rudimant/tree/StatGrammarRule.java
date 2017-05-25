@@ -19,6 +19,7 @@ public class StatGrammarRule extends RTStatement {
   String label;
   StatIf ifstat;
   // remember whether you are toplevel
+  // TODO: EVENTUALLY REMOVE, CAN BE DETERMINED OTHERWISE (ClassEnv)
   boolean toplevel;
 
   public StatGrammarRule(String label, StatIf ifstat) {

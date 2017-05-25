@@ -6,7 +6,7 @@
 package de.dfki.mlt.rudimant.tree;
 
 import static de.dfki.mlt.rudimant.Constants.DIALOGUE_ACT_TYPE;
-import static de.dfki.mlt.rudimant.Utils.capitalize;
+import static de.dfki.mlt.rudimant.Utils.*;
 
 import java.io.StringWriter;
 import java.io.Writer;
@@ -143,7 +143,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     String ret = "";
     if (node.operator != null && node.operator.contains("(")) {
       // other operator, is it sth. like "exists("
-      if (! mem.getToplevelInstance().equalsIgnoreCase(rudi.getClassName())) {
+      if (! mem.getToplevelInstance().equalsIgnoreCase(mem.getClassName())) {
         ret += mem.getToplevelInstance() + ".";
       }
       ret += node.operator;
@@ -267,6 +267,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatGrammarRule node) {
+    mem.enterRule(node.label);
     if (node.toplevel) {
       // is a toplevel rule and will be converted to a method
       out.append("public void " + node.label + "(");
@@ -283,6 +284,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       out.append(node.label + ":\n");
       node.ifstat.visitWithComments(this);
     }
+    mem.leaveRule();
   }
 
   @Override
@@ -420,7 +422,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   @Override
   public void visitNode(StatReturn node) {
     if (mem.isExistingRule(node.lit)) {
-      if (mem.getTopLevelRules(mem.getClassName()).contains(node.curRuleLabel)) {
+      if (mem.isTopLevelRule(node.curRuleLabel)) {
         out.append("return;\n");
         return;
       }
@@ -429,6 +431,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       return;
 
     } else if (node.toRet == null) {
+      // TODO: IS THIS TESTED?
       if (mem.getCurrentRule().equals(mem.getClassName())) {
         out.append("return;\n");
         return;
@@ -535,8 +538,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   public String visitNode(ExpUFuncCall node) {
     String ret = "";
     if (node.realOrigin != null) {
-      String t = node.realOrigin;
-      ret += t.substring(0, 1).toLowerCase() + t.substring(1) + ".";
+      ret += lowerCaseFirst(node.realOrigin) + ".";
     }
     if(node.newexp){
       ret += Type.convertRdfType(node.type) + "(";
@@ -571,8 +573,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   @Override
   public String visitNode(ExpUVariable node) {
     if (node.realOrigin != null) {
-      String t = node.realOrigin;
-      return t.substring(0, 1).toLowerCase() + t.substring(1) + "." + node.content;
+      return lowerCaseFirst(node.realOrigin) + "." + node.content;
     } else {
       return node.content;
     }

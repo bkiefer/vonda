@@ -5,9 +5,12 @@
  */
 package de.dfki.mlt.rudimant.tree;
 
+import static de.dfki.mlt.rudimant.Utils.*;
+
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
@@ -24,14 +27,9 @@ public class GrammarFile extends RudiTree {
   // imports* (comment grammar_rule | method_declaration | statement )* comment
   List<RudiTree> rules;
   static Writer out;
-  String classname;
 
   public GrammarFile(List<RudiTree> rules) {
     this.rules = rules;
-  }
-
-  public void setClassName(String name) {
-    this.classname = name;
   }
 
   public boolean containsDefinition(RudiTree t) {
@@ -56,14 +54,16 @@ public class GrammarFile extends RudiTree {
   public void startTypeInference(RudimantCompiler rudi) {
     VTestTypeVisitor ttv = new VTestTypeVisitor(rudi);
     Mem mem = rudi.getMem();
-    mem.enterEnvironment();
-    String oldname = mem.getClassName();
-    String oldrule = mem.getCurrentRule();
-    String oldTrule = mem.getCurrentTopRule();
+    //mem.enterEnvironment();
+    //String oldname = mem.getClassName();
+    //String oldrule = mem.getCurrentRule();
+    //String oldTrule = mem.getCurrentTopRule();
+    /*
     if(rudi.getClassName() != null){
       setClassName(rudi.getClassName());
       mem.enterClass(rudi.getClassName());
     }
+    */
     List<RudiTree> nonDefs = new ArrayList<>(rules.size());
     // learn about all definitions before visiting the other statements!!
     // TODO: WHY? IF WE REQUIRE THE DEFINITION ALWAYS PRECEDING THE USE, THEN
@@ -86,6 +86,7 @@ public class GrammarFile extends RudiTree {
         rudi.processImport(node.content);
       }
       visitTypeInference(t, ttv);
+      /*
       // if t will later on be put into a stub function in GenerationVisitor,
       // we should add its predicted name to the mem so the method is called in
       // the correct position between the imports
@@ -101,9 +102,11 @@ public class GrammarFile extends RudiTree {
         mem.ontop = true;
         mem.addRule(fname);
       }
+      */
     }
-    if (mem.getToplevelCalls(rudi.getClassName()) != null) {
-      for (String s : mem.getToplevelCalls(rudi.getClassName())) {
+    /** TODO: REACTIVATE IN A PROPER WAY
+    if (mem.getToplevelCalls() != null) {
+      for (String s : mem.getToplevelCalls() {
         if(s.contains("(")){
           s = s.substring(s.indexOf("=") + 6, s.indexOf("("));
         }
@@ -113,10 +116,10 @@ public class GrammarFile extends RudiTree {
           }
         }
       }
-    }
+    }*/
     // do not leave the environment, we are still in it! (but remember to leave
     // it once the generation is done)
-    mem.leaveClass(oldname, oldrule, oldTrule);
+    //mem.leaveClass(oldname, oldrule, oldTrule);
   }
 
 
@@ -152,13 +155,12 @@ public class GrammarFile extends RudiTree {
         String impor = ((Import)r).name;
         String importn = impor.substring(0, 1).toUpperCase() + impor.substring(1);
         out.append("new " + importn + "(");
-        List<String> ncs = mem.getNeededClasses(impor);
+        Set<String> ncs = mem.getNeededClasses();
         if (ncs != null) {
           int i = 0;
           for (String c : ncs) {
-            if (c.equals(out.getClassName())
-                    || (c.substring(0, 1).toUpperCase()
-                            + c.substring(1)).equals(out.getClassName())) {
+            if (c.equals(mem.getClassName())
+                || capitalize(c).equals(mem.getClassName())) {
               c = "this";
             }
             if (i == 0) {
@@ -186,10 +188,10 @@ public class GrammarFile extends RudiTree {
 
   public void startGeneration(RudimantCompiler out, VGenerationVisitor gv) {
     Mem mem = out.getMem();
-    String oldname = mem.getClassName();
-    String oldrule = mem.getCurrentRule();
-    String oldTrule = mem.getCurrentTopRule();
-    mem.enterClass(out.getClassName());
+    //String oldname = mem.getClassName();
+    //String oldrule = mem.getCurrentRule();
+    //String oldTrule = mem.getCurrentTopRule();
+    //mem.enterClass(out.getClassName());
 
     // tell the file in which package it lies
     String pkg = out.getPackageName();
@@ -203,10 +205,12 @@ public class GrammarFile extends RudiTree {
     out.append("import de.dfki.mlt.rudimant.agent.DialogueAct;\n");
     out.append("import de.dfki.lt.hfc.db.rdfProxy.*;\n");
     out.append("import de.dfki.lt.hfc.types.*;\n");
-    // Let's import our supersuper class
+    // Let's import our supersuper class, TODO: maybe obsolete except for the
+    // wrapper class?
     out.append("import ");
     if (out.getParent() != null) {
-      out.append(pkg + out.getParent().getClassName());
+      // TODO: REACTIVATE PROPERLY
+      // out.append(pkg + out.getParent().getClassName());
     } else {
       out.append(out.getWrapperClass());
     }
@@ -218,19 +222,17 @@ public class GrammarFile extends RudiTree {
     // EXCEPTION: COMMENTS BEFORE ANY CODE, OR AM I WRONG?
     rules.get(0).printImportifJava(gv);
     // maybe we need to import the class that imported us to use its variables
-    String ext = "";
-    if(classname.toLowerCase()
-            .equals(mem.getToplevelInstance().toLowerCase())){
-      ext = " extends " + out.getWrapperClass();
+    out.append("public class " + mem.getClassName());
+    // check if this should extend the wrapper class
+    if (out.getParent() == null) {
+      out.append(" extends ").append(out.getWrapperClass());
     }
-    out.append("public class " + classname
-            + ext
-            + "{\n");
+    out.append("{\n");
 
     // create variable fields for all those classes whose concrete instances we
     // will need
-    for (String n : mem.getNeededClasses(classname)) {
-      if(n.equals(out.getClassName())) continue;
+    for (String n : mem.getNeededClasses()) {
+      if(n.equals(mem.getClassName())) continue;
       out.append("private final ");
       out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
               + n.substring(0, 1).toLowerCase() + n.substring(1));
@@ -259,8 +261,8 @@ public class GrammarFile extends RudiTree {
     }
     // get all those classes the toplevel rules need
     int i = 0;
-    for (String n : mem.getNeededClasses(out.getClassName())) {
-      if(n.equals(out.getClassName())) continue;
+    for (String n : mem.getNeededClasses()) {
+      if(n.equals(mem.getClassName())) continue;
       String name = n.substring(0, 1).toLowerCase() + n.substring(1);
       if (i == 0) {
         args += n.substring(0, 1).toUpperCase() + n.substring(1) + " "
@@ -272,7 +274,7 @@ public class GrammarFile extends RudiTree {
       declare += "this." + name + " = " + name + ";\n";
       i++;
     }
-    out.append("public " + out.getClassName() + "(" + args + ") {\n"
+    out.append("public " + mem.getClassName() + "(" + args + ") {\n"
             + "super(" + conargs + ");\n" + declare + "}\n");
 
     // finally, the main processing method that will call all rules and imports
@@ -280,8 +282,8 @@ public class GrammarFile extends RudiTree {
     writeRuleList(out, gv);
 
     out.append("}\n");
-    mem.leaveClass(oldname, oldrule, oldTrule);
-    mem.leaveEnvironment();
+    //mem.leaveClass(oldname, oldrule, oldTrule);
+    //mem.leaveEnvironment();
   }
 
   @Override

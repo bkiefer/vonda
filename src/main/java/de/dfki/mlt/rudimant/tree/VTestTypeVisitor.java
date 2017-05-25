@@ -106,7 +106,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
         node.left.type = node.type; // the type of the declaration is in this node
       }
       mem.addVariableDeclaration(((ExpUVariable) node.left).content,
-              node.left.type, mem.getClassName());
+              node.left.type);
       if (node.right.type == null) {
         node.right.propagateType(node.type);
       }
@@ -123,7 +123,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
       }
       node.type = node.left.type = node.right.type;
       mem.addVariableDeclaration(((ExpUVariable) node.left).content,
-              node.left.type, mem.getClassName());
+              node.left.type);
     }
     if (node.right instanceof ExpUVariable && !mem.variableExists(node.right.toString())) {
       rudi.typeError("Assignment of a value of a non-existing variable " + node.right + "to " + node.left, node);
@@ -291,7 +291,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   public void visitNode(ExpLambda node) {
     mem.enterEnvironment();
     for(String arg : node.parameters){
-      mem.addVariableDeclaration(arg, node.parType, mem.getClassName());
+      mem.addVariableDeclaration(arg, node.parType);
     }
     if (node.body instanceof RTExpression) {
       RTExpression exp = (RTExpression)node.body;
@@ -306,8 +306,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
 
   @Override
   public void visitNode(StatGrammarRule node) {
-    node.toplevel = mem.ontop;
-    mem.addRule(node.label);
+    node.toplevel = mem.enterRule(node.label);
     // we step down into a new environment (later turned to a method) whose
     //  variables cannot be seen from the outside
     if (node.toplevel) {
@@ -317,6 +316,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     if (node.toplevel) {
       mem.leaveEnvironment();
     }
+    mem.leaveRule();
   }
 
   @Override
@@ -359,7 +359,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
         node.varType = innerIterableType;
       }
     }
-    mem.addVariableDeclaration(node.var.toString(), node.varType, node.position);
+    mem.addVariableDeclaration(node.var.toString(), node.varType);
     node.statblock.visit(this);
   }
 
@@ -371,7 +371,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     // TODO: this is a bit more complicated; remember the types of the variables
     // that were declared in the condition
     for (String s : node.variables) {
-      mem.addVariableDeclaration(s, "Object", node.position);
+      mem.addVariableDeclaration(s, "Object");
     }
   }
 
@@ -389,10 +389,10 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
                   + " doesn't fit its objects' type: " + elementType
                   + " vs " + node.objects.get(0).getType(), node);
         }
-        mem.addVariableDeclaration(node.variableName, type, node.origin);
+        mem.addVariableDeclaration(node.variableName, type);
       } else {
         node.listType = "List<" + node.objects.get(0).getType() + ">";
-        mem.addVariableDeclaration(node.variableName, type, node.origin);
+        mem.addVariableDeclaration(node.variableName, type);
       }
     } else if (node.listType == null) {
       node.listType = "List<Object>";
@@ -430,7 +430,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
    * ********************************************************************* */
   @Override
   public void visitNode(StatVarDef node) {
-    mem.addVariableDeclaration(node.variable, node.type, mem.getClassName());
+    mem.addVariableDeclaration(node.variable, node.type);
   }
 
   @Override
@@ -438,8 +438,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     for(int i = 0; i < node.partypes.size(); i++){
       node.partypes.set(i, Type.checkRdf(node.partypes.get(i)));
     }
-    mem.addFunction(node.name, node.return_type, node.calledUpon, node.partypes,
-            mem.getClassName());
+    mem.addFunction(node.name, node.return_type, node.calledUpon, node.partypes);
     node.return_type = Type.checkRdf(node.return_type);
     if (node.block != null) {
       // The following variables (function parameters) are local to the method
@@ -448,8 +447,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
       mem.enterEnvironment();
       for (int i = 0; i < node.parameters.size(); i++) {
         // add parameters to environment
-        mem.addVariableDeclaration(node.parameters.get(i), node.partypes.get(i),
-                mem.getClassName());
+        mem.addVariableDeclaration(node.parameters.get(i), node.partypes.get(i));
       }
       node.block.visit(this);
       mem.leaveEnvironment();
@@ -645,9 +643,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
       partypes.add(e.getType());
     }
     String o = mem.getFunctionOrigin(node.content, partypes);
-    if (o != null && rudi.getClassName() != null &&
-            !rudi.getClassName().toLowerCase().equals(o.toLowerCase())) {
-      mem.needsClass(mem.getCurrentTopRule(), o);
+    if (o != null) {
       node.realOrigin = o;
     }
     if (node.type == null) {
@@ -681,11 +677,10 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   @Override
   public void visitNode(ExpUVariable node) {
     if (node.type != null && mem.getVariableType(node.content) == null) {
-      mem.addVariableDeclaration(node.fullexp, node.type, node.originClass);
+      mem.addVariableDeclaration(node.fullexp, node.type);
       return;
     }
     node.type = mem.getVariableType(node.fullexp);
-    String o = mem.getVariableOriginClass(node.fullexp);
     // we could have sth like Introduction, that is an undeclared rdf class
     RdfClass cl = mem.getProxy().fetchClass(node.content);
     if (cl != null) {
@@ -694,10 +689,8 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
         node.content = "\"" + node.content + "\"";
       }
     }
-
-    if (o != null && (node.originClass != null &&
-        !node.originClass.toLowerCase().equals(o.toLowerCase()))) {
-      mem.needsClass(mem.getCurrentTopRule(), o);
+    String o = mem.getVariableOriginClass(node.fullexp);
+    if (o != null) {
       node.realOrigin = o;
     }
   }

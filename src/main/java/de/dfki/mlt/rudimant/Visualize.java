@@ -39,14 +39,21 @@ public class Visualize extends GrammarMain {
     return new ByteArrayInputStream(toParse.getBytes());
   }
 
+  private static RudimantCompiler initRc()
+      throws IOException, WrongFormatException {
+    RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
+    rc.getMem().enterClass("test");
+    rc.initMem("test");
+    return rc;
+  }
+
   public static String generate(String in) {
     RudimantCompiler rc;
     try {
-      rc = RudimantCompiler.init(confDir, configs);
-      rc.initMem(new File("test.rudi"));
-      rc.setClassName("test");
+      rc = initRc();
       StringWriter sw = new StringWriter();
       rc.processForReal(getInput(in), sw);
+      rc.getMem().leaveClass();
       rc.flush();
       return sw.toString();
     } catch (IOException | WrongFormatException e) {
@@ -98,10 +105,10 @@ public class Visualize extends GrammarMain {
   public static GrammarFile parseAndTypecheck(InputStream in) {
     try {
       // create the abstract syntax tree
-      RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
-      rc.initMem(new File("test.rudi"));
-      rc.setClassName("test");
-      return rc.processForReal(in, null);
+      RudimantCompiler rc = initRc();
+      GrammarFile result = rc.processForReal(in, null);
+      rc.getMem().leaveClass();
+      return result;
     } catch (Exception ex) {
       throw new RuntimeException(ex);
     }
@@ -114,10 +121,10 @@ public class Visualize extends GrammarMain {
   public static GrammarFile parseAndTypecheck(InputStream in, Writer out) {
     try {
       // create the abstract syntax tree
-      RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
-      rc.initMem(new File("test.rudi"));
-      rc.setClassName("test");
-      return rc.processForReal(in, out);
+      RudimantCompiler rc = initRc();
+      GrammarFile result = rc.processForReal(in, out);
+      rc.getMem().leaveClass();
+      return result;
     } catch (Exception ex) {
       throw new RuntimeException(ex);
     }
@@ -131,11 +138,11 @@ public class Visualize extends GrammarMain {
       throws Throwable {
     try {
       // create the abstract syntax tree
-      RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
-      rc.initMem(new File("test.rudi"));
-      rc.setClassName("test");
+      RudimantCompiler rc = initRc();
       rc.throwTypeErrors();
-      return rc.processForReal(in, out);
+      GrammarFile result = rc.processForReal(in, out);
+      rc.getMem().leaveClass();
+      return result;
     } catch (RuntimeException ex) {
       if (ex.getCause() instanceof TypeException)
         throw ex.getCause();

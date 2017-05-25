@@ -12,7 +12,7 @@ package de.dfki.mlt.rudimant.tree;
  */
 public class ExpUVariable extends RTExpLeaf {
 
-  String originClass;
+  //String originClass;
   // set to the class whose attribute this variable is; null if the variable
   // is declared in originClass
   String realOrigin;
@@ -24,7 +24,7 @@ public class ExpUVariable extends RTExpLeaf {
 
   public ExpUVariable(String representation, String originClass) {
     content = representation;
-    this.originClass = originClass;
+    //this.originClass = originClass;
   }
 
   @Override

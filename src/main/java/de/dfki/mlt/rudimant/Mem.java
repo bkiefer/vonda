@@ -25,22 +25,17 @@ public class Mem {
 
   private static Logger logger = LoggerFactory.getLogger(Mem.class);
 
-  // to remember those labels that get an own method
-  public int ruleNumber = 1;
-  private HashMap<String, HashMap<String, Integer>> ruleNums = new HashMap<>();
+  /** A stack of active class environments, representing the files that are
+   *  currently processed.
+   *
+   *  When processing starts, the ClassEnv for the first source file must be
+   *  added, then the Agent.rudi must be processed as if it was part of this
+   *  file, and then normal processing commences.
+   */
+  final private Deque<ClassEnv> classes;
 
+  /** A stack of the active variable / function scopes */
   final private Deque<Environment> environment;
-
-  private Environment current;
-
-  // every toplevel rule might use variables of super rules from the super file
-  private String curRule;
-  private String curClass;
-  private String curTopRule;
-  private HashMap<String, List<String>> neededClasses = new HashMap<>();
-
-  // remember the toplevel rules and imports in the correct order
-  private Map<String, List<String>> rulesAndImports;
 
   private RdfProxy _proxy;
 
@@ -51,19 +46,19 @@ public class Mem {
    * to be able to not go down into environments for our different
    * initialization files
    **/
-  boolean initializing = false;
+  //boolean initializing = false;
 
   // the rudi file that represents the Agent
   private String upperRudi;
 
   public Mem(RdfProxy proxy) {
     environment = new ArrayDeque<>();
-    rulesAndImports = new HashMap<>();
+    classes = new ArrayDeque<>();
     _proxy = proxy;
     Type.setProxy(proxy);
-    current = new Environment();
+    // current = new Environment();
     // enter our very first environment,
-    enterEnvironment();
+    // enterEnvironment();
   }
 
   public void setToplevelFile(String name) {
@@ -82,9 +77,14 @@ public class Mem {
    * ATTENTION!! This method is only to be used to set a classname for testing
    * purposes!!!!!!!!!!!!!!
    * @param name
-   */
+   *
   public void setClassName(String name){
-    curClass = name;
+    classes.push(new ClassEnv(name));// curClass = name;
+  }*/
+
+  /** Get the current ClassEnv (the one treated now) */
+  private ClassEnv curClass() {
+    return classes.peekFirst();
   }
 
   /**
@@ -95,14 +95,10 @@ public class Mem {
    * @param classname of the new class
    */
   public void enterClass(String classname) {
-    curClass = classname;
-    curRule = classname;
-    if (ruleNums.get(classname) == null) {
-      ruleNums.put(classname, new HashMap<String, Integer>());
-      neededClasses.put(classname, new ArrayList<String>());
-      rulesAndImports.put(classname, new ArrayList<String>());
-    }
-    needsClass(classname, upperRudi);
+    enterEnvironment();
+    classes.push(new ClassEnv(classname, environment.size()));
+    // curRule = classname;
+    curClass().needsClass(upperRudi);
   }
 
   /**
@@ -111,41 +107,33 @@ public class Mem {
    * @return
    */
   public String getClassName() {
-    if(curClass != null){
-      return curClass;
+    if(! classes.isEmpty()){
+      return curClass().getName();
     } else {
       return upperRudi;
     }
   }
 
-  /**
-   * get the name of the current rule
-   *
-   * @return
-   */
-  public String getCurrentRule() {
-    return curRule;
+  public void leaveClass() {
+    classes.pop();
+    leaveEnvironment();
   }
 
-  public String getCurrentTopRule() {
-    if (curTopRule == null) {
-      return curClass;
-    }
-    return curTopRule;
+  public boolean enterRule(String name) {
+    // TODO: The condition must be: We're in the topmost
+    // environment of a file. This is not the nicest solution
+    return curClass().enterRule(name)
+        && environment.size() == curClass().getClassEnvironment();
   }
 
-  public void leaveClass(String oldClassName, String oldCurRule, String oldCurTRule) {
-    if (oldClassName != null) {
-      curClass = oldClassName;
-      if (oldCurRule != null) {
-        curRule = oldCurRule;
-        curTopRule = oldCurTRule;
-      } else {
-        curRule = oldClassName;
-        curTopRule = oldClassName;
-      }
-    }
-  }
+  public void leaveRule() { curClass().leaveRule(); }
+
+  public String getCurrentRule() { return curClass().getCurrentRule(); }
+
+  private static final Set<String> KNOWN_FUNCTIONS =
+      new HashSet<>(Arrays.asList(new String[] {
+          "equals", "startsWith", "endsWith", "substring", "info"
+      }));
 
   /** Add a function/method declaration, optionally with return and parameter
    *  types. If the types are not known, it's assumed they are null.
@@ -156,24 +144,26 @@ public class Mem {
    * @param origin first element class, second rule origin
    */
   public void addFunction(String funcname, String functype, String calledUpon,
-          List<String> partypes, String origin) {
-    if(funcname.equals("equals") || funcname.equals("startsWith")
-            || funcname.equals("endsWith") || funcname.equals("substring")
-            || funcname.equals("info")){
-      origin = null;
-    } else if(initializing){
-      origin = upperRudi;
+          List<String> partypes) {
+    String origin = null;
+    if(! KNOWN_FUNCTIONS.contains(funcname)) {
+      origin = getClassName();
     }
-    current.addFunction(funcname, functype, calledUpon, partypes, origin, this);
+    current().addFunction(funcname, functype, calledUpon, partypes, origin, this);
   }
 
   public String getFunctionOrigin(String funcname, List<String> partypes){
-    return current.getFunctionOrigin(funcname, partypes, this);
+    String origin = current().getFunctionOrigin(funcname, partypes, this);
+    if (origin != null && ! origin.equals(getClassName())) {
+      curClass().needsClass(origin);
+      return origin;
+    }
+    return null;
   }
 
   public boolean existsFunction(String funcname,
           List<String> partypes) {
-    return current.existsFunction(funcname, partypes, this);
+    return current().existsFunction(funcname, partypes, this);
   }
 
   /**
@@ -183,7 +173,7 @@ public class Mem {
    * @return its return type or null
    */
   public String getFunctionRetType(String funcname, String calledUpon, List<String> partypes) {
-    return current.getFunctionRetType(funcname, calledUpon, partypes, this);
+    return current().getFunctionRetType(funcname, calledUpon, partypes, this);
   }
 
   /**
@@ -193,21 +183,20 @@ public class Mem {
    * @param origin first element class, second rule origin
    * @return
    */
-  public boolean addVariableDeclaration(String variable, String type, String origin) {
-    if (current.isVarDefined(variable)) {
+  public boolean addVariableDeclaration(String variable, String type) {
+    if (current().isVarDefined(variable)) {
       return false;
     }
-    if(initializing){
-      origin = upperRudi;
-    }
+    // TODO: GET RID OF INITIALIZING IF POSSIBLE
+    String origin = (classes.size() == 1) ? upperRudi : getClassName();
     type = Type.checkRdf(type);
-    current.put(variable, type, origin);
+    current().put(variable, type, origin);
     logger.trace("Add var {}:{} [{}]", environment.size(), variable, type);
     return true;
   }
 
   public boolean variableExists(String variable) {
-    return (current.isVarDefined(variable));
+    return (current().isVarDefined(variable));
   }
 
   /**
@@ -217,7 +206,12 @@ public class Mem {
    * @return the class it came from, null if not declared
    */
   public String getVariableOriginClass(String variable) {
-    return current.getOrigin(variable);
+    String origin = current().getOrigin(variable);
+    if (origin != null && ! origin.equals(getClassName())) {
+      curClass().needsClass(origin);
+      return origin;
+    }
+    return null;
   }
 
   /**
@@ -227,7 +221,11 @@ public class Mem {
    * @return the variable's type
    */
   public String getVariableType(String variable) {
-    return current.getType(variable);
+    return current().getType(variable);
+  }
+
+  private Environment current() {
+    return environment.peekFirst();
   }
 
   /**
@@ -235,14 +233,16 @@ public class Mem {
    */
   public void enterEnvironment() {
     logger.trace("Enter level {}", environment.size());
-    environment.push(current);
-    current = current.deepCopy();
+    // by copying the existing environment, we avoid searching through all
+    // lower environments at the cost of bigger space consumption
+    environment.push(
+        environment.isEmpty() ? new Environment() : current().deepCopy());
   }
 
   public void leaveEnvironment() {
-    logger.trace("Leave level {}", environment.size());
     // restore the values in actual that we changed
-    current = environment.isEmpty() ? null : environment.pop();
+    environment.pop();
+    logger.trace("Leave level {}", environment.size());
   }
 
   /**
@@ -251,24 +251,19 @@ public class Mem {
    * @param rule
    * @param toplevel
    * @return the rule's number, to be used in bitwise if markers
-   */
+   *
   public void addRule(String rule) {
     if (ontop) {
       ontop = false;
-      rulesAndImports.get(curClass).add(rule);
-      ruleNumber = 1;
-      curTopRule = rule;
-    } else {
-      ruleNumber *= 2;
+      curClass().addRuleOrImport(rule);
     }
-    ruleNums.get(curClass).put(rule, ruleNumber);
-    curRule = rule;
-    neededClasses.put(rule, new ArrayList<String>());
-  }
+    //curRule = rule;
+    // neededClasses.put(rule, new ArrayList<String>());
+  }*/
 
   public void addImport(String importName, String conargs) {
     String importClassName = capitalize(importName);
-    rulesAndImports.get(curClass).add(importClassName + " "
+    curClass().addRuleOrImport(importClassName + " "
             + importName + " = new " + importClassName + "(");
   }
 
@@ -279,14 +274,14 @@ public class Mem {
    * @return
    */
   public List<String> getToplevelCalls(String classname) {
-    return rulesAndImports.get(classname);
+    return curClass().getRulesAndImports();
   }
 
   /**
    * return all toplevel rules contained in the given class
    * @param classname
    * @return
-   */
+   *
   public Set<String> getTopLevelRules(String classname) {
     HashSet<String> rs = new HashSet<>();
     for (String k : ruleNums.get(classname).keySet()) {
@@ -295,6 +290,11 @@ public class Mem {
       }
     }
     return rs;
+  }*/
+
+  public boolean isTopLevelRule(String name) {
+    // TODO: IMPLEMENT
+    return false;
   }
 
   /**
@@ -305,19 +305,21 @@ public class Mem {
    * @param ruleclass the class needed
    */
   public void needsClass(String rule, String ruleclass) {
-    if(curClass.toLowerCase().equals(ruleclass.toLowerCase())
-        || neededClasses.get(rule).contains(ruleclass)){
-      return;
-    }
-    neededClasses.get(rule).add(ruleclass);
+
+    curClass().needsClass(ruleclass);
   }
 
-  public List<String> getNeededClasses(String ruleOrClass) {
-    return neededClasses.get(ruleOrClass);
+  /** Return the set of needed classes to generate the proper import statements
+   *  TODO: IS THE CLASS NAME PARAMETER REALLY NEEDED?
+   * @param ruleOrClass
+   * @return
+   */
+  public Set<String> getNeededClasses() {
+    return curClass().getNeededClasses();
   }
 
   public boolean isExistingRule(String rule) {
-    return ruleNums.get(curClass).containsKey(rule);
+    return curClass().isActiveRule(rule);
   }
 
   public ExpUSingleValue degradeToString(ExpUVariable variable){
