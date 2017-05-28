@@ -14,21 +14,18 @@ import java.util.ArrayList;
 public class StatListCreation extends RTStatement {
 
   ArrayList<RTExpression> objects;
-  String origin;
   String variableName;
   String listType;
 
   public StatListCreation(String varName, ArrayList<RTExpression> objs,
           String orig) {
     objects = objs;
-    origin = orig;
     variableName = varName;
   }
 
   public StatListCreation(String varName, ArrayList<RTExpression> objs,
           String orig, String lType) {
     objects = objs;
-    origin = orig;
     variableName = varName;
     listType = lType;
   }

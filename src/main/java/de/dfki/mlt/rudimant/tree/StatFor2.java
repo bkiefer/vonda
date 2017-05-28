@@ -8,8 +8,8 @@ package de.dfki.mlt.rudimant.tree;
 import java.util.Arrays;
 
 /**
- * FOR LPAR VARIABLE COLON exp RPAR loop_statement_block a 'modern' for
- * statement
+ * FOR LPAR VARIABLE COLON exp RPAR loop_statement_block 
+ * a 'modern' for statement
  *
  * @author Anna Welker
  */

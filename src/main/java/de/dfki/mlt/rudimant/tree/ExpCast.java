@@ -8,25 +8,22 @@ package de.dfki.mlt.rudimant.tree;
 import java.util.Arrays;
 
 /**
- * Either used to encode a normal java creation using new or to create a new
- * rdf object
+ * A Java-like cast
  * @author pal
  */
 public class ExpCast extends RTExpression {
 
   // the java object creation as a function call
-  RTExpression construct;
+  RTExpression expression;
 
   /**
    *
-   * @param toCreate set to the rdf object class whose type should be created
-   *                  or to null if this is a java creation
-   * @param construct set to the function call that represents the java creation
-   *                  (to null if no java creation)
+   * @param t set to the type that the exp is casted to
+   * @param exp set to the expression that is casted
    */
-  public ExpCast(String t, RTExpression con){
+  public ExpCast(String t, RTExpression exp){
     type = t;
-    construct = con;
+    expression = exp;
   }
 
   @Override
@@ -56,7 +53,7 @@ public class ExpCast extends RTExpression {
 
   @Override
   public Iterable<? extends RudiTree> getDtrs() {
-    RudiTree[] dtrs = { construct };
+    RudiTree[] dtrs = { expression };
     return Arrays.asList(dtrs);
   }
 

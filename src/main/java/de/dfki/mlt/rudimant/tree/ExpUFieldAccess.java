@@ -19,7 +19,6 @@ public class ExpUFieldAccess extends RTExpLeaf {
 
   List<RTExpression> parts;
   List<String> representation;
-  boolean asked = false;
 
   public ExpUFieldAccess(List<RTExpression> parts, List<String> representation) {
     this.parts = parts;
