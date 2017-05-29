@@ -118,6 +118,10 @@ public class Mem {
     classes.pop();
     leaveEnvironment();
   }
+  
+  public boolean isActiveRule(String name) {
+	return curClass().isActiveRule(name);
+  }
 
   public boolean enterRule(String name) {
     // TODO: The condition must be: We're in the topmost
