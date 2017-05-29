@@ -21,7 +21,7 @@ public class StatFor1 extends RTStatement {
   RTStatement statblock;
 
   public StatFor1(ExpAssignment assignment, ExpBoolean condition,
-          RTExpression arithmetic, RTStatement statblock, String position) {
+          RTExpression arithmetic, RTStatement statblock) {
     this.initialization = assignment;
     this.condition = condition;
     this.increment = arithmetic;

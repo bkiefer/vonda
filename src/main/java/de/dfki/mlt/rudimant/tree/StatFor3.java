@@ -20,13 +20,11 @@ public class StatFor3 extends RTStatement {
   List<String> variables;
   RTExpression initialization;
   RTStatement statblock;
-  String position;
 
-  public StatFor3(List<String> vars, RTExpression exp, RTStatement block, String pos) {
+  public StatFor3(List<String> vars, RTExpression exp, RTStatement block) {
     variables = vars;
     initialization = exp;
     statblock = block;
-    position = pos;
   }
 
   @Override

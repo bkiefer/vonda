@@ -8,7 +8,7 @@ package de.dfki.mlt.rudimant.tree;
 import java.util.Arrays;
 
 /**
- * FOR LPAR VARIABLE COLON exp RPAR loop_statement_block 
+ * FOR LPAR VARIABLE COLON exp RPAR loop_statement_block
  * a 'modern' for statement
  *
  * @author Anna Welker
@@ -19,19 +19,16 @@ public class StatFor2 extends RTStatement {
   ExpUVariable var;
   RTExpression initialization;
   RTStatement statblock;
-  String position;
 
-  public StatFor2(ExpUVariable v, RTExpression e, RTStatement stat,
-      String pos) {
+  public StatFor2(ExpUVariable v, RTExpression e, RTStatement stat) {
     var = v;
     initialization = e;
     statblock = stat;
     varType = null;
-    position = pos;
   }
 
   public StatFor2(String vType, ExpUVariable v, RTExpression exp,
-      RTStatement stat, String pos) {
+      RTStatement stat) {
     var = v;
     initialization = exp;
     statblock = stat;
@@ -40,7 +37,6 @@ public class StatFor2 extends RTStatement {
     } else {
       varType = vType;
     }
-    position = pos;
   }
 
   @Override
