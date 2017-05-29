@@ -54,16 +54,6 @@ public class GrammarFile extends RudiTree {
   public void startTypeInference(RudimantCompiler rudi) {
     VTestTypeVisitor ttv = new VTestTypeVisitor(rudi);
     Mem mem = rudi.getMem();
-    //mem.enterEnvironment();
-    //String oldname = mem.getClassName();
-    //String oldrule = mem.getCurrentRule();
-    //String oldTrule = mem.getCurrentTopRule();
-    /*
-    if(rudi.getClassName() != null){
-      setClassName(rudi.getClassName());
-      mem.enterClass(rudi.getClassName());
-    }
-    */
     List<RudiTree> nonDefs = new ArrayList<>(rules.size());
     // learn about all definitions before visiting the other statements!!
     // TODO: WHY? IF WE REQUIRE THE DEFINITION ALWAYS PRECEDING THE USE, THEN
@@ -76,9 +66,6 @@ public class GrammarFile extends RudiTree {
       }
     }
     for (RudiTree t : nonDefs) {
-      if(t instanceof StatGrammarRule){
-        mem.ontop = true;
-      }
       if (t instanceof Import) {
         Import node = (Import)t;
         String conargs = "";
@@ -86,40 +73,7 @@ public class GrammarFile extends RudiTree {
         rudi.processImport(node.content);
       }
       visitTypeInference(t, ttv);
-      /*
-      // if t will later on be put into a stub function in GenerationVisitor,
-      // we should add its predicted name to the mem so the method is called in
-      // the correct position between the imports
-      // TODO: CHECK IF THIS IS REALLY STILL NECESSARY, esp. because of the
-      // number appended to the function name.
-      if(!(t instanceof StatAbstractBlock
-           || t instanceof Import
-           || t instanceof StatMethodDeclaration
-           || t instanceof StatGrammarRule)){
-        String fname = rudi.getClassName() + rules.indexOf(t);
-        // add the function to our mem as if it was a rule, so it is called in
-        // the process function
-        mem.ontop = true;
-        mem.addRule(fname);
-      }
-      */
     }
-    /** TODO: REACTIVATE IN A PROPER WAY
-    if (mem.getToplevelCalls() != null) {
-      for (String s : mem.getToplevelCalls() {
-        if(s.contains("(")){
-          s = s.substring(s.indexOf("=") + 6, s.indexOf("("));
-        }
-        if (mem.getNeededClasses(s) != null) {
-          for (String n : mem.getNeededClasses(s)) {
-            mem.needsClass(rudi.getClassName(), n);
-          }
-        }
-      }
-    }*/
-    // do not leave the environment, we are still in it! (but remember to leave
-    // it once the generation is done)
-    //mem.leaveClass(oldname, oldrule, oldTrule);
   }
 
 
@@ -139,10 +93,9 @@ public class GrammarFile extends RudiTree {
       }
     }
     // create the process method
-    out.append("\tpublic boolean process(");
-    out.append("){\n");
+    out.append("  public boolean process(){\n");
     // initialize me according to the super class init
-    out.append("// this.init();\n");
+    //out.append("// this.init();\n");
     // use all methods created from rules in this file
     for(RudiTree r : rules){
       // rules, method declarations and imports are a special case
@@ -152,9 +105,7 @@ public class GrammarFile extends RudiTree {
       } else if (r instanceof StatMethodDeclaration){
         later.add((StatMethodDeclaration)r);
       } else if (r instanceof Import){
-        String impor = ((Import)r).name;
-        String importn = impor.substring(0, 1).toUpperCase() + impor.substring(1);
-        out.append("if (new " + importn + "(");
+        out.append("if (new " + capitalize(((Import)r).name) + "(");
         Set<String> ncs = mem.getNeededClasses();
         if (ncs != null) {
           int i = 0;
@@ -163,13 +114,8 @@ public class GrammarFile extends RudiTree {
                 || capitalize(c).equals(mem.getClassName())) {
               c = "this";
             }
-            if (i == 0) {
-              out.append(c.substring(0, 1).toLowerCase()
-                      + c.substring(1));
-            } else {
-              out.append(", " + c.substring(0, 1).toLowerCase()
-                      + c.substring(1));
-            }
+            if (i != 0) out.append(", ");
+            out.append(lowerCaseFirst(c));
             i++;
           }
         }
@@ -202,15 +148,11 @@ public class GrammarFile extends RudiTree {
     out.append("import de.dfki.lt.hfc.types.*;\n");
     // Let's import our supersuper class, TODO: maybe obsolete except for the
     // wrapper class?
-    if (out.getParent() != null) {
-      // TODO: REACTIVATE PROPERLY
-      //out.append("import ");
-      //out.append(pkg + out.getParent().getClassName());
-    } else {
-     out.append("import ");
-     out.append(out.getWrapperClass());
+    if (out.getParent() == null) {
+      out.append("import ");
+      out.append(out.getWrapperClass());
+      out.append(";\n");
     }
-    out.append(";\n");
 
     // we also need all imports that might be hidden in /*@ in the rudi
     // so, look for it in the comment before the first element we've got
@@ -259,19 +201,14 @@ public class GrammarFile extends RudiTree {
     int i = 0;
     for (String n : mem.getNeededClasses()) {
       if(n.equals(mem.getClassName())) continue;
-      String name = n.substring(0, 1).toLowerCase() + n.substring(1);
-      if (i == 0) {
-        args += n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-                + name;
-      } else {
-        args += ", " + n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-                + name;
-      }
+      String name = lowerCaseFirst(n);
+      if (i != 0) args += ", ";
+      args += capitalize(n) + " " + name;
       declare += "this." + name + " = " + name + ";\n";
       i++;
     }
     out.append("public " + mem.getClassName() + "(" + args + ") {\n"
-            + "super(" + conargs + ");\n" + declare + "}\n");
+        + "super(" + conargs + ");\n" + declare + "}\n");
 
     // finally, the main processing method that will call all rules and imports
     // declared in this file

@@ -39,14 +39,6 @@ public class Mem {
 
   private RdfProxy _proxy;
 
-  // to be set by grammarfile if a toplevel rule is expected
-  public boolean ontop = false;
-
-  /**
-   * to be able to not go down into environments for our different
-   * initialization files
-   **/
-  //boolean initializing = false;
 
   // the rudi file that represents the Agent
   private String upperRudi;
@@ -56,9 +48,6 @@ public class Mem {
     classes = new ArrayDeque<>();
     _proxy = proxy;
     Type.setProxy(proxy);
-    // current = new Environment();
-    // enter our very first environment,
-    // enterEnvironment();
   }
 
   public void setToplevelFile(String name) {
@@ -73,51 +62,36 @@ public class Mem {
     return _proxy;
   }
 
-  /**
-   * ATTENTION!! This method is only to be used to set a classname for testing
-   * purposes!!!!!!!!!!!!!!
-   * @param name
-   *
-  public void setClassName(String name){
-    classes.push(new ClassEnv(name));// curClass = name;
-  }*/
-
   /** Get the current ClassEnv (the one treated now) */
   private ClassEnv curClass() {
     return classes.peekFirst();
   }
 
-  /**
-   * enter a new (imported) class. please store the old values of
-   * getcurrentClass() and getCurrentRule in your visitor and use leaveClass()
-   * to give them back to the memory after the new class has been handled
+  /** Enter a new (imported) class. Automatically enters a new variable scope
+   *  (Environment), too.
    *
    * @param classname of the new class
    */
   public void enterClass(String classname) {
     enterEnvironment();
     classes.push(new ClassEnv(classname, environment.size()));
-    // curRule = classname;
     curClass().needsClass(upperRudi);
   }
 
-  /**
-   * get the name of the current class
-   *
-   * @return
+  /** Leave processing of a class. To be called at the very end of processing
+   *  the top-level class or import.
    */
-  public String getClassName() {
-    if(! classes.isEmpty()){
-      return curClass().getName();
-    } else {
-      return upperRudi;
-    }
-  }
-
   public void leaveClass() {
     classes.pop();
     leaveEnvironment();
   }
+
+  /** get the name of the current class
+   *
+   * @return The name of the current class to be generated.
+   */
+  public String getClassName() { return curClass().getName(); }
+
 
   public boolean enterRule(String name) {
     // TODO: The condition must be: We're in the topmost
@@ -128,7 +102,13 @@ public class Mem {
 
   public void leaveRule() { curClass().leaveRule(); }
 
+  /** Return the name of the innermost rule we're in */
   public String getCurrentRule() { return curClass().getCurrentRule(); }
+
+  /** Return true if we are in a rule (somehow) with this name */
+  public boolean isExistingRule(String rule) {
+    return curClass().isActiveRule(rule);
+  }
 
   /*
   private static final Set<String> KNOWN_FUNCTIONS =
@@ -153,6 +133,7 @@ public class Mem {
     current().addFunction(funcname, functype, calledUpon, partypes, origin, this);
   }
 
+  /** Return the class where this function is defined */
   public String getFunctionOrigin(String funcname, List<String> partypes){
     String origin = current().getFunctionOrigin(funcname, partypes, this);
     if (origin != null && ! origin.equals(getClassName())) {
@@ -162,8 +143,8 @@ public class Mem {
     return null;
   }
 
-  public boolean existsFunction(String funcname,
-          List<String> partypes) {
+  /** Return true if a function with this name is defined */
+  public boolean existsFunction(String funcname, List<String> partypes) {
     return current().existsFunction(funcname, partypes, this);
   }
 
@@ -188,8 +169,7 @@ public class Mem {
     if (current().isVarDefined(variable)) {
       return false;
     }
-    // TODO: GET RID OF INITIALIZING IF POSSIBLE
-    String origin = (classes.size() == 1) ? upperRudi : getClassName();
+    String origin = getClassName();
     type = Type.checkRdf(type);
     current().put(variable, type, origin);
     logger.trace("Add var {}:{} [{}]", environment.size(), variable, type);
@@ -246,77 +226,18 @@ public class Mem {
     logger.trace("Leave level {}", environment.size());
   }
 
-  /**
-   * add the rule to the memory
-   *
-   * @param rule
-   * @param toplevel
-   * @return the rule's number, to be used in bitwise if markers
-   *
-  public void addRule(String rule) {
-    if (ontop) {
-      ontop = false;
-      curClass().addRuleOrImport(rule);
-    }
-    //curRule = rule;
-    // neededClasses.put(rule, new ArrayList<String>());
-  }*/
-
   public void addImport(String importName, String conargs) {
     String importClassName = capitalize(importName);
     curClass().addRuleOrImport(importClassName + " "
             + importName + " = new " + importClassName + "(");
   }
 
-  /**
-   * not only toplevel rules, but also import calls
-   *
-   * @param classname
-   * @return
-   */
-  public List<String> getToplevelCalls(String classname) {
-    return curClass().getRulesAndImports();
-  }
-
-  /**
-   * return all toplevel rules contained in the given class
-   * @param classname
-   * @return
-   *
-  public Set<String> getTopLevelRules(String classname) {
-    HashSet<String> rs = new HashSet<>();
-    for (String k : ruleNums.get(classname).keySet()) {
-      if (ruleNums.get(classname).get(k) == 1) {
-        rs.add(k);
-      }
-    }
-    return rs;
-  }*/
-
-
-  /**
-   * tell the memory to remember that the given rule/class needs an instance of
-   * the given class
-   *
-   * @param rule a rule or class
-   * @param ruleclass the class needed
-   */
-  public void needsClass(String rule, String ruleclass) {
-
-    curClass().needsClass(ruleclass);
-  }
-
   /** Return the set of needed classes to generate the proper import statements
-   *  TODO: IS THE CLASS NAME PARAMETER REALLY NEEDED?
-   * @param ruleOrClass
-   * @return
+   * @return A set of all needed external classes (because of variable or
+   * function definitions from this class).
    */
   public Set<String> getNeededClasses() {
     return curClass().getNeededClasses();
-  }
-
-  public boolean isExistingRule(String rule) {
-    return curClass().isActiveRule(rule);
   }
 
   public ExpUSingleValue degradeToString(ExpUVariable variable){

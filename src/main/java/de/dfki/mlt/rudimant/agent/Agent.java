@@ -402,7 +402,7 @@ public abstract class Agent extends DataComparator implements StreamingClient {
 //    logger.info(fromAsr);
 //    comSys.send(".*", "SpeechActEvent", fromAsr);
 //  }
-  public abstract void process();
+  public abstract boolean process();
 
   @SuppressWarnings("rawtypes")
   public void init(File configDir, String language, RdfProxy proxy, Map configs) {
