@@ -130,11 +130,12 @@ public class Mem {
 
   public String getCurrentRule() { return curClass().getCurrentRule(); }
 
+  /*
   private static final Set<String> KNOWN_FUNCTIONS =
       new HashSet<>(Arrays.asList(new String[] {
           "equals", "startsWith", "endsWith", "substring", "info"
       }));
-
+   */
   /** Add a function/method declaration, optionally with return and parameter
    *  types. If the types are not known, it's assumed they are null.
    *
@@ -146,9 +147,9 @@ public class Mem {
   public void addFunction(String funcname, String functype, String calledUpon,
           List<String> partypes) {
     String origin = null;
-    if(! KNOWN_FUNCTIONS.contains(funcname)) {
-      origin = getClassName();
-    }
+    //if(! KNOWN_FUNCTIONS.contains(funcname)) {
+    origin = getClassName();
+    //}
     current().addFunction(funcname, functype, calledUpon, partypes, origin, this);
   }
 
@@ -292,10 +293,6 @@ public class Mem {
     return rs;
   }*/
 
-  public boolean isTopLevelRule(String name) {
-    // TODO: IMPLEMENT
-    return false;
-  }
 
   /**
    * tell the memory to remember that the given rule/class needs an instance of

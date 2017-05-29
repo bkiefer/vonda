@@ -32,7 +32,7 @@ public class TestReturn {
   public void testReturn3(){
     String in = "foo: if (true) { return foo; }";
     String r = generate(in);
-    String expected = "public void foo(){ foo: if (true) {return foo; }";
+    String expected = "public void foo(){ foo: if (true) {break foo; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -40,7 +40,7 @@ public class TestReturn {
   public void testReturn4(){
     String in = "bar: if (false) { foo: if (true) { return foo; } }";
     String r = generate(in);
-    String expected = "public void bar(){ bar: if (false) {//Rule foo foo: if (true) {return foo; } }";
+    String expected = "public void bar(){ bar: if (false) {//Rule foo foo: if (true) {break foo; } }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -48,7 +48,31 @@ public class TestReturn {
   public void testReturn5(){
     String in = "foo: if (true) { return ; }";
     String r = generate(in);
-    String expected = "public void foo(){ foo: if (true) {return 1; }";
+    String expected = "public void foo(){ foo: if (true) {break foo; }";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void testReturn6(){
+    String in = "foo: if (true) { bar: if (false) return ; }";
+    String r = generate(in);
+    String expected = "public void foo(){ foo: if (true) {//Rule bar bar: if (false) break bar; } }";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void testReturn7(){
+    String in = "foo: if (true) { return test; }";
+    String r = generate(in);
+    String expected = "public void foo(){ foo: if (true) {return true; } }";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void testReturn8(){
+    String in = "if (true) { return test; }";
+    String r = generate(in);
+    String expected = "if (true) {return true; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 

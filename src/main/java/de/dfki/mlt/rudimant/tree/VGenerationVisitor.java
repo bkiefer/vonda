@@ -421,27 +421,23 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatReturn node) {
-    if (mem.isExistingRule(node.lit)) {
-      if (mem.isTopLevelRule(node.curRuleLabel)) {
-        out.append("return;\n");
-        return;
+    if (node.returnExp == null) {
+      // not in any rule, stop all rule processing
+      if (mem.getCurrentRule() == null) {
+        out.append("return true;\n");
+      } else {
+        out.append("break " + mem.getCurrentRule() + ";\n");
       }
-      //out.append("returnTo = returnTo | return_" + node.lit + ";\n");
-      out.append("break " + node.lit + ";\n");
-      return;
-
-    } else if (node.toRet == null) {
-      // TODO: IS THIS TESTED?
-      if (mem.getCurrentRule().equals(mem.getClassName())) {
-        out.append("return;\n");
-        return;
-      }
-      out.append("break " + mem.getCurrentRule() + ";\n");
-      return;
+    } else if (mem.isExistingRule(node.returnExp.fullexp)) {
+      out.append("break " + node.returnExp.fullexp + ";\n");
+    } else if (node.returnExp.fullexp.equals(mem.getClassName())) {
+      // explicitely cancel all rule processing specifying "return <Class>;"
+      out.append("return true;\n");
+    } else {
+      out.append("return ");
+      node.returnExp.visitWithComments(this);
+      out.append(";\n");
     }
-    out.append("return ");
-    node.toRet.visitWithComments(this);
-    out.append(";\n");
   }
 
   @Override

@@ -198,12 +198,10 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitReturn_statement(RobotGrammarParser.Return_statementContext ctx) {
     // RETURN exp? SEMICOLON;
-    if (ctx.getChildCount() == 2) {
-      return new StatReturn().setPosition(ctx, currentClass);
-    } else {
-      return new StatReturn((RTExpression)visit(ctx.getChild(1)),
-          ctx.getChild(1).getText()).setPosition(ctx, currentClass);
-    }
+    return ((ctx.getChildCount() == 2)
+        ? new StatReturn()
+        : new StatReturn((RTExpression)visit(ctx.getChild(1))))
+        .setPosition(ctx, currentClass);
   }
 
   // TODO: IN PRINCIPLE POSSIBLE WITHOUT CURLY BRACES

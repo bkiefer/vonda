@@ -16,12 +16,11 @@ import java.util.Collections;
  */
 public class StatReturn extends RTStatement {
 
-  RTExpression toRet;
-  String lit;
+  RTExpression returnExp;
   String curRuleLabel;
 
   public StatReturn() {
-    toRet = null;
+    returnExp = null;
   }
 
   /**
@@ -31,9 +30,8 @@ public class StatReturn extends RTStatement {
    * @param exp
    * @param lit
    */
-  public StatReturn(RTExpression exp, String orig) {
-    toRet = exp;
-    lit = orig;
+  public StatReturn(RTExpression exp) {
+    returnExp = exp;
   }
 
   @Override
@@ -52,7 +50,7 @@ public class StatReturn extends RTStatement {
   }
 
   public Iterable<? extends RudiTree> getDtrs() {
-    if (toRet == null) return Collections.emptyList();
-    return Arrays.asList(new RudiTree[]{ toRet });
+    if (returnExp == null) return Collections.emptyList();
+    return Arrays.asList(new RudiTree[]{ returnExp });
   }
 }

@@ -707,8 +707,8 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
 
   @Override
   public void visitNode(StatReturn node) {
-    if (!mem.isExistingRule(node.lit) && node.toRet != null) {
-      node.toRet.visit(this);
+    if (node.returnExp != null) {
+      node.returnExp.visit(this);
     }
   }
 

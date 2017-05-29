@@ -188,11 +188,6 @@ public class GrammarFile extends RudiTree {
 
   public void startGeneration(RudimantCompiler out, VGenerationVisitor gv) {
     Mem mem = out.getMem();
-    //String oldname = mem.getClassName();
-    //String oldrule = mem.getCurrentRule();
-    //String oldTrule = mem.getCurrentTopRule();
-    //mem.enterClass(out.getClassName());
-
     // tell the file in which package it lies
     String pkg = out.getPackageName();
     if (pkg == null) {
@@ -207,12 +202,13 @@ public class GrammarFile extends RudiTree {
     out.append("import de.dfki.lt.hfc.types.*;\n");
     // Let's import our supersuper class, TODO: maybe obsolete except for the
     // wrapper class?
-    out.append("import ");
     if (out.getParent() != null) {
       // TODO: REACTIVATE PROPERLY
-      // out.append(pkg + out.getParent().getClassName());
+      //out.append("import ");
+      //out.append(pkg + out.getParent().getClassName());
     } else {
-      out.append(out.getWrapperClass());
+     out.append("import ");
+     out.append(out.getWrapperClass());
     }
     out.append(";\n");
 
@@ -282,8 +278,6 @@ public class GrammarFile extends RudiTree {
     writeRuleList(out, gv);
 
     out.append("}\n");
-    //mem.leaveClass(oldname, oldrule, oldTrule);
-    //mem.leaveEnvironment();
   }
 
   @Override

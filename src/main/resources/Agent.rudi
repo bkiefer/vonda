@@ -1,10 +1,10 @@
 // all standard Java methods that we should remember
 // simply adding functions to be performed on objects here will not work anymore;
 // also add them directly to the list of special cases in mem.addFunction
-boolean equals(Object e);
-boolean startsWith(String s);
-boolean endsWith(String s);
-String substring(int i);
+[T]. boolean equals(Object e);
+[String]. boolean startsWith(String s);
+[String]. boolean endsWith(String s);
+[String]. String substring(int i);
 [List<T>]. T get(int a);
 
 // all Agent methods we should know
