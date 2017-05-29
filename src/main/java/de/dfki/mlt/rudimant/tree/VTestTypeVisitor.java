@@ -125,8 +125,10 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
       mem.addVariableDeclaration(((ExpUVariable) node.left).content,
               node.left.type);
     }
-    if (node.right instanceof ExpUVariable && !mem.variableExists(node.right.toString())) {
-      rudi.typeError("Assignment of a value of a non-existing variable " + node.right + "to " + node.left, node);
+    if (node.right instanceof ExpUVariable
+        && !mem.variableExists(node.right.toString())) {
+      rudi.typeError("assigning the value of a non-existing variable "
+          + node.right + "to " + node.left, node);
     }
 
     // If the type on the left side is more specific that the one on the right,
@@ -224,8 +226,8 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     visitNode(node.expression);
     String mergeType = Type.unifyTypes(node.type, node.expression.type);
     if (mergeType == null) {
-      rudi.typeError("Incompatible types : " + node.expression.type + " casted to "
-          + node.type, node);
+      rudi.typeError("Incompatible types : " + node.expression.type
+          + " casted to " + node.type, node);
     }
     node.expression.type = node.type;
   }
@@ -411,17 +413,16 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     // added.
     node.left.visit(this);
     node.right.visit(this);
-    if (! ((RTExpression)node.left).isComplexType()) {
+    if (! node.left.isComplexType()) {
       rudi.typeError("Left side of a set operation is not a set, but "
-          + ((RTExpression)node.left).getType(), node);
+          + node.left.getType(), node);
       return;
     }
-    String inner = ((RTExpression)node.left).getInnerType();
-    String res = Type.unifyTypes(inner, ((RTExpression)node.right).type);
+    String inner = node.left.getInnerType();
+    String res = Type.unifyTypes(inner, node.right.type);
     if (res == null) {
       rudi.typeError("Incompatible types in set operation: "
-          + ((RTExpression)node.left).getType() + " <> " +
-          ((RTExpression)node.right).type, node);
+          + node.left.getType() + " <> " + node.right.type, node);
     }
   }
 
@@ -610,10 +611,12 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
           currentType = null;
         }
       } else { // unknown or Java type, let's try with the accessor type
-    	  // TODO: think about this. we definitely want this in case of currentNode being a function call, but
-    	  //		if it is a variable we get either nothing or - worse - the type of some unrelated local variable;
+    	  // TODO: think about this. we definitely want this in case of
+        //    currentNode being a function call, but if it is a variable we get
+        //    either nothing or - worse - the type of some unrelated local variable;
     	  //		which other expressions need to be handled cautiously?
-        if (currentNode instanceof RTExpression && !(currentNode instanceof ExpUVariable)) {
+        if (currentNode instanceof RTExpression
+            && !(currentNode instanceof ExpUVariable)) {
           currentType = ((RTExpression) currentNode).type;
         } else {
           currentType = null;
@@ -689,10 +692,9 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
         node.content = "\"" + node.content + "\"";
       }
     }
-    String o = mem.getVariableOriginClass(node.fullexp);
-    if (o != null) {
-      node.realOrigin = o;
-    }
+    // Make sure an external class requirement is registered if variable is
+    // not defined in this class
+    mem.getVariableOriginClass(node.fullexp);
   }
 
   /* **********************************************************************

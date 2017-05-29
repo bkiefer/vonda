@@ -413,15 +413,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       // TODO: or should we check here that the type of the variable in assignment
       // is the type the iterable in exp returns? How?
       RTExpression exp = (RTExpression) visit(ctx.getChild(4));
-      ExpUVariable var = new ExpUVariable(ctx.getChild(2).getText(), currentClass);
+      ExpUVariable var = new ExpUVariable(ctx.getChild(2).getText());
       var.setPosition(ctx.VARIABLE(0), currentClass);
       return new StatFor2(var, exp, visit(ctx.getChild(6)).ensureStatement(),
           currentClass).setPosition(ctx, currentClass);
     } else if (ctx.getChild(4).getText().equals(":")) {
       // with type specification
       ExpUVariable var = new ExpUVariable(ctx.getChild(2).getText(),
-          ctx.getChild(3).getText(),
-          currentClass);
+          ctx.getChild(3).getText());
       var.setPosition(ctx.VARIABLE(0), currentClass);
       // FOR '(' (DEC_VAR | type_spec) VARIABLE ':' exp ')' loop_statement_block
       return new StatFor2(ctx.getChild(2).getText(), var,
@@ -542,7 +541,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     case RobotGrammarLexer.ANNOTATION:  // token is an annotation
       return new ExpUSingleValue(tn.getText() + "\n", "annotation");
     case RobotGrammarLexer.VARIABLE:  // token is variable
-      return new ExpUVariable(tn.getText(), currentClass);
+      return new ExpUVariable(tn.getText());
     case RobotGrammarLexer.BREAK:
     case RobotGrammarLexer.CONTINUE:
       return new ExpUSingleValue(tn.getText(), "break/continue");
@@ -582,7 +581,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitVariable(RobotGrammarParser.VariableContext ctx) {
     // VARIABLE | field_access
-    return new ExpUVariable(ctx.getText(), currentClass).setPosition(ctx, currentClass);
+    return new ExpUVariable(ctx.getText()).setPosition(ctx, currentClass);
   }
 
   @Override

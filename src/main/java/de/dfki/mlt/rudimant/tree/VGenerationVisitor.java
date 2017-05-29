@@ -112,7 +112,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
           replaceLastWithFuncall = false;
           return ret + ".clearValue(" + pa.getPropertyName() + ")";
         }
-        //out.append(functional ? ".setSingleValue(" : ".setValue(");
+        // NO: out.append(functional ? ".setSingleValue(" : ".setValue(");
         ret += ".setValue(";  // always right!
         ret += pa.getPropertyName();
         ret += ", ";
@@ -133,7 +133,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     }
     ret += node.right.visitWithSComments(this);
     if (pa != null) {
-      ret += ")"; // close call to set(Single)Value()
+      ret += ")"; // close call to setValue()
     }
     return ret;
   }
@@ -226,9 +226,10 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       ret += ", " + node.parameters.get(i);
     }
     ret += ") -> ";
-    // is the rare occasion where sth of class statement is allowed to
-    // be inside an expression, prevent it from printing directly to out
-    // TODO: WHAT? EXAMPLE!
+    // is the rare occasion where a "statement", namely a StatAbstractBlock can
+    // be inside an expression, because the body of a lambda expresssion can be
+    // a block.
+    // Therefore, prevent it from printing directly to out
     Writer old = out.out;
     out.out = new StringWriter();
     if (node.body instanceof RTExpression)
@@ -496,6 +497,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       if (node.parts.get(i) instanceof ExpUPropertyAccess) {
         ExpUPropertyAccess pa = (ExpUPropertyAccess) node.parts.get(i);
         String cast = Type.convertRdfType(pa.getType());
+        // TODO: what about long, double, ... ??
         if ("int".equals(cast))
           cast = "Integer";
         else
@@ -568,8 +570,9 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public String visitNode(ExpUVariable node) {
-    if (node.realOrigin != null) {
-      return lowerCaseFirst(node.realOrigin) + "." + node.content;
+    String realOrigin = mem.getVariableOriginClass(node.fullexp);
+    if (realOrigin != null) {
+      return lowerCaseFirst(realOrigin) + "." + node.content;
     } else {
       return node.content;
     }
