@@ -139,7 +139,7 @@ public class GrammarFile extends RudiTree {
       }
     }
     // create the process method
-    out.append("\tpublic void process(");
+    out.append("\tpublic boolean process(");
     out.append("){\n");
     // initialize me according to the super class init
     out.append("// this.init();\n");
@@ -154,7 +154,7 @@ public class GrammarFile extends RudiTree {
       } else if (r instanceof Import){
         String impor = ((Import)r).name;
         String importn = impor.substring(0, 1).toUpperCase() + impor.substring(1);
-        out.append("new " + importn + "(");
+        out.append("if (new " + importn + "(");
         Set<String> ncs = mem.getNeededClasses();
         if (ncs != null) {
           int i = 0;
@@ -173,12 +173,12 @@ public class GrammarFile extends RudiTree {
             i++;
           }
         }
-        out.append(").process();\n");
+        out.append(").process()) return;\n");
       } else {
         gv.visitNode((RTStatement)r);
       }
     }
-    out.append("}\n");
+    out.append("return false; \n}\n");
     // now, add everything that we did not want in the process method
     for(RTStatement t : later){
       gv.visitNode(t);

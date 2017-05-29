@@ -41,7 +41,7 @@ public class TestMethodDeclaration {
     String s = generate(methdecl1 + methdecl2 + usage);
     String expected = "void foo() {int i = 1; } "
             + "String foo(int a) {int i = 1; }"
-            + "public void bar(){ bar: if (true) {foo(); } }";
+            + "public boolean bar(){ bar: if (true) {foo(); }";
     assertEquals(expected, getForMarked(s, expected));
   }
 

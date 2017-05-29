@@ -271,12 +271,12 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     mem.enterRule(node.label);
     if (node.toplevel) {
       // is a toplevel rule and will be converted to a method
-      out.append("public void " + node.label + "(");
+      out.append("public boolean " + node.label + "(");
       out.append("){\n");
       ruleIf = printRuleLogger(node.label, node.ifstat.condition);
       out.append(node.label + ":\n");
       node.ifstat.visitWithComments(this);
-      out.append("}\n");
+      out.append("return false; \n}\n");
     } else {
       // is a sublevel rule and will get an if to determine whether it
       // should be executed
