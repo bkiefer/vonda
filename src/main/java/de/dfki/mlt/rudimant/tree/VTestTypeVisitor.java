@@ -103,6 +103,9 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
       if (mem.variableExists(node.left.toString())) {
         rudi.typeError("Re-declaration of existing variable " + node.left, node);
       } else {
+    	if(mem.isActiveRule(node.left.fullexp)){
+          rudi.typeError("Declaring a variable " + node.left + " what also is a rule name!", node);
+    	}
         node.left.type = node.type; // the type of the declaration is in this node
       }
       mem.addVariableDeclaration(((ExpUVariable) node.left).content,
@@ -711,6 +714,9 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   public void visitNode(StatReturn node) {
     if (node.returnExp != null) {
       node.returnExp.visit(this);
+      if (mem.variableExists(node.returnExp.fullexp)){
+        rudi.typeError("Return used with a rule name that also is a variable, I will use the rule functionality.", node);
+      }
     }
   }
 

@@ -85,6 +85,10 @@ public class Mem {
     classes.pop();
     leaveEnvironment();
   }
+  
+  public boolean isActiveRule(String name) {
+	return curClass().isActiveRule(name);
+  }
 
   /** get the name of the current class
    *

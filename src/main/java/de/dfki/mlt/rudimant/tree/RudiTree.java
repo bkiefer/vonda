@@ -82,7 +82,7 @@ public abstract class RudiTree {
       if (comment.startsWith("/*@")) {
         comment = comment.substring(3, comment.length() - 3);
         if (lookingForImport) {
-          if (!comment.contains("import")) {
+          if (!comment.startsWith("@")) {
             return allcomments;
           }
         }
