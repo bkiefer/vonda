@@ -12,8 +12,6 @@ package de.dfki.mlt.rudimant.tree;
  */
 public class ExpUVariable extends RTExpLeaf {
 
-  String realOrigin;
-
   public ExpUVariable(String type, String representation) {
     this(representation);
     this.type = type;

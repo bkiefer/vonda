@@ -692,10 +692,9 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
         node.content = "\"" + node.content + "\"";
       }
     }
-    String o = mem.getVariableOriginClass(node.fullexp);
-    if (o != null) {
-      node.realOrigin = o;
-    }
+    // Make sure an external class requirement is registered if variable is
+    // not defined in this class
+    mem.getVariableOriginClass(node.fullexp);
   }
 
   /* **********************************************************************
