@@ -59,41 +59,43 @@ if ( XXXX ) {
 } // a: ends
 \end{verbatim}
 
-The labeled exits are implemented by setting flags in a bit mask that are
-tested in the following to skip code not to be executed:
-\newpage
-Possible translation, (example starts at \texttt{return b:})
-\begin{verbatim}
-a:
-if ( XXXX ) {
-  x = child_27;
-  b:
-  if (YYYY) {
-     x = child_3;
-     c:
-     if ( ZZZZ ) {
-        ....
-        if (....) {
-           // return b:;
-           returnMask |= b_mask;
-        }
-        if ((returnMask | (a_mask | b_mask | c_mask)) == 0) {
-           ....
-        }
-     } // c: ends
-     if ((returnMask | (a_mask | b_mask)) == 0) {
-     ....
-     }
-  } // b: ends
-  if ((returnMask | a_mask) == 0) {
-  }
-} // a: ends
-\end{verbatim}
+The labeled exits are implemented by using Java's label and labeled break functionality.
 
-\section{Writing to Rudi (with care)}
-If you are in a state where you want to immediately stop processing and leave all
-rules, use a call to the method Agent.stopProcessing() to jump out of the topmost
-rule file.
+%%The labeled exits are implemented by setting flags in a bit mask that are
+%%tested in the following to skip code not to be executed:
+%%\newpage
+%%Possible translation, (example starts at \texttt{return b:})
+%%\begin{verbatim}
+%%a:
+%%if ( XXXX ) {
+%%  x = child_27;
+%%  b:
+%%  if (YYYY) {
+%%     x = child_3;
+%%     c:
+%%     if ( ZZZZ ) {
+%%        ....
+%%        if (....) {
+%%           // return b:;
+%%           returnMask |= b_mask;
+%%        }
+%%        if ((returnMask | (a_mask | b_mask | c_mask)) == 0) {
+%%           ....
+%%        }
+%%     } // c: ends
+%%     if ((returnMask | (a_mask | b_mask)) == 0) {
+%%     ....
+%%     }
+%%  } // b: ends
+%%  if ((returnMask | a_mask) == 0) {
+%%  }
+%%} // a: ends
+%%\end{verbatim}
+
+%\section{Writing to Rudi (with care)}
+%If you are in a state where you want to immediately stop processing and leave all
+%rules, use a call to the method Agent.stopProcessing() to jump out of the topmost
+%rule file.
 
 %%% Local Variables:
 %%% mode: latex

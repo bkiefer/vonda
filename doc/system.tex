@@ -38,6 +38,7 @@ Die Klasse MyAgent mitsamt Packagenamen muss in der config.yml Datei eines Proje
 \subsubsection{RDF Zugriff, funktionale vs. relationale Prädikate
   \texttt{+=}, \texttt{-=}}
 
+\begin{small}
 \begin{minipage}[t]{0.35\textwidth}
 \begin{verbatim}
 Child c;
@@ -52,16 +53,16 @@ String name = (String)c.getValue("<upper:name>");
 c.setValue("<upper:name>", "new name");
 \end{verbatim}
 \end{minipage}
+\end{small}
 \vspace*{2ex}
 
 Durch die Verbindung zu hfc während des Compile-Vorganges hat rudimant vollen Zugriff auf die Datenbank und kann nicht nur Rdf-Objekte anhand ihrer Typen erkennen, sondern auch erkennen, wann ein Feldzugriff auf ein Rdf-Objekt erfolgt und ihn in solchen Fällen in einen Zugriff auf die Datenbank umwandeln. Dies ist sowohl für Zugriffe auf Properties als auch für Änderungen ihres Inhalts möglich und lässt sich, sofern dies in der verwendeten Ontologie möglich ist, beliebig oft hintereinander ausführen.\\
-
-TODO: funktional vs relational?
-
-Die beiden Operatoren \texttt{+=} und \texttt{-=} sind in rudimant überladen. Sie können sowohl wie in Java zum Rechnen mit Integer, float und double verwendet werden, als auch im Zusammenspiel mit Sets und Listen. $ a += b $ wird hierbei in $ a.add(b) $ umgewandelt, $ a-= b $ resultiert in $ a.remove(b) $.
+Sowohl die Verwendung von relationalen als auch die von funktionalen Prädikaten ist erlaubt. Diese ändern die Aufrufe im rudi-Code jedoch grundsätzlich nicht, da rudimant selbst inferiert, ob ein Zugriff auf die Datenbank ein einfaches Objekt oder ein Set von Objekten zurückgibt. Lediglich die weitere Nutzung dessen, was abgerufen wurde, muss sich (selbstverständlich) an die Art des Ergebnisses des Rdf-Zugriffes anpassen.\\
+Die beiden Operatoren \texttt{+=} und \texttt{-=} sind in rudimant überladen. Sie können sowohl wie in Java zum Rechnen mit Integer, float und double verwendet werden, als auch im Zusammenspiel mit Sets und Listen. \texttt{a += b} wird hierbei in \texttt{a.add(b)} umgewandelt, \texttt{a-= b} resultiert in \texttt{a.remove(b)}.
 
 \subsubsection{Regeln und Labels}
 
+\begin{small}
 \begin{verbatim}
 introduction:
   if (introduction){
@@ -75,6 +76,7 @@ introduction:
     }
   }
 \end{verbatim}
+\end{small}
 
 Das Kernstück von rudimant sind die Dialogregeln. Eine Regel beginnt mit ihrem Namen, einem möglichst aussagekräftigen Label, gefolgt von einem Doppelpunkt. Anschließend folgt ein if-statement. Die Clause des Statements drückt die Bedingung aus, unter der die Regel ausgeführt werden soll, im Body steht der auszuführende Code.\\
 Aussagekräftige Labels sind zum Debugging wichtig. Der generierte Code kann zur Laufzeit debuggt werden, indem man in Agent den Flag ... setzt. Der Output des Loggers wird dann das Label jeder Regel, die evaluiert wird, zusammen mit der Auswertung der Bedingung angeben.\\
@@ -88,52 +90,21 @@ Regeln können beliebig tief geschachtelt werden, d.h., jede Regel kann wiederum
 Anders als Java stellt rudimant nicht den Anspruch, dass die Einträge in einer Datei in irgendeine Form von übergeordneter Struktur gefasst werden. Die Regeln können ebenso wie Funktionsdeklarationen direkt in die Datei geschrieben werden. Dasselbe gilt für jede Art valider (Java-) Statements, wie etwa Zuweisungen, for-Schleifen usw.. Rudimant wird bei der Kompilation eine Java-Klasse erstellen, in die es die Funktionen sowie die Regeln, zu Funktionen transformiert, einträgt. Alle weiteren Statements werden in der korrekten Reihenfolge in die erzeugte Methode process() verschoben, wobei generierte Aufrufe an die Regelfunktionen zwischen ihnen gewährleisten, dass die Regeln und Statements in der Reihenfolge ausgeführt werden, die im rudi-Code spezifiziert war. Dies ermöglicht also, nicht in Regeln gefasste Abbruchbedingungen einzubauen, unter denen die Ausführung der ganzen Datei - und möglicher importierter Dateien - sofort beendet werden soll.\\
 Datei-global deklarierte Variablen werden als Klassenvariablen angelegt.
 
-\subsubsection{Dialogakte und Hütchen} \ {\Large\verb|^|}
+\subsubsection{Dialogakte und Hütchen} %\ {\Large\verb|^|}
 
+\begin{small}
 \begin{verbatim}
 emitDA(#Inform(Answer, what=^solution));
 \end{verbatim}
+\end{small}
+Eine wichtige Aufgabe eines Dialogsystems ist zweifellos die Ausgabe von Dialogakten, die von der Generierungskomponente zu Kommunikation mit dem Nutzer verarbeitet werden können. In rudimant ist die Funktion \texttt{emitDA} hierfür zuständig.\\
+Argument von \texttt{emitDA} ist ein Dialogakt in der oben gezeigten Form. Dass es sich bei \texttt{Inform}\verb|(...)| nicht um einen Funktionsaufruf, sondern um einen Dialogakt handelt, wird  hier und an allen anderen Stellen, an denen man einen Dialogakt benutzen möchte, durch das \verb|#| gekennzeichnet. Rudimant wird so erkennen, dass im Java-Code eine neue Instanz der Klasse DialogueAct mit den entsprechenden Modifikationen erstellt werden muss. Hierbei kommt dem Marker {\Large\verb|^|} eine besondere Bedeutung zu: Per default werden alle in den Klammern angegebenen Argumente, egal, ob sie rechts oder links eines $=$ stehen, als Strings an den neuen DialogueAct übergeben. Möchte man explizit den Inhalt einer Variablen übergeben, so ist die Benutzung von {\Large\verb|^|} vor der entsprechenden rechten Seite einer Zuweisung notwendig.
 
-\subsubsection{Typinferenz} \label{rudimant-Typinferenz}
+\subsubsection{Typinferenz und überladene Vergleichsoperatoren} \label{rudimant-Typinferenz}
 
 Rudimant erlaubt statische Typzuweisungen sowie Casting, beides ist jedoch nicht zwingend notwendig.\\
-Ist beispielsweise der Typ der rechten Seite einer Variablendeklaration mit Zuweisung bekannt oder inferierbar, so ist es nicht notwendig, den Typ der Variablen explizit anzugeben.\\
-Als zeitsparendes Feature bietet rudimant insbesondere das automatische Vervollständingen von bool'schen Ausdrücken in den Clauses von if, while und for an. Da in diesem Fall bekannt ist, dass das Ergebnis boolean sein muss, ergänzt rudimant automatisch den Test auf die Existenz eines Objektes in der Clause, sollte dieses nicht Typ boolean sein. Bei Feldzugriffen testet es für jeden Teilzugriff, dass das erhaltene Objekt nicht null ist, um einer NullPointerException zur Laufzeit des generierten Codes vorzubeugen.
-
-\paragraph{Rudimant Typinformationen zur Verfügung stellen}
-
-In manchen Fällen, wie etwa der Benutzung von außerhalb der rudi-Dateien
-deklarierten Funktionen und Variablen, ist es notwendig, rudimant Informationen
-über Typen zu geben. Dabei gilt folgendes Schema, nach dem Typen an beliebiger
-Stelle, für gewöhnlich jedoch in der Datei MyAgent.rudi (siehe
-\ref{rudimant-global}) deklariert werden können:\\
-
-\begin{tabular}{ll}
-$<myType> someVariable;$ &  es gibt die Variable myVariable vom Typ $<myType>$;
-						 !! dies wird nicht in den kompilierten Code übernommen, ist also keine Variablendeklaration im Java-Sinne !! \\
-$<myType> someFunction(<typeA> a, <typeB> b);$ &  Funktion someFunction nimmt Argumente vom Typ $<typeA>$ und $<typeB>$ und gibt ein Objekt vom Typ $<myType>$ zurück (void = void) \\
-$[<type>]. <myType> Function(<typeA> a);$ & siehe oben; die Funktion muss auf einem Objekt der Klasse $<type>$ aufgerufen werden. Generics erlaubt.
-\end{tabular}
-
-\subsubsection{Überladene Vergleichsoperatoren und Tests}
-
-\begin{minipage}{0.4\textwidth}
-\begin{verbatim}
-if (speechAct <= #Question){
-  ...
-}
-\end{verbatim}
-\end{minipage}
-\begin{minipage}{0.6\textwidth}
-\begin{verbatim}
-if (isSmallerEqual(speechAct, new DialogueAct("Question")) {
-  ...
-}
-\end{verbatim}
-\end{minipage}
-\newline
-Die Vergleichsoperatoren in rudimant sind überladen. Neben den aus Java bekannten Anwendungen als Vergleichsoperatoren können sie auch auf Dialogakte angewendet werden. In diesen Fällen werden sie zu Subsumptionsoperatoren.
-
+Ist beispielsweise der Typ der rechten Seite einer Variablendeklaration mit Zuweisung bekannt oder inferierbar, so ist es nicht notwendig, den Typ der Variablen explizit anzugeben.\\ \vspace*{10pt}
+\begin{footnotesize}
 \begin{minipage}{0.4\textwidth}
 \begin{verbatim}
 if (! c.user.personality.nonchalance){
@@ -150,18 +121,73 @@ if (!((((c != null) && (c.user != null))
 }
 \end{verbatim}
 \end{minipage}
+\end{footnotesize}
+Als zeitsparendes Feature bietet rudimant insbesondere das automatische Vervollständingen von bool'schen Ausdrücken in den Clauses von if, while und for an. Da in diesem Fall bekannt ist, dass das Ergebnis boolean sein muss, ergänzt rudimant automatisch den Test auf die Existenz eines Objektes in der Clause, sollte dieses nicht Typ boolean sein. Bei Feldzugriffen testet es für jeden Teilzugriff, dass das erhaltene Objekt nicht null ist, um einer NullPointerException zur Laufzeit des generierten Codes vorzubeugen.\\
+\vspace*{10pt}
+\begin{footnotesize}
+\begin{minipage}{0.4\textwidth}
+\begin{verbatim}
+if (speechAct <= #Question){
+  ...
+}
+\end{verbatim}
+\end{minipage}
+\begin{minipage}{0.6\textwidth}
+\begin{verbatim}
+if (isSmallerEqual(speechAct, new DialogueAct("Question")) {
+  ...
+}
+\end{verbatim}
+\end{minipage}
+\end{footnotesize}
 
-Dies überschneidet sich mit dem Doku-Teil zur Typinferenz; wohin damit?
+Die Vergleichsoperatoren in rudimant sind überladen. Neben den aus Java bekannten Anwendungen als Vergleichsoperatoren können sie auch auf Dialogakte angewendet werden. In diesen Fällen werden sie zu Subsumptionsoperatoren.
+
+\paragraph{Rudimant Typinformationen zur Verfügung stellen}
+
+In manchen Fällen, wie etwa der Benutzung von außerhalb der rudi-Dateien
+deklarierten Funktionen und Variablen, ist es notwendig, rudimant Informationen
+über Typen zu geben. Dabei gilt folgendes Schema, nach dem Typen an beliebiger
+Stelle, für gewöhnlich jedoch in der Datei MyAgent.rudi (siehe
+\ref{rudimant-global}) deklariert werden können:\\
+\vspace*{2ex}
+\noindent
+\begin{tabular}{ll}
+\texttt{myType someVariable;}
+ &  es gibt die Variable myVariable vom Typ \texttt{myType} \\
+    
+\texttt{myType someFunction(typeA a, typeB b);} &  Funktion someFunction nimmt Argumente vom Typ \texttt{typeA} und \texttt{typeB} und gibt ein Objekt vom Typ \texttt{myType} zurück (void = void) \\
+    
+\texttt{[type]. myType Function(typeA a);} & Funktionsdeklaration wie oben; die Funktion muss auf einem Objekt der Klasse \texttt{type} aufgerufen werden. Generics sind eingeschränkt erlaubt, mit T als festgelegtem Namen der generischen Klasse, Beispiel: \texttt{[List<T>]. T get(int i);}
+\end{tabular}
+
+Wichtig ist: Diese Deklarationen werden nur für die Berechnung der Typen durch rudimant angegeben und werden nicht in den kompilierten Code übernommen. Insbesondere Zeilen wie \texttt{int i;} oder \texttt{void someFunction();} entsprechen damit nicht einer gleich aussehenden Deklaration im Java-Code. Falls es einen Grund geben sollte, dass die Zeilen als im Compile-Ergebnis als dringend erforderlich betrachtet werden, hilft die in Kapitel \ref{rudi-verbatim} beschriebene Methode.
+
+%\subsubsection{Überladene Vergleichsoperatoren und Tests}
+%Dies überschneidet sich in großen Teilen mit dem Doku-Teil zur Typinferenz; wurde dort untergebracht
 
 \subsubsection{Funktionale Konstrukte (lambda)}
+
+\begin{small}
 \begin{verbatim}
 boolean contains(Collection coll, Predicate pred);
 boolean all(Collection coll, Predicate pred);
 List<Object> filter(Collection coll, Predicate pred);
 List<Object> sort(Collection coll, Comparator c);
 \end{verbatim}
+\end{small}
+
+Rudimant erlaubt die Verwendung von lambda-Konstrukten in den angegebenen vier Funktionen.
 
 \subsubsection{\texttt{import}}
+
+\texttt{import} ist ein Schlüsselwort in rudimant. Eine Zeile ''\texttt{import File;}'' auf globaler Ebene, an einer  beliebigen Stelle zwischenn den Regeln, bedeutet die Inklusion der Datei File.rudi an exakt dieser Stelle. Hiermit wird zum einen erreicht, dass rudimant auch diese Datei zu ausführbarem Java-Code kompiliert, sodass nicht alle Dateien eines Projektes separat kompiliert werden müssen. Zum anderen wird das vollständige Regelinventar der Datei an der entsprechenden Stelle im Java-Code mithilfe ihrer process-Methode aufgerufen und durchgearbeitet.\\
+\texttt{import} ermöglicht es also, das Regelinventar für ein Projekt auf mehrere Dateien bzw. mehrere Module aufzuteilen und diese zusammenzustecken, sodass ein einziger Aufruf ausreicht, um sie zu kompilieren und später auch, um die Auswertung der Regeln anzustoßen. Dies ist nicht nur nützlich zur Übersichtlichkeit und Strukturierung des Projektes, sondern fördert auch die Modularität, da verschiedene 'Unterbäume' der \texttt{import}-Hierarchie leicht ausgeklinkt oder aus anderen Projekten wiederverwendet werden können.
+
+\subsubsection{Verbatim für rudi} \label{rudi-verbatim}
+
+Rudimant verarbeitet eine Regelsprache, die mit voller Absicht nur eingeschränkte Java-Funktionalitäten zur Verfügung stellt. Was in rudi-Code nicht umzusetzen ist, sollte in Funktionen in die übergeordnete Java-Klasse wandern (vgl. \ref{rudimant-global}).\\
+Für Fälle, in denen dies nicht genügt und vor Ort eine Funktionalität benötigt wird, die rudimant nicht parsen oder nicht richtig darstelllen kann, ist eine verbatim-Umgebung vorgesehen. Alles, was innerhalb der Zeichenfolgen \verb|/*@| und \verb|@*/| steht, wird behandelt wie ein mehrzeiliges Java-Kommentar, wird also in genau diesem Aussehen in den resultierenden Code übertragen. Dabei werden die klammernden Zeichenfolgen ausgelassen.
 
 %\begin{itemize}
 %\item ``Globale'' Funktionen und Variablen
