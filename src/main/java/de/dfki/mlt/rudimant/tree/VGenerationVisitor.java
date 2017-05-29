@@ -535,7 +535,9 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   @Override
   public String visitNode(ExpUFuncCall node) {
     String ret = "";
-    if (node.realOrigin != null) {
+    if (node.realOrigin != null &&
+    		(node.calledUpon == null ||
+    		node.calledUpon.isEmpty())) {
       ret += lowerCaseFirst(node.realOrigin) + ".";
     }
     if(node.newexp){

@@ -119,7 +119,7 @@ public class GrammarFile extends RudiTree {
             i++;
           }
         }
-        out.append(").process()) return;\n");
+        out.append(").process()) return true;\n");
       } else {
         gv.visitNode((RTStatement)r);
       }
