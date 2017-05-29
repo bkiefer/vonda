@@ -17,14 +17,13 @@ public class StatListCreation extends RTStatement {
   String variableName;
   String listType;
 
-  public StatListCreation(String varName, ArrayList<RTExpression> objs,
-          String orig) {
+  public StatListCreation(String varName, ArrayList<RTExpression> objs) {
     objects = objs;
     variableName = varName;
   }
 
   public StatListCreation(String varName, ArrayList<RTExpression> objs,
-          String orig, String lType) {
+      String lType) {
     objects = objs;
     variableName = varName;
     listType = lType;

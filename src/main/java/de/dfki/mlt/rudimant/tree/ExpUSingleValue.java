@@ -12,7 +12,7 @@ package de.dfki.mlt.rudimant.tree;
 public class ExpUSingleValue extends RTExpLeaf {
 
   public ExpUSingleValue(String representation, String type){
-    this.content = this.fullexp = representation;
+    this.content = representation;
     this.type = type;
   }
 

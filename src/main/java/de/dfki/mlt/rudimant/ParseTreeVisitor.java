@@ -415,8 +415,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       RTExpression exp = (RTExpression) visit(ctx.getChild(4));
       ExpUVariable var = new ExpUVariable(ctx.getChild(2).getText());
       var.setPosition(ctx.VARIABLE(0), currentClass);
-      return new StatFor2(var, exp, visit(ctx.getChild(6)).ensureStatement(),
-          currentClass).setPosition(ctx, currentClass);
+      return new StatFor2(var, exp, visit(ctx.getChild(6)).ensureStatement()).setPosition(ctx, currentClass);
     } else if (ctx.getChild(4).getText().equals(":")) {
       // with type specification
       ExpUVariable var = new ExpUVariable(ctx.getChild(2).getText(),
@@ -425,7 +424,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       // FOR '(' (DEC_VAR | type_spec) VARIABLE ':' exp ')' loop_statement_block
       return new StatFor2(ctx.getChild(2).getText(), var,
           (RTExpression) visit(ctx.getChild(5)),
-          visit(ctx.getChild(7)).ensureStatement(), currentClass).setPosition(ctx, currentClass);
+          visit(ctx.getChild(7)).ensureStatement()).setPosition(ctx, currentClass);
     } else if (ctx.getChild(3).getText().equals(";") ||
         ctx.getChild(5).getText().equals(";")) {
       // statement looks like "FOR LPAR assignment SEMICOLON exp SEMICOLON exp RPAR loop_statement_block"
@@ -442,7 +441,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       RTStatement block = visit(ctx.getChild(i)).ensureStatement();
 
       return new StatFor1((ExpAssignment) forExps[0], (ExpBoolean) forExps[1],
-          (RTExpression) forExps[2], block, currentClass).setPosition(ctx, currentClass);
+          (RTExpression) forExps[2], block).setPosition(ctx, currentClass);
     } else {
       // statement looks like "FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block"
       // TODO: implement For3Stat; exp will return some Object[]
@@ -452,8 +451,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
         vars.add(ctx.getChild(i).getText());
       }
       return new StatFor3(vars, (RTExpression)exp,
-          (RTStatement) visit(ctx.getChild(ctx.getChildCount() - 1)),
-          currentClass).setPosition(ctx, currentClass);
+          (RTStatement) visit(ctx.getChild(ctx.getChildCount() - 1))).setPosition(ctx, currentClass);
     }
   }
 
@@ -569,11 +567,11 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       i += 2;
     }
     if(start == 3){
-      return new StatListCreation(ctx.getChild(0).getText(), elements, currentClass)
+      return new StatListCreation(ctx.getChild(0).getText(), elements)
           .setPosition(ctx, currentClass);
     } else {
       return new StatListCreation(ctx.getChild(1).getText(), elements,
-          currentClass, ctx.getChild(0).getText())
+          ctx.getChild(0).getText())
           .setPosition(ctx, currentClass);
     }
   }
