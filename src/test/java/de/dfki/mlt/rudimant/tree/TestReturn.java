@@ -24,7 +24,7 @@ public class TestReturn {
   public void testReturn2(){
     String in = "foo: if (true) { return 1; }";
     String r = generate(in);
-    String expected = "public void foo(){ foo: if (true) {return 1; }";
+    String expected = "public boolean foo(){ foo: if (true) {return 1; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -32,7 +32,7 @@ public class TestReturn {
   public void testReturn3(){
     String in = "foo: if (true) { return foo; }";
     String r = generate(in);
-    String expected = "public void foo(){ foo: if (true) {break foo; }";
+    String expected = "public boolean foo(){ foo: if (true) {break foo; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -40,7 +40,7 @@ public class TestReturn {
   public void testReturn4(){
     String in = "bar: if (false) { foo: if (true) { return foo; } }";
     String r = generate(in);
-    String expected = "public void bar(){ bar: if (false) {//Rule foo foo: if (true) {break foo; } }";
+    String expected = "public boolean bar(){ bar: if (false) {//Rule foo foo: if (true) {break foo; } }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -48,7 +48,7 @@ public class TestReturn {
   public void testReturn5(){
     String in = "foo: if (true) { return ; }";
     String r = generate(in);
-    String expected = "public void foo(){ foo: if (true) {break foo; }";
+    String expected = "public boolean foo(){ foo: if (true) {break foo; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -56,7 +56,8 @@ public class TestReturn {
   public void testReturn6(){
     String in = "foo: if (true) { bar: if (false) return ; }";
     String r = generate(in);
-    String expected = "public void foo(){ foo: if (true) {//Rule bar bar: if (false) break bar; } }";
+    String expected = "public boolean foo(){ foo: if (true) {//Rule bar bar: if (false) break bar; } "
+    		+ "return false;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -64,7 +65,8 @@ public class TestReturn {
   public void testReturn7(){
     String in = "foo: if (true) { return test; }";
     String r = generate(in);
-    String expected = "public void foo(){ foo: if (true) {return true; } }";
+    String expected = "public boolean foo(){ foo: if (true) {return true; } "
+    		+ "return false;";
     assertEquals(expected, getForMarked(r, expected));
   }
 

@@ -62,7 +62,8 @@ class Function {
 
   public String getReturnType(String calledUpon) {
     // TODO: extensively test this magic
-    if(_returnType.contains("<T>") ||
+    if(calledUpon != null &&
+    	_returnType.contains("<T>") ||
         _returnType.equals("T")){
       int from = StringUtils.indexOfDifference(_calledUpon, calledUpon);
       int to = calledUpon.length() - StringUtils.indexOfDifference(

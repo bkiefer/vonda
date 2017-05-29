@@ -28,9 +28,9 @@ public class TestForStatements {
                     "Iterator<DialogueAct> lastDAs();\n" +
                     "initiate_greet: if(true){ for(seat : getSeats()){} }";
     String s = generate(ifstat);
-    String expected = "public void initiate_greet(){"
+    String expected = "public boolean initiate_greet(){"
             + " initiate_greet: if (true) {for (Object seat_outer : getSeats()) "
-            + "{ Rdf seat = (Rdf)seat_outer; {}}}";
+            + "{ Rdf seat = (Rdf)seat_outer; {}}} return false;";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -42,9 +42,10 @@ public class TestForStatements {
                     "  if(true){\n" +
                     "    for(k : kids()){}}";
     String s = generate(ifstat);
-    String expected = "public void initiate_greet(){"
+    String expected = "public boolean initiate_greet(){"
             + " initiate_greet: if (true) {"
-            + "for (Object k_outer : kids()) { Rdf k = (Rdf)k_outer; {}}}";
+            + "for (Object k_outer : kids()) { Rdf k = (Rdf)k_outer; {}}}"
+            + " return false;";
     assertEquals(expected, getForMarked(s, expected));
   }
 
