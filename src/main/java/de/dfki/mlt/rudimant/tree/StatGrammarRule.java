@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 /**
  * represents a single grammar rule located in the .rudi file; each rule will be
- * transformed in a separate .java class (i.e., a separate .java file)
+ * transformed into a separate java method
  *
  * @author Anna Welker
  */

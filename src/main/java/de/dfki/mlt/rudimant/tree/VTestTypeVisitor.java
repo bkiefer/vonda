@@ -221,13 +221,13 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   @Override
   public void visitNode(ExpCast node) {
     node.type = Type.checkRdf(node.type);
-    visitNode(node.construct);
-    String mergeType = Type.unifyTypes(node.type, node.construct.type);
+    visitNode(node.expression);
+    String mergeType = Type.unifyTypes(node.type, node.expression.type);
     if (mergeType == null) {
-      rudi.typeError("Incompatible types : " + node.construct.type + " casted to "
+      rudi.typeError("Incompatible types : " + node.expression.type + " casted to "
           + node.type, node);
     }
-    node.construct.type = node.type;
+    node.expression.type = node.type;
   }
 
   /**
@@ -296,7 +296,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     if (node.body instanceof RTExpression) {
       RTExpression exp = (RTExpression)node.body;
       visitNode(exp);
-      node.return_type = exp.getType();
+      node.type = exp.getType();
     } else {
       visitNode((StatAbstractBlock)node.body);
     }

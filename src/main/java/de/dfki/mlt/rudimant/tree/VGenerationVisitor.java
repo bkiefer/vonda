@@ -173,7 +173,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   @Override
   public String visitNode(ExpCast node) {
     return "((" + Type.convertRdfType(node.type) + ")"
-        + visitNode(node.construct) + ")";
+        + visitNode(node.expression) + ")";
   }
 
   public String visitDaToken(RTExpression exp) {

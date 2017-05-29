@@ -18,7 +18,6 @@ public class ExpAssignment extends RTExpression {
   RTExpression left; // can be either a UVariable or a Field access
   RTExpression right;
   boolean declaration;
-  String position;
 
   public ExpAssignment(RTExpression l, RTExpression r) {
     left = l;

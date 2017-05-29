@@ -16,7 +16,6 @@ import java.util.List;
  */
 public class ExpLambda extends RTExpLeaf {
 
-  String return_type;
   List<String> parameters;
   String parType;
   RudiTree body;
