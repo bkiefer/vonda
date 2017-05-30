@@ -75,7 +75,6 @@ public class Mem {
   public void enterClass(String classname) {
     enterEnvironment();
     classes.push(new ClassEnv(classname, environment.size()));
-    curClass().needsClass(upperRudi);
   }
 
   /** Leave processing of a class. To be called at the very end of processing
@@ -85,9 +84,9 @@ public class Mem {
     classes.pop();
     leaveEnvironment();
   }
-  
+
   public boolean isActiveRule(String name) {
-	return curClass().isActiveRule(name);
+    return curClass().isActiveRule(name);
   }
 
   /** get the name of the current class
@@ -140,11 +139,10 @@ public class Mem {
   /** Return the class where this function is defined */
   public String getFunctionOrigin(String funcname, List<String> partypes){
     String origin = current().getFunctionOrigin(funcname, partypes, this);
-    if (origin != null && ! origin.equals(getClassName())) {
-      curClass().needsClass(origin);
-      return origin;
-    }
-    return null;
+    if (getClassName().equals(origin))
+      return null;
+
+    return origin;
   }
 
   /** Return true if a function with this name is defined */
@@ -192,11 +190,10 @@ public class Mem {
    */
   public String getVariableOriginClass(String variable) {
     String origin = current().getOrigin(variable);
-    if (origin != null && ! origin.equals(getClassName())) {
-      curClass().needsClass(origin);
-      return origin;
-    }
-    return null;
+    if (origin.equals(getClassName()))
+      return null;
+
+    return origin;
   }
 
   /**
@@ -241,7 +238,12 @@ public class Mem {
    * function definitions from this class).
    */
   public Set<String> getNeededClasses() {
-    return curClass().getNeededClasses();
+    // return all classes above me (import chain), and this class
+    Set<String> result = new HashSet<>();
+    for(ClassEnv env : classes) {
+      result.add(env.getName());
+    }
+    return result;
   }
 
   public ExpUSingleValue degradeToString(ExpUVariable variable){

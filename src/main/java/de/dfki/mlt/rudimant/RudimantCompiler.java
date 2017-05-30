@@ -88,16 +88,6 @@ public class RudimantCompiler {
     mem = new Mem(proxy);
   }
 
-  /**
-   * ATTENTION!! This method is only to be used to set a classname for testing
-   * purposes!!!!!!!!!!!!!!
-   * @param name
-   *
-  public void setClassName(String name){
-    // className = name;
-    mem.setClassName(name);
-  }*/
-
   private void checkOutputDirectory(File configDir, Map<String, Object> configs)
       throws IOException {
     if (configs.containsKey(CFG_OUTPUT_DIRECTORY)) {

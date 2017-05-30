@@ -16,14 +16,11 @@ public class ClassEnv {
   /** A stack of the currently processed rules */
   private List<String> activeRules;
 
-  private Set<String> neededClasses;
-
   private int classEnvironment;
 
   public ClassEnv(String className, int environment) {
     name = className;
     classEnvironment = environment;
-    neededClasses = new LinkedHashSet<>();
     rules = new ArrayList<>();
     activeRules = new ArrayList<>();
   }
@@ -31,22 +28,9 @@ public class ClassEnv {
   /** add the rule to this environment
    * @param rule the name of the rule
    */
-  public void addRule(String rule) {
-    rules.add(rule);
-  }
+  public void addRule(String rule) { rules.add(rule); }
 
-  public String getName() {
-    return name;
-  }
-
-  public void needsClass(String name) {
-    if (name == null) return;
-    neededClasses.add(name);
-  }
-
-  public Set<String> getNeededClasses() {
-    return neededClasses;
-  }
+  public String getName() { return name; }
 
   public int getClassEnvironment() { return classEnvironment; }
 

@@ -172,8 +172,7 @@ public class GrammarFile extends RudiTree {
     for (String n : mem.getNeededClasses()) {
       if(n.equals(mem.getClassName())) continue;
       out.append("private final ");
-      out.append(n.substring(0, 1).toUpperCase() + n.substring(1) + " "
-              + n.substring(0, 1).toLowerCase() + n.substring(1));
+      out.append(capitalize(n) + " " + lowerCaseFirst(n));
       out.append(";\n");
     }
     // now, we should add a constructor, including constructor parameters if
