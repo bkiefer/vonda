@@ -190,7 +190,7 @@ public class Mem {
    */
   public String getVariableOriginClass(String variable) {
     String origin = current().getOrigin(variable);
-    if (origin.equals(getClassName()))
+    if (getClassName().equals(origin))
       return null;
 
     return origin;
