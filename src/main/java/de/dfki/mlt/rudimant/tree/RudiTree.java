@@ -84,6 +84,8 @@ public abstract class RudiTree {
         if (lookingForImport) {
           if (!comment.startsWith("@")) {
             return allcomments;
+          } else {
+        	comment = comment.substring(1);
           }
         }
       }
