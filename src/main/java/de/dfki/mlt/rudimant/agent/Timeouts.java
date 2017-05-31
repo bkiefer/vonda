@@ -84,4 +84,14 @@ public class Timeouts {
     return result;
   }
 
+  // Cancel all running timers and clear all data structures
+  public synchronized void clear() {
+    occuredTimeouts.clear();
+    timeoutOccured = false;
+    for(MyTimer t : pendingTimeouts.values()) {
+      t.timer.stop();
+    }
+    pendingTimeouts.clear();
+  }
+
 }

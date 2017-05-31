@@ -85,10 +85,11 @@ public abstract class Agent extends DataComparator implements StreamingClient {
     return lastDAs;
   }
 
-  // TODO: Why does this already resetted to LinkedList before Deque was removed?
   protected void reset() {
-    myLastDAs = new LinkedList<DialogueAct>();
-    lastDAs = new LinkedList<DialogueAct>();
+    timeouts.clear();
+    myLastDAs = new LinkedList<>();
+    lastDAs = new LinkedList<>();
+    proposalsToExecute = new LinkedList<>();
     proposalsSent = false;
   }
 
@@ -611,7 +612,7 @@ public abstract class Agent extends DataComparator implements StreamingClient {
     }
   }
 
-  public void executeProposal(Intention intention) throws Exception {
+  public void executeProposal(Intention intention) {
     String continuationName = intention.getContent();
     Proposal p = pendingProposals.get(continuationName);
     if (p != null) {
