@@ -12,7 +12,7 @@
 // Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public
-// License along with program; if not, write to the Free Software
+// License along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 // =================================================================
@@ -101,10 +101,11 @@ public class LanguageGenerator {
   }
 
   /**
-   * Implement as a singleton
+   * Implement this as a singleton
    *
-   * @param lang a three-character ISO language code for the number conversion
-   * functionality
+   * @param lang
+   *          a three-character ISO language code for the number conversion
+   *          functionality
    */
   private LanguageGenerator(File configDir, String lang,
       Map<String, Object> cfgs) {
@@ -115,7 +116,7 @@ public class LanguageGenerator {
       _infoState = new InfoStateFunction();
       FunctionFactory.register(_infoState, _ruleMapper);
       // so that all random calls to generation can be recorded, too
-      // don't know if is strictly necessary
+      // don't know if this is strictly necessary
       // FunctionFactory.register(new RecordableRandomFunction(), _ruleMapper);
       File mapperProj = new File(configDir, (String) configs.get(MAPPER_PROJECT));
       _ruleMapper.readProjectFile(mapperProj);
@@ -126,10 +127,8 @@ public class LanguageGenerator {
     }
   }
 
-  /**
-   * Currently, to switch the language, you will create a new (cached)
-   * {@link LanguageGenerator}
-   *
+  /** Currently, to switch the language, you will create a new (cached)
+   *  {@link LanguageGenerator}
    * @param lang
    * @throws IOException
    */
@@ -150,15 +149,15 @@ public class LanguageGenerator {
    * Put the data from the user model into the generic dialogue act received
    * from the state machine
    *
-   * TODO: will be an improved version of the old
+   * TODO: this will be an improved version of the old
    * LanuageGenerator.getSurfaceFormExtendedLf
    *
    * @param genericDialogueAct
    * @return (optionally) a motion action and a surface string to be uttered by
-   * the TTS
+   *         the TTS
    */
   public Pair<String, String>
-          getSurfaceFormExtendedLf(String genericDialogueAct) {
+      getSurfaceFormExtendedLf(String genericDialogueAct) {
     DagNode rawInput = toDag(genericDialogueAct);
     if (rawInput == null) {
       logger.error("Non-wellformed schema LF: " + genericDialogueAct);
@@ -168,7 +167,7 @@ public class LanguageGenerator {
   }
 
   public Pair<String, String>
-          getSurfaceFormExtendedLf(DagNode rawInput) {
+  getSurfaceFormExtendedLf(DagNode rawInput) {
     // obsolete
     // _ruleMapper.schemaLfStringToLfString(genericDialogueAct));
     logger.info("Before mapping: " + rawInput);

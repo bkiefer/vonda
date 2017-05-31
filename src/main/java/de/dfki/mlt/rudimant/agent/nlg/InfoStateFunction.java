@@ -16,19 +16,16 @@ public class InfoStateFunction implements Function {
     _accessMap = new HashMap<String, BaseInfoStateAccess>();
   }
 
-  /**
-   * This method gives mapping rules for proto LFs access to information state
-   * variables coming from the user model or the game move generator
-   *
+  /** This method gives mapping rules for proto LFs access to information state
+   *  variables coming from the user model or the game move generator
    * @param name the name of the variable to retrieve
    * @return
    */
   protected Object getInfoVar(String name) {
     for (BaseInfoStateAccess access : _accessMap.values()) {
       Object result = access.getInfoVar(name);
-      if (result != null) {
+      if (result != null)
         return result;
-      }
     }
     return null;
   }
@@ -41,18 +38,13 @@ public class InfoStateFunction implements Function {
   }
 
   @Override
-  public int arity() {
-    return 1;
-  }
+  public int arity() { return 1; }
 
   @Override
-  public String name() {
-    return "getInfoVar";
-  }
+  public String name() { return "getInfoVar"; }
 
   @Override
-  public void register(UtterancePlanner arg0) {
-  }
+  public void register(UtterancePlanner arg0) {}
 
   public void setAccess(String what, BaseInfoStateAccess access) {
     _accessMap.put(what, access);

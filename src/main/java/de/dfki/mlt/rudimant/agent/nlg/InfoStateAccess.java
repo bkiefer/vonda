@@ -14,10 +14,8 @@ public class InfoStateAccess implements BaseInfoStateAccess {
     _agent = agent;
   }
 
-  /**
-   * This method gives mapping rules for proto LFs access to information state
-   * variables coming from the user model or the game move generator
-   *
+  /** This method gives mapping rules for proto LFs access to information state
+   *  variables coming from the user model or the game move generator
    * @param name the name of the variable to retrieve
    * @return
    */
