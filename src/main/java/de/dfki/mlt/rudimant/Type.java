@@ -131,13 +131,13 @@ public class Type {
   // End of static fields and methods
   // **********************************************************************
 
-  private String name;
+  private String _name;
 
   /** The parameters of a parameterised type, null if a simple type */
-  private List<Type> parameterTypes;
+  private List<Type> _parameterTypes;
 
   public Type(String typeName) {
-    name = typeName;
+    _name = typeName;
   }
 
   /** Return the more specific of the two types, if it exists, null otherwise */
