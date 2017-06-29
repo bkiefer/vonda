@@ -27,7 +27,7 @@ public class ExpNewTest {
 
     RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(conditionalExp));
     assertTrue(dtr instanceof ExpNew);
-    assertTrue(Type.isRdfType(((ExpNew)dtr).type));
+    assertTrue(((ExpNew)dtr).type.isRdfType());
   }
 
   @Test

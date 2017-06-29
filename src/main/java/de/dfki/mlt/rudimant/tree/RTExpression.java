@@ -65,12 +65,12 @@ public abstract class RTExpression extends RudiTree {
 
   // Return true if is represents an RDF type or a DialogueAct
   // TODO: maybe has to be split up.
-  public boolean isRdfType() { return type.isRdfType(); }
+  public boolean isRdfType() { return type != null? type.isRdfType() : false; }
 
-  public boolean isComplexType() { return type.isComplexType(); }
+  public boolean isComplexType() { return type != null? type.isComplexType() : false; }
 
   public boolean isStringOrComplexType() {
-    return "String".equals(type) || isComplexType();
+    return (type != null && "String".equals(type.get_name())) || isComplexType();
   }
 
   public Type getInnerType() { return type.getInnerType(); }
@@ -80,7 +80,7 @@ public abstract class RTExpression extends RudiTree {
       return this;
     }
 
-    if ("boolean".equals(type)){
+    if (type != null && "boolean".equals(type.get_name())){
       if(this instanceof ExpUSingleValue){
         return this;
       } else {

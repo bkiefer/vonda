@@ -91,9 +91,9 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   public void visitNode(ExpAssignment node) {
     node.right.visit(this);
     // make sure they become Java POD types, if xsd type
-    node.right.type = node.right.type.convertXsdType();
+    node.right.type = node.right.type != null? node.right.type.convertXsdType() : null;
     node.left.visit(this);
-    node.left.type = node.left.type.convertXsdType();
+    node.left.type = node.left.type != null? node.left.type.convertXsdType() : null;
 
     // is this a variable declaration for an already existing variable?
     // When we get here, if node.declaration is true, then node.type has a
@@ -191,8 +191,8 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     node.left.visit(this);
     if (node.right != null) {
       node.right.visit(this);
-      if (!node.left.getType().isPODType()
-          && !node.right.getType().isPODType()) {
+      if (node.left.getType() != null && !node.left.getType().isPODType()
+          && node.right.getType() != null && !node.right.getType().isPODType()) {
         String or = "";
         switch (node.operator) {
           case "==":
@@ -589,7 +589,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     partOfFieldAccess = true;
     for (int i = 1; i < node.parts.size(); ++i) {
       currentNode = node.parts.get(i);
-      if (currentType.isComplexType()
+      if (currentType != null && currentType.isComplexType()
           && currentNode instanceof ExpUFuncCall
           && ! ((ExpUFuncCall)currentNode).exps.isEmpty()
           && ((ExpUFuncCall)currentNode).exps.get(0) instanceof ExpLambda) {
@@ -601,7 +601,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     	  ((ExpUFuncCall)currentNode).calledUpon = currentType.convertRdfType();
       }
       currentNode.visit(this);
-      if (currentType.isRdfType()) {
+      if (currentType != null && currentType.isRdfType()) {
         if (currentNode instanceof ExpUVariable) {
           // only a literal, delegate this because it's complicated
           ExpUPropertyAccess acc

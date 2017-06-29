@@ -93,7 +93,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   public String visitNode(ExpAssignment node) {
     String ret = "";
     if (node.declaration) {
-      ret += (Type.convertRdfType(node.type));
+      ret += (node.type.convertRdfType().get_name());
     }
     ret += (' ');
     ExpUPropertyAccess pa = null;
@@ -129,7 +129,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
             && !(node.right instanceof ExpNew)) {
       // then there is either sth wrong here, what would at least have resulted
       // in warnings in type testing, or it is possible to cast the right part
-      ret += "(" + Type.convertRdfType(node.type) + ") ";
+      ret += "(" + node.type.convertRdfType().get_name() + ") ";
     }
     ret += node.right.visitWithSComments(this);
     if (pa != null) {
@@ -172,7 +172,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public String visitNode(ExpCast node) {
-    return "((" + Type.convertRdfType(node.type) + ")"
+    return "((" + node.type.convertRdfType().get_name() + ")"
         + visitNode(node.expression) + ")";
   }
 
@@ -255,7 +255,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
         ret += mem.getToplevelInstance() + ".";
       }
       ret += "_proxy.getClass(\""
-              + mem.getProxy().getClass(node.type)
+              + mem.getProxy().getClass(node.type.get_name())
               + "\").getNewInstance(";
       if(!mem.getClassName().toLowerCase().equals(
               mem.getToplevelInstance().toLowerCase())){
@@ -324,10 +324,10 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     out.append(var).append("_outer : ");
     node.initialization.visitWithComments(this);
     out.append(") { ")
-       .append(Type.convertRdfType(node.varType))
+       .append(node.varType.convertRdfType().get_name())
        .append(" ").append(var);
-    out.append(" = (").append(Type.convertRdfType(node.varType)).append(")")
-       .append(var).append("_outer;\n");
+    out.append(" = (").append(node.varType.convertRdfType().get_name())
+       .append(")").append(var).append("_outer;\n");
     node.statblock.visitWithComments(this);
     out.append("}");
   }
@@ -366,11 +366,11 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatListCreation node) {
-    out.append(Type.convertRdfType(node.listType)).append(' ')
+    out.append(node.listType.convertRdfType().get_name()).append(' ')
        .append(node.variableName);
-    if (node.listType.startsWith("List")) {
+    if (node.listType.get_name().startsWith("List")) {
       out.append(" = new ArrayList<>();");
-    } else if (node.listType.startsWith("Set")) {
+    } else if (node.listType.get_name().startsWith("Set")) {
       out.append(" = new HashSet<>();");
     }
     if(node.objects.isEmpty()) {
@@ -389,13 +389,13 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       return;
     }
     out.append(node.visibility + " ");
-    out.append(Type.convertRdfType(node.return_type) + " ");
+    out.append(node.return_type.convertRdfType().get_name() + " ");
     out.append(node.name + "(");
     for (int i = 0; i < node.parameters.size(); i++) {
       if (i != 0) {
         out.append(", ");
       }
-      out.append(Type.convertRdfType(node.partypes.get(i))
+      out.append(node.partypes.get(i).convertRdfType().get_name()
               + " " + node.parameters.get(i));
     }
     out.append(")\n");
@@ -496,7 +496,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     for (int i = to - 1; i > 0; i--) {
       if (node.parts.get(i) instanceof ExpUPropertyAccess) {
         ExpUPropertyAccess pa = (ExpUPropertyAccess) node.parts.get(i);
-        String cast = Type.convertRdfType(pa.getType());
+        String cast = pa.getType().convertRdfType().get_name();
         // TODO: what about long, double, ... ??
         if ("int".equals(cast))
           cast = "Integer";
@@ -509,13 +509,13 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       }
     }
     ret += node.parts.get(0).visitWithSComments(this);
-    String currentType = ((RTExpression) node.parts.get(0)).type;
+    Type currentType = ((RTExpression) node.parts.get(0)).type;
     for (int i = 1; i < to; i++) {
       RTExpression currentPart = node.parts.get(i);
       if (currentPart instanceof ExpUPropertyAccess) {
         ExpUPropertyAccess pa = (ExpUPropertyAccess) currentPart;
         // then we are in the case that is actually an rdf operation
-        if (DIALOGUE_ACT_TYPE.equals(currentType)) {
+        if (DIALOGUE_ACT_TYPE.equals(currentType.get_name())) {
           ret += ".getValue(";
         } else {
           ret += pa.functional ? ".getSingleValue(" : ".getValue(";
@@ -537,11 +537,11 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     String ret = "";
     if (node.realOrigin != null &&
     		(node.calledUpon == null ||
-    		node.calledUpon.isEmpty())) {
+    		node.calledUpon.get_name().isEmpty())) {
       ret += lowerCaseFirst(node.realOrigin) + ".";
     }
     if(node.newexp){
-      ret += Type.convertRdfType(node.type) + "(";
+      ret += node.type.convertRdfType().get_name() + "(";
     } else {
       ret += node.content + "(";
     }

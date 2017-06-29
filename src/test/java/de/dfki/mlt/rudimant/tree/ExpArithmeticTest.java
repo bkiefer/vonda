@@ -54,7 +54,7 @@ public class ExpArithmeticTest {
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(getInput(arithmeticExp)));
     assertTrue(dtr instanceof ExpArithmetic);
 
-    String type = ((ExpArithmetic) dtr).getType();
+    String type = ((ExpArithmetic) dtr).getType().get_name();
     assertEquals("type of 1 - 2", "int", type);
   }
 

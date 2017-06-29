@@ -94,14 +94,15 @@ public class Type {
     if(!something.isRdfType()) {
       if(something.get_name().contains("<")){
         // might be sth like List<Child>
-        something.set_name(something.get_name().substring(0, something.get_name().indexOf("<") + 1));
+        String som = something.get_name().substring(0, something.get_name().indexOf("<") + 1);
         Type s = new Type(something.get_name().substring(something.get_name().indexOf("<")
                 + 1, something.get_name().lastIndexOf(">")));
-        something.set_name(something.get_name() + s.convertRdfType().get_name() + ">");
+        som += something.get_name() + s.convertRdfType().get_name() + ">";
+        something.set_name(som);
       }
       return something;
     }
-    String d = (DIALOGUE_ACT_TYPE.equals(something)) ? "DialogueAct" : "Rdf";
+    String d = (DIALOGUE_ACT_TYPE.equals(something.get_name())) ? "DialogueAct" : "Rdf";
     return new Type(d);
   }
 
@@ -152,6 +153,7 @@ public void set_name(String _name) {
 /** Return the more specific of the two types, if it exists, null otherwise */
   public Type unifyTypes(Type right) {
     if (get_name() == null || "Object".equals(get_name())) return right;
+    if (right == null) return null;
     if (right.get_name() == null || "Object".equals(right.get_name())) return this;
     Type left = convertXsdType();
     Type r = right.convertXsdType();
