@@ -20,20 +20,26 @@ public class Type {
 
   static final long JAVA_TYPE = 0x10;
   static {
-    typeCodes.put("Object",               0x111l);
-    typeCodes.put("String",                 0x1l);
-    typeCodes.put("Rdf",                   0x10l);
-    typeCodes.put("double",           0x1000000l);
-    typeCodes.put("Double",           0x1000100l);
-    typeCodes.put("float",            0x1100000l);
-    typeCodes.put("Float",            0x1100100l);
-    typeCodes.put("int",              0x1110000l);
-    typeCodes.put("Integer",          0x1110100l);
-    typeCodes.put("long",             0x1111000l);
-    typeCodes.put("Long",             0x1111100l);
-    typeCodes.put("boolean",         0x10000000l);
-    typeCodes.put("Boolean",         0x10000100l);
-    typeCodes.put("null",           0x100000000l);
+    typeCodes.put("Object",                  0x111l);
+    typeCodes.put("String",                    0x1l);
+    typeCodes.put("Rdf",                      0x10l);
+    typeCodes.put("double",           0x1000000000l);
+    typeCodes.put("Double",           0x1000000100l);
+    typeCodes.put("float",            0x1100000000l);
+    typeCodes.put("Float",            0x1100000100l);
+    typeCodes.put("long",             0x1110000000l);
+    typeCodes.put("Long",             0x1110000100l);
+    typeCodes.put("int",              0x1111000000l);
+    typeCodes.put("Integer",          0x1111000100l);
+    typeCodes.put("short",            0x1111100000l);
+    typeCodes.put("Short",            0x1111100100l);
+    typeCodes.put("byte",             0x1111110000l);
+    typeCodes.put("Byte",             0x1111110100l);
+    typeCodes.put("char",             0x1111001000l);
+    typeCodes.put("Character",        0x1111001100l);
+    typeCodes.put("boolean",         0x10000000000l);
+    typeCodes.put("Boolean",         0x10000000100l);
+    typeCodes.put("null",           0x100000000000l);
   }
 
   public static void setProxy(RdfProxy proxy) { PROXY = proxy; }
@@ -42,7 +48,7 @@ public class Type {
   public boolean isPODType() {
     String name = RdfClass.xsdToJavaPod(get_name());
     Long code = typeCodes.get(name);
-    return code != null && (code & 0x111100000l) != 0;
+    return code != null && (code & 0x11111111000l) != 0;
   }
 
   public boolean isRdfType() {
