@@ -7,6 +7,8 @@ package de.dfki.mlt.rudimant.tree;
 
 import java.util.Collections;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  * type_spec VARIABLE SEMICOLON = only to get the type of this variable into
  * memory
@@ -16,10 +18,10 @@ import java.util.Collections;
 public class StatVarDef extends RTStatement {
 
   String variable;
-  String type;
+  Type type;
 
   public StatVarDef(String type, String variable) {
-    this.type = type;
+    this.type = new Type(type);
     this.variable = variable;
   }
 

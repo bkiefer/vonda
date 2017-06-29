@@ -19,13 +19,13 @@ public abstract class RTExpression extends RudiTree {
 
   public static final Logger logger = LoggerFactory.getLogger(RudiTree.class);
 
-  protected String type;
+  protected Type type;
 
-  public String getType() {
+  public Type getType() {
     return type;
   }
 
-  public void setType(String to) {
+  public void setType(Type to) {
     type = to;
   }
 
@@ -65,15 +65,15 @@ public abstract class RTExpression extends RudiTree {
 
   // Return true if is represents an RDF type or a DialogueAct
   // TODO: maybe has to be split up.
-  public boolean isRdfType() { return Type.isRdfType(type); }
+  public boolean isRdfType() { return type.isRdfType(); }
 
-  public boolean isComplexType() { return Type.isComplexType(type); }
+  public boolean isComplexType() { return type.isComplexType(); }
 
   public boolean isStringOrComplexType() {
     return "String".equals(type) || isComplexType();
   }
 
-  public String getInnerType() { return Type.getInnerType(type); }
+  public Type getInnerType() { return type.getInnerType(); }
 
   public RTExpression ensureBooleanBasic() {
     if (this instanceof ExpBoolean) {
@@ -105,15 +105,15 @@ public abstract class RTExpression extends RudiTree {
       right = fixFields(new ExpUSingleValue("null", "Object"));
       result = fixFields(new ExpBoolean(this, right, "!="));
     } else {
-      String cleanType = Type.convertXsdType(type);
+      String cleanType = type.convertXsdType().get_name();
       if (! type.equals(cleanType)) {
         result = fixFields(new ExpBoolean(this, null, "exists("));
       } else {
-        switch (type) {
+        switch (cleanType) {
         case "int":
         case "float":
         case "double":
-          right = fixFields(new ExpUSingleValue("0", type));
+          right = fixFields(new ExpUSingleValue("0", cleanType));
           break;
         default:
           right = fixFields(new ExpUSingleValue("null", "Object"));
@@ -134,6 +134,6 @@ public abstract class RTExpression extends RudiTree {
   }
 
 
-  public abstract void propagateType(String upperType);
+  public abstract void propagateType(Type upperType);
 
 }

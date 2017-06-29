@@ -7,6 +7,8 @@ package de.dfki.mlt.rudimant.tree;
 
 import java.util.Arrays;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  * this is a conditional expression, i.e., something like a ? b : c
  *
@@ -51,7 +53,7 @@ public class ExpConditional extends RTExpression {
     return Arrays.asList(dtrs);
   }
 
-  public void propagateType(String upperType) {
+  public void propagateType(Type upperType) {
     if (type != null) {
       logger.error("Why didn't this type percolate up? " + fullexp + " " + type);
       return;

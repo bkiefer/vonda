@@ -7,6 +7,8 @@ package de.dfki.mlt.rudimant.tree;
 
 import java.util.Arrays;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  * FOR LPAR VARIABLE COLON exp RPAR loop_statement_block
  * a 'modern' for statement
@@ -15,7 +17,7 @@ import java.util.Arrays;
  */
 public class StatFor2 extends RTStatement {
 
-  String varType;
+  Type varType;
   ExpUVariable var;
   RTExpression initialization;
   RTStatement statblock;
@@ -35,7 +37,7 @@ public class StatFor2 extends RTStatement {
     if (vType.equals("var")) {
       varType = null;
     } else {
-      varType = vType;
+      varType = new Type(vType);
     }
   }
 

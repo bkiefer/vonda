@@ -10,6 +10,8 @@ import static de.dfki.mlt.rudimant.Constants.DIALOGUE_ACT_TYPE;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  * this class represents dialogue acts
  *
@@ -27,7 +29,7 @@ public class ExpDialogueAct extends RTExpression {
     daType = da;
     proposition = prop;
     exps = args;
-    type = DIALOGUE_ACT_TYPE;
+    type = new Type(DIALOGUE_ACT_TYPE);
   }
 
   public void visit(RTExpressionVisitor v) {
@@ -57,7 +59,7 @@ public class ExpDialogueAct extends RTExpression {
     return dtrs;
   }
 
-  public void propagateType(String upperType) {
+  public void propagateType(Type upperType) {
     logger.error("Why didn't this type percolate up? " + fullexp + " " + type);
   }
 }

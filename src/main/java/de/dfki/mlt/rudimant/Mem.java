@@ -127,8 +127,8 @@ public class Mem {
    * @param partypes the parameter types of the function's parameters
    * @param origin first element class, second rule origin
    */
-  public void addFunction(String funcname, String functype, String calledUpon,
-          List<String> partypes) {
+  public void addFunction(String funcname, Type functype, Type calledUpon,
+          List<Type> partypes) {
     String origin = null;
     //if(! KNOWN_FUNCTIONS.contains(funcname)) {
     origin = getClassName();
@@ -137,7 +137,7 @@ public class Mem {
   }
 
   /** Return the class where this function is defined */
-  public String getFunctionOrigin(String funcname, List<String> partypes){
+  public String getFunctionOrigin(String funcname, List<Type> partypes){
     String origin = current().getFunctionOrigin(funcname, partypes, this);
     if (getClassName().equals(origin))
       return null;
@@ -146,7 +146,7 @@ public class Mem {
   }
 
   /** Return true if a function with this name is defined */
-  public boolean existsFunction(String funcname, List<String> partypes) {
+  public boolean existsFunction(String funcname, List<Type> partypes) {
     return current().existsFunction(funcname, partypes, this);
   }
 
@@ -156,7 +156,7 @@ public class Mem {
    * @param funcname the name of the function
    * @return its return type or null
    */
-  public String getFunctionRetType(String funcname, String calledUpon, List<String> partypes) {
+  public Type getFunctionRetType(String funcname, Type calledUpon, List<Type> partypes) {
     return current().getFunctionRetType(funcname, calledUpon, partypes, this);
   }
 
@@ -167,12 +167,12 @@ public class Mem {
    * @param origin first element class, second rule origin
    * @return
    */
-  public boolean addVariableDeclaration(String variable, String type) {
+  public boolean addVariableDeclaration(String variable, Type type) {
     if (current().isVarDefined(variable)) {
       return false;
     }
     String origin = getClassName();
-    type = Type.checkRdf(type);
+    type = type.checkRdf();
     current().put(variable, type, origin);
     logger.trace("Add var {}:{} [{}]", environment.size(), variable, type);
     return true;
@@ -202,7 +202,7 @@ public class Mem {
    * @param variable a variable
    * @return the variable's type
    */
-  public String getVariableType(String variable) {
+  public Type getVariableType(String variable) {
     return current().getType(variable);
   }
 

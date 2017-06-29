@@ -7,6 +7,8 @@ package de.dfki.mlt.rudimant.tree;
 
 import java.util.Arrays;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  * a special kind of the RudiTree is an expression; expressions can have types
  *
@@ -25,7 +27,7 @@ public abstract class RTBinaryExp extends RTExpression {
         : new RudiTree[]{ left });
   }
 
-  public void propagateType(String upperType) {
+  public void propagateType(Type upperType) {
     if (type != null) {
       logger.error("Why didn't this type percolate up? " + fullexp + " " + type);
       return;

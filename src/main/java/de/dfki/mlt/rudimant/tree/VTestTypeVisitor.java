@@ -70,7 +70,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
         node.right.propagateType(node.left.type);
       } else {
         // check type compatibility
-        String type = Type.unifyTypes(node.left.type, node.right.type);
+        Type type = node.left.type.unifyTypes(node.right.type);
         if (type == null) {
           rudi.typeError("Incompatible types in " + node + ": "
                   + node.left.type + " vs. " + node.right.type, node);
@@ -91,15 +91,15 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   public void visitNode(ExpAssignment node) {
     node.right.visit(this);
     // make sure they become Java POD types, if xsd type
-    node.right.type = Type.convertXsdType(node.right.type);
+    node.right.type = node.right.type.convertXsdType();
     node.left.visit(this);
-    node.left.type = Type.convertXsdType(node.left.type);
+    node.left.type = node.left.type.convertXsdType();
 
     // is this a variable declaration for an already existing variable?
     // When we get here, if node.declaration is true, then node.type has a
     // non-null value, and vice versa
     if (node.declaration) {
-      node.type = Type.checkRdf(node.type);
+      node.type = node.type.checkRdf();
       if (mem.variableExists(node.left.toString())) {
         rudi.typeError("Re-declaration of existing variable " + node.left, node);
       } else {
@@ -121,7 +121,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
       if (node.right.type == null) {
         // please, never assign null as a type, because that is no valid java type
         // and will crash for sure
-        node.right.type = "Object";
+        node.right.type = new Type("Object");
         // TODO: ? node.right.propagateType(node.type);
       }
       node.type = node.left.type = node.right.type;
@@ -139,11 +139,11 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     // special measures must be taken.
     // if unifyTypes returns null, the types are incompatible
     // if one of them is null, unifyTypes will return the other type
-    String mergeType = Type.unifyTypes(node.left.type, node.right.type);
+    Type mergeType = node.left.type.unifyTypes(node.right.type);
     if (mergeType == null) {
-      if ("boolean".equals(node.left.type)) {
+      if ("boolean".equals(node.left.type.get_name())) {
         // in that case, we assume that this should be a test for existance
-        mergeType = "boolean";
+        mergeType = new Type("boolean");
         node.right = node.right.ensureBoolean();
       } else {
         if ((node.left instanceof ExpUFieldAccess) &&
@@ -152,7 +152,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
           // this is a "clear" operation, to be resolved later.
           mergeType = node.left.type;
         } else {
-          mergeType = "Object";
+          mergeType = new Type("Object");
           rudi.typeError("Incompatible types in assignment: "
               + node.left.type + " := " + node.right.type, node);
         }
@@ -191,8 +191,8 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     node.left.visit(this);
     if (node.right != null) {
       node.right.visit(this);
-      if (!Type.isPODType(node.left.getType())
-          && !Type.isPODType(node.right.getType())) {
+      if (!node.left.getType().isPODType()
+          && !node.right.getType().isPODType()) {
         String or = "";
         switch (node.operator) {
           case "==":
@@ -225,9 +225,9 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
 
   @Override
   public void visitNode(ExpCast node) {
-    node.type = Type.checkRdf(node.type);
+    node.type = node.type.checkRdf();
     visitNode(node.expression);
-    String mergeType = Type.unifyTypes(node.type, node.expression.type);
+    Type mergeType = node.type.unifyTypes(node.expression.type);
     if (mergeType == null) {
       rudi.typeError("Incompatible types : " + node.expression.type
           + " casted to " + node.type, node);
@@ -282,14 +282,15 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     node.boolexp = node.boolexp.ensureBoolean();
     node.thenexp.visit(this);
     node.elseexp.visit(this);
-    if (Type.unifyTypes(node.thenexp.getType(), node.elseexp.getType()) == null) {
+    Type unified = node.thenexp.getType().unifyTypes(node.elseexp.getType());
+    if (unified == null) {
       rudi.typeError(node.fullexp
               + " is a conditional expression where the else expression "
               + "does not have the same type as the right expression!\n("
               + "comparing types " + node.thenexp.getType() + " on left and "
               + node.elseexp.getType() + " on right)", node);
     }
-    node.type = node.thenexp.getType();
+    node.type = unified;
   }
 
   @Override
@@ -345,19 +346,19 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   @Override
   public void visitNode(StatFor2 node) {
     node.initialization.visit(this);
-    String innerIterableType;
+    Type innerIterableType;
     if (node.initialization.type != null && node.initialization.isComplexType()) {
-      innerIterableType = Type.checkRdf(node.initialization.getInnerType());
+      innerIterableType = node.initialization.getInnerType().checkRdf();
     } else {
       rudi.typeError("Iterable for loop type is unknown or not generic, but: "
           + node.initialization.getType(), node);
-      innerIterableType= "Object";
+      innerIterableType= new Type("Object");
     }
     if (node.varType == null) {
       node.varType = innerIterableType;
     } else {
-      node.varType = Type.checkRdf(node.varType);
-      String mergeType = Type.unifyTypes(node.varType, innerIterableType);
+      node.varType = node.varType.checkRdf();
+      Type mergeType = node.varType.unifyTypes(innerIterableType);
       if (mergeType == null) {
         rudi.typeError("Incompatible types in short for loop: "
             + node.varType + " : " + innerIterableType, node);
@@ -376,7 +377,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     // TODO: this is a bit more complicated; remember the types of the variables
     // that were declared in the condition
     for (String s : node.variables) {
-      mem.addVariableDeclaration(s, "Object");
+      mem.addVariableDeclaration(s, new Type("Object"));
     }
   }
 
@@ -386,25 +387,25 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
       for (RTExpression e : node.objects) {
         visitNode(e);
       }
-      String type = node.listType;
+      Type type = node.listType;
       if (type != null) {
-        String elementType = Type.getInnerType(type);
-        if (Type.unifyTypes(elementType, node.objects.get(0).getType()) == null) {
+        Type elementType = type.getInnerType();
+        if (elementType.unifyTypes(node.objects.get(0).getType()) == null) {
           rudi.typeError("Found a list creation where the list type"
                   + " doesn't fit its objects' type: " + elementType
                   + " vs " + node.objects.get(0).getType(), node);
         }
         mem.addVariableDeclaration(node.variableName, type);
       } else {
-        node.listType = "List<" + node.objects.get(0).getType() + ">";
+        node.listType = new Type("List<" + node.objects.get(0).getType().get_name() + ">");
         mem.addVariableDeclaration(node.variableName, type);
       }
     } else if (node.listType == null) {
-      node.listType = "List<Object>";
+      node.listType = new Type("List<Object>");
     } else {
-      String elementType = Type.checkRdf(Type.getInnerType(node.listType));
-      String collType = Type.getOuterType(node.listType);
-      node.listType = collType + '<' + elementType + '>';
+      Type elementType = node.listType.getInnerType().checkRdf();
+      Type collType = node.listType.getOuterType();
+      node.listType = new Type(collType.get_name() + '<' + elementType.get_name() + '>');
     }
 
   }
@@ -421,8 +422,8 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
           + node.left.getType(), node);
       return;
     }
-    String inner = node.left.getInnerType();
-    String res = Type.unifyTypes(inner, node.right.type);
+    Type inner = node.left.getInnerType();
+    Type res = inner.unifyTypes(node.right.type);
     if (res == null) {
       rudi.typeError("Incompatible types in set operation: "
           + node.left.getType() + " <> " + node.right.type, node);
@@ -440,10 +441,10 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   @Override
   public void visitNode(StatMethodDeclaration node) {
     for(int i = 0; i < node.partypes.size(); i++){
-      node.partypes.set(i, Type.checkRdf(node.partypes.get(i)));
+      node.partypes.set(i, node.partypes.get(i).checkRdf());
     }
     mem.addFunction(node.name, node.return_type, node.calledUpon, node.partypes);
-    node.return_type = Type.checkRdf(node.return_type);
+    node.return_type = node.return_type.checkRdf();
     if (node.block != null) {
       // The following variables (function parameters) are local to the method
       // block we now step into; we don't want them to be reachable them from
@@ -510,7 +511,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
    * @param currentType
    * @param label
    */
-  ExpUPropertyAccess treatRdfPropertyAccess(ExpUFieldAccess node, String currentType,
+  ExpUPropertyAccess treatRdfPropertyAccess(ExpUFieldAccess node, Type currentType,
           ExpUVariable var) {
     // only a literal: check if it is a property of clz, and update the
     // current type
@@ -524,7 +525,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
       // the return type will be string, this is a call to getSlot
       return new ExpUPropertyAccess(var.fullexp, var, false, "String", true);
     }
-    RdfClass clz = mem.getProxy().getClass(currentType);
+    RdfClass clz = mem.getProxy().getClass(currentType.get_name());
     String predUri = null;
     if (clz != null) {
       predUri = clz.fetchProperty(var.content);
@@ -538,7 +539,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     var.content = predUri; // replace plain name by URI
     int predType = clz.getPropertyType(predUri);
     // TODO: CONVERT XSD TYPES TO JAVA, WHERE POSSIBLE
-    currentType = clz.getPropertyRange(predUri);
+    currentType = new Type(clz.getPropertyRange(predUri));
     if (currentType == null) {
       // WARNING / error
       rudi.typeError("No range type defined for property "
@@ -564,10 +565,10 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     boolean isFunctional = (predType & RdfClass.FUNCTIONAL_PROPERTY) != 0;
     if (! isFunctional) {
       //currentType = "Set<"+currentType+">";
-      currentType="Set<Object>";
+      currentType = new Type("Set<Object>");
     }
     // the type of this is set to Object by default (not null)
-    return new ExpUPropertyAccess(var.fullexp, var, false, currentType, isFunctional);
+    return new ExpUPropertyAccess(var.fullexp, var, false, currentType.get_name(), isFunctional);
   }
 
   /**
@@ -578,7 +579,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
    */
   @Override
   public void visitNode(ExpUFieldAccess node) {
-    String currentType = null;
+    Type currentType = null;
     RTExpression currentNode = node.parts.get(0); // can not be empty
     currentNode.visit(this);
     // The type to which the next field access item is applied
@@ -588,19 +589,19 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     partOfFieldAccess = true;
     for (int i = 1; i < node.parts.size(); ++i) {
       currentNode = node.parts.get(i);
-      if (Type.isComplexType(currentType)
+      if (currentType.isComplexType()
           && currentNode instanceof ExpUFuncCall
           && ! ((ExpUFuncCall)currentNode).exps.isEmpty()
           && ((ExpUFuncCall)currentNode).exps.get(0) instanceof ExpLambda) {
         ((ExpLambda)((ExpUFuncCall)currentNode).exps.get(0)).parType =
-            Type.getInnerType(currentType);
+        		currentType.getInnerType();
       }
       // if this is a funccall performed on anything, tell the function the type it was called on
       if(currentNode instanceof ExpUFuncCall && currentType != null){
-    	  ((ExpUFuncCall)currentNode).calledUpon = Type.convertRdfType(currentType);
+    	  ((ExpUFuncCall)currentNode).calledUpon = currentType.convertRdfType();
       }
       currentNode.visit(this);
-      if (Type.isRdfType(currentType)) {
+      if (currentType.isRdfType()) {
         if (currentNode instanceof ExpUVariable) {
           // only a literal, delegate this because it's complicated
           ExpUPropertyAccess acc
@@ -627,7 +628,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
       }
       ((RTExpression) currentNode).type = currentType;
     }
-    node.type = currentType == null ? "Object" : currentType; // the final result type
+    node.type = currentType == null ? new Type("Object") : currentType; // the final result type
     partOfFieldAccess = false;
   }
 
@@ -639,11 +640,11 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   public void visitNode(ExpUFuncCall node) {
     // if this was used in a new Expression, handle it accordingly
     if(node.newexp){
-      node.type = Type.checkRdf(node.content);
+      node.type = new Type(node.content).checkRdf();
       return;
     }
     // test whether the given parameters are of the correct type
-    List<String> partypes = new ArrayList<String>();
+    List<Type> partypes = new ArrayList<Type>();
     for (RTExpression e : node.exps) {
       e.visit(this);
       partypes.add(e.getType());
@@ -690,7 +691,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     // we could have sth like Introduction, that is an undeclared rdf class
     RdfClass cl = mem.getProxy().fetchClass(node.content);
     if (cl != null) {
-      node.type = cl.toString();
+      node.type = new Type(cl.toString());
       if (!mem.variableExists(node.content)) {
         node.content = "\"" + node.content + "\"";
       }
@@ -730,7 +731,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   public void visitNode(ExpNew node) {
     if (node.construct == null) {
       // insert proper rdf type
-      node.type = Type.checkRdf(node.type);
+      node.type = node.type.checkRdf();
     } else {
       if(node.construct instanceof ExpUFuncCall){
         ((ExpUFuncCall)node.construct).newexp = true;

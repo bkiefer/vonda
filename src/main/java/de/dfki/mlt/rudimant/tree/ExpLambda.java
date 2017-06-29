@@ -8,6 +8,8 @@ package de.dfki.mlt.rudimant.tree;
 import java.util.Arrays;
 import java.util.List;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  * just to be able to deal with lambda expressions if someone should use them,
  * but there is nothing like type checking implemented yet
@@ -17,7 +19,7 @@ import java.util.List;
 public class ExpLambda extends RTExpLeaf {
 
   List<String> parameters;
-  String parType;
+  Type parType;
   RudiTree body;
 
   public ExpLambda(List<String> args, RudiTree b) {
@@ -51,7 +53,7 @@ public class ExpLambda extends RTExpLeaf {
     for (int i = 1; i < parameters.size(); ++i)
       sb.append(',').append(parameters.get(i));
     sb.append(")");
-    RudiTree[] dtrs = { new ExpUSingleValue(sb.toString(), parType), body };
+    RudiTree[] dtrs = { new ExpUSingleValue(sb.toString(), parType.get_name()), body };
     return Arrays.asList(dtrs);
   }
 }

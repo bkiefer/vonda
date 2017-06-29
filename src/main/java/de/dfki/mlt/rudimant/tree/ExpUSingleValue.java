@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudimant.tree;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  * class representing a simple value like a String, an int or null
  * @author Anna Welker
@@ -13,7 +15,7 @@ public class ExpUSingleValue extends RTExpLeaf {
 
   public ExpUSingleValue(String representation, String type){
     this.content = representation;
-    this.type = type;
+    this.type = new Type(type);
   }
 
   @Override

@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudimant.tree;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  * this is a boolean expression; might also be a subsumes relation (but will in
  * sum always be a boolean)
@@ -26,7 +28,7 @@ public class ExpBoolean extends RTBinaryExp {
     this.left = left;
     this.right = right;
     this.operator = operator;
-    this.type = "boolean";
+    this.type = new Type("boolean");
   }
 
   @Override

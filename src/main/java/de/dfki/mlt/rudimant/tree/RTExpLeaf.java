@@ -7,6 +7,8 @@ package de.dfki.mlt.rudimant.tree;
 
 import java.util.Collections;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  * the lowest, simplest nodes in the AbstractTree
  *
@@ -24,7 +26,7 @@ public abstract class RTExpLeaf extends RTExpression {
     return (content == null) ? fullexp : content;
   }
 
-  public void propagateType(String upperType) {
+  public void propagateType(Type upperType) {
     if (type != null) {
       logger.error("Why didn't this type percolate up? " + fullexp + " " + type);
       return;

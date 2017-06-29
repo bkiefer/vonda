@@ -25,7 +25,7 @@ public class Environment {
   // The file that we're currently in
   private String origin;
 
-  private Map<String, String> variableToType;
+  private Map<String, Type> variableToType;
   private Map<String, String> variableOrigin;
   private HashMap<String, Set<Function>> functions;
 
@@ -44,7 +44,7 @@ public class Environment {
   }
 
   /** Set the type t and origin o (from which file) for variable v */
-  public void put(String var, String type, String origin) {
+  public void put(String var, Type type, String origin) {
     variableToType.put(var, type);
     variableOrigin.put(var, origin);
   }
@@ -53,7 +53,7 @@ public class Environment {
     return variableToType.containsKey(k);
   }
 
-  public String getType(String k) {
+  public Type getType(String k) {
     return variableToType.get(k);
   }
 
@@ -74,11 +74,11 @@ public class Environment {
    * @param partypes the parameter types of the function's parameters
    * @param origin first element class, second rule origin
    */
-  public void addFunction(String funcname, String functype, String calledUpon,
-          List<String> partypes, String origin, Mem mem) {
-    functype = Type.checkRdf(functype);
+  public void addFunction(String funcname, Type functype, Type calledUpon,
+          List<Type> partypes, String origin, Mem mem) {
+    functype = functype.checkRdf();
     for (int i = 0; i < partypes.size(); ++i) {
-      partypes.set(i, Type.checkRdf(partypes.get(i)));
+      partypes.set(i, partypes.get(i).checkRdf());
     }
     // test whether we already have an entry for this method
     if (functions.keySet().contains(funcname)) {
@@ -104,7 +104,7 @@ public class Environment {
                 partypes, calledUpon));
   }
 
-  public String getFunctionOrigin(String funcname, List<String> partypes,
+  public String getFunctionOrigin(String funcname, List<Type> partypes,
           Mem mem) {
     if (functions.keySet().contains(funcname)) {
       for (Function f : functions.get(funcname)) {
@@ -116,7 +116,7 @@ public class Environment {
     return null;
   }
 
-  public boolean existsFunction(String funcname, List<String> partypes, Mem mem) {
+  public boolean existsFunction(String funcname, List<Type> partypes, Mem mem) {
     if (!functions.containsKey(funcname)) {
       return false;
     }
@@ -134,8 +134,8 @@ public class Environment {
    * @param funcname the name of the function
    * @return its return type or null
    */
-  public String getFunctionRetType(String funcname, String calledUpon,
-		  List<String> partypes, Mem mem) {
+  public Type getFunctionRetType(String funcname, Type calledUpon,
+		  List<Type> partypes, Mem mem) {
     if(!functions.containsKey(funcname)){
       return null;
     }

@@ -7,6 +7,8 @@ package de.dfki.mlt.rudimant.tree;
 
 import java.util.Arrays;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  * this is either a variable declaration, or an assignment of a variable to a
  * new value. Most of the type checking rudimant currently does happens here.
@@ -35,7 +37,7 @@ public class ExpAssignment extends RTExpression {
   public ExpAssignment(String actualType, RTExpression l, RTExpression r) {
     this(l, r);
     declaration = true;
-    type = actualType;
+    type = new Type(actualType);
   }
 
   @Override
@@ -63,7 +65,7 @@ public class ExpAssignment extends RTExpression {
     return Arrays.asList(dtrs);
   }
 
-  public void propagateType(String upperType) {
+  public void propagateType(Type upperType) {
     if (type != null) {
       logger.error("Why didn't this type percolate up? " + fullexp + " " + type);
       return;

@@ -86,7 +86,7 @@ public class GrammarFile extends RudiTree {
           ((StatExpression)r).expression instanceof ExpAssignment){
         ExpAssignment ass = (ExpAssignment)((StatExpression)r).expression;
         if(ass.declaration) {
-          out.append(Type.convertRdfType(ass.type)).append(" ")
+          out.append(ass.type.convertRdfType().get_name()).append(" ")
              .append(ass.left.fullexp).append(";\n");
           ass.declaration = false;
         }

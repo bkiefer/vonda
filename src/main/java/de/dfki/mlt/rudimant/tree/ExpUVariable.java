@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudimant.tree;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  * representation of a variable
  *
@@ -14,7 +16,7 @@ public class ExpUVariable extends RTExpLeaf {
 
   public ExpUVariable(String type, String representation) {
     this(representation);
-    this.type = type;
+    this.type = new Type(type);
   }
 
   public ExpUVariable(String representation) {
@@ -46,7 +48,7 @@ public class ExpUVariable extends RTExpLeaf {
     return v.visitNode(this);
   }
 
-  public void propagateType(String upperType) {
+  public void propagateType(Type upperType) {
     // it's not an error if the type is null
     type = upperType;
   }

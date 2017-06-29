@@ -7,6 +7,8 @@ package de.dfki.mlt.rudimant.tree;
 
 import java.util.ArrayList;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  *
  * @author Anna Welker, anna.welker@dfki.de
@@ -15,7 +17,7 @@ public class StatListCreation extends RTStatement {
 
   ArrayList<RTExpression> objects;
   String variableName;
-  String listType;
+  Type listType;
 
   public StatListCreation(String varName, ArrayList<RTExpression> objs) {
     objects = objs;
@@ -26,7 +28,7 @@ public class StatListCreation extends RTStatement {
       String lType) {
     objects = objs;
     variableName = varName;
-    listType = lType;
+    listType = new Type(lType);
   }
 
   @Override

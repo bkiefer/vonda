@@ -7,6 +7,8 @@ package de.dfki.mlt.rudimant.tree;
 
 import java.util.Arrays;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  * A Java-like cast
  * @author pal
@@ -22,12 +24,12 @@ public class ExpCast extends RTExpression {
    * @param exp set to the expression that is casted
    */
   public ExpCast(String t, RTExpression exp){
-    type = t;
+    type = new Type(t);
     expression = exp;
   }
 
   @Override
-  public void propagateType(String upperType) {
+  public void propagateType(Type upperType) {
     // TODO: does this make sense here????
   }
 

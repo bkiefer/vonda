@@ -7,6 +7,8 @@ package de.dfki.mlt.rudimant.tree;
 
 import java.util.List;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  * this is a call to a function; as field accesses are considered to be
  * retrieving sth from the ontology, we define that there will never be
@@ -22,7 +24,7 @@ public class ExpUFuncCall extends RTExpLeaf {
   // remember whether this is used by new
   boolean newexp;
   // the type of object this function was called upon (null if nothing)
-  String calledUpon;
+  Type calledUpon;
 
   public ExpUFuncCall(String representation, List<RTExpression> expressions,
       boolean newexpression) {

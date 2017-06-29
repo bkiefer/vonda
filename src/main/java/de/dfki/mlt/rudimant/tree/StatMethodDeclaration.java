@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  * class that allows the implementation of methods in a .rudi file; we are not
  * sure whether this should still be possible
@@ -18,25 +20,28 @@ import java.util.Collections;
 public class StatMethodDeclaration extends RTStatement {
 
   String visibility;
-  String return_type;
+  Type return_type;
   String name;
   ArrayList<String> parameters;
-  ArrayList<String> partypes;
+  ArrayList<Type> partypes;
   RTStatement block;
   // the type this method should be called upon; null if the method
   // is rudi-defined!
-  String calledUpon;
+  Type calledUpon;
 
   public StatMethodDeclaration(String vis, String ret_type,
 		  String calledUpn, String nm, ArrayList<String> parms,
 		  ArrayList<String> parmTypes, RTStatement blk) {
     visibility = vis;
-    return_type = ret_type;
+    return_type = new Type(ret_type);
     name = nm;
     parameters = parms;
-    partypes = parmTypes;
+    partypes = new ArrayList<Type>();
+    for (String p : parmTypes){
+      partypes.add(new Type(p));
+    }
     block = blk;
-    calledUpon = calledUpn;
+    calledUpon = new Type(calledUpn);
   }
 
   @Override

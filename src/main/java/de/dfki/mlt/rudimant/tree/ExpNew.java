@@ -7,6 +7,8 @@ package de.dfki.mlt.rudimant.tree;
 
 import java.util.Arrays;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  * Either used to encode a normal java creation using new or to create a new
  * rdf object
@@ -25,12 +27,12 @@ public class ExpNew extends RTExpression {
    *                  (to null if no java creation)
    */
   public ExpNew(String toCreate, RTExpression constr){
-    type = toCreate;
+    type = new Type(toCreate);
     construct = constr;
   }
 
   @Override
-  public void propagateType(String upperType) {
+  public void propagateType(Type upperType) {
     // TODO: does this make sense here????
   }
 

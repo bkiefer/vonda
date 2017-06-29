@@ -39,38 +39,38 @@ public class Type {
   public static void setProxy(RdfProxy proxy) { PROXY = proxy; }
 
   /** Indicates if this type should be compared with == or equals */
-  public static boolean isPODType(String name) {
-    name = RdfClass.xsdToJavaPod(name);
+  public boolean isPODType() {
+    String name = RdfClass.xsdToJavaPod(get_name());
     Long code = typeCodes.get(name);
     return code != null && (code & 0x111100000l) != 0;
   }
 
-  public static boolean isRdfType(String type) {
-    return (type != null && type.charAt(0) == '<');
+  public boolean isRdfType() {
+    return (get_name() != null && get_name().charAt(0) == '<');
   }
 
-  public static boolean isComplexType(String type) {
-    if (type == null) return false;
-    return (type.startsWith("Map")
-        || type.startsWith("Set")
-        || type.startsWith("List")
-        || type.startsWith("RdfSet")
-        || type.startsWith("RdfList")
-        || ((type.endsWith(">") && ! isRdfType(type))));
+  public boolean isComplexType() {
+    if (get_name() == null) return false;
+    return (get_name().startsWith("Map")
+        || get_name().startsWith("Set")
+        || get_name().startsWith("List")
+        || get_name().startsWith("RdfSet")
+        || get_name().startsWith("RdfList")
+        || ((get_name().endsWith(">") && ! isRdfType())));
   }
 
   /** Return the "inner" type of a complex type expression */
-  public static String getInnerType(String type) {
-    int left = type.indexOf('<');
-    if (left < 0) return "Object";
-    int right = type.lastIndexOf('>');
-    return type.substring(left + 1, right);
+  public Type getInnerType() {
+    int left = get_name().indexOf('<');
+    if (left < 0) return new Type("Object"); // or return this??
+    int right = get_name().lastIndexOf('>');
+    return new Type(get_name().substring(left + 1, right));
   }
 
-  public static String getOuterType(String type) {
-    int i = type.indexOf('<');
-    if (i < 0) return type;
-    return type.substring(0, i);
+  public Type getOuterType() {
+    int i = get_name().indexOf('<');
+    if (i < 0) return this;
+    return new Type(get_name().substring(0, i));
   }
 
   /**
@@ -78,10 +78,10 @@ public class Type {
    * @param something
    * @return
    */
-  public static String convertXsdType(String something){
-    String ret = RdfClass.xsdToJavaPod(something);
-    if (ret != null) return ret;
-    return something;
+  public Type convertXsdType(){
+    String ret = RdfClass.xsdToJavaPod(get_name());
+    if (ret != null) return new Type(ret);
+    return this;
   }
 
   /**
@@ -89,41 +89,42 @@ public class Type {
    * @param something
    * @return
    */
-  public static String convertRdfType(String something){
-    something = convertXsdType(something);
-    if(!isRdfType(something)) {
-      if(something.contains("<")){
+  public Type convertRdfType(){
+    Type something = this.convertXsdType();
+    if(!something.isRdfType()) {
+      if(something.get_name().contains("<")){
         // might be sth like List<Child>
-        something = something.substring(0, something.indexOf("<") + 1)
-                + convertRdfType(something.substring(something.indexOf("<")
-                        + 1, something.lastIndexOf(">")))
-                + ">";
+        something.set_name(something.get_name().substring(0, something.get_name().indexOf("<") + 1));
+        Type s = new Type(something.get_name().substring(something.get_name().indexOf("<")
+                + 1, something.get_name().lastIndexOf(">")));
+        something.set_name(something.get_name() + s.convertRdfType().get_name() + ">");
       }
       return something;
     }
-    return (DIALOGUE_ACT_TYPE.equals(something)) ? "DialogueAct" : "Rdf";
+    String d = (DIALOGUE_ACT_TYPE.equals(something)) ? "DialogueAct" : "Rdf";
+    return new Type(d);
   }
 
-  public static String checkRdf(String type) {
+  public Type checkRdf() {
     // if is necessary, because otherwise, Object as the static type in a
     // declaration gets changed to RdfType by
     // VGenerationVisitor.visitNode(ExpAssignment node)
-    if ("Object".equals(type) || null == type
-        || "String".equals(type)){ // what about Integer, int, etc.??
-      return type;
+    if ("Object".equals(get_name()) || null == get_name()
+        || "String".equals(get_name())){ // what about Integer, int, etc.??
+      return this;
     }
-    if(!type.startsWith("<") && type.contains("<")){
+    String n = get_name();
+    if(!get_name().startsWith("<") && get_name().contains("<")){
       // might be sth like List<Child>
-      type = type.substring(0, type.indexOf("<") + 1)
-              + checkRdf(type.substring(type.indexOf("<")
-                      + 1, type.lastIndexOf(">")))
-              + ">";
+      n = get_name().substring(0, get_name().indexOf("<") + 1);
+      Type t = new Type(get_name().substring(get_name().indexOf("<") + 1, get_name().lastIndexOf(">")));
+      n += t.checkRdf().get_name() + ">";
     }
-    RdfClass clazz = PROXY.fetchClass(type);
+    RdfClass clazz = PROXY.fetchClass(n);
     if (clazz != null) {
-      type = clazz.toString(); // the URI of the class
+      n = clazz.toString(); // the URI of the class
     }
-    return type;
+    return new Type(n);
   }
 
 
@@ -137,34 +138,42 @@ public class Type {
   private List<Type> _parameterTypes;
 
   public Type(String typeName) {
-    _name = typeName;
+    set_name(typeName);
   }
 
-  /** Return the more specific of the two types, if it exists, null otherwise */
-  public static String unifyTypes(String left, String right) {
-    if (left == null || "Object".equals(left)) return right;
-    if (right == null || "Object".equals(right)) return left;
-    left = convertXsdType(left);
-    right = convertXsdType(right);
+  public String get_name() {
+	return _name;
+}
+
+public void set_name(String _name) {
+	this._name = _name;
+}
+
+/** Return the more specific of the two types, if it exists, null otherwise */
+  public Type unifyTypes(Type right) {
+    if (get_name() == null || "Object".equals(get_name())) return right;
+    if (right.get_name() == null || "Object".equals(right.get_name())) return this;
+    Type left = convertXsdType();
+    Type r = right.convertXsdType();
     // check if these are RDF types and are in a type relation.
-    if (isRdfType(left) || isRdfType(right)) {
-      if (isRdfType(left) && isRdfType(right))
-        return PROXY.fetchMostSpecific(left, right);
-      if ("Rdf".equals(left)) return right;
-      if ("Rdf".equals(right)) return left;
+    if (left.isRdfType() || r.isRdfType()) {
+      if (left.isRdfType() && r.isRdfType())
+        return new Type(PROXY.fetchMostSpecific(left.get_name(), r.get_name()));
+      if ("Rdf".equals(left.get_name())) return right;
+      if ("Rdf".equals(r.get_name())) return this;
       return null;
     }
 
     // this should return the more specific of the two, or null if they are
     // incompatible
-    Long leftCode = typeCodes.get(left);
+    Long leftCode = typeCodes.get(left.get_name());
     if (leftCode == null) leftCode = JAVA_TYPE;
-    Long rightCode = typeCodes.get(right);
+    Long rightCode = typeCodes.get(r.get_name());
     if (rightCode == null) rightCode = JAVA_TYPE;
 
     long common = leftCode & rightCode;
     if (common == leftCode) {
-      return left;
+      return this;
     }
     if (common == rightCode) {
       return right;

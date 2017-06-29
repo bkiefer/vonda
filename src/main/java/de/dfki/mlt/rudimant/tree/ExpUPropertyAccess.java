@@ -7,6 +7,8 @@ package de.dfki.mlt.rudimant.tree;
 
 import java.util.Arrays;
 
+import de.dfki.mlt.rudimant.Type;
+
 /**
  * this represents an access to the ontology (will result in an rdf object in
  * output)
@@ -17,7 +19,7 @@ public class ExpUPropertyAccess extends RTExpLeaf {
 
   ExpUVariable label;
   boolean propertyVariable = false;
-  String rangeType;
+  Type rangeType;
   boolean functional;
 
 
@@ -26,13 +28,13 @@ public class ExpUPropertyAccess extends RTExpLeaf {
     // an access will always return sth of type Object, so to not get null
     // I'll set the type of this to Object by default
     if(rt == null){
-      type = "Object";
+      type = new Type("Object");
     } else {
-      type = rt;
+      type = new Type(rt);
     }
     label = l;
     propertyVariable = var;
-    rangeType = rt;
+    rangeType = new Type(rt);
     functional = func;
     this.fullexp = fullexp;
   }
