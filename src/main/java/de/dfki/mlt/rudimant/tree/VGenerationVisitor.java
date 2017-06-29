@@ -124,7 +124,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       ret += node.left.visitWithSComments(this);
       ret += " = ";
     }
-    if (node.type != null
+    if (node.type != null && node.right.getType() != null
             && !node.type.get_name().equals(node.right.getType().get_name())
             && !(node.right instanceof ExpNew)) {
       // then there is either sth wrong here, what would at least have resulted

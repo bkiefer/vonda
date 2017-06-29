@@ -184,5 +184,10 @@ public void set_name(String _name) {
     if(left.get_name().equals(r.get_name())) return this;
     return null;
   }
+  
+  @Override
+  public String toString(){
+	return _name;
+  }
 
 }

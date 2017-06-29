@@ -282,7 +282,9 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     node.boolexp = node.boolexp.ensureBoolean();
     node.thenexp.visit(this);
     node.elseexp.visit(this);
-    Type unified = node.thenexp.getType().unifyTypes(node.elseexp.getType());
+    Type unified = node.thenexp.getType() != null? 
+    	node.thenexp.getType().unifyTypes(node.elseexp.getType())
+    	: node.elseexp.getType();
     if (unified == null) {
       rudi.typeError(node.fullexp
               + " is a conditional expression where the else expression "
