@@ -25,8 +25,8 @@ class Function {
     // TODO: this is probably not accurate enough; find a more
     // sophisticated way to do this
     return _calledUpon != null &&
-        (_calledUpon.get_name().contains("<T>") || _calledUpon.equals("T")) ||
-        _calledUpon.unifyTypes(calledOn) != null;
+        (_calledUpon.get_name().contains("<T>") || _calledUpon.get_name().equals("T")) ||
+        !_calledUpon.unifyTypes(calledOn).equals(Type.getNoType());
   }
 
   public String getName() {
@@ -44,16 +44,17 @@ class Function {
    */
   public Type getReturnType0(String calledUpon) {
     // TODO: extensively test this magic
-    int from = _returnType.get_name().indexOf('<');
+	String rn = _returnType.get_name();
+    int from = rn.indexOf('<');
     if (from >= 0) {
       // extract the parameter type
-      int to = _returnType.get_name().lastIndexOf('>');
+      int to = rn.lastIndexOf('>');
       String ret = calledUpon.substring(from + 1, to);
-      if(!_returnType.get_name().equals("T")){
+      if(!rn.equals("T")){
         // don't miss anything that is wrapped around <T>
-        ret = _returnType.get_name().substring(0, from)
+        ret = rn.substring(0, from)
             + ret
-            + _returnType.get_name().substring(to + 1);
+            + rn.substring(to + 1);
       }
       return new Type(ret);
     }
@@ -62,20 +63,20 @@ class Function {
 
   public Type getReturnType(Type calledUpon) {
     // TODO: extensively test this magic
+	String rn = _returnType.get_name();
     if(calledUpon != null &&
-    	_returnType.get_name().contains("<T>") ||
-        _returnType.get_name().equals("T")){
+    	rn.contains("<T>") || rn.equals("T")){
       int from = StringUtils.indexOfDifference(_calledUpon.get_name(), calledUpon.get_name());
       int to = calledUpon.get_name().length() - StringUtils.indexOfDifference(
           StringUtils.reverse(_calledUpon.get_name()), StringUtils.reverse(calledUpon.get_name()));
       String ret = calledUpon.get_name().substring(from, to);
-      if(!_returnType.get_name().equals("T")){
+      if(!rn.equals("T")){
        // don't miss anything that is wrapped around <T>
-        int before = _returnType.get_name().indexOf("<T>");
+        int before = rn.indexOf("<T>");
         int after = before + 3;
-        ret = _returnType.get_name().substring(0, before)
+        ret = rn.substring(0, before)
             + ret
-            + _returnType.get_name().substring(after);
+            + rn.substring(after);
       }
       return new Type(ret);
     }

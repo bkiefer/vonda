@@ -56,16 +56,16 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     if (node.right != null) {
       node.right.visit(this);
 
-      if (null == node.left.type) {
+      if (Type.getNoType().equals(node.left.type)) {
         // unknown type to the left
-        if (null == node.right.type) {
+        if (Type.getNoType().equals(node.right.type)) {
           // unknown type on both branches
           rudi.typeError("Expression with unknown type: " + node.right, node);
         } else {
           // propagate type from the right branch to the left
           node.left.propagateType(node.right.type);
         }
-      } else if (null == node.right.type) {
+      } else if (Type.getNoType().equals(node.right.type)) {
         //
         node.right.propagateType(node.left.type);
       } else {
@@ -74,6 +74,8 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
         if (type == null) {
           rudi.typeError("Incompatible types in " + node + ": "
                   + node.left.type + " vs. " + node.right.type, node);
+        } else {
+          node.type = type;
         }
       }
     }
@@ -141,7 +143,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     // if one of them is null, unifyTypes will return the other type
     Type mergeType = node.left.type.unifyTypes(node.right.type);
     if (mergeType == null) {
-      if ("boolean".equals(node.left.type.get_name())) {
+      if (new Type("boolean").equals(node.left.type)) {
         // in that case, we assume that this should be a test for existance
         mergeType = new Type("boolean");
         node.right = node.right.ensureBoolean();
@@ -152,7 +154,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
           // this is a "clear" operation, to be resolved later.
           mergeType = node.left.type;
         } else {
-          mergeType = new Type("Object");
+          mergeType = Type.getNoType();
           rudi.typeError("Incompatible types in assignment: "
               + node.left.type + " := " + node.right.type, node);
         }
@@ -399,7 +401,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
         }
         mem.addVariableDeclaration(node.variableName, type);
       } else {
-        node.listType = new Type("List<" + node.objects.get(0).getType().get_name() + ">");
+        node.listType = new Type("List<" + node.objects.get(0).getType() + ">");
         mem.addVariableDeclaration(node.variableName, type);
       }
     } else if (node.listType == null) {
@@ -407,7 +409,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     } else {
       Type elementType = node.listType.getInnerType().checkRdf();
       Type collType = node.listType.getOuterType();
-      node.listType = new Type(collType.get_name() + '<' + elementType.get_name() + '>');
+      node.listType = new Type(collType.toString() + '<' + elementType + '>');
     }
 
   }
@@ -517,13 +519,13 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
           ExpUVariable var) {
     // only a literal: check if it is a property of clz, and update the
     // current type
-    if ("String".equals(mem.getVariableType(var.content))) {
+    if (new Type("String").equals(mem.getVariableType(var.content))) {
       // the literal represents a variable, so we can't determine the type of
       // the access
       // TODO: Maybe return "Object" as type, should be correct in most cases.
       return new ExpUPropertyAccess(var.fullexp, var, true, null, false);
     }
-    if (DIALOGUE_ACT_TYPE.equals(currentType)) {
+    if (new Type(DIALOGUE_ACT_TYPE).equals(currentType)) {
       // the return type will be string, this is a call to getSlot
       return new ExpUPropertyAccess(var.fullexp, var, false, "String", true);
     }
@@ -541,8 +543,9 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     var.content = predUri; // replace plain name by URI
     int predType = clz.getPropertyType(predUri);
     // TODO: CONVERT XSD TYPES TO JAVA, WHERE POSSIBLE
-    currentType = new Type(clz.getPropertyRange(predUri));
-    if (currentType == null) {
+    String t = clz.getPropertyRange(predUri);
+    currentType = new Type(t);
+    if (t == null) {
       // WARNING / error
       rudi.typeError("No range type defined for property "
               + predUri, node);

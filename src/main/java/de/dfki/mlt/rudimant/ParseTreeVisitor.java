@@ -522,7 +522,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitTerminalInner(TerminalNode tn) {
     switch (tn.getSymbol().getType()) {
     case RobotGrammarLexer.NULL:   // token is NULL
-      return new ExpUSingleValue("null", "null");
+      return new ExpUSingleValue("null", "Object");
     case RobotGrammarLexer.TRUE:   // token is TRUE
     case RobotGrammarLexer.FALSE:  // token is FALSE
       return new ExpUSingleValue(tn.getText(), "boolean");

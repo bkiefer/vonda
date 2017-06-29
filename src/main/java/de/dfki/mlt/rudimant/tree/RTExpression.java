@@ -65,12 +65,12 @@ public abstract class RTExpression extends RudiTree {
 
   // Return true if is represents an RDF type or a DialogueAct
   // TODO: maybe has to be split up.
-  public boolean isRdfType() { return type != null? type.isRdfType() : false; }
+  public boolean isRdfType() { return type != null && type.isRdfType(); }
 
-  public boolean isComplexType() { return type != null? type.isComplexType() : false; }
+  public boolean isComplexType() { return type != null && type.isComplexType(); }
 
   public boolean isStringOrComplexType() {
-    return (type != null && "String".equals(type.get_name())) || isComplexType();
+    return (new Type("String").equals(type)) || isComplexType();
   }
 
   public Type getInnerType() { return type.getInnerType(); }
@@ -80,7 +80,7 @@ public abstract class RTExpression extends RudiTree {
       return this;
     }
 
-    if (type != null && "boolean".equals(type.get_name())){
+    if (new Type("boolean").equals(type)){
       if(this instanceof ExpUSingleValue){
         return this;
       } else {
@@ -101,19 +101,19 @@ public abstract class RTExpression extends RudiTree {
     RTExpression result = null;
     ExpUSingleValue right = null;
 
-    if (type == null) {
+    if (Type.getNoType().equals(type) || type == null) {
       right = fixFields(new ExpUSingleValue("null", "Object"));
       result = fixFields(new ExpBoolean(this, right, "!="));
     } else {
-      String cleanType = type.convertXsdType().get_name();
-      if (! type.get_name().equals(cleanType)) {
+      Type cleanType = type.convertXsdType();
+      if (! type.equals(cleanType)) {
         result = fixFields(new ExpBoolean(this, null, "exists("));
       } else {
-        switch (cleanType) {
+        switch (cleanType.get_name()) {
         case "int":
         case "float":
         case "double":
-          right = fixFields(new ExpUSingleValue("0", cleanType));
+          right = fixFields(new ExpUSingleValue("0", cleanType.get_name()));
           break;
         default:
           right = fixFields(new ExpUSingleValue("null", "Object"));

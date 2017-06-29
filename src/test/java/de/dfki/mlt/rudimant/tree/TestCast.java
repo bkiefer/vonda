@@ -50,7 +50,7 @@ public class TestCast {
   public void testCast3() {
     String in = "String th = myLastDA().theme;";
     String s = generate(in);
-    String expected = "String th = (String) ((Set<Object>)myLastDA().getValue(\"theme\"));";
+    String expected = "String th = ((String)myLastDA().getValue(\"theme\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -179,7 +179,7 @@ public class TestCast {
   public void test12() {
     String in = "int i; i = false;";
     String s = generate(in);
-    String expected = "i = (Object) false;";
+    String expected = "i = (Object /* (unknown) */) false;";
     assertEquals(expected, getForMarked(s, expected));
   }
 
