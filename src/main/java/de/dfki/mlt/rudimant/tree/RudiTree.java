@@ -37,6 +37,11 @@ public abstract class RudiTree {
     v.out.append(checkComments(v, endPos));
   }
 
+  /**
+   * set positions and fullexp of to those of this object
+   * @param Ruditree b
+   * @return
+   */
   public <T extends RudiTree> T fixFields(T b) {
     b.positions = positions;
     b.fullexp = fullexp;

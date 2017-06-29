@@ -57,7 +57,8 @@ public class ExpUFieldAccess extends RTExpLeaf {
     List<String> smallerRep = representation.subList(0, s);
     ExpUFieldAccess first = fixFields(new ExpUFieldAccess(smaller, smallerRep));
     RTExpression right;
-    if (Constants.DIALOGUE_ACT_TYPE.equals(parts.get(s - 1).type)) {
+    if (parts.get(s - 1).type != null &&
+    		Constants.DIALOGUE_ACT_TYPE.equals(parts.get(s - 1).type.get_name())) {
       ExpUSingleValue property = fixFields(new ExpUSingleValue("\"" +
           parts.get(s).fullexp + "\"", "String"));
       right = fixFields(new ExpBoolean(first, property, "hasSlot("));

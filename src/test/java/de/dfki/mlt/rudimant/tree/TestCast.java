@@ -50,7 +50,7 @@ public class TestCast {
   public void testCast3() {
     String in = "String th = myLastDA().theme;";
     String s = generate(in);
-    String expected = "String th = ((String)myLastDA().getValue(\"theme\"));";
+    String expected = "String th = (String) ((Set<Object>)myLastDA().getValue(\"theme\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
 

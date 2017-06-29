@@ -106,7 +106,7 @@ public abstract class RTExpression extends RudiTree {
       result = fixFields(new ExpBoolean(this, right, "!="));
     } else {
       String cleanType = type.convertXsdType().get_name();
-      if (! type.equals(cleanType)) {
+      if (! type.get_name().equals(cleanType)) {
         result = fixFields(new ExpBoolean(this, null, "exists("));
       } else {
         switch (cleanType) {

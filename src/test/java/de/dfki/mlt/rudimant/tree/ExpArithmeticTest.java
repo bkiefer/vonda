@@ -64,9 +64,9 @@ public class ExpArithmeticTest {
     GrammarFile gf = parseAndTypecheck(getInput(in));
     RudiTree dtr = getNodeOfInterest(gf, 0);
     assertTrue(dtr instanceof StatVarDef);
-    assertEquals("Activity", ((StatVarDef)dtr).type);
+    assertEquals("Activity", ((StatVarDef)dtr).type.get_name());
     dtr = getNodeOfInterest(gf, 1);
     assertTrue(dtr instanceof ExpAssignment);
-    assertEquals("String", ((ExpAssignment)dtr).type);
+    assertEquals("String", ((ExpAssignment)dtr).type.get_name());
   }
 }

@@ -172,7 +172,7 @@ public class Mem {
       return false;
     }
     String origin = getClassName();
-    type = type.checkRdf();
+    type = type != null? type.checkRdf() : null;
     current().put(variable, type, origin);
     logger.trace("Add var {}:{} [{}]", environment.size(), variable, type);
     return true;
@@ -247,6 +247,6 @@ public class Mem {
   }
 
   public ExpUSingleValue degradeToString(ExpUVariable variable){
-    return new ExpUSingleValue(variable.toString(), "String");
+    return variable.fixFields(new ExpUSingleValue(variable.toString(), "String"));
   }
 }

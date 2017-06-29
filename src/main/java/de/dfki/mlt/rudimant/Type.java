@@ -97,7 +97,7 @@ public class Type {
         String som = something.get_name().substring(0, something.get_name().indexOf("<") + 1);
         Type s = new Type(something.get_name().substring(something.get_name().indexOf("<")
                 + 1, something.get_name().lastIndexOf(">")));
-        som += something.get_name() + s.convertRdfType().get_name() + ">";
+        som += s.convertRdfType().get_name() + ">";
         something.set_name(som);
       }
       return something;
@@ -115,9 +115,9 @@ public class Type {
       return this;
     }
     String n = get_name();
-    if(!get_name().startsWith("<") && get_name().contains("<")){
+    if(!n.startsWith("<") && n.contains("<")){
       // might be sth like List<Child>
-      n = get_name().substring(0, get_name().indexOf("<") + 1);
+      n = n.substring(0, n.indexOf("<") + 1);
       Type t = new Type(get_name().substring(get_name().indexOf("<") + 1, get_name().lastIndexOf(">")));
       n += t.checkRdf().get_name() + ">";
     }
@@ -180,6 +180,8 @@ public void set_name(String _name) {
     if (common == rightCode) {
       return right;
     }
+    // TODO: if these are complex types like List<sth>, they can be unified, too!!!
+    if(left.get_name().equals(r.get_name())) return this;
     return null;
   }
 

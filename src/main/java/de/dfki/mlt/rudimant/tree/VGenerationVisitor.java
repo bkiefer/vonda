@@ -125,7 +125,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       ret += " = ";
     }
     if (node.type != null
-            && !node.type.equals(node.right.getType())
+            && !node.type.get_name().equals(node.right.getType().get_name())
             && !(node.right instanceof ExpNew)) {
       // then there is either sth wrong here, what would at least have resulted
       // in warnings in type testing, or it is possible to cast the right part
@@ -179,7 +179,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   public String visitDaToken(RTExpression exp) {
     String ret = "";
     if (exp instanceof ExpUSingleValue
-        && ((ExpUSingleValue) exp).type.equals("String")) {
+        && "String".equals(((ExpUSingleValue) exp).type.get_name())) {
       String s = ((ExpUSingleValue) exp).visitStringV(this);
       if (! s.startsWith("\"")) {
         ret += "\"" + s + "\"";
@@ -595,7 +595,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     // TODO BK: bool_exp can be a simple expression, in which case it
     // has to be turned into a comparison with zero, null or a call to
     // the has(...) method
-    if (bool_exp instanceof ExpUSingleValue && bool_exp.getType().equals("boolean")) {
+    if (bool_exp instanceof ExpUSingleValue && "boolean".equals(bool_exp.getType().get_name())) {
       return ((ExpUSingleValue) bool_exp).content;
     }
     collectingCondition = true;
