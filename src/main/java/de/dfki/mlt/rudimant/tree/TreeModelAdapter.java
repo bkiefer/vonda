@@ -28,7 +28,7 @@ public class TreeModelAdapter extends ModelAdapter {
       if (node instanceof RTExpression) {
         _values = new HashMap<>();
         RTExpression exp = (RTExpression)node;
-        _values.put("type", exp.type + (exp.isRdfType() ? "[R]" : ""));
+        _values.put("type", exp.type.getRep());
       }
       if (_values == null) {
         _values = Collections.emptyMap();
@@ -98,15 +98,15 @@ public class TreeModelAdapter extends ModelAdapter {
       result = " -> ";
     } else if (model instanceof StatMethodDeclaration) {
       StatMethodDeclaration md = (StatMethodDeclaration)model;
-      result = "meth " + ((md.return_type != null) ? md.return_type + " ": "")
+      result = "meth " + ((md.return_type != null) ? md.return_type.getRep() + " ": "")
           + md.name + '(';
       if (! md.parameters.isEmpty()) {
-        if (md.partypes.get(0) != null) { result += md.partypes.get(0) + " "; }
+        if (md.partypes.get(0) != null) { result += md.partypes.get(0).getRep() + " "; }
         result += md.parameters.get(0);
       }
       for (int i = 1; i < md.parameters.size(); ++i) {
         result += ", ";
-        if (md.partypes.get(i) != null) { result += md.partypes.get(i) + " "; }
+        if (md.partypes.get(i) != null) { result += md.partypes.get(i).getRep() + " "; }
         result += md.parameters.get(i);
       }
       result += ')';
@@ -127,7 +127,7 @@ public class TreeModelAdapter extends ModelAdapter {
     if (model instanceof RTExpression) {
       RTExpression exp = (RTExpression)model;
       if (exp.type != null)
-        result += "\n[" + exp.type + (exp.isRdfType() ? "[R]]" : "]");
+        result += "\n[" + exp.type.getRep();
     }
     return result;
   }

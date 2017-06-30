@@ -26,7 +26,7 @@ public class TestTypes {
   public void testType1(){
     String in = " DialogueAct reply = myLastDA().copy();";
     String r = generate(in);
-    String expected = "reply = (DialogueAct) myLastDA().copy();";
+    String expected = "reply = myLastDA().copy();";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("DialogueAct reply;"));
   }
@@ -55,7 +55,7 @@ public class TestTypes {
   public void testType4(){
     String in = " int correct = q.getWhichCorrect();";
     String r = generate(in);
-    String expected = "correct = (int) q.getWhichCorrect();";
+    String expected = "correct = q.getWhichCorrect();";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("int correct;"));
   }

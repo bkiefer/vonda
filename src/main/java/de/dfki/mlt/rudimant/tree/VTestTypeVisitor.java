@@ -56,16 +56,16 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     if (node.right != null) {
       node.right.visit(this);
 
-      if (Type.getNoType().equals(node.left.type)) {
+      if (node.left.type.isUnspecified()) {
         // unknown type to the left
-        if (Type.getNoType().equals(node.right.type)) {
+        if (node.right.type.isUnspecified()) {
           // unknown type on both branches
           rudi.typeError("Expression with unknown type: " + node.right, node);
         } else {
           // propagate type from the right branch to the left
           node.left.propagateType(node.right.type);
         }
-      } else if (Type.getNoType().equals(node.right.type)) {
+      } else if (node.right.type.isUnspecified()) {
         //
         node.right.propagateType(node.left.type);
       } else {
@@ -142,7 +142,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     // if one of them is null, unifyTypes will return the other type
     Type mergeType = node.left.type.unifyTypes(node.right.type);
     if (mergeType == null) {
-      if (new Type("boolean").equals(node.left.type)) {
+      if (node.left.type.isBool()) {
         // in that case, we assume that this should be a test for existance
         mergeType = new Type("boolean");
         node.right = node.right.ensureBoolean();
@@ -509,17 +509,18 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
           ExpUVariable var) {
     // only a literal: check if it is a property of clz, and update the
     // current type
-    if (new Type("String").equals(mem.getVariableType(var.content))) {
+    if (mem.getVariableType(var.content) != null &&
+        mem.getVariableType(var.content).isString()) {
       // the literal represents a variable, so we can't determine the type of
       // the access
       // TODO: Maybe return "Object" as type, should be correct in most cases.
-      return new ExpUPropertyAccess(var.fullexp, var, true, null, false);
+      return new ExpUPropertyAccess(var.fullexp, var, true, Type.getNoType(), false);
     }
-    if (new Type(DIALOGUE_ACT_TYPE).equals(currentType)) {
+    if (currentType.isDialogueAct()) {
       // the return type will be string, this is a call to getSlot
-      return new ExpUPropertyAccess(var.fullexp, var, false, "String", true);
+      return new ExpUPropertyAccess(var.fullexp, var, false, new Type("String"), true);
     }
-    RdfClass clz = mem.getProxy().getClass(currentType.get_name());
+    RdfClass clz = currentType.getRdfClass();
     String predUri = null;
     if (clz != null) {
       predUri = clz.fetchProperty(var.content);
@@ -563,7 +564,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
       currentType = new Type("Set<Object>");
     }
     // the type of this is set to Object by default (not null)
-    return new ExpUPropertyAccess(var.fullexp, var, false, currentType.get_name(), isFunctional);
+    return new ExpUPropertyAccess(var.fullexp, var, false, currentType, isFunctional);
   }
 
   /**
@@ -678,7 +679,8 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
    */
   @Override
   public void visitNode(ExpUVariable node) {
-    if (node.type != null && mem.getVariableType(node.content) == null) {
+    if (node.type != null && ! node.type.isUnspecified()
+        && mem.getVariableType(node.content) == null) {
       mem.addVariableDeclaration(node.fullexp, node.type);
       return;
     }

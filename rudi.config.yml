@@ -1,5 +1,5 @@
 outputDirectory:    src/main/gen-java
-wrapperClass:       de.dfki.dialogue.NaoAgent
+wrapperClass:       de.dfki.dialogue.Foo
 serverHost:         localhost
 serverPort:         9090
 ontologyFile:       src/test/resources/ontos/pal.ini

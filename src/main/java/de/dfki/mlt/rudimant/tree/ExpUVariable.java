@@ -21,6 +21,7 @@ public class ExpUVariable extends RTExpLeaf {
 
   public ExpUVariable(String representation) {
     content = representation;
+    type = Type.getNoType();
   }
 
   @Override

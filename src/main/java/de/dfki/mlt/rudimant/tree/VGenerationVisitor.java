@@ -125,8 +125,8 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       ret += " = ";
     }
     if (node.type != null
-            && !node.type.equals(node.right.getType())
-            && !(node.right instanceof ExpNew)) {
+        && !node.type.needsCast(node.right.getType())
+        && !(node.right instanceof ExpNew)) {
       // then there is either sth wrong here, what would at least have resulted
       // in warnings in type testing, or it is possible to cast the right part
       ret += "(" + node.type + ") ";
@@ -177,16 +177,16 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   }
 
   public String visitDaToken(RTExpression exp) {
-    String ret = "";
+    String ret;
     if (exp instanceof ExpUSingleValue
-        && new Type("String").equals(((ExpUSingleValue) exp).type)) {
+        && ((ExpUSingleValue) exp).type.isString()) {
       String s = ((ExpUSingleValue) exp).visitStringV(this);
       if (! s.startsWith("\"")) {
-        ret += "\"" + s + "\"";
+        ret = "\"" + s + "\"";
       } else
-        ret += s;
+        ret = s;
     } else {
-      ret +=  visitNode(exp);
+      ret = visitNode(exp);
     }
     return ret;
   }
@@ -255,7 +255,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
         ret += mem.getToplevelInstance() + ".";
       }
       ret += "_proxy.getClass(\""
-              + mem.getProxy().getClass(node.type.get_name())
+              + node.type.getRdfClass()
               + "\").getNewInstance(";
       if(!mem.getClassName().toLowerCase().equals(
               mem.getToplevelInstance().toLowerCase())){
@@ -514,7 +514,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       if (currentPart instanceof ExpUPropertyAccess) {
         ExpUPropertyAccess pa = (ExpUPropertyAccess) currentPart;
         // then we are in the case that is actually an rdf operation
-        if (new Type(DIALOGUE_ACT_TYPE).equals(currentType)) {
+        if (currentType.isDialogueAct()) {
           ret += ".getValue(";
         } else {
           ret += pa.functional ? ".getSingleValue(" : ".getValue(";
@@ -535,8 +535,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   public String visitNode(ExpUFuncCall node) {
     String ret = "";
     if (node.realOrigin != null &&
-    		(node.calledUpon == null ||
-    		node.calledUpon.equals(Type.getNoType()))) {
+        (node.calledUpon == null || node.calledUpon.isUnspecified())) {
       ret += lowerCaseFirst(node.realOrigin) + ".";
     }
     if(node.newexp){
@@ -562,7 +561,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public String visitNode(ExpUSingleValue node) {
-    if ("String".equals(node.type) && escape) {
+    if (node.type.isString() && escape) {
       // properly escape if needed
       return "\\" + node.content.substring(0, node.content.length() - 1) + "\\\" ";
     }
@@ -594,7 +593,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     // TODO BK: bool_exp can be a simple expression, in which case it
     // has to be turned into a comparison with zero, null or a call to
     // the has(...) method
-    if (bool_exp instanceof ExpUSingleValue && new Type("boolean").equals(bool_exp.getType())) {
+    if (bool_exp instanceof ExpUSingleValue && bool_exp.getType().isBool()) {
       return ((ExpUSingleValue) bool_exp).content;
     }
     collectingCondition = true;

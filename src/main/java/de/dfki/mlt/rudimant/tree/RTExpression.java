@@ -70,7 +70,7 @@ public abstract class RTExpression extends RudiTree {
   public boolean isComplexType() { return type != null && type.isComplexType(); }
 
   public boolean isStringOrComplexType() {
-    return type.isString() || isComplexType();
+    return type != null && (type.isString() || isComplexType());
   }
 
   public Type getInnerType() { return type.getInnerType(); }
@@ -80,15 +80,14 @@ public abstract class RTExpression extends RudiTree {
       return this;
     }
 
-    if (new Type("boolean").equals(type)){
-      if(this instanceof ExpUSingleValue){
+    if (type != null && type.isBool()){
+      if (this instanceof ExpUSingleValue){
         return this;
-      } else {
-        // if is a funccall with type boolean, we'd still like to have it
-        // as a boolean, at least wrapped up; if it is a fieldaccess kind of funccall, we have
-        // to go on testing for each part if it is null
-        return fixFields(new ExpBoolean(this, null, null));
       }
+      // if is a funccall with type boolean, we'd still like to have it as a
+      // boolean, at least wrapped up; if it is a fieldaccess kind of funccall,
+      // we have to go on testing for each part if it is null
+      return fixFields(new ExpBoolean(this, null, null));
     }
 
     // is some other kind of expression, turn it into a comparison or
@@ -101,26 +100,30 @@ public abstract class RTExpression extends RudiTree {
     RTExpression result = null;
     ExpUSingleValue right = null;
 
-    if (Type.getNoType().equals(type) || type == null) {
+    if (type == null || type.isUnspecified()) {
       right = fixFields(new ExpUSingleValue("null", "Object"));
       result = fixFields(new ExpBoolean(this, right, "!="));
     } else {
-      Type cleanType = type; // .convertXsdType();
-      if (! type.equals(cleanType)) {
-        result = fixFields(new ExpBoolean(this, null, "exists("));
-      } else {
-        switch (cleanType.get_name()) {
+      //Type cleanType = type; // .convertXsdType();
+      //if (! type.equals(cleanType)) {
+      //  result = fixFields(new ExpBoolean(this, null, "exists("));
+      //} else {
+        switch (type.toString()) {
+        case "long":
         case "int":
+        case "short":
+        case "byte":
+        case "char":
         case "float":
         case "double":
-          right = fixFields(new ExpUSingleValue("0", cleanType.get_name()));
+          right = fixFields(new ExpUSingleValue("0", type.toString()));
           break;
         default:
           right = fixFields(new ExpUSingleValue("null", "Object"));
           break;
         }
         result = fixFields(new ExpBoolean(this, right, "!="));
-      }
+     // }
     }
     return result;
   }

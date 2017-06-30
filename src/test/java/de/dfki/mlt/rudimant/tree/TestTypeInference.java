@@ -80,7 +80,7 @@ public class TestTypeInference {
     String in = "Activity a; "
             + "if (a == null) { }";
     String s = generate(in);
-    String expected = "if ((a == null)) {}";
+    String expected = "if (isEqual(a, null)) {}";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -116,7 +116,7 @@ public class TestTypeInference {
   public void test8() {
     String in = " Quiz q; if(q.quizbool) i = 7; ";
     String s = generate(in);
-    String expected = "if (((q != null) && exists(((Boolean)q.getSingleValue(\"<dom:quizbool>\"))))) int i = 7;";
+    String expected = "if (((q != null) && (((Boolean)q.getSingleValue(\"<dom:quizbool>\")) != null))) int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -124,7 +124,7 @@ public class TestTypeInference {
   public void test9() {
     String in = " Quiz q; if(q.tabletOrientation) i = 7; ";
     String s = generate(in);
-    String expected = "if (((q != null) && exists(((String)q.getSingleValue(\"<dom:tabletOrientation>\")))))"
+    String expected = "if (((q != null) && (((String)q.getSingleValue(\"<dom:tabletOrientation>\")) != null)))"
         + " int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
   }

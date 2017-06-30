@@ -62,23 +62,15 @@ class Function {
   }
 
   public Type getReturnType(Type calledUpon) {
-    // TODO: extensively test this magic
-	String rn = _returnType.get_name();
+    // TODO: FIX THIS BULLSHIT!
+    String rn = _returnType.get_name();
     if(calledUpon != null &&
     	rn.contains("<T>") || rn.equals("T")){
       int from = StringUtils.indexOfDifference(_calledUpon.get_name(), calledUpon.get_name());
       int to = calledUpon.get_name().length() - StringUtils.indexOfDifference(
           StringUtils.reverse(_calledUpon.get_name()), StringUtils.reverse(calledUpon.get_name()));
-      String ret = calledUpon.get_name().substring(from, to);
-      if(!rn.equals("T")){
-       // don't miss anything that is wrapped around <T>
-        int before = rn.indexOf("<T>");
-        int after = before + 3;
-        ret = rn.substring(0, before)
-            + ret
-            + rn.substring(after);
-      }
-      return new Type(ret);
+      Type ret = calledUpon.getInnerType();
+      return ret;
     }
     return _returnType;
   }

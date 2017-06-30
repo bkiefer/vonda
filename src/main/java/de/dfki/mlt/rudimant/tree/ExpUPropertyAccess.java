@@ -23,18 +23,18 @@ public class ExpUPropertyAccess extends RTExpLeaf {
   boolean functional;
 
 
-  public ExpUPropertyAccess(String fullexp, ExpUVariable l, boolean var, String rt,
+  public ExpUPropertyAccess(String fullexp, ExpUVariable l, boolean var, Type rt,
       boolean func) {
     // an access will always return sth of type Object, so to not get null
     // I'll set the type of this to Object by default
     if(rt == null){
       type = new Type("Object");
     } else {
-      type = new Type(rt);
+      type = rt;
     }
     label = l;
     propertyVariable = var;
-    rangeType = new Type(rt);
+    rangeType = rt;
     functional = func;
     this.fullexp = fullexp;
   }

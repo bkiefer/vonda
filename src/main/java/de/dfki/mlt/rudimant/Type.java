@@ -16,6 +16,7 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
  */
 public class Type {
   private static RdfProxy PROXY;
+  private static RdfClass DIALACT_CLASS;
 
   static Map<String, Long> typeCodes = new HashMap<>();
 
@@ -43,7 +44,10 @@ public class Type {
     typeCodes.put("null",           0x100000000000l);
   }
 
-  public static void setProxy(RdfProxy proxy) { PROXY = proxy; }
+  public static void setProxy(RdfProxy proxy) {
+    PROXY = proxy;
+    DIALACT_CLASS = proxy.getClass(DIALOGUE_ACT_TYPE);
+  }
 
   public static Type getNoType(){
     return new Type();
@@ -105,6 +109,8 @@ public class Type {
     return _class != null || _name != null && _name.charAt(0) == '<';
   }
 
+  public RdfClass getRdfClass() { return _class; }
+
   public Type getInnerType() {
     if (_parameterTypes != null && _parameterTypes.size() == 1)
       return _parameterTypes.get(0);
@@ -121,19 +127,8 @@ public class Type {
         || ((_name.endsWith(">") && ! isRdfType())));
   }
 
-  /**
-   * returns a correct java type for xsd types
-   * @param something
-   * @return
-   */
-  private Type convertXsdType(){
-    String ret = RdfClass.xsdToJavaPod(get_name());
-    if (ret != null) return new Type(ret);
-    return this;
-  }
-
   public boolean isDialogueAct() {
-    return DIALOGUE_ACT_TYPE.equals(_name);
+    return _class != null && DIALACT_CLASS.equals(_class);
   }
 
   public boolean isString() {
@@ -150,25 +145,30 @@ public class Type {
 
   /** Return the more specific of the two types, if it exists, null otherwise */
   public Type unifyTypes(Type right) {
-    if (this.equals(getNoType()) || new Type("Object").equals(this)) return right;
-    if (right == null) return getNoType();
-    if (right.equals(getNoType()) || new Type("Object").equals(right)) return this;
-    Type left = convertXsdType();
-    Type r = right.convertXsdType();
-    // check if these are RDF types and are in a type relation.
-    if (left.isRdfType() || r.isRdfType()) {
-      if (left.isRdfType() && r.isRdfType())
-        return new Type(PROXY.fetchMostSpecific(left.get_name(), r.get_name()));
-      if ("Rdf".equals(left.get_name())) return right;
-      if ("Rdf".equals(r.get_name())) return this;
-      return getNoType();
+    if (_name == null || _name.equals("Object")) return right;
+    if (right == null || right._name == null
+        || right._name.equals("Object") || this.equals(right))
+      return this;
+
+    // check if these are (real) RDF types and are in a type relation.
+    if (_class != null || right._class != null) {
+      if (_class != null && right._class != null) {
+        String result = PROXY.fetchMostSpecific(_name, right._name);
+        if (result == null) return null; // incompatible types
+        return new Type(result);
+      }
+      if ("Rdf".equals(_name)) return right;
+      if ("Rdf".equals(right._name)) return this;
+      return null;
     }
 
+    String l = RdfClass.xsdToJavaPod(_name);
+    String r = RdfClass.xsdToJavaPod(right._name);
     // this should return the more specific of the two, or null if they are
     // incompatible
-    Long leftCode = typeCodes.get(left.get_name());
+    Long leftCode = typeCodes.get(l);
     if (leftCode == null) leftCode = JAVA_TYPE;
-    Long rightCode = typeCodes.get(r.get_name());
+    Long rightCode = typeCodes.get(r);
     if (rightCode == null) rightCode = JAVA_TYPE;
 
     long common = leftCode & rightCode;
@@ -178,9 +178,8 @@ public class Type {
     if (common == rightCode) {
       return right;
     }
-    // TODO: if these are complex types like List<sth>, they can be unified, too!!!
-    if(left.get_name().equals(r.get_name())) return this;
-    return getNoType();
+
+    return null;
   }
 
   /** returns a correct java type for use in generated code */
@@ -193,8 +192,12 @@ public class Type {
   }
 
   private void toString(StringBuffer sb) {
-    if (isRdfType())
-      sb.append(isDialogueAct() ? "DialogueAct" : "Rdf");
+    if (isDialogueAct())
+      sb.append("DialogueAct");
+    else if (_class != null)
+      sb.append("Rdf");
+    else if (isRdfType())
+      sb.append(RdfClass.xsdToJavaPod(_name));
     else
       sb.append(_name);
 
@@ -214,6 +217,22 @@ public class Type {
   public boolean equals(Object o){
     if (!(o instanceof Type)) return false;
     return _name != null && _name.equals(((Type)o).get_name());
+  }
+
+  /** Return true if the right type has to be casted to this type, e.g.,
+   *  <xsd:long> or long to int. The types are assumed to be compatible, so
+   *  casting is either not necessary or possible.
+   */
+  public boolean needsCast(Type right) {
+    Type res = unifyTypes(right);
+    return res.equals(this);
+  }
+
+  /** Only for the visualization */
+  public String getRep() {
+    if (_class != null) return _class.toString();
+    if (isRdfType()) return _name;
+    return toString();
   }
 
 }

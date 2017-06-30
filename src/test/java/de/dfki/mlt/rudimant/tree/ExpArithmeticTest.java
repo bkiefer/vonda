@@ -67,6 +67,6 @@ public class ExpArithmeticTest {
     assertEquals("Activity", ((StatVarDef)dtr).type.get_name());
     dtr = getNodeOfInterest(gf, 1);
     assertTrue(dtr instanceof ExpAssignment);
-    assertEquals("String", ((ExpAssignment)dtr).type.get_name());
+    assertEquals("String", ((ExpAssignment)dtr).type.toString());
   }
 }
