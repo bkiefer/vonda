@@ -93,7 +93,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   public String visitNode(ExpAssignment node) {
     String ret = "";
     if (node.declaration) {
-      ret += node.type.convertRdfType();
+      ret += node.type;
     }
     ret += (' ');
     ExpUPropertyAccess pa = null;
@@ -129,7 +129,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
             && !(node.right instanceof ExpNew)) {
       // then there is either sth wrong here, what would at least have resulted
       // in warnings in type testing, or it is possible to cast the right part
-      ret += "(" + node.type.convertRdfType() + ") ";
+      ret += "(" + node.type + ") ";
     }
     ret += node.right.visitWithSComments(this);
     if (pa != null) {
@@ -172,7 +172,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public String visitNode(ExpCast node) {
-    return "((" + node.type.convertRdfType() + ")"
+    return "((" + node.type + ")"
         + visitNode(node.expression) + ")";
   }
 
@@ -324,9 +324,9 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     out.append(var).append("_outer : ");
     node.initialization.visitWithComments(this);
     out.append(") { ")
-       .append(node.varType.convertRdfType().toString())
+       .append(node.varType.toString())
        .append(" ").append(var);
-    out.append(" = (").append(node.varType.convertRdfType().toString())
+    out.append(" = (").append(node.varType.toString())
        .append(")").append(var).append("_outer;\n");
     node.statblock.visitWithComments(this);
     out.append("}");
@@ -366,7 +366,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatListCreation node) {
-    out.append(node.listType.convertRdfType().toString()).append(' ')
+    out.append(node.listType.toString()).append(' ')
        .append(node.variableName);
     if (node.listType.toString().startsWith("List")) {
       out.append(" = new ArrayList<>();");
@@ -389,14 +389,13 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       return;
     }
     out.append(node.visibility + " ");
-    out.append(node.return_type.convertRdfType() + " ");
+    out.append(node.return_type + " ");
     out.append(node.name + "(");
     for (int i = 0; i < node.parameters.size(); i++) {
       if (i != 0) {
         out.append(", ");
       }
-      out.append(node.partypes.get(i).convertRdfType()
-              + " " + node.parameters.get(i));
+      out.append(node.partypes.get(i) + " " + node.parameters.get(i));
     }
     out.append(")\n");
     node.block.visitWithComments(this);
@@ -496,7 +495,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     for (int i = to - 1; i > 0; i--) {
       if (node.parts.get(i) instanceof ExpUPropertyAccess) {
         ExpUPropertyAccess pa = (ExpUPropertyAccess) node.parts.get(i);
-        String cast = pa.getType().convertRdfType().toString();
+        String cast = pa.getType().toString();
         // TODO: what about long, double, ... ??
         if ("int".equals(cast))
           cast = "Integer";
@@ -541,7 +540,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       ret += lowerCaseFirst(node.realOrigin) + ".";
     }
     if(node.newexp){
-      ret += node.type.convertRdfType() + "(";
+      ret += node.type + "(";
     } else {
       ret += node.content + "(";
     }

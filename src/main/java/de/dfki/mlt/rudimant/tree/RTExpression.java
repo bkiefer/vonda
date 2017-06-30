@@ -70,7 +70,7 @@ public abstract class RTExpression extends RudiTree {
   public boolean isComplexType() { return type != null && type.isComplexType(); }
 
   public boolean isStringOrComplexType() {
-    return (new Type("String").equals(type)) || isComplexType();
+    return type.isString() || isComplexType();
   }
 
   public Type getInnerType() { return type.getInnerType(); }
@@ -105,7 +105,7 @@ public abstract class RTExpression extends RudiTree {
       right = fixFields(new ExpUSingleValue("null", "Object"));
       result = fixFields(new ExpBoolean(this, right, "!="));
     } else {
-      Type cleanType = type.convertXsdType();
+      Type cleanType = type; // .convertXsdType();
       if (! type.equals(cleanType)) {
         result = fixFields(new ExpBoolean(this, null, "exists("));
       } else {

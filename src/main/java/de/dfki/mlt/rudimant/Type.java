@@ -2,6 +2,7 @@ package de.dfki.mlt.rudimant;
 
 import static de.dfki.mlt.rudimant.Constants.DIALOGUE_ACT_TYPE;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,19 +46,69 @@ public class Type {
   public static void setProxy(RdfProxy proxy) { PROXY = proxy; }
 
   public static Type getNoType(){
-	return new Type(null);
+    return new Type();
   }
-  
+
+  // **********************************************************************
+  // Fields and constructors
+  // **********************************************************************
+
+  private String _name;
+
+  /** The parameters of a parameterised type, null if a simple type */
+  private List<Type> _parameterTypes;
+
+  private RdfClass _class;
+
+  private Type() {
+    _name = null;
+  }
+
+  public Type(String typeSpec) {
+    if (typeSpec == null) {
+      _name = null;
+      return;
+    }
+    int i;
+    String nameSpec = typeSpec;
+    if ((i = typeSpec.indexOf('<')) > 0) {
+      nameSpec = typeSpec.substring(0, i).trim();
+      String[] partypes = typeSpec.substring(i+1, typeSpec.lastIndexOf('>')).split(" *, *");
+      _parameterTypes = new ArrayList<>();
+      for (String par : partypes)
+        _parameterTypes.add(new Type(par));
+    }
+    _name = nameSpec;
+    if (typeCodes.containsKey(nameSpec)) return;
+    if (nameSpec.charAt(0) == '<') {
+      // xsd or RDF type
+      _class = PROXY.getClass(nameSpec);
+    } else {
+      // try to get an appropriate RDF class
+      _class = PROXY.fetchClass(nameSpec);
+    }
+  }
+
+  public String get_name() {
+    return _name;
+  }
+
   /** Indicates if this type should be compared with == or equals */
   public boolean isPODType() {
-	if (_name == null) return true;
+    if (_name == null) return true;
     String name = RdfClass.xsdToJavaPod(_name);
     Long code = typeCodes.get(name);
     return code != null && (code & 0x11111111000l) != 0;
   }
 
   public boolean isRdfType() {
-    return (_name != null && get_name().charAt(0) == '<');
+    return _class != null || _name != null && _name.charAt(0) == '<';
+  }
+
+  public Type getInnerType() {
+    if (_parameterTypes != null && _parameterTypes.size() == 1)
+      return _parameterTypes.get(0);
+    return null;
   }
 
   public boolean isComplexType() {
@@ -70,100 +121,34 @@ public class Type {
         || ((_name.endsWith(">") && ! isRdfType())));
   }
 
-  /** Return the "inner" type of a complex type expression */
-  public Type getInnerType() {
-    int left = _name.indexOf('<');
-    if (left < 0) return new Type("Object"); // or return this??
-    int right = _name.lastIndexOf('>');
-    return new Type(_name.substring(left + 1, right));
-  }
-
-  public Type getOuterType() {
-    int i = _name.indexOf('<');
-    if (i < 0) return this;
-    return new Type(_name.substring(0, i));
-  }
-
   /**
    * returns a correct java type for xsd types
    * @param something
    * @return
    */
-  public Type convertXsdType(){
+  private Type convertXsdType(){
     String ret = RdfClass.xsdToJavaPod(get_name());
     if (ret != null) return new Type(ret);
     return this;
   }
 
-  /**
-   * returns a correct java type for whatever input
-   * @param something
-   * @return
-   */
-  public Type convertRdfType(){
-	if (_name == null) return this;
-    Type something = this.convertXsdType();
-    if(!something.isRdfType()) {
-      String name = something.get_name();
-      if(name.contains("<")){
-        // might be sth like List<Child>
-        String som = name.substring(0, name.indexOf("<") + 1);
-        Type s = new Type(name.substring(name.indexOf("<")
-                + 1, name.lastIndexOf(">")));
-        som += s.convertRdfType().get_name() + ">";
-        something.set_name(som);
-      }
-      return something;
-    }
-    String d = (DIALOGUE_ACT_TYPE.equals(something.get_name())) ? "DialogueAct" : "Rdf";
-    return new Type(d);
+  public boolean isDialogueAct() {
+    return DIALOGUE_ACT_TYPE.equals(_name);
   }
 
-  public Type checkRdf() {
-    // if is necessary, because otherwise, Object as the static type in a
-    // declaration gets changed to RdfType by
-    // VGenerationVisitor.visitNode(ExpAssignment node)
-    if (new Type("Object").equals(this)
-        || new Type("String").equals(this)){ // what about Integer, int, etc.??
-      return this;
-    }
-    String n = get_name();
-    if(!n.startsWith("<") && n.contains("<")){
-      // might be sth like List<Child>
-      n = n.substring(0, n.indexOf("<") + 1);
-      Type t = new Type(get_name().substring(get_name().indexOf("<") + 1, get_name().lastIndexOf(">")));
-      n += t.checkRdf().get_name() + ">";
-    }
-    RdfClass clazz = PROXY.fetchClass(n);
-    if (clazz != null) {
-      n = clazz.toString(); // the URI of the class
-    }
-    return new Type(n);
+  public boolean isString() {
+    return "String".equals(_name);
   }
 
-
-  // **********************************************************************
-  // End of static fields and methods
-  // **********************************************************************
-
-  private String _name;
-
-  /** The parameters of a parameterised type, null if a simple type */
-  private List<Type> _parameterTypes;
-
-  public Type(String typeName) {
-    set_name(typeName);
+  public boolean isBool() {
+    return "boolean".equals(_name.toLowerCase());
   }
 
-  public String get_name() {
-	return _name;
+  public boolean isUnspecified() {
+    return _name == null;
   }
 
-  public void set_name(String _name) {
-	this._name = _name;
-  }
-
-/** Return the more specific of the two types, if it exists, null otherwise */
+  /** Return the more specific of the two types, if it exists, null otherwise */
   public Type unifyTypes(Type right) {
     if (this.equals(getNoType()) || new Type("Object").equals(this)) return right;
     if (right == null) return getNoType();
@@ -197,17 +182,38 @@ public class Type {
     if(left.get_name().equals(r.get_name())) return this;
     return getNoType();
   }
-  
+
+  /** returns a correct java type for use in generated code */
   @Override
-  public String toString(){
-	if (_name == null) return "Object /* (unknown) */";
-	return _name;
+  public String toString() {
+    if (_name == null) return "Object /* (unknown) */";
+    StringBuffer out = new StringBuffer();
+    toString(out);
+    return out.toString();
   }
-  
+
+  private void toString(StringBuffer sb) {
+    if (isRdfType())
+      sb.append(isDialogueAct() ? "DialogueAct" : "Rdf");
+    else
+      sb.append(_name);
+
+    if (_parameterTypes != null) {
+      sb.append('<');
+      boolean first = true;
+      for (Type pType : _parameterTypes) {
+        if (! first) sb.append(", ");
+        pType.toString(sb);
+        first = false;
+      }
+      sb.append('>');
+    }
+  }
+
   @Override
   public boolean equals(Object o){
-	if (!(o instanceof Type)) return false;
-	return _name != null && _name.equals(((Type)o).get_name());
+    if (!(o instanceof Type)) return false;
+    return _name != null && _name.equals(((Type)o).get_name());
   }
 
 }

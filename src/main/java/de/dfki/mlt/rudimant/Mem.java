@@ -172,7 +172,6 @@ public class Mem {
       return false;
     }
     String origin = getClassName();
-    type = type != null? type.checkRdf() : null;
     current().put(variable, type, origin);
     logger.trace("Add var {}:{} [{}]", environment.size(), variable, type);
     return true;
