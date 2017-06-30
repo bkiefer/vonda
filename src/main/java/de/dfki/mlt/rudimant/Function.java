@@ -94,8 +94,7 @@ class Function {
       return false;
     }
     for (int i = 0; i < _parameterTypes.size(); i++) {
-      if (!(_parameterTypes.get(i).equals(partypes.get(i))
-          || _parameterTypes.get(i).unifyTypes(partypes.get(i)) != null)) {
+      if (_parameterTypes.get(i).unifyTypes(partypes.get(i)) == null) {
         return false;
       }
     }
@@ -115,5 +114,19 @@ class Function {
     return _name.equals(((Function) fun)._name)
         && _returnType.equals(((Function) fun)._returnType)
         && _parameterTypes.equals(((Function) fun)._parameterTypes);
+  }
+
+  @Override
+  public String toString() {
+    StringBuffer sb = new StringBuffer();
+    sb.append(_returnType.getRep()).append(' ').append(_name).append('(');
+    boolean notfirst = false;
+    for (Type pType : _parameterTypes) {
+      if (notfirst) sb.append(", ");
+      notfirst = true;
+      sb.append(pType.getRep());
+    }
+    sb.append(')');
+    return sb.toString();
   }
 }

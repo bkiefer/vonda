@@ -155,7 +155,8 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
         } else {
           mergeType = Type.getNoType();
           rudi.typeError("Incompatible types in assignment: "
-              + node.left.type + " := " + node.right.type, node);
+              + node.left.type.getRep() + " := "
+              + node.right.type.getRep(), node);
         }
       }
     }

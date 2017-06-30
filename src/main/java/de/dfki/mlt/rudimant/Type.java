@@ -216,7 +216,17 @@ public class Type {
   @Override
   public boolean equals(Object o){
     if (!(o instanceof Type)) return false;
-    return _name != null && _name.equals(((Type)o).get_name());
+    Type t = (Type)o;
+    if (_class != null) {
+      return _class == t._class;
+    }
+    if (isPODType()) {
+      String l = RdfClass.xsdToJavaPod(_name);
+      String r = RdfClass.xsdToJavaPod(t._name);
+      return l.equals(r);
+    }
+    // TODO: check the parameter type list (recursively)
+    return _name != null && _name.equals(t._name);
   }
 
   /** Return true if the right type has to be casted to this type, e.g.,
