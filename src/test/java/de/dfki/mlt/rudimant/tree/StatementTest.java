@@ -104,14 +104,24 @@ public class StatementTest {
     assertEquals(expected, getForMarked(r, expected));
  }
 
-  @Test
-   public void StatementTestx(){
-     String in = "Object foo;  "
-             + "for (int i = 1; i <= 2; i = i+1){foo.slot = 1;}";
-    String r = generate(in);
-    String expected = "for ( int i = 1; (i <= 2); i = (i+1)){ foo.slot = 1; }";
-    assertEquals(expected, getForMarked(r, expected));
-  }
+ @Test
+  public void StatementTestx(){
+    String in = "Object foo;  "
+            + "for (int i = 1; i <= 2; i = i+1){foo.slot = 1;}";
+   String r = generate(in);
+   String expected = "for ( int i = 1; (i <= 2); i = (i+1)){ foo.slot = 1; }";
+   assertEquals(expected, getForMarked(r, expected));
+ }
+
+ @Test
+  public void TimeoutTest(){
+   String in = "time = 2; timeout(label, time) { i = 4; }";
+   String r = generate(in);
+   System.out.println(r);
+   String expected = "int time = 2; "
+       + "newTimeout(\"label\",time,new Proposal() {public void run() {int i = 4; }});";
+   assertEquals(expected, getForMarked(r, expected));
+ }
 
 //   @Test
 //   public void StatementTestxy(){

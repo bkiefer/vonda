@@ -22,6 +22,7 @@ import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_blockContext;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_groupContext;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_labelContext;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_statementContext;
+import de.dfki.mlt.rudimant.io.RobotGrammarParser.Timeout_statementContext;
 import de.dfki.mlt.rudimant.tree.*;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
 
@@ -350,6 +351,16 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     // PROPOSE LPAR propose_arg RPAR statement_block
     return new StatPropose((RTExpression) visit(ctx.getChild(2)),
         (StatAbstractBlock) visit(ctx.getChild(4))).setPosition(ctx, currentClass);
+  }
+
+  @Override
+  public RudiTree visitTimeout_statement(Timeout_statementContext ctx) {
+    // TIMEOUT '(' VARIABLE ',' arithmetic ')' statement_block
+    return new StatTimeout(
+        (RTExpression) new ExpUSingleValue(ctx.getChild(2).getText(), "String")
+          .setPosition(ctx, currentClass),
+        (RTExpression) visit(ctx.getChild(4)),
+        (StatAbstractBlock) visit(ctx.getChild(6))).setPosition(ctx, currentClass);
   }
 
   @Override

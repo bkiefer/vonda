@@ -708,6 +708,12 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     node.arg.visit(this);
     node.block.visit(this);
   }
+  
+  @Override
+  public void visitNode(StatTimeout node) {
+    node.time.visit(this);
+    node.block.visit(this);
+  }
 
   @Override
   public void visitNode(StatReturn node) {

@@ -419,6 +419,27 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     out.append("});\n");
   }
 
+  // newTimeout("label", time, new Proposal(public void run(){ block })) 
+  @Override
+  public void visitNode(StatTimeout node) {
+    if(!mem.getClassName().toLowerCase().equals(
+            mem.getToplevelInstance().toLowerCase())){
+      out.append(mem.getToplevelInstance()).append(".");
+    }
+    out.append("newTimeout(");
+    node.label.visitWithComments(this);
+    out.append(",");
+    node.time.visitWithComments(this);
+    out.append(",");
+    if(!mem.getClassName().toLowerCase().equals(
+            mem.getToplevelInstance().toLowerCase())){
+      out.append(mem.getToplevelInstance()).append(".");
+    }
+    out.append("new Proposal() {public void run()\n");
+    node.block.visitWithComments(this);
+    out.append("});\n");
+  }
+
   @Override
   public void visitNode(StatReturn node) {
     if (node.returnExp == null) {
@@ -561,9 +582,12 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public String visitNode(ExpUSingleValue node) {
-    if (node.type.isString() && escape) {
-      // properly escape if needed
-      return "\\" + node.content.substring(0, node.content.length() - 1) + "\\\" ";
+    if (node.type.isString()) {
+      if (node.content.indexOf('"') != 0)
+        node.content = "\"" + node.content + "\"";
+      if (escape)
+        // properly escape if needed
+        return "\\" + node.content.substring(0, node.content.length() - 1) + "\\\" ";
     }
     return node.content;
   }

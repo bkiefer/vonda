@@ -32,6 +32,7 @@ statement
   | set_operation
   | return_statement
   | propose_statement
+  | timeout_statement
   | if_statement
   | while_statement
   | for_statement
@@ -75,6 +76,10 @@ for_statement
 
 propose_statement
   : PROPOSE '(' string_expression ')' statement_block
+  ;
+
+timeout_statement
+  : TIMEOUT '(' VARIABLE ',' arithmetic ')' statement_block
   ;
 
 switch_statement
@@ -341,7 +346,7 @@ WILDCARD: '_';
 HASH: '#';
 PROPOSE: 'propose';
 DEC_VAR: 'var';
-// TIMEOUT: 'timeout';
+TIMEOUT: 'timeout';
 VARIABLE_MARKER: '^';
 
 /// comments (starting with /* or //):
