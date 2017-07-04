@@ -14,9 +14,9 @@ import java.util.LinkedHashMap;
  * Collects data to generate the complex boolean conditions to log the rules
  * properly.
  */
-public class VConditionLogVisitor implements RTStringVisitor {
+public class VisitorConditionLog implements RTStringVisitor {
 
-  private VGenerationVisitor genV;
+  private VisitorGeneration genV;
   private boolean enteringCondition;
   // a counter to help naming the booleans that we create
   private int counter = 0;
@@ -28,7 +28,7 @@ public class VConditionLogVisitor implements RTStringVisitor {
   // map the new variables to the rudi expressions they come from
   private LinkedHashMap<String, String> rudiLook;
 
-  public VConditionLogVisitor(VGenerationVisitor v) {
+  public VisitorConditionLog(VisitorGeneration v) {
     genV = v;
   }
 
@@ -158,22 +158,22 @@ public class VConditionLogVisitor implements RTStringVisitor {
   }
 
   @Override
-  public String visitNode(ExpUFieldAccess node) {
+  public String visitNode(ExpFieldAccess node) {
     return visitMyExp(node);
   }
 
   @Override
-  public String visitNode(ExpUFuncCall node) {
+  public String visitNode(ExpFuncCall node) {
     return visitMyExp(node);
   }
 
   @Override
-  public String visitNode(ExpUSingleValue node) {
+  public String visitNode(ExpSingleValue node) {
     return visitMyExp(node);
   }
 
   @Override
-  public String visitNode(ExpUVariable node) {
+  public String visitNode(ExpVariable node) {
     return visitMyExp(node);
   }
 }

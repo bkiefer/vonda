@@ -18,18 +18,18 @@ import de.dfki.mlt.rudimant.Type;
 public class StatFor2 extends RTStatement {
 
   Type varType;
-  ExpUVariable var;
+  ExpVariable var;
   RTExpression initialization;
   RTStatement statblock;
 
-  public StatFor2(ExpUVariable v, RTExpression e, RTStatement stat) {
+  public StatFor2(ExpVariable v, RTExpression e, RTStatement stat) {
     var = v;
     initialization = e;
     statblock = stat;
     varType = null;
   }
 
-  public StatFor2(String vType, ExpUVariable v, RTExpression exp,
+  public StatFor2(String vType, ExpVariable v, RTExpression exp,
       RTStatement stat) {
     var = v;
     initialization = exp;
@@ -52,7 +52,7 @@ public class StatFor2 extends RTStatement {
   }
 
   @Override
-  public void visitVoidV(VGenerationVisitor v) {
+  public void visitVoidV(VisitorGeneration v) {
     v.visitNode(this);
   }
 

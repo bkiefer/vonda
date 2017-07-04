@@ -92,7 +92,7 @@ public class TreeModelAdapter extends ModelAdapter {
       result = "_ ? _ : _";
     } else if (model instanceof StatPropose) {
       result = "propose";
-    } else if (model instanceof ExpUFieldAccess) {
+    } else if (model instanceof ExpFieldAccess) {
       result = "FieldAcc";
     } else if (model instanceof ExpLambda) {
       result = " -> ";
@@ -115,8 +115,8 @@ public class TreeModelAdapter extends ModelAdapter {
         result = "{ _ }";
       else
         result = "block";
-    } else if (model instanceof ExpUFuncCall) {
-      result = ((ExpUFuncCall)model).content + "( )";
+    } else if (model instanceof ExpFuncCall) {
+      result = ((ExpFuncCall)model).content + "( )";
     } else {
       if (null == model) {
         result = "<null>";

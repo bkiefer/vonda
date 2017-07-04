@@ -41,7 +41,7 @@ public class ExpLambda extends RTExpLeaf {
    * @param v
    */
   @Override
-  public void visitVoidV(VGenerationVisitor v) {
+  public void visitVoidV(VisitorGeneration v) {
     v.out.append(v.visitNode(this));
   }
 
@@ -56,7 +56,7 @@ public class ExpLambda extends RTExpLeaf {
     for (int i = 1; i < parameters.size(); ++i)
       sb.append(',').append(parameters.get(i));
     sb.append(")");
-    RudiTree[] dtrs = { new ExpUSingleValue(sb.toString(), parType.get_name()), body };
+    RudiTree[] dtrs = { new ExpSingleValue(sb.toString(), parType.get_name()), body };
     return Arrays.asList(dtrs);
   }
 

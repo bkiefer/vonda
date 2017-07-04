@@ -60,7 +60,7 @@ GREATER: '>';
     // TODO dtr is instanceof UVariable. Is this correct?
     // dtr.getType is "boolean" as String. Is this correct?
 
-     assertTrue(dtr instanceof ExpUSingleValue);
+     assertTrue(dtr instanceof ExpSingleValue);
      assertEquals("false should be of type Boolean", "boolean", (((RTExpression) dtr).getType().get_name()));
   }
 

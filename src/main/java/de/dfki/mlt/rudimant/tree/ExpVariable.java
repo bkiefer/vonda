@@ -12,14 +12,14 @@ import de.dfki.mlt.rudimant.Type;
  *
  * @author Anna Welker
  */
-public class ExpUVariable extends RTExpLeaf {
+public class ExpVariable extends RTExpLeaf {
 
-  public ExpUVariable(String type, String representation) {
+  public ExpVariable(String type, String representation) {
     this(representation);
     this.type = new Type(type);
   }
 
-  public ExpUVariable(String representation) {
+  public ExpVariable(String representation) {
     content = representation;
     type = Type.getNoType();
   }
@@ -40,7 +40,7 @@ public class ExpUVariable extends RTExpLeaf {
    * @param v
    */
   @Override
-  public void visitVoidV(VGenerationVisitor v) {
+  public void visitVoidV(VisitorGeneration v) {
     v.out.append(v.visitNode(this));
   }
 

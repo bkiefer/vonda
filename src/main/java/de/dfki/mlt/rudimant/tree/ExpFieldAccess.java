@@ -16,12 +16,12 @@ import de.dfki.mlt.rudimant.Type;
  *
  * @author Anna Welker
  */
-public class ExpUFieldAccess extends RTExpLeaf {
+public class ExpFieldAccess extends RTExpLeaf {
 
   List<RTExpression> parts;
   List<String> representation;
 
-  public ExpUFieldAccess(List<RTExpression> parts, List<String> representation) {
+  public ExpFieldAccess(List<RTExpression> parts, List<String> representation) {
     this.parts = parts;
     this.representation = representation;
   }
@@ -37,7 +37,7 @@ public class ExpUFieldAccess extends RTExpLeaf {
    * @param v
    */
   @Override
-  public void visitVoidV(VGenerationVisitor v) {
+  public void visitVoidV(VisitorGeneration v) {
     v.out.append(v.visitNode(this));
   }
 
@@ -56,10 +56,10 @@ public class ExpUFieldAccess extends RTExpLeaf {
 
     List<RTExpression> smaller = parts.subList(0, s);
     List<String> smallerRep = representation.subList(0, s);
-    ExpUFieldAccess first = fixFields(new ExpUFieldAccess(smaller, smallerRep));
+    ExpFieldAccess first = fixFields(new ExpFieldAccess(smaller, smallerRep));
     RTExpression right;
     if (parts.get(s - 1).type != null && parts.get(s - 1).type.isDialogueAct()) {
-      ExpUSingleValue property = fixFields(new ExpUSingleValue("\"" +
+      ExpSingleValue property = fixFields(new ExpSingleValue("\"" +
           parts.get(s).fullexp + "\"", "String"));
       right = fixFields(new ExpBoolean(first, property, "hasSlot("));
     } else {

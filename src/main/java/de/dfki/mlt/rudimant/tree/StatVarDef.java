@@ -36,7 +36,7 @@ public class StatVarDef extends RTStatement {
   }
 
   @Override
-  public void visitVoidV(VGenerationVisitor v) {
+  public void visitVoidV(VisitorGeneration v) {
     v.visitNode(this);
   }
 

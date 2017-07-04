@@ -15,15 +15,15 @@ import de.dfki.mlt.rudimant.Type;
  *
  * @author Anna Welker
  */
-public class ExpUPropertyAccess extends RTExpLeaf {
+public class ExpPropertyAccess extends RTExpLeaf {
 
-  ExpUVariable label;
+  ExpVariable label;
   boolean propertyVariable = false;
   Type rangeType;
   boolean functional;
 
 
-  public ExpUPropertyAccess(String fullexp, ExpUVariable l, boolean var, Type rt,
+  public ExpPropertyAccess(String fullexp, ExpVariable l, boolean var, Type rt,
       boolean func) {
     // an access will always return sth of type Object, so to not get null
     // I'll set the type of this to Object by default
@@ -46,7 +46,7 @@ public class ExpUPropertyAccess extends RTExpLeaf {
    * @param v
    */
   @Override
-  public void visitVoidV(VGenerationVisitor v) {
+  public void visitVoidV(VisitorGeneration v) {
     v.out.append(v.visitNode(this));
   }
 

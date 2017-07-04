@@ -41,7 +41,7 @@ public class Import extends RudiTree {
   }
 
   @Override
-  public void visitVoidV(VGenerationVisitor v) {
+  public void visitVoidV(VisitorGeneration v) {
     // TODO Auto-generated method stub
 
   }

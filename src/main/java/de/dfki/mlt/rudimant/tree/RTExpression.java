@@ -34,7 +34,7 @@ public abstract class RTExpression extends RudiTree {
    * duplicate the method from RudiTree to ensure String return
    * @param v
    */
-  public String visitWithSComments(VGenerationVisitor v) {
+  public String visitWithSComments(VisitorGeneration v) {
     if(v.collectingCondition){
       return visitStringV(v);
     }
@@ -57,7 +57,7 @@ public abstract class RTExpression extends RudiTree {
    * the visitMethod for the visitor that allows to return Strings ! for
    * everything except expressions, they should write to out !
    */
-  public abstract void visitVoidV(VGenerationVisitor v);
+  public abstract void visitVoidV(VisitorGeneration v);
 
   public boolean isComplexType() { return type != null && type.isCollection(); }
 
@@ -73,7 +73,7 @@ public abstract class RTExpression extends RudiTree {
     }
 
     if (type != null && type.isBool()){
-      if (this instanceof ExpUSingleValue){
+      if (this instanceof ExpSingleValue){
         return this;
       }
       // if is a funccall with type boolean, we'd still like to have it as a
@@ -90,10 +90,10 @@ public abstract class RTExpression extends RudiTree {
     }
 
     RTExpression result = null;
-    ExpUSingleValue right = null;
+    ExpSingleValue right = null;
 
     if (type == null || type.isUnspecified()) {
-      right = fixFields(new ExpUSingleValue("null", "Object"));
+      right = fixFields(new ExpSingleValue("null", "Object"));
       result = fixFields(new ExpBoolean(this, right, "!="));
     } else {
       //Type cleanType = type; // .convertXsdType();
@@ -109,10 +109,10 @@ public abstract class RTExpression extends RudiTree {
         case "char":
         case "float":
         case "double":
-          right = fixFields(new ExpUSingleValue("0", type.toString()));
+          right = fixFields(new ExpSingleValue("0", type.toString()));
           break;
         default:
-          right = fixFields(new ExpUSingleValue("null", "Object"));
+          right = fixFields(new ExpSingleValue("null", "Object"));
           break;
         }
         result = fixFields(new ExpBoolean(this, right, "!="));
@@ -122,8 +122,8 @@ public abstract class RTExpression extends RudiTree {
   }
 
   public RTExpression ensureBoolean() {
-    if (this instanceof ExpUFieldAccess) {
-      ExpUFieldAccess ufa = (ExpUFieldAccess)this;
+    if (this instanceof ExpFieldAccess) {
+      ExpFieldAccess ufa = (ExpFieldAccess)this;
       return ufa.ensureBooleanUFA();
     }
     return ensureBooleanBasic();

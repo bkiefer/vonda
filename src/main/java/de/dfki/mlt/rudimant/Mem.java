@@ -13,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.mlt.rudimant.tree.ExpUSingleValue;
-import de.dfki.mlt.rudimant.tree.ExpUVariable;
+import de.dfki.mlt.rudimant.tree.ExpSingleValue;
+import de.dfki.mlt.rudimant.tree.ExpVariable;
 
 /**
  * this is rudimants memory, used for type checking

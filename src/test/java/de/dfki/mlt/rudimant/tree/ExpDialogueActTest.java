@@ -11,7 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.dfki.mlt.rudimant.tree.ExpDialogueAct;
-import de.dfki.mlt.rudimant.tree.ExpUFuncCall;
+import de.dfki.mlt.rudimant.tree.ExpFuncCall;
 import de.dfki.mlt.rudimant.tree.RudiTree;
 
 /**
@@ -29,8 +29,8 @@ public class ExpDialogueActTest {
   public void test() throws IOException {
     String in = "emitDA(#Inform(Answer, what=solution));";
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(in));
-    assertTrue(dtr instanceof ExpUFuncCall);
-    assertTrue(((ExpUFuncCall)dtr).getDtrs().iterator().next()
+    assertTrue(dtr instanceof ExpFuncCall);
+    assertTrue(((ExpFuncCall)dtr).getDtrs().iterator().next()
         instanceof ExpDialogueAct);
 
   }

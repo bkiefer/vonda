@@ -11,9 +11,9 @@ import de.dfki.mlt.rudimant.Type;
  * class representing a simple value like a String, an int or null
  * @author Anna Welker
  */
-public class ExpUSingleValue extends RTExpLeaf {
+public class ExpSingleValue extends RTExpLeaf {
 
-  public ExpUSingleValue(String representation, String type){
+  public ExpSingleValue(String representation, String type){
     this.content = representation;
     this.type = new Type(type);
   }
@@ -29,7 +29,7 @@ public class ExpUSingleValue extends RTExpLeaf {
    * @param v
    */
   @Override
-  public void visitVoidV(VGenerationVisitor v) {
+  public void visitVoidV(VisitorGeneration v) {
     v.out.append(v.visitNode(this));
   }
 

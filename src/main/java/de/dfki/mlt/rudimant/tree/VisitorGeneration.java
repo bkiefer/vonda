@@ -25,14 +25,14 @@ import de.dfki.mlt.rudimant.Type;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
+public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
   public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
   RudimantCompiler out;
   private RudimantCompiler rudi;
   private Mem mem;
-  private VConditionLogVisitor condV;
+  private VisitorConditionLog condV;
   LinkedList<Token> collectedTokens;
 
   // activate bool to get double escaped String literals
@@ -41,11 +41,11 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   // flag to tell the if if is a real rule if (contains the condition that was calculated)
   private String ruleIf = null;
 
-  public VGenerationVisitor(RudimantCompiler r, LinkedList<Token> tokens) {
+  public VisitorGeneration(RudimantCompiler r, LinkedList<Token> tokens) {
     rudi = r;
     out = r;
     mem = rudi.getMem();
-    condV = new VConditionLogVisitor(this);
+    condV = new VisitorConditionLog(this);
     collectedTokens = tokens;
   }
 
@@ -95,19 +95,19 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       ret += node.type;
     }
     ret += (' ');
-    ExpUPropertyAccess pa = null;
-    if (node.left instanceof ExpUFieldAccess) {
-      ExpUFieldAccess acc = (ExpUFieldAccess) node.left;
+    ExpPropertyAccess pa = null;
+    if (node.left instanceof ExpFieldAccess) {
+      ExpFieldAccess acc = (ExpFieldAccess) node.left;
       RudiTree lastPart = acc.parts.get(acc.parts.size() - 1);
-      if (lastPart instanceof ExpUPropertyAccess) {
-        pa = (ExpUPropertyAccess) lastPart;
+      if (lastPart instanceof ExpPropertyAccess) {
+        pa = (ExpPropertyAccess) lastPart;
       }
       // don't print the last field since is will be replaced by a set...(a, b)
       replaceLastWithFuncall = pa != null;
       ret += node.left.visitWithSComments(this);
       if (replaceLastWithFuncall) {
-        if (node.right instanceof ExpUSingleValue &&
-            ((ExpUSingleValue)node.right).content.equals("null")) {
+        if (node.right instanceof ExpSingleValue &&
+            ((ExpSingleValue)node.right).content.equals("null")) {
           replaceLastWithFuncall = false;
           return ret + ".clearValue(" + pa.getPropertyName() + ")";
         }
@@ -178,9 +178,9 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
   public String visitDaToken(RTExpression exp) {
     String ret;
-    if (exp instanceof ExpUSingleValue
-        && ((ExpUSingleValue) exp).type.isString()) {
-      String s = ((ExpUSingleValue) exp).visitStringV(this);
+    if (exp instanceof ExpSingleValue
+        && ((ExpSingleValue) exp).type.isString()) {
+      String s = ((ExpSingleValue) exp).visitStringV(this);
       if (! s.startsWith("\"")) {
         ret = "\"" + s + "\"";
       } else
@@ -275,21 +275,20 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     mem.enterRule(node.label);
     if (node.toplevel) {
       mem.enterEnvironment(node.getBindings());
-      // is a toplevel rule and will be converted to a method
+      // is a top level rule and will be converted to a method
       out.append("public boolean " + node.label + "(");
       out.append("){\n");
-      ruleIf = printRuleLogger(node.label, node.ifstat.condition);
-      out.append(node.label + ":\n");
-      node.ifstat.visitWithComments(this);
+    } else {
+      // is a sub-level rule and will get an if to determine whether it
+      // should be executed
+      out.append("// Rule " + node.label + "\n");
+    }
+    ruleIf = printRuleLogger(node.label, node.ifstat.condition);
+    out.append(node.label + ":\n");
+    node.ifstat.visitWithComments(this);
+    if (node.toplevel) {
       out.append("return false; \n}\n");
       mem.leaveEnvironment();
-    } else {
-      // is a sublevel rule and will get an if to determine whether it
-      // should be executed
-      out.append("//Rule " + node.label + "\n");
-      ruleIf = printRuleLogger(node.label, node.ifstat.condition);
-      out.append(node.label + ":\n");
-      node.ifstat.visitWithComments(this);
     }
     mem.leaveRule();
   }
@@ -513,7 +512,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   }
 
   @Override
-  public String visitNode(ExpUFieldAccess node) {
+  public String visitNode(ExpFieldAccess node) {
     String ret = "";
     int to = node.parts.size();
     // don't print the last field if is in an assignment rather than an
@@ -524,8 +523,8 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
     // changed the direction of the for loop; should be enough
     for (int i = to - 1; i > 0; i--) {
-      if (node.parts.get(i) instanceof ExpUPropertyAccess) {
-        ExpUPropertyAccess pa = (ExpUPropertyAccess) node.parts.get(i);
+      if (node.parts.get(i) instanceof ExpPropertyAccess) {
+        ExpPropertyAccess pa = (ExpPropertyAccess) node.parts.get(i);
         String cast = pa.getType().toString();
         // TODO: what about long, double, ... ??
         if ("int".equals(cast))
@@ -542,8 +541,8 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     Type currentType = ((RTExpression) node.parts.get(0)).type;
     for (int i = 1; i < to; i++) {
       RTExpression currentPart = node.parts.get(i);
-      if (currentPart instanceof ExpUPropertyAccess) {
-        ExpUPropertyAccess pa = (ExpUPropertyAccess) currentPart;
+      if (currentPart instanceof ExpPropertyAccess) {
+        ExpPropertyAccess pa = (ExpPropertyAccess) currentPart;
         // then we are in the case that is actually an rdf operation
         if (currentType.isDialogueAct()) {
           ret += ".getValue(";
@@ -563,7 +562,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   }
 
   @Override
-  public String visitNode(ExpUFuncCall node) {
+  public String visitNode(ExpFuncCall node) {
     String ret = "";
     if (node.realOrigin != null &&
         (node.calledUpon == null || node.calledUpon.isUnspecified())) {
@@ -591,7 +590,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   }
 
   @Override
-  public String visitNode(ExpUSingleValue node) {
+  public String visitNode(ExpSingleValue node) {
     if (node.type.isString()) {
       if (node.content.indexOf('"') != 0)
         node.content = "\"" + node.content + "\"";
@@ -603,7 +602,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   }
 
   @Override
-  public String visitNode(ExpUVariable node) {
+  public String visitNode(ExpVariable node) {
     String realOrigin = mem.getVariableOriginClass(node.fullexp);
     if (realOrigin != null) {
       return lowerCaseFirst(realOrigin) + "." + node.content;
@@ -627,8 +626,8 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     // TODO BK: bool_exp can be a simple expression, in which case it
     // has to be turned into a comparison with zero, null or a call to
     // the has(...) method
-    if (bool_exp instanceof ExpUSingleValue && bool_exp.getType().isBool()) {
-      return ((ExpUSingleValue) bool_exp).content;
+    if (bool_exp instanceof ExpSingleValue && bool_exp.getType().isBool()) {
+      return ((ExpSingleValue) bool_exp).content;
     }
     collectingCondition = true;
 

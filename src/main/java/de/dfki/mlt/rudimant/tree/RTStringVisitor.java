@@ -29,11 +29,11 @@ public interface RTStringVisitor {
 
   public String visitNode(ExpNew node);
 
-  public String visitNode(ExpUFieldAccess node);
+  public String visitNode(ExpFieldAccess node);
 
-  public String visitNode(ExpUFuncCall node);
+  public String visitNode(ExpFuncCall node);
 
-  public String visitNode(ExpUSingleValue node);
+  public String visitNode(ExpSingleValue node);
 
-  public String visitNode(ExpUVariable node);
+  public String visitNode(ExpVariable node);
 }

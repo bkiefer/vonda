@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 
-import de.dfki.mlt.rudimant.tree.ExpUVariable;
+import de.dfki.mlt.rudimant.tree.ExpVariable;
 import de.dfki.mlt.rudimant.tree.RudiTree;
 import de.dfki.mlt.rudimant.tree.StatReturn;
 
@@ -83,7 +83,7 @@ public class StatementTest {
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(in), 2);
     assertTrue(dtr instanceof StatReturn);
     assertTrue(((StatReturn)dtr).getDtrs().iterator().next()
-        instanceof ExpUVariable);
+        instanceof ExpVariable);
   }
 
  @Test

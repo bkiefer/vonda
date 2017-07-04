@@ -22,14 +22,14 @@ import de.dfki.mlt.rudimant.Type;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor {
+public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
 
   public static final Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
   private RudimantCompiler rudi;
   private Mem mem;
 
-  public VTestTypeVisitor(RudimantCompiler comp) {
+  public VisitorType(RudimantCompiler comp) {
     rudi = comp;
     mem = rudi.getMem();
   }
@@ -107,12 +107,12 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     	}
         node.left.type = node.type; // the type of the declaration is in this node
       }
-      mem.addVariableDeclaration(((ExpUVariable) node.left).content,
+      mem.addVariableDeclaration(((ExpVariable) node.left).content,
               node.left.type);
       if (node.right.type == null) {
         node.right.propagateType(node.type);
       }
-    } else if (node.left instanceof ExpUVariable
+    } else if (node.left instanceof ExpVariable
         && !mem.variableExists(node.left.toString())) {
       node.declaration = true;
       // node.type is null, and variable does not exist, so no type.
@@ -124,10 +124,10 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
         // TODO: ? node.right.propagateType(node.type);
       }
       node.type = node.left.type = node.right.type;
-      mem.addVariableDeclaration(((ExpUVariable) node.left).content,
+      mem.addVariableDeclaration(((ExpVariable) node.left).content,
               node.left.type);
     }
-    if (node.right instanceof ExpUVariable
+    if (node.right instanceof ExpVariable
         && !mem.variableExists(node.right.toString())) {
       rudi.typeError("assigning the value of a non-existing variable "
           + node.right + "to " + node.left, node);
@@ -145,9 +145,9 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
         mergeType = new Type("boolean");
         node.right = node.right.ensureBoolean();
       } else {
-        if ((node.left instanceof ExpUFieldAccess) &&
-            node.right instanceof ExpUSingleValue &&
-            ((ExpUSingleValue)node.right).content.equals("null")) {
+        if ((node.left instanceof ExpFieldAccess) &&
+            node.right instanceof ExpSingleValue &&
+            ((ExpSingleValue)node.right).content.equals("null")) {
           // this is a "clear" operation, to be resolved later.
           mergeType = node.left.type;
         } else {
@@ -250,8 +250,8 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     node.expression.type = node.type;
   }
 
-  public static ExpUSingleValue degradeToString(ExpUVariable variable){
-    return variable.fixFields(new ExpUSingleValue(variable.toString(), "String"));
+  public static ExpSingleValue degradeToString(ExpVariable variable){
+    return variable.fixFields(new ExpSingleValue(variable.toString(), "String"));
   }
 
   /**
@@ -262,21 +262,21 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
    */
   @Override
   public void visitNode(ExpDialogueAct node) {
-    if (node.daType instanceof ExpUVariable) {
-      if (!mem.variableExists(((ExpUVariable) node.daType).content)) {
-        node.daType = degradeToString((ExpUVariable) node.daType);
+    if (node.daType instanceof ExpVariable) {
+      if (!mem.variableExists(((ExpVariable) node.daType).content)) {
+        node.daType = degradeToString((ExpVariable) node.daType);
       }
     }
-    if (node.proposition instanceof ExpUVariable) {
-      if (!mem.variableExists(((ExpUVariable) node.proposition).content)) {
-        node.proposition = degradeToString((ExpUVariable) node.proposition);
+    if (node.proposition instanceof ExpVariable) {
+      if (!mem.variableExists(((ExpVariable) node.proposition).content)) {
+        node.proposition = degradeToString((ExpVariable) node.proposition);
       }
     }
     int i = 0;
     for (RTExpression e : node.exps) {
-      if (e instanceof ExpUVariable) {
-        if (!mem.variableExists(((ExpUVariable) e).content)) {
-          node.exps.set(i, degradeToString((ExpUVariable) e));
+      if (e instanceof ExpVariable) {
+        if (!mem.variableExists(((ExpVariable) e).content)) {
+          node.exps.set(i, degradeToString((ExpVariable) e));
         }
       } else {
         e.visit(this);
@@ -531,8 +531,8 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
    * @param currentType
    * @param label
    */
-  ExpUPropertyAccess treatRdfPropertyAccess(ExpUFieldAccess node, Type currentType,
-          ExpUVariable var) {
+  ExpPropertyAccess treatRdfPropertyAccess(ExpFieldAccess node, Type currentType,
+          ExpVariable var) {
     // only a literal: check if it is a property of clz, and update the
     // current type
     if (mem.getVariableType(var.content) != null &&
@@ -540,11 +540,11 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
       // the literal represents a variable, so we can't determine the type of
       // the access
       // TODO: Maybe return "Object" as type, should be correct in most cases.
-      return new ExpUPropertyAccess(var.fullexp, var, true, Type.getNoType(), false);
+      return new ExpPropertyAccess(var.fullexp, var, true, Type.getNoType(), false);
     }
     if (currentType.isDialogueAct()) {
       // the return type will be string, this is a call to getSlot
-      return new ExpUPropertyAccess(var.fullexp, var, false, new Type("String"), true);
+      return new ExpPropertyAccess(var.fullexp, var, false, new Type("String"), true);
     }
     RdfClass clz = currentType.getRdfClass();
     String predUri = null;
@@ -554,7 +554,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     // warning / error if property not found
     if (predUri == null) {
       rudi.typeError("No property found for " + var.content, node);
-      return new ExpUPropertyAccess(var.fullexp, var, false, Type.getNoType(), false);
+      return new ExpPropertyAccess(var.fullexp, var, false, Type.getNoType(), false);
     }
 
     var.content = predUri; // replace plain name by URI
@@ -590,7 +590,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
       currentType = new Type("Set<Object>");
     }
     // the type of this is set to Object by default (not null)
-    return new ExpUPropertyAccess(var.fullexp, var, false, currentType, isFunctional);
+    return new ExpPropertyAccess(var.fullexp, var, false, currentType, isFunctional);
   }
 
   /**
@@ -600,7 +600,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
    * TODO CHECK FOR PROPERTIES RANGING OVER XSD DATATYPES, ETC. ALL FUZZY STUFF
    */
   @Override
-  public void visitNode(ExpUFieldAccess node) {
+  public void visitNode(ExpFieldAccess node) {
     RTExpression currentNode = node.parts.get(0); // can not be empty
     currentNode.visit(this);
     // The type to which the next field access item is applied
@@ -611,22 +611,22 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     for (int i = 1; i < node.parts.size(); ++i) {
       currentNode = node.parts.get(i);
       if (currentType.isCollection()
-          && currentNode instanceof ExpUFuncCall
-          && ! ((ExpUFuncCall)currentNode).params.isEmpty()
-          && ((ExpUFuncCall)currentNode).params.get(0) instanceof ExpLambda) {
-        ((ExpLambda)((ExpUFuncCall)currentNode).params.get(0)).parType =
+          && currentNode instanceof ExpFuncCall
+          && ! ((ExpFuncCall)currentNode).params.isEmpty()
+          && ((ExpFuncCall)currentNode).params.get(0) instanceof ExpLambda) {
+        ((ExpLambda)((ExpFuncCall)currentNode).params.get(0)).parType =
         		currentType.getInnerType();
       }
       // if this is a funccall performed on anything, tell the function the type it was called on
-      if(currentNode instanceof ExpUFuncCall) {
-        ((ExpUFuncCall)currentNode).calledUpon = currentType;
+      if(currentNode instanceof ExpFuncCall) {
+        ((ExpFuncCall)currentNode).calledUpon = currentType;
       }
       currentNode.visit(this);
       if (currentType.isRdfType()) {
-        if (currentNode instanceof ExpUVariable) {
+        if (currentNode instanceof ExpVariable) {
           // only a literal, delegate this because it's complicated
-          ExpUPropertyAccess acc = treatRdfPropertyAccess(node, currentType,
-              (ExpUVariable) currentNode);
+          ExpPropertyAccess acc = treatRdfPropertyAccess(node, currentType,
+              (ExpVariable) currentNode);
           node.parts.set(i, acc);
           currentType = acc.getType();
         } else if (currentNode instanceof RTExpression) {
@@ -641,7 +641,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
         //    either nothing or - worse - the type of some unrelated local variable;
     	  //		which other expressions need to be handled cautiously?
         if (currentNode instanceof RTExpression
-            && !(currentNode instanceof ExpUVariable)) {
+            && !(currentNode instanceof ExpVariable)) {
           currentType = ((RTExpression) currentNode).type;
         } else {
           currentType = Type.getNoType();
@@ -658,7 +658,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
    * types? Is it necessary?
    */
   @Override
-  public void visitNode(ExpUFuncCall node) {
+  public void visitNode(ExpFuncCall node) {
     // if this was used in a new Expression, handle it accordingly
     if(node.newexp){
       node.type = new Type(node.content);
@@ -696,7 +696,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
    * give the node a proper type; how to do that?
    */
   @Override
-  public void visitNode(ExpUSingleValue node) {
+  public void visitNode(ExpSingleValue node) {
     // nothing to test here
     if (node.type == null)
       node.type = Type.getNoType();
@@ -708,7 +708,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
    * information is already stored with it. b)
    */
   @Override
-  public void visitNode(ExpUVariable node) {
+  public void visitNode(ExpVariable node) {
     /* Covered by StatVarDef or ExpAssignment
     if (node.type != null && ! node.type.isUnspecified()
         && mem.getVariableType(node.content) == null) {
@@ -772,8 +772,8 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   @Override
   public void visitNode(ExpNew node) {
     if (node.construct != null) {
-      if(node.construct instanceof ExpUFuncCall){
-        ((ExpUFuncCall)node.construct).newexp = true;
+      if(node.construct instanceof ExpFuncCall){
+        ((ExpFuncCall)node.construct).newexp = true;
       }
       node.construct.visit(this);
       // the type is the (java) object created

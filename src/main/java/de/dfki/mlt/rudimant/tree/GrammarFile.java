@@ -46,7 +46,7 @@ public class GrammarFile extends RudiTree {
     return false;
   }
 
-  private void visitTypeInference(RudiTree t, VTestTypeVisitor ttv) {
+  private void visitTypeInference(RudiTree t, VisitorType ttv) {
     if (t instanceof RTStatement) {
       ((RTStatement)t).visit(ttv);
     } else if (t instanceof RTExpression) {
@@ -55,7 +55,7 @@ public class GrammarFile extends RudiTree {
   }
 
   public void startTypeInference(RudimantCompiler rudi) {
-    VTestTypeVisitor ttv = new VTestTypeVisitor(rudi);
+    VisitorType ttv = new VisitorType(rudi);
     Mem mem = rudi.getMem();
     _localBindings = mem.current();
     List<RudiTree> nonDefs = new ArrayList<>(rules.size());
@@ -81,7 +81,7 @@ public class GrammarFile extends RudiTree {
   }
 
 
-  public void writeRuleList(RudimantCompiler out, VGenerationVisitor gv){
+  public void writeRuleList(RudimantCompiler out, VisitorGeneration gv){
     Mem mem = out.getMem();
     List<RTStatement> later = new ArrayList<>();
     // do all assignments on toplevel here, those are class attributes
@@ -136,7 +136,7 @@ public class GrammarFile extends RudiTree {
   }
 
 
-  public void startGeneration(RudimantCompiler out, VGenerationVisitor gv) {
+  public void startGeneration(RudimantCompiler out, VisitorGeneration gv) {
     Mem mem = out.getMem();
     // tell the file in which package it lies
     String pkg = out.getPackageName();
@@ -233,7 +233,7 @@ public class GrammarFile extends RudiTree {
   }
 
   @Override
-  public void visitVoidV(VGenerationVisitor v) {
+  public void visitVoidV(VisitorGeneration v) {
     throw new UnsupportedOperationException("not supported");
   }
 }

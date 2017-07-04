@@ -29,7 +29,7 @@ public abstract class RudiTree {
   /** The input string that is covered by node */
   public String fullexp;
 
-  public void visitWithComments(VGenerationVisitor v) {
+  public void visitWithComments(VisitorGeneration v) {
     int firstPos = positions[0];
     v.out.append(checkComments(v, firstPos));
     visitVoidV(v);
@@ -61,7 +61,7 @@ public abstract class RudiTree {
    * print the comment before and forget about it if -and only if- it is an
    * import in java escapes
    */
-  public void printImportifJava(VGenerationVisitor v) {
+  public void printImportifJava(VisitorGeneration v) {
     lookingForImport = true;
     v.out.append(checkComments(v, positions[0]));
     lookingForImport = false;
@@ -77,9 +77,9 @@ public abstract class RudiTree {
    * the visitMethod for the visitor that allows to return Strings ! for
    * everything except expressions, they should write to out !
    */
-  public abstract void visitVoidV(VGenerationVisitor v);
+  public abstract void visitVoidV(VisitorGeneration v);
 
-  protected String checkComments(VGenerationVisitor v, int firstPos) {
+  protected String checkComments(VisitorGeneration v, int firstPos) {
     String allcomments = "";
     while (!v.collectedTokens.isEmpty() && v.collectedTokens.get(0).getTokenIndex() < firstPos) {
       String comment = v.collectedTokens.get(0).getText();

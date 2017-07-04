@@ -22,7 +22,7 @@ import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.tree.GrammarFile;
 import de.dfki.mlt.rudimant.tree.RudiTree;
-import de.dfki.mlt.rudimant.tree.VGenerationVisitor;
+import de.dfki.mlt.rudimant.tree.VisitorGeneration;
 
 public class RudimantCompiler {
 
@@ -448,7 +448,7 @@ public class RudimantCompiler {
     }
     if (output != null) {
       // generate the output
-      gf.startGeneration(this, new VGenerationVisitor(this, pair.second));
+      gf.startGeneration(this, new VisitorGeneration(this, pair.second));
     }
     logger.info("Done parsing");
     return gf;

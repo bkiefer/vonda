@@ -17,7 +17,7 @@ import de.dfki.mlt.rudimant.Type;
  *
  * @author Anna Welker
  */
-public class ExpUFuncCall extends RTExpLeaf {
+public class ExpFuncCall extends RTExpLeaf {
 
   List<RTExpression> params;
   String realOrigin;
@@ -26,7 +26,7 @@ public class ExpUFuncCall extends RTExpLeaf {
   // the type of object this function was called upon (null if nothing)
   Type calledUpon;
 
-  public ExpUFuncCall(String representation, List<RTExpression> expressions,
+  public ExpFuncCall(String representation, List<RTExpression> expressions,
       boolean newexpression) {
     content = representation;
     params = expressions;
@@ -44,7 +44,7 @@ public class ExpUFuncCall extends RTExpLeaf {
    * @param v
    */
   @Override
-  public void visitVoidV(VGenerationVisitor v) {
+  public void visitVoidV(VisitorGeneration v) {
     v.out.append(v.visitNode(this));
   }
 

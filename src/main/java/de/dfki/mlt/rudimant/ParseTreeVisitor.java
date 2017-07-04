@@ -131,7 +131,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       expList.add((RTExpression) visit(ctx.getChild(i)));
       i += 2;   // skip comma
     }
-    return new ExpUFuncCall(ctx.getChild(0).getText(),
+    return new ExpFuncCall(ctx.getChild(0).getText(),
         expList, false).setPosition(ctx, currentClass);
   }
 
@@ -143,7 +143,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       // it had a ++ or --
       RTExpression left = (RTExpression) visit(ctx.getChild(0));
       RTExpression right = (RTExpression) new ExpArithmetic(left,
-          (RTExpression) new ExpUSingleValue("1", "int")
+          (RTExpression) new ExpSingleValue("1", "int")
           .setPosition(ctx, currentClass),
           ctx.getChild(1).getText().equals("++")? "+" : "-")
           .setPosition(ctx, currentClass);
@@ -357,7 +357,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitTimeout_statement(Timeout_statementContext ctx) {
     // TIMEOUT '(' VARIABLE ',' arithmetic ')' statement_block
     return new StatTimeout(
-        (RTExpression) new ExpUSingleValue(ctx.getChild(2).getText(), "String")
+        (RTExpression) new ExpSingleValue(ctx.getChild(2).getText(), "String")
           .setPosition(ctx, currentClass),
         (RTExpression) visit(ctx.getChild(4)),
         (StatAbstractBlock) visit(ctx.getChild(6))).setPosition(ctx, currentClass);
@@ -393,7 +393,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitSwitch_label(Switch_labelContext ctx) {
     // CASE string_expression ':' | CASE VARIABLE ':' | DEFAULT ':'
-    return new ExpUSingleValue(ctx.getText(), "label").setPosition(ctx, currentClass);
+    return new ExpSingleValue(ctx.getText(), "label").setPosition(ctx, currentClass);
   }
 
   @Override
@@ -424,12 +424,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       // TODO: or should we check here that the type of the variable in assignment
       // is the type the iterable in exp returns? How?
       RTExpression exp = (RTExpression) visit(ctx.getChild(4));
-      ExpUVariable var = new ExpUVariable(ctx.getChild(2).getText());
+      ExpVariable var = new ExpVariable(ctx.getChild(2).getText());
       var.setPosition(ctx.VARIABLE(0), currentClass);
       return new StatFor2(var, exp, visit(ctx.getChild(6)).ensureStatement()).setPosition(ctx, currentClass);
     } else if (ctx.getChild(4).getText().equals(":")) {
       // with type specification
-      ExpUVariable var = new ExpUVariable(ctx.getChild(2).getText(),
+      ExpVariable var = new ExpVariable(ctx.getChild(2).getText(),
           ctx.getChild(3).getText());
       var.setPosition(ctx.VARIABLE(0), currentClass);
       // FOR '(' (DEC_VAR | type_spec) VARIABLE ':' exp ')' loop_statement_block
@@ -480,7 +480,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       representation.add(ctx.getChild(i).getText());
       parts.add((RTExpression) visit(ctx.getChild(i)));
     }
-    return new ExpUFieldAccess(parts, representation)
+    return new ExpFieldAccess(parts, representation)
         .setPosition(ctx, currentClass);
   }
 
@@ -533,27 +533,27 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   public RudiTree visitTerminalInner(TerminalNode tn) {
     switch (tn.getSymbol().getType()) {
     case RobotGrammarLexer.NULL:   // token is NULL
-      return new ExpUSingleValue("null", "Object");
+      return new ExpSingleValue("null", "Object");
     case RobotGrammarLexer.TRUE:   // token is TRUE
     case RobotGrammarLexer.FALSE:  // token is FALSE
-      return new ExpUSingleValue(tn.getText(), "boolean");
+      return new ExpSingleValue(tn.getText(), "boolean");
     case RobotGrammarLexer.CHARACTER:  // token is character
-      return new ExpUSingleValue(tn.getText(), "char");
+      return new ExpSingleValue(tn.getText(), "char");
     case RobotGrammarLexer.STRING:  // token is String
-      return new ExpUSingleValue(tn.getText(), "String");
+      return new ExpSingleValue(tn.getText(), "String");
     case RobotGrammarLexer.INT:  // token is int
-      return new ExpUSingleValue(tn.getText(), "int");
+      return new ExpSingleValue(tn.getText(), "int");
     case RobotGrammarLexer.FLOAT:  // token is float
-      return new ExpUSingleValue(tn.getText(), "float");
+      return new ExpSingleValue(tn.getText(), "float");
       // An annotation is sth. like @Override (yes, it is a String as long as the
       // representation of Strings has to explicitly have a " to be put in "")
     case RobotGrammarLexer.ANNOTATION:  // token is an annotation
-      return new ExpUSingleValue(tn.getText() + "\n", "annotation");
+      return new ExpSingleValue(tn.getText() + "\n", "annotation");
     case RobotGrammarLexer.VARIABLE:  // token is variable
-      return new ExpUVariable(tn.getText());
+      return new ExpVariable(tn.getText());
     case RobotGrammarLexer.BREAK:
     case RobotGrammarLexer.CONTINUE:
-      return new ExpUSingleValue(tn.getText(), "break/continue");
+      return new ExpSingleValue(tn.getText(), "break/continue");
     }
     throw new UnsupportedOperationException("The terminal node for " + tn.getText()
     + ", tree type: " + tn.getSymbol().getType() + " should never be used");
@@ -590,7 +590,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitVariable(RobotGrammarParser.VariableContext ctx) {
     // VARIABLE | field_access
-    return new ExpUVariable(ctx.getText()).setPosition(ctx, currentClass);
+    return new ExpVariable(ctx.getText()).setPosition(ctx, currentClass);
   }
 
   @Override
@@ -611,7 +611,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       expList.add((RTExpression) visit(ctx.getChild(i)));
       i += 2;   // skip comma
     }
-    return new ExpUFuncCall(ctx.getChild(0).getText(),
+    return new ExpFuncCall(ctx.getChild(0).getText(),
         expList, true).setPosition(ctx, currentClass);
   }
 }
