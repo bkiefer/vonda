@@ -59,7 +59,7 @@ public abstract class RTExpression extends RudiTree {
    */
   public abstract void visitVoidV(VGenerationVisitor v);
 
-  public boolean isComplexType() { return type != null && type.isCollecton(); }
+  public boolean isComplexType() { return type != null && type.isCollection(); }
 
   public boolean isStringOrComplexType() {
     return type != null && (type.isString() || isComplexType());

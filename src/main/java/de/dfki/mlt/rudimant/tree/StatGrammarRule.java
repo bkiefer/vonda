@@ -7,6 +7,8 @@ package de.dfki.mlt.rudimant.tree;
 
 import java.util.Arrays;
 
+import de.dfki.mlt.rudimant.Environment;
+
 /**
  * represents a single grammar rule located in the .rudi file; each rule will be
  * transformed into a separate java method
@@ -21,6 +23,8 @@ public class StatGrammarRule extends RTStatement {
   // remember whether you are toplevel
   // TODO: EVENTUALLY REMOVE, CAN BE DETERMINED OTHERWISE (ClassEnv)
   boolean toplevel;
+
+  private Environment _localBindings;
 
   public StatGrammarRule(String label, StatIf ifstat) {
     this.label = label;
@@ -45,4 +49,10 @@ public class StatGrammarRule extends RTStatement {
     RudiTree[] dtrs = { ifstat };
     return Arrays.asList(dtrs);
   }
+
+  public void setBindings(Environment local) {
+    _localBindings = local;
+  }
+
+  public Environment getBindings() { return _localBindings; }
 }

@@ -317,6 +317,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   @Override
   public void visitNode(ExpLambda node) {
     mem.enterEnvironment();
+    node.setBindings(mem.current());
     for(String arg : node.parameters){
       mem.addVariableDeclaration(arg, node.parType);
     }
@@ -338,6 +339,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     //  variables cannot be seen from the outside
     if (node.toplevel) {
       mem.enterEnvironment();
+      node.setBindings(mem.current());
     }
     node.ifstat.visit(this);
     if (node.toplevel) {
@@ -352,6 +354,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     // whose variables cannot be seen from the outside
     if (node.braces) {
       mem.enterEnvironment();
+      node.setBindings(mem.current());
     }
     for (RTStatement t : node.statblock) {
       t.visit(this);
@@ -404,26 +407,28 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
 
   @Override
   public void visitNode(StatListCreation node) {
-    if (!(node.objects.isEmpty())) {
+    if (! node.objects.isEmpty()) {
       for (RTExpression e : node.objects) {
         visitNode(e);
       }
-      Type type = node.listType;
-      if (type != null) {
-        Type elementType = type.getInnerType();
+      if (node.listType == null) {
+        // infer type from content (first element)
+        node.listType = new Type("List<" + node.objects.get(0).getType() + ">");
+      } else {
+        // check inner type against content
+        Type elementType = node.listType.getInnerType();
         if (elementType.unifyTypes(node.objects.get(0).getType()) == null) {
           rudi.typeError("Found a list creation where the list type"
-                  + " doesn't fit its objects' type: " + elementType
-                  + " vs " + node.objects.get(0).getType(), node);
+              + " doesn't fit its objects' type: " + elementType
+              + " vs " + node.objects.get(0).getType(), node);
         }
-        mem.addVariableDeclaration(node.variableName, type);
-      } else {
-        node.listType = new Type("List<" + node.objects.get(0).getType() + ">");
-        mem.addVariableDeclaration(node.variableName, type);
       }
-    } else if (node.listType == null) {
+    }
+    if (node.listType == null) {
+      // that's our best guess
       node.listType = new Type("List<Object>");
     }
+    mem.addVariableDeclaration(node.variableName, node.listType);
   }
 
   @Override
@@ -433,7 +438,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     // added.
     node.left.visit(this);
     node.right.visit(this);
-    if (! node.left.getType().isCollecton()) {
+    if (! node.left.getType().isCollection()) {
       rudi.typeError("Left side of a set operation is not a set, but "
           + node.left.getType(), node);
       return;
@@ -464,6 +469,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
       // block we now step into; we don't want them to be reachable them from
       // outside
       mem.enterEnvironment();
+      node.setBindings(mem.current());
       for (int i = 0; i < node.parameters.size(); i++) {
         // add parameters to environment
         mem.addVariableDeclaration(node.parameters.get(i), node.partypes.get(i));
@@ -604,7 +610,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     partOfFieldAccess = true;
     for (int i = 1; i < node.parts.size(); ++i) {
       currentNode = node.parts.get(i);
-      if (currentType.isCollecton()
+      if (currentType.isCollection()
           && currentNode instanceof ExpUFuncCall
           && ! ((ExpUFuncCall)currentNode).params.isEmpty()
           && ((ExpUFuncCall)currentNode).params.get(0) instanceof ExpLambda) {

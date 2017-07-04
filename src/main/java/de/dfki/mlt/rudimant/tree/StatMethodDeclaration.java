@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+import de.dfki.mlt.rudimant.Environment;
 import de.dfki.mlt.rudimant.Type;
 
 /**
@@ -28,6 +29,8 @@ public class StatMethodDeclaration extends RTStatement {
   // the type this method should be called upon; null if the method
   // is rudi-defined!
   Type calledUpon;
+
+  private Environment _localBindings;
 
   public StatMethodDeclaration(String vis, String ret_type,
 		  String calledUpn, String nm, ArrayList<String> parms,
@@ -64,4 +67,10 @@ public class StatMethodDeclaration extends RTStatement {
     RudiTree[] dtrs = { block };
     return Arrays.asList(dtrs);
   }
+
+  public void setBindings(Environment local) {
+    _localBindings = local;
+  }
+
+  public Environment getBindings() { return _localBindings; }
 }

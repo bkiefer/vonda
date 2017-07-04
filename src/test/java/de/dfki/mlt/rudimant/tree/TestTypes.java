@@ -123,13 +123,25 @@ public class TestTypes {
     assertEquals(expected, getForMarked(r, expected));
   }
 
-  /* TODO: THIS PRODUCES TOTAL JUNK. To be fixed tomorrow
+  /* TODO: THIS PRODUCES TOTAL JUNK. To be fixed.
   @Test
   public void testBooleanRdfExists3() {
     String in = "Child c; a: if (true && false) int i = 0;";
     String r = generate(in);
     String expected =
-        "a(); } public void a(){ boolean a0 = false; a0 = !(((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null)) int i = 0;";
+        "a(); return false; } public boolean a(){ boolean a0 = false; a0 = true if (null) { false a0 = null && null } else { a0 = lasdjf;laksjf;lasjdflja;sldkfj;laskjdf;laskjdf;lk||";
     assertEquals(expected, getForMarked(r, expected));
-  }*/
+  }
+  */
+
+  @Test
+  public void testWrongMapperAccess() {
+    String in = "Child getChild(int i); List<Child> out() { List<Child> raw = { }; " +
+        "for (int i = 1; i < 5 && raw.size() < 3; i++) " +
+        " { Child w = getChild(i); if (w) raw += w; } return raw; }";
+    String r = generate(in);
+    String expected =
+        "List<Rdf> out() {List<Rdf> raw = new ArrayList<>();for ( int i = 1; ((i < 5) && (raw.size() < 3)); i = (i+1)){Rdf w = getChild(i); if ((w != null)) raw.add(w); }return raw;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
 }

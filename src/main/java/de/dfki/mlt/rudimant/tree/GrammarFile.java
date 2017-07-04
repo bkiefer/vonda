@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import de.dfki.mlt.rudimant.Environment;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
 import de.dfki.mlt.rudimant.Type;
@@ -27,6 +28,8 @@ public class GrammarFile extends RudiTree {
   // imports* (comment grammar_rule | method_declaration | statement )* comment
   List<RudiTree> rules;
   static Writer out;
+
+  private Environment _localBindings;
 
   public GrammarFile(List<RudiTree> rules) {
     this.rules = rules;
@@ -54,6 +57,7 @@ public class GrammarFile extends RudiTree {
   public void startTypeInference(RudimantCompiler rudi) {
     VTestTypeVisitor ttv = new VTestTypeVisitor(rudi);
     Mem mem = rudi.getMem();
+    _localBindings = mem.current();
     List<RudiTree> nonDefs = new ArrayList<>(rules.size());
     // learn about all definitions before visiting the other statements!!
     // TODO: WHY? IF WE REQUIRE THE DEFINITION ALWAYS PRECEDING THE USE, THEN
@@ -211,7 +215,9 @@ public class GrammarFile extends RudiTree {
 
     // finally, the main processing method that will call all rules and imports
     // declared in this file
+    mem.enterEnvironment(_localBindings);
     writeRuleList(out, gv);
+    mem.leaveEnvironment();
 
     out.append("}\n");
   }
@@ -230,5 +236,4 @@ public class GrammarFile extends RudiTree {
   public void visitVoidV(VGenerationVisitor v) {
     throw new UnsupportedOperationException("not supported");
   }
-
 }

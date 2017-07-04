@@ -54,7 +54,7 @@ public class Mem {
     return classes.peekFirst();
   }
 
-  private Environment current() {
+  public Environment current() {
     return environment.peekFirst();
   }
 
@@ -195,13 +195,22 @@ public class Mem {
     return current().getType(variable);
   }
 
-  /** enter a new Environment (variable binding level) */
+  /** enter a new Environment (variable binding level) in TypeVisitor */
   public void enterEnvironment() {
     logger.trace("Enter level {}", environment.size());
     // by copying the existing environment, we avoid searching through all
     // lower environments at the cost of bigger space consumption
-    environment.push(
-        environment.isEmpty() ? new Environment() : current().deepCopy());
+    Environment newEnv =
+        environment.isEmpty() ? new Environment() : current().deepCopy();
+    environment.push(newEnv);
+  }
+
+  /** enter a new prefabricated Environment in GenerationVisior */
+  public void enterEnvironment(Environment e) {
+    logger.trace("Enter level {}", environment.size());
+    // by copying the existing environment, we avoid searching through all
+    // lower environments at the cost of bigger space consumption
+    environment.push(e);
   }
 
   /** leave an environment (variable binding level) */

@@ -8,6 +8,7 @@ package de.dfki.mlt.rudimant.tree;
 import java.util.Arrays;
 import java.util.List;
 
+import de.dfki.mlt.rudimant.Environment;
 import de.dfki.mlt.rudimant.Type;
 
 /**
@@ -21,6 +22,8 @@ public class ExpLambda extends RTExpLeaf {
   List<String> parameters;
   Type parType;
   RudiTree body;
+
+  private Environment _localBindings;
 
   public ExpLambda(List<String> args, RudiTree b) {
     parameters = args;
@@ -56,4 +59,10 @@ public class ExpLambda extends RTExpLeaf {
     RudiTree[] dtrs = { new ExpUSingleValue(sb.toString(), parType.get_name()), body };
     return Arrays.asList(dtrs);
   }
+
+  public void setBindings(Environment local) {
+    _localBindings = local;
+  }
+
+  public Environment getBindings() { return _localBindings; }
 }

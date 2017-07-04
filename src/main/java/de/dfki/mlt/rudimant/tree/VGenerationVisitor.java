@@ -221,6 +221,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public String visitNode(ExpLambda node) {
+    mem.enterEnvironment(node.getBindings());
     String ret = "(" + node.parameters.get(0);
     for(int i = 1; i < node.parameters.size(); i++){
       ret += ", " + node.parameters.get(i);
@@ -240,6 +241,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     }
     ret += out.out.toString();
     out.out = old;
+    mem.leaveEnvironment();
     return ret;
   }
 
@@ -272,6 +274,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
   public void visitNode(StatGrammarRule node) {
     mem.enterRule(node.label);
     if (node.toplevel) {
+      mem.enterEnvironment(node.getBindings());
       // is a toplevel rule and will be converted to a method
       out.append("public boolean " + node.label + "(");
       out.append("){\n");
@@ -279,6 +282,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       out.append(node.label + ":\n");
       node.ifstat.visitWithComments(this);
       out.append("return false; \n}\n");
+      mem.leaveEnvironment();
     } else {
       // is a sublevel rule and will get an if to determine whether it
       // should be executed
@@ -296,12 +300,14 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       // when entering a statement block, we need to create a new local
       // environment
       out.append("{");
+      mem.enterEnvironment(node.getBindings());
     }
     for (RudiTree stat : node.statblock) {
       stat.visitWithComments(this);
     }
     if (node.braces) {
       out.append("}");
+      mem.leaveEnvironment();
     }
   }
 
@@ -390,6 +396,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     if (node.block == null) {
       return;
     }
+    mem.enterEnvironment(node.getBindings());
     out.append(node.visibility + " ");
     out.append(node.return_type + " ");
     out.append(node.name + "(");
@@ -401,6 +408,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     }
     out.append(")\n");
     node.block.visitWithComments(this);
+    mem.leaveEnvironment();
   }
 
   @Override

@@ -7,6 +7,8 @@ package de.dfki.mlt.rudimant.tree;
 
 import java.util.List;
 
+import de.dfki.mlt.rudimant.Environment;
+
 /**
  * a class to represent a set of statements, might have curly braces or just be
  * an abstract object for grouping (without showing that grouping in the output)
@@ -17,6 +19,8 @@ public class StatAbstractBlock extends RTStatement {
 
   List<RTStatement> statblock;
   final boolean braces;
+
+  private Environment _localBindings;
 
   public StatAbstractBlock(List<RTStatement> statblock, boolean braces) {
     this.statblock = statblock;
@@ -39,4 +43,10 @@ public class StatAbstractBlock extends RTStatement {
   }
 
   public Iterable<? extends RudiTree> getDtrs() { return statblock; }
+
+  public void setBindings(Environment local) {
+    _localBindings = local;
+  }
+
+  public Environment getBindings() { return _localBindings; }
 }
