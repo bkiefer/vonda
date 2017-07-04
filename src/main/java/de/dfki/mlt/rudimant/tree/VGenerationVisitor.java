@@ -5,7 +5,6 @@
  */
 package de.dfki.mlt.rudimant.tree;
 
-import static de.dfki.mlt.rudimant.Constants.DIALOGUE_ACT_TYPE;
 import static de.dfki.mlt.rudimant.Utils.*;
 
 import java.io.StringWriter;
@@ -140,6 +139,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public String visitNode(ExpBoolean node) {
+    // TODO MOVE THE TYPE CHECKING AND OPERATOR MOD CODE FROM TYPEVISITOR TO HERE.
     String ret = "";
     if (node.operator != null && node.operator.contains("(")) {
       // other operator, is it sth. like "exists("
@@ -250,6 +250,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       ret += "new ";
       ret += node.construct.visitStringV(this);
     } else {
+      // TODO: MAKE A FUNCTION FOR THIS, OR KICK IT! WHAT'S THE MEANING?
       if(!mem.getClassName().toLowerCase().equals(
           mem.getToplevelInstance().toLowerCase())){
         ret += mem.getToplevelInstance() + ".";
@@ -257,6 +258,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
       ret += "_proxy.getClass(\""
               + node.type.getRdfClass()
               + "\").getNewInstance(";
+      // SEE ABOVE
       if(!mem.getClassName().toLowerCase().equals(
               mem.getToplevelInstance().toLowerCase())){
         ret += mem.getToplevelInstance() + ".";
@@ -419,7 +421,7 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     out.append("});\n");
   }
 
-  // newTimeout("label", time, new Proposal(public void run(){ block })) 
+  // newTimeout("label", time, new Proposal(public void run(){ block }))
   @Override
   public void visitNode(StatTimeout node) {
     if(!mem.getClassName().toLowerCase().equals(
@@ -564,9 +566,9 @@ public class VGenerationVisitor implements RTStringVisitor, RTStatementVisitor {
     } else {
       ret += node.content + "(";
     }
-    for (int i = 0; i < node.exps.size(); i++) {
-      ret += node.exps.get(i).visitWithSComments(this);
-      if (i != node.exps.size() - 1) {
+    for (int i = 0; i < node.params.size(); i++) {
+      ret += node.params.get(i).visitWithSComments(this);
+      if (i != node.params.size() - 1) {
         ret += ", ";
       }
     }

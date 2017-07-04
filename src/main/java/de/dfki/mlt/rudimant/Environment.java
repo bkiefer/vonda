@@ -112,32 +112,19 @@ public class Environment {
     return null;
   }
 
-  public boolean existsFunction(String funcname, List<Type> partypes, Mem mem) {
-    if (!functions.containsKey(funcname)) {
-      return false;
-    }
-    for (Function f : functions.get(funcname)) {
-      if (f.areParametertypes(partypes, mem)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * returns null if there is no such function
+  /** returns null if there is no such function, the return type otherwise
    *
    * @param funcname the name of the function
    * @return its return type or null
    */
   public Type getFunctionRetType(String funcname, Type calledUpon,
 		  List<Type> partypes, Mem mem) {
-    if(!functions.containsKey(funcname)){
+    if (! functions.containsKey(funcname)) {
       return null;
     }
     for (Function f : functions.get(funcname)) {
       if (f.areParametertypes(partypes, mem)) {
-        if(calledUpon != null){
+        if(calledUpon != null) {
           if(!f.canCallUpon(calledUpon, mem)) {
             continue;
           }

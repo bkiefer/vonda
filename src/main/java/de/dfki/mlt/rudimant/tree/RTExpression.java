@@ -25,10 +25,6 @@ public abstract class RTExpression extends RudiTree {
     return type;
   }
 
-  public void setType(Type to) {
-    type = to;
-  }
-
   /**
    * visitor method
    */
@@ -63,11 +59,7 @@ public abstract class RTExpression extends RudiTree {
    */
   public abstract void visitVoidV(VGenerationVisitor v);
 
-  // Return true if is represents an RDF type or a DialogueAct
-  // TODO: maybe has to be split up.
-  public boolean isRdfType() { return type != null && type.isRdfType(); }
-
-  public boolean isComplexType() { return type != null && type.isComplexType(); }
+  public boolean isComplexType() { return type != null && type.isCollecton(); }
 
   public boolean isStringOrComplexType() {
     return type != null && (type.isString() || isComplexType());
@@ -108,6 +100,7 @@ public abstract class RTExpression extends RudiTree {
       //if (! type.equals(cleanType)) {
       //  result = fixFields(new ExpBoolean(this, null, "exists("));
       //} else {
+      // TODO USE Type.isCollection, and possibly move to generation
         switch (type.toString()) {
         case "long":
         case "int":

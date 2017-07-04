@@ -75,7 +75,7 @@ GREATER: '>';
 
   @Test
   public void testBoolean5() {
-    String booleanExp = "(False && False || True);";
+    String booleanExp = "(false && false || true);";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
 

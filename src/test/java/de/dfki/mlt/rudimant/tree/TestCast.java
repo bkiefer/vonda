@@ -59,9 +59,9 @@ public class TestCast {
     String in = "Quiz activity; if "
             + "(activity.tabletOrientation != getCurrentAsker()) {}";
     String s = generate(in);
-    String expected = "if ((((String)activity"
-            + ".getSingleValue(\"<dom:tabletOrientation>\"))"
-        + " != getCurrentAsker())) {}";
+    String expected = "if (isNotEqual("
+        + "((String)activity.getSingleValue(\"<dom:tabletOrientation>\"))"
+        + ", getCurrentAsker())) {}";
     assertEquals(expected, getForMarked(s, expected));
   }
 

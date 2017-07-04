@@ -279,7 +279,7 @@ public abstract class Agent extends DataComparator implements StreamingClient {
     timeouts.newTimeout(name, millis, emptyProposal);
   }
 
-  protected void newTimeout(String name, int millis, final Proposal p) {
+  public void newTimeout(String name, int millis, final Proposal p) {
     timeouts.newTimeout(name, millis,
         new Proposal(){ public void run(){
           proposalsToExecute.offerLast(p);

@@ -19,7 +19,7 @@ import de.dfki.mlt.rudimant.Type;
  */
 public class ExpUFuncCall extends RTExpLeaf {
 
-  List<RTExpression> exps;
+  List<RTExpression> params;
   String realOrigin;
   // remember whether this is used by new
   boolean newexp;
@@ -29,7 +29,7 @@ public class ExpUFuncCall extends RTExpLeaf {
   public ExpUFuncCall(String representation, List<RTExpression> expressions,
       boolean newexpression) {
     content = representation;
-    exps = expressions;
+    params = expressions;
     newexp = newexpression;
   }
 
@@ -53,5 +53,5 @@ public class ExpUFuncCall extends RTExpLeaf {
     return v.visitNode(this);
   }
 
-  public Iterable<? extends RudiTree> getDtrs() { return exps; }
+  public Iterable<? extends RudiTree> getDtrs() { return params; }
 }

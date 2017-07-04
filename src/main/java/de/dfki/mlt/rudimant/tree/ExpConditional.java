@@ -54,7 +54,7 @@ public class ExpConditional extends RTExpression {
   }
 
   public void propagateType(Type upperType) {
-    if (type != null) {
+    if (type != null && ! type.isUnspecified()) {
       logger.error("Why didn't this type percolate up? " + fullexp + " " + type);
       return;
     }

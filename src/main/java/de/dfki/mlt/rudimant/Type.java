@@ -99,10 +99,11 @@ public class Type {
 
   /** Indicates if this type should be compared with == or equals */
   public boolean isPODType() {
-    if (_name == null) return true;
+    if (_name == null) return false; // if we're ignorant, it is Object
     String name = RdfClass.xsdToJavaPod(_name);
     Long code = typeCodes.get(name);
-    return code != null && (code & 0x11111111000l) != 0;
+    return code != null && (code & 0x11111111000l) != 0
+        && (code & 0x100) == 0; // containers may be null!
   }
 
   public boolean isRdfType() {
@@ -117,11 +118,11 @@ public class Type {
     return null;
   }
 
-  public boolean isComplexType() {
+  public boolean isCollection() {
     if (_name == null) return false;
-    return (_name.startsWith("Map")
-        || _name.startsWith("Set")
-        || _name.startsWith("List")
+    return (_name.endsWith("Map")
+        || _name.endsWith("Set")
+        || _name.endsWith("List")
         || _name.startsWith("RdfSet")
         || _name.startsWith("RdfList")
         || ((_name.endsWith(">") && ! isRdfType())));
@@ -136,7 +137,7 @@ public class Type {
   }
 
   public boolean isBool() {
-    return "boolean".equals(_name.toLowerCase());
+    return _name != null && "boolean".equals(_name.toLowerCase());
   }
 
   public boolean isUnspecified() {
@@ -238,7 +239,7 @@ public class Type {
     return res.equals(this);
   }
 
-  /** Only for the visualization */
+  /** Only for the visualisation */
   public String getRep() {
     if (_class != null) return _class.toString();
     if (isRdfType()) return _name;

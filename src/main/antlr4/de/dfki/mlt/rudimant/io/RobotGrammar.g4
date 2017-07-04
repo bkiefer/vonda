@@ -79,7 +79,7 @@ propose_statement
   ;
 
 timeout_statement
-  : TIMEOUT '(' VARIABLE ',' arithmetic ')' statement_block
+  : TIMEOUT '(' string_expression ',' arithmetic ')' statement_block
   ;
 
 switch_statement

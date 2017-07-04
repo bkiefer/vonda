@@ -27,11 +27,7 @@ public class ExpUPropertyAccess extends RTExpLeaf {
       boolean func) {
     // an access will always return sth of type Object, so to not get null
     // I'll set the type of this to Object by default
-    if(rt == null){
-      type = new Type("Object");
-    } else {
-      type = rt;
-    }
+    type = rt;
     label = l;
     propertyVariable = var;
     rangeType = rt;

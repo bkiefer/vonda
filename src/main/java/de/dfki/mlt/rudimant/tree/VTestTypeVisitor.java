@@ -5,8 +5,6 @@
  */
 package de.dfki.mlt.rudimant.tree;
 
-import static de.dfki.mlt.rudimant.Constants.DIALOGUE_ACT_TYPE;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +64,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
           node.left.propagateType(node.right.type);
         }
       } else if (node.right.type.isUnspecified()) {
-        //
+        // propagate type from the left branch to the right
         node.right.propagateType(node.left.type);
       } else {
         // check type compatibility
@@ -74,11 +72,11 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
         if (type == null) {
           rudi.typeError("Incompatible types in " + node + ": "
                   + node.left.type + " vs. " + node.right.type, node);
-        } else {
-          node.type = type;
         }
       }
     }
+    // may be wrong if type unification failed
+    node.type = node.left.type;
   }
 
   /**
@@ -114,15 +112,15 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
       if (node.right.type == null) {
         node.right.propagateType(node.type);
       }
-    } else if ((node.left instanceof ExpUVariable
-            && !mem.variableExists(node.left.toString()))) {
+    } else if (node.left instanceof ExpUVariable
+        && !mem.variableExists(node.left.toString())) {
       node.declaration = true;
       // node.type is null, and variable does not exist, so no type.
       // now consolidate types
       if (node.right.type == null) {
         // please, never assign null as a type, because that is no valid java type
         // and will crash for sure
-        node.right.type = new Type("Object");
+        node.right.type = Type.getNoType();
         // TODO: ? node.right.propagateType(node.type);
       }
       node.type = node.left.type = node.right.type;
@@ -182,41 +180,57 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
             || ("<>".indexOf(operator.charAt(0)) >= 0 && operator.length() == 1);
   }
 
+  private String modifyOperator(String operator) {
+    switch (operator) {
+    case "==": return "isEqual(";
+    case "!=": return "isNotEqual(";
+    case "<": return "isSmaller(";
+    case ">": return "isGreater(";
+    case "<=": return "isSmallerEqual(";
+    case ">=": return "isGreaterEqual(";
+    default:
+      logger.warn("Unknown operator: {}", operator);
+      break;
+    }
+    return operator;
+  }
+
+  private RTExpression ensureDA(RTExpression ex) {
+    if (ex.getType().isString())
+      return ex.fixFields(new ExpNew("DialogueAct", ex));
+    if (! ex.getType().isDialogueAct())
+      logger.error("Can not be converted to dialogue act: {}", ex);
+    return ex;
+  }
+
   /**
    * In principle the same as ExpArithmetic, with boolean only. The one
    * difference is that there are unary expressions which serve as boolean
    * expressions and later have to be turned into proper boolean expressions,
    * either by calling the right 0-ary method, or comparing with zero or null.
+   *
+   * What combinations are we expecting?
+   * POD vs POD --> keep operator
+   * POD vs Container --> container may be null!
+   * String vs String --> isSmallerThan
+   * String vs DialogueAct --> convert String and apply DA vs DA
+   * String vs Rdf or Rdf vs Rdf or Rdf vs RdfClass --> convert both to RdfClass
+   * DA vs DA,
    */
   @Override
   public void visitNode(ExpBoolean node) {
     node.left.visit(this);
     if (node.right != null) {
       node.right.visit(this);
-      if (node.left.getType() != null && !node.left.getType().isPODType()
-          && node.right.getType() != null && !node.right.getType().isPODType()) {
-        String or = "";
-        switch (node.operator) {
-          case "==":
-            node.operator = or + "isEqual(";
-            break;
-          case "<":
-            node.operator = or + "isSmaller(";
-            break;
-          case ">":
-            node.operator = or + "isGreater(";
-            break;
-          case "<=":
-            node.operator = or + "isSmallerEqual(";
-            break;
-          case ">=":
-            node.operator = or + "isGreaterEqual(";
-            break;
-        }
-      }
       if (isBooleanOperator(node.operator)) {
         node.right = node.right.ensureBoolean();
         node.left = node.left.ensureBoolean();
+      }
+      // TODO: must be done during GENERATION
+      Type l = node.left.getType();
+      Type r = node.right.getType();
+      if (! l.isPODType() && !r.isPODType()) {
+        node.operator = modifyOperator(node.operator);
       }
     } else {
       // we should do this always, because if the boolean expression has only one
@@ -236,6 +250,10 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     node.expression.type = node.type;
   }
 
+  public static ExpUSingleValue degradeToString(ExpUVariable variable){
+    return variable.fixFields(new ExpUSingleValue(variable.toString(), "String"));
+  }
+
   /**
    * This should have type "DialogueAct" already, which should be a constant
    * What we have to do is finding out which tokens are actual variables and
@@ -246,19 +264,19 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   public void visitNode(ExpDialogueAct node) {
     if (node.daType instanceof ExpUVariable) {
       if (!mem.variableExists(((ExpUVariable) node.daType).content)) {
-        node.daType = mem.degradeToString((ExpUVariable) node.daType);
+        node.daType = degradeToString((ExpUVariable) node.daType);
       }
     }
     if (node.proposition instanceof ExpUVariable) {
       if (!mem.variableExists(((ExpUVariable) node.proposition).content)) {
-        node.proposition = mem.degradeToString((ExpUVariable) node.proposition);
+        node.proposition = degradeToString((ExpUVariable) node.proposition);
       }
     }
     int i = 0;
     for (RTExpression e : node.exps) {
       if (e instanceof ExpUVariable) {
         if (!mem.variableExists(((ExpUVariable) e).content)) {
-          node.exps.set(i, mem.degradeToString((ExpUVariable) e));
+          node.exps.set(i, degradeToString((ExpUVariable) e));
         }
       } else {
         e.visit(this);
@@ -415,7 +433,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     // added.
     node.left.visit(this);
     node.right.visit(this);
-    if (! node.left.isComplexType()) {
+    if (! node.left.getType().isCollecton()) {
       rudi.typeError("Left side of a set operation is not a set, but "
           + node.left.getType(), node);
       return;
@@ -431,6 +449,8 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   /* **********************************************************************
    * Statements that add info to the binding table (var defs, fun defs)
    * ********************************************************************* */
+
+  /** An explicit variable declaration, without assignment, just definition */
   @Override
   public void visitNode(StatVarDef node) {
     mem.addVariableDeclaration(node.variable, node.type);
@@ -438,7 +458,6 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
 
   @Override
   public void visitNode(StatMethodDeclaration node) {
-
     mem.addFunction(node.name, node.return_type, node.calledUpon, node.partypes);
     if (node.block != null) {
       // The following variables (function parameters) are local to the method
@@ -529,7 +548,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     // warning / error if property not found
     if (predUri == null) {
       rudi.typeError("No property found for " + var.content, node);
-      return new ExpUPropertyAccess(var.fullexp, var, false, null, false);
+      return new ExpUPropertyAccess(var.fullexp, var, false, Type.getNoType(), false);
     }
 
     var.content = predUri; // replace plain name by URI
@@ -576,40 +595,39 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
    */
   @Override
   public void visitNode(ExpUFieldAccess node) {
-    Type currentType = null;
     RTExpression currentNode = node.parts.get(0); // can not be empty
     currentNode.visit(this);
     // The type to which the next field access item is applied
-    currentType = ((RTExpression) currentNode).type;
+    Type currentType = ((RTExpression) currentNode).type;
     // this is dangerous, and only works if this condition can not be
     // "interrupted"
     partOfFieldAccess = true;
     for (int i = 1; i < node.parts.size(); ++i) {
       currentNode = node.parts.get(i);
-      if (currentType != null && currentType.isComplexType()
+      if (currentType.isCollecton()
           && currentNode instanceof ExpUFuncCall
-          && ! ((ExpUFuncCall)currentNode).exps.isEmpty()
-          && ((ExpUFuncCall)currentNode).exps.get(0) instanceof ExpLambda) {
-        ((ExpLambda)((ExpUFuncCall)currentNode).exps.get(0)).parType =
+          && ! ((ExpUFuncCall)currentNode).params.isEmpty()
+          && ((ExpUFuncCall)currentNode).params.get(0) instanceof ExpLambda) {
+        ((ExpLambda)((ExpUFuncCall)currentNode).params.get(0)).parType =
         		currentType.getInnerType();
       }
       // if this is a funccall performed on anything, tell the function the type it was called on
-      if(currentNode instanceof ExpUFuncCall && currentType != null){
-    	  ((ExpUFuncCall)currentNode).calledUpon = currentType;
+      if(currentNode instanceof ExpUFuncCall) {
+        ((ExpUFuncCall)currentNode).calledUpon = currentType;
       }
       currentNode.visit(this);
-      if (currentType != null && currentType.isRdfType()) {
+      if (currentType.isRdfType()) {
         if (currentNode instanceof ExpUVariable) {
           // only a literal, delegate this because it's complicated
-          ExpUPropertyAccess acc
-                  = treatRdfPropertyAccess(node, currentType, (ExpUVariable) currentNode);
+          ExpUPropertyAccess acc = treatRdfPropertyAccess(node, currentType,
+              (ExpUVariable) currentNode);
           node.parts.set(i, acc);
           currentType = acc.getType();
         } else if (currentNode instanceof RTExpression) {
           // could also be a method application, possibly, what else?
           currentType = ((RTExpression) currentNode).type;
         } else {
-          currentType = null;
+          currentType = Type.getNoType();
         }
       } else { // unknown or Java type, let's try with the accessor type
     	  // TODO: think about this. we definitely want this in case of
@@ -620,12 +638,12 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
             && !(currentNode instanceof ExpUVariable)) {
           currentType = ((RTExpression) currentNode).type;
         } else {
-          currentType = null;
+          currentType = Type.getNoType();
         }
       }
       ((RTExpression) currentNode).type = currentType;
     }
-    node.type = currentType == null ? new Type("Object") : currentType; // the final result type
+    node.type = currentType; // the final result type
     partOfFieldAccess = false;
   }
 
@@ -642,7 +660,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     }
     // test whether the given parameters are of the correct type
     List<Type> partypes = new ArrayList<Type>();
-    for (RTExpression e : node.exps) {
+    for (RTExpression e : node.params) {
       e.visit(this);
       partypes.add(e.getType());
     }
@@ -651,15 +669,18 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
       node.realOrigin = o;
     }
     if (node.type == null) {
+      // this returns null if there is no such function, and an unspecified type
+      // if the return type is unknown.
       node.type = mem.getFunctionRetType(node.content, node.calledUpon, partypes);
     }
-    if (!mem.existsFunction(node.content, partypes)) {
-      if (partOfFieldAccess) {
-        // TODO: adapt this if you still want to throw an error
-        return;
+    if (node.type == null) {
+      // TODO: MAYBE INTRODUCE A FLAG FOR STRICT CHECKING. FOR THE TIME BEING,
+      // WE EXCLUDE ALL CALLS ON OBJECT THAT ARE ORDINARY JAVA CLASS INSTANCES
+      if (node.calledUpon == null) {
+        rudi.typeError("The function call to " + node.content
+            + " refers to a function that wasn't declared", node);
       }
-      rudi.typeError("The function call to " + node.content
-              + " refers to a function that wasn't declared", node);
+      node.type = Type.getNoType();
     }
   }
 
@@ -671,6 +692,8 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   @Override
   public void visitNode(ExpUSingleValue node) {
     // nothing to test here
+    if (node.type == null)
+      node.type = Type.getNoType();
   }
 
   /**
@@ -680,18 +703,26 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
    */
   @Override
   public void visitNode(ExpUVariable node) {
+    /* Covered by StatVarDef or ExpAssignment
     if (node.type != null && ! node.type.isUnspecified()
         && mem.getVariableType(node.content) == null) {
       mem.addVariableDeclaration(node.fullexp, node.type);
       return;
-    }
+    } */
+    // get the type of the variable, if defined
+    // TODO: is there a way to find out if we try to retrieve the value of an
+    // undefined variable?
     node.type = mem.getVariableType(node.fullexp);
-    // we could have sth like Introduction, that is an undeclared rdf class
-    RdfClass cl = mem.getProxy().fetchClass(node.content);
-    if (cl != null) {
-      node.type = new Type(cl.toString());
-      if (!mem.variableExists(node.content)) {
-        node.content = "\"" + node.content + "\"";
+    if (node.type == null) {
+      // we could have sth like Introduction, that is an undeclared rdf class
+      RdfClass cl = mem.getProxy().fetchClass(node.content);
+      if (cl != null) {
+        node.type = new Type(cl.toString());
+        if (!mem.variableExists(node.content)) {
+          node.content = "\"" + node.content + "\"";
+        }
+      } else {
+        node.type = Type.getNoType();
       }
     }
     // Make sure an external class requirement is registered if variable is
@@ -708,7 +739,7 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
     node.arg.visit(this);
     node.block.visit(this);
   }
-  
+
   @Override
   public void visitNode(StatTimeout node) {
     node.time.visit(this);
@@ -719,7 +750,8 @@ public class VTestTypeVisitor implements RTExpressionVisitor, RTStatementVisitor
   public void visitNode(StatReturn node) {
     if (node.returnExp != null) {
       node.returnExp.visit(this);
-      if (mem.variableExists(node.returnExp.fullexp)){
+      if (mem.variableExists(node.returnExp.fullexp)
+          && mem.isActiveRule(node.returnExp.fullexp)){
         rudi.typeError("Return used with a rule name that also is a variable, I will use the rule functionality.", node);
       }
     }

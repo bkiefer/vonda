@@ -39,7 +39,6 @@ public class Mem {
 
   private RdfProxy _proxy;
 
-
   // the rudi file that represents the Agent
   private String upperRudi;
 
@@ -48,6 +47,15 @@ public class Mem {
     classes = new ArrayDeque<>();
     _proxy = proxy;
     Type.setProxy(proxy);
+  }
+
+  /** Get the current ClassEnv (the one treated now) */
+  private ClassEnv curClass() {
+    return classes.peekFirst();
+  }
+
+  private Environment current() {
+    return environment.peekFirst();
   }
 
   public void setToplevelFile(String name) {
@@ -60,11 +68,6 @@ public class Mem {
 
   public RdfProxy getProxy() {
     return _proxy;
-  }
-
-  /** Get the current ClassEnv (the one treated now) */
-  private ClassEnv curClass() {
-    return classes.peekFirst();
   }
 
   /** Enter a new (imported) class. Automatically enters a new variable scope
@@ -113,12 +116,6 @@ public class Mem {
     return curClass().isActiveRule(rule);
   }
 
-  /*
-  private static final Set<String> KNOWN_FUNCTIONS =
-      new HashSet<>(Arrays.asList(new String[] {
-          "equals", "startsWith", "endsWith", "substring", "info"
-      }));
-   */
   /** Add a function/method declaration, optionally with return and parameter
    *  types. If the types are not known, it's assumed they are null.
    *
@@ -130,9 +127,7 @@ public class Mem {
   public void addFunction(String funcname, Type functype, Type calledUpon,
           List<Type> partypes) {
     String origin = null;
-    //if(! KNOWN_FUNCTIONS.contains(funcname)) {
     origin = getClassName();
-    //}
     current().addFunction(funcname, functype, calledUpon, partypes, origin, this);
   }
 
@@ -145,27 +140,24 @@ public class Mem {
     return origin;
   }
 
-  /** Return true if a function with this name is defined */
-  public boolean existsFunction(String funcname, List<Type> partypes) {
-    return current().existsFunction(funcname, partypes, this);
-  }
-
-  /**
-   * returns null if there is no such function
+  /** return the return type of the given function or method, or null if there
+   *  is no such function
    *
-   * @param funcname the name of the function
+   * @param funcname   the name of the function
+   * @param calledUpon the class to which the method belongs, or null if it
+   *        is a pure function
+   * @param partypes   the parameter type list
    * @return its return type or null
    */
   public Type getFunctionRetType(String funcname, Type calledUpon, List<Type> partypes) {
     return current().getFunctionRetType(funcname, calledUpon, partypes, this);
   }
 
-  /**
+  /** Add a new variable declaration, providing the variable name and type
    *
    * @param variable
    * @param type
-   * @param origin first element class, second rule origin
-   * @return
+   * @return true if the variable is not already defined, false otherwise
    */
   public boolean addVariableDeclaration(String variable, Type type) {
     if (current().isVarDefined(variable)) {
@@ -181,10 +173,9 @@ public class Mem {
     return (current().isVarDefined(variable));
   }
 
-  /**
-   * get the class the given variable is located
+  /** get the class where the given variable was defined
    *
-   * @param variable a variable
+   * @param variable a variable name
    * @return the class it came from, null if not declared
    */
   public String getVariableOriginClass(String variable) {
@@ -195,23 +186,16 @@ public class Mem {
     return origin;
   }
 
-  /**
-   * get the type of the given variable
+  /** get the type of the given variable
    *
-   * @param variable a variable
+   * @param variable a variable name
    * @return the variable's type
    */
   public Type getVariableType(String variable) {
     return current().getType(variable);
   }
 
-  private Environment current() {
-    return environment.peekFirst();
-  }
-
-  /**
-   * adds a new Environment with the given depth
-   */
+  /** enter a new Environment (variable binding level) */
   public void enterEnvironment() {
     logger.trace("Enter level {}", environment.size());
     // by copying the existing environment, we avoid searching through all
@@ -220,6 +204,7 @@ public class Mem {
         environment.isEmpty() ? new Environment() : current().deepCopy());
   }
 
+  /** leave an environment (variable binding level) */
   public void leaveEnvironment() {
     // restore the values in actual that we changed
     environment.pop();
@@ -243,9 +228,5 @@ public class Mem {
       result.add(env.getName());
     }
     return result;
-  }
-
-  public ExpUSingleValue degradeToString(ExpUVariable variable){
-    return variable.fixFields(new ExpUSingleValue(variable.toString(), "String"));
   }
 }

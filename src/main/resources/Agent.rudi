@@ -1,11 +1,13 @@
 // all standard Java methods that we should remember
 // simply adding functions to be performed on objects here will not work anymore;
 // also add them directly to the list of special cases in mem.addFunction
-[T]. boolean equals(Object e);
+[Object]. boolean equals(Object e);
 [String]. boolean startsWith(String s);
 [String]. boolean endsWith(String s);
 [String]. String substring(int i);
 [List<T>]. T get(int a);
+[List<T>]. void add(Object a);
+[Set<T>]. void add(Object a);
 
 // all Agent methods we should know
 
@@ -22,6 +24,8 @@ DialogueAct emitDA(DialogueAct da);
 DialogueAct myLastDA();
 DialogueAct lastDA();
 
+[DialogueAct]. void setProposition(String prop);
+
 int lastOccurenceOfMyDA(String raw);
 // did i say something like ta in this session (subsumption)? If so, how many
 // utterances back was it? (otherwise, -1 is returned)
@@ -36,7 +40,7 @@ void lastDAprocessed();
 void newData();
 
 // Timeout methods
-void newTimeout(String name, int millis);
+//void newTimeout(String name, int millis);
 boolean isTimedOut(String name);
 void removeTimeout(String name);
 boolean hasActiveTimeout(String name);

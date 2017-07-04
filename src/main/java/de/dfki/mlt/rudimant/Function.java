@@ -25,8 +25,7 @@ class Function {
     // TODO: this is probably not accurate enough; find a more
     // sophisticated way to do this
     return _calledUpon != null &&
-        (_calledUpon.get_name().contains("<T>") || _calledUpon.get_name().equals("T")) ||
-        !_calledUpon.unifyTypes(calledOn).equals(Type.getNoType());
+        _calledUpon.unifyTypes(calledOn) != null;
   }
 
   public String getName() {
