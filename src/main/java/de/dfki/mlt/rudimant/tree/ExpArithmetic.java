@@ -5,8 +5,6 @@
  */
 package de.dfki.mlt.rudimant.tree;
 
-import de.dfki.mlt.rudimant.Type;
-
 /**
  * this is an arithmetic expression with an operator, two expressions left and
  * right, and eventually if this is no complex term but a single number there is
@@ -28,7 +26,6 @@ public class ExpArithmetic extends RTBinaryExp {
     this.left = left;
     this.right = right;
     this.operator = operator;
-    // TODO: TYPE UNION OF LEFT AND RIGHT
     this.type = left.getType();
   }
 

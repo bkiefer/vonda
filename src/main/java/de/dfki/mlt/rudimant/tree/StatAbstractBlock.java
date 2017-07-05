@@ -15,12 +15,10 @@ import de.dfki.mlt.rudimant.Environment;
  *
  * @author Anna Welker
  */
-public class StatAbstractBlock extends RTStatement {
+public class StatAbstractBlock extends RTStatement implements RTBlockNode {
 
   List<RTStatement> statblock;
   final boolean braces;
-
-  private Environment _localBindings;
 
   public StatAbstractBlock(List<RTStatement> statblock, boolean braces) {
     this.statblock = statblock;
@@ -44,9 +42,15 @@ public class StatAbstractBlock extends RTStatement {
 
   public Iterable<? extends RudiTree> getDtrs() { return statblock; }
 
-  public void setBindings(Environment local) {
-    _localBindings = local;
+  // ==== IMPLEMENTATION OF RTBLOCKNODE =====================================
+
+  private Environment _localBindings, _parentBindings;
+
+  public void setBindings(Environment parent, Environment local) {
+    _parentBindings = parent; _localBindings = local;
   }
 
   public Environment getBindings() { return _localBindings; }
+
+  public Environment getParentBindings() { return _parentBindings; }
 }

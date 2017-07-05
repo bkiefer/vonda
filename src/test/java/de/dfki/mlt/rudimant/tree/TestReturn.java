@@ -65,7 +65,7 @@ public class TestReturn {
   public void testReturn7(){
     String in = "foo: if (true) { return test; }";
     String r = generate(in);
-    String expected = "public boolean foo(){ foo: if (true) {return true; } "
+    String expected = "public boolean foo(){ foo: if (true) {return test; } "
     		+ "return false;";
     assertEquals(expected, getForMarked(r, expected));
   }
@@ -74,7 +74,7 @@ public class TestReturn {
   public void testReturn8(){
     String in = "if (true) { return test; }";
     String r = generate(in);
-    String expected = "if (true) {return true; }";
+    String expected = "if (true) {return test; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 

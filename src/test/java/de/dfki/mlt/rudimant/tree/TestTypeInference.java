@@ -43,7 +43,7 @@ public class TestTypeInference {
   @Test
   public void testPredefFn() {
     String in = "boolean firstEncounter(); b = firstEncounter();";
-    GrammarFile gf = parseAndTypecheck(in, null);
+    GrammarFile gf = parseAndTypecheck(in);
     Iterator<? extends RudiTree> it = gf.getDtrs().iterator();
     it.next();
     it.next();

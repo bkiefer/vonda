@@ -6,16 +6,19 @@
 package de.dfki.mlt.rudimant.tree;
 
 import static de.dfki.mlt.rudimant.Utils.*;
+import static de.dfki.mlt.rudimant.io.RobotGrammarParser.*;
 
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
-import de.dfki.mlt.rudimant.Environment;
-import de.dfki.mlt.rudimant.Mem;
-import de.dfki.mlt.rudimant.RudimantCompiler;
-import de.dfki.mlt.rudimant.Type;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.dfki.mlt.rudimant.*;
+import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
+import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 
 /**
  * class that represents a top-level file that was handed over to GrammarMain (=
@@ -23,19 +26,96 @@ import de.dfki.mlt.rudimant.Type;
  *
  * @author Anna Welker
  */
-public class GrammarFile extends RudiTree {
+public class GrammarFile extends RudiTree implements RTBlockNode {
+
+  public static final Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
   // imports* (comment grammar_rule | method_declaration | statement )* comment
   List<RudiTree> rules;
   static Writer out;
 
-  private Environment _localBindings;
+  public LinkedList<Token> tokens;
 
+
+  // **********************************************************************
+  // static methods
+  // **********************************************************************
+
+  private static GrammarFile parseInput(final String realName, InputStream in)
+      throws IOException {
+    // initialise the lexer with given input file
+    RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(in));
+
+    List<Integer> toCollect = Arrays.asList(
+        new Integer[] { JAVA_CODE, ONE_L_COMMENT, MULTI_L_COMMENT, NLWS });
+    CollectorTokenSource collector = new CollectorTokenSource(lexer, toCollect);
+
+    // initialise the parser
+    RobotGrammarParser parser = new RobotGrammarParser(
+        new CommonTokenStream(collector));
+    final boolean[] errorOccured = { false };
+    parser.addErrorListener(new BaseErrorListener() {
+      @Override
+      public void syntaxError(Recognizer<?, ?> recognizer,
+          Object offendingSymbol, int line, int charPositionInLine, String msg,
+          RecognitionException e) {
+        errorOccured[0] = true;
+        logger.error("{}.rudi:{}:{}: {}", realName, line, charPositionInLine, msg);
+      }
+    });
+
+    // create a parse tree; grammar_file is the start rule
+    ParseTree tree = parser.grammar_file();
+    if (errorOccured[0])
+      return null;
+
+    // initialise the visitor that will do all the work
+    ParseTreeVisitor visitor = new ParseTreeVisitor(realName,
+        collector.getCollectedTokens());
+
+    // create the abstract syntax tree
+    RudiTree myTree = visitor.visit(tree);
+    if (! (myTree instanceof GrammarFile))
+      return null;
+    GrammarFile result = (GrammarFile)myTree;
+    result.tokens = collector.getCollectedTokens();
+    return (GrammarFile)myTree;
+  }
+
+
+  /** Prerequisite: mem.enterClass(<className>) has been called, and
+   *  mem.leaveClass(<className>) is called afterwards. Parse the content of
+   *  in and write the generated output to output
+   * @param in     the stream containing rudi input
+   * @param output the writer to output generated java code
+   * @return
+   * @throws IOException
+   */
+  public static GrammarFile parseAndTypecheck(RudimantCompiler rudi,
+      InputStream in, String inputRealName) throws IOException {
+    GrammarFile gf = parseInput(inputRealName, in);
+    logger.info("Done parsing ");
+    if (gf == null) return null;
+
+    // do the type checking, which also adds function and variable definitions
+    // to Mem
+    gf.startTypeInference(rudi, rudi.typeErrorsFatal());
+    logger.info("Done type checking");
+    return gf;
+  }
+
+  public void generate(RudimantCompiler rudi, Writer output) throws IOException {
+    // generate the output
+    startGeneration(rudi, output);
+    logger.info("Done generating code");
+  }
+
+  /** Constructor, only to be used by the parser */
   public GrammarFile(List<RudiTree> rules) {
     this.rules = rules;
   }
 
-  public boolean containsDefinition(RudiTree t) {
+  private boolean containsDefinition(RudiTree t) {
     if (t instanceof StatVarDef
         || (t instanceof StatMethodDeclaration
             && ((StatMethodDeclaration)t).block == null)) return true;
@@ -54,10 +134,9 @@ public class GrammarFile extends RudiTree {
     }
   }
 
-  public void startTypeInference(RudimantCompiler rudi) {
-    VisitorType ttv = new VisitorType(rudi);
+  private void startTypeInference(RudimantCompiler rudi, boolean errorsFatal) {
     Mem mem = rudi.getMem();
-    _localBindings = mem.current();
+    VisitorType ttv = new VisitorType(mem, errorsFatal);
     List<RudiTree> nonDefs = new ArrayList<>(rules.size());
     // learn about all definitions before visiting the other statements!!
     // TODO: WHY? IF WE REQUIRE THE DEFINITION ALWAYS PRECEDING THE USE, THEN
@@ -81,8 +160,8 @@ public class GrammarFile extends RudiTree {
   }
 
 
-  public void writeRuleList(RudimantCompiler out, VisitorGeneration gv){
-    Mem mem = out.getMem();
+  private void writeRuleList(Writer out, Mem mem, VisitorGeneration gv)
+      throws IOException{
     List<RTStatement> later = new ArrayList<>();
     // do all assignments on toplevel here, those are class attributes
     for(RudiTree r : rules){
@@ -136,27 +215,28 @@ public class GrammarFile extends RudiTree {
   }
 
 
-  public void startGeneration(RudimantCompiler out, VisitorGeneration gv) {
-    Mem mem = out.getMem();
+  private void startGeneration(RudimantCompiler rudi, Writer out)
+      throws IOException  {
+    Mem mem = rudi.getMem();
     // tell the file in which package it lies
-    String pkg = out.getPackageName();
+    String pkg = rudi.getPackageName();
     if (pkg == null) {
       pkg = "";
     } else {
       out.append("package " + pkg + ";\n");
       pkg += ".";
     }
-    out.append("import java.util.*;\n\n");
-    out.append("import de.dfki.mlt.rudimant.agent.DialogueAct;\n");
-    out.append("import de.dfki.lt.hfc.db.rdfProxy.*;\n");
-    out.append("import de.dfki.lt.hfc.types.*;\n");
+    out.append("import java.util.*;\n\n" +
+        "import de.dfki.mlt.rudimant.agent.DialogueAct;\n" +
+        "import de.dfki.lt.hfc.db.rdfProxy.*;\n" +
+        "import de.dfki.lt.hfc.types.*;\n");
     // Let's import our supersuper class, TODO: maybe obsolete except for the
     // wrapper class?
-    if (out.getParent() == null) {
-      out.append("import ");
-      out.append(out.getWrapperClass());
-      out.append(";\n");
+    if (rudi.getParent() == null) {
+      out.append("import ").append(rudi.getWrapperClass()).append(";\n");
     }
+
+    VisitorGeneration gv = new VisitorGeneration(rudi, out, tokens);
 
     // we also need all imports that might be hidden in /*@ in the rudi
     // so, look for it in the comment before the first element we've got
@@ -166,8 +246,8 @@ public class GrammarFile extends RudiTree {
     // maybe we need to import the class that imported us to use its variables
     out.append("public class " + mem.getClassName());
     // check if this should extend the wrapper class
-    if (out.getParent() == null) {
-      out.append(" extends ").append(out.getWrapperClass());
+    if (rudi.getParent() == null) {
+      out.append(" extends ").append(rudi.getWrapperClass());
     }
     out.append("{\n");
 
@@ -184,7 +264,7 @@ public class GrammarFile extends RudiTree {
     // also, to use them for imports, declare those parameters class attributes
     String conargs = "";
     String declare = "";
-    String args = out.getConstructorArgs();
+    String args = rudi.getConstructorArgs();
     if (null != args && !args.isEmpty()) {
       int i = 0;
       for (String a : args.split(",")) {
@@ -215,9 +295,9 @@ public class GrammarFile extends RudiTree {
 
     // finally, the main processing method that will call all rules and imports
     // declared in this file
-    mem.enterEnvironment(_localBindings);
-    writeRuleList(out, gv);
-    mem.leaveEnvironment();
+    mem.enterEnvironment(this);
+    writeRuleList(out, rudi.getMem(), gv);
+    mem.leaveEnvironment(this);
 
     out.append("}\n");
   }
@@ -236,4 +316,16 @@ public class GrammarFile extends RudiTree {
   public void visitVoidV(VisitorGeneration v) {
     throw new UnsupportedOperationException("not supported");
   }
+
+  // ==== IMPLEMENTATION OF RTBLOCKNODE =====================================
+
+  private Environment _localBindings, _parentBindings;
+
+  public void setBindings(Environment parent, Environment local) {
+    _parentBindings = parent; _localBindings = local;
+  }
+
+  public Environment getBindings() { return _localBindings; }
+
+  public Environment getParentBindings() { return _parentBindings; }
 }

@@ -15,6 +15,7 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
 import de.dfki.mlt.rudimant.Type;
+import de.dfki.mlt.rudimant.TypeException;
 
 /**
  * this visitor calculates the types of nodes and checks whether the types are
@@ -26,12 +27,40 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
 
   public static final Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
-  private RudimantCompiler rudi;
   private Mem mem;
 
-  public VisitorType(RudimantCompiler comp) {
-    rudi = comp;
-    mem = rudi.getMem();
+  boolean typeErrorFatal;
+
+  /** use this to report a type checking error; it will be handled according to
+   *  the set typeCheck parameter
+   *
+   * @param errorMessage
+   * @param node the tree node where the error occured
+   */
+  public void typeError(String errorMessage, RudiTree node) {
+    String newErrorMessage = node.getLocation() + " " + errorMessage;
+    if (typeErrorFatal) {
+      // throw a real Exception
+      throw new TypeException(newErrorMessage);
+    } else {
+      // just set a warning into the logger
+      logger.error(newErrorMessage);
+    }
+  }
+
+  /** use this to report a type checking warning
+   *
+   * @param errorMessage
+   * @param node the tree node where the error occured
+   */
+  public void typeWarning(String errorMessage, RudiTree node) {
+    // just set a warning into the logger
+    logger.warn(node.getLocation() + " " + errorMessage);
+  }
+
+  public VisitorType(Mem m, boolean errorsFatal) {
+    mem = m;
+    typeErrorFatal = errorsFatal;
   }
 
   public void visitNode(RTExpression node) {
@@ -58,7 +87,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
         // unknown type to the left
         if (node.right.type.isUnspecified()) {
           // unknown type on both branches
-          rudi.typeError("Expression with unknown type: " + node.right, node);
+          typeError("Expression with unknown type: " + node.right, node);
         } else {
           // propagate type from the right branch to the left
           node.left.propagateType(node.right.type);
@@ -70,7 +99,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
         // check type compatibility
         Type type = node.left.type.unifyTypes(node.right.type);
         if (type == null) {
-          rudi.typeError("Incompatible types in " + node + ": "
+          typeError("Incompatible types in " + node + ": "
                   + node.left.type + " vs. " + node.right.type, node);
         }
       }
@@ -100,10 +129,10 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     // non-null value, and vice versa
     if (node.declaration) {
       if (mem.variableExists(node.left.toString())) {
-        rudi.typeError("Re-declaration of existing variable " + node.left, node);
+        typeError("Re-declaration of existing variable " + node.left, node);
       } else {
     	if(mem.isActiveRule(node.left.fullexp)){
-          rudi.typeError("Declaring a variable " + node.left + " what also is a rule name!", node);
+          typeError("Declaring a variable " + node.left + " what also is a rule name!", node);
     	}
         node.left.type = node.type; // the type of the declaration is in this node
       }
@@ -129,7 +158,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     }
     if (node.right instanceof ExpVariable
         && !mem.variableExists(node.right.toString())) {
-      rudi.typeError("assigning the value of a non-existing variable "
+      typeError("assigning the value of a non-existing variable "
           + node.right + "to " + node.left, node);
     }
 
@@ -152,7 +181,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
           mergeType = node.left.type;
         } else {
           mergeType = Type.getNoType();
-          rudi.typeError("Incompatible types in assignment: "
+          typeError("Incompatible types in assignment: "
               + node.left.type.getRep() + " := "
               + node.right.type.getRep(), node);
         }
@@ -214,7 +243,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
    * POD vs Container --> container may be null!
    * String vs String --> isSmallerThan
    * String vs DialogueAct --> convert String and apply DA vs DA
-   * String vs Rdf or Rdf vs Rdf or Rdf vs RdfClass --> convert both to RdfClass
+   * String vs Rdf or String vs RdfClass or Rdf vs RdfClass --> convert to RdfClass
    * DA vs DA,
    */
   @Override
@@ -244,7 +273,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     visitNode(node.expression);
     Type mergeType = node.type.unifyTypes(node.expression.type);
     if (mergeType == null) {
-      rudi.typeError("Incompatible types : " + node.expression.type
+      typeError("Incompatible types : " + node.expression.type
           + " casted to " + node.type, node);
     }
     node.expression.type = node.type;
@@ -305,7 +334,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     	node.thenexp.getType().unifyTypes(node.elseexp.getType())
     	: node.elseexp.getType();
     if (unified == null) {
-      rudi.typeError(node.fullexp
+      typeError(node.fullexp
               + " is a conditional expression where the else expression "
               + "does not have the same type as the right expression!\n("
               + "comparing types " + node.thenexp.getType() + " on left and "
@@ -316,8 +345,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(ExpLambda node) {
-    mem.enterEnvironment();
-    node.setBindings(mem.current());
+    mem.enterEnvironment(node);
     for(String arg : node.parameters){
       mem.addVariableDeclaration(arg, node.parType);
     }
@@ -328,7 +356,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     } else {
       visitNode((StatAbstractBlock)node.body);
     }
-    mem.leaveEnvironment();
+    mem.leaveEnvironment(node);
   }
 
 
@@ -338,12 +366,11 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     // we step down into a new environment (later turned to a method) whose
     //  variables cannot be seen from the outside
     if (node.toplevel) {
-      mem.enterEnvironment();
-      node.setBindings(mem.current());
+      mem.enterEnvironment(node);
     }
     node.ifstat.visit(this);
     if (node.toplevel) {
-      mem.leaveEnvironment();
+      mem.leaveEnvironment(node);
     }
     mem.leaveRule();
   }
@@ -353,14 +380,13 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     // we step down into a new environment (a block, possibly method block)
     // whose variables cannot be seen from the outside
     if (node.braces) {
-      mem.enterEnvironment();
-      node.setBindings(mem.current());
+      mem.enterEnvironment(node);
     }
     for (RTStatement t : node.statblock) {
       t.visit(this);
     }
     if (node.braces) {
-      mem.leaveEnvironment();
+      mem.leaveEnvironment(node);
     }
   }
 
@@ -375,7 +401,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
       innerIterableType = node.initialization.getInnerType();
     }
     if (innerIterableType == null) {
-      rudi.typeError("Iterable for loop type is unknown or not generic, but: "
+      typeError("Iterable for loop type is unknown or not generic, but: "
           + node.initialization.getType(), node);
       innerIterableType= new Type("Object");
     }
@@ -384,7 +410,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     } else {
       Type mergeType = node.varType.unifyTypes(innerIterableType);
       if (mergeType == null) {
-        rudi.typeError("Incompatible types in short for loop: "
+        typeError("Incompatible types in short for loop: "
             + node.varType + " : " + innerIterableType, node);
         node.varType = innerIterableType;
       }
@@ -418,7 +444,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
         // check inner type against content
         Type elementType = node.listType.getInnerType();
         if (elementType.unifyTypes(node.objects.get(0).getType()) == null) {
-          rudi.typeError("Found a list creation where the list type"
+          typeError("Found a list creation where the list type"
               + " doesn't fit its objects' type: " + elementType
               + " vs " + node.objects.get(0).getType(), node);
         }
@@ -439,14 +465,14 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     node.left.visit(this);
     node.right.visit(this);
     if (! node.left.getType().isCollection()) {
-      rudi.typeError("Left side of a set operation is not a set, but "
+      typeError("Left side of a set operation is not a set, but "
           + node.left.getType(), node);
       return;
     }
     Type inner = node.left.getInnerType();
     Type res = inner.unifyTypes(node.right.type);
     if (res == null) {
-      rudi.typeError("Incompatible types in set operation: "
+      typeError("Incompatible types in set operation: "
           + node.left.getType() + " <> " + node.right.type, node);
     }
   }
@@ -468,14 +494,13 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
       // The following variables (function parameters) are local to the method
       // block we now step into; we don't want them to be reachable them from
       // outside
-      mem.enterEnvironment();
-      node.setBindings(mem.current());
+      mem.enterEnvironment(node);
       for (int i = 0; i < node.parameters.size(); i++) {
         // add parameters to environment
         mem.addVariableDeclaration(node.parameters.get(i), node.partypes.get(i));
       }
       node.block.visit(this);
-      mem.leaveEnvironment();
+      mem.leaveEnvironment(node);
     }
   }
 
@@ -553,7 +578,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     }
     // warning / error if property not found
     if (predUri == null) {
-      rudi.typeError("No property found for " + var.content, node);
+      typeError("No property found for " + var.content, node);
       return new ExpPropertyAccess(var.fullexp, var, false, Type.getNoType(), false);
     }
 
@@ -564,10 +589,10 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     currentType = new Type(t);
     if (t == null) {
       // WARNING / error
-      rudi.typeError("No range type defined for property "
+      typeError("No range type defined for property "
               + predUri, node);
       if (var.getType() != null) {
-        rudi.typeWarning("empty range: type defined instead: "
+        typeWarning("empty range: type defined instead: "
                 + var.getType(), node);
       }
     }
@@ -577,7 +602,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     // which seems too complicated anyway.
     /*
     if (var.getType() != null && !var.getType().equals(currentType)) {
-      rudi.typeError("Overwriting type " + var.type
+      typeError("Overwriting type " + var.type
               + "  of partial field access for " + var.content + " to "
               + currentType, node);
     }*/
@@ -683,7 +708,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
       // TODO: MAYBE INTRODUCE A FLAG FOR STRICT CHECKING. FOR THE TIME BEING,
       // WE EXCLUDE ALL CALLS ON OBJECT THAT ARE ORDINARY JAVA CLASS INSTANCES
       if (node.calledUpon == null) {
-        rudi.typeError("The function call to " + node.content
+        typeError("The function call to " + node.content
             + " refers to a function that wasn't declared", node);
       }
       node.type = Type.getNoType();
@@ -758,7 +783,8 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
       node.returnExp.visit(this);
       if (mem.variableExists(node.returnExp.fullexp)
           && mem.isActiveRule(node.returnExp.fullexp)){
-        rudi.typeError("Return used with a rule name that also is a variable, I will use the rule functionality.", node);
+        typeError("Return used with a rule name that also is a variable, "
+            + "will use the rule functionality.", node);
       }
     }
   }

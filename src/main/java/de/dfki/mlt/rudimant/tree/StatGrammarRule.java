@@ -15,7 +15,7 @@ import de.dfki.mlt.rudimant.Environment;
  *
  * @author Anna Welker
  */
-public class StatGrammarRule extends RTStatement {
+public class StatGrammarRule extends RTStatement implements RTBlockNode {
 
   // comment label comment if_statement
   String label;
@@ -23,8 +23,6 @@ public class StatGrammarRule extends RTStatement {
   // remember whether you are toplevel
   // TODO: EVENTUALLY REMOVE, CAN BE DETERMINED OTHERWISE (ClassEnv)
   boolean toplevel;
-
-  private Environment _localBindings;
 
   public StatGrammarRule(String label, StatIf ifstat) {
     this.label = label;
@@ -50,9 +48,15 @@ public class StatGrammarRule extends RTStatement {
     return Arrays.asList(dtrs);
   }
 
-  public void setBindings(Environment local) {
-    _localBindings = local;
+  // ==== IMPLEMENTATION OF RTBLOCKNODE =====================================
+
+  private Environment _localBindings, _parentBindings;
+
+  public void setBindings(Environment parent, Environment local) {
+    _parentBindings = parent; _localBindings = local;
   }
 
   public Environment getBindings() { return _localBindings; }
+
+  public Environment getParentBindings() { return _parentBindings; }
 }

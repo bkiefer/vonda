@@ -16,11 +16,8 @@ public class ClassEnv {
   /** A stack of the currently processed rules */
   private List<String> activeRules;
 
-  private int classEnvironment;
-
-  public ClassEnv(String className, int environment) {
+  public ClassEnv(String className) {
     name = className;
-    classEnvironment = environment;
     rules = new ArrayList<>();
     activeRules = new ArrayList<>();
   }
@@ -31,8 +28,6 @@ public class ClassEnv {
   public void addRule(String rule) { rules.add(rule); }
 
   public String getName() { return name; }
-
-  public int getClassEnvironment() { return classEnvironment; }
 
   public void addRuleOrImport(String name) { rules.add(name); }
 

@@ -18,7 +18,7 @@ import de.dfki.mlt.rudimant.Type;
  *
  * @author Anna Welker
  */
-public class StatMethodDeclaration extends RTStatement {
+public class StatMethodDeclaration extends RTStatement implements RTBlockNode {
 
   String visibility;
   Type return_type;
@@ -29,8 +29,6 @@ public class StatMethodDeclaration extends RTStatement {
   // the type this method should be called upon; null if the method
   // is rudi-defined!
   Type calledUpon;
-
-  private Environment _localBindings;
 
   public StatMethodDeclaration(String vis, String ret_type,
 		  String calledUpn, String nm, ArrayList<String> parms,
@@ -68,9 +66,15 @@ public class StatMethodDeclaration extends RTStatement {
     return Arrays.asList(dtrs);
   }
 
-  public void setBindings(Environment local) {
-    _localBindings = local;
+  // ==== IMPLEMENTATION OF RTBLOCKNODE =====================================
+
+  private Environment _localBindings, _parentBindings;
+
+  public void setBindings(Environment parent, Environment local) {
+    _parentBindings = parent; _localBindings = local;
   }
 
   public Environment getBindings() { return _localBindings; }
+
+  public Environment getParentBindings() { return _parentBindings; }
 }

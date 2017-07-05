@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
+import de.dfki.mlt.rudimant.SilentWriter;
 import de.dfki.mlt.rudimant.Type;
 
 /**
@@ -29,11 +30,12 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
   public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
-  RudimantCompiler out;
-  private RudimantCompiler rudi;
+  SilentWriter out;
   private Mem mem;
   private VisitorConditionLog condV;
   LinkedList<Token> collectedTokens;
+
+  boolean whatToLog;
 
   // activate bool to get double escaped String literals
   private boolean escape = false;
@@ -41,10 +43,10 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
   // flag to tell the if if is a real rule if (contains the condition that was calculated)
   private String ruleIf = null;
 
-  public VisitorGeneration(RudimantCompiler r, LinkedList<Token> tokens) {
-    rudi = r;
-    out = r;
-    mem = rudi.getMem();
+  public VisitorGeneration(RudimantCompiler r, Writer o, LinkedList<Token> tokens) {
+    out = new SilentWriter(o);
+    mem = r.getMem();
+    whatToLog = r.logRudi();
     condV = new VisitorConditionLog(this);
     collectedTokens = tokens;
   }
@@ -94,7 +96,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     if (node.declaration) {
       ret += node.type;
     }
-    ret += (' ');
+    ret += ' ';
     ExpPropertyAccess pa = null;
     if (node.left instanceof ExpFieldAccess) {
       ExpFieldAccess acc = (ExpFieldAccess) node.left;
@@ -221,7 +223,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public String visitNode(ExpLambda node) {
-    mem.enterEnvironment(node.getBindings());
+    mem.enterEnvironment(node);
     String ret = "(" + node.parameters.get(0);
     for(int i = 1; i < node.parameters.size(); i++){
       ret += ", " + node.parameters.get(i);
@@ -231,17 +233,18 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     // be inside an expression, because the body of a lambda expresssion can be
     // a block.
     // Therefore, prevent it from printing directly to out
-    Writer old = out.out;
-    out.out = new StringWriter();
+    SilentWriter old = out;
+    StringWriter inner = new StringWriter();
+    out = new SilentWriter(inner);
     if (node.body instanceof RTExpression)
       ((RTExpression)node.body).visitVoidV(this);
     else { // this must be an AbstractBlock
       assert(node.body instanceof StatAbstractBlock);
       ((StatAbstractBlock)node.body).visit(this);
     }
-    ret += out.out.toString();
-    out.out = old;
-    mem.leaveEnvironment();
+    ret += inner.toString();
+    out = old;
+    mem.leaveEnvironment(node);
     return ret;
   }
 
@@ -274,7 +277,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
   public void visitNode(StatGrammarRule node) {
     mem.enterRule(node.label);
     if (node.toplevel) {
-      mem.enterEnvironment(node.getBindings());
+      mem.enterEnvironment(node);
       // is a top level rule and will be converted to a method
       out.append("public boolean " + node.label + "(");
       out.append("){\n");
@@ -288,7 +291,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     node.ifstat.visitWithComments(this);
     if (node.toplevel) {
       out.append("return false; \n}\n");
-      mem.leaveEnvironment();
+      mem.leaveEnvironment(node);
     }
     mem.leaveRule();
   }
@@ -299,14 +302,14 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
       // when entering a statement block, we need to create a new local
       // environment
       out.append("{");
-      mem.enterEnvironment(node.getBindings());
+      mem.enterEnvironment(node);
     }
     for (RudiTree stat : node.statblock) {
       stat.visitWithComments(this);
     }
     if (node.braces) {
       out.append("}");
-      mem.leaveEnvironment();
+      mem.leaveEnvironment(node);
     }
   }
 
@@ -395,7 +398,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     if (node.block == null) {
       return;
     }
-    mem.enterEnvironment(node.getBindings());
+    mem.enterEnvironment(node);
     out.append(node.visibility + " ");
     out.append(node.return_type + " ");
     out.append(node.name + "(");
@@ -407,7 +410,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     }
     out.append(")\n");
     node.block.visitWithComments(this);
-    mem.leaveEnvironment();
+    mem.leaveEnvironment(node);
   }
 
   @Override
@@ -652,9 +655,9 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     out.append("Map<String, Boolean> " + rule + " = new LinkedHashMap<>();\n");
 
     LinkedHashMap<String, String> logging;
-      out.append(rule + ".put(\"" + stringEscape(bool_exp.fullexp) + "\", "
-          + condV.getLastBool() + ");\n");
-    if(out.logRudi()){
+    out.append(rule + ".put(\"" + stringEscape(bool_exp.fullexp) + "\", "
+        + condV.getLastBool() + ");\n");
+    if(whatToLog){
       logging = rudiLook;
     } else {
       logging = realLook;
@@ -671,7 +674,6 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
     out.append("}\n");
     collectingCondition = false;
-    //return (String) expnames[expnames.length - 1];
     return condV.getLastBool();
   }
 

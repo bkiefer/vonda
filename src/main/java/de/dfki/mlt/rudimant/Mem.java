@@ -13,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.mlt.rudimant.tree.ExpSingleValue;
-import de.dfki.mlt.rudimant.tree.ExpVariable;
+import de.dfki.mlt.rudimant.tree.RTBlockNode;
+import de.dfki.mlt.rudimant.tree.ToplevelBlock;
 
 /**
  * this is rudimants memory, used for type checking
@@ -32,10 +32,12 @@ public class Mem {
    *  added, then the Agent.rudi must be processed as if it was part of this
    *  file, and then normal processing commences.
    */
-  final private Deque<ClassEnv> classes;
+  private ToplevelBlock classBlock;
 
   /** A stack of the active variable / function scopes */
-  final private Deque<Environment> environment;
+  private Environment current;
+
+  private int blockNesting = 0;
 
   private RdfProxy _proxy;
 
@@ -43,19 +45,15 @@ public class Mem {
   private String upperRudi;
 
   public Mem(RdfProxy proxy) {
-    environment = new ArrayDeque<>();
-    classes = new ArrayDeque<>();
+    current = null;
+    classBlock = null;
     _proxy = proxy;
     Type.setProxy(proxy);
   }
 
   /** Get the current ClassEnv (the one treated now) */
   private ClassEnv curClass() {
-    return classes.peekFirst();
-  }
-
-  public Environment current() {
-    return environment.peekFirst();
+    return classBlock.getClassEnv();
   }
 
   public void setToplevelFile(String name) {
@@ -75,17 +73,18 @@ public class Mem {
    *
    * @param classname of the new class
    */
-  public void enterClass(String classname) {
-    enterEnvironment();
-    classes.push(new ClassEnv(classname, environment.size()));
+  public void enterClass(String classname, ToplevelBlock node) {
+    enterEnvironment(node);
+    node.setClass(classBlock, new ClassEnv(classname));
+    classBlock = node;
   }
 
   /** Leave processing of a class. To be called at the very end of processing
    *  the top-level class or import.
    */
-  public void leaveClass() {
-    classes.pop();
-    leaveEnvironment();
+  public void leaveClass(ToplevelBlock node) {
+    classBlock = classBlock.getParentClass();
+    leaveEnvironment(node);
   }
 
   public boolean isActiveRule(String name) {
@@ -100,10 +99,8 @@ public class Mem {
 
 
   public boolean enterRule(String name) {
-    // TODO: The condition must be: We're in the topmost
-    // environment of a file. This is not the nicest solution
-    return curClass().enterRule(name)
-        && environment.size() == curClass().getClassEnvironment();
+    // The condition is: We're in the topmost environment of a file.
+    return curClass().enterRule(name) && classBlock.getBindings() == current;
   }
 
   public void leaveRule() { curClass().leaveRule(); }
@@ -128,12 +125,12 @@ public class Mem {
           List<Type> partypes) {
     String origin = null;
     origin = getClassName();
-    current().addFunction(funcname, functype, calledUpon, partypes, origin, this);
+    current.addFunction(funcname, functype, calledUpon, partypes, origin, this);
   }
 
   /** Return the class where this function is defined */
   public String getFunctionOrigin(String funcname, List<Type> partypes){
-    String origin = current().getFunctionOrigin(funcname, partypes, this);
+    String origin = current.getFunctionOrigin(funcname, partypes, this);
     if (getClassName().equals(origin))
       return null;
 
@@ -150,7 +147,7 @@ public class Mem {
    * @return its return type or null
    */
   public Type getFunctionRetType(String funcname, Type calledUpon, List<Type> partypes) {
-    return current().getFunctionRetType(funcname, calledUpon, partypes, this);
+    return current.getFunctionRetType(funcname, calledUpon, partypes, this);
   }
 
   /** Add a new variable declaration, providing the variable name and type
@@ -160,17 +157,17 @@ public class Mem {
    * @return true if the variable is not already defined, false otherwise
    */
   public boolean addVariableDeclaration(String variable, Type type) {
-    if (current().isVarDefined(variable)) {
+    if (current.isVarDefined(variable)) {
       return false;
     }
     String origin = getClassName();
-    current().put(variable, type, origin);
-    logger.trace("Add var {}:{} [{}]", environment.size(), variable, type);
+    current.put(variable, type, origin);
+    logger.trace("Add var {}:{} [{}]", blockNesting, variable, type);
     return true;
   }
 
   public boolean variableExists(String variable) {
-    return (current().isVarDefined(variable));
+    return current.isVarDefined(variable);
   }
 
   /** get the class where the given variable was defined
@@ -179,7 +176,7 @@ public class Mem {
    * @return the class it came from, null if not declared
    */
   public String getVariableOriginClass(String variable) {
-    String origin = current().getOrigin(variable);
+    String origin = current.getOrigin(variable);
     if (getClassName().equals(origin))
       return null;
 
@@ -192,32 +189,37 @@ public class Mem {
    * @return the variable's type
    */
   public Type getVariableType(String variable) {
-    return current().getType(variable);
+    return current.getType(variable);
   }
 
   /** enter a new Environment (variable binding level) in TypeVisitor */
-  public void enterEnvironment() {
-    logger.trace("Enter level {}", environment.size());
+  public void enterEnvironment(RTBlockNode node) {
+    logger.trace("Enter level {}", blockNesting);
     // by copying the existing environment, we avoid searching through all
     // lower environments at the cost of bigger space consumption
-    Environment newEnv =
-        environment.isEmpty() ? new Environment() : current().deepCopy();
-    environment.push(newEnv);
+    Environment newEnv = node.getBindings();
+    if (newEnv == null) {
+      newEnv = current == null ? new Environment() : current.deepCopy();
+      node.setBindings(current, newEnv);
+    }
+    current = newEnv;
+    ++blockNesting;
   }
 
-  /** enter a new prefabricated Environment in GenerationVisior */
+  /** enter a new prefabricated Environment in GenerationVisior *
   public void enterEnvironment(Environment e) {
     logger.trace("Enter level {}", environment.size());
     // by copying the existing environment, we avoid searching through all
     // lower environments at the cost of bigger space consumption
     environment.push(e);
-  }
+  }*/
 
   /** leave an environment (variable binding level) */
-  public void leaveEnvironment() {
+  public void leaveEnvironment(RTBlockNode node) {
     // restore the values in actual that we changed
-    environment.pop();
-    logger.trace("Leave level {}", environment.size());
+    current = node.getParentBindings();
+    --blockNesting;
+    logger.trace("Leave level {}", blockNesting);
   }
 
   public void addImport(String importName, String conargs) {
@@ -233,8 +235,10 @@ public class Mem {
   public Set<String> getNeededClasses() {
     // return all classes above me (import chain), and this class
     Set<String> result = new HashSet<>();
-    for(ClassEnv env : classes) {
-      result.add(env.getName());
+    ToplevelBlock tb = classBlock;
+    while(tb != null) {
+      result.add(tb.getClassEnv().getName());
+      tb = tb.getParentClass();
     }
     return result;
   }

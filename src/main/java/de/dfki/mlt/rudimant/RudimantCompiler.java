@@ -1,27 +1,25 @@
 package de.dfki.mlt.rudimant;
 
 import static de.dfki.mlt.rudimant.Constants.*;
-import static de.dfki.mlt.rudimant.Utils.*;
-import static de.dfki.mlt.rudimant.io.RobotGrammarParser.*;
+import static de.dfki.mlt.rudimant.tree.GrammarFile.*;
+import static de.dfki.mlt.rudimant.Utils.capitalize;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.hfc.db.server.HfcDbHandler;
-import de.dfki.mlt.rudimant.agent.nlg.Pair;
-import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
-import de.dfki.mlt.rudimant.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.tree.GrammarFile;
-import de.dfki.mlt.rudimant.tree.RudiTree;
+import de.dfki.mlt.rudimant.tree.ToplevelBlock;
 import de.dfki.mlt.rudimant.tree.VisitorGeneration;
 
 public class RudimantCompiler {
@@ -38,10 +36,7 @@ public class RudimantCompiler {
   // there may be users that do not start the .rudi files with capital letters,
   // we don't want to crash in that case by turning it to uppercase and then
   // trying to read it
-  private String inputRealName;
-
-//  private StringBuffer out;
-  public Writer out;
+  //private String inputRealName;
 
   private Mem mem;
 
@@ -65,6 +60,9 @@ public class RudimantCompiler {
 
   // what should be logged in the rules (true = rudi code vs false = java code)
   private boolean versionToLog = true;
+
+  // The block that represents the file level that is compiled here
+  ToplevelBlock fileBlock = new ToplevelBlock();
 
 
   /** Constructor for imports */
@@ -108,16 +106,16 @@ public class RudimantCompiler {
    *  the toplevel rudi file.
    * @param topLevel
    */
-  public void initMem(String className) {
+  public void initMem(String inputRealName) {
+    String className = capitalize(inputRealName);
+    mem.enterClass(className, fileBlock);
     mem.setToplevelFile(className);
-    //mem.initializing = true;
     parent = null;
     try {
-      processForReal(RudimantCompiler.class.getResourceAsStream(agentInit), null);
+      parseAndTypecheck(this, RudimantCompiler.class.getResourceAsStream(agentInit), inputRealName);
     } catch (IOException ex) {
       logger.error("Agent initializer file import fails: {}", ex);
     }
-    //mem.initializing = false;
   }
 
   private static RdfProxy startClient(File configDir, Map<String, Object> configs)
@@ -167,82 +165,13 @@ public class RudimantCompiler {
     }
   }
 
-  public void throwTypeErrors() {
-    typeCheck = true;
-  }
+  public void throwTypeErrors() { typeCheck = true; }
 
-  /** Process the top-level rudi file */
-  public void process(File topLevel) throws IOException {
-    String className = computeClassName(topLevel);
-    mem.enterClass(className);
-    initMem(className);
-    inputDirectory = topLevel.getParentFile();
-    File wrapperInit = new File(inputDirectory,
-        wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + RULES_FILE_EXTENSION);
-    try {
-      if (wrapperInit.exists()) {
-        //mem.initializing = true;
-        processForReal(new FileInputStream(wrapperInit), null);
-      } else {
-        logger.info("No method declaration file for {}", wrapperInit);
-      }
-    } catch (IOException ex) {
-      logger.error("Initializer file import: {}", ex);
-    } finally {
-      //mem.initializing = false;
-    }
-    if (outputDirectory == null)
-      outputDirectory = inputDirectory;
+  public void showTree() { visualise = true; }
 
-    if (packageName != null && !packageName.isEmpty()) {
-      subPackage.addAll(Arrays.asList(packageName.split("\\.")));
-      rootLevel = subPackage.size() - 1;
-    }
-    processForReal();
-    mem.leaveClass();
-  }
+  public boolean typeErrorsFatal() { return typeCheck; }
 
-  /** Process an imported rudi file */
-  private void process(String importSpec) throws IOException {
-    inputDirectory = parent.inputDirectory;
-    outputDirectory = parent.outputDirectory;
-
-    String[] elements = importSpec.split("\\.");
-    inputRealName = elements[elements.length - 1];
-    subPackage = parent.subPackage;
-    subPackage.addAll(Arrays.asList(elements).subList(0, elements.length - 1));
-
-    mem.enterClass(capitalize(inputRealName));
-    processForReal();
-    mem.leaveClass();
-  }
-
-  public void processImport(String importSpec) {
-    logger.info("Processing import {}", importSpec);
-    try {
-      RudimantCompiler result = new RudimantCompiler(this);
-      result.process(importSpec);
-    } catch (IOException ex) {
-      throw new RuntimeException(ex);
-    }
-  }
-
-  /**
-   * Return the inputfile, which is relative to inputDirectory, the subdirectory
-   * is specified by the subPackage, and the last entry of subPackage, which is
-   * the class name of the file to be processed, is removed.
-   */
-  private File getInputFile() {
-    File result = inputDirectory;
-    if (!subPackage.isEmpty()) {
-      for (String s : subPackage.subList(rootLevel, subPackage.size() - 1)) {
-        result = new File(result, s);
-      }
-    }
-    return new File(result,
-        (inputRealName != null ? inputRealName : mem.getClassName())
-        + RULES_FILE_EXTENSION);
-  }
+  public boolean visualise() { return visualise; }
 
   /**
    * Return the inputfile, which is relative to inputDirectory, the subdirectory
@@ -279,45 +208,6 @@ public class RudimantCompiler {
 
   public RudimantCompiler getParent() {
     return parent;
-  }
-
-  public RudimantCompiler append(char c) {
-    try {
-      out.append(c);
-    } catch (IOException ex) {
-      throw new RuntimeException(ex);
-    }
-    return this;
-  }
-
-  public RudimantCompiler append(CharSequence c) {
-    try {
-      out.append(c);
-    } catch (IOException ex) {
-      throw new RuntimeException(ex);
-    }
-    return this;
-  }
-
-  public void flush() {
-    try {
-      out.flush();
-    } catch (IOException ex) {
-      throw new RuntimeException(ex);
-    }
-  }
-
-  private String computeClassName(File inputFile) {
-    // remember the real name, without upper case transformation, so getInputFile()
-    // won't crash
-    inputRealName = inputFile.getName().replace(RULES_FILE_EXTENSION, "");
-    String classname = null;
-    try {
-      classname = capitalize(inputRealName);
-    } catch (StringIndexOutOfBoundsException e) {
-      logger.error("Could not find class name " + inputFile.getName());
-    }
-    return classname;
   }
 
   private static final File tmpCfg = new File("/tmp/uncrustify.cfg");
@@ -369,117 +259,101 @@ public class RudimantCompiler {
     }
   }
 
-  private void processForReal() throws IOException {
+
+
+
+  /** Create output directories, open a writer to the output file and process
+   *  the current input
+   */
+  private void processForReal(String inputRealName)
+      throws IOException {
     File outputdir = getOutputDirectory();
     if (!outputdir.isDirectory()) {
       Files.createDirectories(outputdir.toPath());
     }
     File outputFile = new File(outputdir, mem.getClassName() + ".java");
-    Writer output = Files.newBufferedWriter(outputFile.toPath());
 
-    File inputFile = getInputFile();
+    /* Compute the inputfile, which is relative to inputDirectory, the subdirectory
+     * is specified by the subPackage, and the last entry of subPackage, which is
+     * the class name of the file to be processed, is removed.
+     */
+    File result = inputDirectory;
+    if (!subPackage.isEmpty()) {
+      for (String s : subPackage.subList(rootLevel, subPackage.size() - 1)) {
+        result = new File(result, s);
+      }
+    }
+    File inputFile = new File(result,
+        (inputRealName != null ? inputRealName : mem.getClassName())
+        + RULES_FILE_EXTENSION);
+
     logger.info("parsing " + inputFile.getName() + " to " + outputFile);
-    if (processForReal(new FileInputStream(inputFile), output) == null)
+    GrammarFile gf = parseAndTypecheck(this,
+        new FileInputStream(inputFile), inputRealName);
+    if (gf == null)
       throw new UnsupportedOperationException("Parsing failed.");
-    flush();
+    if (visualise)
+      Visualize.show(gf, inputRealName);
+    Writer output = Files.newBufferedWriter(outputFile.toPath());
+    gf.generate(this, output);
+    output.close();
+
     uncrustify(outputFile);
   }
 
-  private static Pair<GrammarFile, LinkedList<Token>> parseInput(
-      final String realName, InputStream in) throws IOException {
-    // initialise the lexer with given input file
-    RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(in));
+  /** Process the top-level rudi file */
+  public void processToplevel(File topLevel) throws IOException {
+    inputDirectory = topLevel.getParentFile();
+    if (outputDirectory == null) outputDirectory = inputDirectory;
 
-    List<Integer> toCollect = Arrays.asList(
-        new Integer[] { JAVA_CODE, ONE_L_COMMENT, MULTI_L_COMMENT, NLWS });
-    CollectorTokenSource collector = new CollectorTokenSource(lexer, toCollect);
-
-    // initialise the parser
-    RobotGrammarParser parser = new RobotGrammarParser(
-        new CommonTokenStream(collector));
-    final boolean[] errorOccured = { false };
-    parser.addErrorListener(new BaseErrorListener() {
-      @Override
-      public void syntaxError(Recognizer<?, ?> recognizer,
-          Object offendingSymbol, int line, int charPositionInLine, String msg,
-          RecognitionException e) {
-        errorOccured[0] = true;
-        logger.error("{}.rudi:{}:{}: {}", realName, line, charPositionInLine, msg);
+    // get the real name, without upper case transformation
+    String inputRealName = topLevel.getName().replace(RULES_FILE_EXTENSION, "");
+    // TODO: not nice. should always come in "brackets", but makes it more messy
+    initMem(inputRealName);
+    File wrapperInit = new File(inputDirectory,
+        wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + RULES_FILE_EXTENSION);
+    try {
+      if (wrapperInit.exists()) {
+        parseAndTypecheck(this, new FileInputStream(wrapperInit), inputRealName);
+      } else {
+        logger.info("No method declaration file for {}", wrapperInit);
       }
-    });
+    } catch (IOException ex) {
+      logger.error("Initializer file import: {}", ex);
+    }
 
-    // create a parse tree; grammar_file is the start rule
-    ParseTree tree = parser.grammar_file();
-    if (errorOccured[0])
-      return null;
-
-    // initialise the visitor that will do all the work
-    ParseTreeVisitor visitor = new ParseTreeVisitor(realName,
-        collector.getCollectedTokens());
-
-    // create the abstract syntax tree
-    RudiTree myTree = visitor.visit(tree);
-    if (! (myTree instanceof GrammarFile))
-      return null;
-    return new Pair<>((GrammarFile)myTree, collector.getCollectedTokens());
+    if (packageName != null && !packageName.isEmpty()) {
+      subPackage.addAll(Arrays.asList(packageName.split("\\.")));
+      rootLevel = subPackage.size() - 1;
+    }
+    processForReal(inputRealName);
+    mem.leaveClass(fileBlock);
   }
 
-  /** Prerequisite: mem.enterClass(<className>) has been called, and
-   *  mem.leaveClass(<className>) is called afterwards.
-   * @param in
-   * @param output
-   * @return
-   * @throws IOException
-   */
-  public GrammarFile processForReal(InputStream in, Writer output)
-      throws IOException {
-    out = output;
-    Pair<GrammarFile, LinkedList<Token>> pair = parseInput(inputRealName, in);
-    if (pair == null)
-      return null;
+  /** Process an imported rudi file */
+  private void processImportInternal(String importSpec) throws IOException {
+    inputDirectory = parent.inputDirectory;
+    outputDirectory = parent.outputDirectory;
 
-    GrammarFile gf = pair.first;
-    // do the type checking, which also adds function and variable definitions
-    // to Mem
-    gf.startTypeInference(this);
+    String[] elements = importSpec.split("\\.");
+    String inputRealName = elements[elements.length - 1];
+    subPackage = parent.subPackage;
+    subPackage.addAll(Arrays.asList(elements).subList(0, elements.length - 1));
 
-    if (visualise) {
-      Visualize.show(gf, inputRealName);
-    }
-    if (output != null) {
-      // generate the output
-      gf.startGeneration(this, new VisitorGeneration(this, pair.second));
-    }
-    logger.info("Done parsing");
-    return gf;
+    // TODO: not nice. should always come in "brackets", but makes it more messy
+    mem.enterClass(capitalize(inputRealName), fileBlock);
+    processForReal(inputRealName);
+    mem.leaveClass(fileBlock);
   }
 
-  /**
-   * use this to report a type checking error; it will be handled according to
-   * the set typeCheck parameter
-   *
-   * @param errorMessage
-   * @param node the tree node where the error occured
-   */
-  public void typeError(String errorMessage, RudiTree node) {
-    String newErrorMessage = node.getLocation() + " " + errorMessage;
-    if (typeCheck) {
-      // throw a real Exception
-      throw new TypeException(newErrorMessage);
-    } else {
-      // just set a warning into the logger
-      logger.error(newErrorMessage);
+  public void processImport(String importSpec) {
+    logger.info("Processing import {}", importSpec);
+    try {
+      RudimantCompiler result = new RudimantCompiler(this);
+      result.processImportInternal(importSpec);
+    } catch (IOException ex) {
+      throw new RuntimeException(ex);
     }
   }
 
-  /**
-   * use this to report a type checking warning
-   *
-   * @param errorMessage
-   * @param node the tree node where the error occured
-   */
-  public void typeWarning(String errorMessage, RudiTree node) {
-    // just set a warning into the logger
-    logger.warn(node.getLocation() + " " + errorMessage);
-  }
 }

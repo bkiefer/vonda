@@ -42,7 +42,6 @@ public class Visualize extends GrammarMain {
   private static RudimantCompiler initRc()
       throws IOException, WrongFormatException {
     RudimantCompiler rc = RudimantCompiler.init(confDir, configs);
-    rc.getMem().enterClass("test");
     rc.initMem("test");
     return rc;
   }
@@ -52,9 +51,8 @@ public class Visualize extends GrammarMain {
     try {
       rc = initRc();
       StringWriter sw = new StringWriter();
-      rc.processForReal(getInput(in), sw);
-      rc.getMem().leaveClass();
-      rc.flush();
+      parseAndGenerate(rc, getInput(in), sw, "test");
+      sw.flush();
       return sw.toString();
     } catch (IOException | WrongFormatException e) {
       throw new RuntimeException(e);
@@ -106,8 +104,7 @@ public class Visualize extends GrammarMain {
     try {
       // create the abstract syntax tree
       RudimantCompiler rc = initRc();
-      GrammarFile result = rc.processForReal(in, null);
-      rc.getMem().leaveClass();
+      GrammarFile result = GrammarFile.parseAndTypecheck(rc, in, "test");
       return result;
     } catch (Exception ex) {
       throw new RuntimeException(ex);
@@ -118,12 +115,23 @@ public class Visualize extends GrammarMain {
     return parseAndTypecheck(getInput(in));
   }
 
+  private static GrammarFile parseAndGenerate(RudimantCompiler rc,
+      InputStream in, Writer out, String name) throws IOException {
+    GrammarFile gf = GrammarFile.parseAndTypecheck(rc, in, name);
+    if (gf == null)
+      throw new UnsupportedOperationException("Parsing failed.");
+    if (rc.visualise())
+      Visualize.show(gf, name);
+    gf.generate(rc, out);
+    return gf;
+  }
+
+
   public static GrammarFile parseAndTypecheck(InputStream in, Writer out) {
     try {
       // create the abstract syntax tree
       RudimantCompiler rc = initRc();
-      GrammarFile result = rc.processForReal(in, out);
-      rc.getMem().leaveClass();
+      GrammarFile result = parseAndGenerate(rc, in, out, "test");
       return result;
     } catch (Exception ex) {
       throw new RuntimeException(ex);
@@ -140,8 +148,7 @@ public class Visualize extends GrammarMain {
       // create the abstract syntax tree
       RudimantCompiler rc = initRc();
       rc.throwTypeErrors();
-      GrammarFile result = rc.processForReal(in, out);
-      rc.getMem().leaveClass();
+      GrammarFile result = parseAndGenerate(rc, in, out, "test");
       return result;
     } catch (RuntimeException ex) {
       if (ex.getCause() instanceof TypeException)

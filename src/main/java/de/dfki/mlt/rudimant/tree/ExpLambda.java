@@ -17,13 +17,11 @@ import de.dfki.mlt.rudimant.Type;
  *
  * @author Anna Welker
  */
-public class ExpLambda extends RTExpLeaf {
+public class ExpLambda extends RTExpLeaf implements RTBlockNode {
 
   List<String> parameters;
   Type parType;
   RudiTree body;
-
-  private Environment _localBindings;
 
   public ExpLambda(List<String> args, RudiTree b) {
     parameters = args;
@@ -56,13 +54,20 @@ public class ExpLambda extends RTExpLeaf {
     for (int i = 1; i < parameters.size(); ++i)
       sb.append(',').append(parameters.get(i));
     sb.append(")");
-    RudiTree[] dtrs = { new ExpSingleValue(sb.toString(), parType.get_name()), body };
+    String typeString = parType == null ? "<null>" : parType.getRep();
+    RudiTree[] dtrs = { new ExpSingleValue(sb.toString(), typeString), body };
     return Arrays.asList(dtrs);
   }
 
-  public void setBindings(Environment local) {
-    _localBindings = local;
+  // ==== IMPLEMENTATION OF RTBLOCKNODE =====================================
+
+  private Environment _localBindings, _parentBindings;
+
+  public void setBindings(Environment parent, Environment local) {
+    _parentBindings = parent; _localBindings = local;
   }
 
   public Environment getBindings() { return _localBindings; }
+
+  public Environment getParentBindings() { return _parentBindings; }
 }

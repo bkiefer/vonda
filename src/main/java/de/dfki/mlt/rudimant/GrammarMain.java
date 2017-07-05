@@ -50,7 +50,7 @@ public class GrammarMain {
       throws IOException {
     try {
       for (String file : files) {
-        rc.process(new File(file));
+        rc.processToplevel(new File(file));
       }
     } catch (UnsupportedOperationException ex) {
       if (ex.getMessage().startsWith("Parsing")) return true;
