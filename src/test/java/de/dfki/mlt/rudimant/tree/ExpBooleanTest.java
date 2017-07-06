@@ -61,7 +61,7 @@ GREATER: '>';
     // dtr.getType is "boolean" as String. Is this correct?
 
      assertTrue(dtr instanceof ExpSingleValue);
-     assertEquals("false should be of type Boolean", "boolean", (((RTExpression) dtr).getType().get_name()));
+     assertEquals("false should be of type Boolean", "boolean", (((RTExpression) dtr).getType().toString()));
   }
 
   @Test

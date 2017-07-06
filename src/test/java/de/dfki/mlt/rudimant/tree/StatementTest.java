@@ -71,6 +71,8 @@ public class StatementTest {
 
   @Test
   public void StatementTest5(){
+    // explanation: the statement "int i;" is supposed to tell rudimant that
+    // the variable i already exists somewhere
     String in = "int i;  i = 1; return i;";
     String r = generate(in);
     String expected = "i = 1; return i;";
@@ -88,6 +90,7 @@ public class StatementTest {
 
  @Test
  public void StatementTest6(){
+   // TODO: the empty statement after case is not wrong, but it is kind of funny
    String in = "int i; boolean truth; "
            + "switch(truth){case (truth): i=2;  case(truth==false): i=1;}";
     String r = generate(in);

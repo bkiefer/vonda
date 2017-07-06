@@ -169,6 +169,8 @@ public class TestCast {
 
   @Test
   public void test11() {
+    // TODO: find out whether i is int or boolean at the end, and put that into the
+    // documentation
     String in = "int i; boolean i; i = 2; ";
     String s = generate(in);
     String expected = "i = 2;";
@@ -177,6 +179,7 @@ public class TestCast {
 
   @Test
   public void test12() {
+    // TODO: When i is int, this is definitely an error in java; how to deal with it?
     String in = "int i; i = false;";
     String s = generate(in);
     String expected = "i = (Object /* (unknown) */) false;";
