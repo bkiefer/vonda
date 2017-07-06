@@ -20,7 +20,7 @@ import de.dfki.mlt.rudimant.agent.nlg.Pair;
  *
  * @author chbu02, Bernd Kiefer
  */
-public abstract class Agent extends DataComparator implements StreamingClient {
+public abstract class Agent implements StreamingClient {
 
   public static final Logger logger = LoggerFactory.getLogger(Agent.class);
 
@@ -74,6 +74,7 @@ public abstract class Agent extends DataComparator implements StreamingClient {
   public Set<String> rulesToLog = new HashSet<>();
   public boolean logAllRules = false;
 
+  private RdfProxy _proxy;
 
   /** Send something out to the world */
   protected void sendBehaviour(Object obj) {
@@ -329,8 +330,8 @@ public abstract class Agent extends DataComparator implements StreamingClient {
     return _proxy.getRdf(uri);
   }
 
-  public String toUri(Rdf rdf) {
-    return rdf.getURI();
+  public RdfClass getRdfClass(String name) {
+    return _proxy.fetchClass(name);
   }
 
   /* *************************************************************************
@@ -347,6 +348,18 @@ public abstract class Agent extends DataComparator implements StreamingClient {
 
   public DialogueAct analyse(String input) {
     return asr.interpret(input);
+  }
+
+  /* *******************************************************
+   * overloaded boolean operator methods
+   ********************************************************/
+
+  public static boolean exists(Object s) {
+    if (s == null) return false;
+    if (s instanceof String) return ! ((String)s).isEmpty();
+    if (s instanceof Boolean) return (Boolean)s;
+    if (s instanceof Collection) return !((Collection)s).isEmpty();
+    return true;
   }
 
 //  /**

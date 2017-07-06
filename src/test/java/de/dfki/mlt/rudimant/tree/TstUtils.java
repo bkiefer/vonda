@@ -72,6 +72,7 @@ public class TstUtils {
     exp = normalizeSpaces(exp);
     //int end = s.lastIndexOf("}") - 2;
     int start = s.indexOf("// hello test") + 14;
-    return normalizeSpaces(s.substring(start, start + exp.length()).trim());
+    return normalizeSpaces(s.substring(start,
+        Math.min(start + exp.length(), s.length())).trim());
   }
 }

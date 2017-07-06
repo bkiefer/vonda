@@ -13,7 +13,9 @@
 
 // Rdf(Proxy) methods
 Rdf toRdf(String uri);
-String toUri(Rdf rdf);
+
+RdfClass getRdfClass(String s);
+boolean exists(Object o);
 
 // DialogueAct methods
 DialogueAct createEmitDA(DialogueAct da);

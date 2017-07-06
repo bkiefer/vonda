@@ -115,50 +115,24 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     this.rules = rules;
   }
 
-  private boolean containsDefinition(RudiTree t) {
-    if (t instanceof StatVarDef
-        || (t instanceof StatMethodDeclaration
-            && ((StatMethodDeclaration)t).block == null)) return true;
-    if (t instanceof StatExpression) {
-      RTExpression ex = ((StatExpression) t).expression;
-      return (ex instanceof ExpAssignment) && ((ExpAssignment) ex).declaration;
-    }
-    return false;
-  }
-
-  private void visitTypeInference(RudiTree t, VisitorType ttv) {
-    if (t instanceof RTStatement) {
-      ((RTStatement)t).visit(ttv);
-    } else if (t instanceof RTExpression) {
-      ((RTExpression)t).visit(ttv);
-    }
-  }
-
+  // As expected, this works equally well.
   private void startTypeInference(RudimantCompiler rudi, boolean errorsFatal) {
     Mem mem = rudi.getMem();
     VisitorType ttv = new VisitorType(mem, errorsFatal);
-    List<RudiTree> nonDefs = new ArrayList<>(rules.size());
-    // learn about all definitions before visiting the other statements!!
-    // TODO: WHY? IF WE REQUIRE THE DEFINITION ALWAYS PRECEDING THE USE, THEN
-    // WHY IS THIS NECESSARY?
+
     for (RudiTree t : rules) {
-      if(containsDefinition(t)) {
-        visitTypeInference(t, ttv);
-      } else {
-        nonDefs.add(t);
-      }
-    }
-    for (RudiTree t : nonDefs) {
       if (t instanceof Import) {
         Import node = (Import)t;
         String conargs = "";
         mem.addImport(node.name, conargs);
         rudi.processImport(node.content);
+      } else if (t instanceof RTStatement) {
+        ((RTStatement)t).visit(ttv);
+      } else if (t instanceof RTExpression) {
+        ((RTExpression)t).visit(ttv);
       }
-      visitTypeInference(t, ttv);
     }
   }
-
 
   private void writeRuleList(Writer out, Mem mem, VisitorGeneration gv)
       throws IOException{

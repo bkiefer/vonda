@@ -9,7 +9,6 @@ import org.junit.*;
 
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.mlt.rudimant.GrammarMain;
-import de.dfki.mlt.rudimant.TypeException;
 
 public class TestImport {
 

@@ -100,14 +100,19 @@ public class Type {
   /** Indicates if this type should be compared with == or equals */
   public boolean isPODType() {
     if (_name == null) return false; // if we're ignorant, it is Object
+    if (isNull()) return true;
     String name = RdfClass.xsdToJavaPod(_name);
     Long code = typeCodes.get(name);
     return code != null && (code & 0x11111111000l) != 0
         && (code & 0x100) == 0; // containers may be null!
   }
 
-  public boolean isRdfType() {
-    return _class != null || _name != null && _name.charAt(0) == '<';
+  public boolean isNull() { return "null".equals(_name); }
+
+  public boolean isRdfType() { return _class != null; }
+
+  public boolean isXsdType() {
+    return _name != null && _name.charAt(0) == '<';
   }
 
   public RdfClass getRdfClass() { return _class; }
@@ -124,8 +129,7 @@ public class Type {
         || _name.endsWith("Set")
         || _name.endsWith("List")
         || _name.startsWith("RdfSet")
-        || _name.startsWith("RdfList")
-        || ((_name.endsWith(">") && ! isRdfType())));
+        || _name.startsWith("RdfList"));
   }
 
   public boolean isDialogueAct() {
@@ -133,11 +137,12 @@ public class Type {
   }
 
   public boolean isString() {
-    return "String".equals(_name);
+    return "String".equals(_name) || "<xsd:string>".equals(_name);
   }
 
   public boolean isBool() {
-    return _name != null && "boolean".equals(_name.toLowerCase());
+    return "boolean".equals(_name) || "Boolean".equals(_name)
+        || "<xsd:boolean>".equals(_name);
   }
 
   public boolean isUnspecified() {
@@ -195,9 +200,9 @@ public class Type {
   private void toString(StringBuffer sb) {
     if (isDialogueAct())
       sb.append("DialogueAct");
-    else if (_class != null)
-      sb.append("Rdf");
     else if (isRdfType())
+      sb.append("Rdf");
+    else if (isXsdType())
       sb.append(RdfClass.xsdToJavaPod(_name));
     else
       sb.append(_name);
@@ -245,5 +250,4 @@ public class Type {
     if (isRdfType()) return _name;
     return toString();
   }
-
 }

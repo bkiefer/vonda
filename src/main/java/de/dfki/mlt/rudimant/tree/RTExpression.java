@@ -59,12 +59,6 @@ public abstract class RTExpression extends RudiTree {
    */
   public abstract void visitVoidV(VisitorGeneration v);
 
-  public boolean isComplexType() { return type != null && type.isCollection(); }
-
-  public boolean isStringOrComplexType() {
-    return type != null && (type.isString() || isComplexType());
-  }
-
   public Type getInnerType() { return type.getInnerType(); }
 
   public RTExpression ensureBooleanBasic() {
@@ -77,58 +71,21 @@ public abstract class RTExpression extends RudiTree {
         return this;
       }
       // if is a funccall with type boolean, we'd still like to have it as a
-      // boolean, at least wrapped up; if it is a fieldaccess kind of funccall,
-      // we have to go on testing for each part if it is null
-      return fixFields(new ExpBoolean(this, null, null));
+      // boolean, at least wrapped up
+      // TODO: don't know if this is necessary.
     }
-
-    // is some other kind of expression, turn it into a comparison or
-    // method call returning a boolean
-    // TODO check if there's something missing for RDF types
-    if (isStringOrComplexType()) {
-      return fixFields(new ExpBoolean(this, null, "exists("));
-    }
-
-    RTExpression result = null;
-    ExpSingleValue right = null;
-
-    if (type == null || type.isUnspecified()) {
-      right = fixFields(new ExpSingleValue("null", "Object"));
-      result = fixFields(new ExpBoolean(this, right, "!="));
-    } else {
-      //Type cleanType = type; // .convertXsdType();
-      //if (! type.equals(cleanType)) {
-      //  result = fixFields(new ExpBoolean(this, null, "exists("));
-      //} else {
-      // TODO USE Type.isCollection, and possibly move to generation
-        switch (type.toString()) {
-        case "long":
-        case "int":
-        case "short":
-        case "byte":
-        case "char":
-        case "float":
-        case "double":
-          right = fixFields(new ExpSingleValue("0", type.toString()));
-          break;
-        default:
-          right = fixFields(new ExpSingleValue("null", "Object"));
-          break;
-        }
-        result = fixFields(new ExpBoolean(this, right, "!="));
-     // }
-    }
-    return result;
+    return fixFields(new ExpBoolean(this, null, "<>"));
   }
 
   public RTExpression ensureBoolean() {
     if (this instanceof ExpFieldAccess) {
+      // if it is a fieldaccess kind of funccall, we have to go on testing for
+      // each part if it is null
       ExpFieldAccess ufa = (ExpFieldAccess)this;
       return ufa.ensureBooleanUFA();
     }
     return ensureBooleanBasic();
   }
-
 
   public abstract void propagateType(Type upperType);
 

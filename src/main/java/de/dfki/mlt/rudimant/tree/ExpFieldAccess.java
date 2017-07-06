@@ -7,9 +7,6 @@ package de.dfki.mlt.rudimant.tree;
 
 import java.util.List;
 
-import de.dfki.mlt.rudimant.Constants;
-import de.dfki.mlt.rudimant.Type;
-
 /**
  * this represents an access to the ontology (will result in an rdf object in
  * output)
@@ -57,14 +54,8 @@ public class ExpFieldAccess extends RTExpLeaf {
     List<RTExpression> smaller = parts.subList(0, s);
     List<String> smallerRep = representation.subList(0, s);
     ExpFieldAccess first = fixFields(new ExpFieldAccess(smaller, smallerRep));
-    RTExpression right;
-    if (parts.get(s - 1).type != null && parts.get(s - 1).type.isDialogueAct()) {
-      ExpSingleValue property = fixFields(new ExpSingleValue("\"" +
-          parts.get(s).fullexp + "\"", "String"));
-      right = fixFields(new ExpBoolean(first, property, "hasSlot("));
-    } else {
-      right = this.ensureBooleanBasic();
-    }
+    first.type = parts.get(s - 1).type;
+    RTExpression right = this.ensureBooleanBasic();
     return fixFields(new ExpBoolean(first.ensureBooleanUFA(), right, "&&"));
   }
 }

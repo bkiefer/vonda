@@ -46,10 +46,11 @@ public class Visualize extends GrammarMain {
     return rc;
   }
 
-  public static String generate(String in) {
+  public static String generate(String in, boolean show) {
     RudimantCompiler rc;
     try {
       rc = initRc();
+      if (show) rc.showTree();
       StringWriter sw = new StringWriter();
       parseAndGenerate(rc, getInput(in), sw, "test");
       sw.flush();
@@ -58,6 +59,8 @@ public class Visualize extends GrammarMain {
       throw new RuntimeException(e);
     }
   }
+
+  public static String generate(String in) { return generate(in, false); }
 
   public static String normalizeSpaces(String in) {
     return in.replaceAll("[ \n\r\t]+", " ");

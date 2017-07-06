@@ -33,5 +33,4 @@ public class TestFragment {
     String type_else = ((ExpConditional) dtr).elseexp.getType().get_name();
     assertEquals("else part", "int", type_else);
   }
-
 }

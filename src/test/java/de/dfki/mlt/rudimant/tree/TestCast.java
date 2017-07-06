@@ -59,9 +59,9 @@ public class TestCast {
     String in = "Quiz activity; if "
             + "(activity.tabletOrientation != getCurrentAsker()) {}";
     String s = generate(in);
-    String expected = "if (isNotEqual("
+    String expected = "if ((! "
         + "((String)activity.getSingleValue(\"<dom:tabletOrientation>\"))"
-        + ", getCurrentAsker())) {}";
+        + ".equals(getCurrentAsker()))) {}";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -102,8 +102,8 @@ public class TestCast {
   public void test4() {
      String in = "Activity activity; bool = (activity.status == \"gameProposed\");";
     String s = generate(in);
-    String expected = "boolean bool = isEqual(((String)activity"
-            + ".getSingleValue(\"<dom:status>\")), \"gameProposed\");";
+    String expected = "boolean bool = (((String)activity"
+            + ".getSingleValue(\"<dom:status>\")).equals(\"gameProposed\"))";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -117,10 +117,10 @@ public class TestCast {
 
   @Test
   public void test6() {
-    String in = "Child user; user.isLocatedAt == \"<dom:Home>\";";
+    String in = "Child user; user.isLocatedAt == new Rdf(\"<dom:Home>\");";
     String s = generate(in);
-    String expected = "isEqual(((Rdf)user.getSingleValue(\"<dom:isLocatedAt>\")),"
-            + " \"<dom:Home>\");";
+    String expected = "((((Rdf)user.getSingleValue(\"<dom:isLocatedAt>\")))"
+        + ".equals(\"<dom:Home>\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -137,8 +137,8 @@ public class TestCast {
   public void test7() {
     String in = "Child user; b = (user.forename == \"John\");";
     String s = generate(in);
-    String expected = "boolean b = isEqual(((String)user"
-            + ".getSingleValue(\"<dom:forename>\")), \"John\");";
+    String expected = "boolean b = (((String)user"
+            + ".getSingleValue(\"<dom:forename>\")).equals(\"John\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -163,7 +163,7 @@ public class TestCast {
   public void test10() {
     String in = "DialogueAct a; DialogueAct b; boolean isSmaller; isSmaller = a<b;";
     String s = generate(in);
-    String expected = "isSmaller = isSmaller(a, b);";
+    String expected = "isSmaller = (a.strictlySubsumes(b));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -187,7 +187,7 @@ public class TestCast {
   public void test13() {
     String in = "DialogueAct a; DialogueAct b; boolean isGreater; isGreater = a>b;";
     String s = generate(in);
-    String expected = "isGreater = isGreater(a, b);";
+    String expected = "isGreater = (a.isStrictlySubsumedBy(b));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
