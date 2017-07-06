@@ -31,7 +31,7 @@ public class ExpAssignmentTest {
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(assignmentExp));
     assertTrue(dtr instanceof ExpAssignment);
-    String type = ((ExpAssignment) dtr).right.getType().get_name();
+    String type = ((ExpAssignment) dtr).right.getType().toString();
     assertEquals("right side type of test = 4 should be int", "int", type);
   }
 
@@ -41,7 +41,7 @@ public class ExpAssignmentTest {
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(assignmentExp));
     assertTrue(dtr instanceof ExpAssignment);
-    String type = ((ExpAssignment) dtr).right.getType().get_name();
+    String type = ((ExpAssignment) dtr).right.getType().toString();
     assertEquals("right side type of test = (4>5) should be boolean", "boolean", type);
 
   }
@@ -53,7 +53,7 @@ public class ExpAssignmentTest {
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(assignmentExp));
     assertTrue(dtr instanceof ExpAssignment);
 
-    String type_right = ((ExpAssignment) dtr).right.getType().get_name();
+    String type_right = ((ExpAssignment) dtr).right.getType().toString();
     assertEquals("right side type of boolean test is turned to boolean", "boolean", type_right);
 
 //    String type_left = ((RTExpression)((ExpAssignment) dtr).left).getType();
@@ -69,15 +69,15 @@ public class ExpAssignmentTest {
     RudiTree dtr = getNodeOfInterest(gf, 0); // test = true
     assertTrue(dtr instanceof ExpAssignment);
 
-    String type_right = ((ExpAssignment) dtr).right.getType().get_name();
+    String type_right = ((ExpAssignment) dtr).right.getType().toString();
     assertEquals("right side type test should be boolean", "boolean", type_right);
 
     dtr = getNodeOfInterest(gf, 1); // test2 = 1
-    type_right = ((ExpAssignment) dtr).right.getType().get_name();
+    type_right = ((ExpAssignment) dtr).right.getType().toString();
     assertEquals("right side type test2 should be int", "int", type_right);
 
     dtr = getNodeOfInterest(gf, 2); // test3 = test2
-    type_right = ((ExpAssignment) dtr).right.getType().get_name();
+    type_right = ((ExpAssignment) dtr).right.getType().toString();
     assertEquals("right side type test3 should be int", "int", type_right);
   }
 

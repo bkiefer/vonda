@@ -24,13 +24,13 @@ public class TestFragment {
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(conditionalExp));
     assertTrue(dtr instanceof ExpConditional);
 
-    String type_boolean = ((ExpConditional) dtr).boolexp.getType().get_name();
+    String type_boolean = ((ExpConditional) dtr).boolexp.getType().toString();
     assertEquals("boolean part of conditional", "boolean", type_boolean);
 
-    String type_then = ((ExpConditional) dtr).thenexp.getType().get_name();
+    String type_then = ((ExpConditional) dtr).thenexp.getType().toString();
     assertEquals("then part", "int", type_then);
 
-    String type_else = ((ExpConditional) dtr).elseexp.getType().get_name();
+    String type_else = ((ExpConditional) dtr).elseexp.getType().toString();
     assertEquals("else part", "int", type_else);
   }
 }

@@ -59,7 +59,7 @@ public class TestComparison {
   public void testGenerationComparisonStringRdf() {
     String in = "String i; Child j; if (i <= j) return true;";
     String r = generate(in);
-    String expected = "if ((getRdfClass(i).isSubclassOf((j).getClazz()))) return true;";
+    String expected = "if ((i.getClazz().isSubclassOf(j.getClazz()))) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -67,7 +67,7 @@ public class TestComparison {
   public void testGenerationComparisonStringRdfClass() {
     String in = "String j; if (Child <= j) return true;";
     String r = generate(in);
-    String expected = "if ((getRdfClass(\"Child\").isSubclassOf(getRdfClass(j)))) return true;";
+    String expected = "if ((getRdfClass(\"Child\").isSubclassOf(j.getClazz()))) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -94,7 +94,7 @@ public class TestComparison {
   public void testGenerationComparisonRdfRdfClass() {
     String in = "Child j; if (Child <= j) return true;";
     String r = generate(in);
-    String expected = "if ((getRdfClass(\"Child\").isSubclassOf((j).getClazz()))) return true;";
+    String expected = "if ((getRdfClass(\"Child\").isSubclassOf(j.getClazz()))) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 

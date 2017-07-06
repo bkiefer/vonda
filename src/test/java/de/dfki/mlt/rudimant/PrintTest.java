@@ -26,6 +26,6 @@ public class PrintTest {
       //"../herbea/poc/src/main/rudi/Kaefer.rudi"
       //"../dipal/src/main/rudi/PalAgent.rudi"
     };
-    GrammarMain.main(strings);
+    //GrammarMain.main(strings);
   }
 }

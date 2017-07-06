@@ -55,5 +55,6 @@ public class TestAdditionalEmpty {
     String exp = "x = 27; emitDA(new DialogueAct(\"I\", \"Greet\", \"val\", x));";
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));
+    assertTrue(s.contains("int x;"));
   }
 }
