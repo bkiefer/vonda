@@ -118,7 +118,7 @@ public class TestTypes {
     String in = "Child c; a: if (!c.hasMother) int i = 0;";
     String r = generate(in);
     String expected =
-        "a(); return false; } public boolean a(){ boolean a0 = false; a0 = !((c != null) && "
+        "if (a()) return true; return false; } public boolean a(){ boolean a0 = false; a0 = !((c != null) && "
         + "(((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null));";
     assertEquals(expected, getForMarked(r, expected));
   }

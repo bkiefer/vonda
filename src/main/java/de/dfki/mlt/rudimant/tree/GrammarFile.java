@@ -183,7 +183,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     for(RudiTree r : rules){
       // rules, method declarations and imports are a special case
       if (r instanceof StatGrammarRule){
-        out.append(((StatGrammarRule)r).label + "();\n");
+        out.append("if (" + ((StatGrammarRule)r).label + "()) return true;\n");
         later.add((StatGrammarRule)r);
       } else if (r instanceof StatMethodDeclaration){
         later.add((StatMethodDeclaration)r);
