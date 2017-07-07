@@ -19,6 +19,28 @@ public class Type {
   private static RdfClass DIALACT_CLASS;
 
   static Map<String, Long> typeCodes = new HashMap<>();
+  static Map<Long, String> code2type = new HashMap<>();
+
+  private static final Map<String, String> xsd2java = new HashMap<>();
+
+  static {
+    final String[][] xsd2javatypes = {
+      {"<xsd:int>", "Integer"},
+      {"<xsd:string>", "String"},
+      {"<xsd:boolean>", "Boolean"},
+      {"<xsd:double>", "Double"},
+      {"<xsd:float>", "Float"},
+      {"<xsd:long>", "Long"},
+      {"<xsd:integer>", "Long"},
+      {"<xsd:byte>", "Byte"},
+      {"<xsd:short>", "Short"},
+      {"<xsd:dateTime>", "Date"},
+      {"<xsd:date>", "XsdDate"},
+    };
+    for (String[] pair : xsd2javatypes) {
+      xsd2java.put(pair[0], pair[1]);
+    }
+  }
 
   static final long JAVA_TYPE = 0x10;
   static {
@@ -42,6 +64,9 @@ public class Type {
     typeCodes.put("boolean",         0x10000000000l);
     typeCodes.put("Boolean",         0x10000000100l);
     typeCodes.put("null",           0x100000000000l);
+    for (Map.Entry<String, Long> entry : typeCodes.entrySet()) {
+      code2type.put(entry.getValue(), entry.getKey());
+    }
   }
 
   public static void setProxy(RdfProxy proxy) {
@@ -97,30 +122,45 @@ public class Type {
     return _name;
   }
 
+  private String xsdToJavaPodWrapper() {
+    String ret = xsd2java.get(_name);
+    return (ret != null) ? ret : _name;
+  }
+
+  private String xsdToJavaPod() {
+    String ret = xsd2java.get(_name);
+    Long code = typeCodes.get(ret);
+    if (code == null) return _name;
+    ret = code2type.get(code & ~ 0x100);
+    return (ret != null) ? ret : _name;
+  }
+
   /** Indicates if this type should be compared with == or equals */
   public boolean isPODType() {
     if (_name == null) return false; // if we're ignorant, it is Object
     if (isNull()) return true;
-    String name = RdfClass.xsdToJavaPod(_name);
+    String name = xsdToJavaPodWrapper();
     Long code = typeCodes.get(name);
     return code != null && (code & 0x11111111000l) != 0
         && (code & 0x100) == 0; // containers may be null!
   }
 
+  /** Return true if this is a Java wrapper class for some number */
+  public boolean isNumber() {
+     // if we're ignorant, it is Object, and null is not a number
+    if (_name == null) return false;
+    String name = xsdToJavaPodWrapper();
+    Long code = typeCodes.get(name);
+    return code != null && (code & 0x11111111000l) != 0
+        && (code & 0x100) != 0;
+  }
+
   public boolean isNull() { return "null".equals(_name); }
 
-  public boolean isRdfType() { return _class != null; }
+  public boolean isRdfType() { return _class != null || "Rdf".equals(_name); }
 
   public boolean isXsdType() {
     return _name != null && _name.charAt(0) == '<';
-  }
-
-  public RdfClass getRdfClass() { return _class; }
-
-  public Type getInnerType() {
-    if (_parameterTypes != null && _parameterTypes.size() == 1)
-      return _parameterTypes.get(0);
-    return null;
   }
 
   public boolean isCollection() {
@@ -149,6 +189,15 @@ public class Type {
     return _name == null;
   }
 
+
+  public RdfClass getRdfClass() { return _class; }
+
+  public Type getInnerType() {
+    if (_parameterTypes != null && _parameterTypes.size() == 1)
+      return _parameterTypes.get(0);
+    return null;
+  }
+
   /** Return the more specific of the two types, if it exists, null otherwise */
   public Type unifyTypes(Type right) {
     if (_name == null || _name.equals("Object")) return right;
@@ -159,7 +208,8 @@ public class Type {
     // check if these are (real) RDF types and are in a type relation.
     if (_class != null || right._class != null) {
       if (_class != null && right._class != null) {
-        String result = PROXY.fetchMostSpecific(_name, right._name);
+        String result = PROXY.fetchMostSpecific(
+            _class.toString(), right._class.toString());
         if (result == null) return null; // incompatible types
         return new Type(result);
       }
@@ -168,8 +218,8 @@ public class Type {
       return null;
     }
 
-    String l = RdfClass.xsdToJavaPod(_name);
-    String r = RdfClass.xsdToJavaPod(right._name);
+    String l = xsdToJavaPod();
+    String r = right.xsdToJavaPod();
     // this should return the more specific of the two, or null if they are
     // incompatible
     Long leftCode = typeCodes.get(l);
@@ -203,7 +253,7 @@ public class Type {
     else if (isRdfType())
       sb.append("Rdf");
     else if (isXsdType())
-      sb.append(RdfClass.xsdToJavaPod(_name));
+      sb.append(xsdToJavaPodWrapper());
     else
       sb.append(_name);
 
@@ -227,8 +277,8 @@ public class Type {
       return _class == t._class;
     }
     if (isPODType()) {
-      String l = RdfClass.xsdToJavaPod(_name);
-      String r = RdfClass.xsdToJavaPod(t._name);
+      String l = xsdToJavaPodWrapper();
+      String r = t.xsdToJavaPodWrapper();
       return l.equals(r);
     }
     // TODO: check the parameter type list (recursively)

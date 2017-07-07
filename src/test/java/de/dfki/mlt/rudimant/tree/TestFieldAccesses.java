@@ -32,8 +32,8 @@ public class TestFieldAccesses {
 	  public void testFieldAccess2() {
 	    String in = "if(! c.user.personality.nonchalance ){}";
 	    String s = generate(in);
-	    String expected = "if (!(((c != null && c.user != null) && c.user.personality != null)"
-	    		+ " && c.user.personality.nonchalance != null))";
+	    String expected = "if (!((((c != null && c.user != null) && c.user.personality != null)"
+	    		+ " && c.user.personality.nonchalance != null)))";
 	    assertEquals(expected, getForMarked(s, expected));
 	  }
 
@@ -47,4 +47,21 @@ public class TestFieldAccesses {
 	    assertEquals(expected, getForMarked(s, expected));
 	  }
 
+    @Test
+    public void testFieldAccess4() {
+      String in = "Clazz c; timeout(\"bla\" + c.a.toString(), 1000) {}";
+      String s = generate(in);
+      String expected = "newTimeout((\"bla\"+((Rdf)c.getSingleValue(\"<dom:a>\")).toString()),"
+          + "1000,new Proposal() {public void run() {}});";
+      assertEquals(expected, getForMarked(s, expected));
+    }
+
+    @Test
+    public void testFieldAccess5() {
+      String in = "Clazz c; propose(\"bla\" + c.a.toString()) {}";
+      String s = generate(in);
+      String expected = "propose((\"bla\"+((Rdf)c.getSingleValue(\"<dom:a>\")).toString()),"
+          + "new Proposal() {public void run() {}});";
+      assertEquals(expected, getForMarked(s, expected));
+    }
 }

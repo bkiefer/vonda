@@ -210,7 +210,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
       out.append("import ").append(rudi.getWrapperClass()).append(";\n");
     }
 
-    VisitorGeneration gv = new VisitorGeneration(rudi, out, tokens);
+    VisitorGeneration gv =
+        new VisitorGeneration(out, mem, rudi.logRudi(), tokens);
 
     // we also need all imports that might be hidden in /*@ in the rudi
     // so, look for it in the comment before the first element we've got
@@ -218,7 +219,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     // EXCEPTION: COMMENTS BEFORE ANY CODE, OR AM I WRONG?
     rules.get(0).printImportifJava(gv);
     // maybe we need to import the class that imported us to use its variables
-    out.append("public class " + mem.getClassName());
+    out.append("public class ").append(mem.getClassName());
     // check if this should extend the wrapper class
     if (rudi.getParent() == null) {
       out.append(" extends ").append(rudi.getWrapperClass());
@@ -230,42 +231,26 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     for (String n : mem.getNeededClasses()) {
       if(n.equals(mem.getClassName())) continue;
       out.append("private final ");
-      out.append(capitalize(n) + " " + lowerCaseFirst(n));
+      out.append(capitalize(n)).append(' ').append(lowerCaseFirst(n));
       out.append(";\n");
     }
-    // now, we should add a constructor, including constructor parameters if
-    // specified in configs
+    // add a constructor
     // also, to use them for imports, declare those parameters class attributes
-    String conargs = "";
     String declare = "";
-    String args = rudi.getConstructorArgs();
-    if (null != args && !args.isEmpty()) {
-      int i = 0;
-      for (String a : args.split(",")) {
-        if (i > 0) {
-          conargs += ", ";
-        }
-        String s = a.trim().split(" ")[1];
-        out.append("private final " + a + ";\n");
-        declare += "this." + s + " = " + s + ";\n";
-        conargs += a.trim().split(" ")[1];
-        i++;
-      }
-    } else {
-      args = "";
-    }
+
     // get all those classes the toplevel rules need
-    int i = 0;
+    boolean notfirst = false;
+    out.append("public ").append(mem.getClassName()).append('(');
     for (String n : mem.getNeededClasses()) {
       if(n.equals(mem.getClassName())) continue;
       String name = lowerCaseFirst(n);
-      if (i != 0) args += ", ";
-      args += capitalize(n) + " " + name;
+      if (notfirst)
+        out.append(", ");
+      out.append(capitalize(n)).append(' ').append(name);
       declare += "this." + name + " = " + name + ";\n";
-      i++;
+      notfirst = true;
     }
-    out.append("public " + mem.getClassName() + "(" + args + ") {\n"
-        + "super(" + conargs + ");\n" + declare + "}\n");
+    out.append(") {\n super();\n").append(declare).append("}\n");
 
     // finally, the main processing method that will call all rules and imports
     // declared in this file

@@ -86,7 +86,7 @@ public class TestComparison {
     // other operators than == don't make sense here.
     String in = "Child a; Child b; if (a == b) return true;";
     String r = generate(in);
-    String expected = "if (a.equals(b)) return true;";
+    String expected = "if ((a.equals(b))) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -106,4 +106,59 @@ public class TestComparison {
     String expected = "if ((d.isSubsumedBy(new DialogueAct(\"Accept\", \"Return\")))) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
-}
+
+  @Test
+  public void testGenerationRdfExists() {
+    // other operators than == don't make sense here.
+    String in = "Child a; if (a.hasTreatment) return true;";
+    String r = generate(in);
+    String expected = "if ((a != null &&"
+        + " ((Rdf)a.getSingleValue(\"<dom:hasTreatment>\")) != null)) return true;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void testGenerationIntegerExists() {
+    // other operators than == don't make sense here.
+    String in = "Child a; if (a.age) return true;";
+    String r = generate(in);
+    String expected = "if ((a != null && "
+        + "exists(((Integer)a.getSingleValue(\"<dom:age>\"))))) return true;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void testGenerationXsdDateExists() {
+    // other operators than == don't make sense here.
+    String in = "Child a; if (a.birthdate) return true;";
+    String r = generate(in);
+    String expected = "if ((a != null && ((XsdDate)a.getSingleValue(\"<dom:birthdate>\")) != null)) return true;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void testGenerationStringExists() {
+    // other operators than == don't make sense here.
+    String in = "Activity a; if (a.status) return true;";
+    String r = generate(in);
+    String expected = "if ((a != null && exists(((String)a.getSingleValue(\"<dom:status>\"))))) return true;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void testGenerationNotEqual() {
+    // other operators than == don't make sense here.
+    String in = "Activity a; if (a.status != \"foo\") return true;";
+    String r = generate(in);
+    String expected = "if ((! (((String)a.getSingleValue(\"<dom:status>\")).equals(\"foo\")))) return true;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void testGenerationNotEqual2() {
+    // other operators than == don't make sense here.
+    String in = "Child c; if (c.hasBrother != null) return true;";
+    String r = generate(in);
+    String expected = "if ((! (((Set<Object>)c.getValue(\"<dom:hasBrother>\")) == null))) return true;";
+    assertEquals(expected, getForMarked(r, expected));
+  }}

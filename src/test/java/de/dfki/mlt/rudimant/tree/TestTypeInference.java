@@ -140,4 +140,12 @@ public class TestTypeInference {
   }
   */
 
+  @Test
+  public void test10() {
+    String in = " double f; void fun() { Clazz c; c.bf = 1.0; }";
+    String s = generate(in);
+    String expected = "return false; } void fun() { c.setValue(\"<dom:bf>\", 1.0); }";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
 }

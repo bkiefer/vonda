@@ -43,17 +43,12 @@ public class RudimantCompiler {
   private List<String> subPackage = new ArrayList<>();
   private int rootLevel = 0;
 
-  // private String className;
-
   private String packageName;
 
   private RudimantCompiler parent;
 
   // the class that should be extended by the rudi files to fill them into a project
   private final String wrapperClass;
-
-  // ... and its constructor arguments, if any
-  private final String constructorArgs;
 
   // Definitions for methods and variables in Agent.java
   private static final String agentInit = "/Agent.rudi";
@@ -62,13 +57,12 @@ public class RudimantCompiler {
   private boolean versionToLog = true;
 
   // The block that represents the file level that is compiled here
-  ToplevelBlock fileBlock = new ToplevelBlock();
+  private ToplevelBlock fileBlock = new ToplevelBlock();
 
 
   /** Constructor for imports */
   private RudimantCompiler(RudimantCompiler parentCompiler) {
     wrapperClass = parentCompiler.wrapperClass;
-    constructorArgs = parentCompiler.getConstructorArgs();
     mem = parentCompiler.mem;
     parent = parentCompiler;
     typeCheck = parentCompiler.typeCheck;
@@ -79,10 +73,8 @@ public class RudimantCompiler {
   }
 
   /** Constructor for top-level file */
-  private RudimantCompiler(RdfProxy proxy, String wrapper,
-      String targetConstructor){
+  private RudimantCompiler(RdfProxy proxy, String wrapper){
     wrapperClass = wrapper;
-    constructorArgs = targetConstructor;
     mem = new Mem(proxy);
   }
 
@@ -142,8 +134,7 @@ public class RudimantCompiler {
       proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
     }
     RudimantCompiler rc = new RudimantCompiler(proxy,
-              (String)configs.get(CFG_WRAPPER_CLASS),
-              (String)configs.get(CFG_TARGET_CONSTRUCTOR));
+              (String)configs.get(CFG_WRAPPER_CLASS));
     rc.checkOutputDirectory(configDir, configs);
     rc.typeCheck = (boolean)configs.get(CFG_TYPE_ERROR_FATAL);
     if (configs.containsKey(CFG_PACKAGE)) {
@@ -196,10 +187,6 @@ public class RudimantCompiler {
 
   public String getWrapperClass() {
     return wrapperClass;
-  }
-
-  public String getConstructorArgs() {
-    return constructorArgs;
   }
 
   public Mem getMem() {
@@ -340,7 +327,6 @@ public class RudimantCompiler {
     subPackage = parent.subPackage;
     subPackage.addAll(Arrays.asList(elements).subList(0, elements.length - 1));
 
-    // TODO: not nice. should always come in "brackets", but makes it more messy
     mem.enterClass(capitalize(inputRealName), fileBlock);
     processForReal(inputRealName);
     mem.leaveClass(fileBlock);

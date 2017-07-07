@@ -74,7 +74,7 @@ public abstract class Agent implements StreamingClient {
   public Set<String> rulesToLog = new HashSet<>();
   public boolean logAllRules = false;
 
-  private RdfProxy _proxy;
+  public RdfProxy _proxy;
 
   /** Send something out to the world */
   protected void sendBehaviour(Object obj) {
@@ -356,6 +356,7 @@ public abstract class Agent implements StreamingClient {
 
   public static boolean exists(Object s) {
     if (s == null) return false;
+    if (s instanceof Number) return ((Number) s).doubleValue() != 0;
     if (s instanceof String) return ! ((String)s).isEmpty();
     if (s instanceof Boolean) return (Boolean)s;
     if (s instanceof Collection) return !((Collection)s).isEmpty();

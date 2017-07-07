@@ -118,7 +118,7 @@ public class StatementTest {
 
  @Test
   public void TimeoutTest(){
-   String in = "time = 2; timeout(label, time) { i = 4; }";
+   String in = "time = 2; timeout(\"label\", time) { i = 4; }";
    String r = generate(in);
    System.out.println(r);
    String expected = "int time = 2; "

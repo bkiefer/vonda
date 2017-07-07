@@ -9,10 +9,7 @@ import static de.dfki.mlt.rudimant.Utils.*;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
@@ -45,10 +42,10 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
   // flag to tell the if if is a real rule if (contains the condition that was calculated)
   private String ruleIf = null;
 
-  public VisitorGeneration(RudimantCompiler r, Writer o, LinkedList<Token> tokens) {
+  public VisitorGeneration(Writer o, Mem m, boolean logHow, LinkedList<Token> tokens) {
     out = new SilentWriter(o);
-    mem = r.getMem();
-    whatToLog = r.logRudi();
+    mem = m;
+    whatToLog = logHow;
     condV = new VisitorConditionLog(this);
     collectedTokens = tokens;
   }
@@ -90,6 +87,11 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     return ret;
   }
 
+  /** If this is true, when generating a ExpFieldAccess we will not
+   *  generate an RDF access for the last part, which will be realized
+   *  by a method call.  This is highly, EXTREMELY, dangerous and error
+   *  prone, but currently we don't have a better idea.
+   */
   boolean replaceLastWithFuncall = false;
 
   @Override
@@ -152,11 +154,12 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     return left;
   }
 
-  private String generateAndMassageType(RTExpression node, Type resultType) {
+  private String generateAndMassageType(RTExpression node,
+      Type resultType, String operator) {
     if (node.type.isString()) {
       if (resultType.isDialogueAct())
         return "new DialogueAct(" + node.visitWithSComments(this) + ")";
-      if (resultType.isRdfType())
+      if (resultType.isRdfType() && ! "==".equals(operator))
         return node.visitWithSComments(this) + ".getClazz()";
     }
     // TODO: MAYBE THIS MUST BE GENERALIZED TO OTHER JAVA TYPES THAN STRING
@@ -167,9 +170,13 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
       if (node instanceof ExpVariable
           && ((ExpVariable) node).content.startsWith("\"")) {
         // TODO: ADD WRAPPER CLASS ACCESS
-        return "getRdfClass(" + node.visitWithSComments(this) + ")";
+        Type[] args = { new Type("String") };
+        String orig = mem.getFunctionOrigin("getRdfClass", Arrays.asList(args));
+        orig = orig == null ? "" : orig.toLowerCase() + ".";
+        return orig + "getRdfClass(" + node.visitWithSComments(this) + ")";
       } else {
-        return node.visitWithSComments(this) + ".getClazz()";
+        if (! "==".equals(operator))
+          return node.visitWithSComments(this) + ".getClazz()";
       }
     }
     return node.visitWithSComments(this);
@@ -236,9 +243,11 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     if (type.isPODType()) {
       return node.visitWithSComments(this) + " != 0";
     }
-    if (type.isCollection() || type.isString()) {
-      // TODO: ADD WRAPPER CLASS ACCESS
-      return "exists(" + node.visitWithSComments(this) + ")";
+    if (type.isCollection() || type.isString() || type.isNumber()) {
+      Type[] args = { new Type("Object") };
+      String orig = mem.getFunctionOrigin("exists", Arrays.asList(args));
+      orig = orig == null ? "" : orig.toLowerCase() + ".";
+      return  orig + "exists(" + node.visitWithSComments(this) + ")";
     }
     return node.visitWithSComments(this) + " != null";
   }
@@ -262,7 +271,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
         String operator = node.operator;
         if (operator.equals("!=")) {
           operator = "==";
-          ret += "! ";
+          ret += "! (";
         }
         // TODO: THERE'S A SPECIAL CASE IF BOTH ARE RDF AND OPERATOR IS ==
         // THEN, IT SHOULD JUST BE a.equals(b)
@@ -274,24 +283,24 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
             : " " + newOp + " ";
         String suff =
             (lastClosing >= 0) ? newOp.substring(lastClosing) : "";
-        ret += this.generateAndMassageType(node.left, resultType);
+        ret += this.generateAndMassageType(node.left, resultType, operator);
         ret += pref;
-        ret += this.generateAndMassageType(node.right, resultType);
+        ret += this.generateAndMassageType(node.right, resultType, operator);
         ret += suff;
       } else {
         ret += node.left.visitWithSComments(this);
         ret += " " + node.operator + " ";
         ret += node.right.visitWithSComments(this);
       }
-      ret += ")";
+      ret += ("!=".equals(node.operator)) ? "))" : ")";
     } else {
       if (null != node.operator) {
         // marker for generation, to probably wrap the right tests around?
         if (node.operator.equals("<>")) {
           ret += massageTest(node.left);
         } else {
-          ret += node.operator;
-          ret += node.left.visitWithSComments(this);
+          ret += node.operator + '(';
+          ret += node.left.visitWithSComments(this) + ')';
         }
       } else {
         ret += node.left.visitWithSComments(this);
@@ -656,11 +665,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
       if (node.parts.get(i) instanceof ExpPropertyAccess) {
         ExpPropertyAccess pa = (ExpPropertyAccess) node.parts.get(i);
         String cast = pa.getType().toString();
-        // TODO: what about long, double, ... ??
-        if ("int".equals(cast))
-          cast = "Integer";
-        else
-          cast = capitalize(cast);
+        // cast = capitalize(cast);
         //ret += "((" + cast + ")";
         ret += "((";
         ret += (!pa.functional) ? "Set<Object>" : cast;

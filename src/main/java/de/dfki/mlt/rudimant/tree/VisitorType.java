@@ -711,6 +711,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatTimeout node) {
+    node.label.visit(this);
     node.time.visit(this);
     node.block.visit(this);
   }

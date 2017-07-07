@@ -1,0 +1,41 @@
+
+
+// **********************************************************************
+// Tests and Comparisons
+// **********************************************************************
+
+// test for value under path, intermediate tests are generated
+if (child.brother.firstName) return "foo";
+
+// subsumption of dialogue acts, (equality is also possible)
+if (lastDA() <= #AcceptOffer(Bringing)) return "foo";
+
+// Two rdf objects being the same object. Mark the difference to the next
+// example! Here, the objects are compared, not the classes. Same for !=,
+// but all other comparison operators compare classes
+Child c1;
+Person c2;
+if (c1 == c2) return "foo";
+
+// Is the class of c1 a subclass (a strict subclass) of the class of c2 ?
+if (c1 <= c2) return "foo";
+if (c1 < c2) return "foo";
+
+// Is the class of c1 a subclass of Child?
+if (c1 <= Child) return "foo";
+
+// Is s not null and not empty?
+String s = "bar";
+if (s) return "foo";
+
+// Is s.compareTo(t) < 0
+String s = "bar", t = "baz";
+if (s < t) return "foo";
+
+// Is i not null and not zero? (Same for all other Number containers)
+Integer i = -1;
+if (i) return "foo";
+
+// Is o not null?
+Object o = new Object();
+if (o) return "foo";
