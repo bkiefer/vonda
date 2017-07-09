@@ -29,8 +29,8 @@ public class TestForStatements {
                     "initiate_greet: if(true){ for(seat : getSeats()){} }";
     String s = generate(ifstat);
     String expected = "public boolean initiate_greet(){"
-            + " initiate_greet: if (true) {for (Object seat_outer : getSeats()) "
-            + "{ Rdf seat = (Rdf)seat_outer; {}}} return false;";
+            + " initiate_greet: if (true) { for (Object seat_outer : getSeats()) "
+            + "{ Rdf seat = (Rdf)seat_outer; { } } } return false;";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -44,7 +44,7 @@ public class TestForStatements {
     String s = generate(ifstat);
     String expected = "public boolean initiate_greet(){"
             + " initiate_greet: if (true) {"
-            + "for (Object k_outer : kids()) { Rdf k = (Rdf)k_outer; {}}}"
+            + " for (Object k_outer : kids()) { Rdf k = (Rdf)k_outer; { } } }"
             + " return false;";
     assertEquals(expected, getForMarked(s, expected));
   }
@@ -57,7 +57,7 @@ public class TestForStatements {
     String s = generate(ifstat);
     String expected = "for (Object s_outer : getI()) {"
             + " Object s = (Object)s_outer; " +
-              "{// Rule label " +
+              "{ // Rule label " +
               "label: " +
               "if (true) { s = null; " +
               "}";
@@ -68,8 +68,23 @@ public class TestForStatements {
   public void test4() {
     String stat = "for (int i = 0; i < 10; i++){}";
     String s = generate(stat);
-    String expected = "for ( int i = 0; (i < 10); i = (i+1)){}";
+    String expected = "for ( int i = 0; (i < 10); i = (i+1)){ }";
     assertEquals(expected, getForMarked(s, expected));
   }
+
+  @Test
+  public void testComments() {
+    String stat = "/*@  public String preBlock() { return \"preBlock\";} @*/"
+        + "demo_rule: if (true) return; "
+        + "/*@ public String postBlock() { return \"postBlock\"; }@*/";
+    String s = generate(stat);
+    String expected = "public String preBlock() { return \"preBlock\";}"
+        + "public boolean demo_rule(){ demo_rule: if (true) break demo_rule; return false; } "
+        + "public String postBlock() { return \"postBlock\";}";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+  
+  
+
 
 }

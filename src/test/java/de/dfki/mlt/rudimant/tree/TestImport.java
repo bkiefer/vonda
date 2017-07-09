@@ -1,5 +1,6 @@
 package de.dfki.mlt.rudimant.tree;
 
+import static de.dfki.mlt.rudimant.Visualize.generate;
 import static de.dfki.mlt.rudimant.tree.TstUtils.*;
 import static org.junit.Assert.*;
 
@@ -13,7 +14,7 @@ import de.dfki.mlt.rudimant.GrammarMain;
 public class TestImport {
 
   @Test
-  public void testImport() throws WrongFormatException {
+  public void testImport1() throws WrongFormatException {
     GrammarMain.main(new String[]{
         "-o", "target/generated/",
         "-r", RESOURCE_DIR + "ontos/pal.quads.ini",

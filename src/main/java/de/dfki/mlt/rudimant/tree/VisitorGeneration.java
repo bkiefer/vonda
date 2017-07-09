@@ -426,7 +426,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     out.append(node.label + ":\n");
     node.ifstat.visitWithComments(this);
     if (node.toplevel) {
-      out.append("return false; \n}\n");
+      out.append("\nreturn false; \n}\n");
       mem.leaveEnvironment(node);
     }
     mem.leaveRule();
@@ -437,14 +437,14 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     if (node.braces) {
       // when entering a statement block, we need to create a new local
       // environment
-      out.append("{");
+      out.append("{\n");
       mem.enterEnvironment(node);
     }
     for (RudiTree stat : node.statblock) {
       stat.visitWithComments(this);
     }
     if (node.braces) {
-      out.append("}");
+      out.append("\n}");
       mem.leaveEnvironment(node);
     }
   }
@@ -475,7 +475,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     out.append(" = (").append(node.varType.toString())
        .append(")").append(var).append("_outer;\n");
     node.statblock.visitWithComments(this);
-    out.append("}");
+    out.append("\n}");
   }
 
   @Override
@@ -488,7 +488,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
       out.append("\nObject " + s + " = o[" + count++ + "]");
     }
     node.statblock.visitWithComments(this);
-    out.append("}");
+    out.append("\n}");
   }
 
   @Override
@@ -515,9 +515,9 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     out.append(node.listType.toString()).append(' ')
        .append(node.variableName);
     if (node.listType.toString().startsWith("List")) {
-      out.append(" = new ArrayList<>();");
+      out.append(" = new ArrayList<>();\n");
     } else if (node.listType.toString().startsWith("Set")) {
-      out.append(" = new HashSet<>();");
+      out.append(" = new HashSet<>();\n");
     }
     if(node.objects.isEmpty()) {
       return;

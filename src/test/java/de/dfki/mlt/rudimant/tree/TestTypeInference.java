@@ -27,7 +27,7 @@ public class TestTypeInference {
     String boolexp = ""
             + "public void foo() { b = 5 < 1; }";
     String s = generate(boolexp);
-    String expected = "public void foo() {boolean b = (5 < 1);";
+    String expected = "public void foo() { boolean b = (5 < 1);";
     assertEquals(expected, getForMarked(s, expected));
 
 
@@ -79,7 +79,7 @@ public class TestTypeInference {
   public void test4() {
     String in = "Activity a; if (a) { }";
     String s = generate(in);
-    String expected = "if (a != null) {}";
+    String expected = "if (a != null) { }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -144,7 +144,7 @@ public class TestTypeInference {
   public void test10() {
     String in = " double f; void fun() { Clazz c; c.bf = 1.0; }";
     String s = generate(in);
-    String expected = "return false; } void fun() { c.setValue(\"<dom:bf>\", 1.0); }";
+    String expected = "return false; } void fun() { c.setValue(\"<dom:bf>\", 1.0); }}";
     assertEquals(expected, getForMarked(s, expected));
   }
 

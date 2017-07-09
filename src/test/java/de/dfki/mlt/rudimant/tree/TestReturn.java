@@ -16,7 +16,7 @@ public class TestReturn {
   public void testReturn1(){
     String in = "int fn() { return 1; }";
     String r = generate(in);
-    String expected = "int fn() {return 1; }";
+    String expected = "int fn() { return 1; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -24,7 +24,7 @@ public class TestReturn {
   public void testReturn2(){
     String in = "foo: if (true) { return 1; }";
     String r = generate(in);
-    String expected = "public boolean foo(){ foo: if (true) {return 1; }";
+    String expected = "public boolean foo(){ foo: if (true) { return 1; } return false; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -32,7 +32,7 @@ public class TestReturn {
   public void testReturn3(){
     String in = "foo: if (true) { return foo; }";
     String r = generate(in);
-    String expected = "public boolean foo(){ foo: if (true) {break foo; }";
+    String expected = "public boolean foo(){ foo: if (true) { break foo; } return false; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -40,7 +40,7 @@ public class TestReturn {
   public void testReturn4(){
     String in = "bar: if (false) { foo: if (true) { return foo; } }";
     String r = generate(in);
-    String expected = "public boolean bar(){ bar: if (false) {// Rule foo foo: if (true) {break foo; } }";
+    String expected = "public boolean bar(){ bar: if (false) { // Rule foo foo: if (true) { break foo; } } return false; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -48,7 +48,7 @@ public class TestReturn {
   public void testReturn5(){
     String in = "foo: if (true) { return ; }";
     String r = generate(in);
-    String expected = "public boolean foo(){ foo: if (true) {break foo; }";
+    String expected = "public boolean foo(){ foo: if (true) { break foo; } return false; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -56,8 +56,8 @@ public class TestReturn {
   public void testReturn6(){
     String in = "foo: if (true) { bar: if (false) return ; }";
     String r = generate(in);
-    String expected = "public boolean foo(){ foo: if (true) {// Rule bar bar: if (false) break bar; } "
-    		+ "return false;";
+    String expected = "public boolean foo(){ foo: if (true) { // Rule bar bar: if (false) break bar; } "
+    		+ "return false; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -65,8 +65,8 @@ public class TestReturn {
   public void testReturn7(){
     String in = "foo: if (true) { return test; }";
     String r = generate(in);
-    String expected = "public boolean foo(){ foo: if (true) {return test; } "
-    		+ "return false;";
+    String expected = "public boolean foo(){ foo: if (true) { return test; } "
+    		+ "return false; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -74,7 +74,7 @@ public class TestReturn {
   public void testReturn8(){
     String in = "if (true) { return test; }";
     String r = generate(in);
-    String expected = "if (true) {return test; }";
+    String expected = "if (true) { return test; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 

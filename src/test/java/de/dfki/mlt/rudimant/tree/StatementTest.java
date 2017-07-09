@@ -40,9 +40,9 @@ public class StatementTest {
     String in = " List<String> slots = { Hobby, Color };"
             + " for (String slot : slots){}";
     String r = generate(in);
-    String expected = "List<String> slots = new ArrayList<>();slots.add(\"Hobby\"); "
+    String expected = "List<String> slots = new ArrayList<>(); slots.add(\"Hobby\"); "
         + "slots.add(\"Color\"); "
-        + "for (Object slot_outer : slots) { String slot = (String)slot_outer; {}}";
+        + "for (Object slot_outer : slots) { String slot = (String)slot_outer; { } }";
     assertEquals(expected, getForMarked(r, expected));
     // TODO: make this work again, it was nicer
 //    assertEquals("List<String> slots = new ArrayList<>();slots.add(\"Hobby\"); "
@@ -94,7 +94,7 @@ public class StatementTest {
    String in = "int i; boolean truth; "
            + "switch(truth){case (truth): i=2;  case(truth==false): i=1;}";
     String r = generate(in);
-    String expected = "switch (truth){case(truth):; "
+    String expected = "switch (truth){ case(truth):; "
             + "i = 2; case(truth==false):; i = 1; }";
     assertEquals(expected, getForMarked(r, expected));
  }
@@ -121,7 +121,7 @@ public class StatementTest {
    String in = "time = 2; timeout(\"label\", time) { i = 4; }";
    String r = generate(in);
    String expected = "int time = 2; "
-       + "newTimeout(\"label\",time,new Proposal() {public void run() {int i = 4; }});";
+       + "newTimeout(\"label\",time,new Proposal() {public void run() { int i = 4; }});";
    assertEquals(expected, getForMarked(r, expected));
  }
 

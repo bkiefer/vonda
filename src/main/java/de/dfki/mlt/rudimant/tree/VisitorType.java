@@ -429,6 +429,11 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
   /** An explicit variable declaration, without assignment, just definition */
   @Override
   public void visitNode(StatVarDef node) {
+    if (mem.variableExists(node.variable)){
+      typeError("Re-defined variable " + node.variable + " from " +
+            mem.getVariableType(node.variable) + " to " + node.type +
+            ", so I'll stay with the old type", node);
+    }
     mem.addVariableDeclaration(node.variable, node.type);
   }
 

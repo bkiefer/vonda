@@ -32,7 +32,7 @@ public class ExpLambdaTest {
     // according to Anna, this function doesn't work yet (1.12.2016)
     // RudiTree dtr = getNodeOfInterest(parseAndTypecheck(in));
     // assertTrue(dtr instanceof ExpLambda);
-
+    // TODO: this is now working and already tested in TestTypes.testLambdaExp, add examples that make sense here!
   }
 
 }
