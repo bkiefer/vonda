@@ -115,50 +115,24 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     this.rules = rules;
   }
 
-  private boolean containsDefinition(RudiTree t) {
-    if (t instanceof StatVarDef
-        || (t instanceof StatMethodDeclaration
-            && ((StatMethodDeclaration)t).block == null)) return true;
-    if (t instanceof StatExpression) {
-      RTExpression ex = ((StatExpression) t).expression;
-      return (ex instanceof ExpAssignment) && ((ExpAssignment) ex).declaration;
-    }
-    return false;
-  }
-
-  private void visitTypeInference(RudiTree t, VisitorType ttv) {
-    if (t instanceof RTStatement) {
-      ((RTStatement)t).visit(ttv);
-    } else if (t instanceof RTExpression) {
-      ((RTExpression)t).visit(ttv);
-    }
-  }
-
+  // As expected, this works equally well.
   private void startTypeInference(RudimantCompiler rudi, boolean errorsFatal) {
     Mem mem = rudi.getMem();
     VisitorType ttv = new VisitorType(mem, errorsFatal);
-    List<RudiTree> nonDefs = new ArrayList<>(rules.size());
-    // learn about all definitions before visiting the other statements!!
-    // TODO: WHY? IF WE REQUIRE THE DEFINITION ALWAYS PRECEDING THE USE, THEN
-    // WHY IS THIS NECESSARY?
+
     for (RudiTree t : rules) {
-      if(containsDefinition(t)) {
-        visitTypeInference(t, ttv);
-      } else {
-        nonDefs.add(t);
-      }
-    }
-    for (RudiTree t : nonDefs) {
       if (t instanceof Import) {
         Import node = (Import)t;
         String conargs = "";
         mem.addImport(node.name, conargs);
         rudi.processImport(node.content);
+      } else if (t instanceof RTStatement) {
+        ((RTStatement)t).visit(ttv);
+      } else if (t instanceof RTExpression) {
+        ((RTExpression)t).visit(ttv);
       }
-      visitTypeInference(t, ttv);
     }
   }
-
 
   private void writeRuleList(Writer out, Mem mem, VisitorGeneration gv)
       throws IOException{
@@ -236,7 +210,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
       out.append("import ").append(rudi.getWrapperClass()).append(";\n");
     }
 
-    VisitorGeneration gv = new VisitorGeneration(rudi, out, tokens);
+    VisitorGeneration gv =
+        new VisitorGeneration(out, mem, rudi.logRudi(), tokens);
 
     // we also need all imports that might be hidden in /*@ in the rudi
     // so, look for it in the comment before the first element we've got
@@ -244,7 +219,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     // EXCEPTION: COMMENTS BEFORE ANY CODE, OR AM I WRONG?
     rules.get(0).printImportifJava(gv);
     // maybe we need to import the class that imported us to use its variables
-    out.append("public class " + mem.getClassName());
+    out.append("public class ").append(mem.getClassName());
     // check if this should extend the wrapper class
     if (rudi.getParent() == null) {
       out.append(" extends ").append(rudi.getWrapperClass());
@@ -256,42 +231,26 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     for (String n : mem.getNeededClasses()) {
       if(n.equals(mem.getClassName())) continue;
       out.append("private final ");
-      out.append(capitalize(n) + " " + lowerCaseFirst(n));
+      out.append(capitalize(n)).append(' ').append(lowerCaseFirst(n));
       out.append(";\n");
     }
-    // now, we should add a constructor, including constructor parameters if
-    // specified in configs
+    // add a constructor
     // also, to use them for imports, declare those parameters class attributes
-    String conargs = "";
     String declare = "";
-    String args = rudi.getConstructorArgs();
-    if (null != args && !args.isEmpty()) {
-      int i = 0;
-      for (String a : args.split(",")) {
-        if (i > 0) {
-          conargs += ", ";
-        }
-        String s = a.trim().split(" ")[1];
-        out.append("private final " + a + ";\n");
-        declare += "this." + s + " = " + s + ";\n";
-        conargs += a.trim().split(" ")[1];
-        i++;
-      }
-    } else {
-      args = "";
-    }
+
     // get all those classes the toplevel rules need
-    int i = 0;
+    boolean notfirst = false;
+    out.append("public ").append(mem.getClassName()).append('(');
     for (String n : mem.getNeededClasses()) {
       if(n.equals(mem.getClassName())) continue;
       String name = lowerCaseFirst(n);
-      if (i != 0) args += ", ";
-      args += capitalize(n) + " " + name;
+      if (notfirst)
+        out.append(", ");
+      out.append(capitalize(n)).append(' ').append(name);
       declare += "this." + name + " = " + name + ";\n";
-      i++;
+      notfirst = true;
     }
-    out.append("public " + mem.getClassName() + "(" + args + ") {\n"
-        + "super(" + conargs + ");\n" + declare + "}\n");
+    out.append(") {\n super();\n").append(declare).append("}\n");
 
     // finally, the main processing method that will call all rules and imports
     // declared in this file

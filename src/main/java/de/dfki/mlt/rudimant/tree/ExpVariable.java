@@ -14,14 +14,17 @@ import de.dfki.mlt.rudimant.Type;
  */
 public class ExpVariable extends RTExpLeaf {
 
+  private ExpVariable(String representation, Type t) {
+    content = representation;
+    type = t;
+  }
+
   public ExpVariable(String type, String representation) {
-    this(representation);
-    this.type = new Type(type);
+    this(representation, new Type(type));
   }
 
   public ExpVariable(String representation) {
-    content = representation;
-    type = Type.getNoType();
+    this(representation, Type.getNoType());
   }
 
   @Override

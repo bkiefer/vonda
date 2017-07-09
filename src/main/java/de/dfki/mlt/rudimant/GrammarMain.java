@@ -67,7 +67,6 @@ public class GrammarMain {
   final static Object [][] defaults = {
     { CFG_TYPE_ERROR_FATAL, true, "e" },
     { CFG_VISUALISE, false , "v" },
-    { CFG_TARGET_CONSTRUCTOR, "", "CA" },
     { CFG_WRAPPER_CLASS, "w", "DummyAgent" },
   };
 

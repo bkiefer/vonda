@@ -355,10 +355,8 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitTimeout_statement(Timeout_statementContext ctx) {
-    // TIMEOUT '(' VARIABLE ',' arithmetic ')' statement_block
-    return new StatTimeout(
-        (RTExpression) new ExpSingleValue(ctx.getChild(2).getText(), "String")
-          .setPosition(ctx, currentClass),
+    // TIMEOUT '(' string_expression ',' arithmetic ')' statement_block
+    return new StatTimeout((RTExpression) visit(ctx.getChild(2)),
         (RTExpression) visit(ctx.getChild(4)),
         (StatAbstractBlock) visit(ctx.getChild(6))).setPosition(ctx, currentClass);
   }

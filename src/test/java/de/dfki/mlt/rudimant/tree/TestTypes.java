@@ -109,7 +109,7 @@ public class TestTypes {
     String in = "Child c; if (!c.hasMother) int i = 0;";
     String r = generate(in);
     String expected =
-        "if (!((c != null) && (((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null))) int i = 0;";
+        "if (!((c != null && ((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null))) int i = 0;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -118,8 +118,9 @@ public class TestTypes {
     String in = "Child c; a: if (!c.hasMother) int i = 0;";
     String r = generate(in);
     String expected =
-        "if (a()) return true; return false; } public boolean a(){ boolean a0 = false; a0 = !((c != null) && "
-        + "(((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null));";
+        "if (a()) return true; return false; }"
+        + " public boolean a(){ boolean a0 = false; a0 = !((c != null && "
+        + "((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null));";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -141,7 +142,9 @@ public class TestTypes {
         " { Child w = getChild(i); if (w) raw += w; } return raw; }";
     String r = generate(in);
     String expected =
-        "List<Rdf> out() {List<Rdf> raw = new ArrayList<>();for ( int i = 1; ((i < 5) && (raw.size() < 3)); i = (i+1)){Rdf w = getChild(i); if ((w != null)) raw.add(w); }return raw;";
+        "List<Rdf> out() {List<Rdf> raw = new ArrayList<>();"
+        + "for ( int i = 1; ((i < 5) && (raw.size() < 3)); i = (i+1)){"
+        + "Rdf w = getChild(i); if (w != null) raw.add(w); }return raw;";
     assertEquals(expected, getForMarked(r, expected));
   }
 }

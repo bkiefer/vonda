@@ -5,6 +5,8 @@
  */
 package de.dfki.mlt.rudimant.tree;
 
+import static de.dfki.mlt.rudimant.Utils.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +55,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
    * @param errorMessage
    * @param node the tree node where the error occured
    */
-  public void typeWarning(String errorMessage, RudiTree node) {
+  public static void typeWarning(String errorMessage, RudiTree node) {
     // just set a warning into the logger
     logger.warn(node.getLocation() + " " + errorMessage);
   }
@@ -119,11 +121,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
   @Override
   public void visitNode(ExpAssignment node) {
     node.right.visit(this);
-    // make sure they become Java POD types, if xsd type
-    //node.right.type = node.right.type != null? node.right.type.convertXsdType() : null;
     node.left.visit(this);
-    //node.left.type = node.left.type != null? node.left.type.convertXsdType() : null;
-
     // is this a variable declaration for an already existing variable?
     // When we get here, if node.declaration is true, then node.type has a
     // non-null value, and vice versa
@@ -132,9 +130,9 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
         typeError("Re-declaration of existing variable " + node.left, node);
       } else {
     	if(mem.isActiveRule(node.left.fullexp)){
-          typeError("Declaring a variable " + node.left + " what also is a rule name!", node);
+    	  typeError("Declaring variable " + node.left + " that is also a rule name!", node);
     	}
-        node.left.type = node.type; // the type of the declaration is in this node
+    	node.left.type = node.type; // the type of the declaration is in this node
       }
       mem.addVariableDeclaration(((ExpVariable) node.left).content,
               node.left.type);
@@ -145,10 +143,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
         && !mem.variableExists(node.left.toString())) {
       node.declaration = true;
       // node.type is null, and variable does not exist, so no type.
-      // now consolidate types
       if (node.right.type == null) {
-        // please, never assign null as a type, because that is no valid java type
-        // and will crash for sure
         node.right.type = Type.getNoType();
         // TODO: ? node.right.propagateType(node.type);
       }
@@ -196,55 +191,11 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     }
   }
 
-  private boolean isBooleanOperator(String operator) {
-    return operator.equals("&&") || operator.equals("||")
-            || operator.equals("!");
-  }
-
-  private boolean isComparisonOperator(String operator) {
-    if ("<>=!".indexOf(operator.charAt(0)) < 0) {
-      return false;
-    }
-    return (operator.length() == 2 && operator.charAt(1) == '=')
-            || ("<>".indexOf(operator.charAt(0)) >= 0 && operator.length() == 1);
-  }
-
-  private String modifyOperator(String operator) {
-    switch (operator) {
-    case "==": return "isEqual(";
-    case "!=": return "isNotEqual(";
-    case "<": return "isSmaller(";
-    case ">": return "isGreater(";
-    case "<=": return "isSmallerEqual(";
-    case ">=": return "isGreaterEqual(";
-    default:
-      logger.warn("Unknown operator: {}", operator);
-      break;
-    }
-    return operator;
-  }
-
-  private RTExpression ensureDA(RTExpression ex) {
-    if (ex.getType().isString())
-      return ex.fixFields(new ExpNew("DialogueAct", ex));
-    if (! ex.getType().isDialogueAct())
-      logger.error("Can not be converted to dialogue act: {}", ex);
-    return ex;
-  }
-
-  /**
+  /*
    * In principle the same as ExpArithmetic, with boolean only. The one
    * difference is that there are unary expressions which serve as boolean
    * expressions and later have to be turned into proper boolean expressions,
    * either by calling the right 0-ary method, or comparing with zero or null.
-   *
-   * What combinations are we expecting?
-   * POD vs POD --> keep operator
-   * POD vs Container --> container may be null!
-   * String vs String --> isSmallerThan
-   * String vs DialogueAct --> convert String and apply DA vs DA
-   * String vs Rdf or String vs RdfClass or Rdf vs RdfClass --> convert to RdfClass
-   * DA vs DA,
    */
   @Override
   public void visitNode(ExpBoolean node) {
@@ -255,15 +206,9 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
         node.right = node.right.ensureBoolean();
         node.left = node.left.ensureBoolean();
       }
-      // TODO: must be done during GENERATION
-      Type l = node.left.getType();
-      Type r = node.right.getType();
-      if (! l.isPODType() && !r.isPODType()) {
-        node.operator = modifyOperator(node.operator);
-      }
     } else {
-      // we should do this always, because if the boolean expression has only one
-      // side it may have no operator!!!!
+      // we do this always, because if the boolean expression has only one
+      // side it may have no operator
       node.left = node.left.ensureBoolean();
     }
   }
@@ -564,7 +509,6 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
         mem.getVariableType(var.content).isString()) {
       // the literal represents a variable, so we can't determine the type of
       // the access
-      // TODO: Maybe return "Object" as type, should be correct in most cases.
       return new ExpPropertyAccess(var.fullexp, var, true, Type.getNoType(), false);
     }
     if (currentType.isDialogueAct()) {
@@ -734,12 +678,6 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
    */
   @Override
   public void visitNode(ExpVariable node) {
-    /* Covered by StatVarDef or ExpAssignment
-    if (node.type != null && ! node.type.isUnspecified()
-        && mem.getVariableType(node.content) == null) {
-      mem.addVariableDeclaration(node.fullexp, node.type);
-      return;
-    } */
     // get the type of the variable, if defined
     // TODO: is there a way to find out if we try to retrieve the value of an
     // undefined variable?
@@ -773,6 +711,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatTimeout node) {
+    node.label.visit(this);
     node.time.visit(this);
     node.block.visit(this);
   }

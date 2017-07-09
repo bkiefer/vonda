@@ -13,7 +13,9 @@
 
 // Rdf(Proxy) methods
 Rdf toRdf(String uri);
-String toUri(Rdf rdf);
+
+RdfClass getRdfClass(String s);
+boolean exists(Object o);
 
 // DialogueAct methods
 DialogueAct createEmitDA(DialogueAct da);
@@ -63,6 +65,6 @@ List<Object> sort(Collection coll, Comparator c);
 
 // all Agent variables we should know
 
-RdfProxy _proxy;
+//RdfProxy _proxy;
 CommunicationHub _hub;
 AsrTts asr;

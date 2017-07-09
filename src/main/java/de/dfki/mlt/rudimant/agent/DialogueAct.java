@@ -45,12 +45,28 @@ public class DialogueAct {
     return _dag.toString(true);
   }
 
+  /** this is more specific than arg (this >= arg) */
   public boolean isSubsumedBy(DialogueAct moreGeneral) {
     return _dag.isSubsumedBy(moreGeneral._dag);
   }
 
-  public boolean subsumes(DialogueAct moreGeneral) {
-    return _dag.subsumes(moreGeneral._dag);
+  /** this is more specific than arg (this >= arg) */
+  public boolean isStrictlySubsumedBy(DialogueAct moreGeneral) {
+    return _dag.isSubsumedBy(moreGeneral._dag) && ! equals(moreGeneral);
+  }
+
+  /** this is more general than arg (this <= arg) */
+  public boolean subsumes(DialogueAct moreSpecific) {
+    return _dag.subsumes(moreSpecific._dag);
+  }
+
+  /** this is more general than arg (this <= arg) */
+  public boolean strictlySubsumes(DialogueAct moreSpecific) {
+    return _dag.subsumes(moreSpecific._dag) && ! equals(moreSpecific);
+  }
+
+  public boolean equals(DialogueAct arg) {
+    return _dag.equals(arg._dag);
   }
 
   /** Return true if the given slot (argument) is available */

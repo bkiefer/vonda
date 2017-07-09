@@ -9,8 +9,7 @@ import static de.dfki.mlt.rudimant.Utils.*;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.*;
 
 import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
@@ -43,10 +42,10 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
   // flag to tell the if if is a real rule if (contains the condition that was calculated)
   private String ruleIf = null;
 
-  public VisitorGeneration(RudimantCompiler r, Writer o, LinkedList<Token> tokens) {
+  public VisitorGeneration(Writer o, Mem m, boolean logHow, LinkedList<Token> tokens) {
     out = new SilentWriter(o);
-    mem = r.getMem();
-    whatToLog = r.logRudi();
+    mem = m;
+    whatToLog = logHow;
     condV = new VisitorConditionLog(this);
     collectedTokens = tokens;
   }
@@ -88,6 +87,11 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     return ret;
   }
 
+  /** If this is true, when generating a ExpFieldAccess we will not
+   *  generate an RDF access for the last part, which will be realized
+   *  by a method call.  This is highly, EXTREMELY, dangerous and error
+   *  prone, but currently we don't have a better idea.
+   */
   boolean replaceLastWithFuncall = false;
 
   @Override
@@ -139,33 +143,166 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     return ret;
   }
 
+
+  private static Type assessTypes(Type left, Type right) {
+    if (right.isString() && ! left.isString()) {
+      Type h = right; right = left; left = h;
+    }
+    if (left.isString()
+        && (right.isDialogueAct() || right.isRdfType()))
+      return right;
+    return left;
+  }
+
+  private String generateAndMassageType(RTExpression node,
+      Type resultType, String operator) {
+    if (node.type.isString()) {
+      if (resultType.isDialogueAct())
+        return "new DialogueAct(" + node.visitWithSComments(this) + ")";
+      if (resultType.isRdfType() && ! "==".equals(operator))
+        return node.visitWithSComments(this) + ".getClazz()";
+    }
+    // TODO: MAYBE THIS MUST BE GENERALIZED TO OTHER JAVA TYPES THAN STRING
+    // THAT CAN BE CONVERTED AUTOMATICALLY FROM XSD TYPES
+    if (!node.type.isDialogueAct()
+        && node.type.isRdfType()
+        && resultType.isRdfType()) {
+      if (node instanceof ExpVariable
+          && ((ExpVariable) node).content.startsWith("\"")) {
+        // TODO: ADD WRAPPER CLASS ACCESS
+        Type[] args = { new Type("String") };
+        String orig = mem.getFunctionOrigin("getRdfClass", Arrays.asList(args));
+        orig = orig == null ? "" : orig.toLowerCase() + ".";
+        return orig + "getRdfClass(" + node.visitWithSComments(this) + ")";
+      } else {
+        if (! "==".equals(operator))
+          return node.visitWithSComments(this) + ".getClazz()";
+      }
+    }
+    return node.visitWithSComments(this);
+  }
+
+  static Map<String, String> rdfOpMap = new HashMap<>();
+  static Map<String, String> dialOpMap = new HashMap<>();
+  static Map<String, String> striOpMap = new HashMap<>();
+  static {
+    String[] rdf = { "==", ".equals()",
+        "<=", ".isSubclassOf()",
+        "<", ".isTrueSubclassOf()",
+        ">=", ".isSuperclassOf()",
+        ">", ".isTrueSuperclassOf()",
+    };
+    for(int i = 0; i < rdf.length; i += 2) {
+      rdfOpMap.put(rdf[i], rdf[i+1]);
+    }
+    String[] dial = { "==", ".equals()",
+        "<=", ".subsumes()",
+        "<", ".strictlySubsumes()",
+        ">=", ".isSubsumedBy()",
+        ">", ".isStrictlySubsumedBy()",
+    };
+    for(int i = 0; i < dial.length; i += 2) {
+      dialOpMap.put(dial[i], dial[i+1]);
+    }
+    String[] stri = { "==", ".equals()",
+        "<=", ".compareTo() <= 0",
+        "<", ".compareTo() < 0",
+        ">=", ".compareTo() >= 0",
+        ">", ".compareTo() > 0"
+    };
+    for(int i = 0; i < stri.length; i += 2) {
+
+      striOpMap.put(stri[i], stri[i+1]);
+    }
+  }
+
+  private String massageOperator(String operator, Type resultType) {
+    if (resultType.isDialogueAct()) return dialOpMap.get(operator);
+    if (resultType.isRdfType()) return rdfOpMap.get(operator);
+    if (resultType.isString()) return striOpMap.get(operator);
+    return operator;
+  }
+
+  private String massageTest(RTExpression node) {
+    Type type = node.type;
+    if (node instanceof ExpFieldAccess) {
+      ExpFieldAccess fa = (ExpFieldAccess)node;
+      RTExpression nextToLast = fa.parts.get(fa.parts.size() - 2);
+      if (nextToLast.type.isDialogueAct()) {
+        boolean oldrep = replaceLastWithFuncall;
+        replaceLastWithFuncall = true;
+        String ret = fa.visitWithSComments(this) + ".hasSlot(\"" +
+            fa.parts.get(fa.parts.size() - 1).fullexp + "\")";
+        replaceLastWithFuncall = oldrep;
+        return ret;
+      }
+    }
+    if (type.isBool()) {
+      return node.visitWithSComments(this);
+    }
+    if (type.isPODType()) {
+      return node.visitWithSComments(this) + " != 0";
+    }
+    if (type.isCollection() || type.isString() || type.isNumber()) {
+      Type[] args = { new Type("Object") };
+      String orig = mem.getFunctionOrigin("exists", Arrays.asList(args));
+      orig = orig == null ? "" : orig.toLowerCase() + ".";
+      return  orig + "exists(" + node.visitWithSComments(this) + ")";
+    }
+    return node.visitWithSComments(this) + " != null";
+  }
+
   @Override
   public String visitNode(ExpBoolean node) {
-    // TODO MOVE THE TYPE CHECKING AND OPERATOR MOD CODE FROM TYPEVISITOR TO HERE.
     String ret = "";
-    if (node.operator != null && node.operator.contains("(")) {
-      // other operator, is it sth. like "exists("
-      if (! mem.getToplevelInstance().equalsIgnoreCase(mem.getClassName())) {
-        ret += mem.getToplevelInstance() + ".";
-      }
-      ret += node.operator;
-      ret += node.left.visitWithSComments(this);
-      if (node.right != null) {
-        ret += ", ";
-        ret += node.right.visitWithSComments(this);
-      }
-      ret += ")";
-    } else {
-      if (node.right != null) {
-        ret += "(";
+    if (node.right != null) {
+      /* What combinations are we expecting?
+       * POD vs POD --> keep operator
+       * POD vs Container --> container may be null! Ignore for now?
+       * String vs String --> i.compareTo(j) < 0 etc.
+       * String vs DialogueAct --> convert String and apply DA vs DA (isSubsumed, etc.)
+       * String vs Rdf --> convert to RdfClass and use isSub/SuperclassOf
+       * DA vs DA, DA vs String --> isSubsumed and the like.
+       * Rdf == Rdf --> equals
+       */
+      ret += "(";
+      if (isComparisonOperator(node.operator)
+          && !node.left.type.isPODType() && !node.right.type.isPODType()) {
+        String operator = node.operator;
+        if (operator.equals("!=")) {
+          operator = "==";
+          ret += "! (";
+        }
+        // TODO: THERE'S A SPECIAL CASE IF BOTH ARE RDF AND OPERATOR IS ==
+        // THEN, IT SHOULD JUST BE a.equals(b)
+        Type resultType = assessTypes(node.left.type, node.right.type);
+        String newOp = massageOperator(operator, resultType);
+        int lastClosing = newOp.lastIndexOf(')');
+        String pref = (lastClosing >= 0)
+            ? newOp.substring(0, lastClosing)
+            : " " + newOp + " ";
+        String suff =
+            (lastClosing >= 0) ? newOp.substring(lastClosing) : "";
+        ret += this.generateAndMassageType(node.left, resultType, operator);
+        ret += pref;
+        ret += this.generateAndMassageType(node.right, resultType, operator);
+        ret += suff;
+      } else {
         ret += node.left.visitWithSComments(this);
         ret += " " + node.operator + " ";
         ret += node.right.visitWithSComments(this);
-        ret += ")";
-      } else {
-        if (null != node.operator) {
-          ret += node.operator;
+      }
+      ret += ("!=".equals(node.operator)) ? "))" : ")";
+    } else {
+      if (null != node.operator) {
+        // marker for generation, to probably wrap the right tests around?
+        if (node.operator.equals("<>")) {
+          ret += massageTest(node.left);
+        } else {
+          ret += node.operator + '(';
+          ret += node.left.visitWithSComments(this) + ')';
         }
+      } else {
         ret += node.left.visitWithSComments(this);
       }
     }
@@ -174,8 +311,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public String visitNode(ExpCast node) {
-    return "((" + node.type + ")"
-        + visitNode(node.expression) + ")";
+    return "((" + node.type + ")" + visitNode(node.expression) + ")";
   }
 
   public String visitDaToken(RTExpression exp) {
@@ -529,11 +665,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
       if (node.parts.get(i) instanceof ExpPropertyAccess) {
         ExpPropertyAccess pa = (ExpPropertyAccess) node.parts.get(i);
         String cast = pa.getType().toString();
-        // TODO: what about long, double, ... ??
-        if ("int".equals(cast))
-          cast = "Integer";
-        else
-          cast = capitalize(cast);
+        // cast = capitalize(cast);
         //ret += "((" + cast + ")";
         ret += "((";
         ret += (!pa.functional) ? "Set<Object>" : cast;
@@ -571,7 +703,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
         (node.calledUpon == null || node.calledUpon.isUnspecified())) {
       ret += lowerCaseFirst(node.realOrigin) + ".";
     }
-    if(node.newexp){
+    if (node.newexp){
       ret += node.type + "(";
     } else {
       ret += node.content + "(";
