@@ -180,6 +180,7 @@ public class TestCast {
   @Test
   public void test12() {
     // TODO: When i is int, this is definitely an error in java; how to deal with it?
+    //      in this case, a type error is thrown; we should test that here 
     String in = "int i; i = false;";
     String s = generate(in);
     String expected = "i = (Object /* (unknown) */) false;";

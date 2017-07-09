@@ -120,7 +120,6 @@ public class StatementTest {
   public void TimeoutTest(){
    String in = "time = 2; timeout(label, time) { i = 4; }";
    String r = generate(in);
-   System.out.println(r);
    String expected = "int time = 2; "
        + "newTimeout(\"label\",time,new Proposal() {public void run() {int i = 4; }});";
    assertEquals(expected, getForMarked(r, expected));
