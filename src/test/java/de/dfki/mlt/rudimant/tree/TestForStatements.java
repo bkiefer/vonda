@@ -80,7 +80,7 @@ public class TestForStatements {
     String s = generate(stat);
     String expected = "public String preBlock() { return \"preBlock\";}"
         + "public boolean demo_rule(){ demo_rule: if (true) break demo_rule; return false; } "
-        + "public String postBlock() { return \"postBlock\";}";
+        + "public String postBlock() { return \"postBlock\"; }";
     assertEquals(expected, getForMarked(s, expected));
   }
   

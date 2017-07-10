@@ -444,7 +444,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
       stat.visitWithComments(this);
     }
     if (node.braces) {
-      out.append("\n}");
+      out.append("\n}\n");
       mem.leaveEnvironment(node);
     }
   }
@@ -475,7 +475,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     out.append(" = (").append(node.varType.toString())
        .append(")").append(var).append("_outer;\n");
     node.statblock.visitWithComments(this);
-    out.append("\n}");
+    out.append("\n}\n");
   }
 
   @Override

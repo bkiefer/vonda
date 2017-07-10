@@ -52,7 +52,7 @@ public class TestFieldAccesses {
       String in = "Clazz c; timeout(\"bla\" + c.a.toString(), 1000) {}";
       String s = generate(in);
       String expected = "newTimeout((\"bla\"+((Rdf)c.getSingleValue(\"<dom:a>\")).toString()),"
-          + "1000,new Proposal() {public void run() { }});";
+          + "1000,new Proposal() {public void run() { } });";
       assertEquals(expected, getForMarked(s, expected));
     }
 
@@ -61,7 +61,7 @@ public class TestFieldAccesses {
       String in = "Clazz c; propose(\"bla\" + c.a.toString()) {}";
       String s = generate(in);
       String expected = "propose((\"bla\"+((Rdf)c.getSingleValue(\"<dom:a>\")).toString()),"
-          + "new Proposal() {public void run() { }});";
+          + "new Proposal() {public void run() { } });";
       assertEquals(expected, getForMarked(s, expected));
     }
 }

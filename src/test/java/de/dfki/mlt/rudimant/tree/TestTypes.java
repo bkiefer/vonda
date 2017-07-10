@@ -47,7 +47,7 @@ public class TestTypes {
     String r = generate(in);
     String expected = "propose(\"continue_quiz\",new Proposal() {"
             + "public void run() {"
-            + " Rdf turn = getCurrentTurn(activity); }});";
+            + " Rdf turn = getCurrentTurn(activity); } });";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -92,7 +92,7 @@ public class TestTypes {
     String in = "Set<Child> cs; cs.contains((c) -> {c.foreName.equals(\"John\");});";
     String r = generate(in);
     String expected = "cs.contains((c) -> {"
-            + " ((Set<Object>)c.getValue(\"foreName\")).equals(\"John\"); });";
+            + " ((Set<Object>)c.getValue(\"foreName\")).equals(\"John\"); } );";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -144,7 +144,7 @@ public class TestTypes {
     String expected =
         "List<Rdf> out() { List<Rdf> raw = new ArrayList<>();"
         + " for ( int i = 1; ((i < 5) && (raw.size() < 3)); i = (i+1)){"
-        + " Rdf w = getChild(i); if (w != null) raw.add(w); }return raw;";
+        + " Rdf w = getChild(i); if (w != null) raw.add(w); } return raw;";
     assertEquals(expected, getForMarked(r, expected));
   }
 }

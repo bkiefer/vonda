@@ -65,7 +65,7 @@ public class StatementTest {
     String in = "Object foo;  "
             + "do {foo.slot = 2;} while (foo.slot == 1)";
     String r = generate(in);
-    String expected = "do{ foo.slot = 2; }while ((foo.slot == 1));";
+    String expected = "do{ foo.slot = 2; } while ((foo.slot == 1));";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -121,7 +121,7 @@ public class StatementTest {
    String in = "time = 2; timeout(\"label\", time) { i = 4; }";
    String r = generate(in);
    String expected = "int time = 2; "
-       + "newTimeout(\"label\",time,new Proposal() {public void run() { int i = 4; }});";
+       + "newTimeout(\"label\",time,new Proposal() {public void run() { int i = 4; } });";
    assertEquals(expected, getForMarked(r, expected));
  }
 
