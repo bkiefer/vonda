@@ -1,5 +1,9 @@
 package de.dfki.mlt.rudimant.agent;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -143,6 +147,16 @@ public class DialogueAct {
 
   }
 
+  /** Get a set of all slots of this dialogue act */
+  public Set<String> getAllSlots() {
+    Set<String> slots = new HashSet<String>();
+    Iterator<DagEdge> dit = _dag.getEdgeIterator();
+    while (dit.hasNext()) {
+      DagEdge d = dit.next();
+      slots.add(d.getName());
+    }
+    return slots;
+  }
 
 }
 
