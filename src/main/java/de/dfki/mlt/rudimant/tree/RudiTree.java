@@ -99,7 +99,9 @@ public abstract class RudiTree {
       comment = removeJavaBrackets(comment);
       allcomments += comment;
     }
-    return allcomments.trim();
+    allcomments = allcomments.trim();
+    if(!allcomments.isEmpty()) allcomments += "\n";
+    return allcomments;
   }
   
   protected String getPossibleImport(VisitorGeneration v) {
