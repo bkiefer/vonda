@@ -6,7 +6,12 @@
 package de.dfki.mlt.rudimant.tree;
 
 import de.dfki.mlt.rudimant.Location;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
@@ -33,6 +38,8 @@ public abstract class RudiTree {
     int firstPos = positions[0];
     v.out.append(checkComments(v, firstPos));
     visitVoidV(v);
+    // TODO: as endpos is where this node ends, we will never get to print anything
+    //       here, will we?
     int endPos = positions[1];
     v.out.append(checkComments(v, endPos));
   }
@@ -55,18 +62,6 @@ public abstract class RudiTree {
     return (RTStatement)this;
   }
 
-  boolean lookingForImport = false;
-
-  /**
-   * print the comment before and forget about it if -and only if- it is an
-   * import in java escapes
-   */
-  public void printImportifJava(VisitorGeneration v) {
-    lookingForImport = true;
-    v.out.append(checkComments(v, positions[0]));
-    lookingForImport = false;
-  }
-
   /**
    * the visitMethod for the visitor that allows to return Strings ! only to be
    * used by expressions !
@@ -79,27 +74,49 @@ public abstract class RudiTree {
    */
   public abstract void visitVoidV(VisitorGeneration v);
 
-  protected String checkComments(VisitorGeneration v, int firstPos) {
-    String allcomments = "";
+  public static String removeJavaBrackets(String c){
+    // Deal with java code
+    if (c.startsWith("/*@")) {
+      c = c.substring(3, c.length() - 3);
+    }
+    return c;
+  }
+  
+  private List<Token> getTokensOfInterest(VisitorGeneration v, int firstPos) {
+    List<Token> tokens = new ArrayList<>();
     while (!v.collectedTokens.isEmpty() && v.collectedTokens.get(0).getTokenIndex() < firstPos) {
-      String comment = v.collectedTokens.get(0).getText();
-      // Deal with java code
-      if (comment.startsWith("/*@")) {
-        comment = comment.substring(3, comment.length() - 3);
-        if (lookingForImport) {
-          if (!comment.startsWith("@")) {
-            return allcomments;
-          } else {
-        	comment = comment.substring(1);
-          }
-        }
-      }
-      if (!comment.trim().isEmpty()) {
-        allcomments += comment;
-      }
+      tokens.add(v.collectedTokens.get(0));
       v.collectedTokens.remove();
     }
+    return tokens;
+  }
+  
+  protected String checkComments(VisitorGeneration v, int firstPos) {
+    List<Token> ts = getTokensOfInterest(v, firstPos);
+    String allcomments = "";
+    for (int i = 0; i < ts.size(); i++) {
+      String comment = ts.get(i).getText();
+      comment = removeJavaBrackets(comment);
+      allcomments += comment;
+    }
+    allcomments = allcomments.trim();
+    if(!allcomments.isEmpty()) allcomments += "\n";
     return allcomments;
+  }
+  
+  protected String getPossibleImport(VisitorGeneration v) {
+    List<Token> ts = getTokensOfInterest(v, positions[0]);
+    String allImports = "";
+    for (int i = 0; i < ts.size(); i++) {
+      String candidate = ts.get(i).getText();
+      candidate = removeJavaBrackets(candidate);
+      if(!candidate.startsWith("@")){
+        v.collectedTokens.addFirst(ts.get(i));
+      } else {
+        allImports += candidate.substring(1) + "\n";
+      }
+    }
+    return allImports.trim();
   }
 
   /**

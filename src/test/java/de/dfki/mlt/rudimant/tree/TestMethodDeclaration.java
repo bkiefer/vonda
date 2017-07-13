@@ -21,7 +21,7 @@ public class TestMethodDeclaration {
   public void test() {
     String methdecl = " void foo() { i = 1; }";
     String s = generate(methdecl);
-    String expected = "void foo() {int i = 1; }";
+    String expected = "void foo() { int i = 1; }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -29,7 +29,7 @@ public class TestMethodDeclaration {
   public void testParType() {
     String methdecl = " void foo(List<Child> cs) { i = 1; }";
     String s = generate(methdecl);
-    String expected = "void foo(List<Rdf> cs) {int i = 1; }";
+    String expected = "void foo(List<Rdf> cs) { int i = 1; }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -39,9 +39,9 @@ public class TestMethodDeclaration {
     String methdecl2 = "String foo(int a) { i = 1; }\n";
     String usage = "bar: if(true){foo();}";
     String s = generate(methdecl1 + methdecl2 + usage);
-    String expected = "void foo() {int i = 1; } "
-            + "String foo(int a) {int i = 1; }"
-            + "public boolean bar(){ bar: if (true) {foo(); }";
+    String expected = "void foo() { int i = 1; } "
+            + "String foo(int a) { int i = 1; }"
+            + " public boolean bar(){ bar: if (true) { foo(); }";
     assertEquals(expected, getForMarked(s, expected));
   }
 

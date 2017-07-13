@@ -18,7 +18,7 @@ public class TestAdditional {
     String in = " for(seat : getSeats()){}";
     String r = generate(in);
     String expected = "for (Object seat_outer : getSeats()) {"
-            + " Object seat = (Object)seat_outer; {}}";
+            + " Object seat = (Object)seat_outer; { } }";
     assertEquals(expected, getForMarked(r, expected));
   }
 

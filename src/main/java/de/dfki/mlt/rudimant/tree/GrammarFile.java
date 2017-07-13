@@ -217,7 +217,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     // so, look for it in the comment before the first element we've got
     // TODO: THIS SHOULD BE HANDLED EXPLICITELY, BECAUSE IT'S A COMPLETE
     // EXCEPTION: COMMENTS BEFORE ANY CODE, OR AM I WRONG?
-    rules.get(0).printImportifJava(gv);
+    out.append(rules.get(0).getPossibleImport(gv));
     // maybe we need to import the class that imported us to use its variables
     out.append("public class ").append(mem.getClassName());
     // check if this should extend the wrapper class
@@ -250,7 +250,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
       declare += "this." + name + " = " + name + ";\n";
       notfirst = true;
     }
-    out.append(") {\n super();\n").append(declare).append("}\n");
+    out.append(") {\n super();\n").append(declare).append("\n}\n");
 
     // finally, the main processing method that will call all rules and imports
     // declared in this file
@@ -258,7 +258,18 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     writeRuleList(out, rudi.getMem(), gv);
     mem.leaveEnvironment(this);
 
+    // at the very end of the file, there might still be comments floating around
+    printForgottenComments(gv);
     out.append("}\n");
+  }
+  
+  public void printForgottenComments(VisitorGeneration gv) throws IOException {
+    String comments = "";
+    while (!gv.collectedTokens.isEmpty()) {
+      comments += RudiTree.removeJavaBrackets(gv.collectedTokens.get(0).getText()) + "\n";
+      gv.collectedTokens.remove();
+    }
+    gv.out.append(comments);
   }
 
   @Override

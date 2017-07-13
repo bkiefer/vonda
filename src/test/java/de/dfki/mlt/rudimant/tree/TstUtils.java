@@ -68,11 +68,11 @@ public class TstUtils {
   }
 
   public static String getForMarked(String s, String exp) {
-    s = normalizeSpaces(s);
-    exp = normalizeSpaces(exp);
-    //int end = s.lastIndexOf("}") - 2;
-    int start = s.indexOf("// hello test") + 14;
-    return normalizeSpaces(s.substring(start,
-        Math.min(start + exp.length(), s.length())).trim());
+    s = normalizeSpaces(s).trim();
+    exp = normalizeSpaces(exp).trim();
+    int start = s.indexOf("// hello test") + 13;
+    int end = Math.min(start + exp.length() + 1, s.length());
+    //s.lastIndexOf("// end of test");
+    return normalizeSpaces(s.substring(start, end).trim());
   }
 }

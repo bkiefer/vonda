@@ -8,11 +8,14 @@ import java.io.FileNotFoundException;
 
 import org.junit.*;
 
+import de.dfki.mlt.rudimant.TypeException;
+import de.dfki.mlt.rudimant.Visualize;
+
 public class TestCast {
 
   static String header = "boolean firstEncounter(); label: if(true) {"
           + "// hello test\n";
-  static String footer = "}";
+  static String footer = "// end of test\n}";
 
   @BeforeClass
   public static void setUpClass() throws FileNotFoundException {
@@ -61,7 +64,7 @@ public class TestCast {
     String s = generate(in);
     String expected = "if ((! "
         + "(((String)activity.getSingleValue(\"<dom:tabletOrientation>\"))"
-        + ".equals(getCurrentAsker())))) {}";
+        + ".equals(getCurrentAsker())))) { }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -103,7 +106,7 @@ public class TestCast {
      String in = "Activity activity; bool = (activity.status == \"gameProposed\");";
     String s = generate(in);
     String expected = "boolean bool = (((String)activity"
-            + ".getSingleValue(\"<dom:status>\")).equals(\"gameProposed\"))";
+            + ".getSingleValue(\"<dom:status>\")).equals(\"gameProposed\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -177,13 +180,14 @@ public class TestCast {
     assertEquals(expected, getForMarked(s, expected));
   }
 
-  @Test
-  public void test12() {
+  @Test(expected=TypeException.class)
+  public void test12() throws Throwable{
     // TODO: When i is int, this is definitely an error in java; how to deal with it?
+    //      in this case, a type error is thrown; we should test that here 
     String in = "int i; i = false;";
-    String s = generate(in);
-    String expected = "i = (Object /* (unknown) */) false;";
-    assertEquals(expected, getForMarked(s, expected));
+    String s = getTypeError(in);
+    // String expected = "i = (Object /* (unknown) */) false;";
+    // assertEquals(expected, getForMarked(s, expected));
   }
 
   @Test
