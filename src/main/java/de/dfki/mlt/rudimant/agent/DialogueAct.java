@@ -101,6 +101,13 @@ public class DialogueAct {
         new DagNode(DagNode.PROP_FEAT_ID, new DagNode(value)));
   }
 
+  /** Set the argument for key slot, delete old entry for key */
+  public void setValueUnique(String slot, String value) {
+    if (hasSlot(slot))
+      _dag.removeEdge(DagNode.getFeatureId(slot));
+    setValue(slot, value);
+  }
+
   /** Return the dialogue act */
   public String getDialogueActType() {
     DagNode d = _dag.getValue(DagNode.TYPE_FEAT_ID);

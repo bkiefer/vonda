@@ -42,7 +42,7 @@ void lastDAprocessed();
 void newData();
 
 // Timeout methods
-//void newTimeout(String name, int millis);
+void newTimeout(String name, int millis);
 boolean isTimedOut(String name);
 void removeTimeout(String name);
 boolean hasActiveTimeout(String name);
