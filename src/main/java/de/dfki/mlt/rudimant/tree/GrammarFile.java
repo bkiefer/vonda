@@ -259,17 +259,17 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     mem.leaveEnvironment(this);
 
     // at the very end of the file, there might still be comments floating around
-    printForgottenComments(gv);
+    printForgottenComments(gv, out);
     out.append("}\n");
   }
   
-  public void printForgottenComments(VisitorGeneration gv) throws IOException {
+  public void printForgottenComments(VisitorGeneration gv, Writer out) throws IOException {
     String comments = "";
     while (!gv.collectedTokens.isEmpty()) {
       comments += RudiTree.removeJavaBrackets(gv.collectedTokens.get(0).getText()) + "\n";
       gv.collectedTokens.remove();
     }
-    gv.out.append(comments);
+    out.append(comments);
   }
 
   @Override
