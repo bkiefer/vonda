@@ -473,8 +473,7 @@ public abstract class Agent implements StreamingClient {
 
   private IdentityHashMap<Behaviour, Integer> _customDelay = new IdentityHashMap<>();
 
-
-  Map<String, Pair<Proposal, Integer>> behaviourTriggers = new HashMap<>();
+  private Map<String, Pair<Proposal, Integer>> behaviourTriggers = new HashMap<>();
 
   protected void lastBehaviourTrigger(int maxWait, Proposal p) {
     synchronized(behaviourTriggers) {
@@ -489,7 +488,7 @@ public abstract class Agent implements StreamingClient {
     }
   }
 
-  protected void startLastBehaviourTriggerTimeout(String behaviourId) {
+  private void startLastBehaviourTriggerTimeout(String behaviourId) {
     Pair<Proposal, Integer> p = behaviourTriggers.get(behaviourId);
     if (p != null && ! timeouts.hasActiveTimeout(behaviourId)) {
       timeouts.newTimeout(lastBehaviourId, p.second, new Proposal() {
@@ -502,7 +501,7 @@ public abstract class Agent implements StreamingClient {
 
 
 
-  protected void executeTrigger(String behaviourId) {
+  private void executeTrigger(String behaviourId) {
     synchronized(behaviourTriggers) {
       timeouts.cancelTimeout(behaviourId);
       if (behaviourTriggers.containsKey(behaviourId)) {
@@ -512,7 +511,8 @@ public abstract class Agent implements StreamingClient {
     }
   }
 
-  /** Seems agnostic to implementation --> Agent ?? */
+  // TODO: Replaced by lastBehaviourTrigger?
+  /** Seems agnostic to implementation --> Agent ??
   boolean waitForBehaviours(Object message) {
     long currentTime = System.currentTimeMillis();
     if (currentTime < behaviourNotBefore) {
@@ -527,7 +527,7 @@ public abstract class Agent implements StreamingClient {
       behaviourNotBefore = currentTime + delay;
     }
     return false;
-  }
+  }*/
 
   double estimatedTime(int items) {
     return items * ((double)sumOfDurations / numberOfItems);
