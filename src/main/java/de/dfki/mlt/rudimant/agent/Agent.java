@@ -475,16 +475,10 @@ public abstract class Agent implements StreamingClient {
 
   private Map<String, Pair<Proposal, Integer>> behaviourTriggers = new HashMap<>();
 
-  protected void lastBehaviourTrigger(int maxWait, Proposal p) {
+  public void lastBehaviourTrigger(int maxWait, Proposal p) {
     synchronized(behaviourTriggers) {
       behaviourTriggers.put(lastBehaviourId,
           new Pair<Proposal, Integer>(p, maxWait));
-      /*timeouts.newTimeout(lastBehaviourId, maxWait, new Proposal() {
-        public void run() {
-          synchronized(behaviourTriggers) { executeTrigger(lastBehaviourId); }
-        }
-      });
-      */
     }
   }
 

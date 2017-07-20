@@ -577,8 +577,8 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     } else {
       out.append("newTimeout(");
       node.label.visitWithComments(this);
+      out.append(",");
     }
-    out.append(",");
     node.time.visitWithComments(this);
     out.append(",");
     topLevel();
