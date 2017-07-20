@@ -14,6 +14,7 @@ public class StatTimeout extends RTStatement {
   RTExpression time;
   StatAbstractBlock block;
 
+  /** if label is null, then this represents a behaviourFinishedTimeout */
   public StatTimeout(RTExpression label, RTExpression time, StatAbstractBlock block) {
     this.label = label;
     this.time = time;

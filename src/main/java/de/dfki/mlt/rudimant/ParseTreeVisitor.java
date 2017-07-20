@@ -349,7 +349,10 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitPropose_statement(RobotGrammarParser.Propose_statementContext ctx) {
     // PROPOSE LPAR propose_arg RPAR statement_block
-    return new StatPropose((RTExpression) visit(ctx.getChild(2)),
+    if (((TerminalNode)ctx.getChild(0)).getSymbol().getType() == RobotGrammarLexer.PROPOSE)
+      return new StatPropose((RTExpression) visit(ctx.getChild(2)),
+          (StatAbstractBlock) visit(ctx.getChild(4))).setPosition(ctx, currentClass);
+    return new StatTimeout(null, (RTExpression) visit(ctx.getChild(2)),
         (StatAbstractBlock) visit(ctx.getChild(4))).setPosition(ctx, currentClass);
   }
 
