@@ -172,7 +172,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
         // TODO: ADD WRAPPER CLASS ACCESS
         Type[] args = { new Type("String") };
         String orig = mem.getFunctionOrigin("getRdfClass", Arrays.asList(args));
-        orig = orig == null ? "" : orig.toLowerCase() + ".";
+        orig = orig == null ? "" : lowerCaseFirst(orig) + ".";
         return orig + "getRdfClass(" + node.visitWithSComments(this) + ")";
       } else {
         if (! "==".equals(operator))
@@ -246,7 +246,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     if (type.isCollection() || type.isString() || type.isNumber()) {
       Type[] args = { new Type("Object") };
       String orig = mem.getFunctionOrigin("exists", Arrays.asList(args));
-      orig = orig == null ? "" : orig.toLowerCase() + ".";
+      orig = orig == null ? "" : lowerCaseFirst(orig) + ".";
       return  orig + "exists(" + node.visitWithSComments(this) + ")";
     }
     return node.visitWithSComments(this) + " != null";
@@ -392,16 +392,14 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
       ret += node.construct.visitStringV(this);
     } else {
       // TODO: MAKE A FUNCTION FOR THIS, OR KICK IT! WHAT'S THE MEANING?
-      if(!mem.getClassName().toLowerCase().equals(
-          mem.getToplevelInstance().toLowerCase())){
+      if(mem.isNotToplevelClass()) {
         ret += mem.getToplevelInstance() + ".";
       }
       ret += "_proxy.getClass(\""
               + node.type.getRdfClass()
               + "\").getNewInstance(";
       // SEE ABOVE
-      if(!mem.getClassName().toLowerCase().equals(
-              mem.getToplevelInstance().toLowerCase())){
+      if(mem.isNotToplevelClass()) {
         ret += mem.getToplevelInstance() + ".";
       }
       ret += "DEFNS)";
@@ -549,40 +547,41 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     mem.leaveEnvironment(node);
   }
 
-  @Override
-  public void visitNode(StatPropose node) {
-    if(!mem.getClassName().toLowerCase().equals(
-            mem.getToplevelInstance().toLowerCase())){
+  private void topLevel() {
+    if(mem.isNotToplevelClass()){
       out.append(mem.getToplevelInstance()).append(".");
     }
+  }
+
+  @Override
+  public void visitNode(StatPropose node) {
+    topLevel();
     out.append("propose(");
     node.arg.visitWithComments(this);
     out.append(",");
-    if(!mem.getClassName().toLowerCase().equals(
-            mem.getToplevelInstance().toLowerCase())){
-      out.append(mem.getToplevelInstance()).append(".");
-    }
+    topLevel();
     out.append("new Proposal() {public void run()\n");
     node.block.visitWithComments(this);
     out.append("});\n");
   }
 
-  // newTimeout("label", time, new Proposal(public void run(){ block }))
+  /** newTimeout("label", time, new Proposal(public void run(){ block }))
+   *  if the label ist null, then this is a "behaviour finished" triggered
+   *  timeout.
+   */
   @Override
   public void visitNode(StatTimeout node) {
-    if(!mem.getClassName().toLowerCase().equals(
-            mem.getToplevelInstance().toLowerCase())){
-      out.append(mem.getToplevelInstance()).append(".");
+    topLevel();
+    if (node.label == null) {
+      out.append("lastBehaviourTrigger(");
+    } else {
+      out.append("newTimeout(");
+      node.label.visitWithComments(this);
     }
-    out.append("newTimeout(");
-    node.label.visitWithComments(this);
     out.append(",");
     node.time.visitWithComments(this);
     out.append(",");
-    if(!mem.getClassName().toLowerCase().equals(
-            mem.getToplevelInstance().toLowerCase())){
-      out.append(mem.getToplevelInstance()).append(".");
-    }
+    topLevel();
     out.append("new Proposal() {public void run()\n");
     node.block.visitWithComments(this);
     out.append("});\n");
@@ -778,10 +777,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     out.append(result);
 
     out.append("if (");
-    if(!mem.getClassName().toLowerCase().equals(
-            mem.getToplevelInstance().toLowerCase())){
-      out.append(mem.getToplevelInstance()).append(".");
-    }
+    topLevel();
     out.append("shouldLog(\"" + rule + "\")){\n");
     // do all that logging
     out.append("Map<String, Boolean> " + rule + " = new LinkedHashMap<>();\n");
@@ -797,10 +793,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     for (String var : logging.keySet()) {
       out.append(rule + ".put(\"" + stringEscape(logging.get(var)) + "\", " + var + ");\n");
     }
-    if(!mem.getClassName().toLowerCase().equals(
-            mem.getToplevelInstance().toLowerCase())){
-      out.append(mem.getToplevelInstance()).append(".");
-    }
+    topLevel();
     out.append("logRule(" + rule + ", \"" + rule + "\", \""
             + mem.getClassName() + "\");\n");
 
