@@ -301,7 +301,7 @@ public abstract class Agent implements StreamingClient {
     return timeouts.hasActiveTimeout(name);
   }
 
-  protected void cancelTimeout(String name) {
+  public void cancelTimeout(String name) {
     timeouts.cancelTimeout(name);
   }
 
