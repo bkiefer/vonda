@@ -737,7 +737,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public String visitNode(ExpVariable node) {
-    String realOrigin = mem.getVariableOriginClass(node.fullexp);
+    String realOrigin = mem.getVariableOriginClass(node.content);
     if (realOrigin != null) {
       return lowerCaseFirst(realOrigin) + "." + node.content;
     } else {
