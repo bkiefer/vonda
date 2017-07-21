@@ -251,10 +251,13 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
       if (e instanceof ExpVariable) {
         if (!mem.variableExists(((ExpVariable) e).content)) {
           node.exps.set(i, degradeToString((ExpVariable) e));
+          continue;
         }
-      } else {
-        e.visit(this);
       }
+      if (e instanceof ExpFuncCall && ((ExpFuncCall)e).fullexp.equals("getAnswerArgs(q)")){
+        int p = 0;
+      }
+      e.visit(this);
       i++;
     }
   }
@@ -633,16 +636,17 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
    */
   @Override
   public void visitNode(ExpFuncCall node) {
+    // test whether the given parameters are of the correct type
+    List<Type> partypes = new ArrayList<Type>();
+    if(node.params != null)
+      for (RTExpression e : node.params) {
+        e.visit(this);
+        partypes.add(e.getType());
+      }
     // if this was used in a new Expression, handle it accordingly
     if(node.newexp){
       node.type = new Type(node.content);
       return;
-    }
-    // test whether the given parameters are of the correct type
-    List<Type> partypes = new ArrayList<Type>();
-    for (RTExpression e : node.params) {
-      e.visit(this);
-      partypes.add(e.getType());
     }
     String o = mem.getFunctionOrigin(node.content, partypes);
     if (o != null) {
