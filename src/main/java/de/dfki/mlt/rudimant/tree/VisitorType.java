@@ -251,11 +251,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
       if (e instanceof ExpVariable) {
         if (!mem.variableExists(((ExpVariable) e).content)) {
           node.exps.set(i, degradeToString((ExpVariable) e));
-          continue;
         }
-      }
-      if (e instanceof ExpFuncCall && ((ExpFuncCall)e).fullexp.equals("getAnswerArgs(q)")){
-        int p = 0;
       }
       e.visit(this);
       i++;
