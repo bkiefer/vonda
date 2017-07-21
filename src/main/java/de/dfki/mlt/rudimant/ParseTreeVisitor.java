@@ -224,10 +224,10 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitExp(RobotGrammarParser.ExpContext ctx) {
     if (ctx.getChildCount() == 1) {
-      return (RTExpression) visit(ctx.getChild(0)).setPosition(ctx, currentClass);
+      return (RTExpression) visit(ctx.getChild(0));
     } else {
       RTExpression ret =
-          (RTExpression) visit(ctx.getChild(3)).setPosition(ctx, currentClass);
+          (RTExpression) visit(ctx.getChild(3));
       return new ExpCast(ctx.getChild(1).getText(),
           ret).setPosition(ctx, currentClass);
     }
