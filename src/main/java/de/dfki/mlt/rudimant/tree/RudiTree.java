@@ -81,7 +81,7 @@ public abstract class RudiTree {
     }
     return c;
   }
-  
+
   private List<Token> getTokensOfInterest(VisitorGeneration v, int firstPos) {
     List<Token> tokens = new ArrayList<>();
     while (!v.collectedTokens.isEmpty() && v.collectedTokens.get(0).getTokenIndex() < firstPos) {
@@ -90,7 +90,7 @@ public abstract class RudiTree {
     }
     return tokens;
   }
-  
+
   protected String checkComments(VisitorGeneration v, int firstPos) {
     List<Token> ts = getTokensOfInterest(v, firstPos);
     String allcomments = "";
@@ -102,21 +102,6 @@ public abstract class RudiTree {
     allcomments = allcomments.trim();
     if(!allcomments.isEmpty()) allcomments += "\n";
     return allcomments;
-  }
-  
-  protected String getPossibleImport(VisitorGeneration v) {
-    List<Token> ts = getTokensOfInterest(v, positions[0]);
-    String allImports = "";
-    for (int i = 0; i < ts.size(); i++) {
-      String candidate = ts.get(i).getText();
-      candidate = removeJavaBrackets(candidate);
-      if(!candidate.startsWith("@")){
-        v.collectedTokens.addFirst(ts.get(i));
-      } else {
-        allImports += candidate.substring(1) + "\n";
-      }
-    }
-    return allImports.trim();
   }
 
   /**

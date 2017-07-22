@@ -151,8 +151,6 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     }
     // create the process method
     out.append("  public boolean process(){\n");
-    // initialize me according to the super class init
-    //out.append("// this.init();\n");
     // use all methods created from rules in this file
     for(RudiTree r : rules){
       // rules, method declarations and imports are a special case
@@ -204,20 +202,23 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         "import de.dfki.mlt.rudimant.agent.DialogueAct;\n" +
         "import de.dfki.lt.hfc.db.rdfProxy.*;\n" +
         "import de.dfki.lt.hfc.types.*;\n");
-    // Let's import our supersuper class, TODO: maybe obsolete except for the
-    // wrapper class?
+    // Let's import our supersuper class, if we're the top-level class
     if (rudi.getParent() == null) {
       out.append("import ").append(rudi.getWrapperClass()).append(";\n");
     }
 
-    VisitorGeneration gv =
-        new VisitorGeneration(out, mem, rudi.logRudi(), tokens);
+    // Now, print all initial comments (preceding the first element) before the
+    // class starts, for, e.g., imports
+    int firstPos = rules.get(0).positions[0];
+    Iterator<Token> it = tokens.iterator();
+    while (it.hasNext()) {
+      Token curr = it.next();
+      if (curr.getTokenIndex() < firstPos) {
+        out.append(RudiTree.removeJavaBrackets(curr.getText()));
+        it.remove();
+      } else break;
+    }
 
-    // we also need all imports that might be hidden in /*@ in the rudi
-    // so, look for it in the comment before the first element we've got
-    // TODO: THIS SHOULD BE HANDLED EXPLICITELY, BECAUSE IT'S A COMPLETE
-    // EXCEPTION: COMMENTS BEFORE ANY CODE, OR AM I WRONG?
-    out.append(rules.get(0).getPossibleImport(gv));
     // maybe we need to import the class that imported us to use its variables
     out.append("public class ").append(mem.getClassName());
     // check if this should extend the wrapper class
@@ -254,22 +255,17 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
 
     // finally, the main processing method that will call all rules and imports
     // declared in this file
+    VisitorGeneration gv =
+        new VisitorGeneration(out, mem, rudi.logRudi(), tokens);
     mem.enterEnvironment(this);
-    writeRuleList(out, rudi.getMem(), gv);
+    writeRuleList(out, mem, gv);
     mem.leaveEnvironment(this);
 
-    // at the very end of the file, there might still be comments floating around
-    printForgottenComments(gv, out);
-    out.append("}\n");
-  }
-  
-  public void printForgottenComments(VisitorGeneration gv, Writer out) throws IOException {
-    String comments = "";
-    while (!gv.collectedTokens.isEmpty()) {
-      comments += RudiTree.removeJavaBrackets(gv.collectedTokens.get(0).getText()) + "\n";
-      gv.collectedTokens.remove();
+    // at the very end of the file, there might still be unprinted comments
+    for (Token comment : gv.collectedTokens) {
+      out.append(RudiTree.removeJavaBrackets(comment.getText())).append("\n");
     }
-    out.append(comments);
+    out.append("}\n");
   }
 
   @Override

@@ -60,8 +60,13 @@ public class Mem {
     upperRudi = name;
   }
 
+  // TODO the next two are candidates for refactoring, check call graph!
   public String getToplevelInstance() {
     return lowerCaseFirst(upperRudi);
+  }
+
+  public boolean isNotToplevelClass() {
+    return getClassName().compareToIgnoreCase(upperRudi) != 0;
   }
 
   public RdfProxy getProxy() {

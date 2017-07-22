@@ -46,6 +46,7 @@ void newTimeout(String name, int millis);
 boolean isTimedOut(String name);
 void removeTimeout(String name);
 boolean hasActiveTimeout(String name);
+void cancelTimeout(String name);
 
 String getLanguage();
 

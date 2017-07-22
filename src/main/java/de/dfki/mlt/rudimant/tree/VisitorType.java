@@ -252,9 +252,8 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
         if (!mem.variableExists(((ExpVariable) e).content)) {
           node.exps.set(i, degradeToString((ExpVariable) e));
         }
-      } else {
-        e.visit(this);
       }
+      e.visit(this);
       i++;
     }
   }
@@ -514,11 +513,11 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
         mem.getVariableType(var.content).isString()) {
       // the literal represents a variable, so we can't determine the type of
       // the access
-      return new ExpPropertyAccess(var.fullexp, var, true, Type.getNoType(), false);
+      return new ExpPropertyAccess(var.content, var, true, Type.getNoType(), false);
     }
     if (currentType.isDialogueAct()) {
       // the return type will be string, this is a call to getSlot
-      return new ExpPropertyAccess(var.fullexp, var, false, new Type("String"), true);
+      return new ExpPropertyAccess(var.content, var, false, new Type("String"), true);
     }
     RdfClass clz = currentType.getRdfClass();
     String predUri = null;
@@ -528,7 +527,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     // warning / error if property not found
     if (predUri == null) {
       typeError("No property found for " + var.content, node);
-      return new ExpPropertyAccess(var.fullexp, var, false, Type.getNoType(), false);
+      return new ExpPropertyAccess(var.content, var, false, Type.getNoType(), false);
     }
 
     var.content = predUri; // replace plain name by URI
@@ -564,7 +563,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
       currentType = new Type("Set<Object>");
     }
     // the type of this is set to Object by default (not null)
-    return new ExpPropertyAccess(var.fullexp, var, false, currentType, isFunctional);
+    return new ExpPropertyAccess(var.content, var, false, currentType, isFunctional);
   }
 
   /**
@@ -633,16 +632,17 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
    */
   @Override
   public void visitNode(ExpFuncCall node) {
+    // test whether the given parameters are of the correct type
+    List<Type> partypes = new ArrayList<Type>();
+    if(node.params != null)
+      for (RTExpression e : node.params) {
+        e.visit(this);
+        partypes.add(e.getType());
+      }
     // if this was used in a new Expression, handle it accordingly
     if(node.newexp){
       node.type = new Type(node.content);
       return;
-    }
-    // test whether the given parameters are of the correct type
-    List<Type> partypes = new ArrayList<Type>();
-    for (RTExpression e : node.params) {
-      e.visit(this);
-      partypes.add(e.getType());
     }
     String o = mem.getFunctionOrigin(node.content, partypes);
     if (o != null) {
@@ -686,7 +686,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     // get the type of the variable, if defined
     // TODO: is there a way to find out if we try to retrieve the value of an
     // undefined variable?
-    node.type = mem.getVariableType(node.fullexp);
+    node.type = mem.getVariableType(node.content);
     if (node.type == null) {
       // we could have sth like Introduction, that is an undeclared rdf class
       RdfClass cl = mem.getProxy().fetchClass(node.content);
@@ -701,7 +701,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     }
     // Make sure an external class requirement is registered if variable is
     // not defined in this class
-    mem.getVariableOriginClass(node.fullexp);
+    mem.getVariableOriginClass(node.content);
   }
 
   /* **********************************************************************
@@ -716,7 +716,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatTimeout node) {
-    node.label.visit(this);
+    if (node.label != null) node.label.visit(this);
     node.time.visit(this);
     node.block.visit(this);
   }

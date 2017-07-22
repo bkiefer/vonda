@@ -224,10 +224,10 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitExp(RobotGrammarParser.ExpContext ctx) {
     if (ctx.getChildCount() == 1) {
-      return (RTExpression) visit(ctx.getChild(0)).setPosition(ctx, currentClass);
+      return (RTExpression) visit(ctx.getChild(0));
     } else {
       RTExpression ret =
-          (RTExpression) visit(ctx.getChild(3)).setPosition(ctx, currentClass);
+          (RTExpression) visit(ctx.getChild(3));
       return new ExpCast(ctx.getChild(1).getText(),
           ret).setPosition(ctx, currentClass);
     }
@@ -349,7 +349,10 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitPropose_statement(RobotGrammarParser.Propose_statementContext ctx) {
     // PROPOSE LPAR propose_arg RPAR statement_block
-    return new StatPropose((RTExpression) visit(ctx.getChild(2)),
+    if (((TerminalNode)ctx.getChild(0)).getSymbol().getType() == RobotGrammarLexer.PROPOSE)
+      return new StatPropose((RTExpression) visit(ctx.getChild(2)),
+          (StatAbstractBlock) visit(ctx.getChild(4))).setPosition(ctx, currentClass);
+    return new StatTimeout(null, (RTExpression) visit(ctx.getChild(2)),
         (StatAbstractBlock) visit(ctx.getChild(4))).setPosition(ctx, currentClass);
   }
 

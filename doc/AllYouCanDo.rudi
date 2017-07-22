@@ -39,3 +39,15 @@ if (i) return "foo";
 // Is o not null?
 Object o = new Object();
 if (o) return "foo";
+
+// **********************************************************************
+// Forward declaration of methods
+// **********************************************************************
+
+String foo(String a, String b);
+
+if (foo("a", "b")) {
+  log.info("yes!");
+}
+
+String foo (String a, String b) { return a + b; }

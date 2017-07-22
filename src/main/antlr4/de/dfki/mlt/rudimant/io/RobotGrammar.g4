@@ -75,7 +75,7 @@ for_statement
   ;
 
 propose_statement
-  : PROPOSE '(' string_expression ')' statement_block
+  : (PROPOSE|TIMEOUT_BEHAVIOUR) '(' string_expression ')' statement_block
   ;
 
 timeout_statement
@@ -347,6 +347,7 @@ HASH: '#';
 PROPOSE: 'propose';
 DEC_VAR: 'var';
 TIMEOUT: 'timeout';
+TIMEOUT_BEHAVIOUR: 'behaviour_timeout';
 VARIABLE_MARKER: '^';
 
 /// comments (starting with /* or //):
