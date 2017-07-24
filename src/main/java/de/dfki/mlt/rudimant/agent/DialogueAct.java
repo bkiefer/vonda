@@ -97,15 +97,13 @@ public class DialogueAct {
 
   /** Set the argument for key slot */
   public void setValue(String slot, String value) {
-    _dag.addEdge(DagNode.getFeatureId(slot),
-        new DagNode(DagNode.PROP_FEAT_ID, new DagNode(value)));
-  }
-
-  /** Set the argument for key slot, delete old entry for key */
-  public void setValueUnique(String slot, String value) {
-    if (hasSlot(slot))
-      _dag.removeEdge(DagNode.getFeatureId(slot));
-    setValue(slot, value);
+    DagEdge edge = _dag.getEdge(DagNode.getFeatureId(slot));
+    DagNode newVal = new DagNode(DagNode.PROP_FEAT_ID, new DagNode(value));
+    if (edge == null) {
+      _dag.addEdge(DagNode.getFeatureId(slot), newVal);
+    } else {
+      edge.setValue(newVal);
+    }
   }
 
   /** Return the dialogue act */
