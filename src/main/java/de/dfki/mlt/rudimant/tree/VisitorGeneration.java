@@ -287,12 +287,13 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
         ret += pref;
         ret += this.generateAndMassageType(node.right, resultType, operator);
         ret += suff;
+        ret += ("!=".equals(node.operator)) ? "))" : ")";
       } else {
         ret += node.left.visitWithSComments(this);
         ret += " " + node.operator + " ";
         ret += node.right.visitWithSComments(this);
+        ret += ")";
       }
-      ret += ("!=".equals(node.operator)) ? "))" : ")";
     } else {
       if (null != node.operator) {
         // marker for generation, to probably wrap the right tests around?
