@@ -15,8 +15,8 @@ public class Behaviour {
 
   /** Create a new behaviour
    *
-   * @param text
-   * @param motion
+   * @param text   The text to speak
+   * @param motion The motion to execute
    * @param delay the minimum delay from or to the next speech act. A negative
    *              delay means that the delay should be before this behaviour,
    *              a positive after this.
@@ -28,6 +28,11 @@ public class Behaviour {
     _delay = delay;
   }
 
+  /** Create a new behaviour
+   *
+   * @param text   The text to speak
+   * @param motion The motion to execute
+   */
   public Behaviour(String text, String motion) {
     this(Long.toHexString(System.currentTimeMillis()),
         text, motion, DEFAULT_DELAY);

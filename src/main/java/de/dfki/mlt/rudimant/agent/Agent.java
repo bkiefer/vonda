@@ -169,6 +169,7 @@ public abstract class Agent implements StreamingClient {
     return emitDA(Behaviour.DEFAULT_DELAY, da);
   }
 
+  /** The last dialogue act spoken by the agent */
   public DialogueAct myLastDA() {
     return myLastDAs.peekFirst();
   }
@@ -232,6 +233,7 @@ public abstract class Agent implements StreamingClient {
     return lastOccurence(da, lastDAs);
   }
 
+  /** The last dialogue act spoken by the user */
   public DialogueAct lastDA() {
     DialogueAct last = lastDAs.peekFirst();
     // TODO: THIS IS NOT QUITE RIGHT. I SHOULD MARK SINGLE INCOMING DA'S AS
@@ -242,6 +244,7 @@ public abstract class Agent implements StreamingClient {
     return last;
   }
 
+  /** Add the given dialogue act to the list of the user's dialogue acts */
   public DialogueAct addLastDA(DialogueAct newDA) {
     if (newDA == null) {
       logger.error("input DA is null");
@@ -252,18 +255,24 @@ public abstract class Agent implements StreamingClient {
     return newDA;
   }
 
+  /** We reacted appropriately to the last dialogue act from the user and let
+   *  the system know that we did.
+   */
   public void lastDAprocessed() {
     lastDAprocessed = System.currentTimeMillis();
   }
 
+  /** Get the value of the given slot from the dialogue act */
   public static String getSlot(DialogueAct diaAct, String feature) {
     return diaAct.getValue(feature);
   }
 
+  /** Return true if the given slot (feature) is available in this DialogueAct */
   public static boolean hasSlot(DialogueAct diaAct, String feature) {
     return diaAct.hasSlot(feature);
   }
 
+  /** Get the dialogue act type from the dialogue act */
   public static String getDialogueAct(DialogueAct diaAct) {
     return diaAct.getDialogueActType();
   }
@@ -276,6 +285,7 @@ public abstract class Agent implements StreamingClient {
     }
   };
 
+  /** Create a new timeout */
   public void newTimeout(String name, int millis) {
     timeouts.newTimeout(name, millis, emptyProposal);
   }
@@ -287,16 +297,19 @@ public abstract class Agent implements StreamingClient {
         }});
   }
 
+  /** Tell me if the timer if the given name ran out */
   public boolean isTimedOut(String name) {
     boolean result = timeouts.isTimedout(name);
     if (result) removeTimeout(name);
     return result;
   }
 
+  /** Remove the timer with the given name */
   public void removeTimeout(String name) {
     timeouts.remove(name);
   }
 
+  /** Is there and active timeout with the given name */
   public boolean hasActiveTimeout(String name) {
     return timeouts.hasActiveTimeout(name);
   }
@@ -309,14 +322,19 @@ public abstract class Agent implements StreamingClient {
 
   ************************************************************************* */
 
+  /** Signal that new data has arrived and the rules have to be executed */
   public void newData() {
     newData = true;
   }
 
+  /** Get the language of the current agent */
   public String getLanguage() {
     return _language;
   }
 
+  /** Return true if the agent's waiting for the statistical component to
+   *  return the best action alternative.
+   */
   public boolean waitForIntention() {
     return proposalsSent;
   }
@@ -325,11 +343,13 @@ public abstract class Agent implements StreamingClient {
    Rdf shortcuts
    ************************************************************************* */
 
+  /** Turn a URI into an RDF object */
   public Rdf toRdf(String uri) {
     if (uri.startsWith("\"")) uri = uri.substring(1, uri.length() -1);
     return _proxy.getRdf(uri);
   }
 
+  /** Return the RDF class object for the given name */
   public RdfClass getRdfClass(String name) {
     return _proxy.fetchClass(name);
   }
@@ -338,10 +358,12 @@ public abstract class Agent implements StreamingClient {
   Java shortcuts
   ************************************************************************* */
 
+  /** Return a new random number between zero and one */
   public float random() {
     return random.nextFloat();
   }
 
+  /** Return a random integer between zero (inclusive) and bound (exclusive) */
   public int random(int bound) {
     return random.nextInt(bound);
   }
@@ -417,8 +439,17 @@ public abstract class Agent implements StreamingClient {
 //    logger.info(fromAsr);
 //    comSys.send(".*", "SpeechActEvent", fromAsr);
 //  }
+  /** The implementation of this method in the wrapper class starts rule
+   *  processing
+   */
   public abstract boolean process();
 
+  /**Initialize the agent.
+   * @param configDir the directory of the global configuration file
+   * @param language  the language of the agent
+   * @param proxy     the RdfProxy object to access Rdf objects and classes
+   * @param configs   the global configuration settings
+   */
   @SuppressWarnings("rawtypes")
   public void init(File configDir, String language, RdfProxy proxy, Map configs) {
     _proxy = proxy;
@@ -435,6 +466,9 @@ public abstract class Agent implements StreamingClient {
     reset();
   }
 
+  /** For system-specific functions and communication with the outside, we have
+   *  the communication hub
+   */
   public void setCommunicationHub(CommunicationHub hub) {
     _hub = hub;
   }
@@ -612,6 +646,7 @@ public abstract class Agent implements StreamingClient {
   // ######################################################################
 
 
+  /** Add a proposal to the list of pending proposals, if not already in */
   public void propose(String name, Proposal p) {
     // add the proposal to the pending proposals, but not twice
     if (!pendingProposals.containsKey(name)) {
@@ -620,6 +655,7 @@ public abstract class Agent implements StreamingClient {
     }
   }
 
+  /** Execute a selected proposal */
   public void executeProposal(Intention intention) {
     String continuationName = intention.getContent();
     Proposal p = pendingProposals.get(continuationName);
@@ -677,18 +713,27 @@ public abstract class Agent implements StreamingClient {
   // Collection + lambda methods
   // ######################################################################
 
+  /** Return true if the predicate returns true for some element of the
+   *  collection
+   */
   public <T> boolean contains(Collection<T> coll, Predicate<? super T> p) {
     for(T elt : coll)
       if (p.test(elt)) return true;
     return false;
   }
 
+  /** Return true if the predicate returns true for all elements of the
+   *  collection
+   */
   public <T> boolean all(Collection<T> coll, Predicate<? super T> p) {
     for(T elt : coll)
       if (! p.test(elt)) return false;
     return true;
   }
 
+  /** Return a list of all elements of collection where the predicate returns
+   *  true for the element.
+   */
   public <T> List<T> filter(Collection<T> coll, Predicate<? super T> p) {
     List<T> result = new ArrayList<>();
     for(T elt : coll)
@@ -696,12 +741,18 @@ public abstract class Agent implements StreamingClient {
     return result;
   }
 
+  /** Return a new list with the elements of the collections sorted according
+   *  to the comparator.
+   */
   public <T> List<T> sort(Collection<T> coll,  Comparator<? super T> c) {
     List<T> l = new LinkedList<>(coll);
     Collections.sort(l, c);
     return l;
   }
 
+  /** Return the number of all elements of collection where the predicate returns
+   *  true for the element.
+   */
   public <T> int count(Collection<T> coll, Predicate<? super T> p) {
     int result = 0;
     for(T elt : coll)
