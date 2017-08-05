@@ -51,3 +51,25 @@ if (foo("a", "b")) {
 }
 
 String foo (String a, String b) { return a + b; }
+
+// **********************************************************************
+// Breaking out of rules
+// **********************************************************************
+
+// break can be used to exit the rule specified
+test_rule:
+  if (true) {
+    second_rule:
+      if (false) {
+        break test_rule;
+      }
+  }
+  
+// returning true from a rule will cause the evaluation process to stop
+test_rule:
+  if (true) {
+    second_rule:
+      if (false) {
+        return true;
+      }
+  }

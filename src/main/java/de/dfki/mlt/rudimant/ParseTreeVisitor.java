@@ -17,6 +17,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
+import de.dfki.mlt.rudimant.io.RobotGrammarParser.Break_statementContext;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Da_tokenContext;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_blockContext;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_groupContext;
@@ -614,5 +615,13 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     }
     return new ExpFuncCall(ctx.getChild(0).getText(),
         expList, true).setPosition(ctx, currentClass);
+  }
+
+  @Override
+  public RudiTree visitBreak_statement(Break_statementContext ctx) {
+    if (ctx.getChildCount() == 1) {
+      return new StatBreak().setPosition(ctx, currentClass);
+    }
+    return new StatBreak(ctx.getChild(1).getText()).setPosition(ctx, currentClass);
   }
 }

@@ -29,32 +29,32 @@ public class TestReturn {
   }
 
   @Test
-  public void testReturn3(){
-    String in = "foo: if (true) { return foo; }";
+  public void testBreak1(){
+    String in = "foo: if (true) { break foo; }";
     String r = generate(in);
     String expected = "public boolean foo(){ foo: if (true) { break foo; } return false; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
   @Test
-  public void testReturn4(){
-    String in = "bar: if (false) { foo: if (true) { return foo; } }";
+  public void testBreak2(){
+    String in = "bar: if (false) { foo: if (true) { break foo; } }";
     String r = generate(in);
     String expected = "public boolean bar(){ bar: if (false) { // Rule foo foo: if (true) { break foo; } } return false; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
   @Test
-  public void testReturn5(){
-    String in = "foo: if (true) { return ; }";
+  public void testBreak3(){
+    String in = "foo: if (true) { break foo ; }";
     String r = generate(in);
     String expected = "public boolean foo(){ foo: if (true) { break foo; } return false; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
   @Test
-  public void testReturn6(){
-    String in = "foo: if (true) { bar: if (false) return ; }";
+  public void testBreak4(){
+    String in = "foo: if (true) { bar: if (false) break bar ; }";
     String r = generate(in);
     String expected = "public boolean foo(){ foo: if (true) { // Rule bar bar: if (false) break bar; } "
     		+ "return false; }";
@@ -77,5 +77,20 @@ public class TestReturn {
     String expected = "if (true) { return test; }";
     assertEquals(expected, getForMarked(r, expected));
   }
+
+  @Test
+  public void testBreak(){
+    String in = "test_rule: if (true) { second_rule: if (false) { break test_rule; } }";
+    String r = generate(in);
+    System.out.println(r);
+    String expected = "public boolean test_rule(){"
+        + " test_rule: if (true) {"
+        + " // Rule second_rule "
+        + "second_rule: if (false) {"
+        + " break test_rule; } }"
+        + " return false;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+  
 
 }

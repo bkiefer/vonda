@@ -37,8 +37,8 @@ statement
   | while_statement
   | for_statement
   | switch_statement
+  | break_statement
   | CONTINUE ';'
-  | BREAK ';'
   ;
 ////////// STATEMENTS ///////////////////
 
@@ -102,6 +102,10 @@ switch_label
 
 var_def
   : type_spec variable ';'
+  ;
+
+break_statement
+  : BREAK VARIABLE? ';'
   ;
 
 method_declaration

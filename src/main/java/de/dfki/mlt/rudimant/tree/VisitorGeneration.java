@@ -590,7 +590,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatReturn node) {
-    if (node.returnExp == null) {
+    /* if (node.returnExp == null) {
       // not in any rule, stop all rule processing
       if (mem.getCurrentRule() == null) {
         out.append("return true;\n");
@@ -603,10 +603,17 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
       // explicitely cancel all rule processing specifying "return <Class>;"
       out.append("return true;\n");
     } else {
+    */
       out.append("return ");
-      node.returnExp.visitWithComments(this);
+      if (node.returnExp != null)
+        node.returnExp.visitWithComments(this);
       out.append(";\n");
-    }
+    // }
+  }
+
+  @Override
+  public void visitNode(StatBreak node) {
+    out.append("break " + node.toLeave + ";");
   }
 
   @Override

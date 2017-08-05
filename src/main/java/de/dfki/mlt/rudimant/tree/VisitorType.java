@@ -632,6 +632,9 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
    */
   @Override
   public void visitNode(ExpFuncCall node) {
+    if(node.content.equals("filter")){
+      int i = 0;
+    }
     // test whether the given parameters are of the correct type
     List<Type> partypes = new ArrayList<Type>();
     if(node.params != null)
@@ -725,12 +728,17 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
   public void visitNode(StatReturn node) {
     if (node.returnExp != null) {
       node.returnExp.visit(this);
-      if (mem.variableExists(node.returnExp.fullexp)
-          && mem.isActiveRule(node.returnExp.fullexp)){
-        typeError("Return used with a rule name that also is a variable, "
-            + "will use the rule functionality.", node);
-      }
+      // if (mem.variableExists(node.returnExp.fullexp)
+      //     && mem.isActiveRule(node.returnExp.fullexp)){
+      //   typeError("Return used with a rule name that also is a variable, "
+      //       + "will use the rule functionality.", node);
+      // }
     }
+  }
+
+  @Override
+  public void visitNode(StatBreak node) {
+    // nothing to do
   }
 
   @Override

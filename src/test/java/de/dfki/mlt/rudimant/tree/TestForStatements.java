@@ -75,7 +75,7 @@ public class TestForStatements {
   @Test
   public void testComments() {
     String stat = "/*@  public String preBlock() { return \"preBlock\";} @*/"
-        + "demo_rule: if (true) return; "
+        + "demo_rule: if (true) break demo_rule; "
         + "/*@ public String postBlock() { return \"postBlock\"; }@*/";
     String s = generate(stat);
     String expected = "public String preBlock() { return \"preBlock\";}"
