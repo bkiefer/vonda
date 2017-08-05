@@ -82,7 +82,6 @@ public class TestReturn {
   public void testBreak(){
     String in = "test_rule: if (true) { second_rule: if (false) { break test_rule; } }";
     String r = generate(in);
-    System.out.println(r);
     String expected = "public boolean test_rule(){"
         + " test_rule: if (true) {"
         + " // Rule second_rule "
