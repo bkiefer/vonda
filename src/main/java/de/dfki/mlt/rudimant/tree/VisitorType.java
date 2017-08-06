@@ -241,11 +241,13 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
         node.daType = degradeToString((ExpVariable) node.daType);
       }
     }
+    node.daType.visit(this);
     if (node.proposition instanceof ExpVariable) {
       if (!mem.variableExists(((ExpVariable) node.proposition).content)) {
         node.proposition = degradeToString((ExpVariable) node.proposition);
       }
     }
+    node.proposition.visit(this);
     int i = 0;
     for (RTExpression e : node.exps) {
       if (e instanceof ExpVariable) {
