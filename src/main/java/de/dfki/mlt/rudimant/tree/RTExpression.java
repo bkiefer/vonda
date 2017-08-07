@@ -67,8 +67,8 @@ public abstract class RTExpression extends RudiTree {
     }
 
     if (type != null && type.isBool()){
-      if (this instanceof ExpSingleValue){
-        return this;
+      if (!(this instanceof ExpBoolean)){
+        return fixFields(new ExpBoolean(this, null, null));
       }
       // if is a funccall with type boolean, we'd still like to have it as a
       // boolean, at least wrapped up
