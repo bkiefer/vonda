@@ -292,13 +292,17 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
   @Override
   public void visitNode(ExpLambda node) {
     mem.enterEnvironment(node);
+    Type[] parTypes = new Type[node.parameters.size()+ 1];
+    int i = 1;
     for(String arg : node.parameters){
       mem.addVariableDeclaration(arg, node.parType);
+      parTypes[i++] = node.parType;
     }
     if (node.body instanceof RTExpression) {
       RTExpression exp = (RTExpression)node.body;
       visitNode(exp);
-      node.type = exp.getType();
+      parTypes[0] = exp.getType();
+      node.type = new Type(parTypes);
     } else {
       visitNode((StatAbstractBlock)node.body);
     }

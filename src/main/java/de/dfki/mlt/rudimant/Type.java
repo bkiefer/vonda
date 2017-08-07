@@ -2,10 +2,7 @@ package de.dfki.mlt.rudimant;
 
 import static de.dfki.mlt.rudimant.Constants.DIALOGUE_ACT_TYPE;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
@@ -93,29 +90,46 @@ public class Type {
     _name = null;
   }
 
+  private void rdfIfy() {
+    if (typeCodes.containsKey(_name)) return;
+    if (_name.charAt(0) == '<') {
+      // xsd or RDF type
+      _class = PROXY.getClass(_name);
+    } else {
+      // try to get an appropriate RDF class
+      _class = PROXY.fetchClass(_name);
+    }
+  }
+
+  private void splitIfy(String typeSpec) {
+    int i = 0;
+    if ((i = typeSpec.indexOf('<')) > 0) {
+      String nameSpec = typeSpec.substring(0, i).trim();
+      String[] partypes = typeSpec.substring(i+1, typeSpec.lastIndexOf('>')).split(" *, *");
+      _parameterTypes = new ArrayList<>();
+      for (String par : partypes)
+        _parameterTypes.add(new Type(par));
+      _name = nameSpec;
+    } else {
+      _name = typeSpec;
+    }
+  }
+
+
+  /** This is only to be used to create complex types for lambda expressions */
+  public Type(Type ... parameterTypes) {
+    _name = "Function";
+    _parameterTypes = new ArrayList<>(parameterTypes.length);
+    _parameterTypes.addAll(Arrays.asList(parameterTypes));
+  }
+
   public Type(String typeSpec) {
     if (typeSpec == null) {
       _name = null;
       return;
     }
-    int i;
-    String nameSpec = typeSpec;
-    if ((i = typeSpec.indexOf('<')) > 0) {
-      nameSpec = typeSpec.substring(0, i).trim();
-      String[] partypes = typeSpec.substring(i+1, typeSpec.lastIndexOf('>')).split(" *, *");
-      _parameterTypes = new ArrayList<>();
-      for (String par : partypes)
-        _parameterTypes.add(new Type(par));
-    }
-    _name = nameSpec;
-    if (typeCodes.containsKey(nameSpec)) return;
-    if (nameSpec.charAt(0) == '<') {
-      // xsd or RDF type
-      _class = PROXY.getClass(nameSpec);
-    } else {
-      // try to get an appropriate RDF class
-      _class = PROXY.fetchClass(nameSpec);
-    }
+    splitIfy(typeSpec);
+    rdfIfy();
   }
 
   public String get_name() {

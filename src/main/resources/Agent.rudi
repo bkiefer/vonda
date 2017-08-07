@@ -59,10 +59,10 @@ Logger logger;
 void info(String s, int i);
 
 // lambda
-boolean contains(Collection coll, Predicate pred);
-boolean all(Collection coll, Predicate pred);
-List<Object> filter(Collection coll, Predicate pred);
-List<Object> sort(Collection coll, Comparator c);
+boolean contains(Collection coll, Function<Boolean, Object> pred);
+boolean all(Collection coll, Function<Boolean, Object> pred);
+List<Object> filter(Collection coll, Function<Boolean, Object> pred);
+List<Object> sort(Collection coll, Function<Integer, Object, Object> c);
 
 // all Agent variables we should know
 
