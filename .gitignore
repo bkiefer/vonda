@@ -13,3 +13,13 @@
 runtest
 test.rudi
 /repo/
+**/*.aux
+**/*.blg
+**/*.bbl
+**/*.log
+**/*.toc
+**/*.out
+**/*.nav
+**/*.vrb
+**/*.snm
+**/auto
