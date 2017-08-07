@@ -1,0 +1,27 @@
+/*@// Initial Java Comment
+import foo.bar.baz;
+
+public class bla { public String s; }
+*/
+
+// Normal comment: This is fn foo
+int foo() { return 1; }
+
+// Next comment: This is bar
+boolean bar() { return false; }
+
+// The first rule
+rule:
+if (true && true) { c = 1; }
+
+// Next function: baz
+double baz() { return 1.0; }
+
+// The second rule
+rule2:
+if (true && false) { c = 0; }
+
+// Next function: barf
+float barf() { return -1.1; }
+
+// A final comment: end of file.

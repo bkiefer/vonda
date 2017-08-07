@@ -43,7 +43,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
    * name of the resulting java file!!!!
    * @param client
    */
-  public ParseTreeVisitor(String masterFile, List<Token> commentTokens) {
+  public ParseTreeVisitor(String masterFile) {
     currentClass = masterFile;
   }
 

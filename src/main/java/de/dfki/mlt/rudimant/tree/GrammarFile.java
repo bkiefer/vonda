@@ -51,8 +51,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     CollectorTokenSource collector = new CollectorTokenSource(lexer, toCollect);
 
     // initialise the parser
-    RobotGrammarParser parser = new RobotGrammarParser(
-        new CommonTokenStream(collector));
+    RobotGrammarParser parser =
+        new RobotGrammarParser(new CommonTokenStream(collector));
     final boolean[] errorOccured = { false };
     parser.addErrorListener(new BaseErrorListener() {
       @Override
@@ -70,8 +70,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
       return null;
 
     // initialise the visitor that will do all the work
-    ParseTreeVisitor visitor = new ParseTreeVisitor(realName,
-        collector.getCollectedTokens());
+    ParseTreeVisitor visitor = new ParseTreeVisitor(realName);
 
     // create the abstract syntax tree
     RudiTree myTree = visitor.visit(tree);
@@ -213,7 +212,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     Iterator<Token> it = tokens.iterator();
     while (it.hasNext()) {
       Token curr = it.next();
-      if (curr.getTokenIndex() < firstPos) {
+      if (curr.getTokenIndex() < firstPos && curr.getText().startsWith("/*@")) {
         out.append(RudiTree.removeJavaBrackets(curr.getText()));
         it.remove();
       } else break;
