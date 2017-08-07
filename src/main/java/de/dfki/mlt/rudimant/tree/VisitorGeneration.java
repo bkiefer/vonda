@@ -421,7 +421,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
       // should be executed
       out.append("// Rule " + node.label + "\n");
     }
-    ruleIf = printRuleLogger(node.label, node.ifstat.condition);
+    ruleIf = printRuleLogger(node.label, (ExpBoolean) node.ifstat.condition);
     out.append(node.label + ":\n");
     node.ifstat.visitWithComments(this);
     if (node.toplevel) {
@@ -763,13 +763,13 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
    *
    * @param rule
    */
-  private String printRuleLogger(String rule, RTExpression bool_exp) {
+  private String printRuleLogger(String rule, ExpBoolean bool_exp) {
 
     // TODO BK: bool_exp can be a simple expression, in which case it
     // has to be turned into a comparison with zero, null or a call to
     // the has(...) method
-    if (bool_exp instanceof ExpSingleValue && bool_exp.getType().isBool()) {
-      return ((ExpSingleValue) bool_exp).content;
+    if (((ExpBoolean)bool_exp).right == null && ((ExpBoolean)bool_exp).left instanceof ExpSingleValue) {
+      return ((ExpSingleValue)((ExpBoolean) bool_exp).left).content;
     }
     collectingCondition = true;
 
