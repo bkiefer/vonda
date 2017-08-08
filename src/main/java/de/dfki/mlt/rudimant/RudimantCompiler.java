@@ -20,7 +20,6 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import de.dfki.mlt.rudimant.tree.GrammarFile;
 import de.dfki.mlt.rudimant.tree.ToplevelBlock;
-import de.dfki.mlt.rudimant.tree.VisitorGeneration;
 
 public class RudimantCompiler {
 

@@ -11,6 +11,8 @@ package de.dfki.mlt.rudimant;
  */
 public class NoConfigException extends RuntimeException {
 
+  private static final long serialVersionUID = 1L;
+
   public NoConfigException(String message) {
     super(message);
   }

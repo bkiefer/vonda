@@ -11,6 +11,8 @@ package de.dfki.mlt.rudimant;
  */
 public class TypeException extends RuntimeException {
 
+  private static final long serialVersionUID = 1L;
+
   public TypeException(String ex) {
     super(ex);
   }

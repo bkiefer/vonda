@@ -22,9 +22,6 @@ public class Environment {
 
   private static Logger logger = LoggerFactory.getLogger(Environment.class);
 
-  // The file that we're currently in
-  private String origin;
-
   private Map<String, Type> variableToType;
   private Map<String, String> variableOrigin;
   private HashMap<String, Set<Function>> functions;

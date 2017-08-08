@@ -2,8 +2,6 @@ package de.dfki.mlt.rudimant;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 class Function {
 
   private String _name;
@@ -63,7 +61,7 @@ class Function {
   public Type getReturnType(Type calledUpon) {
     // TODO: FIX THIS BULLSHIT!
     String rn = _returnType.get_name();
-    if(calledUpon != null && 
+    if(calledUpon != null &&
     	rn.contains("<T>") || rn.equals("T")){
       //int from = StringUtils.indexOfDifference(_calledUpon.get_name(), calledUpon.get_name());
       //int to = calledUpon.get_name().length() - StringUtils.indexOfDifference(
