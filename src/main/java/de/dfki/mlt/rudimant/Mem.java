@@ -128,18 +128,14 @@ public class Mem {
    */
   public void addFunction(String funcname, Type functype, Type calledUpon,
           List<Type> partypes) {
-    String origin = null;
-    origin = getClassName();
-    current.addFunction(funcname, functype, calledUpon, partypes, origin, this);
+    current.addFunction(funcname, functype, calledUpon, partypes,
+        getClassName());
   }
 
   /** Return the class where this function is defined */
   public String getFunctionOrigin(String funcname, List<Type> partypes){
-    String origin = current.getFunctionOrigin(funcname, partypes, this);
-    if (getClassName().equals(origin))
-      return null;
-
-    return origin;
+    String origin = current.getFunctionOrigin(funcname, partypes);
+    return (getClassName().equals(origin)) ? null : origin;
   }
 
   /** return the return type of the given function or method, or null if there
@@ -152,7 +148,7 @@ public class Mem {
    * @return its return type or null
    */
   public Type getFunctionRetType(String funcname, Type calledUpon, List<Type> partypes) {
-    return current.getFunctionRetType(funcname, calledUpon, partypes, this);
+    return current.getFunctionRetType(funcname, calledUpon, partypes);
   }
 
   /** Add a new variable declaration, providing the variable name and type
@@ -210,14 +206,6 @@ public class Mem {
     current = newEnv;
     ++blockNesting;
   }
-
-  /** enter a new prefabricated Environment in GenerationVisior *
-  public void enterEnvironment(Environment e) {
-    logger.trace("Enter level {}", environment.size());
-    // by copying the existing environment, we avoid searching through all
-    // lower environments at the cost of bigger space consumption
-    environment.push(e);
-  }*/
 
   /** leave an environment (variable binding level) */
   public void leaveEnvironment(RTBlockNode node) {

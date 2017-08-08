@@ -15,6 +15,9 @@ public class Type {
   private static RdfProxy PROXY;
   private static RdfClass DIALACT_CLASS;
 
+  static Map<String, Long> assignCodes = new HashMap<>();
+  static Map<Long, String> assigncode2type = new HashMap<>();
+
   static Map<String, Long> typeCodes = new HashMap<>();
   static Map<Long, String> code2type = new HashMap<>();
 
@@ -39,28 +42,79 @@ public class Type {
     }
   }
 
+  /*
+  1. Types that are automatically converted in assignments, expressions or
+     function calls (as parameters)
+     byte -> short -> int -> long -> float -> double
+
+     PODs and their corresponding container types can be used interchangeably,
+     but *not*, e.g., Long l = (int)i, this needs a cast to the corresponding
+     POD(!) type.
+
+     The other way around works: double d = F; where F is Float
+
+     Also, the above conversion for the PODs does not work for the container
+     types, Double D = F; is illegal, but D = D + F works
+
+   2. For Java and RDF type: if they are in a subclass relation, the more
+      specific can be assigned/used as parameter for the more general
+   */
+
   static final long JAVA_TYPE = 0x10;
+
+  /** This represents the "assignable" hierarchy, with the exception of
+   *  interchangeability of POD with container type, which must be checked
+   *  manually
+   */
   static {
-    typeCodes.put("Object",                  0x111l);
-    typeCodes.put("String",                    0x1l);
-    typeCodes.put("Rdf",                      0x10l);
-    typeCodes.put("double",           0x1000000000l);
-    typeCodes.put("Double",           0x1000000100l);
-    typeCodes.put("float",            0x1100000000l);
-    typeCodes.put("Float",            0x1100000100l);
-    typeCodes.put("long",             0x1110000000l);
-    typeCodes.put("Long",             0x1110000100l);
-    typeCodes.put("int",              0x1111000000l);
-    typeCodes.put("Integer",          0x1111000100l);
-    typeCodes.put("short",            0x1111100000l);
-    typeCodes.put("Short",            0x1111100100l);
-    typeCodes.put("byte",             0x1111110000l);
-    typeCodes.put("Byte",             0x1111110100l);
-    typeCodes.put("char",             0x1111001000l);
-    typeCodes.put("Character",        0x1111001100l);
-    typeCodes.put("boolean",         0x10000000000l);
-    typeCodes.put("Boolean",         0x10000000100l);
-    typeCodes.put("null",           0x100000000000l);
+    assignCodes.put("double",           0b1111110100l);
+    assignCodes.put("Double",           0b1111110000l);
+    assignCodes.put("float",            0b1111100100l);
+    assignCodes.put("Float",            0b1111100000l);
+    assignCodes.put("long",             0b1111000100l);
+    assignCodes.put("Long",             0b1111000000l);
+    assignCodes.put("int",              0b1110000100l);
+    assignCodes.put("Integer",          0b1110000000l);
+    assignCodes.put("short",            0b1100000100l);
+    assignCodes.put("Short",            0b1100000000l);
+    assignCodes.put("byte",             0b1000000100l);
+    assignCodes.put("Byte",             0b1000000000l);
+    assignCodes.put("char",             0b1100001100l);
+    assignCodes.put("Character",        0b1100001000l);
+    assignCodes.put("boolean",         0b10000000100l);
+    assignCodes.put("Boolean",         0b10000000000l);
+    for (Map.Entry<String, Long> entry : assignCodes.entrySet()) {
+      assigncode2type.put(entry.getValue(), entry.getKey());
+    }
+  }
+
+  private static final long CONTAINER_MASK = ~ 0b100l;
+
+  // This represents a correct hierarchy for type unification for expressions.
+  // the type unification will return the result type of the expression.
+  // This hierarchy does not work for assignments or function calls (parameter
+  // substitution).
+  static {
+    typeCodes.put("Object",                  0b111l);
+    typeCodes.put("String",                    0b1l);
+    typeCodes.put("Rdf",                      0b10l);
+    typeCodes.put("double",           0b1000000000l);
+    typeCodes.put("Double",           0b1000000100l);
+    typeCodes.put("float",            0b1100000000l);
+    typeCodes.put("Float",            0b1100000100l);
+    typeCodes.put("long",             0b1110000000l);
+    typeCodes.put("Long",             0b1110000100l);
+    typeCodes.put("int",              0b1111000000l);
+    typeCodes.put("Integer",          0b1111000100l);
+    typeCodes.put("short",            0b1111100000l);
+    typeCodes.put("Short",            0b1111100100l);
+    typeCodes.put("byte",             0b1111110000l);
+    typeCodes.put("Byte",             0b1111110100l);
+    typeCodes.put("char",             0b1111001000l);
+    typeCodes.put("Character",        0b1111001100l);
+    typeCodes.put("boolean",         0b10000000000l);
+    typeCodes.put("Boolean",         0b10000000100l);
+    typeCodes.put("null",           0b100000000000l);
     for (Map.Entry<String, Long> entry : typeCodes.entrySet()) {
       code2type.put(entry.getValue(), entry.getKey());
     }
@@ -145,7 +199,7 @@ public class Type {
     String ret = xsd2java.get(_name);
     Long code = typeCodes.get(ret);
     if (code == null) return _name;
-    ret = code2type.get(code & ~ 0x100);
+    ret = code2type.get(code & ~ 0b100);
     return (ret != null) ? ret : _name;
   }
 
@@ -155,8 +209,8 @@ public class Type {
     if (isNull()) return true;
     String name = xsdToJavaPodWrapper();
     Long code = typeCodes.get(name);
-    return code != null && (code & 0x11111111000l) != 0
-        && (code & 0x100) == 0; // containers may be null!
+    return code != null && (code & 0b11111111000l) != 0
+        && (code & 0b100) == 0; // containers may be null!
   }
 
   /** Return true if this is a Java wrapper class for some number */
@@ -165,8 +219,8 @@ public class Type {
     if (_name == null) return false;
     String name = xsdToJavaPodWrapper();
     Long code = typeCodes.get(name);
-    return code != null && (code & 0x11111111000l) != 0
-        && (code & 0x100) != 0;
+    return code != null && (code & 0b11111111000l) != 0
+        && (code & 0b100) != 0;
   }
 
   public boolean isNull() { return "null".equals(_name); }
@@ -252,6 +306,48 @@ public class Type {
     return null;
   }
 
+  /** Return true if actualType can be used as function argument when this is the
+   *  parameter type, which is the same as if this was the type of the left
+   *  hand side of an assignment and actualType on the right hand side.
+   *
+   *  - if this is null or Object, return true;
+   *  - if this an RDF type, actualType must be an RDF type that is subClassOf
+   *    this rdf type
+   *  - if this is a POD type, get the assign codes for both types, mask the
+   *    Container type bit, and perform a bitwise and. The result must be
+   *    equal to the assign code of this.
+   */
+  public boolean isPossibleArgumentType(Type actualType) {
+    if (_name == null || actualType._name == null
+        || _name.equals("Object") || equals(actualType))
+      return true;
+
+    // check if these are (real) RDF types and are in a type relation.
+    if (_class != null || actualType._class != null) {
+      if (_class != null && actualType._class != null) {
+        String result = PROXY.fetchMostSpecific(
+            _class.toString(), actualType._class.toString());
+        // not incompatible, and actualType is more specific?
+        return result != null && result.equals(actualType._class.toString());
+      }
+      return ("Rdf".equals(_name)); // the most unspecific RDF type
+    }
+
+    String l = xsdToJavaPodWrapper();
+    String r = actualType.xsdToJavaPodWrapper();
+    // this should return the more specific of the two, or null if they are
+    // incompatible
+    Long leftCode = assignCodes.get(l);
+    if (leftCode == null) leftCode = JAVA_TYPE;
+    Long rightCode = assignCodes.get(r);
+    if (rightCode == null) rightCode = JAVA_TYPE;
+    if ((leftCode & CONTAINER_MASK) == (rightCode & CONTAINER_MASK)) return true;
+
+
+    long result = leftCode | rightCode;
+    return result == leftCode;
+  }
+
   /** returns a correct java type for use in generated code */
   @Override
   public String toString() {
@@ -303,6 +399,8 @@ public class Type {
   /** Return true if the right type has to be casted to this type, e.g.,
    *  <xsd:long> or long to int. The types are assumed to be compatible, so
    *  casting is either not necessary or possible.
+   *
+   *  TODO: SEEMS THIS WORKS, BUT IS IT CORRECT? WHAT ABOUT ASSIGNMENTS
    */
   public boolean needsCast(Type right) {
     Type res = unifyTypes(right);

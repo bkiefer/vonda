@@ -72,14 +72,14 @@ public class Environment {
    * @param origin first element class, second rule origin
    */
   public void addFunction(String funcname, Type functype, Type calledUpon,
-          List<Type> partypes, String origin, Mem mem) {
+          List<Type> partypes, String origin) {
     // test whether we already have an entry for this method
     if (functions.keySet().contains(funcname)) {
       for (Function f : functions.get(funcname)) {
-        if (f.areParametertypes(partypes, mem) &&
+        if (f.areParametertypes(partypes) &&
         		(calledUpon != null && calledUpon.equals(f.getCalledUpon()))) {
           // in this case we have an obvious error
-          if (!f.isReturnType(functype, mem)) {
+          if (!f.isReturnType(functype)) {
             // TODO: add a description about where we are in the input file
             logger.warn("redeclaring function " + funcname
                     + " with new return type - was: " + f.getReturnType(calledUpon)
@@ -97,11 +97,10 @@ public class Environment {
                 partypes, calledUpon));
   }
 
-  public String getFunctionOrigin(String funcname, List<Type> partypes,
-          Mem mem) {
+  public String getFunctionOrigin(String funcname, List<Type> partypes) {
     if (functions.keySet().contains(funcname)) {
       for (Function f : functions.get(funcname)) {
-        if (f.areParametertypes(partypes, mem)) {
+        if (f.areParametertypes(partypes)) {
           return f.getOrigin();
         }
       }
@@ -115,17 +114,13 @@ public class Environment {
    * @return its return type or null
    */
   public Type getFunctionRetType(String funcname, Type calledUpon,
-		  List<Type> partypes, Mem mem) {
+		  List<Type> partypes) {
     if (! functions.containsKey(funcname)) {
       return null;
     }
     for (Function f : functions.get(funcname)) {
-      if (f.areParametertypes(partypes, mem)) {
-        if(calledUpon != null) {
-          if(!f.canCallUpon(calledUpon, mem)) {
-            continue;
-          }
-        }
+      if (f.areParametertypes(partypes)
+          && (calledUpon == null || f.canCallUpon(calledUpon))) {
         return f.getReturnType(calledUpon);
       }
     }

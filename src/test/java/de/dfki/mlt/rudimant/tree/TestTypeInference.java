@@ -9,10 +9,7 @@ import java.util.Iterator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.dfki.mlt.rudimant.tree.ExpAssignment;
-import de.dfki.mlt.rudimant.tree.GrammarFile;
-import de.dfki.mlt.rudimant.tree.RudiTree;
-import de.dfki.mlt.rudimant.tree.StatExpression;
+import de.dfki.mlt.rudimant.TypeException;
 
 
 public class TestTypeInference {
@@ -148,4 +145,17 @@ public class TestTypeInference {
     assertEquals(expected, getForMarked(s, expected));
   }
 
+  @Test(expected=TypeException.class)
+  public void test11() throws Throwable {
+    String in = " int fun(int i); long l = 1; k = fun(l);";
+    getTypeError(in);
+  }
+
+  @Test
+  public void test12() {
+    String in = " long fun(long i); int l = 1; k = fun(l);";
+    String s = generate(in);
+    String expected = "l = 1; k = fun(l);";
+    assertEquals(expected, getForMarked(s, expected));
+  }
 }

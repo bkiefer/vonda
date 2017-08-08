@@ -19,9 +19,11 @@ class Function {
     _calledUpon = calledUpon;
   }
 
-  public boolean canCallUpon(Type calledOn, Mem mem) {
+  public boolean canCallUpon(Type calledOn) {
     // TODO: this is probably not accurate enough; find a more
     // sophisticated way to do this
+    // It seems what is returned by unifyTypes should be a subclass of
+    // _calledUpon
     return _calledUpon != null &&
         _calledUpon.unifyTypes(calledOn) != null;
   }
@@ -34,38 +36,11 @@ class Function {
     return _calledUpon;
   }
 
-  /** TODO BK I changed this function in a way that seemed sensible to me,
-   *  but earnestly, i don't understand what it was supposed to do in the first
-   *  place. So, if my changes are not correct, PLEASE EXPLAIN THE EXACT
-   *  INTENTIONS, MAYBE ADD EXAMPLES, OR WHATEVER.
-   */
-  public Type getReturnType0(String calledUpon) {
-    // TODO: extensively test this magic
-	String rn = _returnType.get_name();
-    int from = rn.indexOf('<');
-    if (from >= 0) {
-      // extract the parameter type
-      int to = rn.lastIndexOf('>');
-      String ret = calledUpon.substring(from + 1, to);
-      if(!rn.equals("T")){
-        // don't miss anything that is wrapped around <T>
-        ret = rn.substring(0, from)
-            + ret
-            + rn.substring(to + 1);
-      }
-      return new Type(ret);
-    }
-    return _returnType;
-  }
-
   public Type getReturnType(Type calledUpon) {
-    // TODO: FIX THIS BULLSHIT!
     String rn = _returnType.get_name();
     if(calledUpon != null &&
-    	rn.contains("<T>") || rn.equals("T")){
-      //int from = StringUtils.indexOfDifference(_calledUpon.get_name(), calledUpon.get_name());
-      //int to = calledUpon.get_name().length() - StringUtils.indexOfDifference(
-      //    StringUtils.reverse(_calledUpon.get_name()), StringUtils.reverse(calledUpon.get_name()));
+        // TODO: THIS SEEMS TO BE A CRUDE HOAX
+        (rn.contains("<T>") || rn.equals("T"))){
       Type ret = calledUpon.getInnerType();
       return ret;
     }
@@ -81,17 +56,18 @@ class Function {
     return _name.equals(name);
   }
 
-  public boolean isReturnType(Type type, Mem mem) {
+  // TODO: AGAIN: IS THIS ENOUGH? NOT SUBCLASS?
+  public boolean isReturnType(Type type) {
     return _returnType.equals(type)
         || _returnType.unifyTypes(type) != null;
   }
 
-  public boolean areParametertypes(List<Type> partypes, Mem mem) {
-    if (_parameterTypes.size() != partypes.size()) {
+  public boolean areParametertypes(List<Type> actualTypes) {
+    if (_parameterTypes.size() != actualTypes.size()) {
       return false;
     }
     for (int i = 0; i < _parameterTypes.size(); i++) {
-      if (_parameterTypes.get(i).unifyTypes(partypes.get(i)) == null) {
+      if (! _parameterTypes.get(i).isPossibleArgumentType(actualTypes.get(i))) {
         return false;
       }
     }

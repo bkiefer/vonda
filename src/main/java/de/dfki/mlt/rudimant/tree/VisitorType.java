@@ -117,6 +117,9 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
    * right type? If it has no type, set it to the type of the right side. 2) if
    * it is not defined, define it and set type c) if the variable has a type,
    * and the right side has not, push it down the right branch.
+   *
+   * TODO: GIVEN MY LAST WORK ON TYPE COMPATIBILITY IN ASSIGNMENT, I DOUBT THAT
+   * UNIFYTYPES IS THE RIGHT THING TO DO. NEEDS A LOT OF UNIT TESTS FIRST
    */
   @Override
   public void visitNode(ExpAssignment node) {
