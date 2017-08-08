@@ -37,9 +37,8 @@ statement
   | while_statement
   | for_statement
   | switch_statement
-  | break_statement
-  | CONTINUE ';'
   ;
+
 ////////// STATEMENTS ///////////////////
 
 statement_block
@@ -52,7 +51,8 @@ grammar_rule
   ;
 
 // TODO: what about return label; ??
-return_statement: RETURN exp? ';';
+return_statement
+  : (RETURN exp? | BREAK VARIABLE? | CANCEL | CANCELALL | CONTINUE) ';' ;
 
 if_statement
   : IF '(' boolean_exp ')' (statement) (ELSE (statement))?
@@ -102,10 +102,6 @@ switch_label
 
 var_def
   : type_spec variable ';'
-  ;
-
-break_statement
-  : BREAK VARIABLE? ';'
   ;
 
 method_declaration
@@ -282,6 +278,8 @@ CASE: 'case';
 DEFAULT: 'default';
 CONTINUE: 'continue';
 BREAK: 'break';
+CANCEL: 'cancel';
+CANCEL_ALL: 'cancel_all';
 FOR: 'for';
 NULL: 'null';
 TRUE: 'true';

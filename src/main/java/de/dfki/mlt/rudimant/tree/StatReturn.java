@@ -16,12 +16,9 @@ import java.util.Collections;
  */
 public class StatReturn extends RTStatement {
 
+  String command;
   RTExpression returnExp;
-  String curRuleLabel;
-
-  public StatReturn() {
-    returnExp = null;
-  }
+  String ruleLabel;
 
   /**
    * give me the expression after 'return' as well as the String it is, so if
@@ -31,7 +28,23 @@ public class StatReturn extends RTStatement {
    * @param lit
    */
   public StatReturn(RTExpression exp) {
+    command = "return";
     returnExp = exp;
+    ruleLabel = null;
+  }
+
+  /** A break with label */
+  public StatReturn(String cmd, String label) {
+    command = cmd;
+    ruleLabel = label;
+    returnExp = null;
+  }
+
+  /** A break without label, a cancel or cancelAll */
+  public StatReturn(String cmd) {
+    command = cmd;
+    ruleLabel = null;
+    returnExp = null;
   }
 
   @Override
@@ -47,6 +60,13 @@ public class StatReturn extends RTStatement {
   @Override
   public void visitVoidV(VisitorGeneration v) {
     v.visitNode(this);
+  }
+
+  public String toString() {
+    String result = command;
+    if (ruleLabel != null) result = result + " " + ruleLabel;
+    if (returnExp != null) result = result + " " + returnExp.toString();
+    return result;
   }
 
   public Iterable<? extends RudiTree> getDtrs() {

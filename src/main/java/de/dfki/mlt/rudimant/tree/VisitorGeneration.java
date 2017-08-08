@@ -6,6 +6,7 @@
 package de.dfki.mlt.rudimant.tree;
 
 import static de.dfki.mlt.rudimant.Utils.*;
+import static de.dfki.mlt.rudimant.Constants.*;
 
 import java.io.StringWriter;
 import java.io.Writer;
@@ -604,17 +605,30 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
       out.append("return true;\n");
     } else {
     */
-      out.append("return ");
+    switch (node.command) {
+    case "break":
+    case "return":
+      out.append(node.command).append(' ');
       if (node.returnExp != null)
         node.returnExp.visitWithComments(this);
+      if (node.ruleLabel != null)
+        out.append(node.ruleLabel);
       out.append(";\n");
+      break;
+    case "cancel":
+      out.append("return ").append(CANCEL_LOCAL).append(";\n");
+      break;
+    case "cancel_all":
+      out.append("return ").append(CANCEL_GLOBAL).append(";\n");
+      break;
+    case "continue":
+      out.append(node.command).append(";\n");
+      break;
+    default: logger.error("Wrong return command: {}", node.command); break;
+    }
     // }
   }
 
-  @Override
-  public void visitNode(StatBreak node) {
-    out.append("break " + node.toLeave + ";");
-  }
 
   @Override
   public void visitNode(StatSetOperation node) {

@@ -79,7 +79,7 @@ public class TreeModelAdapter extends ModelAdapter {
     if (model instanceof RTBinaryExp) {
       result = ((RTBinaryExp)model).operator;
     } else if (model instanceof StatReturn) {
-      result = "return";
+      result = ((StatReturn)model).toString();
     } else if (model instanceof StatGrammarRule) {
       result = ((StatGrammarRule)model).label + ":";
     } else if (model instanceof StatIf) {

@@ -139,13 +139,40 @@ Der Output des Loggers wird dann das Label jeder Regel, die evaluiert wird,
 zusammen mit der Auswertung der Bedingung und den Werten aller booleschen
 Basisterme, die in der Bedingung vorhanden sind, angeben.
 
-%\todo{Bsp debugging-output}
+\todo{Bsp debugging-output}
 
-%\subsubsection{Propose}
+\subsubsection{Ausstieg aus Regeln}
+
+Es gibt mehrere Möglichkeiten, die Regelverarbeitung lokal oder ganz
+abzubrechen. Aus einer gelabelten Regel kann man z.B. mit \texttt{break
+  label_name;} aussteigen. Alle danach folgenden Regeln werden dann
+weiter verarbeitet.
+
+Bricht man die Verarbeitung mit \texttt{cancel} ab, wird keine der in
+der Datei folgenden Regeln mehr angewandt, bei \texttt{cancel_all} wird
+keine nachfolgende Regel, weder lokal, noch auf höheren Ebenen, angewandt.
+
+Um \texttt{propose} oder \texttt{timeout} Blöcke zu verlassen, muss
+\texttt{return} benutzt werden, da dies normale Funktionsblöcke sind.
+
+\subsubsection{Propose}
 
 \subsubsection{Struktur einer Datei im rudi-Format}
 
-Anders als Java stellt rudimant nicht den Anspruch, dass die Einträge in einer Datei in irgendeine Form von übergeordneter Struktur gefasst werden. Die Regeln können ebenso wie Funktionsdeklarationen direkt in die Datei geschrieben werden. Dasselbe gilt für jede Art valider (Java-) Statements, wie etwa Zuweisungen, for-Schleifen usw.. Rudimant wird bei der Kompilation eine Java-Klasse erstellen, in die es die Funktionen sowie die Regeln, zu Funktionen transformiert, einträgt. Alle weiteren Statements werden in der korrekten Reihenfolge in die erzeugte Methode process() verschoben, wobei generierte Aufrufe an die Regelfunktionen zwischen ihnen gewährleisten, dass die Regeln und Statements in der Reihenfolge ausgeführt werden, die im rudi-Code spezifiziert war. Dies ermöglicht also, nicht in Regeln gefasste Abbruchbedingungen einzubauen, unter denen die Ausführung der ganzen Datei - und möglicher importierter Dateien - sofort beendet werden soll.\\
+Anders als Java stellt rudimant nicht den Anspruch, dass die Einträge in einer
+Datei in irgendeine Form von übergeordneter Struktur gefasst werden. Die Regeln
+können ebenso wie Funktionsdeklarationen direkt in die Datei geschrieben
+werden. Dasselbe gilt für jede Art valider (Java-) Statements, wie etwa
+Zuweisungen, for-Schleifen usw.. Rudimant wird bei der Kompilation eine
+Java-Klasse erstellen, in die es die Funktionen sowie die Regeln, zu Funktionen
+transformiert, einträgt. Alle weiteren Statements werden in der korrekten
+Reihenfolge in die erzeugte Methode process() verschoben, wobei generierte
+Aufrufe an die Regelfunktionen zwischen ihnen gewährleisten, dass die Regeln
+und Statements in der Reihenfolge ausgeführt werden, die im rudi-Code
+spezifiziert war. Dies ermöglicht also, nicht in Regeln gefasste
+Abbruchbedingungen einzubauen, unter denen die Ausführung der ganzen Datei -
+und möglicher importierter Dateien - sofort beendet werden soll.
+
 Datei-global deklarierte Variablen werden als Klassenvariablen angelegt.
 
 \subsubsection{Dialogakte und Evaluation mittels \caret}
@@ -240,6 +267,7 @@ if (sa.isSubsumedBy(new DialogueAct("Question")) {
   \caption{Überladene Vergleichsoperatoren}
   \label{tab:overloaded-comparison}
 \end{table}
+
 \paragraph{Rudimant Typinformationen zur Verfügung stellen}
 
 In manchen Fällen, wie etwa der Benutzung von außerhalb der rudi-Dateien

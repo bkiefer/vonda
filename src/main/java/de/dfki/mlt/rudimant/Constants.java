@@ -13,4 +13,8 @@ public interface Constants {
   public static final String CFG_LOGGING = "logging";
 
   public static final String DIALOGUE_ACT_TYPE = "<dial:DialogueAct>";
+
+  public static final String CANCEL_LOCAL = "false";
+  public static final String CANCEL_GLOBAL = "true";
+
 }

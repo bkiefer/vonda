@@ -740,11 +740,6 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
   }
 
   @Override
-  public void visitNode(StatBreak node) {
-    // nothing to do
-  }
-
-  @Override
   public void visitNode(StatSwitch node) {
     node.condition.visit(this);
     node.block.visit(this);

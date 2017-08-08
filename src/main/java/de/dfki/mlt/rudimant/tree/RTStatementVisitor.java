@@ -20,7 +20,7 @@ public interface RTStatementVisitor {
   public void visitNode(StatMethodDeclaration node);
 
   public void visitNode(StatPropose node);
-  
+
   public void visitNode(StatTimeout node);
 
   public void visitNode(StatReturn node);
@@ -32,8 +32,6 @@ public interface RTStatementVisitor {
   public void visitNode(StatVarDef node);
 
   public void visitNode(StatWhile node);
-  
-  public void visitNode(StatBreak node);
 
   public void visitNode(StatExpression node);
 }

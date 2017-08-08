@@ -1,4 +1,4 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper]{memoir}
 
 \usepackage[a4paper,margin=2cm]{geometry}
 \usepackage[utf8]{inputenc}
@@ -11,11 +11,15 @@
 
 \begin{document}
 
-\begin{center}
-  \Large Rudimant, the DFKI MLT dialogue engine
-\end{center}
+\title{Rudimant, the DFKI MLT dialogue engine}
+\author{Bernd Kiefer, Anna Welker}
+\date{\today}
 
-\section{Purpose}
+\maketitle
+
+\tableofcontents
+
+\chapter{Purpose}
 
 The multimodal interaction manager analyses natural language coming from the
 user, and generates natural language and gestures for the robot resp. its
@@ -26,7 +30,7 @@ strategic planning component, or any other sensor input, if available.
 The goal is to create engaging interactions with the users that support the
 currently active high-level goals.
 
-\section{Interaction with the overall system}
+\chapter{Interaction with the overall system}
 
 The interaction manager will get several input types from the nexus, the ones
 currently foreseen are: input from automatic speech recognition (ASR) or typed
@@ -71,7 +75,7 @@ outgoing dialogue acts into natural language utterances and gestures.
 
 \input{design}
 
-\section{Auspacken, Installation, Starten}
+\chapter{Auspacken, Installation, Starten}
 
 \input{hfc}
 

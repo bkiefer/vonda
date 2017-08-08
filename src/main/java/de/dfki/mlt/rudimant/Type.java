@@ -276,7 +276,8 @@ public class Type {
       boolean first = true;
       for (Type pType : _parameterTypes) {
         if (! first) sb.append(", ");
-        pType.toString(sb);
+        if (pType != null) pType.toString(sb);
+        else sb.append("null");
         first = false;
       }
       sb.append('>');

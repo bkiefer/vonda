@@ -151,35 +151,47 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     // create the process method
     out.append("  public boolean process(){\n");
     // use all methods created from rules in this file
-    for(RudiTree r : rules){
-      // rules, method declarations and imports are a special case
-      if (r instanceof StatGrammarRule){
-        out.append("if (" + ((StatGrammarRule)r).label + "()) return true;\n");
-        later.add((StatGrammarRule)r);
-      } else if (r instanceof StatMethodDeclaration){
+    for(RudiTree r : rules) {
+      if (r instanceof StatMethodDeclaration) {
+        // retain method declarations for later
+        // TODO: also move all appropriate comments to a laterComments list
         later.add((StatMethodDeclaration)r);
-      } else if (r instanceof Import){
-        out.append("if (new " + capitalize(((Import)r).name) + "(");
-        Set<String> ncs = mem.getNeededClasses();
-        if (ncs != null) {
-          int i = 0;
-          for (String c : ncs) {
-            if (c.equals(mem.getClassName())
-                || capitalize(c).equals(mem.getClassName())) {
-              c = "this";
+        continue;
+      }
+
+      if (r instanceof StatGrammarRule || r instanceof Import) {
+        // rules and imports are called as functions and may return a non-zero
+        // value. If the value is 1
+        out.append("if (");
+        if (r instanceof StatGrammarRule){
+          out.append(((StatGrammarRule)r).label).append("()");
+          // TODO: move all appropriate comments to a laterComments list
+          later.add((StatGrammarRule)r);
+        } else {
+          out.append("new " + capitalize(((Import)r).name) + "(");
+          Set<String> ncs = mem.getNeededClasses();
+          if (ncs != null) {
+            boolean notfirst = false;
+            for (String c : ncs) {
+              if (c.equals(mem.getClassName())
+                  || capitalize(c).equals(mem.getClassName())) {
+                c = "this";
+              }
+              if (notfirst) out.append(", ");
+              else notfirst = true;
+              out.append(lowerCaseFirst(c));
             }
-            if (i != 0) out.append(", ");
-            out.append(lowerCaseFirst(c));
-            i++;
           }
+          out.append(").process()");
         }
-        out.append(").process()) return true;\n");
-      } else {
+        out.append(") return true;\n");
+      } else if (r instanceof RTStatement) {
         gv.visitNode((RTStatement)r);
       }
     }
     out.append("return false; \n}\n");
     // now, add everything that we did not want in the process method
+    // TODO: replace the comments list by the laterComments list
     for(RTStatement t : later){
       gv.visitNode(t);
     }

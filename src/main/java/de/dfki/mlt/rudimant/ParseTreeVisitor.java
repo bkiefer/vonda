@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
@@ -17,7 +16,6 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
-import de.dfki.mlt.rudimant.io.RobotGrammarParser.Break_statementContext;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Da_tokenContext;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_blockContext;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_groupContext;
@@ -200,10 +198,18 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitReturn_statement(RobotGrammarParser.Return_statementContext ctx) {
     // RETURN exp? SEMICOLON;
-    return ((ctx.getChildCount() == 2)
-        ? new StatReturn()
-        : new StatReturn((RTExpression)visit(ctx.getChild(1))))
-        .setPosition(ctx, currentClass);
+    StatReturn res;
+    String cmd = ctx.getChild(0).getText();
+    if (ctx.getChildCount() == 2) {
+      res = new StatReturn(cmd);
+    } else {
+      if (cmd.equals("return"))
+        res = new StatReturn((RTExpression)visit(ctx.getChild(1)));
+      else
+        res = new StatReturn(cmd, ctx.getChild(1).getText());
+    }
+    res.setPosition(ctx, currentClass);
+    return res;
   }
 
   // TODO: IN PRINCIPLE POSSIBLE WITHOUT CURLY BRACES
@@ -615,13 +621,5 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     }
     return new ExpFuncCall(ctx.getChild(0).getText(),
         expList, true).setPosition(ctx, currentClass);
-  }
-
-  @Override
-  public RudiTree visitBreak_statement(Break_statementContext ctx) {
-    if (ctx.getChildCount() == 1) {
-      return new StatBreak().setPosition(ctx, currentClass);
-    }
-    return new StatBreak(ctx.getChild(1).getText()).setPosition(ctx, currentClass);
   }
 }

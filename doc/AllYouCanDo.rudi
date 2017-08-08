@@ -56,7 +56,8 @@ String foo (String a, String b) { return a + b; }
 // Breaking out of rules
 // **********************************************************************
 
-// break can be used to exit the rule specified
+// break can be used to exit the rule specified, rules following this
+// rule will still be executed
 test_rule:
   if (true) {
     second_rule:
@@ -64,12 +65,21 @@ test_rule:
         break test_rule;
       }
   }
-  
-// returning true from a rule will cause the evaluation process to stop
+
+// return from a file (not looking at subsequent rules) with cancel
 test_rule:
   if (true) {
     second_rule:
       if (false) {
-        return true;
+        cancel;
+      }
+  }
+
+// Stop all rule execution (even at higher levels) with cancel_all
+test_rule:
+  if (true) {
+    second_rule:
+      if (false) {
+        cancel_all;
       }
   }
