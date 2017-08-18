@@ -129,7 +129,7 @@ public class StatementTest {
  public void IfTest1(){
    String in = "String s = \"bla\"; if (s == null) {}";
    String r = generate(in);
-   String expected = "String s = \"bla\"; if (s == null) {}";
+   String expected = "String s = \"bla\"; if ((s == null)) {";
    assertEquals(expected, getForMarked(r, expected));
  }
 
@@ -137,7 +137,7 @@ public class StatementTest {
  public void IfTest2(){
    String in = "String s = \"bla\"; if (s != null) {}";
    String r = generate(in);
-   String expected = "String s = \"bla\"; if (s != null) {}";
+   String expected = "String s = \"bla\"; if ((s != null)) {";
    assertEquals(expected, getForMarked(r, expected));
  }
 

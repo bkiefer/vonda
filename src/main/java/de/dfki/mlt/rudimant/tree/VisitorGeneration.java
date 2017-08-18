@@ -146,6 +146,8 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
 
   private static Type assessTypes(Type left, Type right) {
+    if (right.isNull()) return right;
+    if (left.isNull()) return left;
     if (right.isString() && ! left.isString()) {
       Type h = right; right = left; left = h;
     }

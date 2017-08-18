@@ -159,6 +159,6 @@ public class TestComparison {
     // other operators than == don't make sense here.
     String in = "Child c; if (c.hasBrother != null) return true;";
     String r = generate(in);
-    String expected = "if ((! (((Set<Object>)c.getValue(\"<dom:hasBrother>\")) == null))) return true;";
+    String expected = "if ((((Set<Object>)c.getValue(\"<dom:hasBrother>\")) != null)) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }}
