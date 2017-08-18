@@ -125,6 +125,30 @@ public class StatementTest {
    assertEquals(expected, getForMarked(r, expected));
  }
 
+ @Test
+ public void IfTest1(){
+   String in = "String s = \"bla\"; if (s == null) {}";
+   String r = generate(in);
+   String expected = "String s = \"bla\"; if (s == null) {}";
+   assertEquals(expected, getForMarked(r, expected));
+ }
+
+ @Test
+ public void IfTest2(){
+   String in = "String s = \"bla\"; if (s != null) {}";
+   String r = generate(in);
+   String expected = "String s = \"bla\"; if (s != null) {}";
+   assertEquals(expected, getForMarked(r, expected));
+ }
+
+ @Test
+ public void IfTest3(){
+   String in = "String s = \"bla\"; if (s) {}";
+   String r = generate(in);
+   String expected = "String s = \"bla\"; if (exists(s)) {";
+   assertEquals(expected, getForMarked(r, expected));
+ }
+
 //   @Test
 //   public void StatementTestxy(){
 //     String in = "Object foo; for (int i = 1; i <= 2; ++i){foo.slot = 1;}";
