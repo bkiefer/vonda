@@ -172,7 +172,6 @@ complex_exp
     arithmetic
   | literal_or_graph_exp
   | assignment
-  | NOT exp
   | simple_exp
   ;
 
@@ -201,6 +200,7 @@ bool_and_exp
 simple_b_exp
   : complex_exp // will be compiled to '!= null' or '!= 0' or 'has()' ...
   | complex_exp ('==' | '!=' | '<=' | '<' | '>=' | '>') exp
+  | NOT exp
   ;
 
 new_exp

@@ -274,20 +274,10 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitComplex_exp(RobotGrammarParser.Complex_expContext ctx) {
-    //  arithmetic | literal_or_graph_exp | assignment | NOT exp
-    RudiTree result;
-    switch (ctx.getChildCount()) {
-    case 2: // NOT simple_exp
-      result = new ExpBoolean(
-          (RTExpression) visit(ctx.getChild(1)), null, "!");
-      break;
-    case 1: // other expression
-      result = visit(ctx.getChild(0));
-      break;
-    default:
+    //  arithmetic | literal_or_graph_exp | assignment
+    if (ctx.getChildCount() != 1)
       throw new UnsupportedOperationException("How's that possible");
-    }
-    return result.setPosition(ctx, currentClass);
+    return visit(ctx.getChild(0)).setPosition(ctx, currentClass);
   }
 
   @Override
@@ -305,15 +295,24 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   }
 
   private RudiTree boolExp(ParserRuleContext ctx) {
-    RudiTree result;
-    if (ctx.getChildCount() == 1) {
+    RudiTree result = null;
+    switch (ctx.getChildCount()) {
+    case 1:
       result = visit(ctx.getChild(0));
-    } else {
+      break;
+    case 2: // NOT simple_exp
+      result = new ExpBoolean(
+          (RTExpression) visit(ctx.getChild(1)), null, "!");
+      break;
+    case 3: // comparison operator
       result = new ExpBoolean(
           (RTExpression) visit(ctx.getChild(0)),
           (RTExpression) visit(ctx.getChild(2)),
           ctx.getChild(1).getText() // operator
           );
+      break;
+    default:
+      throw new UnsupportedOperationException("How's that possible");
     }
     return result.setPosition(ctx, currentClass);
   }
