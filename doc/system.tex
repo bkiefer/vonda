@@ -139,17 +139,17 @@ Der Output des Loggers wird dann das Label jeder Regel, die evaluiert wird,
 zusammen mit der Auswertung der Bedingung und den Werten aller booleschen
 Basisterme, die in der Bedingung vorhanden sind, angeben.
 
-\todo{Bsp debugging-output}
+\todo[inline]{Bsp debugging-output}
 
 \subsubsection{Ausstieg aus Regeln}
 
 Es gibt mehrere Möglichkeiten, die Regelverarbeitung lokal oder ganz
-abzubrechen. Aus einer gelabelten Regel kann man z.B. mit \texttt{break
-  label_name;} aussteigen. Alle danach folgenden Regeln werden dann
+abzubrechen. Aus einer gelabelten Regel kann man z.B. mit
+\verb|break label_name;| aussteigen. Alle danach folgenden Regeln werden dann
 weiter verarbeitet.
 
 Bricht man die Verarbeitung mit \texttt{cancel} ab, wird keine der in
-der Datei folgenden Regeln mehr angewandt, bei \texttt{cancel_all} wird
+der Datei folgenden Regeln mehr angewandt, bei \texttt{cancel\_all} wird
 keine nachfolgende Regel, weder lokal, noch auf höheren Ebenen, angewandt.
 
 Um \texttt{propose} oder \texttt{timeout} Blöcke zu verlassen, muss
@@ -376,22 +376,39 @@ Diese Funktionalität kann insbesondere dazu benutzt werden, am Anfang einer
 \texttt{rudi} Datei Java-Klassen zu importieren, die im kompilierten Code
 gebraucht werden.
 
-\subsection{Struktur des POC Rudimant-Projekts}
+\subsection{Architektur von Rudimant}
 
-TODO: Siehe Bild für Softprak, Beschreibung von HerbeaAgent.rudi
-vs. HerbeaAgent.java und Rolle von HerbeaClient
+In der Abbildung~\ref{fig:architecture} ist die Gesamtarchitektur skizziert.
 
-Die Basisklassen von Herbea sind \texttt{HerbeaClient}, der die Kommunikation
-mit der Außenwelt herstellt, und \texttt{HerbeaAgent}, der Java-Funktionalität
-zur Verfügung stellt, die sich nicht ohne weiteres in \texttt{rudi} Dateien
-implementieren lässt (komplexe Queries an die Datenbank, etc.).
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=.8\textwidth]{RudimantStructure.png}
+  \caption{Gesamtarchitektur von Rudimant}
+  \label{fig:architecture}
+\end{figure}
 
-Zu \texttt{HerbeaAgent.java} gehört noch eine Datei \texttt{HerbeaAgent.rudi},
-die sozusagen das Interface beschreibt, auf das der \texttt{rudi} Quellcode
-zugreifen kann. Hier können auch statt der generischen Klasse \texttt{Rdf} die
-Klassen aus der Ontologie spezifiziert werden, wenn diese genauer angegeben
-werden können. Das hilft dem Kompiler bei der Typinferenz und dem richtigen
-Zugriff mit RDF-Prädikaten.
+Rudimant besteht aus einem Compiler und einem Laufzeitsystem. Daraus wird eine
+konkrete Applikation, indem zunächst eine spezielle Java-Klasse, die sogenannte
+\emph{Wrapper-Klasse}, von der Klasse \texttt{Agent} abgeleitet wird. Diese
+kann Implementierungen von \texttt{Agent} erweitern oder
+überschreiben. Außerdem können eigene Java-Methoden für die Benutzung in den
+Regelfiles zur Verfügung stellen, die sich nicht ohne weiteres in \texttt{rudi}
+Dateien implementieren lassen (komplexe Queries an die Datenbank, etc.). Im
+Bild ist dies \texttt{MyAgent.java}.
+
+Damit der Compiler diese Funktionen kennt, müssen sie in der Datei
+\texttt{MyAgent.rudi} deklariert werden. Sie beschreibt sozusagen das
+Interface, auf das der \texttt{rudi} Quellcode zugreifen kann.
+
+\todo{Das kann man doch in allen .rudi files}
+Hier können auch statt der generischen Klasse \texttt{Rdf} die Klassen aus der
+Ontologie spezifiziert werden, wenn diese genauer angegeben werden können. Das
+hilft dem Kompiler bei der Typinferenz und dem richtigen Zugriff mit
+RDF-Prädikaten.
+
+Eine weitere wichtige Klasse ist \texttt{MyClient.java}, der die Kommunikation
+mit der Außenwelt herstellt und das Laufzeitsystem von konkreten
+Kommunikationsinterfaces abschirmt.
 
 \subsection{Default-Funktionalität im Laufzeitsystem}
 Alles was in \texttt{Agent} bereitgestellt wird. Die aktuelle Liste der

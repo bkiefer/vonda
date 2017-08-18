@@ -1,10 +1,5 @@
 * Queries aus .rudi abfeuern
 
-* Issue:
-  Variablen werden nicht angelegt, siehe Person pers in DialogIdScheissdrauf
-  Variablen final machen können wg. lambdas (DialogIdScheissdrauf)
-  Rdf types in variable declarations are wrongly turned to Object (Kaefer)
-
 * Dialogue Acts
   - hierarchy of Frames from the ontology with access functions
 
