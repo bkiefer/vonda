@@ -269,8 +269,8 @@ public class Type {
   /** Return the more specific of the two types, if it exists, null otherwise */
   public Type unifyTypes(Type right) {
     if (_name == null || _name.equals("Object")) return right;
-    if (right == null || right._name == null
-        || right._name.equals("Object") || this.equals(right))
+    if (right == null || right._name == null || right.isNull()
+        || right.isUnspecified() || this.equals(right))
       return this;
 
     // check if these are (real) RDF types and are in a type relation.

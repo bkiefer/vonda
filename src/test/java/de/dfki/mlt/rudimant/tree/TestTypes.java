@@ -70,6 +70,14 @@ public class TestTypes {
   }
 
   @Test
+  public void testType6(){
+    String in = "if(true) { String s = null;}";
+    String r = generate(in);
+    String expected = "if (true) { String s = null;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
   public void testReturnSetType() {
     String in = "Child c;  docs = c.isTreatedBy;";
     String r = generate(in);

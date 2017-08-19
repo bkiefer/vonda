@@ -139,7 +139,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
       }
       mem.addVariableDeclaration(((ExpVariable) node.left).content,
               node.left.type);
-      if (node.right.type == null) {
+      if (node.right.type.isUnspecified()) {
         node.right.propagateType(node.type);
       }
     } else if (node.left instanceof ExpVariable
