@@ -36,7 +36,7 @@ public class Type {
       {"<xsd:short>", "Short"},
       {"<xsd:dateTime>", "Date"},
       {"<xsd:date>", "XsdDate"},
-      {"<xsd:dateTimeStamp>", "XsdLong"},
+      {"<xsd:dateTimeStamp>", "Long"},
     };
     for (String[] pair : xsd2javatypes) {
       xsd2java.put(pair[0], pair[1]);
