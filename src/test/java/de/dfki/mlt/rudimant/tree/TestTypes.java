@@ -11,6 +11,8 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 
+import de.dfki.mlt.rudimant.TypeException;
+
 /**
  *
  * @author anna
@@ -154,5 +156,14 @@ public class TestTypes {
         + " for ( int i = 1; ((i < 5) && (raw.size() < 3)); i = (i+1)){"
         + " Rdf w = getChild(i); if (w != null) raw.add(w); } return raw;";
     assertEquals(expected, getForMarked(r, expected));
+  }
+  
+  // 
+  @Test(expected=TypeException.class)
+  public void testVoidFunction() throws Throwable {
+    String in = " void fun(); k = fun();";
+    //String r = generate(in);
+    //System.out.println(r);
+    getTypeError(in);  
   }
 }

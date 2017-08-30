@@ -128,11 +128,12 @@ public class TestTypeInference {
   }
 
   /** TODO: Fix this problem (issue #55)
+   * aw: wouldn't an entry like [Rdf]. boolean has(String sth) in Agent.rudi fix this?
   @Test
   public void testUnknownBoolean() {
     String in = "Rdf r; if(r.has(\"prop\")) i = 1;";
     String s = generate(in);
-    String expected = "if (r.has(\"prop\")) int i = 1; ";
+    String expected = "if ((r != null && r.has(\"prop\"))) int i = 1; ";
     assertEquals(expected, getForMarked(s, expected));
   }
   */
