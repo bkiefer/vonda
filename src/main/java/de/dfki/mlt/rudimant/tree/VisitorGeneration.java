@@ -722,8 +722,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
   @Override
   public String visitNode(ExpFuncCall node) {
     String ret = "";
-    if (node.realOrigin != null &&
-        (node.calledUpon == null || node.calledUpon.isUnspecified())) {
+    if (node.realOrigin != null && node.calledUpon == null) {
       ret += lowerCaseFirst(node.realOrigin) + ".";
     }
     if (node.newexp){

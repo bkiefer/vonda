@@ -2,7 +2,7 @@
 
 * Dialogue Acts
   - hierarchy of Frames from the ontology with access functions
-
+  - Serialize DialogueAct to / from RDF
 * processor / abstract processor
   + behaviour sync with optional delays
 
@@ -10,6 +10,7 @@
   - PAL system
   - Robo demo
   - HySociaTea SB demo
+  - Herbea
 
 * Softwarepraktikum
 ** usability questionnaires / templates

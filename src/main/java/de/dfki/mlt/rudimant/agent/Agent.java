@@ -709,6 +709,22 @@ public abstract class Agent implements StreamingClient {
     }
   }
 
+  /** Empty all queues that might make the thing going */
+  public void clearBehavioursAndProposals() {
+    // remove all behaviours, proposals and timeouts
+    pendingProposals.clear();
+    proposalsToExecute.clear();
+    _pendingBehaviours.clear();
+  }
+
+  /** Empty all queues that might make the thing going */
+  public void shutdown() {
+    // remove all behaviours, proposals and timeouts
+    clearBehavioursAndProposals();
+    behaviourTriggers.clear();
+    timeouts.clear();
+  }
+
   // ######################################################################
   // Collection + lambda methods
   // ######################################################################

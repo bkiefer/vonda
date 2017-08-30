@@ -58,6 +58,10 @@ float random();
 Logger logger;
 void info(String s, int i);
 
+// discarding actions and shutdown
+void clearBehavioursAndProposals();
+void shutdown();
+
 // lambda
 boolean contains(Collection coll, Function<Boolean, Object> pred);
 boolean all(Collection coll, Function<Boolean, Object> pred);
