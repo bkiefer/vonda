@@ -356,16 +356,22 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     if (innerIterableType == null) {
       typeError("Iterable for loop type is unknown or not generic, but: "
           + node.initialization.getType(), node);
-      innerIterableType= new Type("Object");
+      innerIterableType = new Type("Object");
     }
     if (node.varType == null) {
       node.varType = innerIterableType;
     } else {
       Type mergeType = node.varType.unifyTypes(innerIterableType);
       if (mergeType == null) {
-        typeError("Incompatible types in short for loop: "
-            + node.varType + " : " + innerIterableType, node);
-        node.varType = innerIterableType;
+        if (innerIterableType.equals(new Type("Object"))) {
+          // Then handle this as an implicit cast, but warn the user that it might crash
+          typeError("Implicit casting of list Object to " + node.varType
+              + " in short for loop, be aware this might crash in Java ", node);
+        } else {
+          typeError("Incompatible types in short for loop: "
+              + node.varType + " : " + innerIterableType, node);
+          node.varType = innerIterableType;
+        }
       }
     }
     mem.addVariableDeclaration(node.var.toString(), node.varType);
