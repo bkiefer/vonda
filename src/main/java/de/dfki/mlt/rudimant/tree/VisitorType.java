@@ -647,9 +647,6 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
    */
   @Override
   public void visitNode(ExpFuncCall node) {
-    if (node.fullexp.startsWith("checkWithMine")) {
-      int i = 1;
-    }
     // test whether the given parameters are of the correct type
     List<Type> partypes = new ArrayList<Type>();
     if(node.params != null)

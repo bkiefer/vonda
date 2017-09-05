@@ -165,13 +165,15 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
       if (r instanceof StatGrammarRule || r instanceof Import) {
         // rules and imports are called as functions and may return a non-zero
         // value. If the value is 1
-        out.append("if (");
         if (r instanceof StatGrammarRule){
+          out.append("if (");
           out.append(((StatGrammarRule)r).label).append("()");
           // TODO: move all appropriate comments to a laterComments list
           later.add((StatGrammarRule)r);
           saveCommentsForLater(gv, r.positions[1]);
         } else {
+          out.append(r.checkComments(gv, r.positions[0]));
+          out.append("if (");
           out.append("new " + capitalize(((Import)r).name) + "(");
           Set<String> ncs = mem.getNeededClasses();
           if (ncs != null) {
