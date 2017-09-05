@@ -52,7 +52,7 @@ grammar_rule
 
 // TODO: what about return label; ??
 return_statement
-  : (RETURN exp? | BREAK VARIABLE? | CANCEL | CANCELALL | CONTINUE) ';' ;
+  : (RETURN exp? | BREAK VARIABLE? | CANCEL | CANCEL_ALL | CONTINUE) ';' ;
 
 if_statement
   : IF '(' boolean_exp ')' (statement) (ELSE (statement))?
@@ -232,7 +232,8 @@ da_token
 // TODO: is that all 'what you can assign to' (an lvalue), which can be:
 // a variable, an array element, an rdf slot (did i forget sth?)
 assignment
-  : ((DEC_VAR | type_spec)? variable) '=' exp
+  : FINAL type_spec? variable '=' exp
+  | type_spec? variable '=' exp
   | field_access '=' exp
   ;
 
@@ -289,6 +290,7 @@ PUBLIC: 'public';
 PROTECTED: 'protected';
 PRIVATE: 'private';
 NEW: 'new';
+FINAL: 'final';
 
 /// character literal (starting with ' ):
 CHARACTER: '\''.'\'';
@@ -347,7 +349,6 @@ COLON: ':';
 WILDCARD: '_';
 HASH: '#';
 PROPOSE: 'propose';
-DEC_VAR: 'var';
 TIMEOUT: 'timeout';
 TIMEOUT_BEHAVIOUR: 'behaviour_timeout';
 VARIABLE_MARKER: '^';

@@ -29,7 +29,7 @@ String s = "bar";
 if (s) return "foo";
 
 // Is s.compareTo(t) < 0
-String s = "bar", t = "baz";
+String s = "bar"; t = "baz";
 if (s < t) return "foo";
 
 // Is i not null and not zero? (Same for all other Number containers)
@@ -82,4 +82,20 @@ test_rule:
       if (false) {
         cancel_all;
       }
+  }
+
+// **********************************************************************
+// Near-to-Java features
+// **********************************************************************
+
+// you can declare a variable final if you need to use it in a propose or
+// timeout block
+test_rule:
+  if(true) {
+    final c = "hi";
+    final boolean b = false;
+    propose("test") {
+      if(c.equals("bye"))
+        return true;
+    }
   }

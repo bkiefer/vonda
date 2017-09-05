@@ -146,7 +146,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
           .setPosition(ctx, currentClass),
           ctx.getChild(1).getText().equals("++")? "+" : "-")
           .setPosition(ctx, currentClass);
-      result = new ExpAssignment(left, right);
+      result = new ExpAssignment(left, right, false);
     } else { // 3 children
       result = new ExpArithmetic(
           (RTExpression) visit(ctx.getChild(0)),
@@ -338,17 +338,25 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitAssignment(RobotGrammarParser.AssignmentContext ctx) {
     // ((DEC_VAR | VARIABLE)? VARIABLE | field_access) ASSIGN exp
-    if (ctx.getChildCount() == 3) { // no declaration
-      RudiTree left = visit(ctx.getChild(0));
+    boolean isFinal = false;
+    int start = 0;
+    if (ctx.getChild(0).getText().equals("final")) {
+      isFinal = true;
+      start = 1;
+    }
+    if (ctx.getChildCount() - start == 3) { // no declaration
+      RudiTree left = visit(ctx.getChild(start));
       return new ExpAssignment((RTExpression) left,
-          (RTExpression) visit(ctx.getChild(2))).setPosition(ctx, currentClass);
+          (RTExpression) visit(ctx.getChild(start + 2)), isFinal)
+          .setPosition(ctx, currentClass);
     } else {  // declaration
-      String declaredType = ctx.getChild(0).getText();
-      if (declaredType.equals("var")) {
+      String declaredType = ctx.getChild(start).getText();
+      /* if (declaredType.equals("var")) {
         declaredType = null;
-      }
-      return new ExpAssignment(declaredType, (RTExpression) visit(ctx.getChild(1)),
-          (RTExpression) visit(ctx.getChild(3))).setPosition(ctx, currentClass);
+      }*/
+      return new ExpAssignment(declaredType, (RTExpression) visit(ctx.getChild(start + 1)),
+          (RTExpression) visit(ctx.getChild(start + 3)), isFinal)
+          .setPosition(ctx, currentClass);
     }
   }
 

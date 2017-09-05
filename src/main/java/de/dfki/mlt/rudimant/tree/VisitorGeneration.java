@@ -98,9 +98,10 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
   @Override
   public String visitNode(ExpAssignment node) {
     String ret = "";
-    if (node.declaration) {
+    if (node.fin)
+      ret = "final ";
+    if (node.declaration)
       ret += node.type;
-    }
     ret += ' ';
     ExpPropertyAccess pa = null;
     if (node.left instanceof ExpFieldAccess) {
