@@ -148,6 +148,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         }
       }
     }
+    
     // create the process method
     out.append("  public boolean process(){\n");
     // use all methods created from rules in this file
@@ -156,6 +157,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         // retain method declarations for later
         // TODO: also move all appropriate comments to a laterComments list
         later.add((StatMethodDeclaration)r);
+        if (((StatMethodDeclaration)r).block != null)
+          saveCommentsForLater(gv, r.positions[1]);
         continue;
       }
 
@@ -167,6 +170,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
           out.append(((StatGrammarRule)r).label).append("()");
           // TODO: move all appropriate comments to a laterComments list
           later.add((StatGrammarRule)r);
+          saveCommentsForLater(gv, r.positions[1]);
         } else {
           out.append("new " + capitalize(((Import)r).name) + "(");
           Set<String> ncs = mem.getNeededClasses();
@@ -190,10 +194,31 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
       }
     }
     out.append("return false; \n}\n");
+    
+    pourBackSavedComments(gv);
+    
     // now, add everything that we did not want in the process method
     // TODO: replace the comments list by the laterComments list
     for(RTStatement t : later){
       gv.visitNode(t);
+    }
+  }
+  
+  // in this list, keep all comments that belong to methods or rules that
+  // are not evaluated into the process method
+  LinkedList<Token> saveComments = new LinkedList<>();
+  
+  private void saveCommentsForLater(VisitorGeneration gv, int pos) {
+    while (!gv.collectedTokens.isEmpty() && gv.collectedTokens.get(0).getTokenIndex() < pos) {
+      saveComments.addFirst(gv.collectedTokens.get(0));
+      gv.collectedTokens.remove();
+    }
+  }
+  
+  private void pourBackSavedComments(VisitorGeneration gv) {
+    while (!saveComments.isEmpty()) {
+      gv.collectedTokens.addFirst(saveComments.getFirst());
+      saveComments.removeFirst();
     }
   }
 
