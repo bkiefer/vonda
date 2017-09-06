@@ -319,6 +319,8 @@ public class Type {
    *    equal to the assign code of this.
    */
   public boolean isPossibleArgumentType(Type actualType) {
+    if (actualType == null)
+      return false;
     if (_name == null || actualType._name == null
         || _name.equals("Object") || equals(actualType))
       return true;
