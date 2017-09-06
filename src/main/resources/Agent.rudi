@@ -8,6 +8,8 @@
 [List<T>]. T get(int a);
 [List<T>]. void add(Object a);
 [Set<T>]. void add(Object a);
+[List<T>]. boolean contains(Object a);
+[Set<T>]. boolean contains(Object a);
 
 // all Agent methods we should know
 
