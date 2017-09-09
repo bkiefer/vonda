@@ -94,8 +94,8 @@ public class StatementTest {
    String in = "int i; boolean truth; "
            + "switch(truth){case (truth): i=2;  case(truth==false): i=1;}";
     String r = generate(in);
-    String expected = "switch (truth){ case(truth):; "
-            + "i = 2; case(truth==false):; i = 1; }";
+    String expected = "switch (truth){ case (truth):; "
+            + "i = 2; case (truth==false):; i = 1; }";
     assertEquals(expected, getForMarked(r, expected));
  }
 
@@ -146,6 +146,14 @@ public class StatementTest {
    String in = "String s = \"bla\"; if (s) {}";
    String r = generate(in);
    String expected = "String s = \"bla\"; if (exists(s)) {";
+   assertEquals(expected, getForMarked(r, expected));
+ }
+
+ @Test
+ public void SwitchTest(){
+   String in = "switch(5 % 3) { case 0: return true; case 1: return false;}";
+   String r = generate(in);
+   String expected = "switch ((5%3)){ case 0:; return true; case 1:; return false;";
    assertEquals(expected, getForMarked(r, expected));
  }
 

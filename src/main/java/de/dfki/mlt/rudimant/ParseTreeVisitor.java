@@ -408,7 +408,9 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitSwitch_label(Switch_labelContext ctx) {
     // CASE string_expression ':' | CASE VARIABLE ':' | DEFAULT ':'
-    return new ExpSingleValue(ctx.getText(), "label").setPosition(ctx, currentClass);
+    String text = ctx.getChild(0).getText() + " " + ctx.getChild(1).getText();
+    text = ctx.getChildCount() == 3 ? text + ":" : text;
+    return new ExpSingleValue(text, "label").setPosition(ctx, currentClass);
   }
 
   @Override
