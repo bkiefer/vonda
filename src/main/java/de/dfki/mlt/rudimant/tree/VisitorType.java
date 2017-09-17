@@ -41,6 +41,10 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
    */
   public void typeError(String errorMessage, RudiTree node) {
     String newErrorMessage = node.getLocation() + " " + errorMessage;
+    if (mem.rulesLoc) {
+      mem.currentMap.put("ERROR:" + node.getLocation().getLineNumber(),
+            errorMessage);
+    }
     if (typeErrorFatal) {
       // throw a real Exception
       throw new TypeException(newErrorMessage);
