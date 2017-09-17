@@ -17,4 +17,6 @@ public interface Constants {
   public static final String CANCEL_LOCAL = "false";
   public static final String CANCEL_GLOBAL = "true";
 
+  public static final String CFG_RULE_LOCATION_FILE = "ruleLocationFile";
+  public static final String CFG_RULE_LOCATION_SUFFIX = "RuleLocation.yml";
 }
