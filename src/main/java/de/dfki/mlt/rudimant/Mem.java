@@ -41,6 +41,11 @@ public class Mem {
 
   private RdfProxy _proxy;
 
+  private LinkedHashMap<String, Object> rulesLocMap;
+  public LinkedHashMap<String, Object> currentMap;
+  public List<LinkedHashMap<String,Object>> previousMaps;
+  public boolean rulesLoc;
+
   // the rudi file that represents the Agent
   private String upperRudi;
 
@@ -80,16 +85,34 @@ public class Mem {
    */
   public void enterClass(String classname, ToplevelBlock node) {
     enterEnvironment(node);
+
+    if (rulesLoc)
+      previousMaps.add(currentMap);
+
     node.setClass(classBlock, new ClassEnv(classname));
     classBlock = node;
-    System.out.println("## classblock entering: " + curClass().getName());
+
+    if (rulesLoc) {
+      if (currentMap.containsKey(curClass().getName())) {
+        currentMap = (LinkedHashMap) currentMap.get(curClass().getName());
+      } else {
+        currentMap = new LinkedHashMap<String, Object>();
+      }
+    }
   }
 
   /** Leave processing of a class. To be called at the very end of processing
    *  the top-level class or import.
    */
   public void leaveClass(ToplevelBlock node) {
-    System.out.println("## classblock leaving: " + classBlock.getClassEnv().getName());
+    if (rulesLoc) {
+      if (previousMaps.isEmpty()) {
+        rulesLocMap = currentMap;
+      } else {
+        previousMaps.get(previousMaps.size() - 1).put(curClass().getName(), currentMap);
+        currentMap = previousMaps.remove(previousMaps.size() - 1);
+      }
+    }
 
     classBlock = classBlock.getParentClass();
 
@@ -109,8 +132,6 @@ public class Mem {
 
   public boolean enterRule(String name) {
     // The condition is: We're in the topmost environment of a file.
-//    System.out.println("enter rule: " + name);
-//    System.out.println(curClass().getRulesAndImports());
     return curClass().enterRule(name) && classBlock.getBindings() == current;
   }
 
@@ -240,5 +261,16 @@ public class Mem {
       tb = tb.getParentClass();
     }
     return result;
+  }
+
+  public void initRulesLocMap() {
+    rulesLoc = true;
+    rulesLocMap = new LinkedHashMap<>();
+    currentMap = rulesLocMap;
+    previousMaps = new ArrayList<>();
+  }
+
+  public Map getRulesLocMap() {
+    return rulesLocMap;
   }
 }
