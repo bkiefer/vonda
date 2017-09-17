@@ -45,6 +45,7 @@ public class Mem {
   public LinkedHashMap<String, Object> currentMap;
   public List<LinkedHashMap<String,Object>> previousMaps;
   public boolean rulesLoc;
+  public int importLoc;
 
   // the rudi file that represents the Agent
   private String upperRudi;
@@ -86,8 +87,6 @@ public class Mem {
   public void enterClass(String classname, ToplevelBlock node) {
     enterEnvironment(node);
 
-    System.out.println("entering " + classname);
-
     if (rulesLoc)
       previousMaps.add(currentMap);
 
@@ -100,6 +99,7 @@ public class Mem {
       } else {
         currentMap = new LinkedHashMap<String, Object>();
       }
+      currentMap.put("ImportWasInLine", importLoc);
     }
   }
 

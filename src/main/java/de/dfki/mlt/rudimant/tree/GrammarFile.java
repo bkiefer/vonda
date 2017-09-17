@@ -124,6 +124,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         Import node = (Import)t;
         String conargs = "";
         mem.addImport(node.name, conargs);
+        mem.importLoc = node.getLocation().getLineNumber();
         rudi.processImport(node.content);
       } else if (t instanceof RTStatement) {
         ((RTStatement)t).visit(ttv);
@@ -148,7 +149,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         }
       }
     }
-    
+
     // create the process method
     out.append("  public boolean process(){\n");
     // use all methods created from rules in this file
@@ -196,27 +197,27 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
       }
     }
     out.append("return false; \n}\n");
-    
+
     pourBackSavedComments(gv);
-    
+
     // now, add everything that we did not want in the process method
     // TODO: replace the comments list by the laterComments list
     for(RTStatement t : later){
       gv.visitNode(t);
     }
   }
-  
+
   // in this list, keep all comments that belong to methods or rules that
   // are not evaluated into the process method
   LinkedList<Token> saveComments = new LinkedList<>();
-  
+
   private void saveCommentsForLater(VisitorGeneration gv, int pos) {
     while (!gv.collectedTokens.isEmpty() && gv.collectedTokens.get(0).getTokenIndex() < pos) {
       saveComments.addFirst(gv.collectedTokens.get(0));
       gv.collectedTokens.remove();
     }
   }
-  
+
   private void pourBackSavedComments(VisitorGeneration gv) {
     while (!saveComments.isEmpty()) {
       gv.collectedTokens.addFirst(saveComments.getFirst());
