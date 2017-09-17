@@ -258,6 +258,7 @@ public class RudimantCompiler {
       Files.createDirectories(outputdir.toPath());
     }
     File outputFile = new File(outputdir, mem.getClassName() + ".java");
+    System.out.println(mem.getClassName());
 
     /* Compute the inputfile, which is relative to inputDirectory, the subdirectory
      * is specified by the subPackage, and the last entry of subPackage, which is
@@ -313,6 +314,7 @@ public class RudimantCompiler {
       rootLevel = subPackage.size() - 1;
     }
     processForReal(inputRealName);
+    System.out.println("main file: " + inputRealName);
     mem.leaveClass(fileBlock);
   }
 

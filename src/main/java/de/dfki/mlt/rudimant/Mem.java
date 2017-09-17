@@ -82,13 +82,17 @@ public class Mem {
     enterEnvironment(node);
     node.setClass(classBlock, new ClassEnv(classname));
     classBlock = node;
+    System.out.println("## classblock entering: " + curClass().getName());
   }
 
   /** Leave processing of a class. To be called at the very end of processing
    *  the top-level class or import.
    */
   public void leaveClass(ToplevelBlock node) {
+    System.out.println("## classblock leaving: " + classBlock.getClassEnv().getName());
+
     classBlock = classBlock.getParentClass();
+
     leaveEnvironment(node);
   }
 
@@ -105,6 +109,8 @@ public class Mem {
 
   public boolean enterRule(String name) {
     // The condition is: We're in the topmost environment of a file.
+//    System.out.println("enter rule: " + name);
+//    System.out.println(curClass().getRulesAndImports());
     return curClass().enterRule(name) && classBlock.getBindings() == current;
   }
 
