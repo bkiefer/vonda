@@ -51,7 +51,6 @@ public class GrammarMain {
     try {
       for (String file : files) {
         rc.processToplevel(new File(file));
-        System.out.println("top-level file processed");
       }
     } catch (UnsupportedOperationException ex) {
       if (ex.getMessage().startsWith("Parsing")) return true;
@@ -138,8 +137,6 @@ public class GrammarMain {
     File outputDirectory = null;
     List files = null;
     confDir = new File(".");
-    
-    System.out.println("### STARTING...");
 
     try {
       options = parser.parse(args);
@@ -195,7 +192,6 @@ public class GrammarMain {
     } catch (IOException ex) {
       usage("A file error occured: " + ex.getMessage());
     } finally {
-      System.out.println("### COMPILING SUCCESSFUL.");
       RudimantCompiler.shutdown();
     }
   }
