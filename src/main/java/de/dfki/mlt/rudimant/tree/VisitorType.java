@@ -321,6 +321,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
   public void visitNode(StatGrammarRule node) {
     node.toplevel = mem.enterRule(node.label);
     if (mem.rulesLoc)
+      System.out.println(node.location);
       mem.currentMap.put(node.label, node.getLocation().getLineNumber());
     // we step down into a new environment (later turned to a method) whose
     //  variables cannot be seen from the outside

@@ -86,6 +86,8 @@ public class Mem {
   public void enterClass(String classname, ToplevelBlock node) {
     enterEnvironment(node);
 
+    System.out.println("entering " + classname);
+
     if (rulesLoc)
       previousMaps.add(currentMap);
 
