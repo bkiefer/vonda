@@ -116,6 +116,7 @@ public class Type {
     typeCodes.put("boolean",         0b10000000000l);
     typeCodes.put("Boolean",         0b10000000100l);
     typeCodes.put("null",           0b100000000000l);
+    typeCodes.put("void",          0b1000000000000l);
     for (Map.Entry<String, Long> entry : typeCodes.entrySet()) {
       code2type.put(entry.getValue(), entry.getKey());
     }
@@ -252,6 +253,10 @@ public class Type {
   public boolean isBool() {
     return "boolean".equals(_name) || "Boolean".equals(_name)
         || "<xsd:boolean>".equals(_name);
+  }
+
+  public boolean isVoid() {
+    return "void".equals(_name);
   }
 
   public boolean isUnspecified() {

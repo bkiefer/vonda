@@ -124,7 +124,11 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
   @Override
   public void visitNode(ExpAssignment node) {
     node.right.visit(this);
+    if (node.right.type.isVoid())
+      typeError("Void can not be assigned", node);
+
     node.left.visit(this);
+
     // is this a variable declaration for an already existing variable?
     // When we get here, if node.declaration is true, then node.type has a
     // non-null value, and vice versa
