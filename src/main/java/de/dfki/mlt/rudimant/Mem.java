@@ -99,7 +99,7 @@ public class Mem {
       } else {
         currentMap = new LinkedHashMap<String, Object>();
       }
-      currentMap.put("ImportWasInLine", importLoc);
+      currentMap.put("%ImportWasInLine", importLoc);
     }
   }
 

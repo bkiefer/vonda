@@ -18,6 +18,7 @@ import de.dfki.mlt.rudimant.Mem;
 import de.dfki.mlt.rudimant.RudimantCompiler;
 import de.dfki.mlt.rudimant.Type;
 import de.dfki.mlt.rudimant.TypeException;
+import java.util.LinkedHashMap;
 
 /**
  * this visitor calculates the types of nodes and checks whether the types are
@@ -319,9 +320,18 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatGrammarRule node) {
+    // needed for flag -b
+    String parentRule = mem.getCurrentRule();
+
     node.toplevel = mem.enterRule(node.label);
-    if (mem.rulesLoc)
-      mem.currentMap.put(node.label, node.getLocation().getLineNumber());
+
+    if (mem.rulesLoc) {
+      LinkedHashMap tempMap = new LinkedHashMap();
+      tempMap.put("%InLine", node.getLocation().getLineNumber());
+      mem.currentMap.put(node.label, tempMap);
+      mem.previousMaps.add(mem.currentMap);
+      mem.currentMap = tempMap;
+    }
     // we step down into a new environment (later turned to a method) whose
     //  variables cannot be seen from the outside
     if (node.toplevel) {
@@ -330,6 +340,10 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     node.ifstat.visit(this);
     if (node.toplevel) {
       mem.leaveEnvironment(node);
+    }
+
+    if ( mem.rulesLoc) {
+      mem.currentMap =  mem.previousMaps.remove( mem.previousMaps.size() - 1);
     }
     mem.leaveRule();
   }
