@@ -328,7 +328,24 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     if (mem.rulesLoc) {
       LinkedHashMap tempMap = new LinkedHashMap();
       tempMap.put("%InLine", node.getLocation().getLineNumber());
-      mem.currentMap.put(node.label, tempMap);
+      // verify if name already taken
+      String ruleName = node.label;
+      if (mem.ruleNames.contains(ruleName)) {
+        logger.warn("The rule name " + ruleName + " is already used.");
+        Integer counter = 1;
+        ruleName += "%" + Integer.toString(counter);
+        while (true) {
+          if (mem.ruleNames.contains(ruleName)) {
+            counter += 1;
+            ruleName = ruleName.substring(0, ruleName.length() - 2)
+                    + Integer.toString(counter);
+            continue;
+          }
+          break;
+        }
+      }
+      mem.ruleNames.add(ruleName);
+      mem.currentMap.put(ruleName, tempMap);
       mem.previousMaps.add(mem.currentMap);
       mem.currentMap = tempMap;
     }
