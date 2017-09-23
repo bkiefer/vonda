@@ -337,7 +337,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
         while (true) {
           if (mem.ruleNames.contains(ruleName)) {
             counter += 1;
-            ruleName = ruleName.substring(0, ruleName.length() - 2)
+            ruleName = ruleName.substring(0, ruleName.length() - 1)
                     + Integer.toString(counter);
             continue;
           }
