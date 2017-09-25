@@ -46,6 +46,7 @@ public class Mem {
   public List<LinkedHashMap<String,Object>> previousMaps;
   public boolean rulesLoc;
   public int importLoc;
+  public HashSet<String> ruleNames;
 
   // the rudi file that represents the Agent
   private String upperRudi;
@@ -99,7 +100,7 @@ public class Mem {
       } else {
         currentMap = new LinkedHashMap<String, Object>();
       }
-      currentMap.put("ImportWasInLine", importLoc);
+      currentMap.put("%ImportWasInLine", importLoc);
     }
   }
 
@@ -270,6 +271,7 @@ public class Mem {
     rulesLocMap = new LinkedHashMap<>();
     currentMap = rulesLocMap;
     previousMaps = new ArrayList<>();
+    ruleNames = new HashSet();
   }
 
   public Map getRulesLocMap() {
