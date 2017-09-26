@@ -14,7 +14,7 @@ public interface Constants {
 
   public static final String DIALOGUE_ACT_TYPE = "<dial:DialogueAct>";
 
-  public static final String CANCEL_LOCAL = "false";
-  public static final String CANCEL_GLOBAL = "true";
+  public static final String CANCEL_LOCAL = "1";
+  public static final String CANCEL_GLOBAL = "-1";
 
 }

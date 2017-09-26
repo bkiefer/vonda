@@ -442,7 +442,7 @@ public abstract class Agent implements StreamingClient {
   /** The implementation of this method in the wrapper class starts rule
    *  processing
    */
-  public abstract boolean process();
+  public abstract int process();
 
   /**Initialize the agent.
    * @param configDir the directory of the global configuration file

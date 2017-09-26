@@ -128,8 +128,8 @@ public class TestTypes {
     String in = "Child c; a: if (!c.hasMother) int i = 0;";
     String r = generate(in);
     String expected =
-        "if (a()) return true; return false; }"
-        + " public boolean a(){ boolean a0 = false; a0 = !((c != null && "
+        "res = a(); if (res != 0) return (res - 1); return 0; }"
+        + " public int a(){ boolean a0 = false; a0 = !((c != null && "
         + "((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null));";
     assertEquals(expected, getForMarked(r, expected));
   }
@@ -157,13 +157,13 @@ public class TestTypes {
         + " Rdf w = getChild(i); if (w != null) raw.add(w); } return raw;";
     assertEquals(expected, getForMarked(r, expected));
   }
-  
-  // 
+
+  //
   @Test(expected=TypeException.class)
   public void testVoidFunction() throws Throwable {
     String in = " void fun(); k = fun();";
     //String r = generate(in);
     //System.out.println(r);
-    getTypeError(in);  
+    getTypeError(in);
   }
 }
