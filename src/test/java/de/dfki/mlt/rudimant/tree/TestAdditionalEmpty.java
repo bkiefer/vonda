@@ -16,9 +16,9 @@ public class TestAdditionalEmpty {
   @Test
   public void testIfThenExp() {
     String in = "lab: if(true) emitDA(#InitialGreeting(Greet));";
-    String exp = "public boolean lab(){ lab: if (true) "
+    String exp = "public int lab(){ lab: if (true) "
             + "emitDA(new DialogueAct(\"InitialGreeting\", \"Greet\"));"
-            + " return false;";
+            + " return 0;";
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));
   }
@@ -27,9 +27,9 @@ public class TestAdditionalEmpty {
   @Test
   public void testIfThenElseExp() {
     String in = "lab: if(true) b=1; else emitDA(#InitialGreeting(Greet));";
-    String exp = "public boolean lab(){ lab: if (true) int b = 1; "
+    String exp = "public int lab(){ lab: if (true) int b = 1; "
             + "else emitDA(new DialogueAct(\"InitialGreeting\", \"Greet\")); "
-            + "return false;";
+            + "return 0;";
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));
   }
@@ -38,9 +38,9 @@ public class TestAdditionalEmpty {
   @Test
   public void testForExp() {
     String in = "lab: if(true) for(s : child.sessions) 23;";
-    String exp = "public boolean lab(){ lab: if (true) "
+    String exp = "public int lab(){ lab: if (true) "
             + "for (Object s_outer : child.sessions) {"
-            + " Object s = (Object)s_outer; 23; } return false;";
+            + " Object s = (Object)s_outer; 23; } return 0;";
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));
   }

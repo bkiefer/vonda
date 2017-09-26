@@ -418,7 +418,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     if (node.toplevel) {
       mem.enterEnvironment(node);
       // is a top level rule and will be converted to a method
-      out.append("public boolean " + node.label + "(");
+      out.append("public int " + node.label + "(");
       out.append("){\n");
     } else {
       // is a sub-level rule and will get an if to determine whether it
@@ -429,7 +429,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     out.append(node.label + ":\n");
     node.ifstat.visitWithComments(this);
     if (node.toplevel) {
-      out.append("\nreturn false; \n}\n");
+      out.append("\nreturn 0; \n}\n");
       mem.leaveEnvironment(node);
     }
     mem.leaveRule();

@@ -34,7 +34,7 @@ public class TestAdditional {
   public void testParenthesis() {
     String in = "rule: if (lastPref.pref_score != 0) {}";
     String r = generate(in);
-    String expected = "public boolean rule(){ "
+    String expected = "public int rule(){ "
         + "boolean rule0 = false; "
         + "rule0 = (lastPref.pref_score != 0); "
         + "if (shouldLog(\"rule\")){"
@@ -44,7 +44,7 @@ public class TestAdditional {
         + "logRule(rule, \"rule\", \"Test\"); } "
         + "rule: "
         + "if (rule0) { } "
-        + "return false; }";
+        + "return 0; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 }

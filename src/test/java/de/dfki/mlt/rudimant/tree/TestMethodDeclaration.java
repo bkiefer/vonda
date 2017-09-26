@@ -41,7 +41,7 @@ public class TestMethodDeclaration {
     String s = generate(methdecl1 + methdecl2 + usage);
     String expected = "void foo() { int i = 1; } "
             + "String foo(int a) { int i = 1; }"
-            + " public boolean bar(){ bar: if (true) { foo(); }";
+            + " public int bar(){ bar: if (true) { foo(); }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -61,7 +61,7 @@ public class TestMethodDeclaration {
     String expected = "void foo(int i, String s) { i = 1; }";
     assertEquals(expected, getForMarked(s, expected));
   }
-  
+
   @Test
   public void testCallUpon1(){
     String methdecl = " [List<T>]. T get(int a); List<String> l;"

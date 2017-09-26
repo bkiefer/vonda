@@ -134,6 +134,30 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     }
   }
 
+  // in this list, keep all comments that belong to methods or rules that
+  // are not evaluated into the process method
+  LinkedList<Token> saveComments = new LinkedList<>();
+
+  /** Save comments that belong to a postponed part of the code onto another
+   *  list (all before pos)
+   */
+  private void saveCommentsForLater(VisitorGeneration gv, int pos) {
+    while (!gv.collectedTokens.isEmpty()
+        && gv.collectedTokens.get(0).getTokenIndex() < pos) {
+      saveComments.addFirst(gv.collectedTokens.get(0));
+      gv.collectedTokens.remove();
+    }
+  }
+
+  /** put the saved comments back onto the original list for processing */
+  private void pourBackSavedComments(VisitorGeneration gv) {
+    while (!saveComments.isEmpty()) {
+      gv.collectedTokens.addFirst(saveComments.getFirst());
+      saveComments.removeFirst();
+    }
+  }
+
+  /** Now produce code for all rules and statements in a file */
   private void writeRuleList(Writer out, Mem mem, VisitorGeneration gv)
       throws IOException{
     List<RTStatement> later = new ArrayList<>();
@@ -151,12 +175,12 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     }
 
     // create the process method
-    out.append("  public boolean process(){\n");
+    out.append("  public int process(){\n  int res = 0;");
     // use all methods created from rules in this file
     for(RudiTree r : rules) {
       if (r instanceof StatMethodDeclaration) {
-        // retain method declarations for later
-        // TODO: also move all appropriate comments to a laterComments list
+        // retain method declarations for later and move all appropriate
+        // comments to a laterComments list
         later.add((StatMethodDeclaration)r);
         if (((StatMethodDeclaration)r).block != null)
           saveCommentsForLater(gv, r.positions[1]);
@@ -167,14 +191,14 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         // rules and imports are called as functions and may return a non-zero
         // value. If the value is 1
         if (r instanceof StatGrammarRule){
-          out.append("if (");
-          out.append(((StatGrammarRule)r).label).append("()");
-          // TODO: move all appropriate comments to a laterComments list
+          out.append("res = ");
+          out.append(((StatGrammarRule)r).label).append("();");
           later.add((StatGrammarRule)r);
+          // move all appropriate comments to a laterComments list
           saveCommentsForLater(gv, r.positions[1]);
         } else {
           out.append(r.checkComments(gv, r.positions[0]));
-          out.append("if (");
+          out.append("res = ");
           out.append("new " + capitalize(((Import)r).name) + "(");
           Set<String> ncs = mem.getNeededClasses();
           if (ncs != null) {
@@ -189,39 +213,20 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
               out.append(lowerCaseFirst(c));
             }
           }
-          out.append(").process()");
+          out.append(").process();");
         }
-        out.append(") return true;\n");
+        out.append(" if (res != 0) return (res - 1);\n");
       } else if (r instanceof RTStatement) {
         gv.visitNode((RTStatement)r);
       }
     }
-    out.append("return false; \n}\n");
+    out.append("return 0; \n}\n");
 
+    // replace the comments list by the laterComments list
     pourBackSavedComments(gv);
-
     // now, add everything that we did not want in the process method
-    // TODO: replace the comments list by the laterComments list
     for(RTStatement t : later){
       gv.visitNode(t);
-    }
-  }
-
-  // in this list, keep all comments that belong to methods or rules that
-  // are not evaluated into the process method
-  LinkedList<Token> saveComments = new LinkedList<>();
-
-  private void saveCommentsForLater(VisitorGeneration gv, int pos) {
-    while (!gv.collectedTokens.isEmpty() && gv.collectedTokens.get(0).getTokenIndex() < pos) {
-      saveComments.addFirst(gv.collectedTokens.get(0));
-      gv.collectedTokens.remove();
-    }
-  }
-
-  private void pourBackSavedComments(VisitorGeneration gv) {
-    while (!saveComments.isEmpty()) {
-      gv.collectedTokens.addFirst(saveComments.getFirst());
-      saveComments.removeFirst();
     }
   }
 
