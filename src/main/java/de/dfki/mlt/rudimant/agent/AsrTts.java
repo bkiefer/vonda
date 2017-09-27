@@ -11,10 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
-import de.dfki.mlt.rudimant.agent.nlg.InfoStateAccess;
-import de.dfki.mlt.rudimant.agent.nlg.Interpreter;
-import de.dfki.mlt.rudimant.agent.nlg.LanguageGenerator;
-import de.dfki.mlt.rudimant.agent.nlg.Pair;
+import de.dfki.mlt.rudimant.agent.nlg.*;
 
 public class AsrTts {
   public static final Logger logger = LoggerFactory.getLogger(AsrTts.class);
@@ -41,13 +38,18 @@ public class AsrTts {
       //language = "english";
       _generator = LanguageGenerator.getGenerator(configDir, language,
           (Map<String, Object>)nlgConfig.get(language));
-      _generator.registerAccess("general", new InfoStateAccess(agent));
+      //_generator.registerAccess("general", new InfoStateAccess(agent));
+      // see below
     }
 
     if (nluConfig != null && nluConfig.containsKey(language)) {
       _interpreter = Interpreter.getInterpreter(configDir, language,
           (Map)nluConfig.get(language));
     }
+  }
+
+  public void registerInfoStateAccess(String what, BaseInfoStateAccess acc) {
+    _generator.registerAccess(what, acc);
   }
 
   private static final Pattern toEscape = Pattern.compile("[^0-9a-zA-Z_-]");
