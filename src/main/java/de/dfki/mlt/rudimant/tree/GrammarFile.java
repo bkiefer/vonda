@@ -195,6 +195,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
           later.add((StatGrammarRule)r);
           // move all appropriate comments to a laterComments list
           saveCommentsForLater(gv, r.positions[1]);
+          out.append(" if (res != 0)");
         } else {
           out.append(r.checkComments(gv, r.positions[0]));
           out.append("res = ");
@@ -213,8 +214,9 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
             }
           }
           out.append(").process();");
+          out.append(" if (res < 0)");
         }
-        out.append(" if (res != 0) return (res - 1);\n");
+        out.append(" return (res - 1);\n");
       } else if (r instanceof RTStatement) {
         gv.visitNode((RTStatement)r);
       }
