@@ -9,6 +9,7 @@ import static de.dfki.mlt.rudimant.Utils.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -552,17 +553,24 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     var.content = predUri; // replace plain name by URI
     int predType = clz.getPropertyType(predUri);
     // TODO: CONVERT XSD TYPES TO JAVA, WHERE POSSIBLE
-    String t = clz.getPropertyRange(predUri);
-    currentType = new Type(t);
-    if (t == null) {
+    String typeName = null;
+    Set<String> t = clz.getPropertyRange(predUri);
+    if (t.isEmpty()) {
       // WARNING / error
-      typeError("No range type defined for property "
-              + predUri, node);
+      typeError("No range type defined for property " + predUri, node);
       if (var.getType() != null) {
-        typeWarning("empty range: type defined instead: "
-                + var.getType(), node);
+        typeWarning("empty range: type defined instead: " + var.getType(),
+            node);
+      }
+    } else {
+      typeName = t.iterator().next();
+      if (t.size() > 1) {
+        // WARNING / error
+        typeError("Multiple range types defined for property "
+            + predUri + ", taking " + typeName, node);
       }
     }
+    currentType = new Type(typeName);
     // TODO: this resulted in weird warnings if the property has the same name
     // 		as a local variable; this should be a "parameterized" property
     // access, where the name of the property is stored in the variable,
