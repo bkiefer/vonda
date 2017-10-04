@@ -23,23 +23,22 @@ boolean exists(Object o);
 DialogueAct createEmitDA(DialogueAct da);
 DialogueAct emitDA(int delay, DialogueAct da);
 DialogueAct emitDA(DialogueAct da);
+[DialogueAct]. void setProposition(String prop);
 
 // my last outgoing resp. the last incoming dialogue act
 DialogueAct myLastDA();
-DialogueAct lastDA();
-
-[DialogueAct]. void setProposition(String prop);
-
-int lastOccurenceOfMyDA(String raw);
+//void myLastDAprocessed();
 // did i say something like ta in this session (subsumption)? If so, how many
 // utterances back was it? (otherwise, -1 is returned)
 int saidInSession(DialogueAct da);
-// like saidInSession, only for incoming dialogue acts
-int receivedInSession(DialogueAct da);
 
 boolean waitingForResponse();
+
+DialogueAct lastDA();
 DialogueAct addLastDA(DialogueAct newDA);
 void lastDAprocessed();
+// like saidInSession, only for incoming dialogue acts
+int receivedInSession(DialogueAct da);
 
 void newData();
 
