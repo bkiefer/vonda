@@ -48,7 +48,7 @@ public class TestTypeInference {
     assertTrue(rt instanceof StatExpression);
     assertTrue(((StatExpression)rt).expression instanceof ExpAssignment);
     ExpAssignment ass = (ExpAssignment)((StatExpression)rt).expression;
-    assertEquals("boolean", ass.left.type.toString());
+    assertEquals("boolean", ass.left.type.toJava());
   }
 
   @Test

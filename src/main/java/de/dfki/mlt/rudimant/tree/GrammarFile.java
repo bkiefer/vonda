@@ -166,7 +166,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
           ((StatExpression)r).expression instanceof ExpAssignment){
         ExpAssignment ass = (ExpAssignment)((StatExpression)r).expression;
         if(ass.declaration) {
-          out.append(ass.type.toString()).append(" ")
+          out.append(ass.type.toJava()).append(" ")
              .append(ass.left.fullexp).append(";\n");
           ass.declaration = false;
         }
