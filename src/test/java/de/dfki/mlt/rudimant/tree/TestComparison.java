@@ -19,7 +19,7 @@ public class TestComparison {
 
   @BeforeClass
   public static void setUpClass() {
-    setUpEmpty();
+    setUpNonEmpty();
   }
 
   @Test

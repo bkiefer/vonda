@@ -8,6 +8,8 @@ package de.dfki.mlt.rudimant.tree;
 import static de.dfki.mlt.rudimant.Visualize.generate;
 import static de.dfki.mlt.rudimant.tree.TstUtils.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -76,8 +78,9 @@ public class TestForStatements {
   public void test5() {
     String stat = "List<Object> l; for (QuizHistory q : l){}";
     String s = generate(stat);
-    String expected = "List<Object> l;for (Object q_outer : l) { Rdf q = (Rdf)q_outer; { } }";
+    String expected = "for (Object q_outer : l) { Rdf q = (Rdf)q_outer; { } }";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("List<Object> l;"));
   }
 
   @Test

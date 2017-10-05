@@ -11,7 +11,7 @@ public class TestVarDeclaration {
 
   @BeforeClass
   public static void setUpClass() {
-    setUpEmpty();
+    setUpNonEmpty();
   }
 
   @Test

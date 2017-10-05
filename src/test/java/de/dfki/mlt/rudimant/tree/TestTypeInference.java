@@ -76,8 +76,9 @@ public class TestTypeInference {
   public void test4() {
     String in = "Activity a; if (a) { }";
     String s = generate(in);
-    String expected = "Rdf a;if (a != null) { }";
+    String expected = "if (a != null) { }";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("Rdf a;"));
   }
 
   @Test
@@ -112,19 +113,21 @@ public class TestTypeInference {
   public void test8() {
     String in = " Quiz q; if(q.quizbool) i = 7; ";
     String s = generate(in);
-    String expected = "Rdf q;if ((q != null && "
+    String expected = "if ((q != null && "
         + "((Boolean)q.getSingleValue(\"<dom:quizbool>\")))) int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("Rdf q;"));
   }
 
   @Test
   public void test9() {
-    String in = " Quiz q; if(q.tabletOrientation) i = 7; ";
+    String in = "Quiz q;if(q.tabletOrientation) i = 7; ";
     String s = generate(in);
-    String expected = "Rdf q;if ((q != null && "
+    String expected = "if ((q != null && "
         + "exists(((String)q.getSingleValue(\"<dom:tabletOrientation>\")))))"
         + " int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("Rdf q;"));
   }
 
   /** TODO: Fix this problem (issue #55)
