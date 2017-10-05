@@ -160,7 +160,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
   private void writeRuleList(Writer out, Mem mem, VisitorGeneration gv)
       throws IOException{
     List<RTStatement> later = new ArrayList<>();
-    // do all assignments on toplevel here, those are class attributes
+    // do all assignments (and VarDefs) on toplevel here, those are class attributes
     for(RudiTree r : rules){
       if(r instanceof StatExpression &&
           ((StatExpression)r).expression instanceof ExpAssignment){
@@ -170,6 +170,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
              .append(ass.left.fullexp).append(";\n");
           ass.declaration = false;
         }
+      } else if (r instanceof StatVarDef) {
+        gv.visitNode((StatVarDef) r);
       }
     }
 
@@ -183,6 +185,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         later.add((StatMethodDeclaration)r);
         if (((StatMethodDeclaration)r).block != null)
           saveCommentsForLater(gv, r.positions[1]);
+        continue;
+      } else if (r instanceof StatVarDef) {
         continue;
       }
 
