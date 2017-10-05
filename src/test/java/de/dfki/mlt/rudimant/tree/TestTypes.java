@@ -86,6 +86,7 @@ public class TestTypes {
     String expected = "docs = ((Set<Object>)c.getValue(\"<dom:isTreatedBy>\"));";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("Set<Object> docs;"));
+    assertTrue(r.contains("Rdf c;"));
   }
 
   @Test
@@ -95,6 +96,7 @@ public class TestTypes {
     String expected = "cs.contains((c) -> "
             + "((Set<Object>)c.getValue(\"foreName\")).equals(\"John\"));";
     assertEquals(expected, getForMarked(r, expected));
+    assertTrue(r.contains("Set<Rdf> cs;"));
   }
 
   @Test
@@ -104,6 +106,7 @@ public class TestTypes {
     String expected = "cs.contains((c) -> {"
             + " ((Set<Object>)c.getValue(\"foreName\")).equals(\"John\"); } );";
     assertEquals(expected, getForMarked(r, expected));
+    assertTrue(r.contains("Set<Rdf> cs;"));
   }
 
   @Test
@@ -121,6 +124,7 @@ public class TestTypes {
     String expected =
         "if (!((c != null && ((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null))) int i = 0;";
     assertEquals(expected, getForMarked(r, expected));
+    assertTrue(r.contains("Rdf c;"));
   }
 
   @Test
@@ -128,10 +132,10 @@ public class TestTypes {
     String in = "Child c; a: if (!c.hasMother) int i = 0;";
     String r = generate(in);
     String expected =
-        "res = a(); if (res != 0) return (res - 1); return 0; }"
-        + " public int a(){ boolean a0 = false; a0 = !((c != null && "
+        "public int a(){ boolean a0 = false; a0 = !((c != null && "
         + "((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null));";
     assertEquals(expected, getForMarked(r, expected));
+    assertTrue(r.contains("Rdf c;"));
   }
 
   /* TODO: THIS PRODUCES TOTAL JUNK. To be fixed.

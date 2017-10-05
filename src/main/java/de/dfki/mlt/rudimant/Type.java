@@ -142,9 +142,7 @@ public class Type {
 
   private RdfClass _class;
 
-  private Type() {
-    _name = null;
-  }
+  private Type() { }
 
   private void rdfIfy() {
     if (typeCodes.containsKey(_name)) return;
@@ -174,6 +172,10 @@ public class Type {
 
   /** This is only to be used to create complex types for lambda expressions */
   public Type(Type ... parameterTypes) {
+    if (parameterTypes.length == 1 && parameterTypes[0] == null) {
+      _name = null;
+      return;
+    }
     _name = "Function";
     _parameterTypes = new ArrayList<>(parameterTypes.length);
     _parameterTypes.addAll(Arrays.asList(parameterTypes));
@@ -359,10 +361,21 @@ public class Type {
   /** returns a correct java type for use in generated code */
   @Override
   public String toString() {
+    return toDebugString();
+  }
+
+  /** returns a correct java type for use in generated code */
+  public String toJava() {
     if (_name == null) return "Object /* (unknown) */";
     StringBuffer out = new StringBuffer();
     toString(out);
     return out.toString();
+  }
+
+  public String toDebugString() {
+    if (_class != null) return _class.toString() + "[" + toJava() + "]";
+    if (isRdfType()) return _name + "[" + toJava() + "]";
+    return toJava();
   }
 
   private void toString(StringBuffer sb) {
@@ -419,6 +432,6 @@ public class Type {
   public String getRep() {
     if (_class != null) return _class.toString();
     if (isRdfType()) return _name;
-    return toString();
+    return toJava();
   }
 }

@@ -9,6 +9,7 @@ import static de.dfki.mlt.rudimant.Utils.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -293,12 +294,11 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     	: node.elseexp.getType();
     if (unified == null) {
       typeError(node.fullexp
-              + " is a conditional expression where the else expression "
-              + "does not have the same type as the right expression!\n("
-              + "comparing types " + node.thenexp.getType() + " on left and "
-              + node.elseexp.getType() + " on right)", node);
+          + ": type of then and else differ: "
+          + node.thenexp.getType().toDebugString() + " vs. "
+          + node.elseexp.getType().toDebugString(), node);
     }
-    node.type = unified;
+    node.type = unified == null ? new Type(unified) : unified;
   }
 
   @Override
@@ -396,7 +396,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     }
     if (innerIterableType == null) {
       typeError("Iterable for loop type is unknown or not generic, but: "
-          + node.initialization.getType(), node);
+          + node.initialization.getType().toDebugString(), node);
       innerIterableType = new Type("Object");
     }
     if (node.varType == null) {
@@ -406,7 +406,8 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
       if (mergeType == null) {
         if (innerIterableType.equals(new Type("Object"))) {
           // Then handle this as an implicit cast, but warn the user that it might crash
-          typeError("Implicit casting of list Object to " + node.varType
+          typeError("Implicit casting of list Object to "
+              + node.varType.toDebugString()
               + " in short for loop, be aware this might crash in Java ", node);
         } else {
           typeError("Incompatible types in short for loop: "
@@ -444,9 +445,10 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
         // check inner type against content
         Type elementType = node.listType.getInnerType();
         if (elementType.unifyTypes(node.objects.get(0).getType()) == null) {
-          typeError("Found a list creation where the list type"
-              + " doesn't fit its objects' type: " + elementType
-              + " vs " + node.objects.get(0).getType(), node);
+          typeError("List creation where list type ["
+              + elementType.toDebugString()
+              + "] doesn't fit its objects' type ["
+              + node.objects.get(0).getType().toDebugString() + "]", node);
         }
       }
     }
@@ -485,9 +487,10 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
   @Override
   public void visitNode(StatVarDef node) {
     if (mem.variableExists(node.variable)){
-      typeError("Re-defined variable " + node.variable + " from " +
-            mem.getVariableType(node.variable) + " to " + node.type +
-            ", so I'll stay with the old type", node);
+      typeError("Re-defined variable " + node.variable
+          + " from " + mem.getVariableType(node.variable).toDebugString()
+          + " to " + node.type.toDebugString() +
+          ", so I'll stay with the old type", node);
     }
     mem.addVariableDeclaration(node.variable, node.type);
   }
@@ -589,17 +592,24 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     var.content = predUri; // replace plain name by URI
     int predType = clz.getPropertyType(predUri);
     // TODO: CONVERT XSD TYPES TO JAVA, WHERE POSSIBLE
-    String t = clz.getPropertyRange(predUri);
-    currentType = new Type(t);
-    if (t == null) {
+    String typeName = null;
+    Set<String> t = clz.getPropertyRange(predUri);
+    if (t.isEmpty()) {
       // WARNING / error
-      typeError("No range type defined for property "
-              + predUri, node);
+      typeError("No range type defined for property " + predUri, node);
       if (var.getType() != null) {
-        typeWarning("empty range: type defined instead: "
-                + var.getType(), node);
+        typeWarning("empty range: type defined instead: " + var.getType(),
+            node);
+      }
+    } else {
+      typeName = t.iterator().next();
+      if (t.size() > 1) {
+        // WARNING / error
+        typeError("Multiple range types defined for property "
+            + predUri + ", taking " + typeName, node);
       }
     }
+    currentType = new Type(typeName);
     // TODO: this resulted in weird warnings if the property has the same name
     // 		as a local variable; this should be a "parameterized" property
     // access, where the name of the property is stored in the variable,

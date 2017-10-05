@@ -48,7 +48,7 @@ public class TestTypeInference {
     assertTrue(rt instanceof StatExpression);
     assertTrue(((StatExpression)rt).expression instanceof ExpAssignment);
     ExpAssignment ass = (ExpAssignment)((StatExpression)rt).expression;
-    assertEquals("boolean", ass.left.type.toString());
+    assertEquals("boolean", ass.left.type.toJava());
   }
 
   @Test
@@ -78,6 +78,7 @@ public class TestTypeInference {
     String s = generate(in);
     String expected = "if (a != null) { }";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("Rdf a;"));
   }
 
   @Test
@@ -115,16 +116,18 @@ public class TestTypeInference {
     String expected = "if ((q != null && "
         + "((Boolean)q.getSingleValue(\"<dom:quizbool>\")))) int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("Rdf q;"));
   }
 
   @Test
   public void test9() {
-    String in = " Quiz q; if(q.tabletOrientation) i = 7; ";
+    String in = "Quiz q;if(q.tabletOrientation) i = 7; ";
     String s = generate(in);
     String expected = "if ((q != null && "
         + "exists(((String)q.getSingleValue(\"<dom:tabletOrientation>\")))))"
         + " int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("Rdf q;"));
   }
 
   /** TODO: Fix this problem (issue #55)
@@ -142,8 +145,9 @@ public class TestTypeInference {
   public void test10() {
     String in = " double f; void fun() { Clazz c; c.bf = 1.0; }";
     String s = generate(in);
-    String expected = "return 0; } void fun() { c.setValue(\"<dom:bf>\", 1.0); } }";
+    String expected = "void fun() { Rdf c; c.setValue(\"<dom:bf>\", 1.0); } }";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("double f;"));
   }
 
   @Test(expected=TypeException.class)

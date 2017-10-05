@@ -101,7 +101,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     if (node.fin)
       ret = "final ";
     if (node.declaration)
-      ret += node.type;
+      ret += node.type.toJava();
     ret += ' ';
     ExpPropertyAccess pa = null;
     if (node.left instanceof ExpFieldAccess) {
@@ -316,7 +316,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public String visitNode(ExpCast node) {
-    return "((" + node.type + ")" + visitNode(node.expression) + ")";
+    return "(" + node.type.toJava() + ")" + visitNode(node.expression);
   }
 
   public String visitDaToken(RTExpression exp) {
@@ -473,9 +473,9 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     out.append(var).append("_outer : ");
     node.initialization.visitWithComments(this);
     out.append(") { ")
-       .append(node.varType.toString())
+       .append(node.varType.toJava())
        .append(" ").append(var);
-    out.append(" = (").append(node.varType.toString())
+    out.append(" = (").append(node.varType.toJava())
        .append(")").append(var).append("_outer;\n");
     node.statblock.visitWithComments(this);
     out.append("\n}\n");
@@ -515,11 +515,11 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatListCreation node) {
-    out.append(node.listType.toString()).append(' ')
+    out.append(node.listType.toJava()).append(' ')
        .append(node.variableName);
-    if (node.listType.toString().startsWith("List")) {
+    if (node.listType.toJava().startsWith("List")) {
       out.append(" = new ArrayList<>();\n");
-    } else if (node.listType.toString().startsWith("Set")) {
+    } else if (node.listType.toJava().startsWith("Set")) {
       out.append(" = new HashSet<>();\n");
     }
     if(node.objects.isEmpty()) {
@@ -539,13 +539,13 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     }
     mem.enterEnvironment(node);
     out.append(node.visibility + " ");
-    out.append(node.return_type + " ");
+    out.append(node.return_type.toJava() + " ");
     out.append(node.name + "(");
     for (int i = 0; i < node.parameters.size(); i++) {
       if (i != 0) {
         out.append(", ");
       }
-      out.append(node.partypes.get(i) + " " + node.parameters.get(i));
+      out.append(node.partypes.get(i).toJava() + " " + node.parameters.get(i));
     }
     out.append(")\n");
     node.block.visitWithComments(this);
@@ -647,7 +647,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatVarDef node) {
-    // no generation here
+    out.append(node.type.toJava() + " " + node.variable + ";");
   }
 
   @Override
@@ -688,7 +688,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     for (int i = to - 1; i > 0; i--) {
       if (node.parts.get(i) instanceof ExpPropertyAccess) {
         ExpPropertyAccess pa = (ExpPropertyAccess) node.parts.get(i);
-        String cast = pa.getType().toString();
+        String cast = pa.getType().toJava();
         // cast = capitalize(cast);
         //ret += "((" + cast + ")";
         ret += "((";
@@ -727,7 +727,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
       ret += lowerCaseFirst(node.realOrigin) + ".";
     }
     if (node.newexp){
-      ret += node.type + "(";
+      ret += node.type.toJava() + "(";
     } else {
       ret += node.content + "(";
     }

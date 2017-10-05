@@ -26,8 +26,6 @@ public abstract class Agent implements StreamingClient {
 
   protected String executedLast = null;
 
-  protected long lastDAprocessed = -1;
-
   protected String _language;
 
   // TODO: that's not nice. The mood is transported in the Intention, and
@@ -49,11 +47,14 @@ public abstract class Agent implements StreamingClient {
   /** Is new data in the repository */
   private boolean newData = false;
 
-  /** The DAs I emitted, newest first */
-  protected Deque<DialogueAct> myLastDAs;
+  /** The DAs I emitted, newest first, DON'T CHANGE FROM DERIVED CLASSES */
+  protected LinkedList<DialogueAct> myLastDAs;
+  // protected int myUnprocessedDAs;
 
   /** The DAs I received, newest first */
-  private Deque<DialogueAct> lastDAs;
+  private LinkedList<DialogueAct> lastDAs;
+  protected long lastDAprocessed = -1;
+  //protected int unprocessedDAs;
 
   private Timeouts timeouts = new Timeouts();
 
@@ -89,7 +90,9 @@ public abstract class Agent implements StreamingClient {
   protected void reset() {
     timeouts.clear();
     myLastDAs = new LinkedList<>();
+    //myUnprocessedDAs = 0;
     lastDAs = new LinkedList<>();
+    //unprocessedDAs = 0;
     proposalsToExecute = new LinkedList<>();
     proposalsSent = false;
   }
@@ -149,6 +152,7 @@ public abstract class Agent implements StreamingClient {
   /** Generate DialogueAct from a raw speech act representation */
   public DialogueAct addToMyDA(DialogueAct da) {
     myLastDAs.addFirst(da);
+    // ++myUnprocessedDAs;
     newData();
     return da;
   }
@@ -172,10 +176,16 @@ public abstract class Agent implements StreamingClient {
   /** The last dialogue act spoken by the agent */
   public DialogueAct myLastDA() {
     return myLastDAs.peekFirst();
+    //if (myUnprocessedDAs == 0) return null;
+    //return myLastDAs.get(myUnprocessedDAs - 1);
   }
 
+  //public void myLastDAprocessed() { --myUnprocessedDAs; }
+
   /** Return the index of the last speech act equal or more specific than the
-   *  given one
+   *  given one. Zero means there is no such speechact, valid indices start at
+   *  one, which means that if it should be retrieved from the respective list,
+   *  one position must be subtracted from the result.
    */
   protected int lastOccurence(DialogueAct da, Iterable<DialogueAct> daList) {
     int i = 1;
@@ -188,7 +198,9 @@ public abstract class Agent implements StreamingClient {
     return 0;
   }
 
-  /** When did i say this in this session? */
+  /** When did i say this in this session?
+   *  Zero means never, that was my last utterance.
+   */
   public int saidInSession(DialogueAct da) {
     return lastOccurence(da, myLastDAs);
   }
@@ -217,17 +229,18 @@ public abstract class Agent implements StreamingClient {
     if (lastDA != null && myLast.timeStamp < lastDA.timeStamp)
       return false;
     for (DialogueAct req : requests) {
-      RdfClass my = _proxy.getClass(myLast.getDialogueActType());
-      RdfClass r = _proxy.getClass(req.getDialogueActType());
+      //RdfClass my = _proxy.getClass(myLast.getDialogueActType());
+      //RdfClass r = _proxy.getClass(req.getDialogueActType());
       //logger.error("waitResp: {} <= {}", my, r);
-      if (my.isSubclassOf(r)) return true;
-      //if (myLast.isSubsumedBy(req)) return true;
+      //if (my.isSubclassOf(r)) return true;
+      if (myLast.isSubsumedBy(req)) return true;
     }
     return false;
   }
 
   /** Return the index of the last speech act equal or more specific than the
    *  given one
+   *  Zero means: was never said, one that was the last incoming utterance, etc.
    */
   public int receivedInSession(DialogueAct da) {
     return lastOccurence(da, lastDAs);
@@ -241,6 +254,8 @@ public abstract class Agent implements StreamingClient {
     if (last == null || last.timeStamp < lastDAprocessed) {
       return null;
     }
+    //if (unprocessedDAs == 0) return null;
+    //DialogueAct last = lastDAs.get(unprocessedDAs - 1);
     return last;
   }
 
@@ -251,6 +266,7 @@ public abstract class Agent implements StreamingClient {
       return null;
     }
     lastDAs.addFirst(newDA);
+    //++unprocessedDAs;
     newData();
     return newDA;
   }
@@ -260,6 +276,7 @@ public abstract class Agent implements StreamingClient {
    */
   public void lastDAprocessed() {
     lastDAprocessed = System.currentTimeMillis();
+    // --unprocessedDAs;
   }
 
   /** Get the value of the given slot from the dialogue act */
@@ -686,13 +703,13 @@ public abstract class Agent implements StreamingClient {
     if (newData || timeouts.timeoutOccured()) {
       int oldSize = 0;
       do {
+        newData = false;
         oldSize = pendingProposals.size();
         process();
-      } while (pendingProposals.size() != oldSize);
+      } while (pendingProposals.size() != oldSize || newData);
       if (oldSize > 0) {
         sendIntentions(pendingProposals.keySet());
       }
-      newData = false;
     }
   }
 

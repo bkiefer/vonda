@@ -161,16 +161,18 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
   private void writeRuleList(Writer out, Mem mem, VisitorGeneration gv)
       throws IOException{
     List<RTStatement> later = new ArrayList<>();
-    // do all assignments on toplevel here, those are class attributes
+    // do all assignments (and VarDefs) on toplevel here, those are class attributes
     for(RudiTree r : rules){
       if(r instanceof StatExpression &&
           ((StatExpression)r).expression instanceof ExpAssignment){
         ExpAssignment ass = (ExpAssignment)((StatExpression)r).expression;
         if(ass.declaration) {
-          out.append(ass.type.toString()).append(" ")
+          out.append(ass.type.toJava()).append(" ")
              .append(ass.left.fullexp).append(";\n");
           ass.declaration = false;
         }
+      } else if (r instanceof StatVarDef) {
+        gv.visitNode((StatVarDef) r);
       }
     }
 
@@ -185,6 +187,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         if (((StatMethodDeclaration)r).block != null)
           saveCommentsForLater(gv, r.positions[1]);
         continue;
+      } else if (r instanceof StatVarDef) {
+        continue;
       }
 
       if (r instanceof StatGrammarRule || r instanceof Import) {
@@ -196,6 +200,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
           later.add((StatGrammarRule)r);
           // move all appropriate comments to a laterComments list
           saveCommentsForLater(gv, r.positions[1]);
+          out.append(" if (res != 0)");
         } else {
           out.append(r.checkComments(gv, r.positions[0]));
           out.append("res = ");
@@ -214,8 +219,9 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
             }
           }
           out.append(").process();");
+          out.append(" if (res < 0)");
         }
-        out.append(" if (res != 0) return (res - 1);\n");
+        out.append(" return (res - 1);\n");
       } else if (r instanceof RTStatement) {
         gv.visitNode((RTStatement)r);
       }

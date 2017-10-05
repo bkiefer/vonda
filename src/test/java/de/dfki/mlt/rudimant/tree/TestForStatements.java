@@ -8,6 +8,8 @@ package de.dfki.mlt.rudimant.tree;
 import static de.dfki.mlt.rudimant.Visualize.generate;
 import static de.dfki.mlt.rudimant.tree.TstUtils.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -78,6 +80,7 @@ public class TestForStatements {
     String s = generate(stat);
     String expected = "for (Object q_outer : l) { Rdf q = (Rdf)q_outer; { } }";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("List<Object> l;"));
   }
 
   @Test
@@ -92,7 +95,13 @@ public class TestForStatements {
     assertEquals(expected, getForMarked(s, expected));
   }
 
-
+  @Test
+  public void testWhile() {
+    String stat = "{ int n = 0; while ((n = random(7)) == correct) { n++; } }";
+    String s = generate(stat);
+    String expected = "{ int n = 0; while ((( n = random(7)) == correct)){ n = (n+1); }";
+    assertEquals(expected, getForMarked(s, expected));
+  }
 
 
 }

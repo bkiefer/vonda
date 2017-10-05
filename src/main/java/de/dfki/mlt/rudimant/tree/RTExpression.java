@@ -19,10 +19,16 @@ public abstract class RTExpression extends RudiTree {
 
   public static final Logger logger = LoggerFactory.getLogger(RudiTree.class);
 
+  protected boolean _parens = false;
+
   protected Type type;
 
   public Type getType() {
     return type;
+  }
+
+  public void generateParens() {
+    _parens = true;
   }
 
   /**
@@ -35,15 +41,18 @@ public abstract class RTExpression extends RudiTree {
    * @param v
    */
   public String visitWithSComments(VisitorGeneration v) {
-    if(v.collectingCondition){
-      return visitStringV(v);
-    }
     String ret = "";
-    int firstPos = positions[0];
-    ret += checkComments(v, firstPos);
+    if (! v.collectingCondition) {
+      int firstPos = positions[0];
+      ret += checkComments(v, firstPos);
+    }
+    if (_parens) ret += "(";
     ret += visitStringV(v);
-    int endPos = positions[1];
-    ret += checkComments(v, endPos);
+    if (_parens) ret += ")";
+    if (! v.collectingCondition) {
+      int endPos = positions[1];
+      ret += checkComments(v, endPos);
+    }
     return ret;
   }
 

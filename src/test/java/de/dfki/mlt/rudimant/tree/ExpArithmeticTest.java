@@ -54,7 +54,7 @@ public class ExpArithmeticTest {
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(getInput(arithmeticExp)));
     assertTrue(dtr instanceof ExpArithmetic);
 
-    String type = ((ExpArithmetic) dtr).getType().toString();
+    String type = ((ExpArithmetic) dtr).getType().toJava();
     assertEquals("type of 1 - 2", "int", type);
   }
 
@@ -65,9 +65,9 @@ public class ExpArithmeticTest {
     RudiTree dtr = getNodeOfInterest(gf, 0);
     assertTrue(dtr instanceof StatVarDef);
     assertEquals("Activity", ((StatVarDef)dtr).type.get_name());
-    assertEquals("Rdf", ((StatVarDef)dtr).type.toString());
+    assertEquals("Rdf", ((StatVarDef)dtr).type.toJava());
     dtr = getNodeOfInterest(gf, 1);
     assertTrue(dtr instanceof ExpAssignment);
-    assertEquals("String", ((ExpAssignment)dtr).type.toString());
+    assertEquals("String", ((ExpAssignment)dtr).type.toJava());
   }
 }

@@ -25,16 +25,16 @@ public class TestFragment {
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(conditionalExp));
     assertTrue(dtr instanceof ExpConditional);
 
-    String type_boolean = ((ExpConditional) dtr).boolexp.getType().toString();
+    String type_boolean = ((ExpConditional) dtr).boolexp.getType().toJava();
     assertEquals("boolean part of conditional", "boolean", type_boolean);
 
-    String type_then = ((ExpConditional) dtr).thenexp.getType().toString();
+    String type_then = ((ExpConditional) dtr).thenexp.getType().toJava();
     assertEquals("then part", "int", type_then);
 
-    String type_else = ((ExpConditional) dtr).elseexp.getType().toString();
+    String type_else = ((ExpConditional) dtr).elseexp.getType().toJava();
     assertEquals("else part", "int", type_else);
   }
-  
+
   @Test
   public void testFinal1() {
     String fin = "final boolean b = true;";
@@ -42,7 +42,7 @@ public class TestFragment {
     String expected = "final boolean b = true;";
     assertEquals(expected, getForMarked(s, expected));
   }
-  
+
   @Test
   public void testFinal2() {
     String fin = "final b = true;";
@@ -50,7 +50,7 @@ public class TestFragment {
     String expected = "final boolean b = true;";
     assertEquals(expected, getForMarked(s, expected));
   }
-  
+
   // TODO: do we really need to check this?
   /*
   @Test(expected=TypeException.class)

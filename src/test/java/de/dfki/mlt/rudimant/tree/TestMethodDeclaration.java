@@ -70,5 +70,6 @@ public class TestMethodDeclaration {
     String expected = "x = l.get(0);";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("String x;"));
+    assertTrue(s.contains("List<String> l;"));
   }
 }
