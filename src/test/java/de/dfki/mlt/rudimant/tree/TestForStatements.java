@@ -95,7 +95,13 @@ public class TestForStatements {
     assertEquals(expected, getForMarked(s, expected));
   }
 
-
+  @Test
+  public void testWhile() {
+    String stat = "{ int n = 0; while ((n = random(7)) == correct) { n++; } }";
+    String s = generate(stat);
+    String expected = "{ int n = 0; while ((( n = random(7)) == correct)){ n = (n+1); }";
+    assertEquals(expected, getForMarked(s, expected));
+  }
 
 
 }

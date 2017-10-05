@@ -262,6 +262,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     switch (ctx.getChildCount()) {
     case 3: // '(' exp ')'
       result = visit(ctx.getChild(1));
+      ((RTExpression)result).generateParens();
       break;
     case 1: // other expression
       result = visit(ctx.getChild(0));

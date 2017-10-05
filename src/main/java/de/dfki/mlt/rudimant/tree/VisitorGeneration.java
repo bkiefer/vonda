@@ -316,7 +316,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public String visitNode(ExpCast node) {
-    return "((" + node.type.toJava() + ")" + visitNode(node.expression) + ")";
+    return "(" + node.type.toJava() + ")" + visitNode(node.expression);
   }
 
   public String visitDaToken(RTExpression exp) {

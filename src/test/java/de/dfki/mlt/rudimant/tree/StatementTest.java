@@ -161,10 +161,10 @@ public class StatementTest {
  public void AssignConditionTest(){
    String in = "Child user; Robot agent; Robot I_ROBOT; agent = (agent == user) ? I_ROBOT : user;";
    String r = generate(in);
-   String expected = "Rdf user;Rdf agent;Rdf I_ROBOT; agent = ((agent.equals(user)) ? I_ROBOT : user);";
+   String expected = "Rdf user;Rdf agent;Rdf I_ROBOT; agent = (((agent.equals(user))) ? I_ROBOT : user);";
    assertEquals(expected, getForMarked(r, expected));
  }
- 
+
 //   @Test
 //   public void StatementTestxy(){
 //     String in = "Object foo; for (int i = 1; i <= 2; ++i){foo.slot = 1;}";

@@ -105,8 +105,8 @@ public class TestCast {
   public void test4() {
      String in = "Activity activity; bool = (activity.status == \"gameProposed\");";
     String s = generate(in);
-    String expected = "Rdf activity;boolean bool = (((String)activity"
-            + ".getSingleValue(\"<dom:status>\")).equals(\"gameProposed\"));";
+    String expected = "Rdf activity;boolean bool = ((((String)activity"
+            + ".getSingleValue(\"<dom:status>\")).equals(\"gameProposed\")));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -140,8 +140,8 @@ public class TestCast {
   public void test7() {
     String in = "Child user; b = (user.forename == \"John\");";
     String s = generate(in);
-    String expected = "Rdf user;boolean b = (((String)user"
-            + ".getSingleValue(\"<dom:forename>\")).equals(\"John\"));";
+    String expected = "Rdf user;boolean b = ((((String)user"
+            + ".getSingleValue(\"<dom:forename>\")).equals(\"John\")));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -183,7 +183,7 @@ public class TestCast {
   @Test(expected=TypeException.class)
   public void test12() throws Throwable{
     // TODO: When i is int, this is definitely an error in java; how to deal with it?
-    //      in this case, a type error is thrown; we should test that here 
+    //      in this case, a type error is thrown; we should test that here
     String in = "int i; i = false;";
     String s = getTypeError(in);
     // String expected = "i = (Object /* (unknown) */) false;";
@@ -203,7 +203,7 @@ public class TestCast {
     // Test cast with parameterized types
     String in = "LinkedList<String> b; LinkedList<String> l = (LinkedList<String>) b;";
     String s = generate(in);
-    String expected = "LinkedList<String> b;LinkedList<String> l = ((LinkedList<String>)b);";
+    String expected = "LinkedList<String> b;LinkedList<String> l = (LinkedList<String>)b;";
     assertEquals(expected, getForMarked(s, expected));
   }
 
