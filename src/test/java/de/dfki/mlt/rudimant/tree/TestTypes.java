@@ -83,7 +83,7 @@ public class TestTypes {
   public void testReturnSetType() {
     String in = "Child c;  docs = c.isTreatedBy;";
     String r = generate(in);
-    String expected = "docs = ((Set<Object>)c.getValue(\"<dom:isTreatedBy>\"));";
+    String expected = "Rdf c; docs = ((Set<Object>)c.getValue(\"<dom:isTreatedBy>\"));";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("Set<Object> docs;"));
   }
@@ -92,7 +92,7 @@ public class TestTypes {
   public void testLambdaExp() {
     String in = "Set<Child> cs; cs.contains((c) -> c.foreName.equals(\"John\"));";
     String r = generate(in);
-    String expected = "cs.contains((c) -> "
+    String expected = "Set<Rdf> cs;cs.contains((c) -> "
             + "((Set<Object>)c.getValue(\"foreName\")).equals(\"John\"));";
     assertEquals(expected, getForMarked(r, expected));
   }
@@ -101,7 +101,7 @@ public class TestTypes {
   public void testComplexLambdaExp() {
     String in = "Set<Child> cs; cs.contains((c) -> {c.foreName.equals(\"John\");});";
     String r = generate(in);
-    String expected = "cs.contains((c) -> {"
+    String expected = "Set<Rdf> cs;cs.contains((c) -> {"
             + " ((Set<Object>)c.getValue(\"foreName\")).equals(\"John\"); } );";
     assertEquals(expected, getForMarked(r, expected));
   }
@@ -119,7 +119,7 @@ public class TestTypes {
     String in = "Child c; if (!c.hasMother) int i = 0;";
     String r = generate(in);
     String expected =
-        "if (!((c != null && ((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null))) int i = 0;";
+        "Rdf c;if (!((c != null && ((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null))) int i = 0;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -128,7 +128,7 @@ public class TestTypes {
     String in = "Child c; a: if (!c.hasMother) int i = 0;";
     String r = generate(in);
     String expected =
-        "res = a(); if (res != 0) return (res - 1); return 0; }"
+        "Rdf c;res = a(); if (res != 0) return (res - 1); return 0; }"
         + " public int a(){ boolean a0 = false; a0 = !((c != null && "
         + "((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null));";
     assertEquals(expected, getForMarked(r, expected));

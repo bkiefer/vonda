@@ -41,7 +41,7 @@ public class TestFieldAccesses {
 	  public void testFieldAccess3() {
 	    String in = "Child c; yesterday = \"Lukas\"; if(c.name.equals(yesterday)){}";
 	    String s = generate(in);
-	    String expected = "String yesterday = \"Lukas\"; if (((c != null &&"
+	    String expected = "Rdf c;String yesterday = \"Lukas\"; if (((c != null &&"
 	        + " exists(((Set<Object>)c.getValue(\"<upper:name>\")))) &&"
 	    		+ " ((Set<Object>)c.getValue(\"<upper:name>\")).equals(yesterday)))";
 	    assertEquals(expected, getForMarked(s, expected));
@@ -51,7 +51,7 @@ public class TestFieldAccesses {
     public void testFieldAccess4() {
       String in = "Clazz c; timeout(\"bla\" + c.a.toString(), 1000) {}";
       String s = generate(in);
-      String expected = "newTimeout((\"bla\"+((Rdf)c.getSingleValue(\"<dom:a>\")).toString()),"
+      String expected = "Rdf c;newTimeout((\"bla\"+((Rdf)c.getSingleValue(\"<dom:a>\")).toString()),"
           + "1000,new Proposal() {public void run() { } });";
       assertEquals(expected, getForMarked(s, expected));
     }
@@ -60,7 +60,7 @@ public class TestFieldAccesses {
     public void testFieldAccess5() {
       String in = "Clazz c; propose(\"bla\" + c.a.toString()) {}";
       String s = generate(in);
-      String expected = "propose((\"bla\"+((Rdf)c.getSingleValue(\"<dom:a>\")).toString()),"
+      String expected = "Rdf c;propose((\"bla\"+((Rdf)c.getSingleValue(\"<dom:a>\")).toString()),"
           + "new Proposal() {public void run() { } });";
       assertEquals(expected, getForMarked(s, expected));
     }

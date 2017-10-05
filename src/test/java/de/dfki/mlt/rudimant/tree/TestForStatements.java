@@ -76,7 +76,7 @@ public class TestForStatements {
   public void test5() {
     String stat = "List<Object> l; for (QuizHistory q : l){}";
     String s = generate(stat);
-    String expected = "for (Object q_outer : l) { Rdf q = (Rdf)q_outer; { } }";
+    String expected = "List<Object> l;for (Object q_outer : l) { Rdf q = (Rdf)q_outer; { } }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
