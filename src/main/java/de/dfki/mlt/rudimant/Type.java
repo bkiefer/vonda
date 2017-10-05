@@ -142,7 +142,7 @@ public class Type {
 
   private RdfClass _class;
 
-  private Type() {
+  public Type() {
     _name = null;
   }
 

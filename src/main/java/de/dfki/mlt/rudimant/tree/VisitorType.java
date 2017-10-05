@@ -294,7 +294,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
               + "comparing types " + node.thenexp.getType() + " on left and "
               + node.elseexp.getType() + " on right)", node);
     }
-    node.type = unified;
+    node.type = unified == null? new Type() : unified;
   }
 
   @Override
