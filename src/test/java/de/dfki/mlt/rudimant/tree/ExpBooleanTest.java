@@ -58,7 +58,8 @@ GREATER: '>';
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
 
     assertTrue(dtr instanceof ExpSingleValue);
-    assertEquals("false should be of type Boolean", "boolean", (((RTExpression) dtr).getType().toString()));
+    assertEquals("false should be of type Boolean", "boolean",
+        (((RTExpression) dtr).getType().toJava()));
   }
 
   @Test

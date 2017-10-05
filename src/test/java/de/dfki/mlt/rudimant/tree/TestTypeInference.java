@@ -48,7 +48,7 @@ public class TestTypeInference {
     assertTrue(rt instanceof StatExpression);
     assertTrue(((StatExpression)rt).expression instanceof ExpAssignment);
     ExpAssignment ass = (ExpAssignment)((StatExpression)rt).expression;
-    assertEquals("boolean", ass.left.type.toString());
+    assertEquals("boolean", ass.left.type.toJava());
   }
 
   @Test
@@ -142,7 +142,7 @@ public class TestTypeInference {
   public void test10() {
     String in = " double f; void fun() { Clazz c; c.bf = 1.0; }";
     String s = generate(in);
-    String expected = "return 0; } void fun() { c.setValue(\"<dom:bf>\", 1.0); } }";
+    String expected = "return 0; } void fun() { Rdf c; c.setValue(\"<dom:bf>\", 1.0); } }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
