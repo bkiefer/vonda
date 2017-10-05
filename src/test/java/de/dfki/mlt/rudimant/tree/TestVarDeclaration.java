@@ -18,7 +18,7 @@ public class TestVarDeclaration {
   public void testPOD() {
     String decl = " int i; if (true) { i = i + 1; }";
     String s = generate(decl);
-    String expected = "int i; if (true) { i = (i+1); }";
+    String expected = "int i;if (true) { i = (i+1); }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -26,7 +26,7 @@ public class TestVarDeclaration {
   public void testRdf() {
     String decl = " Child i; if (true) { i = new Child; }";
     String s = generate(decl);
-    String expected = "Rdf i; if (true) { i = _proxy.getClass(\"<dom:Child>\").getNewInstance(DEFNS); }";
+    String expected = "Rdf i;if (true) { i = _proxy.getClass(\"<dom:Child>\").getNewInstance(DEFNS); }";
     assertEquals(expected, getForMarked(s, expected));
   }
 

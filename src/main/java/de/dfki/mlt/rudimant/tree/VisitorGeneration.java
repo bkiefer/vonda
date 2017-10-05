@@ -647,7 +647,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatVarDef node) {
-    // no generation here
+    out.append(node.type + " " + node.variable + ";");
   }
 
   @Override

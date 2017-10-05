@@ -42,7 +42,7 @@ public class TestComparison {
   public void testGenerationComparisonStringString() {
     String in = "String i; String j; if (i <= j) return true;";
     String r = generate(in);
-    String expected = "if ((i.compareTo(j) <= 0)) return true;";
+    String expected = "String i; String j; if ((i.compareTo(j) <= 0)) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -112,7 +112,7 @@ public class TestComparison {
     // other operators than == don't make sense here.
     String in = "Child a; if (a.hasTreatment) return true;";
     String r = generate(in);
-    String expected = "if ((a != null &&"
+    String expected = "Rdf a; if ((a != null &&"
         + " ((Rdf)a.getSingleValue(\"<dom:hasTreatment>\")) != null)) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
