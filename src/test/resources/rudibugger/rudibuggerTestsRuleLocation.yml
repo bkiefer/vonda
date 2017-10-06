@@ -1,0 +1,5 @@
+Rules:
+  rule_one:
+    '%InLine': 1
+  rule_two:
+    '%InLine': 5
