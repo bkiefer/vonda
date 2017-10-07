@@ -1,0 +1,11 @@
+rule_one:
+if (test = 1) {
+  bla;
+}
+
+import Import1;
+
+rule_two:
+if (test = 2) {
+  bla;
+}
