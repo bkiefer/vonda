@@ -20,6 +20,8 @@ import de.dfki.lt.loot.gui.util.ObjectHandler;
 import de.dfki.mlt.rudimant.tree.GrammarFile;
 import de.dfki.mlt.rudimant.tree.RudiTree;
 import de.dfki.mlt.rudimant.tree.TreeModelAdapter;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 public class Visualize extends GrammarMain {
@@ -61,6 +63,18 @@ public class Visualize extends GrammarMain {
   }
 
   public static String generate(String in) { return generate(in, false); }
+
+  public static Map generateAndGetRulesLocMap(File input) {
+    RudimantCompiler rc;
+    try {
+      rc = RudimantCompiler.init(confDir, configs);
+      rc.processToplevel(input);
+    } catch (IOException | WrongFormatException e) {
+      throw new RuntimeException(e);
+    }
+    return rc.getMem().getRulesLocMap();
+  }
+
 
   public static String normalizeSpaces(String in) {
     return in.replaceAll("[ \n\r\t]+", " ");
