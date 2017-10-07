@@ -1,6 +1,0 @@
-outputDirectory:    target/generated
-wrapperClass:       de.dfki.dialogue.NaoAgent
-ontologyFile:       ../../ontos/pal.quads.ini
-failOnError:        false
-targetConstructor:
-
