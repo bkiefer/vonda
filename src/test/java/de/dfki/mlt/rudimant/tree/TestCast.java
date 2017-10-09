@@ -207,6 +207,15 @@ public class TestCast {
     assertEquals(expected, getForMarked(s, expected));
   }
 
+  @Test
+  public void test15() {
+    String in = "Agent c; String s = ((Child)c).forename;";
+    String s = generate(in);
+    System.out.println(s);
+    String expected = "Rdf c;String s = ((String)((Rdf)c).getSingleValue(\"<dom:forename>\"));";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
   // TODO: CONSTRUCT A TEST EXAMPLE WITH AT LEAST THREE RDF ACCESSES
   @Test
   public void testMultipleRdfAccess() {
