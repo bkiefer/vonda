@@ -1,0 +1,18 @@
+rule_one:
+if (test = 1) {
+  bla;
+  rule_one_a:
+  if (test = 10) {
+    blc;
+  }
+}
+
+import Import1;
+
+rule_two:
+if (test = 2) {
+  bla;
+  rule_two_a:
+  if (test = 3) 
+    bly;
+}

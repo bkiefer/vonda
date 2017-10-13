@@ -1,0 +1,9 @@
+rule_import:
+if (test = 3) {
+  bla;
+  rule_import_a:
+  if (test = 5) {
+    blx;
+  }
+}
+

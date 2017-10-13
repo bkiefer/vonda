@@ -124,6 +124,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         Import node = (Import)t;
         String conargs = "";
         mem.addImport(node.name, conargs);
+        mem.importLoc = node.getLocation().getLineNumber();
         rudi.processImport(node.content);
       } else if (t instanceof RTStatement) {
         ((RTStatement)t).visit(ttv);

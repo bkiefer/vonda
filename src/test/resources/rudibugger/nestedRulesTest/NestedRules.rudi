@@ -1,0 +1,12 @@
+rule_one:
+if (test = 1) {
+  bla;
+  rule_one_a: 
+  if (test = 4) {
+    blo;
+  }
+}
+
+rule_two:
+if (test = 2) 
+  bli;
