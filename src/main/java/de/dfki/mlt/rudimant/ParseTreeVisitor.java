@@ -16,12 +16,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import de.dfki.mlt.rudimant.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.io.RobotGrammarParser;
-import de.dfki.mlt.rudimant.io.RobotGrammarParser.Da_tokenContext;
-import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_blockContext;
-import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_groupContext;
-import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_labelContext;
-import de.dfki.mlt.rudimant.io.RobotGrammarParser.Switch_statementContext;
-import de.dfki.mlt.rudimant.io.RobotGrammarParser.Timeout_statementContext;
+import de.dfki.mlt.rudimant.io.RobotGrammarParser.*;
 import de.dfki.mlt.rudimant.tree.*;
 import de.dfki.mlt.rudimant.io.RobotGrammarVisitor;
 
@@ -321,6 +316,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitSimple_b_exp(RobotGrammarParser.Simple_b_expContext ctx) {
     // simple_exp | simple_exp ('==' | '!=' | '<=' | '<' | '>=' | '>') exp
+    return boolExp(ctx);
+  }
+
+  @Override
+  public RudiTree visitNegatable_b_exp(Negatable_b_expContext ctx) {
+    // simple_b_exp | NOT simple_b_exp
     return boolExp(ctx);
   }
 

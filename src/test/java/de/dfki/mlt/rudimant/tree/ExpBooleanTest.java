@@ -4,9 +4,13 @@ import static de.dfki.mlt.rudimant.Visualize.*;
 import static de.dfki.mlt.rudimant.tree.TstUtils.*;
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.dfki.mlt.rudimant.Visualize;
 import de.dfki.mlt.rudimant.tree.*;
 
 /**
@@ -105,6 +109,19 @@ GREATER: '>';
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
 
     assertTrue(dtr instanceof ExpBoolean);
+  }
+
+  @Test
+  public void testNegationScope() {
+    String booleanExp = "(! var1 == var2 && var1 <= var2 && var2 == var1);";
+
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
+    //Visualize.show(dtr, "foo");
+    List<RudiTree> dtrs = new ArrayList<>();
+    for (RudiTree d : dtr.getDtrs()) { dtrs.add(d); }
+    assertEquals("!", ((ExpBoolean)dtrs.get(0)).operator) ;
+    assertEquals("&&", ((ExpBoolean)dtrs.get(1)).operator) ;
+
   }
 
 }

@@ -193,14 +193,18 @@ boolean_exp
   ;
 
 bool_and_exp
-  : simple_b_exp '&&' bool_and_exp
+  : negatable_b_exp '&&' bool_and_exp
+  | negatable_b_exp
+  ;
+
+negatable_b_exp
+  : NOT simple_b_exp
   | simple_b_exp
   ;
 
 simple_b_exp
   : complex_exp // will be compiled to '!= null' or '!= 0' or 'has()' ...
   | complex_exp ('==' | '!=' | '<=' | '<' | '>=' | '>') exp
-  | NOT exp
   ;
 
 new_exp

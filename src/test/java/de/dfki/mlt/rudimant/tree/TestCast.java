@@ -203,7 +203,15 @@ public class TestCast {
     // Test cast with parameterized types
     String in = "LinkedList<String> b; LinkedList<String> l = (LinkedList<String>) b;";
     String s = generate(in);
-    String expected = "LinkedList<String> b;LinkedList<String> l = (LinkedList<String>)b;";
+    String expected = "LinkedList<String> b;LinkedList<String> l = ((LinkedList<String>)b);";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
+  @Test
+  public void test15() {
+    String in = "Agent c; String s = ((Child)c).forename;";
+    String s = generate(in);
+    String expected = "Rdf c;String s = ((String)((Rdf)c).getSingleValue(\"<dom:forename>\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -257,7 +265,7 @@ public class TestCast {
     // Test set field with POD type
     String in = "if (((Rdf)d) <= Child) return true;";
     String s = generate(in);
-    String expected = "if ((((Rdf)d).getClazz().isSubclassOf(getRdfClass(\"Child\")))) return true;";
+    String expected = "if (((((Rdf)d)).getClazz().isSubclassOf(getRdfClass(\"Child\")))) return true;";
     assertEquals(expected, getForMarked(s, expected));
   }
 
