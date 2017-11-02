@@ -3,8 +3,9 @@ MAVEN_REPO="$HOME/.m2/repository"
 
 GRAFF_VERSION=0.4-SNAPSHOT
 HFC_VERSION=1.2.0-SNAPSHOT
-HFC_DB_VERSION=1.2-SNAPSHOT
+HFC_DB_VERSION=1.3-SNAPSHOT
 SRGS2XML_VERSION=0.9
+PALTECS_UTILS_VERSION=2.0-SNAPSHOT
 
 # ARGS: groupId artefact version
 function mvi() {
@@ -25,6 +26,10 @@ mvi de.dfki.lt.hfc hfc-db "$HFC_DB_VERSION"
 
 mvi de.dfki.mlt srgs-parser "$SRGS2XML_VERSION"
 
+mvi de.dfki.mlt srgs-parser "$SRGS2XML_VERSION"
+
+mvi pal palTECS-utils "$PALTECS_UTILS_VERSION"
+
 # the following stuff is in http://www.forschungssoftware.de/nexus/content/groups/public/
 # but it's not reliable, so we hope it's in the system wide repo from where we
 # put it into our local repo
@@ -37,5 +42,5 @@ mvi de.dfki.mlt cplan-core "$CPLAN_CORE_VERSION"
 DATAVIZ_VERSION=0.1-SNAPSHOT
 mvi de.dfki.mlt dataviz "$DATAVIZ_VERSION"
 
-TECS_VERSION=2.0.1
+TECS_VERSION=2.0.6
 mvi de.dfki.tecs libtecs "$TECS_VERSION"
