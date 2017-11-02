@@ -26,8 +26,6 @@ mvi de.dfki.lt.hfc hfc-db "$HFC_DB_VERSION"
 
 mvi de.dfki.mlt srgs-parser "$SRGS2XML_VERSION"
 
-mvi de.dfki.mlt srgs-parser "$SRGS2XML_VERSION"
-
 mvi pal palTECS-utils "$PALTECS_UTILS_VERSION"
 
 # the following stuff is in http://www.forschungssoftware.de/nexus/content/groups/public/
