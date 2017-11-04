@@ -5,12 +5,14 @@
  */
 package de.dfki.mlt.rudimant;
 
-import static de.dfki.mlt.rudimant.tree.TstUtils.RESOURCE_DIR;
+import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.RESOURCE_DIR;
 import static org.junit.Assert.*;
 
 import java.io.File;
 
 import org.junit.Test;
+
+import de.dfki.mlt.rudimant.compiler.CompilerMain;
 
 /**
  *
@@ -21,7 +23,7 @@ public class CommentTest {
   @Test
   public void Test() throws Exception {
     // enter here the file whose compilation you'd like to debug
-    GrammarMain.main(new String[]{
+    CompilerMain.main(new String[]{
       "-o", "target/generated/",
       "-r", RESOURCE_DIR + "ontos/pal.quads.ini",
       RESOURCE_DIR + "comments.rudi",

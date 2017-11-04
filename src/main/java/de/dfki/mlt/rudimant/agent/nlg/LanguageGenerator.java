@@ -29,6 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
+import de.dfki.lt.tr.dialogue.cplan.LoggingTracer;
+import de.dfki.lt.tr.dialogue.cplan.RuleTracer;
 import de.dfki.lt.tr.dialogue.cplan.UtterancePlanner;
 import de.dfki.lt.tr.dialogue.cplan.functions.FunctionFactory;
 import static de.dfki.mlt.rudimant.agent.nlg.ConfConstants.*;
@@ -125,6 +127,14 @@ public class LanguageGenerator {
     } catch (IOException e) {
       logger.error("mapper rules could not be read: " + e);
     }
+  }
+
+  public void logMapper() {
+    _ruleMapper.setTracing(new LoggingTracer(RuleTracer.ALL));
+  }
+
+  public void logGenerator() {
+    cplanner.logGenerator();
   }
 
   /** Currently, to switch the language, you will create a new (cached)

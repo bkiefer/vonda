@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>de.dfki.mlt</groupId>
+  <artifactId>dataviz</artifactId>
+  <versioning>
+    <versions>
+      <version>0.1-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20171102165625</lastUpdated>
+  </versioning>
+</metadata>

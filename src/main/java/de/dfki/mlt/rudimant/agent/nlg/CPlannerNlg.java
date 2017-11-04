@@ -13,12 +13,8 @@ import org.apache.log4j.Logger;
 
 import com.ibm.icu.text.RuleBasedNumberFormat;
 
-import de.dfki.lt.tr.dialogue.cplan.BatchTest;
+import de.dfki.lt.tr.dialogue.cplan.*;
 import de.dfki.lt.tr.dialogue.cplan.BatchTest.BatchType;
-import de.dfki.lt.tr.dialogue.cplan.CcgUtterancePlanner;
-import de.dfki.lt.tr.dialogue.cplan.DagEdge;
-import de.dfki.lt.tr.dialogue.cplan.DagNode;
-import de.dfki.lt.tr.dialogue.cplan.UtterancePlanner;
 import de.dfki.lt.tr.dialogue.cplan.functions.FunctionFactory;
 
 public class CPlannerNlg {
@@ -130,6 +126,10 @@ public class CPlannerNlg {
           + stringRepresentation + "] [" + input + "]");
     }
     return new ProtoLf(input);
+  }
+
+  public void logGenerator() {
+    _planner.setTracing(new LoggingTracer(RuleTracer.ALL));
   }
 
   public String realise(ProtoLf plf) {

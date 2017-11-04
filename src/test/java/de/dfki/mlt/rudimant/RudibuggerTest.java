@@ -1,10 +1,10 @@
 package de.dfki.mlt.rudimant;
 
 import de.dfki.lt.hfc.WrongFormatException;
-import static de.dfki.mlt.rudimant.GrammarMain.configs;
-import static de.dfki.mlt.rudimant.Visualize.generateAndGetRulesLocMap;
-import static de.dfki.mlt.rudimant.tree.TstUtils.RESOURCE_DIR;
-import static de.dfki.mlt.rudimant.tree.TstUtils.setUpEmpty;
+import static de.dfki.mlt.rudimant.compiler.CompilerMain.configs;
+import static de.dfki.mlt.rudimant.compiler.Visualize.generateAndGetRulesLocMap;
+import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.RESOURCE_DIR;
+import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.setUpEmpty;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
