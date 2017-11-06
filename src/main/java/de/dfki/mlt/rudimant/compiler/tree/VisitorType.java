@@ -5,7 +5,7 @@
  */
 package de.dfki.mlt.rudimant.compiler.tree;
 
-import static de.dfki.mlt.rudimant.compiler.Utils.*;
+import static de.dfki.mlt.rudimant.compiler.Utils.isBooleanOperator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
-import java.util.LinkedHashMap;
 import de.dfki.mlt.rudimant.compiler.Mem;
 import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
 import de.dfki.mlt.rudimant.compiler.Type;
@@ -43,10 +42,8 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
    */
   public void typeError(String errorMessage, RudiTree node) {
     String newErrorMessage = node.getLocation() + " " + errorMessage;
-    if (mem.rulesLoc) {
-      mem.currentMap.put("ERROR:" + node.getLocation().getLineNumber(),
-            errorMessage);
-    }
+    mem.registerError(errorMessage, node.getLocation());
+
     if (typeErrorFatal) {
       // throw a real Exception
       throw new TypeException(newErrorMessage);
@@ -324,35 +321,8 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatGrammarRule node) {
-    // needed for flag -b
-    String parentRule = mem.getCurrentRule();
+    node.toplevel = mem.enterRule(node.label, node.getLocation());
 
-    node.toplevel = mem.enterRule(node.label);
-
-    if (mem.rulesLoc) {
-      LinkedHashMap tempMap = new LinkedHashMap();
-      tempMap.put("%InLine", node.getLocation().getLineNumber());
-      // verify if name already taken
-      String ruleName = node.label;
-      if (mem.ruleNames.contains(ruleName)) {
-        logger.warn("The rule name " + ruleName + " is already used.");
-        Integer counter = 1;
-        ruleName += "%" + Integer.toString(counter);
-        while (true) {
-          if (mem.ruleNames.contains(ruleName)) {
-            counter += 1;
-            ruleName = ruleName.substring(0, ruleName.length() - 1)
-                    + Integer.toString(counter);
-            continue;
-          }
-          break;
-        }
-      }
-      mem.ruleNames.add(ruleName);
-      mem.currentMap.put(ruleName, tempMap);
-      mem.previousMaps.add(mem.currentMap);
-      mem.currentMap = tempMap;
-    }
     // we step down into a new environment (later turned to a method) whose
     //  variables cannot be seen from the outside
     if (node.toplevel) {
@@ -363,9 +333,6 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
       mem.leaveEnvironment(node);
     }
 
-    if ( mem.rulesLoc) {
-      mem.currentMap =  mem.previousMaps.remove( mem.previousMaps.size() - 1);
-    }
     mem.leaveRule();
   }
 
@@ -562,7 +529,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
    *
    * @param node
    * @param currentType
-   * @param label
+   * @param var
    */
   ExpPropertyAccess treatRdfPropertyAccess(ExpFieldAccess node, Type currentType,
           ExpVariable var) {

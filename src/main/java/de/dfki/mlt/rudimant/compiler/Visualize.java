@@ -2,14 +2,7 @@ package de.dfki.mlt.rudimant.compiler;
 
 import static de.dfki.mlt.rudimant.compiler.Constants.RULES_FILE_EXTENSION;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.loot.gui.DrawingPanel;
@@ -17,7 +10,7 @@ import de.dfki.lt.loot.gui.MainFrame;
 import de.dfki.lt.loot.gui.Style;
 import de.dfki.lt.loot.gui.layouts.CompactLayout;
 import de.dfki.lt.loot.gui.util.ObjectHandler;
-import java.util.Map;
+import de.dfki.mlt.rudimant.compiler.info.BasicInfo;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
 import de.dfki.mlt.rudimant.compiler.tree.RudiTree;
 import de.dfki.mlt.rudimant.compiler.tree.TreeModelAdapter;
@@ -63,7 +56,7 @@ public class Visualize extends CompilerMain {
 
   public static String generate(String in) { return generate(in, false); }
 
-  public static Map generateAndGetRulesLocMap(File input) {
+  public static BasicInfo generateAndGetRulesLocMap(File input) {
     RudimantCompiler rc;
     try {
       rc = RudimantCompiler.init(confDir, configs);
@@ -71,7 +64,7 @@ public class Visualize extends CompilerMain {
     } catch (IOException | WrongFormatException e) {
       throw new RuntimeException(e);
     }
-    return rc.getMem().getRulesLocMap();
+    return rc.getMem().getInfo();
   }
 
 
@@ -138,7 +131,9 @@ public class Visualize extends CompilerMain {
       throw new UnsupportedOperationException("Parsing failed.");
     if (rc.visualise())
       Visualize.show(gf, name);
+    rc.getMem().enterGeneration();
     gf.generate(rc, out);
+    rc.getMem().leaveGeneration();
     return gf;
   }
 

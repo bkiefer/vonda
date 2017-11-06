@@ -414,7 +414,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatGrammarRule node) {
-    mem.enterRule(node.label);
+    mem.enterRule(node.label, null);
     if (node.toplevel) {
       mem.enterEnvironment(node);
       // is a top level rule and will be converted to a method

@@ -123,10 +123,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     for (RudiTree t : rules) {
       if (t instanceof Import) {
         Import node = (Import)t;
-        String conargs = "";
-        mem.addImport(node.name, conargs);
-        mem.importLoc = node.getLocation().getLineNumber();
-        rudi.processImport(node.content);
+        rudi.processImport(node.name, node.content, node.location);
       } else if (t instanceof RTStatement) {
         ((RTStatement)t).visit(ttv);
       } else if (t instanceof RTExpression) {

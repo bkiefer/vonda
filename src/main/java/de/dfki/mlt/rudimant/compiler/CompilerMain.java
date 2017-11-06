@@ -129,7 +129,7 @@ public class CompilerMain {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
-    OptionParser parser = new OptionParser("hlver:w:c:o:b");
+    OptionParser parser = new OptionParser("hlver:w:c:o:");
     parser.accepts("help");
     OptionSet options = null;
 
@@ -181,13 +181,6 @@ public class CompilerMain {
       if (options.has("o")) {
         outputDirectory = new File((String)options.valueOf("o"));
         configs.put(CFG_OUTPUT_DIRECTORY, outputDirectory);
-      }
-      // activate logging of rules location for rudibugger
-      if (options.has("b")) {
-        String rulesLocFile = (String)options.valueOf("c");
-        rulesLocFile = rulesLocFile.substring(0, rulesLocFile.length() - 4);
-        rulesLocFile += CFG_RULE_LOCATION_SUFFIX;
-        configs.put(CFG_RULE_LOCATION_FILE, rulesLocFile);
       }
       main.setConfig(configs);
       if (process(RudimantCompiler.init(confDir, configs), files)) {

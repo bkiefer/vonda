@@ -13,6 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import de.dfki.mlt.rudimant.compiler.info.BasicInfo;
+import de.dfki.mlt.rudimant.compiler.info.ErrorInfo;
+import de.dfki.mlt.rudimant.compiler.info.ImportInfo;
+import de.dfki.mlt.rudimant.compiler.info.RuleInfo;
 import de.dfki.mlt.rudimant.compiler.tree.RTBlockNode;
 import de.dfki.mlt.rudimant.compiler.tree.ToplevelBlock;
 
@@ -41,12 +45,10 @@ public class Mem {
 
   private RdfProxy _proxy;
 
-  private LinkedHashMap<String, Object> rulesLocMap;
-  public LinkedHashMap<String, Object> currentMap;
-  public List<LinkedHashMap<String,Object>> previousMaps;
-  public boolean rulesLoc;
-  public int importLoc;
-  public HashSet<String> ruleNames;
+  /** Info about all imports and rules (tree) */
+  private BasicInfo root;
+  private int ruleId;
+  private boolean doingTypeCheck;
 
   // the rudi file that represents the Agent
   private String upperRudi;
@@ -56,6 +58,8 @@ public class Mem {
     classBlock = null;
     _proxy = proxy;
     Type.setProxy(proxy);
+    ruleId = 0;
+    doingTypeCheck = true;
   }
 
   /** Get the current ClassEnv (the one treated now) */
@@ -65,6 +69,7 @@ public class Mem {
 
   public void setToplevelFile(String name) {
     upperRudi = name;
+    root = new ImportInfo(name, -1, null);
   }
 
   // TODO the next two are candidates for refactoring, check call graph!
@@ -88,35 +93,14 @@ public class Mem {
   public void enterClass(String classname, ToplevelBlock node) {
     enterEnvironment(node);
 
-    if (rulesLoc)
-      previousMaps.add(currentMap);
-
     node.setClass(classBlock, new ClassEnv(classname));
     classBlock = node;
-
-    if (rulesLoc) {
-      if (currentMap.containsKey(curClass().getName())) {
-        currentMap = (LinkedHashMap) currentMap.get(curClass().getName());
-      } else {
-        currentMap = new LinkedHashMap<String, Object>();
-      }
-      currentMap.put("%ImportWasInLine", importLoc);
-    }
   }
 
   /** Leave processing of a class. To be called at the very end of processing
    *  the top-level class or import.
    */
   public void leaveClass(ToplevelBlock node) {
-    if (rulesLoc) {
-      if (previousMaps.isEmpty()) {
-        rulesLocMap = currentMap;
-      } else {
-        previousMaps.get(previousMaps.size() - 1).put(curClass().getName(), currentMap);
-        currentMap = previousMaps.remove(previousMaps.size() - 1);
-      }
-    }
-
     classBlock = classBlock.getParentClass();
 
     leaveEnvironment(node);
@@ -133,12 +117,27 @@ public class Mem {
   public String getClassName() { return curClass().getName(); }
 
 
-  public boolean enterRule(String name) {
+  public void enterGeneration() {
+    doingTypeCheck = false;
+  }
+
+  public void leaveGeneration() {
+    doingTypeCheck = true;
+  }
+
+
+  public boolean enterRule(String name, Location loc) {
+    if (doingTypeCheck)
+      root = new RuleInfo(++ruleId, name, loc.getLineNumber(), root);
     // The condition is: We're in the topmost environment of a file.
     return curClass().enterRule(name) && classBlock.getBindings() == current;
   }
 
-  public void leaveRule() { curClass().leaveRule(); }
+  public void leaveRule() {
+    if (doingTypeCheck)
+      root = root.getParent();
+    curClass().leaveRule();
+  }
 
   /** Return the name of the innermost rule we're in */
   public String getCurrentRule() { return curClass().getCurrentRule(); }
@@ -245,10 +244,15 @@ public class Mem {
     logger.trace("Leave level {}", blockNesting);
   }
 
-  public void addImport(String importName, String conargs) {
+  public void addImport(String importName, Location loc) {
+    root = new ImportInfo(importName, loc.getLineNumber(), root);
     String importClassName = capitalize(importName);
     curClass().addRuleOrImport(importClassName + " "
             + importName + " = new " + importClassName + "(");
+  }
+
+  public void leaveImport() {
+    root = root.getParent();
   }
 
   /** Return the set of needed classes to generate the proper import statements
@@ -266,15 +270,15 @@ public class Mem {
     return result;
   }
 
-  public void initRulesLocMap() {
-    rulesLoc = true;
-    rulesLocMap = new LinkedHashMap<>();
-    currentMap = rulesLocMap;
-    previousMaps = new ArrayList<>();
-    ruleNames = new HashSet();
+  public BasicInfo getInfo() {
+    return root;
   }
 
-  public Map getRulesLocMap() {
-    return rulesLocMap;
+  public void registerError(String errorMessage, Location location) {
+    BasicInfo current = root;
+    while (! (current instanceof ImportInfo))
+      current = current.getParent();
+    ImportInfo info = (ImportInfo)current;
+    info.getErrors().add(new ErrorInfo(errorMessage, location));
   }
 }

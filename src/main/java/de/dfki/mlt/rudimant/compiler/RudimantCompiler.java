@@ -21,7 +21,10 @@ import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import java.util.LinkedHashMap;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+
+import de.dfki.mlt.rudimant.compiler.info.BasicInfo;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
+import de.dfki.mlt.rudimant.compiler.tree.Import;
 import de.dfki.mlt.rudimant.compiler.tree.ToplevelBlock;
 
 public class RudimantCompiler {
@@ -108,9 +111,6 @@ public class RudimantCompiler {
     String className = capitalize(inputRealName);
     mem.enterClass(className, fileBlock);
     mem.setToplevelFile(className);
-    if (rulesLoc) {
-      mem.initRulesLocMap();
-    }
 
     parent = null;
     try {
@@ -156,11 +156,6 @@ public class RudimantCompiler {
     }
     if (configs.containsKey(CFG_LOGGING)) {
       rc.versionToLog = false;
-    }
-    // activate logging of rules location for rudibugger
-    if (configs.containsKey(CFG_RULE_LOCATION_FILE)) {
-      rc.rulesLoc = true;
-      rc.rulesLocFile = (String)configs.get(CFG_RULE_LOCATION_FILE);
     }
     return rc;
   }
@@ -297,7 +292,9 @@ public class RudimantCompiler {
     if (visualise)
       Visualize.show(gf, inputRealName);
     Writer output = Files.newBufferedWriter(outputFile.toPath());
+    mem.enterGeneration();
     gf.generate(this, output);
+    mem.leaveGeneration();
     output.close();
 
     uncrustify(outputFile);
@@ -332,15 +329,15 @@ public class RudimantCompiler {
     mem.leaveClass(fileBlock);
 
     // save ruleLocMap to .yml file
-    if (rulesLoc) {
-      DumperOptions options = new DumperOptions();
-      options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-      Yaml yaml = new Yaml(options);
-      FileWriter writer = new FileWriter(rulesLocFile);
-      Map dumpingMap = new LinkedHashMap<>();
-      dumpingMap.put(inputRealName, mem.getRulesLocMap());
-      yaml.dump(dumpingMap, writer);
-    }
+    DumperOptions options = new DumperOptions();
+    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+    Yaml yaml = new Yaml(options);
+    rulesLocFile="/tmp/test.yml";
+    FileWriter writer = new FileWriter(rulesLocFile);
+    BasicInfo dumpingMap = mem.getInfo();
+    //dumpingMap.put(inputRealName, mem.getRulesLocMap());
+    yaml.dump(dumpingMap, writer);
+
   }
 
   /** Process an imported rudi file */
@@ -358,11 +355,13 @@ public class RudimantCompiler {
     mem.leaveClass(fileBlock);
   }
 
-  public void processImport(String importSpec) {
+  public void processImport(String importSpec, String name, Location loc) {
     logger.info("Processing import {}", importSpec);
     try {
+      mem.addImport(name, loc);
       RudimantCompiler result = new RudimantCompiler(this);
       result.processImportInternal(importSpec);
+      mem.leaveImport();
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     }
