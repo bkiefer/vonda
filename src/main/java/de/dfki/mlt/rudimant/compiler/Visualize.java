@@ -10,7 +10,7 @@ import de.dfki.lt.loot.gui.MainFrame;
 import de.dfki.lt.loot.gui.Style;
 import de.dfki.lt.loot.gui.layouts.CompactLayout;
 import de.dfki.lt.loot.gui.util.ObjectHandler;
-import de.dfki.mlt.rudimant.compiler.info.BasicInfo;
+import de.dfki.mlt.rudimant.common.BasicInfo;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
 import de.dfki.mlt.rudimant.compiler.tree.RudiTree;
 import de.dfki.mlt.rudimant.compiler.tree.TreeModelAdapter;

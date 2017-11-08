@@ -13,10 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.mlt.rudimant.compiler.info.BasicInfo;
-import de.dfki.mlt.rudimant.compiler.info.ErrorInfo;
-import de.dfki.mlt.rudimant.compiler.info.ImportInfo;
-import de.dfki.mlt.rudimant.compiler.info.RuleInfo;
+import de.dfki.mlt.rudimant.common.BasicInfo;
+import de.dfki.mlt.rudimant.common.ErrorInfo;
+import de.dfki.mlt.rudimant.common.ImportInfo;
+import de.dfki.mlt.rudimant.common.RuleInfo;
 import de.dfki.mlt.rudimant.compiler.tree.RTBlockNode;
 import de.dfki.mlt.rudimant.compiler.tree.ToplevelBlock;
 

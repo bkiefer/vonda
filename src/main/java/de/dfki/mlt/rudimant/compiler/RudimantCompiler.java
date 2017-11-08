@@ -22,7 +22,7 @@ import java.util.LinkedHashMap;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import de.dfki.mlt.rudimant.compiler.info.BasicInfo;
+import de.dfki.mlt.rudimant.common.BasicInfo;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
 import de.dfki.mlt.rudimant.compiler.tree.Import;
 import de.dfki.mlt.rudimant.compiler.tree.ToplevelBlock;
