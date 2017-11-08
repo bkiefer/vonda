@@ -332,11 +332,10 @@ public class RudimantCompiler {
     DumperOptions options = new DumperOptions();
     options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
     Yaml yaml = new Yaml(options);
-    rulesLocFile="/tmp/test.yml";
-    FileWriter writer = new FileWriter(rulesLocFile);
-    BasicInfo dumpingMap = mem.getInfo();
-    //dumpingMap.put(inputRealName, mem.getRulesLocMap());
-    yaml.dump(dumpingMap, writer);
+    BasicInfo rootInfo = mem.getInfo();
+    String rulesLocFilePath = outputDirectory + "/RuleLoc.yml";
+    FileWriter writer = new FileWriter(rulesLocFilePath);
+    yaml.dump(rootInfo, writer);
 
   }
 
