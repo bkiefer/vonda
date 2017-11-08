@@ -56,7 +56,7 @@ public class Visualize extends CompilerMain {
 
   public static String generate(String in) { return generate(in, false); }
 
-  public static BasicInfo generateAndGetRulesLocMap(File input) {
+  public static BasicInfo generateAndGetRulesInfo(File input) {
     RudimantCompiler rc;
     try {
       rc = RudimantCompiler.init(confDir, configs);
