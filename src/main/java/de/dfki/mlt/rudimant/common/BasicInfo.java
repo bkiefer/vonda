@@ -2,6 +2,7 @@ package de.dfki.mlt.rudimant.common;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class BasicInfo {
 
@@ -53,4 +54,32 @@ public class BasicInfo {
 
   @Override
   public String toString() { return _label; }
+
+  @Override
+  public boolean equals(Object other) {
+
+    if (this == other)
+        return true;
+
+    if (other == null)
+        return false;
+
+    if (getClass() != other.getClass())
+        return false;
+
+    BasicInfo o = (BasicInfo) other;
+    return (this._line == o._line
+            && this._label.equals(o._label)
+            && this._children.equals(o._children)
+            );
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 3;
+    hash = 73 * hash + Objects.hashCode(this._parent);
+    hash = 73 * hash + this._line;
+    hash = 73 * hash + Objects.hashCode(this._label);
+    return hash;
+  }
 }
