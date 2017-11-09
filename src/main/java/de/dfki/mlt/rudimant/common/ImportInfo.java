@@ -10,8 +10,10 @@ public class ImportInfo extends BasicInfo {
 
   public ImportInfo() { }
 
-  public ImportInfo(String name, int line, BasicInfo parent) {
+  public ImportInfo(String name, String[] pathSpec, int line, BasicInfo parent) {
     super(name, line, parent);
+    // TODO create the path from the pathSpec
+
   }
 
   public List<ErrorInfo> getErrors() {

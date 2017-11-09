@@ -56,8 +56,12 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visitImports(RobotGrammarParser.ImportsContext ctx) {
     // IMPORT VARIABLE SEMICOLON
-    String file = ctx.getChild(1).getText();
-    return new Import(file).setPosition(ctx, currentClass);
+    String name = ctx.getChild(ctx.getChildCount() - 2).getText();
+    String[] path = new String[(ctx.getChildCount() - 1) / 2 - 1];
+    for (int i = 1; i < ctx.getChildCount() - 3; i += 2) {
+      path[i/2] = ctx.getChild(i).getText();
+    }
+    return new Import(name, path).setPosition(ctx, currentClass);
   }
 
   @Override
@@ -86,7 +90,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       block = visit(ctx.getChild(ctx.getChildCount() - 1)).ensureStatement();
     }
     return new StatMethodDeclaration(
-        (hasVisibilitySpec == 0 ? "" : ctx.getChild(callS).getText()),
+        (hasVisibilitySpec == 0 ? "public" : ctx.getChild(callS).getText()),
         ctx.getChild(0 + hasVisibilitySpec + callS).getText(),
         callSpec,
         ctx.getChild(1 + hasVisibilitySpec + callS).getText(),

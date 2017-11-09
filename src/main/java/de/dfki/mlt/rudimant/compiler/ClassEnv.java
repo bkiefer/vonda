@@ -10,35 +10,27 @@ import java.util.*;
 public class ClassEnv {
   private String name;
 
-  // remember the toplevel rules and imports in the correct order
-  private List<String> rules;
-
   /** A stack of the currently processed rules */
   private List<String> activeRules;
 
-  public ClassEnv(String className) {
+  /** The package this class lives in */
+  private String[] packageSpec;
+
+  public ClassEnv(String className, String[] pkg) {
     name = className;
-    rules = new ArrayList<>();
+    packageSpec = pkg;
     activeRules = new ArrayList<>();
   }
 
-  /** add the rule to this environment
-   * @param rule the name of the rule
-   */
-  public void addRule(String rule) { rules.add(rule); }
-
   public String getName() { return name; }
 
-  public void addRuleOrImport(String name) { rules.add(name); }
-
-  public List<String> getRulesAndImports() { return rules; }
+  public String[] packageSpec() { return packageSpec; }
 
   /** Are we on the top-level (not in a rule already) */
   private boolean ontop() { return activeRules.isEmpty(); }
 
   public boolean enterRule(String name) {
     boolean topLevelRule = ontop();
-    if (topLevelRule) addRuleOrImport(name);
     activeRules.add(name);
     return topLevelRule;
   }

@@ -46,12 +46,10 @@ public class CompilerMain {
 
   // rdf functionality
 
-  public static boolean process(RudimantCompiler rc, List<String> files)
+  public static boolean process(RudimantCompiler rc, String file)
       throws IOException {
     try {
-      for (String file : files) {
-        rc.processToplevel(new File(file));
-      }
+      rc.processToplevel(new File(file));
     } catch (UnsupportedOperationException ex) {
       if (ex.getMessage().startsWith("Parsing")) return true;
       throw(ex);
@@ -183,7 +181,9 @@ public class CompilerMain {
         configs.put(CFG_OUTPUT_DIRECTORY, outputDirectory);
       }
       main.setConfig(configs);
-      if (process(RudimantCompiler.init(confDir, configs), files)) {
+      if (process(
+          RudimantCompiler.init(confDir, configs, new File((String)files.get(0))),
+          (String)files.get(0))) {
         System.out.println("Parsing failed");
         System.exit(1);
       }

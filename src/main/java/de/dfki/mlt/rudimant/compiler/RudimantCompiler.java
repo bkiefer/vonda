@@ -6,10 +6,7 @@ import static de.dfki.mlt.rudimant.compiler.tree.GrammarFile.*;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -18,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.hfc.db.server.HfcDbHandler;
-import java.util.LinkedHashMap;
+
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -36,8 +33,8 @@ public class RudimantCompiler {
   private boolean typeCheck = true;
   private boolean visualise = false;
 
-  private File inputDirectory;
-  private File outputDirectory;
+  private final File inputDirectory;
+  private final File outputDirectory;
   // there may be users that do not start the .rudi files with capital letters,
   // we don't want to crash in that case by turning it to uppercase and then
   // trying to read it
@@ -45,15 +42,9 @@ public class RudimantCompiler {
 
   private Mem mem;
 
-  private List<String> subPackage = new ArrayList<>();
-  private int rootLevel = 0;
-
-  private String packageName;
+  private final String[] subPackage;
 
   private RudimantCompiler parent;
-
-  // the class that should be extended by the rudi files to fill them into a project
-  private final String wrapperClass;
 
   // Definitions for methods and variables in Agent.java
   private static final String agentInit = "/Agent.rudi";
@@ -61,34 +52,55 @@ public class RudimantCompiler {
   // what should be logged in the rules (true = rudi code vs false = java code)
   private boolean versionToLog = true;
 
-  // The block that represents the file level that is compiled here
-  private ToplevelBlock fileBlock = new ToplevelBlock();
-
   // Save location of rules to file
-  private boolean rulesLoc = false;
   private String rulesLocFile;
 
+  /**
+   * Return the inputfile, which is relative to inputDirectory, the subdirectory
+   * is specified by the subPackage, and the last entry of subPackage, which is
+   * the class name of the file to be processed, is removed.
+   */
+  private File getSubDirectory(File dir, String[] pathSpec) {
+    File result = dir;
+    for (String s : pathSpec) {
+      result = new File(result, s);
+    }
+    return result;
+  }
 
   /** Constructor for imports */
-  private RudimantCompiler(RudimantCompiler parentCompiler) {
-    wrapperClass = parentCompiler.wrapperClass;
-    mem = parentCompiler.mem;
+  private RudimantCompiler(RudimantCompiler parentCompiler, String[] dirSpec) {
     parent = parentCompiler;
-    typeCheck = parentCompiler.typeCheck;
-    packageName = parent.getPackageName();
-    rootLevel = parent.rootLevel;
+    // TODO: THE FOLLOWING NEVER CHANGE. PUT THEM INTO A CONTAINER?
+    mem = parent.mem;
+    typeCheck = parent.typeCheck;
     visualise = parent.visualise;
     versionToLog = parent.versionToLog;
+
+    subPackage = Arrays.copyOf(parent.subPackage,
+        parent.subPackage.length + dirSpec.length);
+    for (int i = 0; i < dirSpec.length; ++i) {
+      subPackage[parent.subPackage.length + i] = dirSpec[i];
+    }
+    inputDirectory = getSubDirectory(parentCompiler.inputDirectory, dirSpec);
+    outputDirectory = getSubDirectory(parentCompiler.outputDirectory, dirSpec);
   }
 
   /** Constructor for top-level file */
-  private RudimantCompiler(RdfProxy proxy, String wrapper){
-    wrapperClass = wrapper;
-    mem = new Mem(proxy);
+  private RudimantCompiler(RdfProxy proxy, String wrapper, File outDir,
+      File topLevel, String packageName){
+    inputDirectory = topLevel == null ? new File(".") : topLevel.getParentFile();
+    if (packageName == null) packageName = "";
+    subPackage = packageName.split("\\.");
+    outputDirectory = outDir == null
+        ? inputDirectory : getSubDirectory(outDir, subPackage);
+    parent = null;
+    mem = new Mem(proxy, wrapper);
   }
 
-  private void checkOutputDirectory(File configDir, Map<String, Object> configs)
+  private static File checkOutputDirectory(File configDir, Map<String, Object> configs)
       throws IOException {
+    File outputDirectory = null;
     if (configs.containsKey(CFG_OUTPUT_DIRECTORY)) {
       Object o = configs.get(CFG_OUTPUT_DIRECTORY);
       if (o instanceof String) {
@@ -100,19 +112,17 @@ public class RudimantCompiler {
         outputDirectory = (File)o;
       }
     }
-    if (outputDirectory == null) return;
+    return outputDirectory;
   }
 
   /** Process the Agent.rudi, treating all definitions as if they came from
    *  the toplevel rudi file.
    * @param topLevel
    */
-  public void initMem(String inputRealName) {
+  public void initMem(String inputRealName, String[] pkg) {
     String className = capitalize(inputRealName);
-    mem.enterClass(className, fileBlock);
-    mem.setToplevelFile(className);
+    mem.enterClass(className, pkg);
 
-    parent = null;
     try {
       parseAndTypecheck(this, RudimantCompiler.class.getResourceAsStream(agentInit), inputRealName);
     } catch (IOException ex) {
@@ -133,7 +143,7 @@ public class RudimantCompiler {
 
   @SuppressWarnings("unchecked")
   public static RudimantCompiler init(File configDir,
-      Map<String, Object> configs)
+      Map<String, Object> configs, File topLevel)
       throws IOException, WrongFormatException {
     if(configs.get(CFG_WRAPPER_CLASS) == null) {
       logger.error("No implementation class specified, exiting.");
@@ -144,12 +154,14 @@ public class RudimantCompiler {
       proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
     }
     RudimantCompiler rc = new RudimantCompiler(proxy,
-              (String)configs.get(CFG_WRAPPER_CLASS));
-    rc.checkOutputDirectory(configDir, configs);
+              (String)configs.get(CFG_WRAPPER_CLASS),
+              checkOutputDirectory(configDir, configs),
+              topLevel,
+              configs.containsKey(CFG_PACKAGE)
+                  ? (String) configs.get(CFG_PACKAGE)
+                      : null
+              );
     rc.typeCheck = (boolean)configs.get(CFG_TYPE_ERROR_FATAL);
-    if (configs.containsKey(CFG_PACKAGE)) {
-      rc.packageName = (String) configs.get(CFG_PACKAGE);
-    }
     if (configs.containsKey(CFG_VISUALISE)) {
       if (rc.visualise = (boolean) configs.get(CFG_VISUALISE))
         Visualize.init();
@@ -174,29 +186,8 @@ public class RudimantCompiler {
 
   public boolean visualise() { return visualise; }
 
-  /**
-   * Return the inputfile, which is relative to inputDirectory, the subdirectory
-   * is specified by the subPackage, and the last entry of subPackage, which is
-   * the class name of the file to be processed, is removed.
-   */
-  private File getOutputDirectory() {
-    File result = outputDirectory;
-    for (String s : subPackage) {
-      result = new File(result, s);
-    }
-    return result;
-  }
-
   public boolean logRudi(){
     return versionToLog;
-  }
-
-  public String getPackageName() {
-    return packageName;
-  }
-
-  public String getWrapperClass() {
-    return wrapperClass;
   }
 
   public Mem getMem() {
@@ -257,6 +248,38 @@ public class RudimantCompiler {
   }
 
 
+  /** Process the top-level rudi file */
+  public void processToplevel(File topLevel) throws IOException {
+    // get the real name, without upper case transformation
+    String inputRealName = topLevel.getName().replace(RULES_FILE_EXTENSION, "");
+    // TODO: not nice. should always come in "brackets", but makes it more messy
+    // contains: mem.enterClass
+    initMem(inputRealName, subPackage);
+    String wrapperClass = mem.getWrapperClass();
+    File wrapperInit = new File(inputDirectory,
+        wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + RULES_FILE_EXTENSION);
+    try {
+      if (wrapperInit.exists()) {
+        parseAndTypecheck(this, new FileInputStream(wrapperInit), inputRealName);
+      } else {
+        logger.info("No method declaration file for {}", wrapperInit);
+      }
+    } catch (IOException ex) {
+      logger.error("Initializer file import: {}", ex);
+    }
+    processForReal(inputRealName);
+    mem.leaveClass();
+
+    // save ruleLocMap to .yml file
+    DumperOptions options = new DumperOptions();
+    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+    Yaml yaml = new Yaml(options);
+    rulesLocFile="/tmp/test.yml";
+    FileWriter writer = new FileWriter(rulesLocFile);
+    BasicInfo dumpingMap = mem.getInfo();
+    //dumpingMap.put(inputRealName, mem.getRulesLocMap());
+    yaml.dump(dumpingMap, writer);
+  }
 
 
   /** Create output directories, open a writer to the output file and process
@@ -264,7 +287,7 @@ public class RudimantCompiler {
    */
   private void processForReal(String inputRealName)
       throws IOException {
-    File outputdir = getOutputDirectory();
+    File outputdir = outputDirectory;
     if (!outputdir.isDirectory()) {
       Files.createDirectories(outputdir.toPath());
     }
@@ -274,13 +297,7 @@ public class RudimantCompiler {
      * is specified by the subPackage, and the last entry of subPackage, which is
      * the class name of the file to be processed, is removed.
      */
-    File result = inputDirectory;
-    if (!subPackage.isEmpty()) {
-      for (String s : subPackage.subList(rootLevel, subPackage.size() - 1)) {
-        result = new File(result, s);
-      }
-    }
-    File inputFile = new File(result,
+    File inputFile = new File(inputDirectory,
         (inputRealName != null ? inputRealName : mem.getClassName())
         + RULES_FILE_EXTENSION);
 
@@ -300,67 +317,20 @@ public class RudimantCompiler {
     uncrustify(outputFile);
   }
 
-  /** Process the top-level rudi file */
-  public void processToplevel(File topLevel) throws IOException {
-    inputDirectory = topLevel.getParentFile();
-    if (outputDirectory == null) outputDirectory = inputDirectory;
-
-    // get the real name, without upper case transformation
-    String inputRealName = topLevel.getName().replace(RULES_FILE_EXTENSION, "");
-    // TODO: not nice. should always come in "brackets", but makes it more messy
-    initMem(inputRealName);
-    File wrapperInit = new File(inputDirectory,
-        wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + RULES_FILE_EXTENSION);
-    try {
-      if (wrapperInit.exists()) {
-        parseAndTypecheck(this, new FileInputStream(wrapperInit), inputRealName);
-      } else {
-        logger.info("No method declaration file for {}", wrapperInit);
-      }
-    } catch (IOException ex) {
-      logger.error("Initializer file import: {}", ex);
-    }
-
-    if (packageName != null && !packageName.isEmpty()) {
-      subPackage.addAll(Arrays.asList(packageName.split("\\.")));
-      rootLevel = subPackage.size() - 1;
-    }
-    processForReal(inputRealName);
-    mem.leaveClass(fileBlock);
-
-    // save ruleLocMap to .yml file
-    DumperOptions options = new DumperOptions();
-    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-    Yaml yaml = new Yaml(options);
-    rulesLocFile="/tmp/test.yml";
-    FileWriter writer = new FileWriter(rulesLocFile);
-    BasicInfo dumpingMap = mem.getInfo();
-    //dumpingMap.put(inputRealName, mem.getRulesLocMap());
-    yaml.dump(dumpingMap, writer);
-
-  }
-
   /** Process an imported rudi file */
-  private void processImportInternal(String importSpec) throws IOException {
-    inputDirectory = parent.inputDirectory;
-    outputDirectory = parent.outputDirectory;
-
-    String[] elements = importSpec.split("\\.");
-    String inputRealName = elements[elements.length - 1];
-    subPackage = parent.subPackage;
-    subPackage.addAll(Arrays.asList(elements).subList(0, elements.length - 1));
-
-    mem.enterClass(capitalize(inputRealName), fileBlock);
-    processForReal(inputRealName);
-    mem.leaveClass(fileBlock);
+  private void processImportInternal(String name)
+      throws IOException {
+    mem.enterClass(capitalize(name), subPackage);
+    processForReal(name);
+    mem.leaveClass();
   }
 
-  public void processImport(String importSpec, String name, Location loc) {
-    logger.info("Processing import {}", importSpec);
+  public void processImport(String name, String[] dirSpec, Location loc) {
+    logger.info("Processing import {}/{}", Arrays.toString(dirSpec), name);
     try {
-      mem.addImport(name, loc);
-      RudimantCompiler result = new RudimantCompiler(this);
-      result.processImportInternal(importSpec);
+      mem.addImport(name, dirSpec, loc);
+      RudimantCompiler result = new RudimantCompiler(this, dirSpec);
+      result.processImportInternal(name);
       mem.leaveImport();
     } catch (IOException ex) {
       throw new RuntimeException(ex);

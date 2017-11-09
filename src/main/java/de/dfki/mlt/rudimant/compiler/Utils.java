@@ -23,4 +23,24 @@ public class Utils {
     return (operator.length() == 2 && operator.charAt(1) == '=')
         || (operator.length() == 1 && (c == '<' || c == '>'));
   }
+
+  public static String getPackageName(String[] pkg) {
+    StringBuffer sb = new StringBuffer();
+    boolean first = true;
+    for(String p : pkg) {
+      if (!first) sb.append('.');
+      else first = false;
+      sb.append(p);
+    }
+    return sb.toString();
+  }
+
+  public static String getQualifiedName(String[] pkg, String name) {
+    StringBuffer sb = new StringBuffer();
+    for(String p : pkg) {
+      sb.append(p).append('.');
+    }
+    sb.append(name);
+    return sb.toString();
+  }
 }

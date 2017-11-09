@@ -7,7 +7,9 @@ package de.dfki.mlt.rudimant.compiler;
 
 import static de.dfki.mlt.rudimant.compiler.Utils.*;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +28,6 @@ import de.dfki.mlt.rudimant.compiler.tree.ToplevelBlock;
  * @author Anna Welker
  */
 public class Mem {
-
   private static Logger logger = LoggerFactory.getLogger(Mem.class);
 
   /** A stack of active class environments, representing the files that are
@@ -50,16 +51,20 @@ public class Mem {
   private int ruleId;
   private boolean doingTypeCheck;
 
-  // the rudi file that represents the Agent
-  private String upperRudi;
+  // the class that should be extended by the rudi files to fill them into a project
+  private final String wrapperClass;
 
-  public Mem(RdfProxy proxy) {
+  // the rudi file that represents the Agent
+  private ClassEnv topLevelClass;
+
+  public Mem(RdfProxy proxy, String wrapper) {
     current = null;
     classBlock = null;
     _proxy = proxy;
     Type.setProxy(proxy);
     ruleId = 0;
     doingTypeCheck = true;
+    wrapperClass = wrapper;
   }
 
   /** Get the current ClassEnv (the one treated now) */
@@ -67,18 +72,36 @@ public class Mem {
     return classBlock.getClassEnv();
   }
 
-  public void setToplevelFile(String name) {
-    upperRudi = name;
-    root = new ImportInfo(name, -1, null);
+  private void setToplevelFile(ClassEnv env) {
+    topLevelClass = env;
+    String[] path = {};
+    root = new ImportInfo(env.getName(), path, -1, null);
+  }
+
+  public String getTopLevelClass() {
+    return topLevelClass.getName();
+  }
+
+  public String getTopLevelPackage() {
+    return getPackageName(topLevelClass.packageSpec());
+  }
+
+  public String getWrapperClass() {
+    return wrapperClass;
+  }
+
+  /** Return the package of the class currently processed */
+  public String getPackage() {
+    return getPackageName(curClass().packageSpec());
   }
 
   // TODO the next two are candidates for refactoring, check call graph!
   public String getToplevelInstance() {
-    return lowerCaseFirst(upperRudi);
+    return lowerCaseFirst(getTopLevelClass());
   }
 
   public boolean isNotToplevelClass() {
-    return getClassName().compareToIgnoreCase(upperRudi) != 0;
+    return classBlock.getParentClass() != null;
   }
 
   public RdfProxy getProxy() {
@@ -90,17 +113,22 @@ public class Mem {
    *
    * @param classname of the new class
    */
-  public void enterClass(String classname, ToplevelBlock node) {
+  public void enterClass(String classname, String[] pkg) {
+    ClassEnv newEnv = new ClassEnv(classname, pkg);
+    if (classBlock == null)
+      setToplevelFile(newEnv);
+    ToplevelBlock node = new ToplevelBlock();
     enterEnvironment(node);
 
-    node.setClass(classBlock, new ClassEnv(classname));
+    node.setClass(classBlock, newEnv);
     classBlock = node;
   }
 
   /** Leave processing of a class. To be called at the very end of processing
    *  the top-level class or import.
    */
-  public void leaveClass(ToplevelBlock node) {
+  public void leaveClass() {
+    ToplevelBlock node = classBlock;
     classBlock = classBlock.getParentClass();
 
     leaveEnvironment(node);
@@ -244,11 +272,9 @@ public class Mem {
     logger.trace("Leave level {}", blockNesting);
   }
 
-  public void addImport(String importName, Location loc) {
-    root = new ImportInfo(importName, loc.getLineNumber(), root);
-    String importClassName = capitalize(importName);
-    curClass().addRuleOrImport(importClassName + " "
-            + importName + " = new " + importClassName + "(");
+  // TODO: REFACTOR INTO ENTERCLASS/LEAVECLASS
+  public void addImport(String name, String[] pathSpec, Location loc) {
+    root = new ImportInfo(name, pathSpec, loc.getLineNumber(), root);
   }
 
   public void leaveImport() {

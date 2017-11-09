@@ -10,7 +10,6 @@ grammar RobotGrammar;
  */
 
 /// start rule
-// the part "'{' statement '}'" is ridiciulous but currently solves a parsing exception...
 grammar_file
   : ( method_declaration
       | statement
@@ -20,7 +19,7 @@ grammar_file
   ;
 
 imports
-  : IMPORT VARIABLE ';'
+  : IMPORT VARIABLE ( '.' VARIABLE )* ';'
   ;
 
 statement
@@ -47,10 +46,9 @@ statement_block
 
 grammar_rule
   // label: if_statement
-  : VARIABLE COLON if_statement
+  : VARIABLE ':' if_statement
   ;
 
-// TODO: what about return label; ??
 return_statement
   : (RETURN exp? | BREAK VARIABLE? | CANCEL | CANCEL_ALL | CONTINUE) ';' ;
 
@@ -59,7 +57,7 @@ if_statement
   ;
 
 if_exp
-  : boolean_exp QUESTION exp COLON exp
+  : boolean_exp '?' exp ':' exp
   ;
 
 while_statement
@@ -83,22 +81,22 @@ timeout_statement
   ;
 
 switch_statement
-	:	SWITCH '(' exp ')' '{' switch_block '}'
-	;
+  : SWITCH '(' exp ')' '{' switch_block '}'
+  ;
 
 switch_block
-	:	switch_group* switch_label*
-	;
+  : switch_group* switch_label*
+  ;
 
 switch_group
-	:	switch_label+ statement+
-	;
+  : switch_label+ statement+
+  ;
 
 switch_label
-	:	CASE string_expression ':'
-	|	CASE VARIABLE ':'
-	|	DEFAULT ':'
-	;
+  : CASE string_expression ':'
+  | CASE VARIABLE ':'
+  | DEFAULT ':'
+  ;
 
 var_def
   : type_spec variable ';'
@@ -106,9 +104,12 @@ var_def
 
 method_declaration
   : ('[' type_spec ']' '.')?
-    (PUBLIC | PROTECTED | PRIVATE)? (DEC_VAR | type_spec) VARIABLE '('
-    ((type_spec | DEC_VAR) VARIABLE (',' (type_spec | DEC_VAR) VARIABLE)*)?
-    ')' (statement_block |';')
+    (PUBLIC | PROTECTED | PRIVATE)?
+    (DEC_VAR | type_spec) VARIABLE
+    '('
+       ((type_spec | DEC_VAR) VARIABLE (',' (type_spec | DEC_VAR) VARIABLE)*)?
+    ')'
+    (statement_block |';')
   ;
 
 list_creation
@@ -118,9 +119,9 @@ list_creation
                  '}' ';'
   ;
 
-// TODO: WHAT'S THIS?
+// add sth to a collection
 set_operation
-  : (variable | field_access) (ADD | REMOVE) exp ';'
+  : (variable | field_access) ('+=' | '-=') exp ';'
   ;
 
 
@@ -130,16 +131,6 @@ function_call
   : VARIABLE '(' ( exp ( ',' exp )* )? ')'
   ;
 
-// TODO: the next two have to be merged into a more generic one. What to do
-// about field access with a '.' can only be decided in the type visitor, when
-// the type of the object to apply to is known
-/*funccall_on_object
-  : (variable | function_call | field_access | STRING | '(' exp ')')
-   '.' function_call
-  ;*/
-
-// TODO: allowing exp after . is too much, should we split exp into exp and
-// complex exp??
 field_access
   : (variable | function_call | STRING | '(' exp ')')
     ( '.' simple_exp)+
@@ -167,17 +158,14 @@ exp
   ;
 
 complex_exp
-  :
-  //| funccall_on_object
-    arithmetic
+  : arithmetic
   | literal_or_graph_exp
   | assignment
   | simple_exp
   ;
 
 simple_exp
-  : 
-  '(' exp ')'
+  : '(' exp ')'
   | variable
   | function_call
   | field_access
@@ -198,7 +186,7 @@ bool_and_exp
   ;
 
 negatable_b_exp
-  : NOT simple_b_exp
+  : '!' simple_b_exp
   | simple_b_exp
   ;
 
@@ -216,18 +204,16 @@ spec_func_call
   : type_spec '(' ( exp ( ',' exp )* )? ')'
   ;
 
-//lambda_exp: '(' DEC_VAR? VARIABLE (',' DEC_VAR? VARIABLE)* ')'
-//    '->' (exp|statement_block);
 lambda_exp: '(' VARIABLE (',' VARIABLE)* ')' '->' (exp|statement_block);
 
 string_expression : (complex_exp|if_exp) '+' exp | (complex_exp|if_exp) ;
 
 literal_or_graph_exp
-  : HASH da_token '(' ( da_token ( ',' ( da_token '=' da_token) )* ) ')'
+  : '#' da_token '(' ( da_token ( ',' ( da_token '=' da_token) )* ) ')'
   ;
 
 da_token
-  : VARIABLE_MARKER exp
+  : '^' exp
   | VARIABLE
   | STRING
   | WILDCARD
@@ -260,7 +246,7 @@ factor
   ;
 
 number
-  : ( INCREMENT | DECREMENT )?
+  : ( '++ | ' )?
     ( ( INT | FLOAT | VARIABLE )
       | field_access
       | function_call
@@ -295,6 +281,7 @@ PROTECTED: 'protected';
 PRIVATE: 'private';
 NEW: 'new';
 FINAL: 'final';
+DEC_VAR: 'var';
 
 /// character literal (starting with ' ):
 CHARACTER: '\''.'\'';
@@ -302,60 +289,14 @@ CHARACTER: '\''.'\'';
 /// string (starting with " ):
 STRING: '\"'(~('\\'|'"')|'\\"')*'\"';
 
-/// assignments
-ASSIGN: '=';
-
-// operator for lambda expressions, annotations
-ARROW: '->';
 // TODO: WHAT IS THIS GOOD FOR ?
 ANNOTATION: '@'('0'..'9'|'A'..'z'|'_'|'('|')')+;
 
-/// separators:
-LPAR: '(';
-RPAR: ')';
-LBRACE: '{';
-RBRACE: '}';
-LBRACK: '[';
-RBRACK: ']';
-SEMICOLON: ';';
-COMMA: ',';
-DOT: '.';
-
-/// boolean operators:
-NOT: '!';
-EQUAL: '==';
-AND1: '&';
-OR1: '|';
-AND2: '&&';
-OR2: '||';
-NOT_EQUAL: '!=';
-SMALLER_EQUAL: '<=';
-SMALLER: '<';
-GREATER_EQUAL: '>=';
-GREATER: '>';
-
-/// mathematical operators:
-PLUS: '+';
-INCREMENT: '++';
-MINUS: '-';
-DECREMENT: '--';
-DIV: '/';
-MUL: '*';
-MOD: '%';
-ADD: '+=';
-REMOVE: '-=';
-
-/// additional operators:
-QUESTION: '?';
-COLON: ':';
-
 /// special for dialogue grammar:
 WILDCARD: '_';
-HASH: '#';
 PROPOSE: 'propose';
 TIMEOUT: 'timeout';
 TIMEOUT_BEHAVIOUR: 'behaviour_timeout';
-VARIABLE_MARKER: '^';
 
 /// comments (starting with /* or //):
 JAVA_CODE: '/*@'.*?'@*/' -> channel(HIDDEN);

@@ -3,6 +3,7 @@ package de.dfki.mlt.rudimant.compiler.tree;
 import de.dfki.mlt.rudimant.compiler.ClassEnv;
 import de.dfki.mlt.rudimant.compiler.Environment;
 
+/** We need this class to unify the enter/leave Environment functions in Mem */
 public class ToplevelBlock implements RTBlockNode {
 
   // ==== IMPLEMENTATION OF RTBLOCKNODE =====================================

@@ -19,16 +19,15 @@ import java.util.Collections;
 public class Import extends RudiTree {
 
   // IMPORT VARIABLE SEMICOLON
-  String content;
+  String[] path;
   String name;
 
-  public Import(String text) {
-    content = text;
-    int lastDotPos = text.lastIndexOf(".");
-    name = (lastDotPos >= 0 ? text.substring(lastDotPos) : text);
+  public Import(String n, String[] dirSpec) {
+    name = n;
+    path = dirSpec;
   }
 
-  public String toString() { return "import " + content; }
+  public String toString() { return "import " + path; }
 
   public Iterable<? extends RudiTree> getDtrs() {
     return Collections.emptyList();

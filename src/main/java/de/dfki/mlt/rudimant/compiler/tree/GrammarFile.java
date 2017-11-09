@@ -123,7 +123,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     for (RudiTree t : rules) {
       if (t instanceof Import) {
         Import node = (Import)t;
-        rudi.processImport(node.name, node.content, node.location);
+        rudi.processImport(node.name, node.path, node.location);
       } else if (t instanceof RTStatement) {
         ((RTStatement)t).visit(ttv);
       } else if (t instanceof RTExpression) {
@@ -239,20 +239,32 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
       throws IOException  {
     Mem mem = rudi.getMem();
     // tell the file in which package it lies
-    String pkg = rudi.getPackageName();
-    if (pkg == null) {
-      pkg = "";
-    } else {
+    String pkg = mem.getPackage();
+    if (pkg != null)
       out.append("package " + pkg + ";\n");
-      pkg += ".";
-    }
+
     out.append("import java.util.*;\n\n" +
         "import de.dfki.mlt.rudimant.agent.DialogueAct;\n" +
         "import de.dfki.lt.hfc.db.rdfProxy.*;\n" +
         "import de.dfki.lt.hfc.types.*;\n");
     // Let's import our supersuper class, if we're the top-level class
-    if (rudi.getParent() == null) {
-      out.append("import ").append(rudi.getWrapperClass()).append(";\n");
+    if (! mem.isNotToplevelClass()) {
+      out.append("import ").append(mem.getWrapperClass()).append(";\n");
+    }
+    // import the top level class
+    out.append("import ")
+       .append(mem.getTopLevelPackage()).append('.')
+       .append(mem.getTopLevelClass()).append(";\n");
+    // import the included classes
+    for(RudiTree r : rules) {
+      if (r instanceof Import) {
+        Import i = (Import)r;
+        if (i.path.length > 0) {
+          out.append("import ")
+          .append(mem.getPackage()).append('.')
+          .append(getQualifiedName(i.path, i.name)).append(";\n");
+        }
+      }
     }
 
     // Now, print all initial comments (preceding the first element) before the
@@ -270,8 +282,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     // maybe we need to import the class that imported us to use its variables
     out.append("public class ").append(mem.getClassName());
     // check if this should extend the wrapper class
-    if (rudi.getParent() == null) {
-      out.append(" extends ").append(rudi.getWrapperClass());
+    if (! mem.isNotToplevelClass()) {
+      out.append(" extends ").append(mem.getWrapperClass());
     }
     out.append("{\n");
 
