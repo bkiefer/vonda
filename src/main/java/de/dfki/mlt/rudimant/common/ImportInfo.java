@@ -1,5 +1,7 @@
 package de.dfki.mlt.rudimant.common;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +22,8 @@ public class ImportInfo extends BasicInfo {
     this._errors = errors;
   }
 
-  public String getFilename() {
-    return _label + ".rudi";
+  public Path getFilePath() {
+    return Paths.get(_label + ".rudi");
   }
 
 }
