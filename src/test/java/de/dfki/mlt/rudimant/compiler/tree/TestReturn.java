@@ -14,9 +14,9 @@ public class TestReturn {
 
   @Test
   public void testReturn1(){
-    String in = "int fn() { return 1; }";
+    String in = "public int fn() { return 1; }";
     String r = generate(in);
-    String expected = "int fn() { return 1; }";
+    String expected = "public int fn() { return 1; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
