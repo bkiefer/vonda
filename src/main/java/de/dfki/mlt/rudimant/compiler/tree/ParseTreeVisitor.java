@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.dfki.mlt.rudimant.compiler;
+package de.dfki.mlt.rudimant.compiler.tree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +14,10 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import de.dfki.mlt.rudimant.compiler.io.RobotGrammarLexer;
-import de.dfki.mlt.rudimant.compiler.io.RobotGrammarParser;
-import de.dfki.mlt.rudimant.compiler.io.RobotGrammarVisitor;
-import de.dfki.mlt.rudimant.compiler.io.RobotGrammarParser.*;
-import de.dfki.mlt.rudimant.compiler.tree.*;
+import de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarLexer;
+import de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarParser;
+import de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarVisitor;
+import de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarParser.*;
 
 /**
  *
@@ -51,6 +50,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       rules.add(t);
     }
     return new GrammarFile(rules).setPosition(ctx, currentClass);
+  }
+
+  @Override
+  public RudiTree visitVar_spec(Var_specContext ctx) {
+    // VISIBILITY var_def
+    String vis = ctx.getChild(0).getText();
+    StatVarDef varDef = (StatVarDef) visit(ctx.getChild(1));
+    return new StatFieldDef(vis, varDef).setPosition(ctx, currentClass);
   }
 
   @Override
@@ -145,7 +152,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
           .setPosition(ctx, currentClass),
           ctx.getChild(1).getText().equals("++")? "+" : "-")
           .setPosition(ctx, currentClass);
-      result = new ExpAssignment(left, right, false);
+      result = new ExpAssignment(left, right);
     } else { // 3 children
       result = new ExpArithmetic(
           (RTExpression) visit(ctx.getChild(0)),
@@ -342,8 +349,10 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   }
 
   @Override
+  // TODO REMOVE UNUSED POSSIBILITIES (SEE GRAMMAR)
   public RudiTree visitAssignment(RobotGrammarParser.AssignmentContext ctx) {
     // ((DEC_VAR | VARIABLE)? VARIABLE | field_access) ASSIGN exp
+    /*
     boolean isFinal = false;
     int start = 0;
     if (ctx.getChild(0).getText().equals("final")) {
@@ -351,19 +360,19 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       start = 1;
     }
     if (ctx.getChildCount() - start == 3) { // no declaration
-      RudiTree left = visit(ctx.getChild(start));
-      return new ExpAssignment((RTExpression) left,
-          (RTExpression) visit(ctx.getChild(start + 2)), isFinal)
-          .setPosition(ctx, currentClass);
+    */
+    RudiTree left = visit(ctx.getChild(0));
+    return new ExpAssignment((RTExpression) left,
+        (RTExpression) visit(ctx.getChild(2)))
+        .setPosition(ctx, currentClass);
+    /*
     } else {  // declaration
       String declaredType = ctx.getChild(start).getText();
-      /* if (declaredType.equals("var")) {
-        declaredType = null;
-      }*/
       return new ExpAssignment(declaredType, (RTExpression) visit(ctx.getChild(start + 1)),
           (RTExpression) visit(ctx.getChild(start + 3)), isFinal)
           .setPosition(ctx, currentClass);
     }
+    */
   }
 
   @Override
@@ -535,12 +544,28 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   }
 
   @Override
+  // TODO: ADAPT TO GRAMMAR
   public RudiTree visitVar_def(RobotGrammarParser.Var_defContext ctx) {
-    // type_spec VARIABLE SEMICOLON
-    // type_spec is either a boring normal type or a type of form Rdf<Child>
-    String type = ctx.getChild(0).getText();
-    return new StatVarDef(type, ctx.getChild(1).getText())
-        .setPosition(ctx, currentClass);
+    // FINAL? type_spec? VARIABLE SEMICOLON
+    boolean isFinal = false;
+    String type = null;
+    int firstPos = 0, lastPos = ctx.getChildCount() - 2;
+    // first check final specification
+    if (ctx.getChild(firstPos).getText().equals("final")) {
+      isFinal = true;
+      ++firstPos;
+    }
+    RTExpression toAssign = null;
+    // if the third last child is an equal sign, there is an assignment
+    if (ctx.getChild(lastPos - 1).getText().equals("=")) {
+      toAssign = (RTExpression) visit(ctx.getChild(lastPos));
+      lastPos -= 2;
+    }
+    if (lastPos - firstPos == 1) { // there is a type definition
+      type = ctx.getChild(firstPos).getText();
+    }
+    return new StatVarDef(isFinal, type, ctx.getChild(lastPos).getText(),
+        toAssign).setPosition(ctx, currentClass);
   }
 
   @Override
@@ -637,4 +662,5 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     return new ExpFuncCall(ctx.getChild(0).getText(),
         expList, true).setPosition(ctx, currentClass);
   }
+
 }

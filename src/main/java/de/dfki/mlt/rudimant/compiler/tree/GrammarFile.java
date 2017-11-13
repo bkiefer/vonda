@@ -6,7 +6,7 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Utils.*;
-import static de.dfki.mlt.rudimant.compiler.io.RobotGrammarParser.*;
+import static de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarParser.*;
 
 import java.io.*;
 import java.util.*;
@@ -16,10 +16,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.mlt.rudimant.*;
 import de.dfki.mlt.rudimant.compiler.*;
-import de.dfki.mlt.rudimant.compiler.io.RobotGrammarLexer;
-import de.dfki.mlt.rudimant.compiler.io.RobotGrammarParser;
+import de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarLexer;
+import de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarParser;
 
 /**
  * class that represents a top-level file that was handed over to GrammarMain (=
@@ -159,18 +158,14 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
   private void writeRuleList(Writer out, Mem mem, VisitorGeneration gv)
       throws IOException{
     List<RTStatement> later = new ArrayList<>();
-    // do all assignments (and VarDefs) on toplevel here, those are class attributes
+    // do all VarDefs *DEFINITIONS* on toplevel here, those are class attributes
     for(RudiTree r : rules){
-      if(r instanceof StatExpression &&
-          ((StatExpression)r).expression instanceof ExpAssignment){
-        ExpAssignment ass = (ExpAssignment)((StatExpression)r).expression;
-        if(ass.declaration) {
-          out.append(ass.type.toJava()).append(" ")
-             .append(ass.left.fullexp).append(";\n");
-          ass.declaration = false;
-        }
+      if (r instanceof StatFieldDef) {
+        // Only generates definition;
+        ((StatFieldDef)r).visitWithComments(gv);;
       } else if (r instanceof StatVarDef) {
-        gv.visitNode((StatVarDef) r);
+        StatFieldDef fd = new StatFieldDef("public", (StatVarDef)r);
+        r.fixFields(fd).visitWithComments(gv);
       }
     }
 
@@ -184,12 +179,17 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         later.add((StatMethodDeclaration)r);
         if (((StatMethodDeclaration)r).block != null)
           saveCommentsForLater(gv, r.positions[1]);
-        continue;
       } else if (r instanceof StatVarDef) {
-        continue;
-      }
-
-      if (r instanceof StatGrammarRule || r instanceof Import) {
+        StatVarDef vd = (StatVarDef)r;
+        if (vd.toAssign == null) continue;
+        vd.isDefinition = false;
+        vd.visitWithComments(gv);
+      } else if (r instanceof StatFieldDef) {
+        StatVarDef vd = ((StatFieldDef)r).varDef;
+        if (vd.toAssign == null) continue;
+        vd.isDefinition = false;
+        vd.visitWithComments(gv);
+      } else if (r instanceof StatGrammarRule || r instanceof Import) {
         // rules and imports are called as functions and may return a non-zero
         // value. If the value is 1
         if (r instanceof StatGrammarRule){
@@ -221,7 +221,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         }
         out.append(" return (res - 1);\n");
       } else if (r instanceof RTStatement) {
-        gv.visitNode((RTStatement)r);
+        ((RTStatement)r).visitWithComments(gv);
       }
     }
     out.append("return 0; \n}\n");

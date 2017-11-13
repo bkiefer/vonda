@@ -74,7 +74,7 @@ public class StatementTest {
     // the variable i already exists somewhere
     String in = "int i;  i = 1; return i;";
     String r = generate(in);
-    String expected = "int i; i = 1; return i;";
+    String expected = "int i;i = 1;return i;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -94,7 +94,7 @@ public class StatementTest {
            + "switch(truth){case (truth): i=2;  case(truth==false): i=1;}";
     String r = generate(in);
     String expected = "int i;boolean truth;switch (truth){ case (truth):; "
-            + "i = 2; case (truth==false):; i = 1; }";
+            + "i = 2;case (truth==false):; i = 1; }";
     assertEquals(expected, getForMarked(r, expected));
  }
 
@@ -119,7 +119,7 @@ public class StatementTest {
   public void TimeoutTest(){
    String in = "time = 2; timeout(\"label\", time) { i = 4; }";
    String r = generate(in);
-   String expected = "int time = 2; "
+   String expected = "int time = 2;"
        + "newTimeout(\"label\",time,new Proposal() {public void run() { int i = 4; } });";
    assertEquals(expected, getForMarked(r, expected));
  }
@@ -128,7 +128,7 @@ public class StatementTest {
  public void IfTest1(){
    String in = "String s = \"bla\"; if (s == null) {}";
    String r = generate(in);
-   String expected = "String s = \"bla\"; if ((s == null)) {";
+   String expected = "String s = \"bla\";if ((s == null)) {";
    assertEquals(expected, getForMarked(r, expected));
  }
 
@@ -136,7 +136,7 @@ public class StatementTest {
  public void IfTest2(){
    String in = "String s = \"bla\"; if (s != null) {}";
    String r = generate(in);
-   String expected = "String s = \"bla\"; if ((s != null)) {";
+   String expected = "String s = \"bla\";if ((s != null)) {";
    assertEquals(expected, getForMarked(r, expected));
  }
 
@@ -144,7 +144,7 @@ public class StatementTest {
  public void IfTest3(){
    String in = "String s = \"bla\"; if (s) {}";
    String r = generate(in);
-   String expected = "String s = \"bla\"; if (exists(s)) {";
+   String expected = "String s = \"bla\";if (exists(s)) {";
    assertEquals(expected, getForMarked(r, expected));
  }
 
@@ -160,7 +160,7 @@ public class StatementTest {
  public void AssignConditionTest(){
    String in = "Child user; Robot agent; Robot I_ROBOT; agent = (agent == user) ? I_ROBOT : user;";
    String r = generate(in);
-   String expected = "Rdf user;Rdf agent;Rdf I_ROBOT; agent = (((agent.equals(user))) ? I_ROBOT : user);";
+   String expected = "Rdf user;Rdf agent;Rdf I_ROBOT;agent = (((agent.equals(user))) ? I_ROBOT : user);";
    assertEquals(expected, getForMarked(r, expected));
  }
 

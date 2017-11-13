@@ -89,7 +89,7 @@ public class TestCast {
   public void test2() {
     String in = "QuizHistory turn; turn.asker = agt;";
     String s = generate(in);
-    String expected = "Rdf turn; turn.setValue(\"<dom:asker>\", agt);";
+    String expected = "Rdf turn;turn.setValue(\"<dom:asker>\", agt);";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -97,7 +97,7 @@ public class TestCast {
   public void test3() {
     String in = "Activity activity; activity.status = \"gameProposed\";";
     String s = generate(in);
-    String expected = "Rdf activity; activity.setValue(\"<dom:status>\", \"gameProposed\");";
+    String expected = "Rdf activity;activity.setValue(\"<dom:status>\", \"gameProposed\");";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -150,7 +150,7 @@ public class TestCast {
     String in = "Child user; user.forename = \"John\";";
     String s = generate(in);
     // It's always setValue, even if the property is functional
-    String expected = "Rdf user; user.setValue(\"<dom:forename>\", \"John\");";
+    String expected = "Rdf user;user.setValue(\"<dom:forename>\", \"John\");";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -158,7 +158,7 @@ public class TestCast {
   public void test9() {
     String in = "Object foo; foo.slot = 1;";
     String s = generate(in);
-    String expected = "Object foo; foo.slot = 1;";
+    String expected = "Object foo;foo.slot = 1;";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -166,18 +166,18 @@ public class TestCast {
   public void test10() {
     String in = "DialogueAct a; DialogueAct b; boolean isSmaller; isSmaller = a<b;";
     String s = generate(in);
-    String expected = "DialogueAct a;DialogueAct b;boolean isSmaller; isSmaller = (a.strictlySubsumes(b));";
+    String expected = "DialogueAct a;DialogueAct b;boolean isSmaller;isSmaller = (a.strictlySubsumes(b));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
-  @Test
-  public void test11() {
+  @Test(expected=TypeException.class)
+  public void test11() throws Throwable {
     // TODO: find out whether i is int or boolean at the end, and put that into the
-    // documentation
+    // documentation: NO, this is a REDEFINITION
     String in = "int i; boolean i; i = 2; ";
-    String s = generate(in);
-    String expected = "int i;boolean i; i = 2;";
-    assertEquals(expected, getForMarked(s, expected));
+    String s = getTypeError(in);
+    //String expected = "int i;boolean i; i = 2;";
+    //assertEquals(expected, getForMarked(s, expected));
   }
 
   @Test(expected=TypeException.class)
@@ -194,7 +194,7 @@ public class TestCast {
   public void test13() {
     String in = "DialogueAct a; DialogueAct b; boolean isGreater; isGreater = a>b;";
     String s = generate(in);
-    String expected = "DialogueAct a;DialogueAct b;boolean isGreater; isGreater = (a.isStrictlySubsumedBy(b));";
+    String expected = "DialogueAct a;DialogueAct b;boolean isGreater;isGreater = (a.isStrictlySubsumedBy(b));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -256,7 +256,7 @@ public class TestCast {
     // Test set field with POD type
     String in = "Child c; c.age = 10;";
     String s = generate(in);
-    String expected = "Rdf c; c.setValue(\"<dom:age>\", 10)";
+    String expected = "Rdf c;c.setValue(\"<dom:age>\", 10)";
     assertEquals(expected, getForMarked(s, expected));
   }
 

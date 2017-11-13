@@ -120,9 +120,9 @@ public class TestComparison {
   @Test
   public void testGenerationIntegerExists() {
     // other operators than == don't make sense here.
-    String in = "Child a; if (a.age) return true;";
+    String in = "final Child a; if (a.age) return true;";
     String r = generate(in);
-    String expected = "Rdf a;if ((a != null && "
+    String expected = "final Rdf a;if ((a != null && "
         + "exists(((Integer)a.getSingleValue(\"<dom:age>\"))))) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
@@ -139,9 +139,9 @@ public class TestComparison {
   @Test
   public void testGenerationStringExists() {
     // other operators than == don't make sense here.
-    String in = "Activity a; if (a.status) return true;";
+    String in = "final Activity a; if (a.status) return true;";
     String r = generate(in);
-    String expected = "Rdf a;if ((a != null && exists(((String)a.getSingleValue(\"<dom:status>\"))))) return true;";
+    String expected = "final Rdf a;if ((a != null && exists(((String)a.getSingleValue(\"<dom:status>\"))))) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -157,8 +157,8 @@ public class TestComparison {
   @Test
   public void testGenerationNotEqual2() {
     // other operators than == don't make sense here.
-    String in = "Child c; if (c.hasBrother != null) return true;";
+    String in = "final Child c; if (c.hasBrother != null) return true;";
     String r = generate(in);
-    String expected = "Rdf c;if ((((Set<Object>)c.getValue(\"<dom:hasBrother>\")) != null)) return true;";
+    String expected = "final Rdf c;if ((((Set<Object>)c.getValue(\"<dom:hasBrother>\")) != null)) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }}

@@ -30,8 +30,8 @@ public class ExpAssignmentTest {
     String assignmentExp = "test = 4;";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(assignmentExp));
-    assertTrue(dtr instanceof ExpAssignment);
-    String type = ((ExpAssignment) dtr).right.getType().toJava();
+    assertTrue(dtr instanceof StatVarDef);
+    String type = ((ExpAssignment)((StatVarDef) dtr).toAssign).right.getType().toJava();
     assertEquals("right side type of test = 4 should be int", "int", type);
   }
 
@@ -40,8 +40,8 @@ public class ExpAssignmentTest {
     String assignmentExp = "test = (4>5);";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(assignmentExp));
-    assertTrue(dtr instanceof ExpAssignment);
-    String type = ((ExpAssignment) dtr).right.getType().toJava();
+    assertTrue(dtr instanceof StatVarDef);
+    String type = ((ExpAssignment)((StatVarDef) dtr).toAssign).right.getType().toJava();
     assertEquals("right side type of test = (4>5) should be boolean", "boolean", type);
 
   }
@@ -51,10 +51,10 @@ public class ExpAssignmentTest {
     String assignmentExp = "boolean test = 4+5;";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(assignmentExp));
-    assertTrue(dtr instanceof ExpAssignment);
+    assertTrue(dtr instanceof StatVarDef);
 
-    String type_right = ((ExpAssignment) dtr).right.getType().toJava();
-    assertEquals("right side type of boolean test is turned to boolean", "boolean", type_right);
+    String type_right = ((ExpAssignment)((StatVarDef) dtr).toAssign).left.getType().toJava();
+    assertEquals("var type should still be boolean", "boolean", type_right);
 
 //    String type_left = ((RTExpression)((ExpAssignment) dtr).left).getType();
 //    assertEquals("right side type of boolean test = 4+5 should be int", "boolean", type_left);
@@ -67,17 +67,17 @@ public class ExpAssignmentTest {
 
     GrammarFile gf = parseAndTypecheck(getInput(assignmentExp));
     RudiTree dtr = getNodeOfInterest(gf, 0); // test = true
-    assertTrue(dtr instanceof ExpAssignment);
+    assertTrue(dtr instanceof StatVarDef);
 
-    String type_right = ((ExpAssignment) dtr).right.getType().toJava();
+    String type_right = ((ExpAssignment)((StatVarDef) dtr).toAssign).right.getType().toJava();
     assertEquals("right side type test should be boolean", "boolean", type_right);
 
     dtr = getNodeOfInterest(gf, 1); // test2 = 1
-    type_right = ((ExpAssignment) dtr).right.getType().toJava();
+    type_right = ((ExpAssignment)((StatVarDef) dtr).toAssign).right.getType().toJava();
     assertEquals("right side type test2 should be int", "int", type_right);
 
     dtr = getNodeOfInterest(gf, 2); // test3 = test2
-    type_right = ((ExpAssignment) dtr).right.getType().toJava();
+    type_right = ((ExpAssignment)((StatVarDef) dtr).toAssign).right.getType().toJava();
     assertEquals("right side type test3 should be int", "int", type_right);
   }
 

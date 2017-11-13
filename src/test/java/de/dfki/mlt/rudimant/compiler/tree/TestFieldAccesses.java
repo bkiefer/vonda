@@ -41,7 +41,7 @@ public class TestFieldAccesses {
 	  public void testFieldAccess3() {
 	    String in = "Child c; yesterday = \"Lukas\"; if(c.name.equals(yesterday)){}";
 	    String s = generate(in);
-	    String expected = "Rdf c;String yesterday = \"Lukas\"; if (((c != null &&"
+	    String expected = "Rdf c;String yesterday = \"Lukas\";if (((c != null &&"
 	        + " exists(((Set<Object>)c.getValue(\"<upper:name>\")))) &&"
 	    		+ " ((Set<Object>)c.getValue(\"<upper:name>\")).equals(yesterday)))";
 	    assertEquals(expected, getForMarked(s, expected));

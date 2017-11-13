@@ -98,11 +98,6 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
   @Override
   public String visitNode(ExpAssignment node) {
     String ret = "";
-    if (node.fin)
-      ret = "final ";
-    if (node.declaration)
-      ret += node.type.toJava();
-    ret += ' ';
     ExpPropertyAccess pa = null;
     if (node.left instanceof ExpFieldAccess) {
       ExpFieldAccess acc = (ExpFieldAccess) node.left;
@@ -647,7 +642,25 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatVarDef node) {
-    out.append(node.type.toJava() + " " + node.variable + ";");
+    if (node.isDefinition) { // Definition of var?
+      if (node.varIsFinal)
+        out.append("final ");
+      out.append(node.type.toJava()).append(" ");
+    }
+    if (node.toAssign != null) {
+      node.toAssign.visitWithComments(this);
+    } else {
+      out.append(node.variable);
+    }
+    out.append(";");
+  }
+
+  /** Top-level field (variable) definition: only spit out definition! */
+  @Override
+  public void visitNode(StatFieldDef node) {
+    out.append(node.visibility).append(node.varDef.varIsFinal ? " final ": " ")
+       .append(node.varDef.type.toJava()).append(" ")
+       .append(node.varDef.variable).append(";");
   }
 
   @Override

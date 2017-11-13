@@ -15,7 +15,12 @@ grammar_file
       | statement
       | ANNOTATION
       | imports
+      | var_spec
     )*
+  ;
+
+var_spec
+  : (PUBLIC | PROTECTED | PRIVATE) var_def
   ;
 
 imports
@@ -66,7 +71,7 @@ while_statement
   ;
 
 for_statement
-  : FOR '(' assignment? ';' exp? ';' exp? ')' statement
+  : FOR '(' (var_def | ';') exp? ';' exp? ')' statement
   | FOR '(' (DEC_VAR | type_spec)? VARIABLE ':' exp ')' statement
   // for loop with destructuring into a tuple
   | FOR '(' '(' VARIABLE ( ',' VARIABLE )+ ')' ':' exp ')' statement
@@ -99,7 +104,10 @@ switch_label
   ;
 
 var_def
-  : type_spec variable ';'
+  : FINAL?
+    type_spec?
+    variable
+    ( '=' exp )? ';'
   ;
 
 method_declaration
@@ -222,8 +230,7 @@ da_token
 // TODO: is that all 'what you can assign to' (an lvalue), which can be:
 // a variable, an array element, an rdf slot (did i forget sth?)
 assignment
-  : FINAL type_spec? variable '=' exp
-  | type_spec? variable '=' exp
+  : variable '=' exp
   | field_access '=' exp
   ;
 

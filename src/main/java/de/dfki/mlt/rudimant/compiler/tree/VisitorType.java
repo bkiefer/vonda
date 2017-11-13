@@ -131,7 +131,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
       typeError("Void can not be assigned", node);
 
     node.left.visit(this);
-
+    /*
     // is this a variable declaration for an already existing variable?
     // When we get here, if node.declaration is true, then node.type has a
     // non-null value, and vice versa
@@ -161,6 +161,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
       mem.addVariableDeclaration(((ExpVariable) node.left).content,
               node.left.type);
     }
+    */
     if (node.right instanceof ExpVariable
         && !mem.variableExists(node.right.toString())) {
       typeError("assigning the value of a non-existing variable "
@@ -453,13 +454,43 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
   /** An explicit variable declaration, without assignment, just definition */
   @Override
   public void visitNode(StatVarDef node) {
-    if (mem.variableExists(node.variable)){
+    if (node.isDefinition && mem.variableExists(node.variable)) {
       typeError("Re-defined variable " + node.variable
           + " from " + mem.getVariableType(node.variable).toDebugString()
           + " to " + node.type.toDebugString() +
-          ", so I'll stay with the old type", node);
+          ", keeping the old type", node);
     }
-    mem.addVariableDeclaration(node.variable, node.type);
+    if (node.type.isUnspecified() && mem.variableExists(node.variable)) {
+      node.type = mem.getVariableType(node.variable);
+    }
+    if (node.toAssign != null) {
+      node.toAssign.visit(this);
+      if (! node.toAssign.type.isUnspecified()) {
+        if (node.toAssign.type.isVoid()) {
+          typeError("Void can not be assigned", node);
+        } else {
+          if (! node.type.isUnspecified()) {
+            // check type
+            if (node.type.unifyTypes(node.toAssign.type) == null) {
+              typeError("Incompatible types in variable definition: "
+                  + node.type + " <> " + node.toAssign.type, node);
+            }
+          } else {
+            node.type = node.toAssign.type;
+          }
+        }
+      } else {
+        node.toAssign.propagateType(node.type);
+      }
+      ExpVariable var = node.fixFields(new ExpVariable(node.variable));
+      var.type = node.type;
+      node.toAssign = node.fixFields(new ExpAssignment(var, node.toAssign));
+    }
+    if (! mem.variableExists(node.variable)) {
+      mem.addVariableDeclaration(node.variable, node.type);
+      // mark as declaration
+      node.isDefinition = true;
+    }
   }
 
   @Override
@@ -478,6 +509,13 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
       mem.leaveEnvironment(node);
     }
   }
+
+  /** Top-level field (variable) definition */
+  @Override
+  public void visitNode(StatFieldDef node) {
+    node.varDef.visit(this);
+  }
+
 
   /* **********************************************************************
    * Statements where one part must be a bool exp (if, do, while, for)

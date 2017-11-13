@@ -60,7 +60,7 @@ public class TestTypeInference {
     String in = "QuizHistory getCurrentTurn();"
             + " turn = getCurrentTurn(); ";
     String s = generate(in);
-    String expected = "turn = getCurrentTurn();";
+    String expected = "Rdf turn = getCurrentTurn();";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("Rdf turn;"));
   }
@@ -71,9 +71,9 @@ public class TestTypeInference {
     String in = "QuizHistory getCurrentTurn(); "
             + "Rdf turn = getCurrentTurn();";
     String s = generate(in);
-    String expected = "turn = getCurrentTurn();";
+    String expected = "Rdf turn = getCurrentTurn();";
     assertEquals(expected, getForMarked(s, expected));
-    assertTrue(s.contains("Rdf turn;"));
+    assertTrue(s.contains("Rdf turn"));
   }
 
   @Test
@@ -106,7 +106,7 @@ public class TestTypeInference {
 
   @Test
   public void test7() {
-    String in = " int b = 7; ";
+    String in = "public int b = 7; ";
     String s = generate(in);
     String expected = "b = 7;";
     assertEquals(expected, getForMarked(s, expected));
@@ -149,7 +149,7 @@ public class TestTypeInference {
   public void test10() {
     String in = " double f; void fun() { Clazz c; c.bf = 1.0; }";
     String s = generate(in);
-    String expected = "public void fun() { Rdf c; c.setValue(\"<dom:bf>\", 1.0); } }";
+    String expected = "double f; public void fun() { Rdf c;c.setValue(\"<dom:bf>\", 1.0); } }";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("double f;"));
   }
@@ -164,7 +164,7 @@ public class TestTypeInference {
   public void test12() {
     String in = " long fun(long i); int l = 1; k = fun(l);";
     String s = generate(in);
-    String expected = "l = 1; k = fun(l);";
+    String expected = "int l = 1;long k = fun(l);";
     assertEquals(expected, getForMarked(s, expected));
   }
 }

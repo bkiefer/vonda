@@ -19,28 +19,10 @@ public class ExpAssignment extends RTExpression {
 
   RTExpression left; // can be either a UVariable or a Field access
   RTExpression right;
-  boolean declaration;
-  boolean fin;
 
-  public ExpAssignment(RTExpression l, RTExpression r, boolean fin) {
+  public ExpAssignment(RTExpression l, RTExpression r) {
     left = l;
     right = r;
-    declaration = false;
-    this.fin = fin;
-  }
-
-  /** This is called in case this is a combined variable declaration with
-   * initial assignment
-   * @param actualType the declared type
-   * @param l
-   * @param r
-   * @param position
-   * @param fin  true if final declaration
-   */
-  public ExpAssignment(String actualType, RTExpression l, RTExpression r, boolean fin) {
-    this(l, r, fin);
-    declaration = true;
-    type = new Type(actualType);
   }
 
   @Override

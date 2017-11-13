@@ -34,12 +34,12 @@ public class ExpDialogueActTest {
         instanceof ExpDialogueAct);
 
   }
-  
+
   @Test
   public void testDA1() {
     String in = "inf = \"Inform\"; emitDA(#^inf(Answer, what=solution));";
     String r = generate(in);
-    String expected = "String inf = \"Inform\"; "
+    String expected = "String inf = \"Inform\";"
         + "emitDA(new DialogueAct(inf, \"Answer\", \"what\", \"solution\"));";
     assertEquals(expected, getForMarked(r, expected));
   }

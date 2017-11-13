@@ -31,6 +31,8 @@ public interface RTStatementVisitor {
 
   public void visitNode(StatVarDef node);
 
+  public void visitNode(StatFieldDef node);
+
   public void visitNode(StatWhile node);
 
   public void visitNode(StatExpression node);

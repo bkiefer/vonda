@@ -19,10 +19,17 @@ public class StatVarDef extends RTStatement {
 
   String variable;
   Type type;
+  RTExpression toAssign;
+  boolean varIsFinal;
+  boolean isDefinition;
 
-  public StatVarDef(String type, String variable) {
+  public StatVarDef(boolean isFinal, String type, String variable,
+      RTExpression assign) {
+    this.varIsFinal = isFinal;
+    this.isDefinition = isFinal || type != null;
     this.type = new Type(type);
     this.variable = variable;
+    this.toAssign = assign;
   }
 
   @Override
@@ -40,7 +47,10 @@ public class StatVarDef extends RTStatement {
     v.visitNode(this);
   }
 
-  public String toString() { return type + " " + variable +";"; }
+  public String toString() {
+    return (varIsFinal ? "final " : "")
+        + type + " " + variable
+        + (toAssign != null ? ("= " + toAssign.toString()) : "") + ";"; }
 
   public Iterable<? extends RudiTree> getDtrs() {
     return Collections.emptyList();
