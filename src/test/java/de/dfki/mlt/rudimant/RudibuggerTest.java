@@ -38,10 +38,9 @@ public class RudibuggerTest {
             new File(RUDIBUGGER_TEST_RES_DIR + "rulesTest/Rules.rudi"));
 
     /* excepted ImportInfo */
-    int ruleId = 0;
     ImportInfo expectedRootImport = new ImportInfo("Rules", null, -1, null);
-    RuleInfo rule_one = new RuleInfo(++ruleId, "rule_one", 1, expectedRootImport);
-    RuleInfo rule_two = new RuleInfo(++ruleId, "rule_two", 5, expectedRootImport);
+    RuleInfo rule_one = new RuleInfo("rule_one", 1, expectedRootImport);
+    RuleInfo rule_two = new RuleInfo("rule_two", 5, expectedRootImport);
 
     /* test for equality */
     assertEquals(expectedRootImport, actualRootImport);
@@ -56,12 +55,11 @@ public class RudibuggerTest {
             + "importTest/Root.rudi"));
 
     /* excepted ImportInfo */
-    int ruleId = 0;
     ImportInfo expectedRootImport = new ImportInfo("Root", null, -1, null);
-    RuleInfo rule_one = new RuleInfo(++ruleId, "rule_one", 1, expectedRootImport);
+    RuleInfo rule_one = new RuleInfo("rule_one", 1, expectedRootImport);
     ImportInfo import1 = new ImportInfo("Import1", null, 6, expectedRootImport);
-    RuleInfo rule_import = new RuleInfo(++ruleId, "rule_import", 1, import1);
-    RuleInfo rule_two = new RuleInfo(++ruleId, "rule_two", 8, expectedRootImport);
+    RuleInfo rule_import = new RuleInfo("rule_import", 1, import1);
+    RuleInfo rule_two = new RuleInfo("rule_two", 8, expectedRootImport);
 
     /* test for equality */
     assertEquals(expectedRootImport, actualRootImport);
@@ -76,11 +74,10 @@ public class RudibuggerTest {
             + "nestedRulesTest/NestedRules.rudi"));
 
     /* excepted ImportInfo */
-    int ruleId = 0;
     ImportInfo expectedRootImport = new ImportInfo("NestedRules", null, -1, null);
-    RuleInfo rule_one = new RuleInfo(++ruleId, "rule_one", 1, expectedRootImport);
-    RuleInfo rule_one_a = new RuleInfo(++ruleId, "rule_one_a", 4, rule_one);
-    RuleInfo rule_two = new RuleInfo(++ruleId, "rule_two", 10, expectedRootImport);
+    RuleInfo rule_one = new RuleInfo("rule_one", 1, expectedRootImport);
+    RuleInfo rule_one_a = new RuleInfo("rule_one_a", 4, rule_one);
+    RuleInfo rule_two = new RuleInfo("rule_two", 10, expectedRootImport);
 
     /* test for equality */
     assertEquals(expectedRootImport, actualRootImport);
@@ -95,15 +92,14 @@ public class RudibuggerTest {
             + "everythingTest/Root.rudi"));
 
     /* excepted ImportInfo */
-    int ruleId = 0;
     ImportInfo expectedRootImport = new ImportInfo("Root", null, -1, null);
-    RuleInfo rule_one = new RuleInfo(++ruleId, "rule_one", 1, expectedRootImport);
-    RuleInfo rule_one_a = new RuleInfo(++ruleId, "rule_one_a", 4, rule_one);
+    RuleInfo rule_one = new RuleInfo("rule_one", 1, expectedRootImport);
+    RuleInfo rule_one_a = new RuleInfo("rule_one_a", 4, rule_one);
     ImportInfo import1 = new ImportInfo("Import1", null, 10, expectedRootImport);
-    RuleInfo rule_import = new RuleInfo(++ruleId, "rule_import", 1, import1);
-    RuleInfo rule_import_a = new RuleInfo(++ruleId, "rule_import_a", 4, rule_import);
-    RuleInfo rule_two = new RuleInfo(++ruleId, "rule_two", 12, expectedRootImport);
-    RuleInfo rule_two_a = new RuleInfo(++ruleId, "rule_two_a", 15, rule_two);
+    RuleInfo rule_import = new RuleInfo("rule_import", 1, import1);
+    RuleInfo rule_import_a = new RuleInfo("rule_import_a", 4, rule_import);
+    RuleInfo rule_two = new RuleInfo("rule_two", 12, expectedRootImport);
+    RuleInfo rule_two_a = new RuleInfo("rule_two_a", 15, rule_two);
 
     /* test for equality */
     assertEquals(expectedRootImport, actualRootImport);

@@ -6,6 +6,9 @@ import java.util.Objects;
 
 public class BasicInfo {
 
+  /** To generate successive unique rule ids */
+  protected static int ruleId;
+
   protected BasicInfo _parent;
   protected int _line;
   protected String _label;
@@ -81,5 +84,10 @@ public class BasicInfo {
     hash = 73 * hash + this._line;
     hash = 73 * hash + Objects.hashCode(this._label);
     return hash;
+  }
+
+  /** Return the number of registered rules */
+  public static int getRuleNumber() {
+    return ruleId;
   }
 }

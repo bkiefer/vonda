@@ -49,9 +49,6 @@ public class Mem {
   /** Info about all imports and rules (tree) */
   private BasicInfo root;
 
-  /** To generate successive unique rule ids */
-  private int ruleId;
-
   /** When true, infos about imports and rules are collected */
   private boolean doingTypeCheck;
 
@@ -68,7 +65,6 @@ public class Mem {
     currentBlock = null;
     _proxy = proxy;
     Type.setProxy(proxy);
-    ruleId = 0;
     doingTypeCheck = true;
     wrapperClass = wrapper;
   }
@@ -158,7 +154,7 @@ public class Mem {
 
   public boolean enterRule(String name, Location loc) {
     if (doingTypeCheck)
-      root = new RuleInfo(++ruleId, name, loc.getLineNumber(), root);
+      root = new RuleInfo(name, loc.getLineNumber(), root);
     // The condition is: We're in the topmost environment of a file.
     return curClass().enterRule(name) && currentBlock.getBindings() == currentEnv;
   }

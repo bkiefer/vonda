@@ -7,13 +7,14 @@ public class RuleInfo extends BasicInfo {
 
   public RuleInfo() {}
 
-  public RuleInfo(int id, String name, int line, BasicInfo parent) {
+  public RuleInfo(String name, int line, BasicInfo parent) {
     super(name, line, parent);
-    _id = id;
+    _id = ruleId++;
   }
 
   public void setId(int id) {
     _id = id;
+    ruleId = Math.max(ruleId, id + 1);
   }
 
   public int getId() { return _id; }
