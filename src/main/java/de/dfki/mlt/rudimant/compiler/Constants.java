@@ -1,7 +1,9 @@
 package de.dfki.mlt.rudimant.compiler;
 
 public interface Constants {
-  public static final String RULES_FILE_EXTENSION = ".rudi";
+  public static final String RULE_FILE_EXT = ".rudi";
+  // Definitions for methods and variables in Agent.java
+  public static final String AGENT_DEFS = "Agent" + RULE_FILE_EXT;
 
   public static final String CFG_OUTPUT_DIRECTORY = "outputDirectory";
   public static final String CFG_WRAPPER_CLASS = "wrapperClass";

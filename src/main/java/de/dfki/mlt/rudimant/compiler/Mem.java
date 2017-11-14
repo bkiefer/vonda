@@ -37,10 +37,10 @@ public class Mem {
    *  added, then the Agent.rudi must be processed as if it was part of this
    *  file, and then normal processing commences.
    */
-  private ToplevelBlock classBlock;
+  private ToplevelBlock currentBlock;
 
   /** A stack of the active variable / function scopes */
-  private Environment current;
+  private Environment currentEnv;
 
   private int blockNesting = 0;
 
@@ -48,18 +48,24 @@ public class Mem {
 
   /** Info about all imports and rules (tree) */
   private BasicInfo root;
+
+  /** To generate successive unique rule ids */
   private int ruleId;
+
+  /** When true, infos about imports and rules are collected */
   private boolean doingTypeCheck;
 
-  // the class that should be extended by the rudi files to fill them into a project
+  /** the Java class that will be extended by the topmost rudi file to link
+   *  the rule files into a Java project
+   */
   private final String wrapperClass;
 
-  // the rudi file that represents the Agent
+  /** the rudi file that represents the Agent (the topmost rudi file) */
   private ClassEnv topLevelClass;
 
   public Mem(RdfProxy proxy, String wrapper) {
-    current = null;
-    classBlock = null;
+    currentEnv = null;
+    currentBlock = null;
     _proxy = proxy;
     Type.setProxy(proxy);
     ruleId = 0;
@@ -69,13 +75,7 @@ public class Mem {
 
   /** Get the current ClassEnv (the one treated now) */
   private ClassEnv curClass() {
-    return classBlock.getClassEnv();
-  }
-
-  private void setToplevelFile(ClassEnv env) {
-    topLevelClass = env;
-    String[] path = {};
-    root = new ImportInfo(env.getName(), path, -1, null);
+    return currentBlock.getClassEnv();
   }
 
   public String getTopLevelClass() {
@@ -101,7 +101,7 @@ public class Mem {
   }
 
   public boolean isNotToplevelClass() {
-    return classBlock.getParentClass() != null;
+    return currentBlock.getParentClass() != null;
   }
 
   public RdfProxy getProxy() {
@@ -115,21 +115,23 @@ public class Mem {
    */
   public void enterClass(String classname, String[] pkg) {
     ClassEnv newEnv = new ClassEnv(classname, pkg);
-    if (classBlock == null)
-      setToplevelFile(newEnv);
+    if (currentBlock == null) {
+      topLevelClass = newEnv;
+      root = new ImportInfo(classname, pkg, -1, null);
+    }
     ToplevelBlock node = new ToplevelBlock();
     enterEnvironment(node);
 
-    node.setClass(classBlock, newEnv);
-    classBlock = node;
+    node.setClass(currentBlock, newEnv);
+    currentBlock = node;
   }
 
   /** Leave processing of a class. To be called at the very end of processing
    *  the top-level class or import.
    */
   public void leaveClass() {
-    ToplevelBlock node = classBlock;
-    classBlock = classBlock.getParentClass();
+    ToplevelBlock node = currentBlock;
+    currentBlock = currentBlock.getParentClass();
 
     leaveEnvironment(node);
   }
@@ -145,11 +147,11 @@ public class Mem {
   public String getClassName() { return curClass().getName(); }
 
 
-  public void enterGeneration() {
+  public void leaveTypecheck() {
     doingTypeCheck = false;
   }
 
-  public void leaveGeneration() {
+  public void enterTypecheck() {
     doingTypeCheck = true;
   }
 
@@ -158,7 +160,7 @@ public class Mem {
     if (doingTypeCheck)
       root = new RuleInfo(++ruleId, name, loc.getLineNumber(), root);
     // The condition is: We're in the topmost environment of a file.
-    return curClass().enterRule(name) && classBlock.getBindings() == current;
+    return curClass().enterRule(name) && currentBlock.getBindings() == currentEnv;
   }
 
   public void leaveRule() {
@@ -185,13 +187,13 @@ public class Mem {
    */
   public void addFunction(String funcname, Type functype, Type calledUpon,
           List<Type> partypes) {
-    current.addFunction(funcname, functype, calledUpon, partypes,
+    currentEnv.addFunction(funcname, functype, calledUpon, partypes,
         getClassName());
   }
 
   /** Return the class where this function is defined */
   public String getFunctionOrigin(String funcname, List<Type> partypes){
-    String origin = current.getFunctionOrigin(funcname, partypes);
+    String origin = currentEnv.getFunctionOrigin(funcname, partypes);
     return (getClassName().equals(origin)) ? null : origin;
   }
 
@@ -205,7 +207,7 @@ public class Mem {
    * @return its return type or null
    */
   public Type getFunctionRetType(String funcname, Type calledUpon, List<Type> partypes) {
-    return current.getFunctionRetType(funcname, calledUpon, partypes);
+    return currentEnv.getFunctionRetType(funcname, calledUpon, partypes);
   }
 
   /** Add a new variable declaration, providing the variable name and type
@@ -215,17 +217,17 @@ public class Mem {
    * @return true if the variable is not already defined, false otherwise
    */
   public boolean addVariableDeclaration(String variable, Type type) {
-    if (current.isVarDefined(variable)) {
+    if (currentEnv.isVarDefined(variable)) {
       return false;
     }
     String origin = getClassName();
-    current.put(variable, type, origin);
+    currentEnv.put(variable, type, origin);
     logger.trace("Add var {}:{} [{}]", blockNesting, variable, type);
     return true;
   }
 
   public boolean variableExists(String variable) {
-    return current.isVarDefined(variable);
+    return currentEnv.isVarDefined(variable);
   }
 
   /** get the class where the given variable was defined
@@ -234,7 +236,7 @@ public class Mem {
    * @return the class it came from, null if not declared
    */
   public String getVariableOriginClass(String variable) {
-    String origin = current.getOrigin(variable);
+    String origin = currentEnv.getOrigin(variable);
     if (getClassName().equals(origin))
       return null;
 
@@ -247,7 +249,7 @@ public class Mem {
    * @return the variable's type
    */
   public Type getVariableType(String variable) {
-    return current.getType(variable);
+    return currentEnv.getType(variable);
   }
 
   /** enter a new Environment (variable binding level) in TypeVisitor */
@@ -257,17 +259,17 @@ public class Mem {
     // lower environments at the cost of bigger space consumption
     Environment newEnv = node.getBindings();
     if (newEnv == null) {
-      newEnv = current == null ? new Environment() : current.deepCopy();
-      node.setBindings(current, newEnv);
+      newEnv = currentEnv == null ? new Environment() : currentEnv.deepCopy();
+      node.setBindings(currentEnv, newEnv);
     }
-    current = newEnv;
+    currentEnv = newEnv;
     ++blockNesting;
   }
 
   /** leave an environment (variable binding level) */
   public void leaveEnvironment(RTBlockNode node) {
     // restore the values in actual that we changed
-    current = node.getParentBindings();
+    currentEnv = node.getParentBindings();
     --blockNesting;
     logger.trace("Leave level {}", blockNesting);
   }
@@ -288,7 +290,7 @@ public class Mem {
   public Set<String> getNeededClasses() {
     // return all classes above me (import chain), and this class
     Set<String> result = new HashSet<>();
-    ToplevelBlock tb = classBlock;
+    ToplevelBlock tb = currentBlock;
     while(tb != null) {
       result.add(tb.getClassEnv().getName());
       tb = tb.getParentClass();

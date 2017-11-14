@@ -36,7 +36,7 @@ public class StatementTest {
 
   @Test
   public void StatementTest2(){
-    String in = " List<String> slots = { Hobby, Color };"
+    String in = " List<String> slots = { \"Hobby\", \"Color\" };"
             + " for (String slot : slots){}";
     String r = generate(in);
     String expected = "List<String> slots = new ArrayList<>(); slots.add(\"Hobby\"); "
@@ -158,9 +158,9 @@ public class StatementTest {
 
  @Test
  public void AssignConditionTest(){
-   String in = "Child user; Robot agent; Robot I_ROBOT; agent = (agent == user) ? I_ROBOT : user;";
+   String in = "Child user; Agent agent; Robot I_ROBOT; agent = (agent == user) ? (Agent)I_ROBOT : (Agent)user;";
    String r = generate(in);
-   String expected = "Rdf user;Rdf agent;Rdf I_ROBOT;agent = (((agent.equals(user))) ? I_ROBOT : user);";
+   String expected = "Rdf user;Rdf agent;Rdf I_ROBOT;agent = (((agent.equals(user))) ? ((Rdf)I_ROBOT) : ((Rdf)user));";
    assertEquals(expected, getForMarked(r, expected));
  }
 

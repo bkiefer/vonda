@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.hfc.db.server.HfcDbHandler;
 
@@ -21,8 +20,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.mlt.rudimant.common.BasicInfo;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
-import de.dfki.mlt.rudimant.compiler.tree.Import;
-import de.dfki.mlt.rudimant.compiler.tree.ToplevelBlock;
 
 public class RudimantCompiler {
 
@@ -30,8 +27,12 @@ public class RudimantCompiler {
 
   private static HfcDbHandler handler;
 
-  private boolean typeCheck = true;
+  private boolean typeCheck = false;
   private boolean visualise = false;
+
+  // what should be logged in the rules (true = rudi code vs false = java code)
+  private boolean versionToLog = true;
+
 
   private final File inputDirectory;
   private final File outputDirectory;
@@ -45,15 +46,6 @@ public class RudimantCompiler {
   private final String[] subPackage;
 
   private RudimantCompiler parent;
-
-  // Definitions for methods and variables in Agent.java
-  private static final String agentInit = "/Agent.rudi";
-
-  // what should be logged in the rules (true = rudi code vs false = java code)
-  private boolean versionToLog = true;
-
-  // Save location of rules to file
-  private String rulesLocFile;
 
   /**
    * Return the inputfile, which is relative to inputDirectory, the subdirectory
@@ -87,9 +79,10 @@ public class RudimantCompiler {
   }
 
   /** Constructor for top-level file */
-  private RudimantCompiler(RdfProxy proxy, String wrapper, File outDir,
-      File topLevel, String packageName){
-    inputDirectory = topLevel == null ? new File(".") : topLevel.getParentFile();
+  public RudimantCompiler(HfcDbHandler handler, RdfProxy proxy,
+      String wrapper, File inpDir, File outDir, String packageName) {
+    RudimantCompiler.handler = handler;
+    inputDirectory = inpDir == null ? new File(".") : inpDir;
     if (packageName == null) packageName = "";
     subPackage = packageName.split("\\.");
     outputDirectory = outDir == null
@@ -98,78 +91,18 @@ public class RudimantCompiler {
     mem = new Mem(proxy, wrapper);
   }
 
-  private static File checkOutputDirectory(File configDir, Map<String, Object> configs)
-      throws IOException {
-    File outputDirectory = null;
-    if (configs.containsKey(CFG_OUTPUT_DIRECTORY)) {
-      Object o = configs.get(CFG_OUTPUT_DIRECTORY);
-      if (o instanceof String) {
-        outputDirectory = new File((String)o);
-        if (! outputDirectory.isAbsolute()) {
-          outputDirectory = new File(configDir, (String)o);
-        }
-      } else {
-        outputDirectory = (File)o;
-      }
-    }
-    return outputDirectory;
-  }
-
   /** Process the Agent.rudi, treating all definitions as if they came from
    *  the toplevel rudi file.
    * @param topLevel
    */
-  public void initMem(String inputRealName, String[] pkg) {
-    String className = capitalize(inputRealName);
-    mem.enterClass(className, pkg);
-
+  public void readAgentSpecs(String inputRealName) {
     try {
-      parseAndTypecheck(this, RudimantCompiler.class.getResourceAsStream(agentInit), inputRealName);
+      parseAndTypecheck(this,
+          RudimantCompiler.class.getResourceAsStream("/" + AGENT_DEFS),
+          inputRealName);
     } catch (IOException ex) {
-      logger.error("Agent initializer file import fails: {}", ex);
+      logger.error("Agent definitions file import fails: {}", ex);
     }
-  }
-
-  private static RdfProxy startClient(File configDir, Map<String, Object> configs)
-      throws IOException, WrongFormatException {
-    handler = new HfcDbHandler();
-    String ontoFileName = (String) configs.get(CFG_ONTOLOGY_FILE);
-    if (ontoFileName == null) {
-      throw new IOException("Ontology file is missing.");
-    }
-    handler.readConfig(new File(configDir, ontoFileName));
-    return new RdfProxy(handler);
-  }
-
-  @SuppressWarnings("unchecked")
-  public static RudimantCompiler init(File configDir,
-      Map<String, Object> configs, File topLevel)
-      throws IOException, WrongFormatException {
-    if(configs.get(CFG_WRAPPER_CLASS) == null) {
-      logger.error("No implementation class specified, exiting.");
-      return null;
-    }
-    RdfProxy proxy = startClient(configDir, configs);
-    if (configs.containsKey(CFG_NAME_TO_URI)) {
-      proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
-    }
-    RudimantCompiler rc = new RudimantCompiler(proxy,
-              (String)configs.get(CFG_WRAPPER_CLASS),
-              checkOutputDirectory(configDir, configs),
-              topLevel,
-              configs.containsKey(CFG_PACKAGE)
-                  ? (String) configs.get(CFG_PACKAGE)
-                      : null
-              );
-    rc.typeCheck = (boolean)configs.get(CFG_TYPE_ERROR_FATAL);
-    if (configs.containsKey(CFG_VISUALISE)) {
-      if (rc.visualise = (boolean) configs.get(CFG_VISUALISE))
-        Visualize.init();
-    }
-    if (configs.containsKey(CFG_LOGGING)) {
-      rc.versionToLog = false;
-    }
-    return rc;
   }
 
   public static void shutdown() {
@@ -192,10 +125,6 @@ public class RudimantCompiler {
 
   public Mem getMem() {
     return mem;
-  }
-
-  public RudimantCompiler getParent() {
-    return parent;
   }
 
   private static final File tmpCfg = new File("/tmp/uncrustify.cfg");
@@ -251,13 +180,15 @@ public class RudimantCompiler {
   /** Process the top-level rudi file */
   public void processToplevel(File topLevel) throws IOException {
     // get the real name, without upper case transformation
-    String inputRealName = topLevel.getName().replace(RULES_FILE_EXTENSION, "");
+    String inputRealName = topLevel.getName().replace(RULE_FILE_EXT, "");
     // TODO: not nice. should always come in "brackets", but makes it more messy
     // contains: mem.enterClass
-    initMem(inputRealName, subPackage);
+    String className = capitalize(inputRealName);
+    mem.enterClass(className, subPackage);
+    readAgentSpecs(inputRealName);
     String wrapperClass = mem.getWrapperClass();
     File wrapperInit = new File(inputDirectory,
-        wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + RULES_FILE_EXTENSION);
+        wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + RULE_FILE_EXT);
     try {
       if (wrapperInit.exists()) {
         parseAndTypecheck(this, new FileInputStream(wrapperInit), inputRealName);
@@ -298,7 +229,7 @@ public class RudimantCompiler {
      */
     File inputFile = new File(inputDirectory,
         (inputRealName != null ? inputRealName : mem.getClassName())
-        + RULES_FILE_EXTENSION);
+        + RULE_FILE_EXT);
 
     logger.info("parsing " + inputFile.getName() + " to " + outputFile);
     GrammarFile gf = parseAndTypecheck(this,
@@ -308,9 +239,9 @@ public class RudimantCompiler {
     if (visualise)
       Visualize.show(gf, inputRealName);
     Writer output = Files.newBufferedWriter(outputFile.toPath());
-    mem.enterGeneration();
+    mem.leaveTypecheck();
     gf.generate(this, output);
-    mem.leaveGeneration();
+    mem.enterTypecheck();
     output.close();
 
     uncrustify(outputFile);

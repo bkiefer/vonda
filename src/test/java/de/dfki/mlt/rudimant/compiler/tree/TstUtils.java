@@ -29,11 +29,8 @@ public class TstUtils {
 
   static int prefix = 252, suffix = 55;
 
-  public static String getGeneration(String in) {
-    StringWriter out = new StringWriter();
-    parseAndTypecheck(in, out);
-    StringBuffer sb = out.getBuffer();
-    return normalizeSpaces(sb.subSequence(prefix + 34, sb.length() - suffix).toString());
+  public static String normalizeSpaces(String in) {
+    return in.replaceAll("[ \n\r\t]+", " ");
   }
 
   public static String getTypeError(String in) throws Throwable {

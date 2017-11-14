@@ -1,6 +1,7 @@
 package de.dfki.mlt.rudimant.compiler;
 
-import static de.dfki.mlt.rudimant.compiler.Constants.RULES_FILE_EXTENSION;
+import static de.dfki.mlt.rudimant.compiler.Constants.RULE_FILE_EXT;
+import static de.dfki.mlt.rudimant.compiler.CompilerMain.init;
 
 import java.io.*;
 
@@ -35,9 +36,10 @@ public class Visualize extends CompilerMain {
 
   private static RudimantCompiler initRc()
       throws IOException, WrongFormatException {
-    RudimantCompiler rc = RudimantCompiler.init(confDir, configs, null);
+    RudimantCompiler rc = init(confDir, configs, null);
     String[] pkg = {};
-    rc.initMem("test", pkg);
+    rc.getMem().enterClass("Test", pkg);
+    rc.readAgentSpecs("Test");
     return rc;
   }
 
@@ -60,17 +62,12 @@ public class Visualize extends CompilerMain {
   public static BasicInfo generateAndGetRulesInfo(File input) {
     RudimantCompiler rc;
     try {
-      rc = RudimantCompiler.init(confDir, configs, input);
+      rc = init(confDir, configs, input.getParentFile());
       rc.processToplevel(input);
     } catch (IOException | WrongFormatException e) {
       throw new RuntimeException(e);
     }
     return rc.getMem().getInfo();
-  }
-
-
-  public static String normalizeSpaces(String in) {
-    return in.replaceAll("[ \n\r\t]+", " ");
   }
 
   public static void show(RudiTree root, String realName, MainFrame mf) {
@@ -91,7 +88,7 @@ public class Visualize extends CompilerMain {
   public static class RudiFileHandler implements ObjectHandler {
     public boolean process(File f, InputStream in, MainFrame mf)
         throws IOException {
-      String inputRealName = f.getName().replace(RULES_FILE_EXTENSION, "");
+      String inputRealName = f.getName().replace(RULE_FILE_EXT, "");
 
       // create the abstract syntax tree
       GrammarFile gf = null;
@@ -132,26 +129,10 @@ public class Visualize extends CompilerMain {
       throw new UnsupportedOperationException("Parsing failed.");
     if (rc.visualise())
       Visualize.show(gf, name);
-    rc.getMem().enterGeneration();
+    rc.getMem().leaveTypecheck();
     gf.generate(rc, out);
-    rc.getMem().leaveGeneration();
+    rc.getMem().enterTypecheck();
     return gf;
-  }
-
-
-  public static GrammarFile parseAndTypecheck(InputStream in, Writer out) {
-    try {
-      // create the abstract syntax tree
-      RudimantCompiler rc = initRc();
-      GrammarFile result = parseAndGenerate(rc, in, out, "test");
-      return result;
-    } catch (Exception ex) {
-      throw new RuntimeException(ex);
-    }
-  }
-
-  public static GrammarFile parseAndTypecheck(String in, Writer out){
-    return parseAndTypecheck(getInput(in), out);
   }
 
   public static GrammarFile parseAndTypecheckWithError(InputStream in, Writer out)

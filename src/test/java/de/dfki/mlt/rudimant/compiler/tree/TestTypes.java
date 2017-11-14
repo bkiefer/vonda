@@ -35,7 +35,7 @@ public class TestTypes {
 
   @Test
   public void testType2(){
-    String in = " Rdf turn = getCurrentTurn(activity);";
+    String in = "QuizHistory getCurrentTurn(); Rdf turn = getCurrentTurn(activity);";
     String r = generate(in);
     String expected = "turn = getCurrentTurn(activity);";
     assertEquals(expected, getForMarked(r, expected));
@@ -44,7 +44,7 @@ public class TestTypes {
 
   @Test
   public void testType3(){
-    String in = " propose(\"continue_quiz\") {\n" +
+    String in = "QuizHistory getCurrentTurn();  propose(\"continue_quiz\") {\n" +
               "      Rdf turn = getCurrentTurn(activity);}";
     String r = generate(in);
     String expected = "propose(\"continue_quiz\",new Proposal() {"
@@ -91,20 +91,20 @@ public class TestTypes {
 
   @Test
   public void testLambdaExp() {
-    String in = "Set<Child> cs; cs.contains((c) -> c.foreName.equals(\"John\"));";
+    String in = "Set<Child> cs; cs.contains((c) -> ((Child)c).forename.equals(\"John\"));";
     String r = generate(in);
     String expected = "public Set<Rdf> cs;/**/cs.contains((c) -> "
-            + "((Set<Object>)c.getValue(\"foreName\")).equals(\"John\"));";
+            + "((String)((Rdf)c).getSingleValue(\"<dom:forename>\")).equals(\"John\"));";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("Set<Rdf> cs;"));
   }
 
   @Test
   public void testComplexLambdaExp() {
-    String in = "Set<Child> cs; cs.contains((c) -> {c.foreName.equals(\"John\");});";
+    String in = "Set<Child> cs; cs.contains((c) -> {((Child)c).forename.equals(\"John\");});";
     String r = generate(in);
     String expected = "public Set<Rdf> cs;/**/cs.contains((c) -> {"
-            + " ((Set<Object>)c.getValue(\"foreName\")).equals(\"John\"); } );";
+            + " ((String)((Rdf)c).getSingleValue(\"<dom:forename>\")).equals(\"John\"); } );";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("Set<Rdf> cs;"));
   }

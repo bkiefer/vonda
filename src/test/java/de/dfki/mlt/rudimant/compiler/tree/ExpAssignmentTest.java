@@ -48,7 +48,7 @@ public class ExpAssignmentTest {
 
   @Test
   public void testAssignment3() throws IOException {
-    String assignmentExp = "boolean test = 4+5;";
+    String assignmentExp = "boolean test = 4+5 != 0;";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(assignmentExp));
     assertTrue(dtr instanceof StatVarDef);

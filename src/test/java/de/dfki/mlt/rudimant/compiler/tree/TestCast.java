@@ -59,12 +59,12 @@ public class TestCast {
 
   @Test
   public void testCast4() {
-    String in = "Quiz activity; if "
-            + "(activity.tabletOrientation != getCurrentAsker()) {}";
+    String in = "Quiz activity; String currentAsker = \"bla\"; if "
+            + "(activity.tabletOrientation != currentAsker) {}";
     String s = generate(in);
-    String expected = "Rdf activity;if ((! "
+    String expected = "Rdf activity;String currentAsker = \"bla\";if ((! "
         + "(((String)activity.getSingleValue(\"<dom:tabletOrientation>\"))"
-        + ".equals(getCurrentAsker())))) { }";
+        + ".equals(currentAsker)))) { }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -87,9 +87,9 @@ public class TestCast {
 
   @Test
   public void test2() {
-    String in = "QuizHistory turn; turn.asker = agt;";
+    String in = "QuizHistory turn; int agt; turn.asker = agt;";
     String s = generate(in);
-    String expected = "Rdf turn;turn.setValue(\"<dom:asker>\", agt);";
+    String expected = "Rdf turn;int agt;turn.setValue(\"<dom:asker>\", agt);";
     assertEquals(expected, getForMarked(s, expected));
   }
 
