@@ -18,14 +18,25 @@ public class Location {
     lineNumber = lineNo;
   }
 
+  public Location() {}
+
   public String getOriginClass() {
     return originClass;
+  }
+
+  public void setOriginClass(String oc) {
+    originClass = oc;
   }
 
   public int getLineNumber() {
     return lineNumber;
   }
 
+  public void setLineNumber(int ln) {
+    lineNumber = ln;
+  }
+
+  @Override
   public String toString() {
     return originClass + ".rudi:" + lineNumber + ":";
   }

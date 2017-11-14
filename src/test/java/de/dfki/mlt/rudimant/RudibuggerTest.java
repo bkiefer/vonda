@@ -1,17 +1,16 @@
 package de.dfki.mlt.rudimant;
 
-import de.dfki.lt.hfc.WrongFormatException;
+import de.dfki.mlt.rudimant.common.ImportInfo;
+import de.dfki.mlt.rudimant.common.RuleInfo;
 import static de.dfki.mlt.rudimant.compiler.CompilerMain.configs;
-import static de.dfki.mlt.rudimant.compiler.Visualize.generateAndGetRulesLocMap;
 import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.RESOURCE_DIR;
 import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.setUpEmpty;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static de.dfki.mlt.rudimant.compiler.Visualize.generateAndGetRulesInfo;
 
 /**
  * These tests check if the harvesting of all rules and imports and its
@@ -32,175 +31,82 @@ public class RudibuggerTest {
   }
 
   @Test
-  public void testRulesOnly() throws WrongFormatException, FileNotFoundException {
+  public void testRulesOnly() {
 
-    /* define to RuleLocation.yml's location */
-    configs.put("ruleLocationFile", RUDIBUGGER_TEST_RES_DIR
-            + "generatedTestFiles/RulesLocation.yml");
+    /* actual rootImport */
+    ImportInfo actualRootImport = (ImportInfo) generateAndGetRulesInfo(
+            new File(RUDIBUGGER_TEST_RES_DIR + "rulesTest/Rules.rudi"));
 
-    /* actual Map */
-    Map actualMap;
-    actualMap = generateAndGetRulesLocMap(new File(RUDIBUGGER_TEST_RES_DIR
-            + "rulesTest/Rules.rudi"));
-
-    /* excepted Map */
-    LinkedHashMap<String, Map> expectedMap = new LinkedHashMap() {
-      {
-        put("rule_one", new LinkedHashMap() {
-          {
-            put("%InLine", 1);
-          }
-        });
-        put("rule_two", new LinkedHashMap() {
-          {
-            put("%InLine", 5);
-          }
-        });
-      }
-    };
+    /* excepted ImportInfo */
+    int ruleId = 0;
+    ImportInfo expectedRootImport = new ImportInfo("Rules", -1, null);
+    RuleInfo rule_one = new RuleInfo(++ruleId, "rule_one", 1, expectedRootImport);
+    RuleInfo rule_two = new RuleInfo(++ruleId, "rule_two", 5, expectedRootImport);
 
     /* test for equality */
-    assertEquals(expectedMap, actualMap);
+    assertEquals(expectedRootImport, actualRootImport);
   }
 
   @Test
   public void testImportsOnly() {
 
-    /* define to RuleLocation.yml's location */
-    configs.put("ruleLocationFile", RUDIBUGGER_TEST_RES_DIR
-            + "generatedTestFiles/ImportLocation.yml");
-
-    /* actual Map */
-    Map actualMap;
-    actualMap = generateAndGetRulesLocMap(new File(RUDIBUGGER_TEST_RES_DIR
+    /* actual rootImport */
+    ImportInfo actualRootImport = (ImportInfo) generateAndGetRulesInfo(
+            new File(RUDIBUGGER_TEST_RES_DIR
             + "importTest/Root.rudi"));
 
-    /* excepted Map */
-    LinkedHashMap<String, Map> expectedMap = new LinkedHashMap() {
-      {
-        put("rule_one", new LinkedHashMap() {
-          {
-            put("%InLine", 1);
-          }
-        });
-        put("Import1", new LinkedHashMap() {
-          {
-            put("%ImportWasInLine", 6);
-            put("rule_import", new LinkedHashMap() {
-              {
-                put("%InLine", 1);
-              }
-            });
-          }
-        });
-        put("rule_two", new LinkedHashMap() {
-          {
-            put("%InLine", 8);
-          }
-        });
-      }
-    };
+    /* excepted ImportInfo */
+    int ruleId = 0;
+    ImportInfo expectedRootImport = new ImportInfo("Root", -1, null);
+    RuleInfo rule_one = new RuleInfo(++ruleId, "rule_one", 1, expectedRootImport);
+    ImportInfo import1 = new ImportInfo("Import1", 6, expectedRootImport);
+    RuleInfo rule_import = new RuleInfo(++ruleId, "rule_import", 1, import1);
+    RuleInfo rule_two = new RuleInfo(++ruleId, "rule_two", 8, expectedRootImport);
 
     /* test for equality */
-    assertEquals(expectedMap, actualMap);
-
+    assertEquals(expectedRootImport, actualRootImport);
   }
 
   @Test
   public void testNestedRules() {
 
-    /* define to RuleLocation.yml's location */
-    configs.put("ruleLocationFile", RUDIBUGGER_TEST_RES_DIR
-            + "generatedTestFiles/NestedRulesLocation.yml");
-
-    /* actual Map */
-    Map actualMap;
-    actualMap = generateAndGetRulesLocMap(new File(RUDIBUGGER_TEST_RES_DIR
+    /* actual rootImport */
+    ImportInfo actualRootImport = (ImportInfo) generateAndGetRulesInfo(
+            new File(RUDIBUGGER_TEST_RES_DIR
             + "nestedRulesTest/NestedRules.rudi"));
 
-    /* excepted Map */
-    LinkedHashMap<String, Map> expectedMap = new LinkedHashMap() {
-      {
-        put("rule_one", new LinkedHashMap() {
-          {
-            put("%InLine", 1);
-            put("rule_one_a", new LinkedHashMap() {
-              {
-                put("%InLine", 4);
-              }
-            });
-          }
-        });
-        put("rule_two", new LinkedHashMap() {
-          {
-            put("%InLine", 10);
-          }
-        });
-      }
-    };
+    /* excepted ImportInfo */
+    int ruleId = 0;
+    ImportInfo expectedRootImport = new ImportInfo("NestedRules", -1, null);
+    RuleInfo rule_one = new RuleInfo(++ruleId, "rule_one", 1, expectedRootImport);
+    RuleInfo rule_one_a = new RuleInfo(++ruleId, "rule_one_a", 4, rule_one);
+    RuleInfo rule_two = new RuleInfo(++ruleId, "rule_two", 10, expectedRootImport);
 
     /* test for equality */
-    assertEquals(expectedMap, actualMap);
+    assertEquals(expectedRootImport, actualRootImport);
   }
 
   @Test
   public void testEverything() {
 
-    /* define to RuleLocation.yml's location */
-    configs.put("ruleLocationFile", RUDIBUGGER_TEST_RES_DIR
-            + "generatedTestFiles/EverythingLocation.yml");
-
-    /* actual Map */
-    Map actualMap;
-    actualMap = generateAndGetRulesLocMap(new File(RUDIBUGGER_TEST_RES_DIR
+    /* actual rootImport */
+    ImportInfo actualRootImport = (ImportInfo) generateAndGetRulesInfo(
+            new File(RUDIBUGGER_TEST_RES_DIR
             + "everythingTest/Root.rudi"));
 
-    /* excepted Map */
-    LinkedHashMap<String, Map> expectedMap = new LinkedHashMap() {
-      {
-        put("rule_one", new LinkedHashMap() {
-          {
-            put("%InLine", 1);
-            put("rule_one_a", new LinkedHashMap() {
-              {
-                put("%InLine", 4);
-              }
-            });
-          }
-        });
-        put("Import1", new LinkedHashMap() {
-          {
-            put("%ImportWasInLine", 10);
-            put("rule_import", new LinkedHashMap() {
-              {
-                put("%InLine", 1);
-                put("rule_import_a", new LinkedHashMap() {
-                  {
-                    put("%InLine", 4);
-                  }
-                });
-              }
-            });
-          }
-        });
-        put("rule_two", new LinkedHashMap() {
-          {
-            put("%InLine", 12);
-            put("rule_two_a", new LinkedHashMap() {
-              {
-                put("%InLine", 15);
-              }
-            }
-            );
-          }
-        }
-        );
-      }
-    };
+    /* excepted ImportInfo */
+    int ruleId = 0;
+    ImportInfo expectedRootImport = new ImportInfo("Root", -1, null);
+    RuleInfo rule_one = new RuleInfo(++ruleId, "rule_one", 1, expectedRootImport);
+    RuleInfo rule_one_a = new RuleInfo(++ruleId, "rule_one_a", 4, rule_one);
+    ImportInfo import1 = new ImportInfo("Import1", 10, expectedRootImport);
+    RuleInfo rule_import = new RuleInfo(++ruleId, "rule_import", 1, import1);
+    RuleInfo rule_import_a = new RuleInfo(++ruleId, "rule_import_a", 4, rule_import);
+    RuleInfo rule_two = new RuleInfo(++ruleId, "rule_two", 12, expectedRootImport);
+    RuleInfo rule_two_a = new RuleInfo(++ruleId, "rule_two_a", 15, rule_two);
 
     /* test for equality */
-    assertEquals(expectedMap, actualMap);
-
+    assertEquals(expectedRootImport, actualRootImport);
   }
 
 }
