@@ -60,7 +60,7 @@ public class TestTypeInference {
     String in = "QuizHistory getCurrentTurn();"
             + " turn = getCurrentTurn(); ";
     String s = generate(in);
-    String expected = "Rdf turn = getCurrentTurn();";
+    String expected = "public Rdf turn = getCurrentTurn();";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("Rdf turn;"));
   }
@@ -80,7 +80,7 @@ public class TestTypeInference {
   public void test4() {
     String in = "Activity a; if (a) { }";
     String s = generate(in);
-    String expected = "if (a != null) { }";
+    String expected = "public Rdf a;/**/if (a != null) { }";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("Rdf a;"));
   }
@@ -90,7 +90,7 @@ public class TestTypeInference {
     String in = "String foo(); "
             + "boolean b = foo(); ";
     String s = generate(in);
-    String expected = "b = exists(foo());";
+    String expected = "public Rdf b;b = exists(foo());";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("boolean b;"));
   }
@@ -117,7 +117,7 @@ public class TestTypeInference {
   public void test8() {
     String in = " Quiz q; if(q.quizbool) i = 7; ";
     String s = generate(in);
-    String expected = "if ((q != null && "
+    String expected = "public Rdf q;/**/if ((q != null && "
         + "((Boolean)q.getSingleValue(\"<dom:quizbool>\")))) int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("Rdf q;"));
@@ -127,7 +127,7 @@ public class TestTypeInference {
   public void test9() {
     String in = "Quiz q;if(q.tabletOrientation) i = 7; ";
     String s = generate(in);
-    String expected = "if ((q != null && "
+    String expected = "public Rdf q;/**/if ((q != null && "
         + "exists(((String)q.getSingleValue(\"<dom:tabletOrientation>\")))))"
         + " int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
@@ -149,7 +149,7 @@ public class TestTypeInference {
   public void test10() {
     String in = " double f; void fun() { Clazz c; c.bf = 1.0; }";
     String s = generate(in);
-    String expected = "double f; public void fun() { Rdf c;c.setValue(\"<dom:bf>\", 1.0); } }";
+    String expected = "public double f;/**/public void fun() { Rdf c;c.setValue(\"<dom:bf>\", 1.0); } }";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("double f;"));
   }

@@ -1,5 +1,6 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
+import static de.dfki.mlt.rudimant.compiler.GenerationConstants.*;
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
 import static org.junit.Assert.*;
 
@@ -60,7 +61,7 @@ public class TstUtils {
 
   public static void setUpEmpty() {
     try {
-      setUp(TESTCONF, "int asdf;// hello test\n", "");
+      setUp(TESTCONF, "// hello test\n", "");
     }
     catch (FileNotFoundException fex) {
       throw new RuntimeException(fex);
@@ -68,6 +69,7 @@ public class TstUtils {
   }
 
   public static String getForMarked(String s, String exp) {
+    s = s.replace(PROCESS_PREFIX, "/**/").replace(PROCESS_SUFFIX, "");
     s = normalizeSpaces(s).trim();
     exp = normalizeSpaces(exp).trim();
     int start = s.indexOf("// hello test") + 13;

@@ -6,6 +6,7 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Utils.*;
+import static de.dfki.mlt.rudimant.compiler.GenerationConstants.*;
 import static de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarParser.*;
 
 import java.io.*;
@@ -159,18 +160,26 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
       throws IOException{
     List<RTStatement> later = new ArrayList<>();
     // do all VarDefs *DEFINITIONS* on toplevel here, those are class attributes
-    for(RudiTree r : rules){
+    for(RudiTree r : rules) {
+      StatFieldDef fd = null;
       if (r instanceof StatFieldDef) {
         // Only generates definition;
-        ((StatFieldDef)r).visitWithComments(gv);;
+        fd = (StatFieldDef)r;
       } else if (r instanceof StatVarDef) {
-        StatFieldDef fd = new StatFieldDef("public", (StatVarDef)r);
-        r.fixFields(fd).visitWithComments(gv);
+        fd = new StatFieldDef("public", (StatVarDef)r);
+        r.fixFields(fd);
+      }
+      if (fd != null) {
+        if (fd.varDef.toAssign != null) {
+          gv.visitNode(fd); // save comment for assignment
+        } else {
+          fd.visitWithComments(gv);
+        }
       }
     }
 
     // create the process method
-    out.append("  public int process(){\n  int res = 0;");
+    out.append(PROCESS_PREFIX);
     // use all methods created from rules in this file
     for(RudiTree r : rules) {
       if (r instanceof StatMethodDeclaration) {
@@ -224,7 +233,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         ((RTStatement)r).visitWithComments(gv);
       }
     }
-    out.append("return 0; \n}\n");
+    out.append(PROCESS_SUFFIX);
 
     // replace the comments list by the laterComments list
     pourBackSavedComments(gv);

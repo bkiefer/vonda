@@ -52,7 +52,7 @@ public class TestAdditionalEmpty {
   @Test
   public void testDialogueAct() {
     String in = "int x=27;emitDA(#I(Greet, val=^x));";
-    String exp = "x = 27; emitDA(new DialogueAct(\"I\", \"Greet\", \"val\", x));";
+    String exp = "x = 27;emitDA(new DialogueAct(\"I\", \"Greet\", \"val\", x));";
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));
     assertTrue(s.contains("int x;"));
