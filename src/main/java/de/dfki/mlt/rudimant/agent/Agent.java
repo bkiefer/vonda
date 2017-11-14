@@ -76,7 +76,7 @@ public abstract class Agent implements StreamingClient {
   protected boolean proposalsSent;
 
   /** The next two variable determine which rudi rules are logged */
-  public Set<String> rulesToLog = new HashSet<>();
+  public BitSet rulesToLog = new BitSet();
   public boolean logAllRules = false;
 
   public RdfProxy _proxy;
@@ -827,18 +827,18 @@ public abstract class Agent implements StreamingClient {
   }
 
   /** Start logging a specific rule */
-  public void logRule(String name) {
-    rulesToLog.add(name);
+  public void logRule(int id) {
+    rulesToLog.set(id);
   }
 
   /** Stop logging a specific rule */
-  public void unLogRule(String name) {
-    rulesToLog.remove(name);
+  public void unLogRule(int id) {
+    rulesToLog.clear(id);
   }
 
   /** For the compiled code, to determine if a rule should be logged */
-  public boolean shouldLog(String name) {
-    return logAllRules || rulesToLog.contains(name);
+  public boolean shouldLog(int ruleId) {
+    return logAllRules || rulesToLog.get(ruleId);
   }
 
   /**
