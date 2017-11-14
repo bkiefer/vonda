@@ -129,25 +129,14 @@ public class TestTypes {
 
   @Test
   public void testBooleanRdfExists2() {
-    String in = "Child c; a: if (!c.hasMother) int i = 0;";
+    String in = "Child c; /*myMarker*/a: if (!c.hasMother) int i = 0;";
     String r = generate(in);
     String expected =
-        "public Rdf c;/**/public int a(){ boolean a0 = false; a0 = !((c != null && "
+        "public Rdf c;/**//*myMarker*/ public int a(){ boolean a0 = false; a0 = !((c != null && "
         + "((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null));";
-    assertEquals(expected, getForMarked(r, expected));
+    assertEquals(expected, getForMarked(r, expected, "/*myMarker*/"));
     assertTrue(r.contains("Rdf c;"));
   }
-
-  /* TODO: THIS PRODUCES TOTAL JUNK. To be fixed.
-  @Test
-  public void testBooleanRdfExists3() {
-    String in = "Child c; a: if (true && false) int i = 0;";
-    String r = generate(in);
-    String expected =
-        "a(); return false; } public boolean a(){ boolean a0 = false; a0 = true if (null) { false a0 = null && null } else { a0 = lasdjf;laksjf;lasjdflja;sldkfj;laskjdf;laskjdf;lk||";
-    assertEquals(expected, getForMarked(r, expected));
-  }
-  */
 
   @Test
   public void testWrongMapperAccess() {
@@ -157,8 +146,8 @@ public class TestTypes {
     String r = generate(in);
     String expected =
         "public List<Rdf> out() { List<Rdf> raw = new ArrayList<>();"
-        + " for ( int i = 1; ((i < 5) && (raw.size() < 3)); i = (i+1)){"
-        + " Rdf w = getChild(i); if (w != null) raw.add(w); } return raw;";
+        + " for ( int i = 1;((i < 5) && (raw.size() < 3));i = (i+1)){"
+        + " Rdf w = getChild(i);if (w != null) raw.add(w); } return raw;";
     assertEquals(expected, getForMarked(r, expected));
   }
 

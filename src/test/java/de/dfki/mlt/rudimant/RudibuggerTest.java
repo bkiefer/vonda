@@ -39,7 +39,7 @@ public class RudibuggerTest {
 
     /* excepted ImportInfo */
     int ruleId = 0;
-    ImportInfo expectedRootImport = new ImportInfo("Rules", -1, null);
+    ImportInfo expectedRootImport = new ImportInfo("Rules", null, -1, null);
     RuleInfo rule_one = new RuleInfo(++ruleId, "rule_one", 1, expectedRootImport);
     RuleInfo rule_two = new RuleInfo(++ruleId, "rule_two", 5, expectedRootImport);
 
@@ -57,9 +57,9 @@ public class RudibuggerTest {
 
     /* excepted ImportInfo */
     int ruleId = 0;
-    ImportInfo expectedRootImport = new ImportInfo("Root", -1, null);
+    ImportInfo expectedRootImport = new ImportInfo("Root", null, -1, null);
     RuleInfo rule_one = new RuleInfo(++ruleId, "rule_one", 1, expectedRootImport);
-    ImportInfo import1 = new ImportInfo("Import1", 6, expectedRootImport);
+    ImportInfo import1 = new ImportInfo("Import1", null, 6, expectedRootImport);
     RuleInfo rule_import = new RuleInfo(++ruleId, "rule_import", 1, import1);
     RuleInfo rule_two = new RuleInfo(++ruleId, "rule_two", 8, expectedRootImport);
 
@@ -77,7 +77,7 @@ public class RudibuggerTest {
 
     /* excepted ImportInfo */
     int ruleId = 0;
-    ImportInfo expectedRootImport = new ImportInfo("NestedRules", -1, null);
+    ImportInfo expectedRootImport = new ImportInfo("NestedRules", null, -1, null);
     RuleInfo rule_one = new RuleInfo(++ruleId, "rule_one", 1, expectedRootImport);
     RuleInfo rule_one_a = new RuleInfo(++ruleId, "rule_one_a", 4, rule_one);
     RuleInfo rule_two = new RuleInfo(++ruleId, "rule_two", 10, expectedRootImport);
@@ -96,10 +96,10 @@ public class RudibuggerTest {
 
     /* excepted ImportInfo */
     int ruleId = 0;
-    ImportInfo expectedRootImport = new ImportInfo("Root", -1, null);
+    ImportInfo expectedRootImport = new ImportInfo("Root", null, -1, null);
     RuleInfo rule_one = new RuleInfo(++ruleId, "rule_one", 1, expectedRootImport);
     RuleInfo rule_one_a = new RuleInfo(++ruleId, "rule_one_a", 4, rule_one);
-    ImportInfo import1 = new ImportInfo("Import1", 10, expectedRootImport);
+    ImportInfo import1 = new ImportInfo("Import1", null, 10, expectedRootImport);
     RuleInfo rule_import = new RuleInfo(++ruleId, "rule_import", 1, import1);
     RuleInfo rule_import_a = new RuleInfo(++ruleId, "rule_import_a", 4, rule_import);
     RuleInfo rule_two = new RuleInfo(++ruleId, "rule_two", 12, expectedRootImport);

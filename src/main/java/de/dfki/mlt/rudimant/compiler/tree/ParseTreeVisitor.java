@@ -468,14 +468,17 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       return new StatFor2(ctx.getChild(2).getText(), var,
           (RTExpression) visit(ctx.getChild(5)),
           visit(ctx.getChild(7)).ensureStatement()).setPosition(ctx, currentClass);
-    } else if (ctx.getChild(3).getText().equals(";") ||
-        ctx.getChild(5).getText().equals(";")) {
+    } else if (ctx.getChild(2).getText().endsWith(";") ||
+        ctx.getChild(4).getText().equals(";")) {
       // statement looks like "FOR LPAR assignment SEMICOLON exp SEMICOLON exp RPAR loop_statement_block"
       // all expressions are optional!
-      int i = 2;
       RudiTree[] forExps = {null, null, null};
-      for (int j = 0; j < 3; ++j) {
-        if (!ctx.getChild(i).equals(";")) {
+      if (! ctx.getChild(2).getText().equals(";")) {
+        forExps[0] = visit(ctx.getChild(2));
+      }
+      int i = 3;
+      for (int j = 1; j < 3; ++j) {
+        if (!ctx.getChild(i).getText().equals(";")) {
           forExps[j] = visit(ctx.getChild(i));
           ++i;
         }
@@ -483,7 +486,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       }
       RTStatement block = visit(ctx.getChild(i)).ensureStatement();
 
-      return new StatFor1((ExpAssignment) forExps[0], (ExpBoolean) forExps[1],
+      return new StatFor1((StatVarDef) forExps[0], (ExpBoolean) forExps[1],
           (RTExpression) forExps[2], block).setPosition(ctx, currentClass);
     } else {
       // statement looks like "FOR LPAR LPAR VARIABLE ( COMMA VARIABLE )+ RPAR COLON exp RPAR loop_statement_block"
@@ -557,7 +560,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     }
     RTExpression toAssign = null;
     // if the third last child is an equal sign, there is an assignment
-    if (ctx.getChild(lastPos - 1).getText().equals("=")) {
+    if (lastPos > firstPos && ctx.getChild(lastPos - 1).getText().equals("=")) {
       toAssign = (RTExpression) visit(ctx.getChild(lastPos));
       lastPos -= 2;
     }

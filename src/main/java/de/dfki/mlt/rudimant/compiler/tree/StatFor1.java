@@ -15,12 +15,12 @@ import java.util.Arrays;
  */
 public class StatFor1 extends RTStatement {
 
-  ExpAssignment initialization;
+  StatVarDef initialization;
   RTExpression condition;
   RTExpression increment;
   RTStatement statblock;
 
-  public StatFor1(ExpAssignment assignment, ExpBoolean condition,
+  public StatFor1(StatVarDef assignment, ExpBoolean condition,
           RTExpression arithmetic, RTStatement statblock) {
     this.initialization = assignment;
     this.condition = condition;

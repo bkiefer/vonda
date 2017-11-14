@@ -46,12 +46,10 @@ public class TestTypeInference {
     String in = "boolean firstEncounter(); b = firstEncounter();";
     GrammarFile gf = parseAndTypecheck(in);
     Iterator<? extends RudiTree> it = gf.getDtrs().iterator();
-    it.next();
-    it.next();
     RudiTree rt = it.next();
-    assertTrue(rt instanceof StatExpression);
-    assertTrue(((StatExpression)rt).expression instanceof ExpAssignment);
-    ExpAssignment ass = (ExpAssignment)((StatExpression)rt).expression;
+    rt = it.next();
+    assertTrue(rt instanceof StatVarDef);
+    ExpAssignment ass = (ExpAssignment)((StatVarDef)rt).toAssign;
     assertEquals("boolean", ass.left.type.toJava());
   }
 
@@ -60,9 +58,9 @@ public class TestTypeInference {
     String in = "QuizHistory getCurrentTurn();"
             + " turn = getCurrentTurn(); ";
     String s = generate(in);
-    String expected = "public Rdf turn = getCurrentTurn();";
+    String expected = "turn = getCurrentTurn();";
     assertEquals(expected, getForMarked(s, expected));
-    assertTrue(s.contains("Rdf turn;"));
+    assertTrue(s.contains("public Rdf turn;"));
   }
 
 
@@ -71,9 +69,9 @@ public class TestTypeInference {
     String in = "QuizHistory getCurrentTurn(); "
             + "Rdf turn = getCurrentTurn();";
     String s = generate(in);
-    String expected = "Rdf turn = getCurrentTurn();";
+    String expected = "turn = getCurrentTurn();";
     assertEquals(expected, getForMarked(s, expected));
-    assertTrue(s.contains("Rdf turn"));
+    assertTrue(s.contains("public Rdf turn;"));
   }
 
   @Test
@@ -85,14 +83,14 @@ public class TestTypeInference {
     assertTrue(s.contains("Rdf a;"));
   }
 
-  @Test
-  public void test5() {
+  @Test(expected=TypeException.class)
+  public void test5() throws Throwable {
     String in = "String foo(); "
             + "boolean b = foo(); ";
-    String s = generate(in);
-    String expected = "public Rdf b;b = exists(foo());";
+    String s = getTypeError(in);
+    String expected = "b = foo();";
     assertEquals(expected, getForMarked(s, expected));
-    assertTrue(s.contains("boolean b;"));
+    assertTrue(s.contains("public boolean b;"));
   }
 
   @Test
@@ -164,7 +162,9 @@ public class TestTypeInference {
   public void test12() {
     String in = " long fun(long i); int l = 1; k = fun(l);";
     String s = generate(in);
-    String expected = "int l = 1;long k = fun(l);";
+    String expected = "l = 1;k = fun(l);";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("public int l;"));
+    assertTrue(s.contains("public long k;"));
   }
 }

@@ -8,8 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.StringWriter;
 import java.util.Iterator;
 
-import de.dfki.mlt.rudimant.compiler.tree.*;
-
 public class TstUtils {
   public static final String RESOURCE_DIR = "src/test/resources/";
   public static final String TESTCONF = RESOURCE_DIR + "tests.yml";
@@ -71,6 +69,19 @@ public class TstUtils {
   public static String getForMarked(String s, String exp) {
     s = s.replace(PROCESS_PREFIX, "/**/").replace(PROCESS_SUFFIX, "");
     s = normalizeSpaces(s).trim();
+    exp = normalizeSpaces(exp).trim();
+    int start = s.indexOf("// hello test") + 13;
+    int end = Math.min(start + exp.length() + 1, s.length());
+    //s.lastIndexOf("// end of test");
+    return normalizeSpaces(s.substring(start, end).trim());
+  }
+
+  public static String getForMarked(String s, String exp, String marker) {
+    s = s.replace(PROCESS_PREFIX, "/**/").replace(PROCESS_SUFFIX, "");
+    s = normalizeSpaces(s).trim();
+    int b = s.indexOf("/**/") + 4;
+    int e = s.indexOf(marker);
+    s = s.substring(0, b) + s.substring(e);
     exp = normalizeSpaces(exp).trim();
     int start = s.indexOf("// hello test") + 13;
     int end = Math.min(start + exp.length() + 1, s.length());

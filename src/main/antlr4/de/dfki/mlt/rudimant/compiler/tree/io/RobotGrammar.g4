@@ -1,6 +1,9 @@
 /*
  * Grammar dedicated to create a parser and a lexer for dialogue rules in
  * DFKI robot language
+ *
+ * see also:
+ * http://stackoverflow.com/questions/15050137/once-grammar-is-complete-whats-the-best-way-to-walk-an-antlr-v4-tree
  */
 
 grammar RobotGrammar;
@@ -172,6 +175,13 @@ complex_exp
   | simple_exp
   ;
 
+// TODO: is that all 'what you can assign to' (an lvalue), which can be:
+// a variable, an array element, an rdf slot (did i forget sth?)
+assignment
+  : variable '=' exp
+  | field_access '=' exp
+  ;
+
 simple_exp
   : '(' exp ')'
   | variable
@@ -225,13 +235,6 @@ da_token
   | VARIABLE
   | STRING
   | WILDCARD
-  ;
-
-// TODO: is that all 'what you can assign to' (an lvalue), which can be:
-// a variable, an array element, an rdf slot (did i forget sth?)
-assignment
-  : variable '=' exp
-  | field_access '=' exp
   ;
 
 // either a number or a term containing at least one operator

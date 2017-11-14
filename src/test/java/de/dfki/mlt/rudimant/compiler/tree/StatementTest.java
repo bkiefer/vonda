@@ -111,7 +111,7 @@ public class StatementTest {
     String in = "Object foo;  "
             + "for (int i = 1; i <= 2; i = i+1){foo.slot = 1;}";
    String r = generate(in);
-   String expected = "Object foo;for ( int i = 1; (i <= 2); i = (i+1)){ foo.slot = 1; }";
+   String expected = "Object foo;for ( int i = 1;(i <= 2);i = (i+1)){ foo.slot = 1; }";
    assertEquals(expected, getForMarked(r, expected));
  }
 

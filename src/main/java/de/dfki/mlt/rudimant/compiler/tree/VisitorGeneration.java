@@ -451,7 +451,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
   public void visitNode(StatFor1 node) {
     out.append("for ( ");
     node.initialization.visitWithComments(this);
-    out.append("; ");
+    //out.append("; ");
     node.condition.visitWithComments(this);
     out.append(";");
     if (node.increment != null) {

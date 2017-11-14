@@ -67,7 +67,7 @@ public class TestMethodDeclaration {
     String methdecl = " [List<T>]. T get(int a); List<String> l;"
     		+ "x = l.get(0);";
     String s = generate(methdecl);
-    String expected = "public List<String> l;public String x/**/x = l.get(0);";
+    String expected = "public List<String> l;public String x;/**/x = l.get(0);";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("String x;"));
     assertTrue(s.contains("List<String> l;"));
