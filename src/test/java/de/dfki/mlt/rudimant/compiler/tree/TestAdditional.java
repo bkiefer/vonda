@@ -36,17 +36,20 @@ public class TestAdditional {
   public void testParenthesis() {
     String in = "rule: if (lastPref.pref_score != 0) {}";
     String r = generate(in);
-    String expected = "public int rule(){ "
+    String pref = "public int rule(){ "
         + "boolean rule0 = false; "
         + "rule0 = (lastPref.pref_score != 0); "
-        + "if (shouldLog(\"rule\")){"
-        + " Map<String, Boolean> rule = new LinkedHashMap<>(); "
+        + "if (shouldLog(";
+    String suff =
+        " Map<String, Boolean> rule = new LinkedHashMap<>(); "
         + "rule.put(\"lastPref.pref_score!=0\", rule0); "
         + "rule.put(\"lastPref.pref_score!=0\", rule0); "
         + "logRule(rule, \"rule\", \"Test\"); } "
         + "rule: "
         + "if (rule0) { } "
         + "return 0; }";
-    assertEquals(expected, getForMarked(r, expected));
+    String foo = getForMarked(r, pref + "_________________" + suff);
+    assertTrue(foo.startsWith(pref));
+    assertTrue(foo.contains(suff));
   }
 }

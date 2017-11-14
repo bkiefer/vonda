@@ -323,7 +323,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
   @Override
   public void visitNode(StatGrammarRule node) {
     node.toplevel = mem.enterRule(node.label, node.getLocation());
-
+    node.ruleId = mem.getCurrentRuleInfo().getId();
     // we step down into a new environment (later turned to a method) whose
     //  variables cannot be seen from the outside
     if (node.toplevel) {

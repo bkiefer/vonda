@@ -409,7 +409,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatGrammarRule node) {
-    mem.enterRule(node.label, null);
+    mem.enterRule(node.label, null); // location only used in type visitor
     if (node.toplevel) {
       mem.enterEnvironment(node);
       // is a top level rule and will be converted to a method
@@ -418,9 +418,10 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     } else {
       // is a sub-level rule and will get an if to determine whether it
       // should be executed
-      out.append("// Rule " + node.label + "\n");
+      out.append("// Rule ").append(node.label).append("\n");
     }
-    ruleIf = printRuleLogger(node.label, (ExpBoolean) node.ifstat.condition);
+    ruleIf = printRuleLogger(node.label, node.ruleId,
+        (ExpBoolean) node.ifstat.condition);
     out.append(node.label + ":\n");
     node.ifstat.visitWithComments(this);
     if (node.toplevel) {
@@ -792,7 +793,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
    *
    * @param rule
    */
-  private String printRuleLogger(String rule, ExpBoolean bool_exp) {
+  private String printRuleLogger(String rule, int ruleId, ExpBoolean bool_exp) {
 
     // TODO BK: bool_exp can be a simple expression, in which case it
     // has to be turned into a comparison with zero, null or a call to
@@ -815,7 +816,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
     out.append("if (");
     topLevel();
-    out.append("shouldLog(\"" + rule + "\")){\n");
+    out.append("shouldLog(" + ruleId + ")){\n");
     // do all that logging
     out.append("Map<String, Boolean> " + rule + " = new LinkedHashMap<>();\n");
 

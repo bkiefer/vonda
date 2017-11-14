@@ -21,8 +21,9 @@ public class StatGrammarRule extends RTStatement implements RTBlockNode {
   String label;
   StatIf ifstat;
   // remember whether you are toplevel
-  // TODO: EVENTUALLY REMOVE, CAN BE DETERMINED OTHERWISE (ClassEnv)
   boolean toplevel;
+  // remember your rule id
+  int ruleId;
 
   public StatGrammarRule(String label, StatIf ifstat) {
     this.label = label;

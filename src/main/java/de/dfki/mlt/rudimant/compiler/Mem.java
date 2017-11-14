@@ -165,8 +165,10 @@ public class Mem {
     curClass().leaveRule();
   }
 
-  /** Return the name of the innermost rule we're in */
-  public String getCurrentRule() { return curClass().getCurrentRule(); }
+  /** Return the info of the innermost rule we're in */
+  public RuleInfo getCurrentRuleInfo() {
+    return root instanceof RuleInfo ? (RuleInfo)root : null;
+  }
 
   /** Return true if we are in a rule (somehow) with this name */
   public boolean isExistingRule(String rule) {
