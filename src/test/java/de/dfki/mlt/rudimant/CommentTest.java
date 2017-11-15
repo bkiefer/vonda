@@ -26,7 +26,7 @@ public class CommentTest {
     CompilerMain.main(new String[]{
       "-o", "target/generated/",
       "-r", RESOURCE_DIR + "ontos/pal.quads.ini",
-      RESOURCE_DIR + "comments.rudi",
+      RESOURCE_DIR + "Comments.rudi",
     });
 
     assertTrue(new File("target/generated/Comments.java").exists());

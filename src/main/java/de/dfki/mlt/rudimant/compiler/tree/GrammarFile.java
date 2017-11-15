@@ -227,8 +227,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
           if (ncs != null) {
             boolean notfirst = false;
             for (String c : ncs) {
-              if (c.equals(mem.getClassName())
-                  || capitalize(c).equals(mem.getClassName())) {
+              if (c.equals(mem.getClassName())) {
                 c = "this";
               }
               if (notfirst) out.append(", ");
@@ -313,13 +312,16 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     out.append("{\n");
 
     String thisClassName = mem.getClassName();
+    List<String> fields = new ArrayList<>();
     // ************************************************************
     // create fields for all classes we need instances of
     // ************************************************************
     for (String neededClass : mem.getNeededClasses()) {
       if(neededClass.equals(thisClassName)) continue;
       out.append("private final ");
-      out.append(neededClass).append(' ').append(lowerCaseFirst(neededClass));
+      String name = lowerCaseFirst(neededClass);
+      fields.add(name);
+      out.append(neededClass).append(' ').append(name);
       out.append(";\n");
     }
 
@@ -329,19 +331,17 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
 
     // Add arguments for all needed class instances
     boolean notfirst = false;
-    out.append("public ").append(thisClassName).append('(');
+    out.append("\n\npublic ").append(thisClassName).append('(');
+    Iterator<String> names = fields.iterator();
     for (String needed : mem.getNeededClasses()) {
       if(needed.equals(thisClassName)) continue;
-      String name = lowerCaseFirst(needed);
       if (notfirst)
         out.append(", ");
-      out.append(needed).append(' ').append(name);
+      out.append(needed).append(' ').append(names.next());
       notfirst = true;
     }
     out.append(") {\n super();\n");
-    for (String needed : mem.getNeededClasses()) {
-      if(needed.equals(thisClassName)) continue;
-      String name = lowerCaseFirst(needed);
+    for (String name : fields) {
       out.append("this.").append(name).append(" = ").append(name).append(";\n");
     }
     out.append("\n}\n");

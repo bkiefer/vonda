@@ -18,9 +18,10 @@ public class TestImport {
     CompilerMain.main(new String[]{
         "-o", "target/generated/",
         "-r", RESOURCE_DIR + "ontos/pal.quads.ini",
-        RESOURCE_DIR + "main.rudi"
+        RESOURCE_DIR + "Main.rudi"
     });
     assertTrue(new File("target/generated/Main.java").exists());
     assertTrue(new File("target/generated/Import.java").exists());
+    assertTrue(new File("target/generated/sub/Import.java").exists());
   }
 }

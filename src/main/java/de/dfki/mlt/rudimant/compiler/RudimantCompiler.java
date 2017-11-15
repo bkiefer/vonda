@@ -1,7 +1,6 @@
 package de.dfki.mlt.rudimant.compiler;
 
 import static de.dfki.mlt.rudimant.compiler.Constants.*;
-import static de.dfki.mlt.rudimant.compiler.Utils.capitalize;
 import static de.dfki.mlt.rudimant.compiler.tree.GrammarFile.*;
 
 import java.io.*;
@@ -153,18 +152,17 @@ public class RudimantCompiler {
     inputRootDir = topLevel.getParentFile();
     if (outputRootDir == null) outputRootDir = inputRootDir;
     // get the real name, without upper case transformation
-    String inputRealName = topLevel.getName().replace(RULE_FILE_EXT, "");
+    String className = topLevel.getName().replace(RULE_FILE_EXT, "");
 
-    String className = capitalize(inputRealName);
     String[] subPackage = {};
     mem.enterClass(className, subPackage, null);
-    readAgentSpecs(inputRealName);
+    readAgentSpecs(className);
     String wrapperClass = mem.getWrapperClass();
     File wrapperInit = new File(inputRootDir,
         wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + RULE_FILE_EXT);
     try {
       if (wrapperInit.exists()) {
-        parseAndTypecheck(this, new FileInputStream(wrapperInit), inputRealName);
+        parseAndTypecheck(this, new FileInputStream(wrapperInit), className);
       } else {
         logger.info("No method declaration file for {}", wrapperInit);
       }
@@ -172,7 +170,7 @@ public class RudimantCompiler {
       logger.error("Initializer file import: {}", ex);
     }
     try {
-      processForReal(inputRealName);
+      processForReal(className);
     } finally {
       mem.leaveClass();
     }
