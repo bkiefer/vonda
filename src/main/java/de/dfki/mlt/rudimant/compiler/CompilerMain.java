@@ -147,7 +147,7 @@ public class CompilerMain {
 
   @SuppressWarnings("unchecked")
   public static RudimantCompiler init(File configDir,
-      Map<String, Object> configs, File topLevelDir)
+      Map<String, Object> configs)
       throws IOException, WrongFormatException {
     if(configs.get(CFG_WRAPPER_CLASS) == null) {
       System.out.println("No implementation class specified, exiting.");
@@ -161,7 +161,6 @@ public class CompilerMain {
     RudimantCompiler rc = new RudimantCompiler(
         handler, proxy,
         (String)configs.get(CFG_WRAPPER_CLASS),
-        topLevelDir,
         checkOutputDirectory(configDir, configs),
         configs.containsKey(CFG_PACKAGE)
         ? (String) configs.get(CFG_PACKAGE)
@@ -248,9 +247,7 @@ public class CompilerMain {
         configs.put(CFG_OUTPUT_DIRECTORY, outputDirectory);
       }
       main.setConfig(configs);
-      if (process(
-          init(confDir, configs, new File((String)files.get(0)).getParentFile()),
-          (String)files.get(0))) {
+      if (process(init(confDir, configs), (String)files.get(0))) {
         System.out.println("Parsing failed");
         System.exit(1);
       }

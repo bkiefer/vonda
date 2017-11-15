@@ -7,6 +7,7 @@ package de.dfki.mlt.rudimant.compiler;
 
 import static de.dfki.mlt.rudimant.compiler.Utils.*;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,10 +45,10 @@ public class Mem {
 
   private int blockNesting = 0;
 
-  private RdfProxy _proxy;
+  private final RdfProxy _proxy;
 
   /** Info about all imports and rules (tree) */
-  private BasicInfo root;
+  private BasicInfo currentInfo, rootInfo;
 
   /** When true, infos about imports and rules are collected */
   private boolean doingTypeCheck;
@@ -57,16 +58,21 @@ public class Mem {
    */
   private final String wrapperClass;
 
+  /** The root package for the output */
+  private final String[] rootPackage;
+
   /** the rudi file that represents the Agent (the topmost rudi file) */
   private ClassEnv topLevelClass;
 
-  public Mem(RdfProxy proxy, String wrapper) {
+  public Mem(RdfProxy proxy, String wrapper, String[] rootPkg) {
     currentEnv = null;
     currentBlock = null;
+    currentInfo = null;
     _proxy = proxy;
     Type.setProxy(proxy);
     doingTypeCheck = true;
     wrapperClass = wrapper;
+    rootPackage = rootPkg;
   }
 
   /** Get the current ClassEnv (the one treated now) */
@@ -78,17 +84,18 @@ public class Mem {
     return topLevelClass.getName();
   }
 
-  public String getTopLevelPackage() {
-    return getPackageName(topLevelClass.packageSpec());
+  /** Return the root package spec */
+  public String[] getTopLevelPackageSpec() {
+    return rootPackage;
   }
 
   public String getWrapperClass() {
     return wrapperClass;
   }
 
-  /** Return the package of the class currently processed */
-  public String getPackage() {
-    return getPackageName(curClass().packageSpec());
+  /** Return the sub-package spec of the current class */
+  public String[] getPackageSpec() {
+    return curClass().packageSpec();
   }
 
   // TODO the next two are candidates for refactoring, check call graph!
@@ -109,11 +116,23 @@ public class Mem {
    *
    * @param classname of the new class
    */
-  public void enterClass(String classname, String[] pkg) {
+  public void enterClass(String classname, String[] pkg, Location loc) {
+    if (currentEnv != null) {
+      // create the new package specification (append new to old)
+      String[] currentPkg = getPackageSpec();
+      String[] newpkg =
+          Arrays.copyOf(currentPkg, currentPkg.length + pkg.length);
+      for (int i = 0, j = currentPkg.length; i < pkg.length; ++i, ++j) {
+        newpkg[j] = pkg[i];
+      }
+      pkg = newpkg;
+    }
     ClassEnv newEnv = new ClassEnv(classname, pkg);
+    currentInfo = new ImportInfo(classname, pkg,
+        (loc == null ? -1 :loc.getLineNumber()), currentInfo);
     if (currentBlock == null) {
       topLevelClass = newEnv;
-      root = new ImportInfo(classname, pkg, -1, null);
+      rootInfo = currentInfo;
     }
     ToplevelBlock node = new ToplevelBlock();
     enterEnvironment(node);
@@ -128,6 +147,7 @@ public class Mem {
   public void leaveClass() {
     ToplevelBlock node = currentBlock;
     currentBlock = currentBlock.getParentClass();
+    currentInfo = currentInfo.getParent();
 
     leaveEnvironment(node);
   }
@@ -142,7 +162,6 @@ public class Mem {
    */
   public String getClassName() { return curClass().getName(); }
 
-
   public void leaveTypecheck() {
     doingTypeCheck = false;
   }
@@ -154,25 +173,20 @@ public class Mem {
 
   public boolean enterRule(String name, Location loc) {
     if (doingTypeCheck)
-      root = new RuleInfo(name, loc.getLineNumber(), root);
+      currentInfo = new RuleInfo(name, loc.getLineNumber(), currentInfo);
     // The condition is: We're in the topmost environment of a file.
     return curClass().enterRule(name) && currentBlock.getBindings() == currentEnv;
   }
 
   public void leaveRule() {
     if (doingTypeCheck)
-      root = root.getParent();
+      currentInfo = currentInfo.getParent();
     curClass().leaveRule();
   }
 
   /** Return the info of the innermost rule we're in */
   public RuleInfo getCurrentRuleInfo() {
-    return root instanceof RuleInfo ? (RuleInfo)root : null;
-  }
-
-  /** Return true if we are in a rule (somehow) with this name */
-  public boolean isExistingRule(String rule) {
-    return curClass().isActiveRule(rule);
+    return currentInfo instanceof RuleInfo ? (RuleInfo)currentInfo : null;
   }
 
   /** Add a function/method declaration, optionally with return and parameter
@@ -272,15 +286,6 @@ public class Mem {
     logger.trace("Leave level {}", blockNesting);
   }
 
-  // TODO: REFACTOR INTO ENTERCLASS/LEAVECLASS
-  public void addImport(String name, String[] pathSpec, Location loc) {
-    root = new ImportInfo(name, pathSpec, loc.getLineNumber(), root);
-  }
-
-  public void leaveImport() {
-    root = root.getParent();
-  }
-
   /** Return the set of needed classes to generate the proper import statements
    * @return A set of all needed external classes (because of variable or
    * function definitions from this class).
@@ -297,11 +302,11 @@ public class Mem {
   }
 
   public BasicInfo getInfo() {
-    return root;
+    return rootInfo;
   }
 
   public void registerError(String errorMessage, Location location) {
-    BasicInfo current = root;
+    BasicInfo current = currentInfo;
     while (! (current instanceof ImportInfo))
       current = current.getParent();
     ImportInfo info = (ImportInfo)current;

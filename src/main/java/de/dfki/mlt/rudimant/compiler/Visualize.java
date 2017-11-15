@@ -36,9 +36,9 @@ public class Visualize extends CompilerMain {
 
   private static RudimantCompiler initRc()
       throws IOException, WrongFormatException {
-    RudimantCompiler rc = init(confDir, configs, null);
+    RudimantCompiler rc = init(confDir, configs);
     String[] pkg = {};
-    rc.getMem().enterClass("Test", pkg);
+    rc.getMem().enterClass("Test", pkg, null);
     rc.readAgentSpecs("Test");
     return rc;
   }
@@ -62,7 +62,7 @@ public class Visualize extends CompilerMain {
   public static BasicInfo generateAndGetRulesInfo(File input) {
     RudimantCompiler rc;
     try {
-      rc = init(confDir, configs, input.getParentFile());
+      rc = init(confDir, configs);
       rc.processToplevel(input);
     } catch (IOException | WrongFormatException e) {
       throw new RuntimeException(e);

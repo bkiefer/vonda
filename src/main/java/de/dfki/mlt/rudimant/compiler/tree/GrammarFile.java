@@ -123,7 +123,11 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     for (RudiTree t : rules) {
       if (t instanceof Import) {
         Import node = (Import)t;
-        rudi.processImport(node.name, node.path, node.location);
+        try {
+          rudi.processImport(node.name, node.path, node.location);
+        } catch (IOException fex) {
+          ttv.typeError(fex.getMessage(), node);
+        }
       } else if (t instanceof RTStatement) {
         ((RTStatement)t).visit(ttv);
       } else if (t instanceof RTExpression) {
@@ -209,9 +213,16 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
           saveCommentsForLater(gv, r.positions[1]);
           out.append(" if (res != 0)");
         } else {
+          Import imp = (Import)r;
           out.append(r.checkComments(gv, r.positions[0]));
           out.append("res = ");
-          out.append("new " + capitalize(((Import)r).name) + "(");
+          // use fully qualified name
+          String rootpkg = getPackageName(mem.getTopLevelPackageSpec());
+          String pkg = getPackageName(mem.getPackageSpec());
+          out.append("new ");
+          if (! rootpkg.isEmpty()) out.append(rootpkg).append('.');
+          if (! pkg.isEmpty()) out.append(pkg).append('.');
+          out.append(getQualifiedName(imp.path, imp.name)).append("(");
           Set<String> ncs = mem.getNeededClasses();
           if (ncs != null) {
             boolean notfirst = false;
@@ -248,9 +259,11 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
       throws IOException  {
     Mem mem = rudi.getMem();
     // tell the file in which package it lies
-    String pkg = mem.getPackage();
-    if (pkg != null)
-      out.append("package " + pkg + ";\n");
+    String rootpkg = getPackageName(mem.getTopLevelPackageSpec());
+    String pkg = getPackageName(mem.getPackageSpec());
+    if (!rootpkg.isEmpty() || !pkg.isEmpty())
+      out.append("package " + rootpkg
+          + (pkg.isEmpty() ? "" : "." + pkg) + ";\n");
 
     out.append("import java.util.*;\n\n" +
         "import de.dfki.mlt.rudimant.agent.DialogueAct;\n" +
@@ -259,19 +272,22 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     // Let's import our supersuper class, if we're the top-level class
     if (! mem.isNotToplevelClass()) {
       out.append("import ").append(mem.getWrapperClass()).append(";\n");
+    } else {
+      // import the top level class
+      out.append("import ");
+      if (! rootpkg.isEmpty()) out.append(rootpkg).append('.');
+      out.append(mem.getTopLevelClass()).append(";\n");
     }
-    // import the top level class
-    out.append("import ")
-       .append(mem.getTopLevelPackage()).append('.')
-       .append(mem.getTopLevelClass()).append(";\n");
     // import the included classes
     for(RudiTree r : rules) {
+      // TODO: MAYBE NOT NECESSARY WHEN USING QUALIFIED NAMES IN PROCESS ??
       if (r instanceof Import) {
         Import i = (Import)r;
         if (i.path.length > 0) {
-          out.append("import ")
-          .append(mem.getPackage()).append('.')
-          .append(getQualifiedName(i.path, i.name)).append(";\n");
+          out.append("import ");
+          if (! rootpkg.isEmpty()) out.append(rootpkg).append('.');
+          if (! pkg.isEmpty()) out.append(pkg).append('.');
+          out.append(getQualifiedName(i.path, i.name)).append(";\n");
         }
       }
     }

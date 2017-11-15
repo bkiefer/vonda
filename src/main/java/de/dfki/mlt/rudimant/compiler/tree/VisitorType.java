@@ -770,9 +770,6 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
         node.type = Type.getNoType();
       }
     }
-    // Make sure an external class requirement is registered if variable is
-    // not defined in this class
-    mem.getVariableOriginClass(node.content);
   }
 
   /* **********************************************************************
