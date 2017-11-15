@@ -228,8 +228,11 @@ public class RudimantCompiler {
       throws IOException {
     logger.info("Processing import {}/{}", Arrays.toString(dirSpec), name);
     mem.enterClass(name, dirSpec, loc);
-    processForReal(name);
-    mem.leaveClass();
+    try {
+      processForReal(name);
+    } finally {
+      mem.leaveClass();
+    }
   }
 
 }
