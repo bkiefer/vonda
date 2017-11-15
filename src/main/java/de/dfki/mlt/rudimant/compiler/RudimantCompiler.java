@@ -171,8 +171,11 @@ public class RudimantCompiler {
     } catch (IOException ex) {
       logger.error("Initializer file import: {}", ex);
     }
-    processForReal(inputRealName);
-    mem.leaveClass();
+    try {
+      processForReal(inputRealName);
+    } finally {
+      mem.leaveClass();
+    }
 
     // save ruleLocMap to .yml file
     DumperOptions options = new DumperOptions();
