@@ -312,41 +312,53 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     }
     out.append("{\n");
 
-    // create variable fields for all those classes whose concrete instances we
-    // will need
-    for (String n : mem.getNeededClasses()) {
-      if(n.equals(mem.getClassName())) continue;
+    String thisClassName = mem.getClassName();
+    // ************************************************************
+    // create fields for all classes we need instances of
+    // ************************************************************
+    for (String neededClass : mem.getNeededClasses()) {
+      if(neededClass.equals(thisClassName)) continue;
       out.append("private final ");
-      out.append(capitalize(n)).append(' ').append(lowerCaseFirst(n));
+      out.append(neededClass).append(' ').append(lowerCaseFirst(neededClass));
       out.append(";\n");
     }
-    // add a constructor
-    // also, to use them for imports, declare those parameters class attributes
-    String declare = "";
 
-    // get all those classes the toplevel rules need
+    // ************************************************************
+    // add a constructor for this class
+    // ************************************************************
+
+    // Add arguments for all needed class instances
     boolean notfirst = false;
-    out.append("public ").append(mem.getClassName()).append('(');
-    for (String n : mem.getNeededClasses()) {
-      if(n.equals(mem.getClassName())) continue;
-      String name = lowerCaseFirst(n);
+    out.append("public ").append(thisClassName).append('(');
+    for (String needed : mem.getNeededClasses()) {
+      if(needed.equals(thisClassName)) continue;
+      String name = lowerCaseFirst(needed);
       if (notfirst)
         out.append(", ");
-      out.append(capitalize(n)).append(' ').append(name);
-      declare += "this." + name + " = " + name + ";\n";
+      out.append(needed).append(' ').append(name);
       notfirst = true;
     }
-    out.append(") {\n super();\n").append(declare).append("\n}\n");
+    out.append(") {\n super();\n");
+    for (String needed : mem.getNeededClasses()) {
+      if(needed.equals(thisClassName)) continue;
+      String name = lowerCaseFirst(needed);
+      out.append("this.").append(name).append(" = ").append(name).append(";\n");
+    }
+    out.append("\n}\n");
 
-    // finally, the main processing method that will call all rules and imports
+    // ************************************************************
+    // generate the main processing method that will call all rules and imports
     // declared in this file
+    // ************************************************************
     VisitorGeneration gv =
         new VisitorGeneration(out, mem, rudi.logRudi(), tokens);
     mem.enterEnvironment(this);
     writeRuleList(out, mem, gv);
     mem.leaveEnvironment(this);
 
+    // ************************************************************
     // at the very end of the file, there might still be unprinted comments
+    // ************************************************************
     for (Token comment : gv.collectedTokens) {
       out.append(RudiTree.removeJavaBrackets(comment.getText())).append("\n");
     }

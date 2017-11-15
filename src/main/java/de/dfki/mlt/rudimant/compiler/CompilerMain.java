@@ -188,7 +188,7 @@ public class CompilerMain {
    * @throws WrongFormatException
    * @throws Exception
    */
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  @SuppressWarnings("rawtypes")
   public static void main(String[] args) throws WrongFormatException {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
