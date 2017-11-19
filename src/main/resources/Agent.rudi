@@ -54,7 +54,7 @@ void cancelTimeout(String name);
 String getLanguage();
 
 // Math methods
-int random(limit int);
+int random(int limit);
 float random();
 
 // logging methods

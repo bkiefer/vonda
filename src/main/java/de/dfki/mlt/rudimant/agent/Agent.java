@@ -24,6 +24,10 @@ public abstract class Agent implements StreamingClient {
 
   public static final Logger logger = LoggerFactory.getLogger(Agent.class);
 
+  /** To generate unique IDs for behaviours, etc. */
+  protected static int _generatorCounter = -1;
+  public String idPrefix = "";
+
   protected String executedLast = null;
 
   protected String _language;
@@ -72,7 +76,7 @@ public abstract class Agent implements StreamingClient {
   protected boolean proposalsSent;
 
   /** The next two variable determine which rudi rules are logged */
-  public Set<String> rulesToLog = new HashSet<>();
+  public BitSet rulesToLog = new BitSet();
   public boolean logAllRules = false;
 
   public RdfProxy _proxy;
@@ -80,6 +84,13 @@ public abstract class Agent implements StreamingClient {
   /** Send something out to the world */
   protected void sendBehaviour(Object obj) {
     // TODO implement it, possibly with a Listener.
+  }
+
+  /** Generate a unique id, e.g., for the behaviours */
+  public String generateId() {
+    return idPrefix +
+        (int) ((System.currentTimeMillis() & 0xFF) +
+            (_generatorCounter++ << 8));
   }
 
   // TODO: we need sth like this to use the dialogue history; is this the right way?
@@ -157,12 +168,18 @@ public abstract class Agent implements StreamingClient {
     return da;
   }
 
+  /** Send a Behaviour to the Behaviourmanager (communication hub) */
+  public final void emitBehaviour(Behaviour b) {
+    lastBehaviourId = b.getId();
+    _hub.sendBehaviour(b);
+  }
+
   /** Generate text and motion from a raw speech act representation and send it
-   * to the Behaviourmanager
+   *  to the Behaviourmanager
    */
   public DialogueAct emitDA(int delay, DialogueAct da) {
     Pair<String, String> toSay = asr.generate(da.getDag());
-    _hub.sendBehaviour(new Behaviour(toSay.second, toSay.first, delay));
+    emitBehaviour(new Behaviour(generateId(), toSay.second, toSay.first, delay));
     return addToMyDA(da);
   }
 
@@ -810,18 +827,18 @@ public abstract class Agent implements StreamingClient {
   }
 
   /** Start logging a specific rule */
-  public void logRule(String name) {
-    rulesToLog.add(name);
+  public void logRule(int id) {
+    rulesToLog.set(id);
   }
 
   /** Stop logging a specific rule */
-  public void unLogRule(String name) {
-    rulesToLog.remove(name);
+  public void unLogRule(int id) {
+    rulesToLog.clear(id);
   }
 
   /** For the compiled code, to determine if a rule should be logged */
-  public boolean shouldLog(String name) {
-    return logAllRules || rulesToLog.contains(name);
+  public boolean shouldLog(int ruleId) {
+    return logAllRules || rulesToLog.get(ruleId);
   }
 
   /**

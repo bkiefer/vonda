@@ -7,7 +7,7 @@ package de.dfki.mlt.rudimant;
 
 import org.junit.Test;
 
-import de.dfki.mlt.rudimant.GrammarMain;
+import de.dfki.mlt.rudimant.compiler.CompilerMain;
 
 /**
  *
