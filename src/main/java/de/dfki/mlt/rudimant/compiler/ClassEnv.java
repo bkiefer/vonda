@@ -2,6 +2,8 @@ package de.dfki.mlt.rudimant.compiler;
 
 import java.util.*;
 
+import de.dfki.mlt.rudimant.common.RuleInfo;
+
 /** A class environment, storing things like top-level rules and imports, which
  *  are later on important for generation.
  *
@@ -11,7 +13,7 @@ public class ClassEnv {
   private String name;
 
   /** A stack of the currently processed rules */
-  private List<String> activeRules;
+  private Map<Integer, RuleInfo> activeRules;
 
   /** The package this class lives in */
   private String[] packageSpec;
@@ -19,7 +21,7 @@ public class ClassEnv {
   public ClassEnv(String className, String[] pkg) {
     name = className;
     packageSpec = pkg;
-    activeRules = new ArrayList<>();
+    activeRules = new HashMap<>();
   }
 
   public String getName() { return name; }
@@ -29,22 +31,13 @@ public class ClassEnv {
   /** Are we on the top-level (not in a rule already) */
   private boolean ontop() { return activeRules.isEmpty(); }
 
-  public boolean enterRule(String name) {
+  public boolean enterRule(RuleInfo info) {
     boolean topLevelRule = ontop();
-    activeRules.add(name);
+    activeRules.put(info.getId(), info);
     return topLevelRule;
   }
 
-  public void leaveRule() {
-    activeRules.remove(activeRules.size() - 1);
-  }
-
-  public String getCurrentRule() {
-    if (activeRules.isEmpty()) return null;
-    return activeRules.get(activeRules.size() - 1);
-  }
-
-  public boolean isActiveRule(String name) {
-    return activeRules.indexOf(name) >= 0;
+  public RuleInfo getRuleInfo(int id) {
+    return activeRules.get(id);
   }
 }

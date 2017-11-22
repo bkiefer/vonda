@@ -24,23 +24,8 @@ public class ExpFieldAccess extends RTExpLeaf {
   }
 
   @Override
-  public void visit(RTExpressionVisitor v) {
+  public void visit(RudiVisitor v) {
     v.visitNode(this);
-  }
-
-  /**
-   * if we are an expression but this method is called, we should write to out;
-   * it means that the instance calling us must be a statement
-   * @param v
-   */
-  @Override
-  public void visitVoidV(VisitorGeneration v) {
-    v.out.append(v.visitNode(this));
-  }
-
-  @Override
-  public String visitStringV(RTStringVisitor v){
-    return v.visitNode(this);
   }
 
   public Iterable<? extends RudiTree> getDtrs() { return parts; }
@@ -56,6 +41,6 @@ public class ExpFieldAccess extends RTExpLeaf {
     ExpFieldAccess first = fixFields(new ExpFieldAccess(smaller, smallerRep));
     first.type = parts.get(s - 1).type;
     RTExpression right = this.ensureBooleanBasic();
-    return fixFields(new ExpBoolean(first.ensureBooleanUFA(), right, "&&"));
+    return fixFields(new ExpBoolean(first.ensureBooleanUFA(), right, "&&", true));
   }
 }

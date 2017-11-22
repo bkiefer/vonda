@@ -12,9 +12,4 @@ package de.dfki.mlt.rudimant.compiler.tree;
  */
 public abstract class RTStatement extends RudiTree {
 
-  /**
-   * visitor method
-   */
-  public abstract void visit(RTStatementVisitor v);
-
 }

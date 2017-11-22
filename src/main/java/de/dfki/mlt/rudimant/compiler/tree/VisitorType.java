@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
+import de.dfki.mlt.rudimant.common.RuleInfo;
 import de.dfki.mlt.rudimant.compiler.Mem;
 import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
 import de.dfki.mlt.rudimant.compiler.Type;
@@ -26,7 +27,7 @@ import de.dfki.mlt.rudimant.compiler.TypeException;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
+public class VisitorType implements RudiVisitor {
 
   public static final Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
@@ -68,11 +69,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     typeErrorFatal = errorsFatal;
   }
 
-  public void visitNode(RTExpression node) {
-    node.visit(this);
-  }
-
-  public void visitNode(RTStatement node) {
+  public void visitNode(RudiTree node) {
     node.visit(this);
   }
 
@@ -202,17 +199,59 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     }
   }
 
+
+  private boolean collectTerms() {
+    return (activeInfo != null && ! ruleIfSuspended);
+  }
+
+  private void handleRuleLogging(ExpBoolean node) {
+    // handle case of ExpBoolean which is possibly a base term
+    if (collectTerms()) {
+      if (isBooleanOperator(node.operator)) {
+        activeInfo.addOp(node.operator);
+      } else {
+        activeInfo.addBaseTerm(node.fullexp);
+        ruleIfSuspended = true;
+      }
+    }
+  }
+
+  private void visitExpBoolChild(RudiTree node) {
+    boolean oldSuspendState = ruleIfSuspended;
+    if (collectTerms() && ! (node instanceof ExpBoolean)) {
+      activeInfo.addBaseTerm(node.fullexp);
+      ruleIfSuspended = true;
+    }
+    node.visit(this);
+    ruleIfSuspended = oldSuspendState;
+  }
+
   /*
    * In principle the same as ExpArithmetic, with boolean only. The one
    * difference is that there are unary expressions which serve as boolean
    * expressions and later have to be turned into proper boolean expressions,
    * either by calling the right 0-ary method, or comparing with zero or null.
    */
+  /** In case activeInfo is not null and ruleIfSuspended is false, we have to
+   *  check if the operator is one of &&, || or !, in which case we add the
+   *  operator to the infix representation in the rule info and proceed
+   *  collecting base terms.
+   *
+   *  Otherwise, we have to do some things:
+   *   1. add the base term to the rule info
+   *   2. set ruleIfSuspended to true before descending
+   */
   @Override
   public void visitNode(ExpBoolean node) {
-    node.left.visit(this);
+    boolean oldSuspendState = ruleIfSuspended;
+    // first handle case of ExpBoolean which is a base term
+    handleRuleLogging(node);
+
+    // the operator is one of &&, ||, !, if one of the children is not an
+    // ExpBoolean, term collection has to be suspended and the term added
+    visitExpBoolChild(node.left);
     if (node.right != null) {
-      node.right.visit(this);
+      visitExpBoolChild(node.right);
       if (isBooleanOperator(node.operator)) {
         node.right = node.right.ensureBoolean();
         node.left = node.left.ensureBoolean();
@@ -222,6 +261,7 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
       // side it may have no operator
       node.left = node.left.ensureBoolean();
     }
+    ruleIfSuspended = oldSuspendState;
   }
 
   @Override
@@ -319,17 +359,27 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
     mem.leaveEnvironment(node);
   }
 
+  private boolean ruleIfSuspended = false;
+  private RuleInfo activeInfo = null;
 
   @Override
   public void visitNode(StatGrammarRule node) {
     node.toplevel = mem.enterRule(node.label, node.getLocation());
-    node.ruleId = mem.getCurrentRuleInfo().getId();
+    activeInfo = mem.getCurrentRuleInfo();
+    node.ruleId = activeInfo.getId();
     // we step down into a new environment (later turned to a method) whose
     //  variables cannot be seen from the outside
     if (node.toplevel) {
       mem.enterEnvironment(node);
     }
-    node.ifstat.visit(this);
+    StatIf ifNode = node.ifstat;
+    ifNode.condition.visit(this);
+    activeInfo = null;
+    ifNode.statblockIf.visit(this);
+    if (ifNode.statblockElse != null) {
+      ifNode.statblockElse.visit(this);
+    }
+    ifNode.condition = ifNode.condition.ensureBoolean();
     if (node.toplevel) {
       mem.leaveEnvironment(node);
     }

@@ -50,9 +50,6 @@ public class Mem {
   /** Info about all imports and rules (tree) */
   private BasicInfo currentInfo, rootInfo;
 
-  /** When true, infos about imports and rules are collected */
-  private boolean doingTypeCheck;
-
   /** the Java class that will be extended by the topmost rudi file to link
    *  the rule files into a Java project
    */
@@ -70,7 +67,6 @@ public class Mem {
     currentInfo = null;
     _proxy = proxy;
     Type.setProxy(proxy);
-    doingTypeCheck = true;
     wrapperClass = wrapper;
     rootPackage = rootPkg;
   }
@@ -152,36 +148,33 @@ public class Mem {
     leaveEnvironment(node);
   }
 
-  public boolean isActiveRule(String name) {
-    return curClass().isActiveRule(name);
-  }
-
   /** get the name of the current class
    *
    * @return The name of the current class to be generated.
    */
   public String getClassName() { return curClass().getName(); }
 
-  public void leaveTypecheck() {
-    doingTypeCheck = false;
-  }
-
-  public void enterTypecheck() {
-    doingTypeCheck = true;
-  }
-
-
+  /** This is called during type check, and will return true if the rule is
+   *  on the top level of a file, and not embedded into another rule or
+   *  environment.
+   */
   public boolean enterRule(String name, Location loc) {
-    if (doingTypeCheck)
-      currentInfo = new RuleInfo(name, loc.getLineNumber(), currentInfo);
+    currentInfo = new RuleInfo(name, loc.getLineNumber(), currentInfo);
     // The condition is: We're in the topmost environment of a file.
-    return curClass().enterRule(name) && currentBlock.getBindings() == currentEnv;
+    curClass().enterRule((RuleInfo)currentInfo);
+    return //curClass().enterRule((RuleInfo)currentInfo)
+        currentInfo.getParent() instanceof ImportInfo
+        && currentBlock.getBindings() == currentEnv;
+  }
+
+  /** This is called during generation */
+  public RuleInfo enterRule(int id) {
+    currentInfo = curClass().getRuleInfo(id);
+    return (RuleInfo)currentInfo;
   }
 
   public void leaveRule() {
-    if (doingTypeCheck)
-      currentInfo = currentInfo.getParent();
-    curClass().leaveRule();
+    currentInfo = currentInfo.getParent();
   }
 
   /** Return the info of the innermost rule we're in */

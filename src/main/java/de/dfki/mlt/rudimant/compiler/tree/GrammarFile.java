@@ -370,15 +370,9 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     return rules;
   }
 
-  @Override
-  public String visitStringV(RTStringVisitor v) {
-    throw new UnsupportedOperationException("not supported");
-  }
-
-  @Override
-  public void visitVoidV(VisitorGeneration v) {
-    throw new UnsupportedOperationException("not supported");
-  }
+  public void visit(RudiVisitor v) {
+    throw new UnsupportedOperationException("visit is special");
+  };
 
   // ==== IMPLEMENTATION OF RTBLOCKNODE =====================================
 

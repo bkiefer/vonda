@@ -15,10 +15,10 @@ public class TestAdditionalEmpty {
   // exp to statement in if
   @Test
   public void testIfThenExp() {
-    String in = "lab: if(true) emitDA(#InitialGreeting(Greet));";
-    String exp = "public int lab(){ lab: if (true) "
-            + "emitDA(new DialogueAct(\"InitialGreeting\", \"Greet\"));"
-            + " return 0;";
+    String in = "public int lab(){ if(true) emitDA(#InitialGreeting(Greet)); }";
+    String exp = "public int lab() { if (true) "
+            + "emitDA(new DialogueAct(\"InitialGreeting\", \"Greet\")); }";
+
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));
   }
@@ -26,10 +26,9 @@ public class TestAdditionalEmpty {
   // exp to statement in else of if
   @Test
   public void testIfThenElseExp() {
-    String in = "lab: if(true) b=1; else emitDA(#InitialGreeting(Greet));";
-    String exp = "public int lab(){ lab: if (true) int b = 1; "
-            + "else emitDA(new DialogueAct(\"InitialGreeting\", \"Greet\")); "
-            + "return 0;";
+    String in = "public int lab(){ if(true) b=1; else emitDA(#InitialGreeting(Greet)); }";
+    String exp = "public int lab() { if (true) int b = 1; "
+            + "else emitDA(new DialogueAct(\"InitialGreeting\", \"Greet\")); }";
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));
   }
@@ -37,10 +36,9 @@ public class TestAdditionalEmpty {
   // exp to statement in for
   @Test
   public void testForExp() {
-    String in = "lab: if(true) for(s : child.sessions) 23;";
-    String exp = "public int lab(){ lab: if (true) "
-            + "for (Object s_outer : child.sessions) {"
-            + " Object s = (Object)s_outer; 23; } return 0;";
+    String in = "public int lab(){ for(s : child.sessions) 23; }";
+    String exp = "public int lab() { for (Object s_outer : child.sessions) {"
+            + " Object s = (Object)s_outer; 23; } }";
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));
   }

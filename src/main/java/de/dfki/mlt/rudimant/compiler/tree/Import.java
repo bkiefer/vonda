@@ -27,21 +27,13 @@ public class Import extends RudiTree {
     path = dirSpec;
   }
 
+  public void visit(RudiVisitor v) {
+    throw new UnsupportedOperationException("visit is special");
+  };
+
   public String toString() { return "import " + path; }
 
   public Iterable<? extends RudiTree> getDtrs() {
     return Collections.emptyList();
-  }
-
-  @Override
-  public String visitStringV(RTStringVisitor v) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public void visitVoidV(VisitorGeneration v) {
-    // TODO Auto-generated method stub
-
   }
 }

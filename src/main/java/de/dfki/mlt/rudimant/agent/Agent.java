@@ -865,4 +865,12 @@ public abstract class Agent implements StreamingClient {
     //logger.debug("{}", sb.toString());
     System.err.println(sb.toString());
   }
+
+  /**
+   * function that prints logs of (rule) conditions
+   * @param id the id of the rule whose evaluation this is
+   * @param values the parts of the condition, mapped to true or false
+   */
+  public void logRule(int ruleId, boolean[] result) {
+  }
 }

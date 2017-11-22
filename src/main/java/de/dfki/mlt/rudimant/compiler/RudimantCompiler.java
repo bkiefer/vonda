@@ -214,9 +214,7 @@ public class RudimantCompiler {
     if (visualise)
       Visualize.show(gf, name);
     Writer output = Files.newBufferedWriter(outputFile.toPath());
-    mem.leaveTypecheck();
     gf.generate(this, output);
-    mem.enterTypecheck();
     output.close();
 
     uncrustify(outputFile);

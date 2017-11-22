@@ -23,17 +23,7 @@ public class StatSwitch extends RTCondBlockStatement {
   }
 
   @Override
-  public void visit(RTStatementVisitor v) {
-    v.visitNode(this);
-  }
-
-  @Override
-  public String visitStringV(RTStringVisitor v){
-    throw new UnsupportedOperationException("Nodes bigger than expressions must not return Strings but write to out!");
-  }
-
-  @Override
-  public void visitVoidV(VisitorGeneration v) {
+  public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
 }

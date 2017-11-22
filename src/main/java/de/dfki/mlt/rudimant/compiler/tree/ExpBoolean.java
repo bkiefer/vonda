@@ -14,6 +14,9 @@ import de.dfki.mlt.rudimant.compiler.Type;
  * @author Anna Welker
  */
 public class ExpBoolean extends RTBinaryExp {
+  // if this is true, it means that this ExpBoolean has been created during
+  // code generation, and does not directly come from parsing
+  public boolean synthetic;
 
   /**
    * if the expression consists of only one part, set right and operator to null
@@ -31,23 +34,22 @@ public class ExpBoolean extends RTBinaryExp {
     this.type = new Type("boolean");
   }
 
-  @Override
-  public void visit(RTExpressionVisitor v) {
-    v.visitNode(this);
-  }
-
   /**
-   * if we are an expression but this method is called, we should write to out;
-   * it means that the instance calling us must be a statement
-   * @param v
-   */
-  @Override
-  public void visitVoidV(VisitorGeneration v) {
-    v.out.append(v.visitNode(this));
-  }
+   * if the expression consists of only one part, set right and operator to null
+  *
+  * @param fullexp the String representation of the whole expression
+  * @param left left part
+  * @param right right part
+  * @param operator operator in between
+  */
+ public ExpBoolean(RTExpression left,
+         RTExpression right, String operator, boolean synth) {
+   this(left, right, operator);
+   synthetic = synth;
+ }
 
   @Override
-  public String visitStringV(RTStringVisitor v){
-    return v.visitNode(this);
+  public void visit(RudiVisitor v) {
+    v.visitNode(this);
   }
 }

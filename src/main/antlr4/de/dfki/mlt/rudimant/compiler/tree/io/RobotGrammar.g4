@@ -40,6 +40,7 @@ statement
   | return_statement
   | propose_statement
   | timeout_statement
+  | timeout_behaviour_statement
   | if_statement
   | while_statement
   | for_statement
@@ -81,7 +82,11 @@ for_statement
   ;
 
 propose_statement
-  : (PROPOSE|TIMEOUT_BEHAVIOUR) '(' string_expression ')' statement_block
+  : PROPOSE '(' string_expression ')' statement_block
+  ;
+
+timeout_behaviour_statement
+  : TIMEOUT_BEHAVIOUR '(' arithmetic ')' statement_block
   ;
 
 timeout_statement

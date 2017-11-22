@@ -129,12 +129,12 @@ public class TestTypes {
 
   @Test
   public void testBooleanRdfExists2() {
-    String in = "Child c; /*myMarker*/a: if (!c.hasMother) int i = 0;";
+    String in = "Child c; void a() { if (!c.hasMother) int i = 0; }";
     String r = generate(in);
     String expected =
-        "public Rdf c;/**//*myMarker*/ public int a(){ boolean a0 = false; a0 = !((c != null && "
-        + "((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null));";
-    assertEquals(expected, getForMarked(r, expected, "/*myMarker*/"));
+        "public Rdf c;/**/public void a() { if (!((c != null && "
+        + "((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null))) int i = 0; } }";
+    assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("Rdf c;"));
   }
 

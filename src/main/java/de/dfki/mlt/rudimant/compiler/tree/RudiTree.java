@@ -37,12 +37,15 @@ public abstract class RudiTree {
   public void visitWithComments(VisitorGeneration v) {
     int firstPos = positions[0];
     v.out.append(checkComments(v, firstPos));
-    visitVoidV(v);
+    visit(v);
     // TODO: as endpos is where this node ends, we will never get to print anything
     //       here, will we?
     int endPos = positions[1];
     v.out.append(checkComments(v, endPos));
   }
+
+  /** visitor method, for double dispatch */
+  public abstract void visit(RudiVisitor v);
 
   /**
    * set positions and fullexp of to those of this object
@@ -61,18 +64,6 @@ public abstract class RudiTree {
     }
     return (RTStatement)this;
   }
-
-  /**
-   * the visitMethod for the visitor that allows to return Strings ! only to be
-   * used by expressions !
-   */
-  public abstract String visitStringV(RTStringVisitor v);
-
-  /**
-   * the visitMethod for the visitor that allows to return Strings ! for
-   * everything except expressions, they should write to out !
-   */
-  public abstract void visitVoidV(VisitorGeneration v);
 
   public static String removeJavaBrackets(String c){
     // Deal with java code

@@ -28,18 +28,8 @@ public class StatFor3 extends RTStatement {
   }
 
   @Override
-  public void visit(RTStatementVisitor v) {
+  public void visit(RudiVisitor v) {
     v.visitNode(this);
-  }
-
-  @Override
-  public void visitVoidV(VisitorGeneration v) {
-    v.visitNode(this);
-  }
-
-  @Override
-  public String visitStringV(RTStringVisitor v){
-    throw new UnsupportedOperationException("Nodes bigger than expressions must not return Strings but write to out!");
   }
 
   public Iterable<? extends RudiTree> getDtrs() {

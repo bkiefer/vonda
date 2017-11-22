@@ -8,7 +8,6 @@ package de.dfki.mlt.rudimant.compiler.tree;
 import static de.dfki.mlt.rudimant.compiler.Constants.*;
 import static de.dfki.mlt.rudimant.compiler.Utils.*;
 
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.*;
 
@@ -16,6 +15,7 @@ import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.mlt.rudimant.common.RuleInfo;
 import de.dfki.mlt.rudimant.compiler.Mem;
 import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
 import de.dfki.mlt.rudimant.compiler.SilentWriter;
@@ -26,13 +26,13 @@ import de.dfki.mlt.rudimant.compiler.Type;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
+public class VisitorGeneration implements RudiVisitor {
 
   public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
   SilentWriter out;
   private Mem mem;
-  private VisitorConditionLog condV;
+  //private VisitorConditionLog condV;
   LinkedList<Token> collectedTokens;
 
   boolean whatToLog;
@@ -40,52 +40,55 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
   // activate bool to get double escaped String literals
   private boolean escape = false;
 
-  // flag to tell the if if is a real rule if (contains the condition that was calculated)
-  private String ruleIf = null;
+  // to count the base terms when generating code for logging the rules
+  int baseTerm;
+
+  // A kind of "dynamic bound" flag to suspend rule logging generation for
+  // ExpBoolean embedded in base terms
+  private boolean ruleIfSuspended = false;
+
+  // The active rule info when generating logging info for rules
+  private RuleInfo activeInfo = null;
+
 
   public VisitorGeneration(Writer o, Mem m, boolean logHow, LinkedList<Token> tokens) {
     out = new SilentWriter(o);
     mem = m;
     whatToLog = logHow;
-    condV = new VisitorConditionLog(this);
+    //condV = new VisitorConditionLog(this);
     collectedTokens = tokens;
   }
 
   @Override
-  public void visitNode(RTStatement node) {
+  public void visitNode(RudiTree node) {
     node.visitWithComments(this);
   }
 
   @Override
-  public String visitNode(RTExpression node) {
-    return node.visitWithSComments(this);
-  }
-
-  @Override
-  public String visitNode(ExpArithmetic node) {
-    String ret = "";
+  public void visitNode(ExpArithmetic node) {
     if (node.right == null) {
       // unary operator
       // TODO: ENCAPSULATE THIS INTO TWO FUNCTIONS: isPrefixOperator() and
       // isPostFixOperator()
       if ("-".equals(node.operator) || "!".equals(node.operator)) {
-        ret += node.operator;
+        out.append(node.operator);
       }
-      ret += '(' + node.left.visitWithSComments(this);
+      out.append('(');
+      node.left.visitWithComments(this);
       // something like .isEmpty(), which is a postfix operator
       if (node.operator.endsWith(")")) {
-        ret += node.operator;
+        out.append(node.operator);
       }
     } else {
-      ret += '(' + node.left.visitWithSComments(this);
-      ret += node.operator;
-      ret += node.right.visitWithSComments(this);
+      out.append('(');
+      node.left.visitWithComments(this);
+      out.append(node.operator);
+      node.right.visitWithComments(this);
       if (node.operator.endsWith("(")) {
-        ret += ')';
+        out.append(')');
       }
     }
-    ret += ')';
-    return ret;
+    out.append(')');
   }
 
   /** If this is true, when generating a ExpFieldAccess we will not
@@ -96,8 +99,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
   boolean replaceLastWithFuncall = false;
 
   @Override
-  public String visitNode(ExpAssignment node) {
-    String ret = "";
+  public void visitNode(ExpAssignment node) {
     ExpPropertyAccess pa = null;
     if (node.left instanceof ExpFieldAccess) {
       ExpFieldAccess acc = (ExpFieldAccess) node.left;
@@ -107,37 +109,36 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
       }
       // don't print the last field since is will be replaced by a set...(a, b)
       replaceLastWithFuncall = pa != null;
-      ret += node.left.visitWithSComments(this);
+      node.left.visitWithComments(this);
       if (replaceLastWithFuncall) {
         if (node.right instanceof ExpSingleValue &&
             ((ExpSingleValue)node.right).content.equals("null")) {
           replaceLastWithFuncall = false;
-          return ret + ".clearValue(" + pa.getPropertyName() + ")";
+          out.append(".clearValue(" + pa.getPropertyName() + ")");
         }
         // NO: out.append(functional ? ".setSingleValue(" : ".setValue(");
-        ret += ".setValue(";  // always right!
-        ret += pa.getPropertyName();
-        ret += ", ";
+        out.append(".setValue(");  // always right!
+        out.append(pa.getPropertyName());
+        out.append(", ");
       } else {
-        ret += " = ";
+        out.append(" = ");
       }
       replaceLastWithFuncall = false;
     } else {
-      ret += node.left.visitWithSComments(this);
-      ret += " = ";
+      node.left.visitWithComments(this);
+      out.append(" = ");
     }
     if (node.type != null
         && !node.type.needsCast(node.right.getType())
         && !(node.right instanceof ExpNew)) {
       // then there is either sth wrong here, what would at least have resulted
       // in warnings in type testing, or it is possible to cast the right part
-      ret += "(" + node.type + ") ";
+      out.append("(" + node.type + ") ");
     }
-    ret += node.right.visitWithSComments(this);
+    node.right.visitWithComments(this);
     if (pa != null) {
-      ret += ")"; // close call to setValue()
+      out.append(")"); // close call to setValue()
     }
-    return ret;
   }
 
 
@@ -153,13 +154,21 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     return left;
   }
 
-  private String generateAndMassageType(RTExpression node,
+  private void generateAndMassageType(RTExpression node,
       Type resultType, String operator) {
+    // collectTerms is guaranteed to be false here!
     if (node.type.isString()) {
-      if (resultType.isDialogueAct())
-        return "new DialogueAct(" + node.visitWithSComments(this) + ")";
-      if (resultType.isRdfType() && ! "==".equals(operator))
-        return node.visitWithSComments(this) + ".getClazz()";
+      if (resultType.isDialogueAct()) {
+        out.append("new DialogueAct(");
+        node.visitWithComments(this);
+        out.append(")");
+        return;
+      }
+      if (resultType.isRdfType() && ! "==".equals(operator)) {
+        node.visitWithComments(this);
+        out.append(".getClazz()");
+        return;
+      }
     }
     // TODO: MAYBE THIS MUST BE GENERALIZED TO OTHER JAVA TYPES THAN STRING
     // THAT CAN BE CONVERTED AUTOMATICALLY FROM XSD TYPES
@@ -172,13 +181,19 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
         Type[] args = { new Type("String") };
         String orig = mem.getFunctionOrigin("getRdfClass", Arrays.asList(args));
         orig = orig == null ? "" : lowerCaseFirst(orig) + ".";
-        return orig + "getRdfClass(" + node.visitWithSComments(this) + ")";
+        out.append(orig + "getRdfClass(");
+        node.visitWithComments(this);
+        out.append(")");
+        return;
       } else {
-        if (! "==".equals(operator))
-          return node.visitWithSComments(this) + ".getClazz()";
+        if (! "==".equals(operator)) {
+          node.visitWithComments(this);
+          out.append(".getClazz()");
+          return;
+        }
       }
     }
-    return node.visitWithSComments(this);
+    node.visitWithComments(this);
   }
 
   static Map<String, String> rdfOpMap = new HashMap<>();
@@ -222,7 +237,8 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     return operator;
   }
 
-  private String massageTest(RTExpression node) {
+  private void massageTest(RTExpression node) {
+    // collectTerms is guaranteed to be false here!
     Type type = node.type;
     if (node instanceof ExpFieldAccess) {
       ExpFieldAccess fa = (ExpFieldAccess)node;
@@ -230,31 +246,74 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
       if (nextToLast.type.isDialogueAct()) {
         boolean oldrep = replaceLastWithFuncall;
         replaceLastWithFuncall = true;
-        String ret = fa.visitWithSComments(this) + ".hasSlot(\"" +
-            fa.parts.get(fa.parts.size() - 1).fullexp + "\")";
+        fa.visitWithComments(this);
+        out.append(".hasSlot(\"" +
+            fa.parts.get(fa.parts.size() - 1).fullexp + "\")");
         replaceLastWithFuncall = oldrep;
-        return ret;
+        return;
       }
     }
     if (type.isBool()) {
-      return node.visitWithSComments(this);
-    }
-    if (type.isPODType()) {
-      return node.visitWithSComments(this) + " != 0";
-    }
-    if (type.isCollection() || type.isString() || type.isNumber()) {
+      node.visitWithComments(this);
+    } else if (type.isPODType()) {
+      node.visitWithComments(this); out.append(" != 0");
+    } else if (type.isCollection() || type.isString() || type.isNumber()) {
       Type[] args = { new Type("Object") };
       String orig = mem.getFunctionOrigin("exists", Arrays.asList(args));
       orig = orig == null ? "" : lowerCaseFirst(orig) + ".";
-      return  orig + "exists(" + node.visitWithSComments(this) + ")";
+      out.append(orig + "exists(");
+      node.visitWithComments(this);
+      out.append(")");
+    } else {
+      node.visitWithComments(this);
+      out.append(" != null");
     }
-    return node.visitWithSComments(this) + " != null";
   }
 
+  private boolean collectTerms() {
+    return (activeInfo != null && ! ruleIfSuspended);
+  }
+
+  private void handleRuleLogging(ExpBoolean node) {
+    if (collectTerms()) {
+      if (! isBooleanOperator(node.operator) || node.synthetic) {
+        out.append(activeInfo.resultVarName())
+           .append('[').append(Integer.toString(baseTerm++)).append("] = ");
+        ruleIfSuspended = true;
+      }
+    }
+  }
+
+  /** Treat the special case where we prepare for rule logging in this function
+   *  and then delegate to the "real" generation method
+   */
+  private void visitExpBoolChild(RudiTree node) {
+    boolean oldSuspendState = ruleIfSuspended;
+    boolean emitAssign = collectTerms() &&
+        (! (node instanceof ExpBoolean) || ((ExpBoolean)node).synthetic);
+    if (emitAssign) {
+      out.append('(').append(activeInfo.resultVarName())
+         .append('[').append(Integer.toString(baseTerm++)).append("] = ");
+      ruleIfSuspended = true;
+    }
+    node.visitWithComments(this);
+    if (emitAssign) out.append(')');
+    ruleIfSuspended = oldSuspendState;
+  }
+
+  /** In case activeInfo is not null and ruleIfSuspended is false, we have to
+   *  check if the operator is one of &&, || or !, in which case we add the
+   *  operator to the infix representation in the rule info and proceed
+   *  collecting base terms.
+   *
+   *  Otherwise, we have to do some things:
+   *   1. add the base term to the rule info
+   *   2. set ruleIfSuspended to true before descending
+   */
   @Override
-  public String visitNode(ExpBoolean node) {
-    String ret = "";
-    if (node.right != null) {
+  public void visitNode(ExpBoolean node) {
+    boolean oldSuspendState = ruleIfSuspended;
+    if (node.right != null) { // binary expression?
       /* What combinations are we expecting?
        * POD vs POD --> keep operator
        * POD vs Container --> container may be null! Ignore for now?
@@ -264,13 +323,16 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
        * DA vs DA, DA vs String --> isSubsumed and the like.
        * Rdf == Rdf --> equals
        */
-      ret += "(";
+      out.append("(");
+      handleRuleLogging(node);
+
       if (isComparisonOperator(node.operator)
           && !node.left.type.isPODType() && !node.right.type.isPODType()) {
+        // collectTerms is guaranteed to be false here!
         String operator = node.operator;
         if (operator.equals("!=")) {
           operator = "==";
-          ret += "! (";
+          out.append("! (");
         }
         // TODO: THERE'S A SPECIAL CASE IF BOTH ARE RDF AND OPERATOR IS ==
         // THEN, IT SHOULD JUST BE a.equals(b)
@@ -280,150 +342,144 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
         String pref = (lastClosing >= 0)
             ? newOp.substring(0, lastClosing)
             : " " + newOp + " ";
-        String suff =
-            (lastClosing >= 0) ? newOp.substring(lastClosing) : "";
-        ret += this.generateAndMassageType(node.left, resultType, operator);
-        ret += pref;
-        ret += this.generateAndMassageType(node.right, resultType, operator);
-        ret += suff;
-        ret += ("!=".equals(node.operator)) ? ")" : "";
+        String suff = (lastClosing >= 0) ? newOp.substring(lastClosing) : "";
+        this.generateAndMassageType(node.left, resultType, operator);
+        out.append(pref);
+        this.generateAndMassageType(node.right, resultType, operator);
+        out.append(suff);
+        out.append(("!=".equals(node.operator)) ? ")" : "");
       } else {
-        ret += node.left.visitWithSComments(this);
-        ret += " " + node.operator + " ";
-        ret += node.right.visitWithSComments(this);
+        visitExpBoolChild(node.left);
+        out.append(" " + node.operator + " ");
+        visitExpBoolChild(node.right);
       }
-      ret += ")";
-    } else {
-      if (null != node.operator) {
+      out.append(")");
+    } else { // unary boolean expression
+      if (null == node.operator) {
+        // collectTerms is guaranteed to be false here!
+        node.left.visitWithComments(this);
+      } else if (node.operator.equals("<>")) {
         // marker for generation, to probably wrap the right tests around?
-        if (node.operator.equals("<>")) {
-          ret += massageTest(node.left);
-        } else {
-          ret += node.operator + '(';
-          ret += node.left.visitWithSComments(this) + ')';
-        }
+        // collectTerms is guaranteed to be false here!
+        massageTest(node.left);
       } else {
-        ret += node.left.visitWithSComments(this);
+        out.append(node.operator + '(');
+        visitExpBoolChild(node.left);
+        out.append(')');
       }
     }
-    return ret;
+    // reset ruleIfSuspended to state when entering this method
+    ruleIfSuspended = oldSuspendState;
   }
 
   @Override
-  public String visitNode(ExpCast node) {
-    return "((" + node.type.toJava() + ")" + visitNode(node.expression) +")";
+  public void visitNode(ExpCast node) {
+    out.append("((" + node.type.toJava() + ")");
+    visitNode(node.expression);
+    out.append(")");
   }
 
-  public String visitDaToken(RTExpression exp) {
-    String ret;
-    if (exp instanceof ExpSingleValue
-        && ((ExpSingleValue) exp).type.isString()) {
-      String s = ((ExpSingleValue) exp).visitStringV(this);
-      if (! s.startsWith("\"")) {
-        ret = "\"" + s + "\"";
-      } else
-        ret = s;
-    } else {
-      ret = visitNode(exp);
-    }
-    return ret;
+  public void visitDaToken(RTExpression exp) {
+    visitNode(exp);
   }
 
   @Override
-  public String visitNode(ExpDialogueAct node) {
-    String ret = "new DialogueAct(";
-    ret += visitDaToken(node.daType);
-    ret += ", ";
-    ret += visitDaToken(node.proposition);
+  public void visitNode(ExpDialogueAct node) {
+    out.append("new DialogueAct(");
+    visitDaToken(node.daType);
+    out.append(", ");
+    visitDaToken(node.proposition);
     for (int i = 0; i < node.exps.size(); i += 2) {
-      ret += ", ";
-      ret += visitDaToken(node.exps.get(i));
-      ret += ", ";
-      ret += visitDaToken(node.exps.get(i + 1));
+      out.append(", ");
+      visitDaToken(node.exps.get(i));
+      out.append(", ");
+      visitDaToken(node.exps.get(i + 1));
     }
-    ret += ")";
-    return ret;
+    out.append(")");
   }
 
   @Override
-  public String visitNode(ExpConditional node) {
-    String ret = "(";
-    ret += node.boolexp.visitWithSComments(this);
-    ret += " ? ";
-    ret += node.thenexp.visitWithSComments(this);
-    ret += " : ";
-    ret += node.elseexp.visitWithSComments(this);
-    ret += ')';
-    return ret;
+  public void visitNode(ExpConditional node) {
+    out.append("(");
+    node.boolexp.visitWithComments(this);
+    out.append(" ? ");
+    node.thenexp.visitWithComments(this);
+    out.append(" : ");
+    node.elseexp.visitWithComments(this);
+    out.append(')');
   }
 
   @Override
-  public String visitNode(ExpLambda node) {
+  public void visitNode(ExpLambda node) {
     mem.enterEnvironment(node);
-    String ret = "(" + node.parameters.get(0);
+    out.append("(" + node.parameters.get(0));
     for(int i = 1; i < node.parameters.size(); i++){
-      ret += ", " + node.parameters.get(i);
+      out.append(", " + node.parameters.get(i));
     }
-    ret += ") -> ";
-    // is the rare occasion where a "statement", namely a StatAbstractBlock can
-    // be inside an expression, because the body of a lambda expresssion can be
-    // a block.
-    // Therefore, prevent it from printing directly to out
-    SilentWriter old = out;
-    StringWriter inner = new StringWriter();
-    out = new SilentWriter(inner);
-    if (node.body instanceof RTExpression)
-      ((RTExpression)node.body).visitVoidV(this);
-    else { // this must be an AbstractBlock
-      assert(node.body instanceof StatAbstractBlock);
-      ((StatAbstractBlock)node.body).visit(this);
-    }
-    ret += inner.toString();
-    out = old;
+    out.append(") -> ");
+    node.body.visitWithComments(this);
     mem.leaveEnvironment(node);
-    return ret;
   }
 
   @Override
-  public String visitNode(ExpNew node) {
-    String ret = "";
+  public void visitNode(ExpNew node) {
     if (node.construct != null) {
-      ret += "new ";
-      ret += node.construct.visitStringV(this);
+      out.append("new ");
+      node.construct.visitWithComments(this);
     } else {
       // TODO: MAKE A FUNCTION FOR THIS, OR KICK IT! WHAT'S THE MEANING?
       if(mem.isNotToplevelClass()) {
-        ret += mem.getToplevelInstance() + ".";
+        out.append(mem.getToplevelInstance() + ".");
       }
-      ret += "_proxy.getClass(\""
+      out.append("_proxy.getClass(\""
               + node.type.getRdfClass()
-              + "\").getNewInstance(";
+              + "\").getNewInstance(");
       // SEE ABOVE
       if(mem.isNotToplevelClass()) {
-        ret += mem.getToplevelInstance() + ".";
+        out.append(mem.getToplevelInstance() + ".");
       }
-      ret += "DEFNS)";
+      out.append("DEFNS)");
     }
-    return ret;
   }
 
   @Override
   public void visitNode(StatGrammarRule node) {
-    mem.enterRule(node.label, null); // location only used in type visitor
+    activeInfo = mem.enterRule(node.ruleId);
     if (node.toplevel) {
       mem.enterEnvironment(node);
       // is a top level rule and will be converted to a method
-      out.append("public int " + node.label + "(");
-      out.append("){\n");
+      out.append("public int " + node.label + "(){\n");
     } else {
-      // is a sub-level rule and will get an if to determine whether it
-      // should be executed
+      // a sub-level rule: ordinary <if>
       out.append("// Rule ").append(node.label).append("\n");
     }
-    ruleIf = printRuleLogger(node.label, node.ruleId,
-        (ExpBoolean) node.ifstat.condition);
+    String varName = activeInfo.resultVarName();
+    out.append("boolean[] ").append(varName).append(" = new boolean[")
+       .append(Integer.toString(activeInfo.noBaseTerms() + 1))
+       .append("];\n");
+    StatIf ifNode = node.ifstat;
+    // first assign final result, then call log function, then execute if
+    out.append(varName).append("[0] = ");
+    // if only one base term, avoid handling of base terms, since the top level
+    // result contains all the info
+    ruleIfSuspended = (activeInfo.noBaseTerms() == 1);
+    baseTerm = 1;
+    ifNode.condition.visitWithComments(this);
+    out.append(";\n");
+    if (mem.isNotToplevelClass())
+      out.append(mem.getToplevelInstance()).append('.');
+    out.append("logRule(").append(Integer.toString(activeInfo.getId()))
+       .append(", ").append(varName).append(");\n");
     out.append(node.label + ":\n");
-    node.ifstat.visitWithComments(this);
+    out.append("if (").append(varName).append("[0])");
+    activeInfo = null;
+
+    ifNode.statblockIf.visitWithComments(this);
+    out.append("\n");
+    if (ifNode.statblockElse != null) {
+      out.append("else ");
+      ifNode.statblockElse.visitWithComments(this);
+    }
     if (node.toplevel) {
       out.append("\nreturn 0; \n}\n");
       mem.leaveEnvironment(node);
@@ -434,8 +490,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
   @Override
   public void visitNode(StatAbstractBlock node) {
     if (node.braces) {
-      // when entering a statement block, we need to create a new local
-      // environment
+      // when entering a statement block, we need to enter the local environment
       out.append("{\n");
       mem.enterEnvironment(node);
     }
@@ -465,14 +520,14 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
   @Override
   public void visitNode(StatFor2 node) {
     out.append("for (Object ");
-    String var = node.var.visitWithSComments(this);
-    out.append(var).append("_outer : ");
+    node.var.visitWithComments(this);
+    out.append("_outer : ");
     node.initialization.visitWithComments(this);
-    out.append(") { ")
-       .append(node.varType.toJava())
-       .append(" ").append(var);
-    out.append(" = (").append(node.varType.toJava())
-       .append(")").append(var).append("_outer;\n");
+    out.append(") { ").append(node.varType.toJava()).append(" ");
+    node.var.visitWithComments(this);
+    out.append(" = (").append(node.varType.toJava()).append(")");
+    node.var.visitWithComments(this);
+    out.append("_outer;\n");
     node.statblock.visitWithComments(this);
     out.append("\n}\n");
   }
@@ -492,15 +547,9 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatIf node) {
-    if (ruleIf != null) {
-      out.append("if (" + ruleIf + ") ");
-//      out.append("if (shouldLog(\"" + node.currentRule + "\") ? wholeCondition : ");
-      ruleIf = null;
-    } else {
-      out.append("if (");
-      node.condition.visitWithComments(this);
-      out.append(") ");
-    }
+    out.append("if (");
+    node.condition.visitWithComments(this);
+    out.append(") ");
     node.statblockIf.visitWithComments(this);
     out.append("\n");
     if (node.statblockElse != null) {
@@ -523,7 +572,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
     }
     for (RTExpression e : node.objects) {
       out.append(node.variableName + ".add(");
-      out.append(visitNode(e));
+      visitNode(e);
       out.append(");\n");
     }
   }
@@ -590,20 +639,6 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
 
   @Override
   public void visitNode(StatReturn node) {
-    /* if (node.returnExp == null) {
-      // not in any rule, stop all rule processing
-      if (mem.getCurrentRule() == null) {
-        out.append("return true;\n");
-      } else {
-        out.append("break " + mem.getCurrentRule() + ";\n");
-      }
-    } else if (mem.isExistingRule(node.returnExp.fullexp)) {
-      out.append("break " + node.returnExp.fullexp + ";\n");
-    } else if (node.returnExp.fullexp.equals(mem.getClassName())) {
-      // explicitely cancel all rule processing specifying "return <Class>;"
-      out.append("return true;\n");
-    } else {
-    */
     switch (node.command) {
     case "break":
     case "return":
@@ -689,8 +724,7 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
   }
 
   @Override
-  public String visitNode(ExpFieldAccess node) {
-    String ret = "";
+  public void visitNode(ExpFieldAccess node) {
     int to = node.parts.size();
     // don't print the last field if is in an assignment rather than an
     // access, which means that a set method is generated.
@@ -704,13 +738,13 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
         ExpPropertyAccess pa = (ExpPropertyAccess) node.parts.get(i);
         String cast = pa.getType().toJava();
         // cast = capitalize(cast);
-        //ret += "((" + cast + ")";
-        ret += "((";
-        ret += (!pa.functional) ? "Set<Object>" : cast;
-        ret += ")";
+        //out.append("((" + cast + ")";
+        out.append("((");
+        out.append((!pa.functional) ? "Set<Object>" : cast);
+        out.append(")");
       }
     }
-    ret += node.parts.get(0).visitWithSComments(this);
+    node.parts.get(0).visitWithComments(this);
     Type currentType = ((RTExpression) node.parts.get(0)).type;
     for (int i = 1; i < to; i++) {
       RTExpression currentPart = node.parts.get(i);
@@ -718,41 +752,38 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
         ExpPropertyAccess pa = (ExpPropertyAccess) currentPart;
         // then we are in the case that is actually an rdf operation
         if (currentType.isDialogueAct()) {
-          ret += ".getValue(";
+          out.append(".getValue(");
         } else {
-          ret += pa.functional ? ".getSingleValue(" : ".getValue(";
+          out.append(pa.functional ? ".getSingleValue(" : ".getValue(");
         }
-        ret += pa.getPropertyName();
-        ret += "))";
+        out.append(pa.getPropertyName());
+        out.append("))");
         currentType = pa.type;
       } else {
-        ret += ".";
-        ret += currentPart.visitStringV(this);
+        out.append(".");
+        currentPart.visitWithComments(this);
         currentType = ((RTExpression) currentPart).type;
       }
     }
-    return ret;
   }
 
   @Override
-  public String visitNode(ExpFuncCall node) {
-    String ret = "";
+  public void visitNode(ExpFuncCall node) {
     if (node.realOrigin != null && node.calledUpon == null) {
-      ret += lowerCaseFirst(node.realOrigin) + ".";
+      out.append(lowerCaseFirst(node.realOrigin) + ".");
     }
     if (node.newexp){
-      ret += node.type.toJava() + "(";
+      out.append(node.type.toJava() + "(");
     } else {
-      ret += node.content + "(";
+      out.append(node.content + "(");
     }
     for (int i = 0; i < node.params.size(); i++) {
-      ret += node.params.get(i).visitWithSComments(this);
+      node.params.get(i).visitWithComments(this);
       if (i != node.params.size() - 1) {
-        ret += ", ";
+        out.append(", ");
       }
     }
-    ret += ")";
-    return ret;
+    out.append(")");
   }
 
   @Override
@@ -762,82 +793,32 @@ public class VisitorGeneration implements RTStringVisitor, RTStatementVisitor {
   }
 
   @Override
-  public String visitNode(ExpSingleValue node) {
+  public void visitNode(ExpSingleValue node) {
     if (node.type.isString()) {
       if (node.content.indexOf('"') != 0)
         node.content = "\"" + node.content + "\"";
-      if (escape)
+      if (escape) {
         // properly escape if needed
-        return "\\" + node.content.substring(0, node.content.length() - 1) + "\\\" ";
+        out.append(
+            "\\" + node.content.substring(0, node.content.length() - 1)
+            + "\\\" ");
+        return;
+      }
     }
-    return node.content;
+    out.append(node.content);
   }
 
   @Override
-  public String visitNode(ExpVariable node) {
+  public void visitNode(ExpVariable node) {
     String realOrigin = mem.getVariableOriginClass(node.content);
     if (realOrigin != null) {
-      return lowerCaseFirst(realOrigin) + "." + node.content;
+      out.append(lowerCaseFirst(realOrigin) + "." + node.content);
     } else {
-      return node.content;
+      out.append(node.content);
     }
   }
-
-  boolean collectingCondition = false;
 
   String stringEscape(String in) {
     return in.replaceAll("\\\"", "\\\\\"");
   }
-  /**
-   * creates and prints the logging method of the given rule
-   *
-   * @param rule
-   */
-  private String printRuleLogger(String rule, int ruleId, ExpBoolean bool_exp) {
-
-    // TODO BK: bool_exp can be a simple expression, in which case it
-    // has to be turned into a comparison with zero, null or a call to
-    // the has(...) method
-    if (((ExpBoolean)bool_exp).right == null && ((ExpBoolean)bool_exp).left instanceof ExpSingleValue) {
-      return ((ExpSingleValue)((ExpBoolean) bool_exp).left).content;
-    }
-    collectingCondition = true;
-
-    // remembers how the expressions looked (for logging)
-    LinkedHashMap<String, String> realLook = new LinkedHashMap<>();
-    LinkedHashMap<String, String> rudiLook = new LinkedHashMap<>();
-
-    condV.newInit(rule, realLook, rudiLook);
-    String result = condV.visitNode(bool_exp);
-    for (String s : realLook.keySet()) {
-      out.append("boolean " + s + " = false;\n");
-    }
-    out.append(result);
-
-    out.append("if (");
-    topLevel();
-    out.append("shouldLog(" + ruleId + ")){\n");
-    // do all that logging
-    out.append("Map<String, Boolean> " + rule + " = new LinkedHashMap<>();\n");
-
-    LinkedHashMap<String, String> logging;
-    out.append(rule + ".put(\"" + stringEscape(bool_exp.fullexp) + "\", "
-        + condV.getLastBool() + ");\n");
-    if(whatToLog){
-      logging = rudiLook;
-    } else {
-      logging = realLook;
-    }
-    for (String var : logging.keySet()) {
-      out.append(rule + ".put(\"" + stringEscape(logging.get(var)) + "\", " + var + ");\n");
-    }
-    topLevel();
-    out.append("logRule(" + rule + ", \"" + rule + "\", \""
-            + mem.getClassName() + "\");\n");
-
-    out.append("}\n");
-    collectingCondition = false;
-    return condV.getLastBool();
-  }
-
 }

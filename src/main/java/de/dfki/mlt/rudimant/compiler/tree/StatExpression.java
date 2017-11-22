@@ -12,17 +12,7 @@ public class StatExpression extends RTStatement {
   }
 
   @Override
-  public void visit(RTStatementVisitor v) {
-    v.visitNode(this);
-  }
-
-  @Override
-  public String visitStringV(RTStringVisitor v) {
-    return v.visitNode(expression);
-  }
-
-  @Override
-  public void visitVoidV(VisitorGeneration v) {
+  public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
 

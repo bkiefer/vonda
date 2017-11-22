@@ -1,7 +1,6 @@
 package de.dfki.mlt.rudimant.compiler;
 
 import static de.dfki.mlt.rudimant.compiler.Constants.RULE_FILE_EXT;
-import static de.dfki.mlt.rudimant.compiler.CompilerMain.init;
 
 import java.io.*;
 
@@ -12,6 +11,7 @@ import de.dfki.lt.loot.gui.Style;
 import de.dfki.lt.loot.gui.layouts.CompactLayout;
 import de.dfki.lt.loot.gui.util.ObjectHandler;
 import de.dfki.mlt.rudimant.common.BasicInfo;
+import de.dfki.mlt.rudimant.common.RuleInfo;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
 import de.dfki.mlt.rudimant.compiler.tree.RudiTree;
 import de.dfki.mlt.rudimant.compiler.tree.TreeModelAdapter;
@@ -36,6 +36,7 @@ public class Visualize extends CompilerMain {
 
   private static RudimantCompiler initRc()
       throws IOException, WrongFormatException {
+    RuleInfo.resetIdGenerator();
     RudimantCompiler rc = init(confDir, configs);
     String[] pkg = {};
     rc.getMem().enterClass("Test", pkg, null);
@@ -62,6 +63,7 @@ public class Visualize extends CompilerMain {
   public static BasicInfo generateAndGetRulesInfo(File input) {
     RudimantCompiler rc;
     try {
+      RuleInfo.resetIdGenerator();
       rc = init(confDir, configs);
       rc.processToplevel(input);
     } catch (IOException | WrongFormatException e) {
@@ -129,9 +131,7 @@ public class Visualize extends CompilerMain {
       throw new UnsupportedOperationException("Parsing failed.");
     if (rc.visualise())
       Visualize.show(gf, name);
-    rc.getMem().leaveTypecheck();
     gf.generate(rc, out);
-    rc.getMem().enterTypecheck();
     return gf;
   }
 

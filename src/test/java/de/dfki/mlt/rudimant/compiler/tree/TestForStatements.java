@@ -30,9 +30,7 @@ public class TestForStatements {
                     "Iterator<DialogueAct> lastDAs();\n" +
                     "initiate_greet: if(true){ for(seat : getSeats()){} }";
     String s = generate(ifstat);
-    String expected = "public int initiate_greet(){"
-            + " initiate_greet: if (true) { for (Object seat_outer : getSeats()) "
-            + "{ Rdf seat = (Rdf)seat_outer; { } } } return 0;";
+    String expected = "public int initiate_greet(){ boolean[] __x0 = new boolean[1]; __x0[0] = true; logRule(0, __x0); initiate_greet: if (__x0[0]){ for (Object seat_outer : getSeats()) { Rdf seat = (Rdf)seat_outer; { } } } return 0; } }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -44,10 +42,7 @@ public class TestForStatements {
                     "  if(true){\n" +
                     "    for(k : kids()){}}";
     String s = generate(ifstat);
-    String expected = "public int initiate_greet(){"
-            + " initiate_greet: if (true) {"
-            + " for (Object k_outer : kids()) { Rdf k = (Rdf)k_outer; { } } }"
-            + " return 0;";
+    String expected = "public int initiate_greet(){ boolean[] __x0 = new boolean[1]; __x0[0] = true; logRule(0, __x0); initiate_greet: if (__x0[0]){ for (Object k_outer : kids()) { Rdf k = (Rdf)k_outer; { } } } return 0; } }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -57,12 +52,7 @@ public class TestForStatements {
             "for(s : getI()){"
             + "label: if(true) {s = null;}}";
     String s = generate(ifstat);
-    String expected = "for (Object s_outer : getI()) {"
-            + " Object s = (Object)s_outer; " +
-              "{ // Rule label " +
-              "label: " +
-              "if (true) { s = null; " +
-              "}";
+    String expected = "for (Object s_outer : getI()) { Object s = (Object)s_outer; { // Rule label boolean[] __x0 = new boolean[1]; __x0[0] = true; logRule(0, __x0); label: if (__x0[0]){ s = null; } } } }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -89,9 +79,7 @@ public class TestForStatements {
         + "demo_rule: if (true) break demo_rule; "
         + "/*@ public String postBlock() { return \"postBlock\"; }@*/";
     String s = generate(stat);
-    String expected = "public String preBlock() { return \"preBlock\";}"
-        + " public int demo_rule(){ demo_rule: if (true) break demo_rule; return 0; } "
-        + "public String postBlock() { return \"postBlock\"; }";
+    String expected = "public String preBlock() { return \"preBlock\";} public int demo_rule(){ boolean[] __x0 = new boolean[1]; __x0[0] = true; logRule(0, __x0); demo_rule: if (__x0[0])break demo_rule; return 0; } public String postBlock() { return \"postBlock\"; } }";
     assertEquals(expected, getForMarked(s, expected));
   }
 

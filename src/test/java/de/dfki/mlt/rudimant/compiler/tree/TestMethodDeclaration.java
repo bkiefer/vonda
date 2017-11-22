@@ -4,9 +4,6 @@ import static de.dfki.mlt.rudimant.compiler.Visualize.*;
 import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
 import static org.junit.Assert.*;
 
-import java.io.File;
-import de.dfki.lt.hfc.WrongFormatException;
-import de.dfki.mlt.rudimant.compiler.CompilerMain;
 
 import org.junit.*;
 
@@ -37,11 +34,9 @@ public class TestMethodDeclaration {
   public void testMethodOverload(){
     String methdecl1 = " void foo() { i = 1; }\n";
     String methdecl2 = "String foo(int a) { i = 1; }\n";
-    String usage = "bar: if(true){foo();}";
+    String usage = "void bar() { if(true){foo();} }";
     String s = generate(methdecl1 + methdecl2 + usage);
-    String expected = "public void foo() { int i = 1; } "
-            + "public String foo(int a) { int i = 1; }"
-            + " public int bar(){ bar: if (true) { foo(); }";
+    String expected = "public void foo() { int i = 1; } public String foo(int a) { int i = 1; } public void bar() { if (true) { foo(); }";
     assertEquals(expected, getForMarked(s, expected));
   }
 

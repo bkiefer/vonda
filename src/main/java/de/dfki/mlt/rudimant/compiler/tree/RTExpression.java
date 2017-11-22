@@ -32,41 +32,18 @@ public abstract class RTExpression extends RudiTree {
   }
 
   /**
-   * visitor method
-   */
-  public abstract void visit(RTExpressionVisitor v);
-
-  /**
    * duplicate the method from RudiTree to ensure String return
    * @param v
    */
-  public String visitWithSComments(VisitorGeneration v) {
-    String ret = "";
-    if (! v.collectingCondition) {
-      int firstPos = positions[0];
-      ret += checkComments(v, firstPos);
-    }
-    if (_parens) ret += "(";
-    ret += visitStringV(v);
-    if (_parens) ret += ")";
-    if (! v.collectingCondition) {
-      int endPos = positions[1];
-      ret += checkComments(v, endPos);
-    }
-    return ret;
+  public void visitWithComments(VisitorGeneration v) {
+    int firstPos = positions[0];
+    v.out.append(checkComments(v, firstPos));
+    if (_parens) v.out.append("(");
+    visit(v);
+    if (_parens) v.out.append(")");
+    int endPos = positions[1];
+    v.out.append(checkComments(v, endPos));
   }
-
-  /**
-   * the visitMethod for the visitor that allows to return Strings ! only to be
-   * used by expressions !
-   */
-  public abstract String visitStringV(RTStringVisitor v);
-
-  /**
-   * the visitMethod for the visitor that allows to return Strings ! for
-   * everything except expressions, they should write to out !
-   */
-  public abstract void visitVoidV(VisitorGeneration v);
 
   public Type getInnerType() { return type.getInnerType(); }
 
@@ -77,13 +54,13 @@ public abstract class RTExpression extends RudiTree {
 
     if (type != null && type.isBool()){
       if (!(this instanceof ExpBoolean)){
-        return fixFields(new ExpBoolean(this, null, null));
+        return fixFields(new ExpBoolean(this, null, null, true));
       }
       // if is a funccall with type boolean, we'd still like to have it as a
       // boolean, at least wrapped up
       // TODO: don't know if this is necessary.
     }
-    return fixFields(new ExpBoolean(this, null, "<>"));
+    return fixFields(new ExpBoolean(this, null, "<>", true));
   }
 
   public RTExpression ensureBoolean() {
