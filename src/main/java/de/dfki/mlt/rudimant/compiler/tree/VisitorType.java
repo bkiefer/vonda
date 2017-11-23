@@ -427,7 +427,7 @@ public class VisitorType implements RudiVisitor {
       if (mergeType == null) {
         if (innerIterableType.equals(new Type("Object"))) {
           // Then handle this as an implicit cast, but warn the user that it might crash
-          typeError("Implicit casting of list Object to "
+          typeWarning("Implicit casting of list Object to "
               + node.varType.toDebugString()
               + " in short for loop, be aware this might crash in Java ", node);
         } else {

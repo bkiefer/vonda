@@ -104,7 +104,7 @@ test_rule:
 // Coverage - To be revised and sorted properly
 // **********************************************************************
 
-if (true && !false) { /* do something */}
+if (true && !false) { /* do something */} else { /* do something else */}
 
 // TODO: sum1 and sum2 should, but do not become a proper declaration here
 // An unknown function is used. The system tries to inferr the type of
@@ -119,12 +119,42 @@ someint = 1 < 3? anothervar : 3;
 Integer anotherint = (Integer) i;
 anotherint = anotherint < 3? anotherint : 3;
 
+// There are also while and for loops and switch-case blocks available
+while (true) { continue; }
+for (abc = 1; abc < 10; abc++) { abc++;}
+
+ArrayList<String> iterlist;
+// The following two lines are equivalent
+for (String a : iterlist) {}
+for (a : iterlist) {}
+
+String str;
+switch (str) {
+  case "a": break;
+  case "b":
+  default:
+}
+
+// It is possible to perform implicit casts on iterable elements in a for
+// loop; there is, however, no type safety promise from our side!
+ArrayList<Object> iterlist2;
+for (SomeClass a : iterlist2) {}
+
+// These are some examples for lambda expressions
+newlist = {"a", "cd", "ab", "b"};
+allas = filter(newlist, (element) -> ((String)element).contains("a"));
+dosort = sort(newlist, (a, b) -> (int)(((String)a).lenght() - ((String)b).length()));
+
 // Creation of dialogue acts. Elements that are Variables need to be
 // preceded by ^, all others will be converted to Strings
 robotname = "Robert";
 dia = #Inform(Liking, agent=username, patient=^robotname);
 
-
+// You can set labelled timeouts that will execute the code given to them
+// once the time (given in milliseconds) is over
+timeout("do_something", 15000) {
+  callToSomeMethod();
+}
 
 
 
