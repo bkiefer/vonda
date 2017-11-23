@@ -99,3 +99,33 @@ test_rule:
         return true;
     }
   }
+
+// **********************************************************************
+// Coverage - To be revised and sorted properly
+// **********************************************************************
+
+if (true && !false) { /* do something */}
+
+// TODO: sum1 and sum2 should, but do not become a proper declaration here
+// An unknown function is used. The system tries to inferr the type of
+// operations that contain it from their other parts
+somevar = getSomething();
+sum1 = 3 + somevar;
+sum2 = somevar + 3;
+anothervar = getSomething();
+someint = 1 < 3? anothervar : 3;
+
+// You can use casts and conditional expressions just like in Java
+Integer anotherint = (Integer) i;
+anotherint = anotherint < 3? anotherint : 3;
+
+// Creation of dialogue acts. Elements that are Variables need to be
+// preceded by ^, all others will be converted to Strings
+robotname = "Robert";
+dia = #Inform(Liking, agent=username, patient=^robotname);
+
+
+
+
+
+

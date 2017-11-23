@@ -114,12 +114,15 @@ public class VisitorType implements RTExpressionVisitor, RTStatementVisitor {
   }
 
   /**
-   * This has various aspects. a) if there is a declaration, and the variable is
-   * already defined, that should be either a warning or an error. b) if the
-   * right side has a non-empty type 1) if the variable is defined, has it the
-   * right type? If it has no type, set it to the type of the right side. 2) if
-   * it is not defined, define it and set type c) if the variable has a type,
-   * and the right side has not, push it down the right branch.
+   * This has various aspects.
+   * a) if there is a declaration, and the variable is already defined, that
+   *    should be either a warning or an error.
+   * b) if the right side has a non-empty type
+   *   1) if the variable is defined, has it the right type? If it has no
+   *      type, set it to the type of the right side.
+   *   2) if it is not defined, define it and set type
+   * c) if the variable has a type, and the right side has not, push it down
+   *    the right branch.
    *
    * TODO: GIVEN MY LAST WORK ON TYPE COMPATIBILITY IN ASSIGNMENT, I DOUBT THAT
    * UNIFYTYPES IS THE RIGHT THING TO DO. NEEDS A LOT OF UNIT TESTS FIRST
