@@ -20,6 +20,10 @@ Rdf toRdf(String uri);
 
 RdfClass getRdfClass(String s);
 boolean exists(Object o);
+// fire off general queries
+//List<List<Object>> queryTable(String query, String ... args);
+//List<Object> query(String query, String ... args);
+
 
 // DialogueAct methods
 DialogueAct createEmitDA(DialogueAct da);

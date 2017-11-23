@@ -388,9 +388,17 @@ public abstract class Agent implements StreamingClient {
     return _proxy.fetchClass(name);
   }
 
+  public List<List<Object>> queryTable(String query, String ... args) {
+    return _proxy.queryTable(query, args);
+  }
+
+  public List<Object> query(String query, String ... args) {
+    return _proxy.query(query, args);
+  }
+
   /* *************************************************************************
-  Java shortcuts
-  ************************************************************************* */
+   Java shortcuts
+   ************************************************************************* */
 
   /** Return a new random number between zero and one */
   public float random() {
