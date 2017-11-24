@@ -1,7 +1,9 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
+import static de.dfki.mlt.rudimant.Visualize.generate;
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
 import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
+import static de.dfki.mlt.rudimant.tree.TstUtils.getForMarked;
 import static org.junit.Assert.*;
 
 import java.util.Iterator;
@@ -166,5 +168,17 @@ public class TestTypeInference {
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("public int l;"));
     assertTrue(s.contains("public long k;"));
+  }
+
+  @Test
+  public void testPartUnkDecl() {
+    String in = "somvar = getSomething();" + 
+    		"sum1 = 3 + somevar;" + 
+    		"sum2 = somevar + 3;";
+    String s = generate(in);
+    String expected = "somvar = getSomething();" + 
+    		"int sum1 = 3 + somevar;" + 
+    		"int sum2 = somevar + 3;";
+    assertEquals(expected, getForMarked(s, expected));
   }
 }
