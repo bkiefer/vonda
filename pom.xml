@@ -165,7 +165,7 @@
             </goals>
             <configuration>
               <finalName>vonda-${project.version}</finalName>
-              <attach>false</attach>
+              <attach>true</attach>
               <appendAssemblyId>false</appendAssemblyId>
               <archive>
                 <manifest>

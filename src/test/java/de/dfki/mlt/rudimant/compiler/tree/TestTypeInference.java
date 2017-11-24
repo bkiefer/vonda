@@ -1,9 +1,7 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
-import static de.dfki.mlt.rudimant.Visualize.generate;
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
 import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
-import static de.dfki.mlt.rudimant.tree.TstUtils.getForMarked;
 import static org.junit.Assert.*;
 
 import java.util.Iterator;
@@ -12,11 +10,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.dfki.mlt.rudimant.compiler.TypeException;
+import de.dfki.mlt.rudimant.compiler.Visualize;
 import de.dfki.mlt.rudimant.compiler.tree.ExpAssignment;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
 import de.dfki.mlt.rudimant.compiler.tree.RudiTree;
-import de.dfki.mlt.rudimant.compiler.tree.StatExpression;
-
 
 public class TestTypeInference {
 
@@ -172,13 +169,13 @@ public class TestTypeInference {
 
   @Test
   public void testPartUnkDecl() {
-    String in = "somvar = getSomething();" + 
-    		"sum1 = 3 + somevar;" + 
-    		"sum2 = somevar + 3;";
+    String in = "somevar = getSomething();" +
+        "sum1 = 3 + somevar;sum2 = somevar + 3;";
     String s = generate(in);
-    String expected = "somvar = getSomething();" + 
-    		"int sum1 = 3 + somevar;" + 
-    		"int sum2 = somevar + 3;";
+    String expected = "somevar = getSomething();" +
+        "sum1 = (3+somevar);sum2 = (somevar+3);";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("public int sum1;"));
+    assertTrue(s.contains("public int sum2;"));
   }
 }

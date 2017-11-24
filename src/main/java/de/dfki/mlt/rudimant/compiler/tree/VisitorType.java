@@ -89,12 +89,16 @@ public class VisitorType implements RudiVisitor {
         // unknown type to the left
         if (node.right.type.isUnspecified()) {
           // unknown type on both branches
-          typeError("Expression with unknown type: " + node.right, node);
+          typeError("Expression with unknown type: " + node.fullexp, node);
         } else {
+          typeWarning("propagating " + node.right.type + " to unknown left part: "
+              + node.fullexp, node);
           // propagate type from the right branch to the left
           node.left.propagateType(node.right.type);
         }
       } else if (node.right.type.isUnspecified()) {
+        typeWarning("propagating " + node.left.type + " to unknown right part: "
+            + node.fullexp, node);
         // propagate type from the left branch to the right
         node.right.propagateType(node.left.type);
       } else {
