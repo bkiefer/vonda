@@ -176,7 +176,7 @@ public class VisitorType implements RudiVisitor {
     Type mergeType = node.left.type.unifyTypes(node.right.type);
     if (mergeType == null) {
       if (node.left.type.isBool()) {
-        // in that case, we assume that this should be a test for existance
+        // in that case, we assume that this should be a test for existence
         mergeType = new Type("boolean");
         node.right = node.right.ensureBoolean();
       } else {
@@ -797,6 +797,8 @@ public class VisitorType implements RudiVisitor {
   public void visitNode(ExpSingleValue node) {
     // nothing to test here
     if (node.type == null)
+      // TODO: can this ever happen? SingleValues are things like Strings, chars
+      //       ints, floats, ... recognized = given a type by our parser
       node.type = Type.getNoType();
   }
 

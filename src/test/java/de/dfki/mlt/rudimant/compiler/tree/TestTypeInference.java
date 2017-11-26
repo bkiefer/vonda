@@ -1,9 +1,8 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
-import static de.dfki.mlt.rudimant.Visualize.generate;
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
 import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
-import static de.dfki.mlt.rudimant.tree.TstUtils.getForMarked;
+import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.getForMarked;
 import static org.junit.Assert.*;
 
 import java.util.Iterator;
@@ -170,6 +169,13 @@ public class TestTypeInference {
     assertTrue(s.contains("public long k;"));
   }
 
+  @Test(expected=TypeException.class)
+  public void test13() throws Throwable {
+    String in = " void fun(); l = fun();";
+    getTypeError(in);
+    int i = 0;
+  }
+
   @Test
   public void testPartUnkDecl() {
     String in = "somvar = getSomething();" + 
@@ -177,8 +183,10 @@ public class TestTypeInference {
     		"sum2 = somevar + 3;";
     String s = generate(in);
     String expected = "somvar = getSomething();" + 
-    		"int sum1 = 3 + somevar;" + 
-    		"int sum2 = somevar + 3;";
+    		"sum1 = (3+somevar);" + 
+    		"sum2 = (somevar+3);";
     assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("public int sum1;"));
+    assertTrue(s.contains("public int sum2;"));
   }
 }

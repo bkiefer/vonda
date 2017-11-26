@@ -115,6 +115,7 @@ public class VisitorGeneration implements RudiVisitor {
             ((ExpSingleValue)node.right).content.equals("null")) {
           replaceLastWithFuncall = false;
           out.append(".clearValue(" + pa.getPropertyName() + ")");
+          return;
         }
         // NO: out.append(functional ? ".setSingleValue(" : ".setValue(");
         out.append(".setValue(");  // always right!

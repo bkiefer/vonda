@@ -83,7 +83,6 @@ public class TestTypes {
   public void testType7(){
     String in = "String s = \"something\"; boolean empty = s;";
     String r = generate(in);
-    System.out.println(r);
     String expected = "String s = \"something\"; boolean empty = s.isEmpty();";
     assertEquals(expected, getForMarked(r, expected));
   }

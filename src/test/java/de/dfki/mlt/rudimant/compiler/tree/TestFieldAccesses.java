@@ -64,4 +64,21 @@ public class TestFieldAccesses {
           + "new Proposal() {public void run() { } });";
       assertEquals(expected, getForMarked(s, expected));
     }
+
+    @Test
+    public void testFieldAccess6() {
+      String in = "Clazz c; property = \"name\"; l = c.property;";
+      String s = generate(in);
+      String expected = "Rdf c;String property = \"name\";Object /* (unknown) */ l = ((Set<Object>)c.getValue(property)); }";
+      assertEquals(expected, getForMarked(s, expected));
+    }
+
+    @Test
+    public void testFieldAccess7() {
+      // clear the value of this property
+      String in = "Child c; c.name = null;";
+      String s = generate(in);
+      String expected = "Rdf c;c.clearValue(\"<upper:name>\");";
+      assertEquals(expected, getForMarked(s, expected));
+    }
 }
