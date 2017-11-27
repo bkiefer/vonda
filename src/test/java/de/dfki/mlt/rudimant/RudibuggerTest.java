@@ -1,13 +1,17 @@
 package de.dfki.mlt.rudimant;
 
+import de.dfki.mlt.rudimant.agent.DefaultLogger;
+import de.dfki.mlt.rudimant.agent.RuleLogger;
+import de.dfki.mlt.rudimant.common.BasicInfo;
 import de.dfki.mlt.rudimant.common.ImportInfo;
 import de.dfki.mlt.rudimant.common.RuleInfo;
 import static de.dfki.mlt.rudimant.compiler.CompilerMain.configs;
 import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.RESOURCE_DIR;
 import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.setUpEmpty;
-import java.io.File;
-import java.io.FileNotFoundException;
 import static org.junit.Assert.assertEquals;
+
+import java.io.*;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static de.dfki.mlt.rudimant.compiler.Visualize.generateAndGetRulesInfo;
@@ -25,7 +29,7 @@ public class RudibuggerTest {
   @BeforeClass
   public static void setUpRudimant() throws FileNotFoundException {
     setUpEmpty();
-    configs.put("outputDirectory", "rudibugger/generatedTestFiles");
+    configs.put("outputDirectory", "../../../target/generatedTestFiles");
     configs.put("ontologyFile", "ontos/pal.quads.ini");
     configs.put("failOnError", false);
   }
@@ -75,9 +79,9 @@ public class RudibuggerTest {
 
     /* excepted ImportInfo */
     ImportInfo expectedRootImport = new ImportInfo("NestedRules", null, -1, null);
-    RuleInfo rule_one = new RuleInfo("rule_one", 1, expectedRootImport);
-    RuleInfo rule_one_a = new RuleInfo("rule_one_a", 4, rule_one);
-    RuleInfo rule_two = new RuleInfo("rule_two", 10, expectedRootImport);
+    RuleInfo rule_one = new RuleInfo("rule_one", 3, expectedRootImport);
+    RuleInfo rule_one_a = new RuleInfo("rule_one_a", 6, rule_one);
+    RuleInfo rule_two = new RuleInfo("rule_two", 12, expectedRootImport);
 
     /* test for equality */
     assertEquals(expectedRootImport, actualRootImport);
@@ -105,4 +109,60 @@ public class RudibuggerTest {
     assertEquals(expectedRootImport, actualRootImport);
   }
 
+  @Test
+  public void testDefaultPrinter() {
+    BasicInfo i = generateAndGetRulesInfo(new File(RUDIBUGGER_TEST_RES_DIR
+        + "nestedRulesTest/NestedRules.rudi"));
+    RuleLogger rl = new RuleLogger();
+    rl.setRootInfo(i);
+    rl.setPrinter(new DefaultLogger());
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    PrintStream pri = new PrintStream(out);
+    PrintStream old = System.out;
+    System.setOut(pri);
+    rl.logAllRules();
+    boolean[] res = { false, true, false, false } ;
+    rl.logRule(0, res);
+    System.setOut(old);
+    String output = out.toString();
+    assertEquals("FALSE: (([true: (a!=b)]||[false: (b!=c)])&&[false: (a==c)])\n", output);
+  }
+
+  @Test
+  public void testDefaultPrinter2() {
+    BasicInfo i = generateAndGetRulesInfo(new File(RUDIBUGGER_TEST_RES_DIR
+        + "nestedRulesTest/NestedRules.rudi"));
+    RuleLogger rl = new RuleLogger();
+    rl.setRootInfo(i);
+    rl.setPrinter(new DefaultLogger());
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    PrintStream pri = new PrintStream(out);
+    PrintStream old = System.out;
+    System.setOut(pri);
+    rl.logAllRules();
+    boolean[] res = { false, true, true } ;
+    rl.logRule(1, res);
+    System.setOut(old);
+    String output = out.toString();
+    assertEquals("FALSE: ([true: b==b]&&![true: (a+b)<(b+c)])\n", output);
+  }
+
+  @Test
+  public void testDefaultPrinter3() {
+    BasicInfo i = generateAndGetRulesInfo(new File(RUDIBUGGER_TEST_RES_DIR
+        + "nestedRulesTest/NestedRules.rudi"));
+    RuleLogger rl = new RuleLogger();
+    rl.setRootInfo(i);
+    rl.setPrinter(new DefaultLogger());
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    PrintStream pri = new PrintStream(out);
+    PrintStream old = System.out;
+    System.setOut(pri);
+    rl.logAllRules();
+    boolean[] res = { false, true } ;
+    rl.logRule(2, res);
+    System.setOut(old);
+    String output = out.toString();
+    assertEquals("FALSE: ![true: user]\n", output);
+  }
 }

@@ -461,8 +461,10 @@ public class VisitorGeneration implements RudiVisitor {
     // first assign final result, then call log function, then execute if
     out.append(varName).append("[0] = ");
     // if only one base term, avoid handling of base terms, since the top level
-    // result contains all the info
-    ruleIfSuspended = (activeInfo.noBaseTerms() == 1);
+    // result contains all the info. Only partly true if there's a negation,
+    // so i wonder if the condition should be different, or we want to remove
+    // this completely TODO: decide and fix
+    ruleIfSuspended = false ; // (activeInfo.noBaseTerms() == 1);
     baseTerm = 1;
     ifNode.condition.visitWithComments(this);
     out.append(";\n");

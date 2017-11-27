@@ -14,6 +14,10 @@ public class RuleInfo extends BasicInfo {
 
   private static final String[] opId2Op = { "&&", "||", "!" };
 
+  public static boolean isNot(int opId) { return opId == -3;  }
+
+  public static String getOp(int opId) { return opId2Op[-(opId + 1)]; }
+
   // to simplify tests
   public static void resetIdGenerator() {
     ruleId = 0;
@@ -49,12 +53,20 @@ public class RuleInfo extends BasicInfo {
     this._expr = _expr;
   }
 
+  public int getExpression(int pos) {
+    return _expr.get(pos);
+  }
+
   public List<String> getBaseterms() {
     return _baseTerms;
   }
 
   public void setBaseterms(List<String> _baseTerms) {
     this._baseTerms = _baseTerms;
+  }
+
+  public String getBaseTerm(int i) {
+    return this._baseTerms.get(i);
   }
 
   public void addOp(String op) {
@@ -79,7 +91,7 @@ public class RuleInfo extends BasicInfo {
    */
   public void addBaseTerm(String term) {
     _baseTerms.add(term);
-    _expr.add(_baseTerms.size());
+    _expr.add(_baseTerms.size() - 1);
   }
 
   public String resultVarName() {

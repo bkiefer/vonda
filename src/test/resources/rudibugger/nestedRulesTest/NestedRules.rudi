@@ -1,12 +1,14 @@
+a = 1; b = 2; c = 3; Agent user;
+
 rule_one:
-if (test = 1) {
+if (((a != b) || (b != c)) && (a == c)) {
   bla;
-  rule_one_a: 
-  if (test = 4) {
+  rule_one_a:
+  if (b == b && ! (a + b) < (b + c)) {
     blo;
   }
 }
 
 rule_two:
-if (test = 2) 
+if (! user)
   bli;

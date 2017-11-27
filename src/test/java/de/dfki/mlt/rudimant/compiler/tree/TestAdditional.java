@@ -36,7 +36,7 @@ public class TestAdditional {
   public void testParenthesis() {
     String in = "rule: if (lastPref.pref_score != 0) {}";
     String r = generate(in);
-    String pref = "public int rule(){ boolean[] __x0 = new boolean[2]; __x0[0] = (lastPref.pref_score != 0); logRule(0, __x0); rule: if (__x0[0]){ } return 0; }";
+    String pref = "public int rule(){ boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = lastPref.pref_score != 0); logRule(0, __x0); rule: if (__x0[0]){ } return 0; }";
     assertEquals(pref, getForMarked(r, pref));
  }
 }

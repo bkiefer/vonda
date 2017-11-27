@@ -42,6 +42,9 @@ public abstract class Agent implements StreamingClient {
     public String name;
   }
 
+  /** takes care of the logging for the execution of rules */
+  public RuleLogger ruleLogger;
+
   /** The object that is responsible for outgoing communication */
   protected CommunicationHub _hub;
 
@@ -74,10 +77,6 @@ public abstract class Agent implements StreamingClient {
    *  incoming events into the event queue
    */
   protected boolean proposalsSent;
-
-  /** The next two variable determine which rudi rules are logged */
-  public BitSet rulesToLog = new BitSet();
-  public boolean logAllRules = false;
 
   public RdfProxy _proxy;
 
@@ -418,6 +417,7 @@ public abstract class Agent implements StreamingClient {
    * overloaded boolean operator methods
    ********************************************************/
 
+  @SuppressWarnings("rawtypes")
   public static boolean exists(Object s) {
     if (s == null) return false;
     if (s instanceof Number) return ((Number) s).doubleValue() != 0;
@@ -482,6 +482,7 @@ public abstract class Agent implements StreamingClient {
 //    logger.info(fromAsr);
 //    comSys.send(".*", "SpeechActEvent", fromAsr);
 //  }
+
   /** The implementation of this method in the wrapper class starts rule
    *  processing
    */
@@ -506,6 +507,7 @@ public abstract class Agent implements StreamingClient {
       logger.error("Error loading grammar: {}", ex);
       System.exit(1);
     }
+    ruleLogger = new RuleLogger(new ColorLogger());
     reset();
   }
 
@@ -824,55 +826,22 @@ public abstract class Agent implements StreamingClient {
   // ######################################################################
 
   /** log all rules */
-  public void logAllRules() {
-    logAllRules = true;
-  }
+  public void logAllRules() { ruleLogger.logAllRules(); }
 
   /** Reset logging to false for all rules */
-  public void resetLogging() {
-    logAllRules = false;
-    rulesToLog.clear();
-  }
+  public void resetLogging() { ruleLogger.resetLogging(); }
 
   /** Start logging a specific rule */
-  public void logRule(int id) {
-    rulesToLog.set(id);
-  }
+  public void logRule(int id, int what) { ruleLogger.logRule(id, what); }
 
   /** Stop logging a specific rule */
-  public void unLogRule(int id) {
-    rulesToLog.clear(id);
-  }
+  public void unLogRule(int id, int what) { ruleLogger.unLogRule(id, what); }
 
-  /** For the compiled code, to determine if a rule should be logged */
-  public boolean shouldLog(int ruleId) {
-    return logAllRules || rulesToLog.get(ruleId);
-  }
+  /** Start logging a specific rule */
+  public void logRule(int id) { logRule(id, 0b11); }
 
-  /**
-   * function that logs (rule) conditions
-   * @param values the parts of the condition, mapped to true or false
-   * @param rule the name of the rule whose condition this is
-   * @param file the file the rule is in
-   */
-  public void logRule(Map<String,Boolean> values, String rule, String file){
-    StringBuffer sb = new StringBuffer();
-    //sb.append("Rule ").append(file).append(":").append(rule).append('\n');
-    boolean first = true;
-    for (Map.Entry<String, Boolean> e : values.entrySet()) {
-      if (first) {
-        sb.append(e.getValue().toString().toUpperCase())
-          .append(":[").append(file).append("|").append(rule).append("] ")
-          .append(e.getKey());
-        first = false;
-      } else {
-        sb.append("\n   ")
-        .append(e.getKey()).append(": ").append(e.getValue());
-      }
-    }
-    //logger.debug("{}", sb.toString());
-    System.err.println(sb.toString());
-  }
+  /** Stop logging a specific rule */
+  public void unLogRule(int id) { unLogRule(id, 0b11); }
 
   /**
    * function that prints logs of (rule) conditions
@@ -880,5 +849,6 @@ public abstract class Agent implements StreamingClient {
    * @param values the parts of the condition, mapped to true or false
    */
   public void logRule(int ruleId, boolean[] result) {
+    ruleLogger.logRule(ruleId, result);
   }
 }
