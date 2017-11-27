@@ -30,23 +30,8 @@ import joptsimple.OptionSet;
  * @author Anna Welker
  */
 public class CompilerMain {
-
-  private static String help = "Hello, this is rudimant.\n"
-          + "Currently, the following flags are available:\n"
-          + "-l\tTranscribe file in logmode. Text will be added so that "
-          + "the outcome of\n"
-          + "\tall boolean expressions is being logged as "
-          + "soon as they are evaluated.\n"
-          + "-e\tDo not crash if there are .rudi files that cannot be translated\n"
-          + "-d\tDo not try to do type checking while translating\n"
-          + "\n\nPlease use this tool as follows:\n"
-          + "java rudimant <directory_to_be_searched/> <paht_of_config_file/> OPTIONS\n"
-          + "-o=DIRECTORY\tSpecify DIRECTORY as the output directory";
-
   public static Map<String, Object> configs;
   public static File confDir;
-
-  // rdf functionality
 
   public static boolean process(RudimantCompiler rc, String file)
       throws IOException {
@@ -67,7 +52,7 @@ public class CompilerMain {
   final static Object [][] defaults = {
     { CFG_TYPE_ERROR_FATAL, false, "e" },
     { CFG_VISUALISE, false , "v" },
-    { CFG_WRAPPER_CLASS, "w", "DummyAgent" },
+    { CFG_WRAPPER_CLASS, "w", "TheAgent" },
   };
 
   public Map<String, Object> defaultConfig() {
@@ -175,9 +160,6 @@ public class CompilerMain {
       Visualize.init();
       rc.showTree();
     }
-    if (configs.containsKey(CFG_LOGGING)) {
-      // rc.versionToLog = false;
-    }
     return rc;
   }
 
@@ -193,7 +175,7 @@ public class CompilerMain {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
-    OptionParser parser = new OptionParser("hlver:w:c:o:");
+    OptionParser parser = new OptionParser("ver:w:c:o:");
     parser.accepts("help");
     OptionSet options = null;
 
@@ -213,10 +195,6 @@ public class CompilerMain {
 
       outputDirectory = new File((String)files.get(0)).getParentFile();
 
-      if (options.has("help") || options.has("h")) {
-        System.out.println(help);
-        System.exit(0);
-      }
       if (options.has("c")) {
         String confName = (String)options.valueOf("c");
         readConfig(confName);
@@ -232,9 +210,6 @@ public class CompilerMain {
 
       if (options.has("w")) {
         configs.put(CFG_WRAPPER_CLASS, options.valueOf("w"));
-      }
-      if (options.has("l")) {
-        configs.put(CFG_WRAPPER_CLASS, false);
       }
       if (options.has("v")) {
         configs.put(CFG_VISUALISE, true);
@@ -262,12 +237,12 @@ public class CompilerMain {
 
   private static void usage(String message) {
     System.out.println(message);
-    System.out.println(
-          "java rudimant -h<elp> -v<isualize> -e<rrorstops>\n"
-        + "              -r ontos.ini -w WrapperClass -c config.yaml\n"
-        + "              -o outputDir toplevelfile.rudi (file.rudi)*\n"
-        + "              -l log with java, not rudi look of code\n"
-        + "For help see rumdimant -help\n");
+    System.out.println("java -jar vonda.jar\n"
+        + "   -v<isualize parses> -e<rror stops>\n"
+        + "   -r ontos.ini -w WrapperClass -o outputDir\n"
+        + "   -c config.yaml\n"
+        + "   TopLevel.rudi\n\n"
+        + "Values for -e, -r, -w and -o can also be set in the config file.");
   }
 
 }

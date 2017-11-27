@@ -1,5 +1,6 @@
 package de.dfki.mlt.rudimant.compiler;
 
+import static de.dfki.mlt.rudimant.common.Constants.*;
 import static de.dfki.mlt.rudimant.compiler.Constants.*;
 import static de.dfki.mlt.rudimant.compiler.tree.GrammarFile.*;
 
@@ -17,13 +18,14 @@ import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import de.dfki.mlt.rudimant.common.BasicInfo;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
 
 public class RudimantCompiler {
 
   public static final Logger logger =
       LoggerFactory.getLogger(RudimantCompiler.class);
+
+  static String INFO_DIR = "src/main/resources/generated";
 
   private static HfcDbHandler handler;
 
@@ -108,19 +110,13 @@ public class RudimantCompiler {
         in = RudimantCompiler.class.getResourceAsStream("/uncrustify.cfg");
         out = new FileOutputStream(tmpCfg);
         int b;
-        while ((b = in.read()) >= 0) {
-          out.write(b);
-        }
+        while ((b = in.read()) >= 0) { out.write(b); }
       } catch (IOException ex){
         logger.error("Failed to write uncrustify config");
       }
       finally {
         try {
-          if (out != null) {
-            in.close();
-            out.flush();
-            out.close();
-          }
+          if (out != null) { in.close(); out.flush(); out.close(); }
         }
         catch (IOException ex){
           logger.error("Failed to write uncrustify config");
@@ -151,11 +147,10 @@ public class RudimantCompiler {
   public void processToplevel(File topLevel) throws IOException {
     inputRootDir = topLevel.getParentFile();
     if (outputRootDir == null) outputRootDir = inputRootDir;
-    // get the real name, without upper case transformation
+    // get the name from the input file name
     String className = topLevel.getName().replace(RULE_FILE_EXT, "");
 
-    String[] subPackage = {};
-    mem.enterClass(className, subPackage, null);
+    mem.enterClass(className, new String[0], null);
     readAgentSpecs(className);
     String wrapperClass = mem.getWrapperClass();
     File wrapperInit = new File(inputRootDir,
@@ -179,10 +174,9 @@ public class RudimantCompiler {
     DumperOptions options = new DumperOptions();
     options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
     Yaml yaml = new Yaml(options);
-    BasicInfo rootInfo = mem.getInfo();
-    String rulesLocFilePath = outputRootDir + "/RuleLoc.yml";
-    FileWriter writer = new FileWriter(rulesLocFilePath);
-    yaml.dump(rootInfo, writer);
+    File infoDir = new File(INFO_DIR);
+    if (!infoDir.isDirectory()) Files.createDirectories(infoDir.toPath());
+    yaml.dump(mem.getInfo(), new FileWriter(new File(infoDir, INFO_FILE_NAME)));
   }
 
 

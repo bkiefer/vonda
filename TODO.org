@@ -1,4 +1,6 @@
-* Queries aus .rudi abfeuern
+* Queries aus .rudi abfeuern --> missing varargs!?
+
+* Collections probleme: Alles polymorph?
 
 * Dialogue Acts
   - hierarchy of Frames from the ontology with access functions
@@ -24,3 +26,4 @@
 + Timeouts mit "Argumenten", die spezifische Instanzen beackern.
 + hierarchy of DAs
 + functionality: integrate jtfs for subsumption etc.
++ Final refactoring logging

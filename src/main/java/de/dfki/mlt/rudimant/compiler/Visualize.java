@@ -34,14 +34,22 @@ public class Visualize extends CompilerMain {
     return new ByteArrayInputStream(toParse.getBytes());
   }
 
-  private static RudimantCompiler initRc()
+  private static RudimantCompiler initRc(boolean fakeReal)
       throws IOException, WrongFormatException {
     RuleInfo.resetIdGenerator();
     RudimantCompiler rc = init(confDir, configs);
-    String[] pkg = {};
-    rc.getMem().enterClass("Test", pkg, null);
-    rc.readAgentSpecs("Test");
+    RudimantCompiler.INFO_DIR = "target/generatedTestFiles/";
+    if (fakeReal) {
+      String[] pkg = {};
+      rc.getMem().enterClass("Test", pkg, null);
+      rc.readAgentSpecs("Test");
+    }
     return rc;
+  }
+
+  private static RudimantCompiler initRc()
+      throws IOException, WrongFormatException {
+    return initRc(true);
   }
 
   public static String generate(String in, boolean show) {
@@ -63,8 +71,7 @@ public class Visualize extends CompilerMain {
   public static BasicInfo generateAndGetRulesInfo(File input) {
     RudimantCompiler rc;
     try {
-      RuleInfo.resetIdGenerator();
-      rc = init(confDir, configs);
+      rc = initRc(false);
       rc.processToplevel(input);
     } catch (IOException | WrongFormatException e) {
       throw new RuntimeException(e);

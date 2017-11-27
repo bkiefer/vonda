@@ -22,6 +22,3 @@ test.rudi
 **/*.vrb
 **/*.snm
 **/auto
-
-# ignore RudibuggerTest's generated files
-/src/test/resources/rudibugger/generatedTestFiles/
