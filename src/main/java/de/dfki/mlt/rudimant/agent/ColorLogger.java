@@ -17,10 +17,8 @@ public class ColorLogger extends DefaultLogger {
   }
 
   @Override
-  protected void printResult(boolean value) {
-    printInColor(
-        Boolean.toString(value).toUpperCase() + (value ? " : " : ": "),
-        value ? GREEN : RED);
+  protected void printResult(String label, boolean value) {
+    printInColor(label + ": ", value ? GREEN : RED);
   }
 
 }

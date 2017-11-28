@@ -13,8 +13,8 @@ public class DefaultLogger implements LogPrinter {
     print("[" + (shortCut ? "unk" : value) + ": " + term + "]");
   }
 
-  protected void printResult(boolean value) {
-    print(Boolean.toString(value).toUpperCase() + ": ");
+  protected void printResult(String label, boolean value) {
+    print("(" + label + ") " + Boolean.toString(value).toUpperCase() + ": ");
   }
 
   private boolean printRec(RuleInfo r, boolean[] result, int[] pos, boolean shortCut) {
@@ -42,6 +42,7 @@ public class DefaultLogger implements LogPrinter {
   @Override
   public void printLog(RuleInfo ruleId, boolean[] result) {
     int[] pos = { 0 };
-    printResult(result[0]); printRec(ruleId, result, pos, false); print("\n");
+    printResult(ruleId.getLabel(), result[0]);
+    printRec(ruleId, result, pos, false); print("\n");
   }
 }

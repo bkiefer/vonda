@@ -74,6 +74,10 @@ public class RuleLogger {
     collectRuleInfos(rootInfo);
   }
 
+  public BasicInfo getRootInfo() {
+    return rootInfo;
+  }
+
   /** log all rules */
   public void logAllRules() {
     logAllRules = true;
