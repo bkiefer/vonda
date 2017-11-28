@@ -125,7 +125,7 @@ public class RudibuggerTest {
     rl.logRule(0, res);
     System.setOut(old);
     String output = out.toString();
-    assertEquals("FALSE: (([true: (a!=b)]||[false: (b!=c)])&&[false: (a==c)])\n", output);
+    assertEquals("FALSE: (([true: (a!=b)]||[unk: (b!=c)])&&[false: (a==c)])\n", output);
   }
 
   @Test

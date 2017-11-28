@@ -9,37 +9,39 @@ public class DefaultLogger implements LogPrinter {
     System.out.print(s);
   }
 
-  protected void printTerm(String term, boolean value) {
-    print("[" + value + ": " + term + "]");
+  protected void printTerm(String term, boolean value, boolean shortCut) {
+    print("[" + (shortCut ? "unk" : value) + ": " + term + "]");
   }
 
   protected void printResult(boolean value) {
     print(Boolean.toString(value).toUpperCase() + ": ");
   }
 
-  private void printRec(RuleInfo r, boolean[] result, int[] pos) {
+  private boolean printRec(RuleInfo r, boolean[] result, int[] pos, boolean shortCut) {
     int elt = r.getExpression(pos[0]);
     ++pos[0]; // move to next element
     if (elt < 0) {
       if (RuleInfo.isNot(elt)) { // unary not
         print(RuleInfo.getOp(elt));
-        printRec(r, result, pos);
-      } else { // binary operator
-        print("(");
-        printRec(r, result, pos);
-        print(RuleInfo.getOp(elt));
-        printRec(r, result, pos);
-        print(")");
-      }
-    } else {
-      // print term
-      printTerm(r.getBaseTerm(elt), result[elt + 1]);
+        return ! printRec(r, result, pos, shortCut);
+      } // binary operator
+      print("(");
+      boolean left = printRec(r, result, pos, shortCut);
+      print(RuleInfo.getOp(elt));
+      boolean right = printRec(r, result, pos,
+          shortCut || (elt == -1 && !left) || (elt == -2 && left));
+      print(")");
+      return (elt == -1) ? left && right : left || right;
     }
+    // print term
+    boolean termResult = result[elt + 1];
+    printTerm(r.getBaseTerm(elt), termResult, shortCut);
+    return termResult;
   }
 
   @Override
   public void printLog(RuleInfo ruleId, boolean[] result) {
     int[] pos = { 0 };
-    printResult(result[0]); printRec(ruleId, result, pos); print("\n");
+    printResult(result[0]); printRec(ruleId, result, pos, false); print("\n");
   }
 }
