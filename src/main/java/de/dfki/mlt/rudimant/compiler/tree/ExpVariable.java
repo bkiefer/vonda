@@ -14,7 +14,7 @@ import de.dfki.mlt.rudimant.compiler.Type;
  */
 public class ExpVariable extends RTExpLeaf {
 
-  private ExpVariable(String representation, Type t) {
+  ExpVariable(String representation, Type t) {
     content = representation;
     type = t;
   }

@@ -79,6 +79,10 @@ public class ExpAssignmentTest {
     dtr = getNodeOfInterest(gf, 2); // test3 = test2
     type_right = ((ExpAssignment)((StatVarDef) dtr).toAssign).right.getType().toJava();
     assertEquals("right side type test3 should be int", "int", type_right);
+
+    dtr = getNodeOfInterest(gf, 3); // test3 = test2
+    type_right = ((ExpAssignment)((StatVarDef) dtr).toAssign).right.getType().toJava();
+    assertEquals("right side type test4 should be int", "int", type_right);
   }
 
 }

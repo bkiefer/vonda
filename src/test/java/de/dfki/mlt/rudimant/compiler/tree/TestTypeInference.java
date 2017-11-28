@@ -85,11 +85,11 @@ public class TestTypeInference {
   @Test(expected=TypeException.class)
   public void test5() throws Throwable {
     String in = "String foo(); "
-            + "boolean b = foo(); ";
+            + "int b = foo(); ";
     String s = getTypeError(in);
     String expected = "b = foo();";
     assertEquals(expected, getForMarked(s, expected));
-    assertTrue(s.contains("public boolean b;"));
+    assertTrue(s.contains("public int b;"));
   }
 
   @Test
@@ -172,7 +172,7 @@ public class TestTypeInference {
     String in = "somevar = getSomething();" +
         "sum1 = 3 + somevar;sum2 = somevar + 3;";
     String s = generate(in);
-    String expected = "somevar = getSomething();" +
+    String expected = "somevar = (Object /* (unknown) */) getSomething();" +
         "sum1 = (3+somevar);sum2 = (somevar+3);";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("public int sum1;"));

@@ -22,6 +22,7 @@ public class StatListCreation extends RTStatement {
   public StatListCreation(String varName, ArrayList<RTExpression> objs) {
     objects = objs;
     variableName = varName;
+    listType = Type.getNoType();
   }
 
   public StatListCreation(String varName, ArrayList<RTExpression> objs,

@@ -133,46 +133,15 @@ public class VisitorType implements RudiVisitor {
     node.right.visit(this);
     if (node.right.type.isVoid())
       typeError("Void can not be assigned", node);
-
     node.left.visit(this);
-    /*
-    // is this a variable declaration for an already existing variable?
-    // When we get here, if node.declaration is true, then node.type has a
-    // non-null value, and vice versa
-    if (node.declaration) {
-      if (mem.variableExists(node.left.toString())) {
-        typeError("Re-declaration of existing variable " + node.left, node);
-      } else {
-    	if(mem.isActiveRule(node.left.fullexp)){
-    	  typeError("Declaring variable " + node.left + " that is also a rule name!", node);
-    	}
-    	node.left.type = node.type; // the type of the declaration is in this node
-      }
-      mem.addVariableDeclaration(((ExpVariable) node.left).content,
-              node.left.type);
-      if (node.right.type.isUnspecified()) {
-        node.right.propagateType(node.type);
-      }
-    } else if (node.left instanceof ExpVariable
-        && !mem.variableExists(node.left.toString())) {
-      node.declaration = true;
-      // node.type is null, and variable does not exist, so no type.
-      if (node.right.type == null) {
-        node.right.type = Type.getNoType();
-        // TODO: ? node.right.propagateType(node.type);
-      }
-      node.type = node.left.type = node.right.type;
-      mem.addVariableDeclaration(((ExpVariable) node.left).content,
-              node.left.type);
-    }
-    */
+
     if (node.right instanceof ExpVariable
         && !mem.variableExists(node.right.toString())) {
       typeError("assigning the value of a non-existing variable "
           + node.right + "to " + node.left, node);
     }
 
-    // If the type on the left side is more specific that the one on the right,
+    // If the type on the left side is more specific than the one on the right,
     // a cast must be applied during generation. if it is less specific, no
     // special measures must be taken.
     // if unifyTypes returns null, the types are incompatible
@@ -198,10 +167,10 @@ public class VisitorType implements RudiVisitor {
       }
     }
     node.type = mergeType;
-    if (node.right.type == null) {
+    if (node.right.type.isUnspecified()) {
       node.right.propagateType(node.type);
     }
-    if (node.left.type == null) {
+    if (node.left.type.isUnspecified()) {
       node.left.propagateType(node.type);
     }
   }
@@ -319,12 +288,6 @@ public class VisitorType implements RudiVisitor {
   }
 
   /**
-   * This should get the return type of the method
-   *
-   * @Override public void visitNode(ExpFuncOnObject node) {
-   * node.on.visit(this); node.funccall.visit(this); }
-   */
-  /**
    * This might push the boolean type downwards for the boolexp, but that's not
    * necessary because the bool expression already knows.
    */
@@ -334,16 +297,16 @@ public class VisitorType implements RudiVisitor {
     node.boolexp = node.boolexp.ensureBoolean();
     node.thenexp.visit(this);
     node.elseexp.visit(this);
-    Type unified = node.thenexp.getType() != null?
-    	node.thenexp.getType().unifyTypes(node.elseexp.getType())
-    	: node.elseexp.getType();
+    Type unified = node.thenexp.getType().isUnspecified()
+        ?	node.thenexp.getType().unifyTypes(node.elseexp.getType())
+            : node.elseexp.getType();
     if (unified == null) {
-      typeError(node.fullexp
-          + ": type of then and else differ: "
+      typeError(node.fullexp + ": type of then and else differ: "
           + node.thenexp.getType().toDebugString() + " vs. "
           + node.elseexp.getType().toDebugString(), node);
+      unified = new Type(unified);
     }
-    node.type = unified == null ? new Type(unified) : unified;
+    node.type = unified;
   }
 
   @Override
@@ -415,16 +378,16 @@ public class VisitorType implements RudiVisitor {
   @Override
   public void visitNode(StatFor2 node) {
     node.initialization.visit(this);
-    Type innerIterableType = null;
-    if (node.initialization.type != null) {
+    Type innerIterableType = Type.getNoType();
+    if (! node.initialization.type.isUnspecified()) {
       innerIterableType = node.initialization.getInnerType();
     }
-    if (innerIterableType == null) {
+    if (innerIterableType.isUnspecified()) {
       typeError("Iterable for loop type is unknown or not generic, but: "
           + node.initialization.getType().toDebugString(), node);
       innerIterableType = new Type("Object");
     }
-    if (node.varType == null) {
+    if (node.varType.isUnspecified()) {
       node.varType = innerIterableType;
     } else {
       Type mergeType = node.varType.unifyTypes(innerIterableType);
@@ -463,7 +426,7 @@ public class VisitorType implements RudiVisitor {
       for (RTExpression e : node.objects) {
         visitNode(e);
       }
-      if (node.listType == null) {
+      if (node.listType.isUnspecified()) {
         // infer type from content (first element)
         node.listType = new Type("List<" + node.objects.get(0).getType() + ">");
       } else {
@@ -477,7 +440,7 @@ public class VisitorType implements RudiVisitor {
         }
       }
     }
-    if (node.listType == null) {
+    if (node.listType.isUnspecified()) {
       // that's our best guess
       node.listType = new Type("List<Object>");
     }
@@ -517,36 +480,28 @@ public class VisitorType implements RudiVisitor {
           + " to " + node.type.toDebugString() +
           ", keeping the old type", node);
     }
-    if (node.type.isUnspecified() && mem.variableExists(node.variable)) {
-      node.type = mem.getVariableType(node.variable);
-    }
-    if (node.toAssign != null) {
-      node.toAssign.visit(this);
-      if (! node.toAssign.type.isUnspecified()) {
-        if (node.toAssign.type.isVoid()) {
-          typeError("Void can not be assigned", node);
-        } else {
-          if (! node.type.isUnspecified()) {
-            // check type
-            if (node.type.unifyTypes(node.toAssign.type) == null) {
-              typeError("Incompatible types in variable definition: "
-                  + node.type + " <> " + node.toAssign.type, node);
-            }
-          } else {
-            node.type = node.toAssign.type;
-          }
-        }
-      } else {
-        node.toAssign.propagateType(node.type);
-      }
-      ExpVariable var = node.fixFields(new ExpVariable(node.variable));
-      var.type = node.type;
-      node.toAssign = node.fixFields(new ExpAssignment(var, node.toAssign));
-    }
-    if (! mem.variableExists(node.variable)) {
-      mem.addVariableDeclaration(node.variable, node.type);
+    if (mem.variableExists(node.variable)) {
+      if (node.type.isUnspecified())
+        node.type = mem.getVariableType(node.variable);
+    } else {
+      if (! node.type.isUnspecified())
+        mem.addVariableDeclaration(node.variable, node.type);
       // mark as declaration
       node.isDefinition = true;
+    }
+    if (node.toAssign != null) {
+      ExpVariable var =
+          node.fixFields(new ExpVariable(node.variable, node.type));
+      node.toAssign = node.fixFields(new ExpAssignment(var, node.toAssign));
+      node.toAssign.visit(this);
+      if (node.type.isUnspecified()) {
+        node.type = node.toAssign.type;
+      }
+      if (! mem.variableExists(node.variable)) {
+        mem.addVariableDeclaration(node.variable, var.type);
+        // mark as declaration
+        node.isDefinition = true;
+      }
     }
   }
 
