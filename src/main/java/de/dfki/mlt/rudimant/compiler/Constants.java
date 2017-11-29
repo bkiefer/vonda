@@ -1,9 +1,11 @@
 package de.dfki.mlt.rudimant.compiler;
 
+import static de.dfki.mlt.rudimant.common.Constants.*;
+
 public interface Constants {
-  public static final String RULE_FILE_EXT = ".rudi";
+
   // Definitions for methods and variables in Agent.java
-  public static final String AGENT_DEFS = "Agent" + RULE_FILE_EXT;
+  public static final String AGENT_DEFS = "Agent" + RULE_FILE_EXTENSION;
 
   public static final String CFG_OUTPUT_DIRECTORY = "outputDirectory";
   public static final String CFG_WRAPPER_CLASS = "wrapperClass";
@@ -22,3 +24,4 @@ public interface Constants {
   public static final String CFG_RULE_LOCATION_FILE = "ruleLocationFile";
   public static final String CFG_RULE_LOCATION_SUFFIX = "RuleLocation.yml";
 }
+

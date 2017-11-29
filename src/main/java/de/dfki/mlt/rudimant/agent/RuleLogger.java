@@ -46,7 +46,7 @@ public class RuleLogger {
   public void loadFromResource() {
     // load the rule infos for logging
     rootInfo = (BasicInfo) new Yaml().load(
-        RuleLogger.class.getResourceAsStream("/generated/" + INFO_FILE_NAME));
+        RuleLogger.class.getResourceAsStream("/generated/" + RULE_LOCATION_FILE));
     if (rootInfo != null) {
       ruleInfos = new ArrayList<>();
       collectRuleInfos(rootInfo);
@@ -92,14 +92,8 @@ public class RuleLogger {
 
   /** Start logging a specific rule */
   public void logRule(int id, int what) {
-    if ((what & 1) != 0) rulesToLogTrue.set(id);
-    if ((what & 2) != 0) rulesToLogFalse.set(id);
-  }
-
-  /** Stop logging a specific rule */
-  public void unLogRule(int id, int what) {
-    if ((what & 1) != 0) rulesToLogTrue.clear(id);
-    if ((what & 2) != 0) rulesToLogFalse.clear(id);
+    rulesToLogTrue.set(id, ((what & STATE_IF_TRUE) != 0));
+    rulesToLogFalse.set(id, ((what & STATE_IF_FALSE) != 0));
   }
 
   /** For the compiled code, to determine if a rule should be logged */

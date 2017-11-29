@@ -148,13 +148,13 @@ public class RudimantCompiler {
     inputRootDir = topLevel.getParentFile();
     if (outputRootDir == null) outputRootDir = inputRootDir;
     // get the name from the input file name
-    String className = topLevel.getName().replace(RULE_FILE_EXT, "");
+    String className = topLevel.getName().replace(RULE_FILE_EXTENSION, "");
 
     mem.enterClass(className, new String[0], null);
     readAgentSpecs(className);
     String wrapperClass = mem.getWrapperClass();
     File wrapperInit = new File(inputRootDir,
-        wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + RULE_FILE_EXT);
+        wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + RULE_FILE_EXTENSION);
     try {
       if (wrapperInit.exists()) {
         parseAndTypecheck(this, new FileInputStream(wrapperInit), className);
@@ -176,7 +176,7 @@ public class RudimantCompiler {
     Yaml yaml = new Yaml(options);
     File infoDir = new File(INFO_DIR);
     if (!infoDir.isDirectory()) Files.createDirectories(infoDir.toPath());
-    yaml.dump(mem.getInfo(), new FileWriter(new File(infoDir, INFO_FILE_NAME)));
+    yaml.dump(mem.getInfo(), new FileWriter(new File(infoDir, RULE_LOCATION_FILE)));
   }
 
 
@@ -198,7 +198,7 @@ public class RudimantCompiler {
      */
     File inputFile = new File(
         getSubDirectory(inputRootDir, mem.getPackageSpec()),
-        (name != null ? name : mem.getClassName()) + RULE_FILE_EXT);
+        (name != null ? name : mem.getClassName()) + RULE_FILE_EXTENSION);
 
     logger.info("parsing " + inputFile.getName() + " to " + outputFile);
     GrammarFile gf = parseAndTypecheck(this,

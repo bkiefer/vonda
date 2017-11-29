@@ -1,6 +1,6 @@
 package de.dfki.mlt.rudimant.compiler;
 
-import static de.dfki.mlt.rudimant.compiler.Constants.RULE_FILE_EXT;
+import static de.dfki.mlt.rudimant.common.Constants.RULE_FILE_EXTENSION;
 
 import java.io.*;
 
@@ -97,7 +97,7 @@ public class Visualize extends CompilerMain {
   public static class RudiFileHandler implements ObjectHandler {
     public boolean process(File f, InputStream in, MainFrame mf)
         throws IOException {
-      String inputRealName = f.getName().replace(RULE_FILE_EXT, "");
+      String inputRealName = f.getName().replace(RULE_FILE_EXTENSION, "");
 
       // create the abstract syntax tree
       GrammarFile gf = null;

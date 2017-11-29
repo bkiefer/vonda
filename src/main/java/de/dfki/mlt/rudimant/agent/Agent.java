@@ -1,5 +1,7 @@
 package de.dfki.mlt.rudimant.agent;
 
+import static de.dfki.mlt.rudimant.common.Constants.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -834,14 +836,11 @@ public abstract class Agent implements StreamingClient {
   /** Start logging a specific rule */
   public void logRule(int id, int what) { ruleLogger.logRule(id, what); }
 
-  /** Stop logging a specific rule */
-  public void unLogRule(int id, int what) { ruleLogger.unLogRule(id, what); }
-
-  /** Start logging a specific rule */
-  public void logRule(int id) { logRule(id, 0b11); }
+  /** Set logging status of a specific rule */
+  public void logRule(int id) { logRule(id, STATE_ALWAYS); }
 
   /** Stop logging a specific rule */
-  public void unLogRule(int id) { unLogRule(id, 0b11); }
+  public void unLogRule(int id) { logRule(id, STATE_NEVER); }
 
   /**
    * function that prints logs of (rule) conditions
