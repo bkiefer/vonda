@@ -50,7 +50,7 @@ public class DebugClient implements LogPrinter {
   public void printLog(RuleInfo ruleId, boolean[] result) {
     Object[] params = {ruleId, result};
     try {
-      client.execute("Agent.printLog", params);
+      client.execute("Rudibugger.printLog", params);
     } catch (XmlRpcException e) {
       logger.error(e.getMessage());
     }
