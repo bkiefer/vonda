@@ -84,7 +84,6 @@ public class TestTypes {
   public void testType7(){
     String in = "String s = \"something\"; boolean empty = s;";
     String r = generate(in);
-    System.out.println(r);
     String expected = "s = \"something\";empty = exists(s);";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("String s"));

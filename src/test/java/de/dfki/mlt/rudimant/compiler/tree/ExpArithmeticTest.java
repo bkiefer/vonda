@@ -70,4 +70,12 @@ public class ExpArithmeticTest {
     assertTrue(dtr instanceof ExpAssignment);
     assertEquals("String", ((ExpAssignment)dtr).type.toJava());
   }
+
+  @Test
+  public void testArithmetic5() {
+    String in = "int i = -(1 + 2);";
+    String r = generate(in);
+    String expected = "int i = -((1+2));";
+    assertEquals(expected, getForMarked(r, expected));
+  }
 }

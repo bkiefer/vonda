@@ -167,6 +167,13 @@ public class TestTypeInference {
     assertTrue(s.contains("public long k;"));
   }
 
+  @Test(expected=TypeException.class)
+  public void test13() throws Throwable {
+    String in = " void fun(); l = fun();";
+    getTypeError(in);
+    int i = 0;
+  }
+
   @Test
   public void testPartUnkDecl() {
     String in = "somevar = getSomething();" +

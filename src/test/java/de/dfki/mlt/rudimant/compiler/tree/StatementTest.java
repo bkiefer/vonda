@@ -164,6 +164,15 @@ public class StatementTest {
    assertEquals(expected, getForMarked(r, expected));
  }
 
+ @Test
+ public void StatementTest8(){
+   String in = " Child user; n = user.name; List<String> names = { n };";
+   String r = generate(in);
+   String expected = "Rdf user;Set<Object> n = ((Set<Object>)user.getValue(\"<upper:name>\"));"
+       + "List<String> names = new ArrayList<>(); names.add(n);";
+   assertEquals(expected, getForMarked(r, expected));
+ }
+
 //   @Test
 //   public void StatementTestxy(){
 //     String in = "Object foo; for (int i = 1; i <= 2; ++i){foo.slot = 1;}";
