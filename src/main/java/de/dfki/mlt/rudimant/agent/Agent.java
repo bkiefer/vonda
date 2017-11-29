@@ -17,6 +17,7 @@ import de.dfki.lt.hfc.db.server.HfcDbApiHandler;
 import de.dfki.lt.hfc.db.server.StreamingClient;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
+import de.dfki.mlt.rudimant.common.*;
 
 /**
  *
@@ -849,5 +850,18 @@ public abstract class Agent implements StreamingClient {
    */
   public void logRule(int ruleId, boolean[] result) {
     ruleLogger.logRule(ruleId, result);
+  }
+
+  // ######################################################################
+  // Connection to rudibugger
+  // ######################################################################
+
+  public void connectToDebugger(int ownPort, int debugPort) throws IOException {
+    DebugServer ds = new DebugServer(ownPort);
+    ds.startServer();
+    logger.debug("DebugServer has been started on port [" + ownPort + "].");
+    DebugClient dc = new DebugClient(debugPort);
+    logger.debug("DebugClient has been started and looks for client "
+      + "on port [" + debugPort + "].");
   }
 }

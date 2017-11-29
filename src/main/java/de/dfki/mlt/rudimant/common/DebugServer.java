@@ -46,7 +46,7 @@ public class DebugServer {
    *
    * @see main()
    */
-  private DebugServer(int port) throws IOException {
+  public DebugServer(int port) throws IOException {
     this.port = port;
   }
 
@@ -101,11 +101,11 @@ public class DebugServer {
    * @throws FileNotFoundException
    */
   public static void main(String[] args) throws FileNotFoundException, WrongFormatException, IOException {
-    if (args.length != 4) {
-      System.err.println("  wrong number of arguments; required (4): port-no namespace-dir tuple-dir rule-dir");
-      System.exit(1);
-    }
-    System.out.println("\n  starting HFC Server ... ");
+//    if (args.length != 4) {
+//      System.err.println("  wrong number of arguments; required (4): port-no namespace-dir tuple-dir rule-dir");
+//      System.exit(1);
+//    }
+//    System.out.println("\n  starting HFC Server ... ");
     DebugServer hs = new DebugServer(Integer.parseInt(args[0]));
     hs.startServer();
   }
