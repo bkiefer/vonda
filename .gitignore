@@ -4,6 +4,7 @@
 .settings
 **/*~
 /nbproject/
+nbactions.xml
 /0howto
 /Java8.g4
 /doc/quiz-abstract.txt
