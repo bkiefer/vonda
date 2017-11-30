@@ -8,7 +8,12 @@ import de.dfki.mlt.rudimant.agent.Agent;
 public class DebugAgentApi {
   private Agent _agent;
 
-  /** Start logging a specific rule */
+  /**
+   * Start logging a specific rule
+   *
+   * @param id
+   * @param what
+   */
   public void setLoggingStatus(int id, int what) {
     _agent.logRule(id, what);
   }
