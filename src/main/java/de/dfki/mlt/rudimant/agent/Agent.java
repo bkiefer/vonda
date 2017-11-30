@@ -521,6 +521,16 @@ public abstract class Agent implements StreamingClient {
     _hub = hub;
   }
 
+  private static final int AGENT_SERVER_PORT = 2000, DEBUGGER_GUI_PORT = 3000;
+
+  public void startDebuggerGui() {
+    try {
+      connectToDebugger(AGENT_SERVER_PORT, DEBUGGER_GUI_PORT);
+    } catch (IOException ex) {
+      logger.error("Can not connect to debugger: {}", ex);
+    }
+  }
+
   // ######################################################################
   // behaviour handling --> move to another class!
   // ######################################################################
@@ -857,11 +867,12 @@ public abstract class Agent implements StreamingClient {
   // ######################################################################
 
   public void connectToDebugger(int ownPort, int debugPort) throws IOException {
-    DebugServer ds = new DebugServer(ownPort);
-    ds.startServer();
-    logger.debug("DebugServer has been started on port [" + ownPort + "].");
-    DebugClient dc = new DebugClient(debugPort);
-    logger.debug("DebugClient has been started and looks for client "
-      + "on port [" + debugPort + "].");
+    DebuggingService ds = new DebuggingService(this);
+    ds.startServer(ownPort);
+    logger.debug("DebuggingService has been started on port [" + ownPort + "].");
+    RemoteLogger logprinter = new RemoteLogger(debugPort);
+    this.ruleLogger.setPrinter(logprinter);
+    logger.debug("RemoteLogger started looking for server on port ["
+        + debugPort + "].");
   }
 }
