@@ -3,6 +3,7 @@ package de.dfki.mlt.rudimant.common;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,46 +20,50 @@ public class SimpleServer  {
     public void execute(String[] args);
   }
 
-  private ServerSocket serverSocket;
-
   private Thread serverThread;
 
   private Callable _callable;
+
+  Socket clientSocket;
 
   public SimpleServer(Callable c) throws IOException {
     _callable = c;
   }
 
+  public boolean isAlive() {
+    return serverThread == null || serverThread.isAlive();
+  }
+
   /** starts the debugging service for the agent */
-  public synchronized void startServer(int port, String name) {
+  public void startServer(int port, String name) {
     try {
-      serverSocket = new ServerSocket(port);
-      Socket clientSocket = serverSocket.accept();
-      InputStream in = clientSocket.getInputStream();
-      InputStreamReader inReader = new InputStreamReader(in, "UTF-8");
-      serverThread = new Thread(){
+      serverThread = new Thread() {
         public void run() {
-          int c;
-          StringBuffer sb = new StringBuffer();
-          do {
-            try {
+          try (ServerSocket serverSocket = new ServerSocket(port)) {
+            clientSocket = serverSocket.accept();
+            InputStream in = clientSocket.getInputStream();
+            InputStreamReader inReader = new InputStreamReader(in, "UTF-8");
+            int c;
+            StringBuffer sb = new StringBuffer();
+            do {
               c = inReader.read();
               switch (c) {
               case '\t':
-                String s = sb.toString();
-                String[] args = s.split(";");
-                _callable.execute(args);
-                sb = new StringBuffer();
-                break;
-              case '\0':
-                return;
-              default:
-                sb.append(c);
+                  String s = sb.toString();
+                  String[] args = s.split(";");
+                  _callable.execute(args);
+                  sb = new StringBuffer();
+                  break;
+                case '\0':
+                  return;
+                default:
+                  sb.append((char)c);
               }
-            } catch (IOException ex) {
-              logger.error("Error reading DebuggingService Stream: {}", ex);
-            }
-          } while (true);
+            } while (clientSocket.isConnected() && ! clientSocket.isClosed());
+            serverSocket.close();
+          } catch (IOException ex) {
+            logger.error("Error reading DebuggingService Stream: {}", ex);
+          }
         }
       };
       serverThread.setName(name);
@@ -68,5 +73,28 @@ public class SimpleServer  {
     } catch (Exception exception) {
       logger.error("Agent debug server: " + exception.toString());
     }
+  }
+
+  public static void main(String[] args) throws IOException {
+    final SimpleServer simplServ = new SimpleServer(
+        (s) -> {System.out.println(Arrays.toString(s));}
+        );
+
+    Thread sideThread = new Thread() {
+      public void run() {
+        try {
+          int i =0;
+          while (i++ < 20 && simplServ.isAlive()) {
+            System.out.println("Rödeln...");
+            Thread.sleep(5000);
+          }
+        } catch (InterruptedException v) {
+          System.out.println(v);
+        }
+      }
+    };
+
+    sideThread.start();
+    simplServ.startServer(3665, "testServer");
   }
 }
