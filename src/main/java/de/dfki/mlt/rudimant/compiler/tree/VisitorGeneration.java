@@ -59,6 +59,19 @@ public class VisitorGeneration implements RudiVisitor {
     collectedTokens = tokens;
   }
 
+  /** If this method is called in a generated class that is *not* the top level
+   *  class, the topLevelInstanceName and a dot will be output to guarantee
+   *  that functions, constants, and fields that are provided by the top level
+   *  agent object are accessed in the right way.
+   *
+   *  So in principle, this could also output "this." in case it's the top level
+   */
+  private void accessTopLevelInstance() {
+    if(mem.isNotToplevelClass())
+      out.append(mem.getToplevelInstance()).append(".");
+  }
+
+
   @Override
   public void visitNode(RudiTree node) {
     node.visitWithComments(this);
@@ -181,8 +194,9 @@ public class VisitorGeneration implements RudiVisitor {
         // TODO: ADD WRAPPER CLASS ACCESS
         Type[] args = { new Type("String") };
         String orig = mem.getFunctionOrigin("getRdfClass", Arrays.asList(args));
-        orig = orig == null ? "" : lowerCaseFirst(orig) + ".";
-        out.append(orig + "getRdfClass(");
+        if (orig != null)
+          out.append(lowerCaseFirst(orig)).append(".");
+        out.append("getRdfClass(");
         node.visitWithComments(this);
         out.append(")");
         return;
@@ -428,17 +442,10 @@ public class VisitorGeneration implements RudiVisitor {
       out.append("new ");
       node.construct.visitWithComments(this);
     } else {
-      // TODO: MAKE A FUNCTION FOR THIS, OR KICK IT! WHAT'S THE MEANING?
-      if(mem.isNotToplevelClass()) {
-        out.append(mem.getToplevelInstance() + ".");
-      }
-      out.append("_proxy.getClass(\""
-              + node.type.getRdfClass()
-              + "\").getNewInstance(");
-      // SEE ABOVE
-      if(mem.isNotToplevelClass()) {
-        out.append(mem.getToplevelInstance() + ".");
-      }
+      accessTopLevelInstance();
+      out.append("_proxy.getClass(\"").append(node.type.getRdfClass().toString())
+         .append("\").getNewInstance(");
+      accessTopLevelInstance();
       out.append("DEFNS)");
     }
   }
@@ -469,8 +476,7 @@ public class VisitorGeneration implements RudiVisitor {
     baseTerm = 1;
     ifNode.condition.visitWithComments(this);
     out.append(";\n");
-    if (mem.isNotToplevelClass())
-      out.append(mem.getToplevelInstance()).append('.');
+    accessTopLevelInstance();
     out.append("logRule(").append(Integer.toString(activeInfo.getId()))
        .append(", ").append(varName).append(");\n");
     out.append(node.label + ":\n");
@@ -600,19 +606,13 @@ public class VisitorGeneration implements RudiVisitor {
     mem.leaveEnvironment(node);
   }
 
-  private void topLevel() {
-    if(mem.isNotToplevelClass()){
-      out.append(mem.getToplevelInstance()).append(".");
-    }
-  }
-
   @Override
   public void visitNode(StatPropose node) {
-    topLevel();
+    accessTopLevelInstance();
     out.append("propose(");
     node.arg.visitWithComments(this);
     out.append(",");
-    topLevel();
+    accessTopLevelInstance();
     out.append("new Proposal() {public void run()\n");
     node.block.visitWithComments(this);
     out.append("});\n");
@@ -624,7 +624,7 @@ public class VisitorGeneration implements RudiVisitor {
    */
   @Override
   public void visitNode(StatTimeout node) {
-    topLevel();
+    accessTopLevelInstance();
     if (node.label == null) {
       out.append("lastBehaviourTrigger(");
     } else {
@@ -634,7 +634,7 @@ public class VisitorGeneration implements RudiVisitor {
     }
     node.time.visitWithComments(this);
     out.append(",");
-    topLevel();
+    accessTopLevelInstance();
     out.append("new Proposal() {public void run()\n");
     node.block.visitWithComments(this);
     out.append("});\n");
@@ -802,9 +802,9 @@ public class VisitorGeneration implements RudiVisitor {
         node.content = "\"" + node.content + "\"";
       if (escape) {
         // properly escape if needed
-        out.append(
-            "\\" + node.content.substring(0, node.content.length() - 1)
-            + "\\\" ");
+        out.append("\\")
+           .append(node.content.substring(0, node.content.length() - 1))
+           .append("\\\" ");
         return;
       }
     }
@@ -815,10 +815,9 @@ public class VisitorGeneration implements RudiVisitor {
   public void visitNode(ExpVariable node) {
     String realOrigin = mem.getVariableOriginClass(node.content);
     if (realOrigin != null) {
-      out.append(lowerCaseFirst(realOrigin) + "." + node.content);
-    } else {
-      out.append(node.content);
+      out.append(lowerCaseFirst(realOrigin) + "." );
     }
+    out.append(node.content);
   }
 
   String stringEscape(String in) {

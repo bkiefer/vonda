@@ -318,11 +318,10 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     // ************************************************************
     for (String neededClass : mem.getNeededClasses()) {
       if(neededClass.equals(thisClassName)) continue;
-      out.append("private final ");
       String name = lowerCaseFirst(neededClass);
       fields.add(name);
-      out.append(neededClass).append(' ').append(name);
-      out.append(";\n");
+      out.append("private final ");
+      out.append(neededClass).append(' ').append(name).append(";\n");
     }
 
     // ************************************************************
