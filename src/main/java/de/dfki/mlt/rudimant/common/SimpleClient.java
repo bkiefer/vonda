@@ -26,12 +26,9 @@ public class SimpleClient {
       socket = new Socket(hostName, portNumber);
       out = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
     } catch (UnknownHostException e) {
-      logger.error("Error: " + e);
-      System.out.println("UnknownHostException: " + e);
+      logger.error(e.toString());
     } catch (IOException e) {
-      logger.error("Error: " + e);
-      System.out.println(e);
-
+      logger.error(e.toString());
     }
   }
 
