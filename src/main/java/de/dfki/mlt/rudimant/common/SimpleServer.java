@@ -26,6 +26,8 @@ public class SimpleServer  {
 
   Socket clientSocket;
 
+  private boolean closeRequested = false;
+
   public SimpleServer(Callable c) throws IOException {
     _callable = c;
   }
@@ -59,7 +61,8 @@ public class SimpleServer  {
                 default:
                   sb.append((char)c);
               }
-            } while (clientSocket.isConnected() && ! clientSocket.isClosed());
+            } while (clientSocket.isConnected() && ! clientSocket.isClosed()
+                    || closeRequested);
             serverSocket.close();
           } catch (IOException ex) {
             logger.error("Error reading DebuggingService Stream: {}", ex);
@@ -75,6 +78,10 @@ public class SimpleServer  {
     }
   }
 
+  public void stopServer() {
+    closeRequested = true;
+  }
+
   public static void main(String[] args) throws IOException {
     final SimpleServer simplServ = new SimpleServer(
         (s) -> {System.out.println(Arrays.toString(s));}
@@ -84,7 +91,7 @@ public class SimpleServer  {
       public void run() {
         try {
           int i =0;
-          while (i++ < 20 && simplServ.isAlive()) {
+          while (true && simplServ.isAlive()) {
             System.out.println("Rödeln...");
             Thread.sleep(5000);
           }
@@ -95,6 +102,6 @@ public class SimpleServer  {
     };
 
     sideThread.start();
-    simplServ.startServer(3665, "testServer");
+    simplServ.startServer(3664, "testServer");
   }
 }

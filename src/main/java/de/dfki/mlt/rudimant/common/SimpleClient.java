@@ -32,6 +32,10 @@ public class SimpleClient {
     }
   }
 
+  public boolean isConnected() {
+    return socket != null && socket.isConnected();
+  }
+
   public void disconnect() throws IOException {
     if (socket == null) return;
     out.write("\0");
@@ -58,6 +62,8 @@ public class SimpleClient {
       int i = 0;
       while (i++ < 10) {
         scl.send("test", 345, 12345, 14);
+        Thread.sleep(1000);
+        scl.send("printLog", i, 234, 12);
         Thread.sleep(1000);
       }
     } catch (InterruptedException e) {
