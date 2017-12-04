@@ -13,6 +13,8 @@ public class SimpleClient {
 
   private Socket socket;
 
+  private int _portNumber;
+
   public static String hostName = "localhost";
 
   private OutputStreamWriter out;
@@ -22,13 +24,21 @@ public class SimpleClient {
    * log information to the debugger.
    */
   public SimpleClient(int portNumber) {
+    _portNumber = portNumber;
+  }
+
+  private boolean initClient() {
     try {
-      socket = new Socket(hostName, portNumber);
+      socket = new Socket(hostName, _portNumber);
       out = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+      logger.debug("Client has been connected.");
+      return true;
     } catch (UnknownHostException e) {
       logger.error(e.toString());
+      return false;
     } catch (IOException e) {
       logger.error(e.toString());
+      return false;
     }
   }
 
@@ -45,18 +55,17 @@ public class SimpleClient {
   }
 
   public void send(Object ... s) throws IOException {
-    if (socket != null && out != null) {
-      boolean first = true;
-      for (Object o : s) {
-        if (! first) out.write(";");
-        else first = false;
-        out.write(o.toString());
-      }
-      out.write("\t");
-      out.flush();
-    } else {
-      logger.debug("Trying to send, but client is not connected.");
+    if (! isConnected()) {
+      if (! initClient()) return;
     }
+    boolean first = true;
+    for (Object o : s) {
+      if (! first) out.write(";");
+      else first = false;
+      out.write(o.toString());
+    }
+    out.write("\t");
+    out.flush();
   }
 
 
