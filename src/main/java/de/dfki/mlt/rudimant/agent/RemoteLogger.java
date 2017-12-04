@@ -19,7 +19,13 @@ public class RemoteLogger implements LogPrinter {
   @Override
   public void printLog(RuleInfo ruleId, boolean[] result) {
     try {
-      client.send("printLog", ruleId.getId(), result);
+      String[] toSend = new String[result.length + 2];
+      toSend[0] = "printLog";
+      toSend[1] = Integer.toString(ruleId.getId());
+      for (int i = 0; i < result.length; ++i) {
+        toSend[i + 2] = Boolean.toString(result[i]);
+      }
+      client.send(toSend);
     } catch (IOException e) {
       Agent.logger.error(e.getMessage());
     }

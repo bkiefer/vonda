@@ -54,12 +54,12 @@ public class SimpleClient {
     socket = null;
   }
 
-  public void send(Object ... s) throws IOException {
+  public void send(String ... s) throws IOException {
     if (! isConnected()) {
       if (! initClient()) return;
     }
     boolean first = true;
-    for (Object o : s) {
+    for (String o : s) {
       if (! first) out.write(";");
       else first = false;
       out.write(o.toString());
@@ -74,9 +74,9 @@ public class SimpleClient {
     try {
       int i = 0;
       while (i++ < 10) {
-        scl.send("test", 345, 12345, 14);
+        scl.send("test", "345", "12345", "14");
         Thread.sleep(1000);
-        scl.send("printLog", i, 234, 12);
+        scl.send("printLog", Integer.toString(i), "234", "12");
         Thread.sleep(1000);
       }
     } catch (InterruptedException e) {
