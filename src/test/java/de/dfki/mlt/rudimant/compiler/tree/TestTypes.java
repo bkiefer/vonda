@@ -124,8 +124,27 @@ public class TestTypes {
   public void testListRdftype() {
     String in = "List<Quiz> q = {};";
     String r = generate(in);
-    String expected = "List<Rdf> q = new ArrayList<>();";
+    String expected = "q = new ArrayList<>();";
     assertEquals(expected, getForMarked(r, expected));
+    assertTrue(r.contains("List<Rdf> q;"));
+  }
+
+  @Test
+  public void testInitDefinedCollection() {
+    String in = "List<Quiz> q; q = {};";
+    String r = generate(in);
+    String expected = "public List<Rdf> q;/**/q = new ArrayList<>();";
+    assertEquals(expected, getForMarked(r, expected));
+    assertTrue(r.contains("List<Rdf> q;"));
+  }
+
+  @Test
+  public void testInitDefinedCollection2() {
+    String in = "List<Quiz> q; void f() { q = {}; }";
+    String r = generate(in);
+    String expected = "public List<Rdf> q;/**/public void f() { q = new ArrayList<>();";
+    assertEquals(expected, getForMarked(r, expected));
+    assertTrue(r.contains("List<Rdf> q;"));
   }
 
   @Test
@@ -157,7 +176,7 @@ public class TestTypes {
     String r = generate(in);
     String expected =
         "public List<Rdf> out() { List<Rdf> raw = new ArrayList<>();"
-        + " for ( int i = 1;((i < 5) && (raw.size() < 3));i = (i+1)){"
+        + "for ( int i = 1;((i < 5) && (raw.size() < 3));i = (i+1)){"
         + " Rdf w = getChild(i);if (w != null) raw.add(w); } return raw;";
     assertEquals(expected, getForMarked(r, expected));
   }

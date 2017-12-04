@@ -162,7 +162,7 @@ public class Type {
       String[] partypes = typeSpec.substring(i+1, typeSpec.lastIndexOf('>')).split(" *, *");
       _parameterTypes = new ArrayList<>();
       for (String par : partypes)
-        _parameterTypes.add(new Type(par));
+        _parameterTypes.add(new Type("_".equals(par) ? null : par));
       _name = nameSpec;
     } else {
       _name = typeSpec;
@@ -235,13 +235,18 @@ public class Type {
     return _name != null && _name.charAt(0) == '<';
   }
 
+  private int getCollectionCode() {
+    if (_name == null) return 0;
+    if (_name.endsWith("Map")) return 0x1000b;
+    else if (_name.endsWith("Array")) return 0x0100b;
+    else if (_name.endsWith("Set")) return 0x010b;
+    else if (_name.endsWith("List")) return 0x001b;
+    else if (_name.startsWith("Collection")) return 0x1111b;
+    return 0;
+  }
+
   public boolean isCollection() {
-    if (_name == null) return false;
-    return (_name.endsWith("Map")
-        || _name.endsWith("Set")
-        || _name.endsWith("List")
-        || _name.startsWith("RdfSet")
-        || _name.startsWith("RdfList"));
+    return getCollectionCode() != 0;
   }
 
   public boolean isDialogueAct() {
@@ -265,7 +270,6 @@ public class Type {
     return _name == null;
   }
 
-
   public RdfClass getRdfClass() { return _class; }
 
   public Type getInnerType() {
@@ -274,11 +278,39 @@ public class Type {
     return null;
   }
 
-  /** Return the more specific of the two types, if it exists, null otherwise */
+  public void setInnerType(Type inner) {
+    _parameterTypes = new ArrayList<>(1);
+    _parameterTypes.add(inner);
+  }
+
   public Type unifyTypes(Type right) {
-    if (_name == null || _name.equals("Object")) return right;
-    if (right == null || right._name == null || right.isNull()
-        || right.isUnspecified() || this.equals(right))
+    if (isUnspecified() || isNull() || _name.equals("Object")) return right;
+    if (right == null || right.isNull() || right.isUnspecified()
+        || this.equals(right))
+      return this;
+    // TODO: this is not for types with more than one parameter type. Can it be
+    // extended?
+    int leftCollCode = getCollectionCode();
+    int rightCollCode = right.getCollectionCode();
+    if ((leftCollCode | rightCollCode) != 0) {
+      Type inner = getInnerType().unifyBasicTypes(right.getInnerType());
+      if (inner == null || ((leftCollCode & rightCollCode) == 0))
+        return null;
+      String outer = (leftCollCode & rightCollCode) == leftCollCode ?
+          this._name : right._name;
+      Type result = new Type();
+      result._name = outer;
+      result.setInnerType(inner);
+      return result;
+    }
+    return unifyBasicTypes(right);
+  }
+
+  /** Return the more specific of the two types, if it exists, null otherwise */
+  public Type unifyBasicTypes(Type right) {
+    if (isUnspecified() || isNull() || _name.equals("Object")) return right;
+    if (right == null || right.isNull() || right.isUnspecified()
+        || this.equals(right))
       return this;
 
     // check if these are (real) RDF types and are in a type relation.
@@ -372,6 +404,23 @@ public class Type {
     return out.toString();
   }
 
+  public String toConcreteCollection() {
+    if (! isCollection()) return toJava();
+    if (_name.startsWith("Rdf")) return _name;
+    String collType = null;
+    if (_name.endsWith("Map")) collType = "LinkedHashMap";
+    else if (_name.startsWith("Array")) collType = "Array";
+    else if (_name.endsWith("Set")) collType = "LinkedHashSet";
+    else if (_name.endsWith("List")) collType = "ArrayList";
+    else collType = _name;
+    StringBuffer out = new StringBuffer();
+    out.append(collType);
+    if (_parameterTypes != null && ! _parameterTypes.isEmpty())
+      out.append("<>");
+    //paramTypes(out);
+    return out.toString();
+  }
+
   public String toDebugString() {
     if (_class != null) return _class.toString() + "[" + toJava() + "]";
     if (isRdfType()) return _name + "[" + toJava() + "]";
@@ -387,14 +436,21 @@ public class Type {
       sb.append(xsdToJavaPodWrapper());
     else
       sb.append(_name);
+    paramTypes(sb);
+  }
 
+  private void paramTypes(StringBuffer sb) {
     if (_parameterTypes != null) {
       sb.append('<');
       boolean first = true;
       for (Type pType : _parameterTypes) {
         if (! first) sb.append(", ");
-        if (pType != null) pType.toString(sb);
-        else sb.append("null");
+        if (pType == null)  // for visualization
+          sb.append("null");
+        else if (pType.isRdfType())
+          sb.append("Object");
+        else
+          pType.toString(sb);
         first = false;
       }
       sb.append('>');

@@ -170,11 +170,13 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         // Only generates definition;
         fd = (StatFieldDef)r;
       } else if (r instanceof StatVarDef) {
-        fd = new StatFieldDef("public", (StatVarDef)r);
-        r.fixFields(fd);
+        if (((StatVarDef)r).isDefinition) {
+          fd = new StatFieldDef("public", (StatVarDef)r);
+          r.fixFields(fd);
+        }
       }
       if (fd != null) {
-        if (fd.varDef.toAssign != null) {
+        if (fd.varDef.toAssign != null && fd.varDef.isDefinition) {
           gv.visitNode(fd); // save comment for assignment
         } else {
           fd.visitWithComments(gv);

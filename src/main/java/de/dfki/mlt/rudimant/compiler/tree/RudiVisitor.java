@@ -17,8 +17,6 @@ public interface RudiVisitor {
 
   public void visitNode(StatIf node);
 
-  public void visitNode(StatListCreation node);
-
   public void visitNode(StatMethodDeclaration node);
 
   public void visitNode(StatPropose node);
@@ -53,6 +51,8 @@ public interface RudiVisitor {
   public void visitNode(ExpConditional node);
 
   public void visitNode(ExpLambda node);
+
+  public void visitNode(ExpListLiteral node);
 
   public void visitNode(ExpNew node);
 

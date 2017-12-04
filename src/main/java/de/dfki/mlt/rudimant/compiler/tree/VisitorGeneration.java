@@ -568,22 +568,16 @@ public class VisitorGeneration implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatListCreation node) {
-    out.append(node.listType.toJava()).append(' ')
-       .append(node.variableName);
-    if (node.listType.toJava().startsWith("List")) {
-      out.append(" = new ArrayList<>();\n");
-    } else if (node.listType.toJava().startsWith("Set")) {
-      out.append(" = new HashSet<>();\n");
-    }
-    if(node.objects.isEmpty()) {
-      return;
-    }
-    for (RTExpression e : node.objects) {
-      out.append(node.variableName + ".add(");
-      visitNode(e);
-      out.append(");\n");
-    }
+  public void visitNode(ExpListLiteral node) {
+    out.append(" new ").append(node.type.toConcreteCollection()).append("()");
+    /*
+    if (! node.objects.isEmpty()) {
+      out.append("{{");
+      for (RTExpression e : node.objects) {
+        out.append("add("); visitNode(e); out.append(");\n");
+      }
+      out.append("}}");
+    }*/
   }
 
   @Override
@@ -692,6 +686,21 @@ public class VisitorGeneration implements RudiVisitor {
       out.append(node.variable);
     }
     out.append(";");
+    // TODO: IF WE CHANGE OUR MIND ABOUT THE INITIALIZATION OF COLLECTIONS,
+    // THIS IS THE PLACE TO PUT IT:
+    /**/
+    if (node.toAssign != null &&
+        ((ExpAssignment)node.toAssign).right instanceof ExpListLiteral) {
+      ExpListLiteral listNode =
+          (ExpListLiteral)((ExpAssignment)node.toAssign).right;
+      if (! listNode.objects.isEmpty()) {
+        for (RTExpression e : listNode.objects) {
+          out.append(node.variable).append(".add(");
+          visitNode(e);
+          out.append(");\n");
+        }
+      }
+    }
   }
 
   /** Top-level field (variable) definition: only spit out definition! */

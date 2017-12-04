@@ -127,6 +127,10 @@ public class VisitorType implements RudiVisitor {
    *
    * TODO: GIVEN MY LAST WORK ON TYPE COMPATIBILITY IN ASSIGNMENT, I DOUBT THAT
    * UNIFYTYPES IS THE RIGHT THING TO DO. NEEDS A LOT OF UNIT TESTS FIRST
+   *
+   * TODO: add the case where the assigned expression is a collection literal
+   * This means that as well the outer as the inner types of the variable and
+   * expression have to match.
    */
   @Override
   public void visitNode(ExpAssignment node) {
@@ -136,7 +140,7 @@ public class VisitorType implements RudiVisitor {
     node.left.visit(this);
 
     if (node.right instanceof ExpVariable
-        && !mem.variableExists(node.right.toString())) {
+        && ! mem.variableExists(node.right.toString())) {
       typeError("assigning the value of a non-existing variable "
           + node.right + "to " + node.left, node);
     }
@@ -421,30 +425,24 @@ public class VisitorType implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatListCreation node) {
-    if (! node.objects.isEmpty()) {
-      for (RTExpression e : node.objects) {
-        visitNode(e);
-      }
-      if (node.listType.isUnspecified()) {
-        // infer type from content (first element)
-        node.listType = new Type("List<" + node.objects.get(0).getType() + ">");
-      } else {
-        // check inner type against content
-        Type elementType = node.listType.getInnerType();
-        if (elementType.unifyTypes(node.objects.get(0).getType()) == null) {
-          typeError("List creation where list type ["
-              + elementType.toDebugString()
-              + "] doesn't fit its objects' type ["
-              + node.objects.get(0).getType().toDebugString() + "]", node);
-        }
+  public void visitNode(ExpListLiteral node) {
+    // TODO check if the elements are all subtypes of the contained type of the
+    // collection
+    Type inner = node.type.getInnerType();
+    for (RTExpression e : node.objects) {
+      visitNode(e);
+      inner = inner.unifyTypes(e.getType());
+      if (inner == null) {
+        typeError("Elements of list literal have no common type", node);
+        return;
       }
     }
-    if (node.listType.isUnspecified()) {
-      // that's our best guess
-      node.listType = new Type("List<Object>");
+    node.type.setInnerType(inner);
+    for (RTExpression e : node.objects) {
+      if (e.getType().isUnspecified()) {
+        e.propagateType(inner);
+      }
     }
-    mem.addVariableDeclaration(node.variableName, node.listType);
   }
 
   @Override

@@ -34,7 +34,6 @@ statement
   : statement_block
   | var_def
   | exp ';'
-  | list_creation
   | grammar_rule
   | set_operation
   | return_statement
@@ -112,10 +111,11 @@ switch_label
   ;
 
 var_def
-  : FINAL?
-    type_spec?
-    variable
-    ( '=' exp )? ';'
+  : FINAL? type_spec? variable assgn_exp? ';'
+  ;
+
+assgn_exp
+  : '=' (exp | '{' (exp (',' exp)*)? '}')
   ;
 
 method_declaration
@@ -126,13 +126,6 @@ method_declaration
        ((type_spec | DEC_VAR) VARIABLE (',' (type_spec | DEC_VAR) VARIABLE)*)?
     ')'
     (statement_block |';')
-  ;
-
-list_creation
-  : type_spec?
-    variable '=' '{' ((variable | STRING | INT | FLOAT)
-                      (',' (variable | STRING | INT | FLOAT))*)?
-                 '}' ';'
   ;
 
 // add sth to a collection
@@ -180,11 +173,11 @@ complex_exp
   | simple_exp
   ;
 
-// TODO: is that all 'what you can assign to' (an lvalue), which can be:
+// TODO: is that all 'you can assign to' (an lvalue), which can be:
 // a variable, an array element, an rdf slot (did i forget sth?)
 assignment
-  : variable '=' exp
-  | field_access '=' exp
+  : variable assgn_exp
+  | field_access assgn_exp
   ;
 
 simple_exp
@@ -261,11 +254,8 @@ factor
   ;
 
 number
-  : ( '++ | ' )?
-    ( ( INT | FLOAT | VARIABLE )
-      | field_access
-      | function_call
-    )
+  : ( '+' | '-' )? INT | FLOAT | VARIABLE | field_access | function_call
+
   ;
 
 

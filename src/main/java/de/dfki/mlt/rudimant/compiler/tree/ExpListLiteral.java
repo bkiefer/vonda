@@ -13,23 +13,15 @@ import de.dfki.mlt.rudimant.compiler.Type;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class StatListCreation extends RTStatement {
+public class ExpListLiteral extends RTExpression {
 
   ArrayList<RTExpression> objects;
-  String variableName;
-  Type listType;
 
-  public StatListCreation(String varName, ArrayList<RTExpression> objs) {
+  public ExpListLiteral(ArrayList<RTExpression> objs) {
     objects = objs;
-    variableName = varName;
-    listType = Type.getNoType();
-  }
-
-  public StatListCreation(String varName, ArrayList<RTExpression> objs,
-      String lType) {
-    objects = objs;
-    variableName = varName;
-    listType = new Type(lType);
+    // don't know what this is.
+    type = Type.getNoType();
+    type.setInnerType(Type.getNoType());
   }
 
   @Override
@@ -39,5 +31,10 @@ public class StatListCreation extends RTStatement {
 
   public Iterable<? extends RudiTree> getDtrs() {
     return objects;
+  }
+
+  @Override
+  public void propagateType(Type upperType) {
+    type = upperType;
   }
 }
