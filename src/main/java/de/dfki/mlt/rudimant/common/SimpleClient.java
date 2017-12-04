@@ -45,14 +45,18 @@ public class SimpleClient {
   }
 
   public void send(Object ... s) throws IOException {
-    boolean first = true;
-    for (Object o : s) {
-      if (! first) out.write(";");
-      else first = false;
-      out.write(o.toString());
+    if (socket != null && out != null) {
+      boolean first = true;
+      for (Object o : s) {
+        if (! first) out.write(";");
+        else first = false;
+        out.write(o.toString());
+      }
+      out.write("\t");
+      out.flush();
+    } else {
+      logger.debug("Trying to send, but client is not connected.");
     }
-    out.write("\t");
-    out.flush();
   }
 
 
