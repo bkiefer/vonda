@@ -1,5 +1,7 @@
 package de.dfki.mlt.rudimant.agent;
 
+import de.dfki.mlt.rudimant.common.DefaultLogger;
+
 public class ColorLogger extends DefaultLogger {
 
   private static final String RED="\033[31m";

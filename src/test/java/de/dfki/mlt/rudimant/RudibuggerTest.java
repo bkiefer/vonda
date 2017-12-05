@@ -1,10 +1,5 @@
 package de.dfki.mlt.rudimant;
 
-import de.dfki.mlt.rudimant.agent.DefaultLogger;
-import de.dfki.mlt.rudimant.agent.RuleLogger;
-import de.dfki.mlt.rudimant.common.BasicInfo;
-import de.dfki.mlt.rudimant.common.ImportInfo;
-import de.dfki.mlt.rudimant.common.RuleInfo;
 import static de.dfki.mlt.rudimant.compiler.CompilerMain.configs;
 import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.RESOURCE_DIR;
 import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.setUpEmpty;
@@ -14,6 +9,9 @@ import java.io.*;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import de.dfki.mlt.rudimant.common.*;
+
 import static de.dfki.mlt.rudimant.compiler.Visualize.generateAndGetRulesInfo;
 
 /**

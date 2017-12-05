@@ -1,7 +1,4 @@
-package de.dfki.mlt.rudimant.agent;
-
-import de.dfki.mlt.rudimant.common.LogPrinter;
-import de.dfki.mlt.rudimant.common.RuleInfo;
+package de.dfki.mlt.rudimant.common;
 
 public class DefaultLogger implements LogPrinter {
 
