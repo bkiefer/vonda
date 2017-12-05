@@ -16,11 +16,10 @@ public class StatExpression extends RTStatement {
     v.visitNode(this);
   }
 
+  @SuppressWarnings("serial")
   @Override
   public Iterable<? extends RudiTree> getDtrs() {
-    List<RudiTree> dtrs = new ArrayList<>(1);
-    dtrs.add(expression);
-    return dtrs;
+    return new ArrayList<RudiTree>(){{ add(expression); }};
   }
 
 }

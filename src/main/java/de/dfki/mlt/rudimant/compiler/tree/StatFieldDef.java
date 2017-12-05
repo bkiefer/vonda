@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudimant.compiler.tree;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import de.dfki.mlt.rudimant.compiler.Type;
@@ -34,7 +35,8 @@ public class StatFieldDef extends RTStatement {
     return (visibility != null ? visibility + " " : "") + varDef;
   }
 
+  @SuppressWarnings("serial")
   public Iterable<? extends RudiTree> getDtrs() {
-    return Collections.emptyList();
+    return new ArrayList<RudiTree>(){{ add(varDef); }};
   }
 }

@@ -68,14 +68,6 @@ public class CastTest {
     assertEquals(expected, getForMarked(s, expected));
   }
 
-//  @Test
-//  public void testCast5() {
-//    String in = "t = (QuizHistory) a;";
-//    String r = getGeneration(in);
-//    String exp = "Rdf t = a;";
-//    assertEquals(exp, r);
-//  }
-
   @Test
   public void test1() {
     String in = "QuizHistory turn = new QuizHistory;";
