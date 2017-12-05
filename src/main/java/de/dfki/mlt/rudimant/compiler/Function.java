@@ -42,6 +42,9 @@ class Function {
         // TODO: THIS SEEMS TO BE A CRUDE HOAX
         (rn.contains("<T>") || rn.equals("T"))){
       Type ret = calledUpon.getInnerType();
+      // TODO: NOW WE ADD TO THAT BY ARTIFICIALLY LETTING FUNCTIONS EXTRACTING
+      // FROM COLLECTIONS OF RDF RETURN A MASSAGED OBJECT TYPE
+      if (ret.isRdfType()) ret = ret.getObjectRdf();
       return ret;
     }
     return _returnType;

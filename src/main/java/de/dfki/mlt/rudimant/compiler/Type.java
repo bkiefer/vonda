@@ -140,6 +140,7 @@ public class Type {
   /** The parameters of a parameterised type, null if a simple type */
   private List<Type> _parameterTypes;
 
+  /** The RDF class of this type, if any */
   private RdfClass _class;
 
   private Type() { }
@@ -272,6 +273,13 @@ public class Type {
 
   public RdfClass getRdfClass() { return _class; }
 
+  public Type getObjectRdf() {
+    Type ret = new Type("Object");
+    ret._class = _class;
+    //Type ret = this;
+    return ret;
+  }
+
   public Type getInnerType() {
     if (_parameterTypes != null && _parameterTypes.size() == 1)
       return _parameterTypes.get(0);
@@ -393,7 +401,7 @@ public class Type {
   /** returns a correct java type for use in generated code */
   @Override
   public String toString() {
-    return toDebugString();
+    return toDebugString(new StringBuffer());
   }
 
   /** returns a correct java type for use in generated code */
@@ -404,6 +412,9 @@ public class Type {
     return out.toString();
   }
 
+  /** This returns a string that can be used to create a collection for this
+   *  type, which should be a collection
+   */
   public String toConcreteCollection() {
     if (! isCollection()) return toJava();
     if (_name.startsWith("Rdf")) return _name;
@@ -421,10 +432,36 @@ public class Type {
     return out.toString();
   }
 
-  public String toDebugString() {
-    if (_class != null) return _class.toString() + "[" + toJava() + "]";
-    if (isRdfType()) return _name + "[" + toJava() + "]";
-    return toJava();
+  private void paramTypesDebug(StringBuffer sb) {
+    if (_parameterTypes != null) {
+      sb.append('<');
+      boolean first = true;
+      for (Type pType : _parameterTypes) {
+        if (! first) sb.append(", ");
+        if (pType == null)  // for visualization
+          sb.append("null");
+        else if (pType.isRdfType())
+          sb.append("Object[").append(_class.toString()).append("]");
+        else
+          pType.toDebugString(sb);
+        first = false;
+      }
+      sb.append('>');
+    }
+  }
+
+  private String toDebugString(StringBuffer sb) {
+    if (_class != null) sb.append(_class.toString() + "[" + toJava() + "]");
+    else if (isRdfType())
+      sb.append(_name + "[" + toJava() + "]");
+    else if (isDialogueAct())
+      sb.append("DialogueAct");
+    else if (isXsdType())
+      sb.append(xsdToJavaPodWrapper());
+    else
+      sb.append(_name);
+    paramTypesDebug(sb);
+    return sb.toString();
   }
 
   private void toString(StringBuffer sb) {
@@ -481,7 +518,7 @@ public class Type {
    */
   public boolean needsCast(Type right) {
     Type res = unifyTypes(right);
-    return res.equals(this);
+    return ! res.equals(this);
   }
 
   /** Only for the visualisation */
