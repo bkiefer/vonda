@@ -1,7 +1,7 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
  *
  * @author max
  */
-public class ExpBooleanTest {
+public class BooleanTest {
 
   /*
   /// boolean operators:
@@ -82,15 +82,6 @@ GREATER: '>';
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
 
     assertTrue(dtr instanceof ExpBoolean);
-  }
-
-  @Test
-  public void testArith6() {
-    String intExp = "(3 & 1 | 8);";
-
-    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(intExp));
-
-    assertTrue(dtr instanceof ExpArithmetic);
   }
 
   @Test

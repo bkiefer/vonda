@@ -1,13 +1,13 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.*;
 
 
 import org.junit.*;
 
-public class TestMethodDeclaration {
+public class MethodDeclarationTest {
 
   @BeforeClass
   public static void setUpClass() {
@@ -24,9 +24,9 @@ public class TestMethodDeclaration {
 
   @Test
   public void testParType() {
-    String methdecl = " void foo(List<Child> cs) { i = 1; }";
+    String methdecl = " void foo(List<Child> cs) { c = cs.get(0); }";
     String s = generate(methdecl);
-    String expected = "public void foo(List<Rdf> cs) { int i = 1; }";
+    String expected = "public void foo(List<Object> cs) { Rdf c = (Rdf)cs.get(0); }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -40,14 +40,7 @@ public class TestMethodDeclaration {
     assertEquals(expected, getForMarked(s, expected));
   }
 
-// causes a NullPointerException
-//  @Test
-//  public void testEmptyReturn(){
-//    String methdecl = "void foo() { return; }";
-//    String s = generate(methdecl);
-//    String expected = "void foo() {return; }";
-//    assertEquals(expected, getForEmpty(s, expected));
-//  }
+// .,
 
   @Test
   public void testMethodMultipleParameters(){

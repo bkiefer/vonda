@@ -1,13 +1,13 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Visualize.generate;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.*;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TestVarDeclaration {
+public class VarDeclarationTest {
 
   @BeforeClass
   public static void setUpClass() {

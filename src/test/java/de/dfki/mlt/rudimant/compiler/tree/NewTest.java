@@ -1,6 +1,6 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
@@ -15,7 +15,7 @@ import de.dfki.mlt.rudimant.compiler.tree.RudiTree;
  *
  * @author max
  */
-public class ExpNewTest {
+public class NewTest {
   @BeforeClass
   public static void setUpClass() {
     setUpNonEmpty();
@@ -32,10 +32,11 @@ public class ExpNewTest {
 
   @Test
   public void testJavaType() {
-    String conditionalExp = "new JavaType();";
+    String conditionalExp = "new Integer();";
 
     RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(conditionalExp));
     assertTrue(dtr instanceof ExpNew);
+    assertTrue(((ExpNew)dtr).type.toJava().equals("Integer"));
   }
 
 }

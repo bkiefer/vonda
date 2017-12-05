@@ -1,5 +1,5 @@
 package de.dfki.mlt.rudimant;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.RESOURCE_DIR;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.RESOURCE_DIR;
 import static org.junit.Assert.*;
 
 import java.io.File;

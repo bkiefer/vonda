@@ -6,7 +6,7 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Visualize.generate;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -17,7 +17,7 @@ import org.junit.Test;
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
-public class TestForStatements {
+public class ForStatementsTest {
 
   @BeforeClass
   public static void setUpClass() {
@@ -74,16 +74,6 @@ public class TestForStatements {
   }
 
   @Test
-  public void testComments() {
-    String stat = "/*@  public String preBlock() { return \"preBlock\";} @*/"
-        + "demo_rule: if (true) break demo_rule; "
-        + "/*@ public String postBlock() { return \"postBlock\"; }@*/";
-    String s = generate(stat);
-    String expected = "public String preBlock() { return \"preBlock\";} public int demo_rule(){ boolean[] __x0 = new boolean[1]; __x0[0] = true; logRule(0, __x0); demo_rule: if (__x0[0])break demo_rule; return 0; } public String postBlock() { return \"postBlock\"; } }";
-    assertEquals(expected, getForMarked(s, expected));
-  }
-
-  @Test
   public void testWhile() {
     String stat = "{ int n = 0; while ((n = random(7)) == correct) { n++; } }";
     String s = generate(stat);
@@ -91,5 +81,16 @@ public class TestForStatements {
     assertEquals(expected, getForMarked(s, expected));
   }
 
+  // exp to statement in for
+  @Test
+  public void testForExp() {
+    String in = "public int lab(){ for(s : child.sessions) 23; }";
+    String exp = "public int lab() { for (Object s_outer : child.sessions) {"
+            + " Object s = (Object)s_outer; 23; } }";
+    String s = generate(in);
+    assertEquals(exp, getForMarked(s, exp));
+  }
+
+  // TODO: COMPLETE FOR ALL FOR LOOPS, WHILE, AND DO ... WHILE
 
 }

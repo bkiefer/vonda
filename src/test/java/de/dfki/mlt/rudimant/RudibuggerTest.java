@@ -6,8 +6,8 @@ import de.dfki.mlt.rudimant.common.BasicInfo;
 import de.dfki.mlt.rudimant.common.ImportInfo;
 import de.dfki.mlt.rudimant.common.RuleInfo;
 import static de.dfki.mlt.rudimant.compiler.CompilerMain.configs;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.RESOURCE_DIR;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.setUpEmpty;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.RESOURCE_DIR;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.setUpEmpty;
 import static org.junit.Assert.assertEquals;
 
 import java.io.*;

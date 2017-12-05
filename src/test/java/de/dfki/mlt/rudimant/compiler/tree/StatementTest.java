@@ -6,7 +6,7 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.*;
 
 import org.junit.*;
@@ -39,7 +39,7 @@ public class StatementTest {
     String in = " List<String> slots = { \"Hobby\", \"Color\" };"
             + " for (String slot : slots){}";
     String r = generate(in);
-    String expected = "List<String> slots = new ArrayList<>(); slots.add(\"Hobby\"); "
+    String expected = "List<String> slots = new ArrayList<>();slots.add(\"Hobby\"); "
         + "slots.add(\"Color\"); "
         + "for (Object slot_outer : slots) { String slot = (String)slot_outer; { } }";
     assertEquals(expected, getForMarked(r, expected));
@@ -169,7 +169,7 @@ public class StatementTest {
    String in = " Child user; n = user.name; List<String> names = { n };";
    String r = generate(in);
    String expected = "Rdf user;Set<Object> n = ((Set<Object>)user.getValue(\"<upper:name>\"));"
-       + "List<String> names = new ArrayList<>(); names.add(n);";
+       + "List<String> names = new ArrayList<>();names.add(n);";
    assertEquals(expected, getForMarked(r, expected));
  }
 

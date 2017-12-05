@@ -1,7 +1,7 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.*;
 
 import org.junit.BeforeClass;
@@ -11,7 +11,7 @@ import de.dfki.mlt.rudimant.compiler.TypeException;
 import de.dfki.mlt.rudimant.compiler.tree.ExpConditional;
 import de.dfki.mlt.rudimant.compiler.tree.RudiTree;
 
-public class TestFragment {
+public class FragmentTest {
 
   @BeforeClass
   public static void setUpClass() {

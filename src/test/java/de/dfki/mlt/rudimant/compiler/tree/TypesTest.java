@@ -6,7 +6,7 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.*;
 
 import org.junit.*;
@@ -17,7 +17,7 @@ import de.dfki.mlt.rudimant.compiler.TypeException;
  *
  * @author anna
  */
-public class TestTypes {
+public class TypesTest {
 
   @BeforeClass
   public static void setUpClass() {
@@ -104,20 +104,20 @@ public class TestTypes {
   public void testLambdaExp() {
     String in = "Set<Child> cs; cs.contains((c) -> ((Child)c).forename.equals(\"John\"));";
     String r = generate(in);
-    String expected = "public Set<Rdf> cs;/**/cs.contains((c) -> "
+    String expected = "public Set<Object> cs;/**/cs.contains((c) -> "
             + "((String)((Rdf)c).getSingleValue(\"<dom:forename>\")).equals(\"John\"));";
     assertEquals(expected, getForMarked(r, expected));
-    assertTrue(r.contains("Set<Rdf> cs;"));
+    assertTrue(r.contains("Set<Object> cs;"));
   }
 
   @Test
   public void testComplexLambdaExp() {
     String in = "Set<Child> cs; cs.contains((c) -> {((Child)c).forename.equals(\"John\");});";
     String r = generate(in);
-    String expected = "public Set<Rdf> cs;/**/cs.contains((c) -> {"
+    String expected = "public Set<Object> cs;/**/cs.contains((c) -> {"
             + " ((String)((Rdf)c).getSingleValue(\"<dom:forename>\")).equals(\"John\"); } );";
     assertEquals(expected, getForMarked(r, expected));
-    assertTrue(r.contains("Set<Rdf> cs;"));
+    assertTrue(r.contains("Set<Object> cs;"));
   }
 
   @Test
@@ -126,25 +126,25 @@ public class TestTypes {
     String r = generate(in);
     String expected = "q = new ArrayList<>();";
     assertEquals(expected, getForMarked(r, expected));
-    assertTrue(r.contains("List<Rdf> q;"));
+    assertTrue(r.contains("List<Object> q;"));
   }
 
   @Test
   public void testInitDefinedCollection() {
     String in = "List<Quiz> q; q = {};";
     String r = generate(in);
-    String expected = "public List<Rdf> q;/**/q = new ArrayList<>();";
+    String expected = "public List<Object> q;/**/q = new ArrayList<>();";
     assertEquals(expected, getForMarked(r, expected));
-    assertTrue(r.contains("List<Rdf> q;"));
+    assertTrue(r.contains("List<Object> q;"));
   }
 
   @Test
   public void testInitDefinedCollection2() {
     String in = "List<Quiz> q; void f() { q = {}; }";
     String r = generate(in);
-    String expected = "public List<Rdf> q;/**/public void f() { q = new ArrayList<>();";
+    String expected = "public List<Object> q;/**/public void f() { q = new ArrayList<>();";
     assertEquals(expected, getForMarked(r, expected));
-    assertTrue(r.contains("List<Rdf> q;"));
+    assertTrue(r.contains("List<Object> q;"));
   }
 
   @Test
@@ -175,7 +175,7 @@ public class TestTypes {
         " { Child w = getChild(i); if (w) raw += w; } return raw; }";
     String r = generate(in);
     String expected =
-        "public List<Rdf> out() { List<Rdf> raw = new ArrayList<>();"
+        "public List<Object> out() { List<Object> raw = new ArrayList<>();"
         + "for ( int i = 1;((i < 5) && (raw.size() < 3));i = (i+1)){"
         + " Rdf w = getChild(i);if (w != null) raw.add(w); } return raw;";
     assertEquals(expected, getForMarked(r, expected));
@@ -185,8 +185,6 @@ public class TestTypes {
   @Test(expected=TypeException.class)
   public void testVoidFunction() throws Throwable {
     String in = " void fun(); k = fun();";
-    //String r = generate(in);
-    //System.out.println(r);
     getTypeError(in);
   }
 }

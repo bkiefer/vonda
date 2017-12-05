@@ -6,7 +6,7 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.*;
 
 import org.junit.*;
@@ -15,7 +15,7 @@ import org.junit.*;
  *
  * @author anna
  */
-public class TestComparison {
+public class ComparisonTest {
 
   @BeforeClass
   public static void setUpClass() {

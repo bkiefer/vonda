@@ -1,7 +1,7 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
@@ -11,7 +11,7 @@ import org.junit.*;
 import de.dfki.mlt.rudimant.compiler.TypeException;
 import de.dfki.mlt.rudimant.compiler.Visualize;
 
-public class TestCast {
+public class CastTest {
 
   static String header = "boolean firstEncounter(); label: if(true) {"
           + "// hello test\n";

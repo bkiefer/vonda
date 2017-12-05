@@ -1,12 +1,12 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.*;
 
 import org.junit.*;
 
-public class TestGrammarRule {
+public class GrammarRuleTest {
 
   @BeforeClass
   public static void setUpClass() {

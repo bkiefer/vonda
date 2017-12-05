@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.StringWriter;
 import java.util.Iterator;
 
-public class TstUtils {
+public class TestUtilities {
   public static final String RESOURCE_DIR = "src/test/resources/";
   public static final String TESTCONF = RESOURCE_DIR + "tests.yml";
 

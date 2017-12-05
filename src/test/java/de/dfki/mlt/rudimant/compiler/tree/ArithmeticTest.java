@@ -1,7 +1,7 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
@@ -16,7 +16,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
  *
  * @author max
  */
-public class ExpArithmeticTest {
+public class ArithmeticTest {
 
   @BeforeClass
   public static void setUpClass() throws FileNotFoundException {
@@ -56,6 +56,15 @@ public class ExpArithmeticTest {
 
     String type = ((ExpArithmetic) dtr).getType().toJava();
     assertEquals("type of 1 - 2", "int", type);
+  }
+
+  @Test
+  public void testArith6() {
+    String intExp = "(3 & 1 | 8);";
+
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(intExp));
+
+    assertTrue(dtr instanceof ExpArithmetic);
   }
 
   @Test

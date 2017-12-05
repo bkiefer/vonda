@@ -1,7 +1,7 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
@@ -9,7 +9,7 @@ import java.io.FileNotFoundException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TestFieldAccesses {
+public class FieldAccessesTest {
 
 	  static String header = "boolean firstEncounter(); label: if(true) {"
 	          + "// hello test\n";

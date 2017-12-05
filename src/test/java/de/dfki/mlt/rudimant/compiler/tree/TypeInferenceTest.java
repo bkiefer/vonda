@@ -1,7 +1,7 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.*;
 
 import java.util.Iterator;
@@ -15,7 +15,7 @@ import de.dfki.mlt.rudimant.compiler.tree.ExpAssignment;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
 import de.dfki.mlt.rudimant.compiler.tree.RudiTree;
 
-public class TestTypeInference {
+public class TypeInferenceTest {
 
   @BeforeClass
   public static void setUpClass() {

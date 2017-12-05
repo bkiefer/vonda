@@ -1,7 +1,7 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
-import static de.dfki.mlt.rudimant.compiler.tree.TstUtils.*;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.*;
 
 import de.dfki.lt.hfc.WrongFormatException;
@@ -18,7 +18,7 @@ import org.junit.Test;
  *
  * @author max
  */
-public class ExpAssignmentTest {
+public class AssignmentTest {
 
   @BeforeClass
   public static void setUpClass() {
@@ -55,10 +55,26 @@ public class ExpAssignmentTest {
 
     String type_right = ((ExpAssignment)((StatVarDef) dtr).toAssign).left.getType().toJava();
     assertEquals("var type should still be boolean", "boolean", type_right);
+  }
 
-//    String type_left = ((RTExpression)((ExpAssignment) dtr).left).getType();
-//    assertEquals("right side type of boolean test = 4+5 should be int", "boolean", type_left);
+  @Test
+  public void testAssignment3a() throws IOException {
+    String assignmentExp = "boolean test = 4+5;";
 
+    RudiTree dtr = getNodeOfInterest(parseAndTypecheck(assignmentExp));
+    assertTrue(dtr instanceof StatVarDef);
+
+    String type_right = ((ExpAssignment)((StatVarDef) dtr).toAssign).left.getType().toJava();
+    assertEquals("var type should still be boolean", "boolean", type_right);
+  }
+
+  @Test
+  public void testAssignment3b() throws IOException {
+    String assignmentExp = "boolean test = 4+5;";
+    String out = generate(assignmentExp);
+    String exp = "boolean test = (4+5) != 0";
+
+    assertEquals(exp, getForMarked(out, exp));
   }
 
   @Test
