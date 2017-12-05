@@ -1,4 +1,4 @@
-package de.dfki.mlt.rudimant.agent;
+package de.dfki.mlt.rudimant.common;
 
 import static de.dfki.mlt.rudimant.common.Constants.*;
 
@@ -7,10 +7,6 @@ import java.util.BitSet;
 import java.util.List;
 
 import org.yaml.snakeyaml.Yaml;
-
-import de.dfki.mlt.rudimant.common.BasicInfo;
-import de.dfki.mlt.rudimant.common.LogPrinter;
-import de.dfki.mlt.rudimant.common.RuleInfo;
 
 public class RuleLogger {
 

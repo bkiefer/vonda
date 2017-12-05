@@ -17,6 +17,7 @@ import de.dfki.lt.hfc.db.server.HfcDbApiHandler;
 import de.dfki.lt.hfc.db.server.StreamingClient;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
+import de.dfki.mlt.rudimant.common.RuleLogger;
 
 /**
  *
