@@ -306,8 +306,8 @@ public class VisitorType implements RudiVisitor {
             : node.elseexp.getType();
     if (unified == null) {
       typeError(node.fullexp + ": type of then and else differ: "
-          + node.thenexp.getType().toDebugString() + " vs. "
-          + node.elseexp.getType().toDebugString(), node);
+          + node.thenexp.getType().toString() + " vs. "
+          + node.elseexp.getType().toString(), node);
       unified = new Type(unified);
     }
     node.type = unified;
@@ -388,7 +388,7 @@ public class VisitorType implements RudiVisitor {
     }
     if (innerIterableType.isUnspecified()) {
       typeError("Iterable for loop type is unknown or not generic, but: "
-          + node.initialization.getType().toDebugString(), node);
+          + node.initialization.getType().toString(), node);
       innerIterableType = new Type("Object");
     }
     if (node.varType.isUnspecified()) {
@@ -399,7 +399,7 @@ public class VisitorType implements RudiVisitor {
         if (innerIterableType.equals(new Type("Object"))) {
           // Then handle this as an implicit cast, but warn the user that it might crash
           typeWarning("Implicit casting of list Object to "
-              + node.varType.toDebugString()
+              + node.varType.toString()
               + " in short for loop, be aware this might crash in Java ", node);
         } else {
           typeError("Incompatible types in short for loop: "
@@ -474,8 +474,8 @@ public class VisitorType implements RudiVisitor {
   public void visitNode(StatVarDef node) {
     if (node.isDefinition && mem.variableExists(node.variable)) {
       typeError("Re-defined variable " + node.variable
-          + " from " + mem.getVariableType(node.variable).toDebugString()
-          + " to " + node.type.toDebugString() +
+          + " from " + mem.getVariableType(node.variable).toString()
+          + " to " + node.type.toString() +
           ", keeping the old type", node);
     }
     if (mem.variableExists(node.variable)) {

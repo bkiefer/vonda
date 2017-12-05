@@ -181,6 +181,24 @@ public class TypesTest {
     assertEquals(expected, getForMarked(r, expected));
   }
 
+  @Test
+  public void testCast5() {
+    String in = "t = (QuizHistory) a;";
+    String r = generate(in);
+    String exp = "t = ((Rdf)a);";
+    assertEquals(exp, getForMarked(r, exp));
+    assertTrue(r.contains("Rdf t;"));
+  }
+
+  @Test
+  public void testCast6() {
+    String methdecl = " void foo(List<Child> cs) { c = cs.get(0); }";
+    String s = generate(methdecl);
+    String expected = "public void foo(List<Object> cs)"
+        + " { Rdf c = (Rdf)cs.get(0); }";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
   //
   @Test(expected=TypeException.class)
   public void testVoidFunction() throws Throwable {

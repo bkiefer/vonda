@@ -24,9 +24,10 @@ public class MethodDeclarationTest {
 
   @Test
   public void testParType() {
-    String methdecl = " void foo(List<Child> cs) { c = cs.get(0); }";
-    String s = generate(methdecl);
-    String expected = "public void foo(List<Object> cs) { Rdf c = (Rdf)cs.get(0); }";
+    String methdecl = " void foo(List<Child> cs) { Child c = cs.get(0); }";
+    String s = generate(methdecl, true);
+    String expected = "public void foo(List<Object> cs)"
+        + " { Rdf c = (Rdf)cs.get(0); }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -36,7 +37,9 @@ public class MethodDeclarationTest {
     String methdecl2 = "String foo(int a) { i = 1; }\n";
     String usage = "void bar() { if(true){foo();} }";
     String s = generate(methdecl1 + methdecl2 + usage);
-    String expected = "public void foo() { int i = 1; } public String foo(int a) { int i = 1; } public void bar() { if (true) { foo(); }";
+    String expected = "public void foo() { int i = 1; } "
+        + "public String foo(int a) { int i = 1; } "
+        + "public void bar() { if (true) { foo(); }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
