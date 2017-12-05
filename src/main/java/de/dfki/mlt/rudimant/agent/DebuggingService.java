@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import de.dfki.mlt.rudimant.common.SimpleServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * establishes an server in the agent to be able to modify which rules are
  * logged, and to see watched objects in the DB in the future
  */
 public class DebuggingService  {
+  
+  public static final Logger logger = LoggerFactory.getLogger("DebuggingService");
 
   SimpleServer server;
 
@@ -20,6 +24,7 @@ public class DebuggingService  {
       public void execute(String[] args) {
         try {
           agent.logRule(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+          logger.debug("set rule " + Integer.parseInt(args[0]) + " to " + Integer.parseInt(args[1]));
         } catch (Throwable ex) {
           Agent.logger.error("Illegal DebuggingService Call: {}",
               Arrays.toString(args));
