@@ -1,0 +1,108 @@
+#
+# OUTDATED COMMENT, BUT STILL USEFUL TO SEE HOW THINGS EVOLVED
+# ------------------------------------------------------------
+# the below axiomatic triples can be found in ter Horst papers
+#   Herman J. ter Horst (2004). Extending the RDFS Entailment Lemma. Proceedings ISWC.
+#   Herman J. ter Horst (2005). Combining RDF and Part of OWL with Rules: Semantics,
+#     Decidability, Complexity. Proceedings ISWC.
+#   Herman J. ter Horst (2005). Completeness, decidability and complexity of entailment
+#     for RDF Schema and a semantic extension involving the OWL vocabulary. Journal of
+#     Web Semantics
+# and are a straightforward extension of work done by Pat Hayes for RDF Schema in
+#   Patrick Hayes (2004). RDF Semantics. W3C.
+#
+# I have omitted the RDF-specific triples, since they do not have an effect on the
+# soundness of the entailed triples;
+# I have also added a few extensions to the set of axioms
+#
+# NOTE: six axiomatic triples have been removed when equivalence class reduction is
+#       turned on, viz.,
+#         <owl:sameAs> <rdf:type> <owl:TransitiveProperty> .
+#         <owl:sameAs> <rdf:type> <owl:SymmetricProperty> .
+#         <owl:equivalentClass> <rdf:type> <owl:TransitiveProperty> .
+#         <owl:equivalentClass> <rdf:type> <owl:SymmetricProperty> .
+#         <owl:equivalentProperty> <rdf:type> <owl:TransitiveProperty> .
+#         <owl:equivalentProperty> <rdf:type> <owl:SymmetricProperty> .
+#
+# NOTE: three axiomatic triples have been added instead in order to characterize
+#       these URIs as general properties:
+#         <owl:equivalentClass> <rdf:type> <rdf:Property> .
+#         <owl:equivalentProperty> <rdf:type> <rdf:Property> .
+#         <owl:sameAs> <rdf:type> <rdf:Property> .
+#
+# ********* N E W **********
+#
+# NOTE: this is the _polarity_ & _transaction time_ extension of default.eqred.nt;
+#       for transaction time, we prefix triples from this file by polarity
+#         <logic:true>
+#       indicating that the statement is true and add suffix
+#         "0"^^<xsd:long>
+#       as the universally-holding transaction time 0 ("from the very beginning of
+#       time");
+#       transaction time is supposed to take _long_ natural numbers to represent UNIX
+#       epoch time;
+#       as a consequence (but also consciously chosen), time thus becomes discrete,
+#       so the immediate time point following t would be t+1
+#
+#
+# @author Hans-Ulrich Krieger
+# @version Fri Jul  1 10:34:42 CEST 2016
+#
+
+<logic:true> <rdf:type> <rdf:type> <rdf:Property> "0"^^<xsd:long> .
+<logic:true> <rdf:subject> <rdf:type> <rdf:Property> "0"^^<xsd:long> .
+<logic:true> <rdf:predicate> <rdf:type> <rdf:Property> "0"^^<xsd:long> .
+<logic:true> <rdf:object> <rdf:type> <rdf:Property> "0"^^<xsd:long> .
+<logic:true> <rdf:first> <rdf:type> <rdf:Property> "0"^^<xsd:long> .
+<logic:true> <rdf:rest> <rdf:type> <rdf:Property> "0"^^<xsd:long> .
+<logic:true> <rdf:nil> <rdf:type> <rdf:List> "0"^^<xsd:long> .
+
+<logic:true> <owl:equivalentClass> <rdf:type> <rdf:Property> "0"^^<xsd:long> .
+<logic:true> <owl:equivalentClass> <rdfs:subPropertyOf> <rdfs:subClassOf> "0"^^<xsd:long> .
+
+<logic:true> <owl:equivalentProperty> <rdf:type> <rdf:Property> "0"^^<xsd:long> .
+<logic:true> <owl:equivalentProperty> <rdfs:subPropertyOf> <rdfs:subPropertyOf> "0"^^<xsd:long> .
+
+<logic:true> <owl:sameAs> <rdf:type> <rdf:Property> "0"^^<xsd:long> .
+
+<logic:true> <rdfs:subClassOf> <rdf:type> <owl:TransitiveProperty> "0"^^<xsd:long> .
+<logic:true> <rdfs:subPropertyOf> <rdf:type> <owl:TransitiveProperty> "0"^^<xsd:long> .
+
+<logic:true> <owl:disjointWith> <rdf:type> <owl:SymmetricProperty> "0"^^<xsd:long> .
+
+<logic:true> <owl:inverseOf> <rdf:type> <owl:SymmetricProperty> "0"^^<xsd:long> .
+
+<logic:true> <owl:FunctionalProperty> <rdfs:subClassOf> <rdf:Property> "0"^^<xsd:long> .
+<logic:true> <owl:TransitiveProperty> <rdfs:subClassOf> <rdf:Property> "0"^^<xsd:long> .
+<logic:true> <owl:SymmetricProperty> <rdfs:subClassOf> <rdf:Property> "0"^^<xsd:long> .
+<logic:true> <owl:InverseFunctionalProperty> <rdfs:subClassOf> <rdf:Property> "0"^^<xsd:long> .
+<logic:true> <owl:DatatypeProperty> <rdfs:subClassOf> <rdf:Property> "0"^^<xsd:long> .
+<logic:true> <owl:ObjectProperty> <rdfs:subClassOf> <rdf:Property> "0"^^<xsd:long> .
+<logic:true> <owl:AnnotationProperty> <rdfs:subClassOf> <rdf:Property> "0"^^<xsd:long> .
+
+<logic:true> <owl:differentFrom> <rdf:type> <owl:SymmetricProperty> "0"^^<xsd:long> .
+
+# I have added the four below triples, dealing with top and bottom
+<logic:true> <owl:Thing> <rdf:type> <owl:Class> "0"^^<xsd:long> .
+<logic:true> <owl:Nothing> <rdf:type> <owl:Class> "0"^^<xsd:long> .
+<logic:true> <owl:Nothing> <rdfs:subClassOf> <owl:Thing> "0"^^<xsd:long> .
+<logic:true> <owl:Thing> <owl:disjointWith> <owl:Nothing> "0"^^<xsd:long> .
+
+# _standard_ XSD datatypes, implemented in HFC at the moment
+# note: HFC has further _custom_ XSD datatype of its own
+<logic:true> <xsd:anySimpleType> <rdf:type> <rdfs:Datatype> "0"^^<xsd:long> .
+<logic:true> <xsd:anyURI> <rdf:type> <rdfs:Datatype> "0"^^<xsd:long> .
+<logic:true> <xsd:boolean> <rdf:type> <rdfs:Datatype> "0"^^<xsd:long> .
+<logic:true> <xsd:date> <rdf:type> <rdfs:Datatype> "0"^^<xsd:long> .
+<logic:true> <xsd:dateTime> <rdf:type> <rdfs:Datatype> "0"^^<xsd:long> .
+<logic:true> <xsd:double> <rdf:type> <rdfs:Datatype> "0"^^<xsd:long> .
+<logic:true> <xsd:duration> <rdf:type> <rdfs:Datatype> "0"^^<xsd:long> .
+<logic:true> <xsd:float> <rdf:type> <rdfs:Datatype> "0"^^<xsd:long> .
+<logic:true> <xsd:gDay> <rdf:type> <rdfs:Datatype> "0"^^<xsd:long> .
+<logic:true> <xsd:gMonth> <rdf:type> <rdfs:Datatype> "0"^^<xsd:long> .
+<logic:true> <xsd:gMonthDay> <rdf:type> <rdfs:Datatype> "0"^^<xsd:long> .
+<logic:true> <xsd:gYear> <rdf:type> <rdfs:Datatype> "0"^^<xsd:long> .
+<logic:true> <xsd:gYearMonth> <rdf:type> <rdfs:Datatype> "0"^^<xsd:long> .
+<logic:true> <xsd:int> <rdf:type> <rdfs:Datatype> "0"^^<xsd:long> .
+<logic:true> <xsd:long> <rdf:type> <rdfs:Datatype> "0"^^<xsd:long> .
+<logic:true> <xsd:string> <rdf:type> <rdfs:Datatype> "0"^^<xsd:long> .

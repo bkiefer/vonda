@@ -28,6 +28,9 @@ public abstract class Agent implements StreamingClient {
 
   public static final Logger logger = LoggerFactory.getLogger(Agent.class);
 
+  private static final DialogueAct IMPOSSIBLE_DIALOGUEACT =
+      new DialogueAct("IMPOSSIBLE(IMPOSSIBLE)");
+
   /** To generate unique IDs for behaviours, etc. */
   protected static int _generatorCounter = -1;
   public String idPrefix = "";
@@ -195,7 +198,8 @@ public abstract class Agent implements StreamingClient {
 
   /** The last dialogue act spoken by the agent */
   public DialogueAct myLastDA() {
-    return myLastDAs.peekFirst();
+    DialogueAct result = myLastDAs.peekFirst();
+    return (result == null ? IMPOSSIBLE_DIALOGUEACT : result);
     //if (myUnprocessedDAs == 0) return null;
     //return myLastDAs.get(myUnprocessedDAs - 1);
   }
@@ -272,7 +276,7 @@ public abstract class Agent implements StreamingClient {
     // TODO: THIS IS NOT QUITE RIGHT. I SHOULD MARK SINGLE INCOMING DA'S AS
     // PROCESSED
     if (last == null || last.timeStamp < lastDAprocessed) {
-      return null;
+      return IMPOSSIBLE_DIALOGUEACT;
     }
     //if (unprocessedDAs == 0) return null;
     //DialogueAct last = lastDAs.get(unprocessedDAs - 1);

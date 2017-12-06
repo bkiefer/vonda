@@ -1,0 +1,272 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+    xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
+    xmlns="http://pal.eu/case#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xml:base="file:/Users/krieger/Desktop/PAL/WP1%20Ontology/CPO.owl">
+  <owl:Ontology rdf:about="http://pal.eu/case">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Formal representation of all the core health care concepts related to the care of the diabetes patient (i.e., syndromes, diseases, social issues, signs and&#xD;
+symptoms, problem assessments, and interventions) and the relationships and constraints between these concepts.</rdfs:comment>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Created with TopBraid Composer</owl:versionInfo>
+  </owl:Ontology>
+  <owl:Class rdf:about="http://pal.eu/case#intervention">
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://pal.eu/case#isInterventionOf"/>
+        </owl:onProperty>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="http://pal.eu/case#disease"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="http://pal.eu/case#social_issue"/>
+        </owl:someValuesFrom>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://pal.eu/case#isInterventionOf"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://pal.eu/case#isInterventionOf"/>
+        </owl:onProperty>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="http://pal.eu/case#syndrome"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Action or series of actions undertaken to respond to the needs and problems of the patient.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Intervention</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://pal.eu/case#signsymptom">
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://pal.eu/case#isAssessedBy"/>
+        </owl:onProperty>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="http://pal.eu/case#problem_assessment"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="http://pal.eu/case#disease"/>
+        </owl:someValuesFrom>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://pal.eu/case#isSignOf"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://pal.eu/case#isSignOf"/>
+        </owl:onProperty>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="http://pal.eu/case#social_issue"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://pal.eu/case#isSignOf"/>
+        </owl:onProperty>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="http://pal.eu/case#syndrome"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Union of signs and symptoms</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Sign symptom</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://pal.eu/case#social_issue">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Social issue</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Matters that can be explained only by factors outside an individual's control and immediate social environment which affect the patient, e.g. poverty, violence, justice, crime.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://pal.eu/case#hasIntervention"/>
+        </owl:onProperty>
+        <owl:someValuesFrom rdf:resource="http://pal.eu/case#intervention"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://pal.eu/case#signsymptom"/>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://pal.eu/case#hasSignSymptom"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://pal.eu/case#symptom">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Sensation or change in health function experienced by a patient.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://pal.eu/case#signsymptom"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Symptom</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://pal.eu/case#diagnostic_examination">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Diagnostic examination</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://pal.eu/case#problem_assessment"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://pal.eu/case#comprehensive_assessment">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://pal.eu/case#problem_assessment"/>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Comprehensive assessment</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://pal.eu/case#disease">
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://pal.eu/case#canBeCauseOf"/>
+        </owl:onProperty>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="http://pal.eu/case#syndrome"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://pal.eu/case#hasIntervention"/>
+        </owl:onProperty>
+        <owl:someValuesFrom rdf:resource="http://pal.eu/case#intervention"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://pal.eu/case#hasSignSymptom"/>
+        </owl:onProperty>
+        <owl:someValuesFrom rdf:resource="http://pal.eu/case#signsymptom"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Physiological or psychological dysfunction.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Disease</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://pal.eu/case#syndrome">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Complex health situation in which a combination of sign and symptoms occurs more frequently than it would be expected on the basis of chance alone and generates a functional decline.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://pal.eu/case#canBeExpressionOf"/>
+        </owl:onProperty>
+        <owl:someValuesFrom rdf:resource="http://pal.eu/case#disease"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://pal.eu/case#intervention"/>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://pal.eu/case#hasIntervention"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://pal.eu/case#signsymptom"/>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://pal.eu/case#hasSignSymptom"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Syndrome</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://pal.eu/case#consultation">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://pal.eu/case#problem_assessment"/>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Consultation</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://pal.eu/case#problem_assessment">
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://pal.eu/case#evaluates"/>
+        </owl:onProperty>
+        <owl:someValuesFrom rdf:resource="http://pal.eu/case#signsymptom"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Aspect that assess the condition of the patient during the first encounter and whenever a re-evaluation is required.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Problem assessment</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://pal.eu/case#sign">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Objective evidence of the presence of a disease or disorder.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Sign</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://pal.eu/case#signsymptom"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://pal.eu/case#laboratory_analysis">
+    <rdfs:subClassOf rdf:resource="http://pal.eu/case#problem_assessment"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Laboratory analysis</rdfs:label>
+  </owl:Class>
+  <owl:ObjectProperty rdf:about="http://pal.eu/case#canBeCauseOf">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Consultation</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://pal.eu/case#hasIntervention">
+    <owl:inverseOf>
+      <owl:ObjectProperty rdf:about="http://pal.eu/case#isInterventionOf"/>
+    </owl:inverseOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://pal.eu/case#hasSignSymptom">
+    <owl:inverseOf>
+      <owl:ObjectProperty rdf:about="http://pal.eu/case#isSignOf"/>
+    </owl:inverseOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://pal.eu/case#isSignOf">
+    <owl:inverseOf rdf:resource="http://pal.eu/case#hasSignSymptom"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://pal.eu/case#isInterventionOf">
+    <owl:inverseOf rdf:resource="http://pal.eu/case#hasIntervention"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://pal.eu/case#canBeExpressionOf">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Consultation</rdfs:label>
+  </owl:ObjectProperty>
+</rdf:RDF>
+
+<!-- Created with Protege (with OWL Plugin 3.5, Build 663)  http://protege.stanford.edu -->

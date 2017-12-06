@@ -1,6 +1,6 @@
 outputDirectory:    ../../../target/generated
 wrapperClass:       de.dfki.dialogue.NaoAgent
-ontologyFile:       ontos/pal.quads.ini
+ontologyFile:       ontologies/inits/pal.inference.ini
 failOnError:        false
 targetConstructor:
 rootPackage:        de.dfki.dialogue

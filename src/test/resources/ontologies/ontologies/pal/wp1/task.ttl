@@ -1,0 +1,140 @@
+# baseURI: http://pal.eu/task
+
+@prefix : <http://pal.eu/task#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://pal.eu/task>
+  rdf:type owl:Ontology ;
+  owl:versionInfo "Created with TopBraid Composer"^^xsd:string ;
+.
+:Agenda_item
+  rdf:type :event ;
+.
+:Avatar
+  rdf:type :agent ;
+.
+:PAL_goal
+  rdf:type :goal ;
+.
+:Picture
+  rdf:type :object ;
+.
+:Quiz
+  rdf:type :task ;
+.
+:Sorting_game
+  rdf:type :task ;
+.
+:agent
+  rdf:type owl:Class ;
+  rdfs:comment """An agent is an entity that is considered active. Usually agents are humans but groups of humans or software components may also be considered agents. Agents are
+not specific individuals (like Chris) but always indicate classes of individuals with certain characteristics. Attributes of the agent can include skills, attitude and other
+miscellaneous. Agents perform tasks and always play certain roles within the task world."""^^xsd:string ;
+  rdfs:label "Agent"^^xsd:string ;
+  rdfs:subClassOf owl:Thing ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :plays ;
+      owl:someValuesFrom :role ;
+    ] ;
+.
+:contains
+  rdf:type owl:ObjectProperty ;
+.
+:event
+  rdf:type owl:Class ;
+  rdfs:comment """An event is a change in the state of the task world at a point in time. The change may reflect changes of attribute values of internal concepts such as Object,
+Task, Agent or Role or could reflect changes of external concepts such as the weather or electricity supply. Events influence the task execution sequence by triggering tasks. This model does not specify how the event is created or by whom."""^^xsd:string ;
+  rdfs:label "Event"^^xsd:string ;
+  rdfs:subClassOf owl:Thing ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :triggers ;
+      owl:someValuesFrom :task ;
+    ] ;
+.
+:goal
+  rdf:type owl:Class ;
+  rdfs:subClassOf owl:Thing ;
+.
+:has
+  rdf:type owl:ObjectProperty ;
+.
+:isResponsibleFor
+  rdf:type owl:ObjectProperty ;
+  owl:inverseOf :performedBy ;
+.
+:object
+  rdf:type owl:Class ;
+  rdfs:comment """An object refers to a physical or non-physical entity. A non-physical entity could be anything ranging from messages, passwords or addresses to gestures and
+stories. Objects have attributes consisting of attribute-name and value pairs. What can be done with an object is specified by actions, for instance move, change, turn off etc. Furthermore, objects may be in a type hierarchy and can also be contained in other objects, for example a form may contain an address field, and a cinema can contain a snack bar. Objects are typically used in tasks but they can also influence the task execution sequence when they cause events to occur."""^^xsd:string ;
+  rdfs:label "Object"^^xsd:string ;
+  rdfs:subClassOf owl:Thing ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :usedBy ;
+      owl:someValuesFrom :agent ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :usedBy ;
+      owl:someValuesFrom :role ;
+    ] ;
+.
+:performedBy
+  rdf:type owl:ObjectProperty ;
+  owl:inverseOf :isResponsibleFor ;
+.
+:plays
+  rdf:type owl:ObjectProperty ;
+.
+:role
+  rdf:type owl:Class ;
+  rdfs:comment "A role is a meaningful collection of tasks performed by one or more agents. The role is meaningful when it has a clear goal or when it distinguishes between groups of agents. A role is consequently responsible for the tasks that it encompasses. Roles can be hierarchically composed and are assigned to an agent in a certain way. The role can be obtained by assignment, delegation, mandate or because of a situational context."^^xsd:string ;
+  rdfs:label "Role"^^xsd:string ;
+  rdfs:subClassOf owl:Thing ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :isResponsibleFor ;
+      owl:someValuesFrom :task ;
+    ] ;
+.
+:task
+  rdf:type owl:Class ;
+  rdfs:comment """A task is an activity performed by agents to reach a certain goal. A task typically changes something in the task world and requires some period of time to
+complete. Complex tasks can be decomposed into smaller subtasks. Tasks are executed in a certain order and the completion of one task can trigger the execution of one or more other tasks. A task could also be started because of an event that has occurred in the task world."""^^xsd:string ;
+  rdfs:label "Task"^^xsd:string ;
+  rdfs:subClassOf owl:Thing ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :has ;
+      owl:someValuesFrom :goal ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :performedBy ;
+      owl:someValuesFrom :agent ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :performedBy ;
+      owl:someValuesFrom :role ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :uses ;
+      owl:someValuesFrom :object ;
+    ] ;
+.
+:triggers
+  rdf:type owl:ObjectProperty ;
+.
+:usedBy
+  rdf:type owl:ObjectProperty ;
+.
+:uses
+  rdf:type owl:ObjectProperty ;
+.

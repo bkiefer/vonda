@@ -1,0 +1,152 @@
+_:genid10 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:genid10 <http://www.w3.org/2002/07/owl#onProperty> <http://pal.eu/case#canBeCauseOf> .
+_:genid10 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://pal.eu/case#syndrome> .
+_:genid11 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:genid11 <http://www.w3.org/2002/07/owl#onProperty> <http://pal.eu/case#hasIntervention> .
+_:genid11 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://pal.eu/case#intervention> .
+_:genid12 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:genid12 <http://www.w3.org/2002/07/owl#onProperty> <http://pal.eu/case#hasSignSymptom> .
+_:genid12 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://pal.eu/case#signsymptom> .
+_:genid13 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:genid13 <http://www.w3.org/2002/07/owl#onProperty> <http://pal.eu/case#canBeExpressionOf> .
+_:genid13 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://pal.eu/case#disease> .
+_:genid14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:genid14 <http://www.w3.org/2002/07/owl#onProperty> <http://pal.eu/case#hasIntervention> .
+_:genid14 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://pal.eu/case#intervention> .
+_:genid15 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:genid15 <http://www.w3.org/2002/07/owl#onProperty> <http://pal.eu/case#hasSignSymptom> .
+_:genid15 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://pal.eu/case#signsymptom> .
+_:genid16 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:genid16 <http://www.w3.org/2002/07/owl#onProperty> <http://pal.eu/case#evaluates> .
+_:genid16 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://pal.eu/case#signsymptom> .
+_:genid1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:genid1 <http://www.w3.org/2002/07/owl#onProperty> <http://pal.eu/case#isInterventionOf> .
+_:genid1 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://pal.eu/case#disease> .
+_:genid2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:genid2 <http://www.w3.org/2002/07/owl#onProperty> <http://pal.eu/case#isInterventionOf> .
+_:genid2 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://pal.eu/case#social_issue> .
+_:genid3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:genid3 <http://www.w3.org/2002/07/owl#onProperty> <http://pal.eu/case#isInterventionOf> .
+_:genid3 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://pal.eu/case#syndrome> .
+_:genid4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:genid4 <http://www.w3.org/2002/07/owl#onProperty> <http://pal.eu/case#isAssessedBy> .
+_:genid4 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://pal.eu/case#problem_assessment> .
+_:genid5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:genid5 <http://www.w3.org/2002/07/owl#onProperty> <http://pal.eu/case#isSignOf> .
+_:genid5 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://pal.eu/case#disease> .
+_:genid6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:genid6 <http://www.w3.org/2002/07/owl#onProperty> <http://pal.eu/case#isSignOf> .
+_:genid6 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://pal.eu/case#social_issue> .
+_:genid7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:genid7 <http://www.w3.org/2002/07/owl#onProperty> <http://pal.eu/case#isSignOf> .
+_:genid7 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://pal.eu/case#syndrome> .
+_:genid8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:genid8 <http://www.w3.org/2002/07/owl#onProperty> <http://pal.eu/case#hasIntervention> .
+_:genid8 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://pal.eu/case#intervention> .
+_:genid9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:genid9 <http://www.w3.org/2002/07/owl#onProperty> <http://pal.eu/case#hasSignSymptom> .
+_:genid9 <http://www.w3.org/2002/07/owl#someValuesFrom> <http://pal.eu/case#signsymptom> .
+<http://pal.eu/case#canBeCauseOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#canBeCauseOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#canBeCauseOf> <http://www.w3.org/2000/01/rdf-schema#label> "Consultation"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#canBeExpressionOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#canBeExpressionOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#canBeExpressionOf> <http://www.w3.org/2000/01/rdf-schema#label> "Consultation"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#comprehensive_assessment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#comprehensive_assessment> <http://www.w3.org/2000/01/rdf-schema#label> "Comprehensive assessment"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#comprehensive_assessment> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://pal.eu/case#problem_assessment> .
+<http://pal.eu/case#consultation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#consultation> <http://www.w3.org/2000/01/rdf-schema#label> "Consultation"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#consultation> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://pal.eu/case#problem_assessment> .
+<http://pal.eu/case#diagnostic_examination> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#diagnostic_examination> <http://www.w3.org/2000/01/rdf-schema#label> "Diagnostic examination"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#diagnostic_examination> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://pal.eu/case#problem_assessment> .
+<http://pal.eu/case#disease> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#disease> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#disease> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#disease> <http://www.w3.org/2000/01/rdf-schema#comment> "Physiological or psychological dysfunction."^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#disease> <http://www.w3.org/2000/01/rdf-schema#label> "Disease"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#disease> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid10 .
+<http://pal.eu/case#disease> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid11 .
+<http://pal.eu/case#disease> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid12 .
+<http://pal.eu/case#disease> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/2002/07/owl#Thing> .
+<http://pal.eu/case#evaluates> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#hasIntervention> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#hasIntervention> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#hasIntervention> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#hasIntervention> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#hasIntervention> <http://www.w3.org/2002/07/owl#inverseOf> <http://pal.eu/case#isInterventionOf> .
+<http://pal.eu/case#hasSignSymptom> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#hasSignSymptom> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#hasSignSymptom> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#hasSignSymptom> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#hasSignSymptom> <http://www.w3.org/2002/07/owl#inverseOf> <http://pal.eu/case#isSignOf> .
+<http://pal.eu/case> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Ontology> .
+<http://pal.eu/case> <http://www.w3.org/2000/01/rdf-schema#comment> "Formal representation of all the core health care concepts related to the care of the diabetes patient (i.e., syndromes, diseases, social issues, signs and\r\nsymptoms, problem assessments, and interventions) and the relationships and constraints between these concepts."^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case> <http://www.w3.org/2002/07/owl#versionInfo> "Created with TopBraid Composer"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#intervention> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#intervention> <http://www.w3.org/2000/01/rdf-schema#comment> "Action or series of actions undertaken to respond to the needs and problems of the patient."^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#intervention> <http://www.w3.org/2000/01/rdf-schema#label> "Intervention"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#intervention> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid1 .
+<http://pal.eu/case#intervention> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid2 .
+<http://pal.eu/case#intervention> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid3 .
+<http://pal.eu/case#intervention> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/2002/07/owl#Thing> .
+<http://pal.eu/case#isAssessedBy> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#isInterventionOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#isInterventionOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#isInterventionOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#isInterventionOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#isInterventionOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#isInterventionOf> <http://www.w3.org/2002/07/owl#inverseOf> <http://pal.eu/case#hasIntervention> .
+<http://pal.eu/case#isSignOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#isSignOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#isSignOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#isSignOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#isSignOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://pal.eu/case#isSignOf> <http://www.w3.org/2002/07/owl#inverseOf> <http://pal.eu/case#hasSignSymptom> .
+<http://pal.eu/case#laboratory_analysis> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#laboratory_analysis> <http://www.w3.org/2000/01/rdf-schema#label> "Laboratory analysis"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#laboratory_analysis> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://pal.eu/case#problem_assessment> .
+<http://pal.eu/case#problem_assessment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#problem_assessment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#problem_assessment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#problem_assessment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#problem_assessment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#problem_assessment> <http://www.w3.org/2000/01/rdf-schema#comment> "Aspect that assess the condition of the patient during the first encounter and whenever a re-evaluation is required."^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#problem_assessment> <http://www.w3.org/2000/01/rdf-schema#label> "Problem assessment"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#problem_assessment> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid16 .
+<http://pal.eu/case#problem_assessment> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/2002/07/owl#Thing> .
+<http://pal.eu/case#sign> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#sign> <http://www.w3.org/2000/01/rdf-schema#comment> "Objective evidence of the presence of a disease or disorder."^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#sign> <http://www.w3.org/2000/01/rdf-schema#label> "Sign"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#sign> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://pal.eu/case#signsymptom> .
+<http://pal.eu/case#signsymptom> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#signsymptom> <http://www.w3.org/2000/01/rdf-schema#comment> "Union of signs and symptoms"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#signsymptom> <http://www.w3.org/2000/01/rdf-schema#label> "Sign symptom"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#signsymptom> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid4 .
+<http://pal.eu/case#signsymptom> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid5 .
+<http://pal.eu/case#signsymptom> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid6 .
+<http://pal.eu/case#signsymptom> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid7 .
+<http://pal.eu/case#signsymptom> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/2002/07/owl#Thing> .
+<http://pal.eu/case#social_issue> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#social_issue> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#social_issue> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#social_issue> <http://www.w3.org/2000/01/rdf-schema#comment> "Matters that can be explained only by factors outside an individual's control and immediate social environment which affect the patient, e.g. poverty, violence, justice, crime."^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#social_issue> <http://www.w3.org/2000/01/rdf-schema#label> "Social issue"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#social_issue> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid8 .
+<http://pal.eu/case#social_issue> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid9 .
+<http://pal.eu/case#social_issue> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/2002/07/owl#Thing> .
+<http://pal.eu/case#symptom> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#symptom> <http://www.w3.org/2000/01/rdf-schema#comment> "Sensation or change in health function experienced by a patient."^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#symptom> <http://www.w3.org/2000/01/rdf-schema#label> "Symptom"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#symptom> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://pal.eu/case#signsymptom> .
+<http://pal.eu/case#syndrome> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#syndrome> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#syndrome> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#syndrome> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://pal.eu/case#syndrome> <http://www.w3.org/2000/01/rdf-schema#comment> "Complex health situation in which a combination of sign and symptoms occurs more frequently than it would be expected on the basis of chance alone and generates a functional decline."^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#syndrome> <http://www.w3.org/2000/01/rdf-schema#label> "Syndrome"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://pal.eu/case#syndrome> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid13 .
+<http://pal.eu/case#syndrome> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid14 .
+<http://pal.eu/case#syndrome> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid15 .
+<http://pal.eu/case#syndrome> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/2002/07/owl#Thing> .

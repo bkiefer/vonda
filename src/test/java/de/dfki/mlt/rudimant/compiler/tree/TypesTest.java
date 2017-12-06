@@ -207,6 +207,16 @@ public class TypesTest {
     assertEquals(expected, getForMarked(s, expected));
   }
 
+  @Test
+  public void testCast8() {
+    String methdecl = "Collection<LearningGoalType> foo(Child m) {"
+        + " map(m.hasLearningGoal, (f) -> (((LearningGoal)f).goalType)); }";
+    String s = generate(methdecl);
+    String expected = "public Collection<Rdf> foo(Rdf m)"
+        + " { map(((Set<Object>)m.getValue(\"<edu:hasLearningGoal>\")), (f) -> ((Rdf)((Rdf)f).getSingleValue(\"<edu:goalType>\"))); } }";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
   //
   @Test(expected=TypeException.class)
   public void testVoidFunction() throws Throwable {

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <uri id="Imports Wizard Entry" name="http://www.dfki.de/lt/onto/pal/pal.owl" uri="file:/home/kiefer/palProject/subprojects/ontologies/ontologies/pal/pal/pal.owl"/>
+    <uri id="Imports Wizard Entry" name="http://www.dfki.de/lt/onto/pal/example.owl" uri="file:/home/kiefer/palProject/subprojects/ontologies/ontologies/pal/timeline/timeline.owl"/>
+    <uri id="Imports Wizard Entry" name="http://www.dfki.de/lt/onto/pal/bloom.owl" uri="file:/home/kiefer/palProject/subprojects/ontologies/ontologies/pal/bloom/bloom.owl"/>
+    <uri id="Imports Wizard Entry" name="http://www.dfki.de/lt/onto/common/upper.owl" uri="file:/home/kiefer/palProject/subprojects/ontologies/ontologies/common/upper/upper.owl"/>
+    <uri id="User Entered Import Resolution" name="http://www.dfki.de/lt/onto/common/dialogue.owl" uri="file:/home/kiefer/palProject/subprojects/ontologies/ontologies/common/dialogue/dialogue.owl"/>
+    <uri id="User Entered Import Resolution" name="http://www.dfki.de/lt/onto/pal/task.owl" uri="file:/home/kiefer/palProject/subprojects/ontologies/ontologies/pal/task/task.owl"/>
+    <uri id="User Entered Import Resolution" name="http://www.dfki.de/lt/onto/pal/dmedu.owl" uri="file:/home/kiefer/palProject/subprojects/ontologies/ontologies/pal/dmedu/dmedu.owl"/>
+    <uri id="User Entered Import Resolution" name="http://www.dfki.de/lt/onto/pal/semantics.owl" uri="file:/home/kiefer/palProject/subprojects/ontologies/ontologies/pal/semantics/semantics.owl"/>
+    <uri id="User Entered Import Resolution" name="http://www.dfki.de/lt/onto/common/logic.owl" uri="file:/home/kiefer/palProject/subprojects/ontologies/ontologies/common/logic/logic.owl"/>
+    <uri id="User Entered Import Resolution" name="http://www.dfki.de/lt/onto/common/time.owl" uri="file:/home/kiefer/palProject/subprojects/ontologies/ontologies/common/time/time.owl"/>
+    <uri id="User Entered Import Resolution" name="http://www.dfki.de/lt/onto/pal/domain.owl" uri="file:/home/kiefer/palProject/subprojects/ontologies/ontologies/pal/domain/domain.owl"/>
+    <uri id="User Entered Import Resolution" name="http://www.dfki.de/lt/onto/pal/timeline.owl" uri="file:/home/kiefer/palProject/subprojects/ontologies/ontologies/pal/timeline/timeline.owl"/>
+    <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
+        <uri id="Automatically generated entry, Timestamp=1488553750745" name="http://www.dfki.de/lt/onto/pal/timeline.owl" uri="timeline.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1488553750745" name="http://www.dfki.de/lt/onto/pal/timelinedata.owl" uri="timelinedata.owl"/>
+    </group>
+</catalog>

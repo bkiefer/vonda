@@ -1,0 +1,96 @@
+#
+# the below axiomatic triples can be found in ter Horst papers
+#   Herman J. ter Horst (2004). Extending the RDFS Entailment Lemma. Proceedings ISWC.
+#   Herman J. ter Horst (2005). Combining RDF and Part of OWL with Rules: Semantics,
+#     Decidability, Complexity. Proceedings ISWC.
+#   Herman J. ter Horst (2005). Completeness, decidability and complexity of entailment
+#     for RDF Schema and a semantic extension involving the OWL vocabulary. Journal of
+#     Web Semantics
+# and are a straightforward extension of work done by Pat Hayes for RDF Schema in
+#   Patrick Hayes (2004). RDF Semantics. W3C.
+#
+# I have omitted the RDF-specific triples, since they do not have an effect on the
+# soundness of the entailed triples;
+# I have also added a few extensions to the set of axioms
+#
+# NOTE: six axiomatic triples have been removed for the
+#       equivalence class reduction, viz.,
+#         <owl:sameAs> <rdf:type> <owl:TransitiveProperty> .
+#         <owl:sameAs> <rdf:type> <owl:SymmetricProperty> .
+#         <owl:equivalentClass> <rdf:type> <owl:TransitiveProperty> .
+#         <owl:equivalentClass> <rdf:type> <owl:SymmetricProperty> .
+#         <owl:equivalentProperty> <rdf:type> <owl:TransitiveProperty> .
+#         <owl:equivalentProperty> <rdf:type> <owl:SymmetricProperty> .
+#
+# NOTE: three axiomatic triples have been added instead in order to characterize
+#       these URIs as properties:
+#         <owl:equivalentClass> <rdf:type> <rdf:Property> .
+#         <owl:equivalentProperty> <rdf:type> <rdf:Property> .
+#         <owl:sameAs> <rdf:type> <rdf:Property> .
+#
+# @author Hans-Ulrich Krieger
+# @version Thu Mar 10 14:27:37 GMT 2016
+#
+
+<rdf:type> <rdf:type> <rdf:Property> .
+<rdf:subject> <rdf:type> <rdf:Property> .
+<rdf:predicate> <rdf:type> <rdf:Property> .
+<rdf:object> <rdf:type> <rdf:Property> .
+<rdf:first> <rdf:type> <rdf:Property> .
+<rdf:rest> <rdf:type> <rdf:Property> .
+
+<rdf:nil> <rdf:type> <rdf:List> .
+
+<owl:equivalentClass> <rdf:type> <rdf:Property> .
+<owl:equivalentClass> <rdfs:subPropertyOf> <rdfs:subClassOf> .
+
+<owl:equivalentProperty> <rdf:type> <rdf:Property> .
+<owl:equivalentProperty> <rdfs:subPropertyOf> <rdfs:subPropertyOf> .
+
+<owl:sameAs> <rdf:type> <rdf:Property> .
+
+<rdfs:subClassOf> <rdf:type> <owl:TransitiveProperty> .
+<rdfs:subPropertyOf> <rdf:type> <owl:TransitiveProperty> .
+
+<owl:disjointWith> <rdf:type> <owl:SymmetricProperty> .
+
+<owl:inverseOf> <rdf:type> <owl:SymmetricProperty> .
+
+<owl:FunctionalProperty> <rdfs:subClassOf> <rdf:Property> .
+<owl:TransitiveProperty> <rdfs:subClassOf> <rdf:Property> .
+<owl:SymmetricProperty> <rdfs:subClassOf> <rdf:Property> .
+<owl:InverseFunctionalProperty> <rdfs:subClassOf> <rdf:Property> .
+<owl:DatatypeProperty> <rdfs:subClassOf> <rdf:Property> .
+<owl:ObjectProperty> <rdfs:subClassOf> <rdf:Property> .
+<owl:AnnotationProperty> <rdfs:subClassOf> <rdf:Property> .
+
+<owl:differentFrom> <rdf:type> <owl:SymmetricProperty> .
+
+# I have added the four below triples
+<owl:Thing> <rdf:type> <owl:Class> .
+<owl:Nothing> <rdf:type> <owl:Class> .
+<owl:Nothing> <rdfs:subClassOf> <owl:Thing> .
+<owl:Thing> <owl:disjointWith> <owl:Nothing> .
+
+# (some of the) standard XSD datatypes
+# note: HFC has further custom XSD datatype of its own
+<xsd:anySimpleType> <rdf:type> <rdfs:Datatype> .
+<xsd:anyURI> <rdf:type> <rdfs:Datatype> .
+<xsd:boolean> <rdf:type> <rdfs:Datatype> .
+<xsd:date> <rdf:type> <rdfs:Datatype> .
+<xsd:dateTime> <rdf:type> <rdfs:Datatype> .
+<xsd:double> <rdf:type> <rdfs:Datatype> .
+<xsd:duration> <rdf:type> <rdfs:Datatype> .
+<xsd:float> <rdf:type> <rdfs:Datatype> .
+<xsd:gDay> <rdf:type> <rdfs:Datatype> .
+<xsd:gMonth> <rdf:type> <rdfs:Datatype> .
+<xsd:gMonthDay> <rdf:type> <rdfs:Datatype> .
+<xsd:gYear> <rdf:type> <rdfs:Datatype> .
+<xsd:gYearMonth> <rdf:type> <rdfs:Datatype> .
+<xsd:int> <rdf:type> <rdfs:Datatype> .
+<xsd:long> <rdf:type> <rdfs:Datatype> .
+<xsd:string> <rdf:type> <rdfs:Datatype> .
+
+#<rdfs:Datatype> <rdfs:subClassOf> <rdfs:Class> .
+#<owl:Class> <rdfs:subClassOf> <rdfs:Class> .
+#<owl:Class> <owl:disjointWith> <rdfs:Datatype> .

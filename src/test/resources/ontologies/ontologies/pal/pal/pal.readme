@@ -1,0 +1,40 @@
+PAL Ontology pal (Hans-Ulrich Krieger)
+
+This ontology imports ontologies 1-7 (time, logic, upper, dial,
+dom, sem, dmgoals) through OWL import statements.
+Interlinking the four ontologies is achieved through OWL axiom
+constructors, by incorporating domain/range restrictions, typing
+constraints, cardinality restrictions, and by directly relating
+classes, properties, and instances.  For instance ("<=" denotes
+rdfs:subClassOf, "=" owl:equivalentClass, ":" rdf:type):
+
+  ;; Activity is a subclass of Happening
+  dom:Activity <= upp:Happening
+  ;; class Actor is equivalent to class Agent
+  dom:Actor == upp:Agent
+  dom:Actor == sem:Actor
+  dom:Actor == dial:Agent
+  dom:Color <= upp:Abstract
+  dom:Device <= upp:Object
+  dom:Disease <= upp:Happening
+  dom:EmotionalState <= upp:Abstract
+  dom:Food <= upp:Object
+  dom:Goal <= upp:Abstract
+  dom:Hobby <= upp:Abstract
+  dom:Issue <= upp:Happening
+  dom:LabValue <= upp:Abstract
+  dom:Location == upp:Place
+  dom:Location == sem:Location
+  dom:Mood <= upp:Abstract
+  dom:Output <= upp:Abstract
+  dom:PhysicalState <= upp:Abstract
+  dom:Sentiment <= upp:Abstract
+  dom:Symptoms <= upp:Abstract
+  dom:Treatment <= uppHappening
+  ;; the range of property dial:frame is class sem:Frame
+  T <= dial:frame . sem:Frame
+  ;; the two properties are equivalent
+  dom:name == upp:name
+  
+Individuals that occur in a dialogue should usually be defined here,
+using namespace pal.

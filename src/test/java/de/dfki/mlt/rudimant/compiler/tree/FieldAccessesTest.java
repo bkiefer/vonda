@@ -49,25 +49,25 @@ public class FieldAccessesTest {
 
     @Test
     public void testFieldAccess4() {
-      String in = "Clazz c; timeout(\"bla\" + c.a.toString(), 1000) {}";
+      String in = "Child c; timeout(\"bla\" + c.hasFather.toString(), 1000) {}";
       String s = generate(in);
-      String expected = "Rdf c;newTimeout((\"bla\"+((Rdf)c.getSingleValue(\"<dom:a>\")).toString()),"
+      String expected = "Rdf c;newTimeout((\"bla\"+((Rdf)c.getSingleValue(\"<dom:hasFather>\")).toString()),"
           + "1000,new Proposal() {public void run() { } });";
       assertEquals(expected, getForMarked(s, expected));
     }
 
     @Test
     public void testFieldAccess5() {
-      String in = "Clazz c; propose(\"bla\" + c.a.toString()) {}";
+      String in = "Child c; propose(\"bla\" + c.hasFather.toString()) {}";
       String s = generate(in);
-      String expected = "Rdf c;propose((\"bla\"+((Rdf)c.getSingleValue(\"<dom:a>\")).toString()),"
+      String expected = "Rdf c;propose((\"bla\"+((Rdf)c.getSingleValue(\"<dom:hasFather>\")).toString()),"
           + "new Proposal() {public void run() { } });";
       assertEquals(expected, getForMarked(s, expected));
     }
 
     @Test
     public void testFieldAccess6() {
-      String in = "Clazz c; property = \"name\"; l = c.property;";
+      String in = "Child c; property = \"name\"; l = c.property;";
       String s = generate(in);
       String expected = "Rdf c;String property = \"name\";Object /* (unknown) */ l = (Object /* (unknown) */) ((Set<Object>)c.getValue(property)); }";
       assertEquals(expected, getForMarked(s, expected));

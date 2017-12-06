@@ -1,0 +1,30 @@
+DIT++ Dialogue Act Ontology dial (Hans-Ulrich Krieger)
+
+The most sophisticated ontology integrates ideas from the DIT++ taxonomy
+of dialogue acts (see http://dit.uvt.nl) and from the FrameNet lexical
+database (see http://framenet.icsi.berkeley.edu/).
+Frames and dialogue acts are modelled independently from one another,
+but dialogue acts incorporates frames through the property dafn:frame.
+Dialogue acts also encode the succession of dialogue acts through
+dafn:follows, define the dafn:sender, and the dafn:addressee, but also
+allow a kind of embedding to model indirect speech in questions and
+answers via property dafn:refersTo.
+Modeling the shallow semantic arguments inside the frames frees us from
+defining repeating properties on various dialogue acts over and over
+again.
+
+
+version v0.9.3 (21 Jan 2016) now separates the DIT taxonomy from
+the definitions of the frames in two distinct ontologies.
+
+version v0.9.4 (26 Jan 2016) adds parts of the Dimension Specific
+Communicative Functions from DIT++ (notably, allo and auto feedback)
+to the ontology; in addition, we abstract away from certain General
+Purpose Functions through a new dimension called Aggregate Functions;
+e.g., the aggregate class Accept subsumes AcceptOffer, AcceptRequest,
+Agreement, CheckPositive, and Confirm.
+
+version v0.9.5 (3 Jun 2016) adds further directives, such as dial:Advice
+or dial:Urge, and introduces a subclass of dial:DomainRelatedFunction,
+called dial:SocialFunction, with sublasses dial:Appeasement, dial:Praise,
+and dial:Congratulation.

@@ -1,0 +1,123 @@
+# baseURI: http://pal.eu/context
+
+@prefix : <http://pal.eu/context#> .
+@prefix context: <http://pal.eu/context#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://pal.eu/context>
+  rdf:type owl:Ontology ;
+  owl:versionInfo "Created with TopBraid Composer"^^xsd:string ;
+.
+context:Avatar
+  rdf:type context:agent ;
+.
+context:Game
+  rdf:type owl:Class ;
+  rdfs:subClassOf context:activity ;
+.
+context:Gluconlinemeter
+  rdf:type context:device ;
+.
+context:Home
+  rdf:type context:indoorSpace ;
+.
+context:Hospital
+  rdf:type context:indoorSpace ;
+.
+context:Medical_center
+  rdf:type context:indoorSpace ;
+.
+context:Quiz
+  rdf:type context:Game ;
+.
+context:Sorting_game
+  rdf:type context:Game ;
+.
+context:activity
+  rdf:type owl:Class ;
+  rdfs:label "Activity"^^xsd:string ;
+  rdfs:subClassOf context:contextEntity ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty context:utilizes ;
+      owl:someValuesFrom context:compEntity ;
+    ] ;
+.
+context:agent
+  rdf:type owl:Class ;
+  rdfs:label "Agent"^^xsd:string ;
+  rdfs:subClassOf context:compEntity ;
+.
+context:application
+  rdf:type owl:Class ;
+  rdfs:label "Application"^^xsd:string ;
+  rdfs:subClassOf context:compEntity ;
+.
+context:compEntity
+  rdf:type owl:Class ;
+  rdfs:label "Computational Entity"^^xsd:string ;
+  rdfs:subClassOf context:contextEntity ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty context:locatedIn ;
+      owl:someValuesFrom context:location ;
+    ] ;
+.
+context:contextEntity
+  rdf:type owl:Class ;
+  rdfs:label "Context entity"^^xsd:string ;
+  rdfs:subClassOf owl:Thing ;
+.
+context:device
+  rdf:type owl:Class ;
+  rdfs:label "Device"^^xsd:string ;
+  rdfs:subClassOf context:compEntity ;
+.
+context:engagedIn
+  rdf:type owl:ObjectProperty ;
+.
+context:indoorSpace
+  rdf:type owl:Class ;
+  rdfs:subClassOf context:location ;
+.
+context:locatedIn
+  rdf:type owl:ObjectProperty ;
+.
+context:location
+  rdf:type owl:Class ;
+  rdfs:label "Location"^^xsd:string ;
+  rdfs:subClassOf context:contextEntity ;
+.
+context:myPAL
+  rdf:type context:application ;
+.
+context:outdoorSpace
+  rdf:type owl:Class ;
+  rdfs:subClassOf context:location ;
+.
+context:person
+  rdf:type owl:Class ;
+  rdfs:label "Person"^^xsd:string ;
+  rdfs:subClassOf context:contextEntity ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty context:engagedIn ;
+      owl:someValuesFrom context:activity ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty context:locatedIn ;
+      owl:someValuesFrom context:location ;
+    ] ;
+.
+context:service
+  rdf:type owl:Class ;
+  rdfs:label "Service"^^xsd:string ;
+  rdfs:subClassOf context:compEntity ;
+.
+context:utilizes
+  rdf:type owl:ObjectProperty ;
+.

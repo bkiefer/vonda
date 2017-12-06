@@ -15,7 +15,7 @@ public class CoverageTest {
     // enter here the file whose compilation you'd like to debug
     CompilerMain.main(new String[]{
       "-o", "target/generated/",// "-v",
-      "-r", RESOURCE_DIR + "ontos/pal.quads.ini",
+      "-r", RESOURCE_DIR + "ontologies/inits/pal.inference.ini",
       "doc/AllYouCanDo.rudi",
     });
 

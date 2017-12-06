@@ -70,11 +70,11 @@ void clearBehavioursAndProposals();
 void shutdown();
 
 // lambda: first class argument of Function is return type of function object
-boolean contains(Collection coll, Function<Boolean, Object> pred);
-boolean all(Collection coll, Function<Boolean, Object> pred);
-List<Object> filter(Collection coll, Function<Boolean, Object> pred);
-List<Object> sort(Collection coll, Function<Integer, Object, Object> c);
-Collection<T> map(Collection<S> coll, Function<S, T> f);
+boolean contains(Collection<T> coll, Function<Boolean, T> pred);
+boolean all(Collection<T> coll, Function<Boolean, T> pred);
+List<T> filter(Collection<T> coll, Function<Boolean, T> pred);
+List<T> sort(Collection<T> coll, Function<Integer, T, T> c);
+Collection<T> map(Collection<S> coll, Function<T, S> f);
  
 // all Agent variables we should know
 

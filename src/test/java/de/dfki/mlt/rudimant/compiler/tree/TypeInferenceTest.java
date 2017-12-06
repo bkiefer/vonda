@@ -112,20 +112,20 @@ public class TypeInferenceTest {
 
   @Test
   public void test8() {
-    String in = " Quiz q; if(q.quizbool) i = 7; ";
+    String in = " QuizHistory q; if(q.correct) i = 7; ";
     String s = generate(in);
     String expected = "public Rdf q;/**/if ((q != null && "
-        + "((Boolean)q.getSingleValue(\"<dom:quizbool>\")))) int i = 7;";
+        + "((Boolean)q.getSingleValue(\"<dom:correct>\")))) int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("Rdf q;"));
   }
 
   @Test
   public void test9() {
-    String in = "Quiz q;if(q.tabletOrientation) i = 7; ";
+    String in = "DiabetesEducation q;if(q.shortCode) i = 7; ";
     String s = generate(in);
     String expected = "public Rdf q;/**/if ((q != null && "
-        + "exists(((String)q.getSingleValue(\"<dom:tabletOrientation>\")))))"
+        + "exists(((String)q.getSingleValue(\"<edu:shortCode>\")))))"
         + " int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("Rdf q;"));
@@ -144,9 +144,9 @@ public class TypeInferenceTest {
 
   @Test
   public void test10() {
-    String in = " double f; void fun() { Clazz c; c.bf = 1.0; }";
+    String in = " double f; void fun() { EducationObjective c; c.hasProgress = 1.0; }";
     String s = generate(in);
-    String expected = "public double f;/**/public void fun() { Rdf c;c.setValue(\"<dom:bf>\", 1.0); } }";
+    String expected = "public double f;/**/public void fun() { Rdf c;c.setValue(\"<edu:hasProgress>\", 1.0); } }";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("double f;"));
   }

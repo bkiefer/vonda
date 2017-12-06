@@ -17,7 +17,7 @@ public class ImportTest {
   public void testImport1() throws WrongFormatException {
     CompilerMain.main(new String[]{
         "-o", "target/generated/",
-        "-r", RESOURCE_DIR + "ontos/pal.quads.ini",
+        "-r", RESOURCE_DIR + "ontologies/inits/pal.inference.ini",
         RESOURCE_DIR + "Main.rudi"
     });
     assertTrue(new File("target/generated/Main.java").exists());

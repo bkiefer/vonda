@@ -1,0 +1,192 @@
+# baseURI: http://pal.eu/case
+
+@prefix : <http://pal.eu/case#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://pal.eu/case>
+  rdf:type owl:Ontology ;
+  rdfs:comment """Formal representation of all the core health care concepts related to the care of the diabetes patient (i.e., syndromes, diseases, social issues, signs and
+symptoms, problem assessments, and interventions) and the relationships and constraints between these concepts."""^^xsd:string ;
+  owl:versionInfo "Created with TopBraid Composer"^^xsd:string ;
+.
+:canBeCauseOf
+  rdf:type owl:ObjectProperty ;
+  rdfs:label "Consultation"^^xsd:string ;
+.
+:canBeExpressionOf
+  rdf:type owl:ObjectProperty ;
+  rdfs:label "Consultation"^^xsd:string ;
+.
+:comprehensive_assessment
+  rdf:type owl:Class ;
+  rdfs:label "Comprehensive assessment"^^xsd:string ;
+  rdfs:subClassOf :problem_assessment ;
+.
+:consultation
+  rdf:type owl:Class ;
+  rdfs:label "Consultation"^^xsd:string ;
+  rdfs:subClassOf :problem_assessment ;
+.
+:diagnostic_examination
+  rdf:type owl:Class ;
+  rdfs:label "Diagnostic examination"^^xsd:string ;
+  rdfs:subClassOf :problem_assessment ;
+.
+:disease
+  rdf:type owl:Class ;
+  rdfs:comment "Physiological or psychological dysfunction."^^xsd:string ;
+  rdfs:label "Disease"^^xsd:string ;
+  rdfs:subClassOf owl:Thing ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :canBeCauseOf ;
+      owl:someValuesFrom :syndrome ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :hasIntervention ;
+      owl:someValuesFrom :intervention ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :hasSignSymptom ;
+      owl:someValuesFrom :signsymptom ;
+    ] ;
+.
+:evaluates
+  rdf:type owl:ObjectProperty ;
+.
+:hasIntervention
+  rdf:type owl:ObjectProperty ;
+  owl:inverseOf :isInterventionOf ;
+.
+:hasSignSymptom
+  rdf:type owl:ObjectProperty ;
+  owl:inverseOf :isSignOf ;
+.
+:intervention
+  rdf:type owl:Class ;
+  rdfs:comment "Action or series of actions undertaken to respond to the needs and problems of the patient."^^xsd:string ;
+  rdfs:label "Intervention"^^xsd:string ;
+  rdfs:subClassOf owl:Thing ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :isInterventionOf ;
+      owl:someValuesFrom :disease ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :isInterventionOf ;
+      owl:someValuesFrom :social_issue ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :isInterventionOf ;
+      owl:someValuesFrom :syndrome ;
+    ] ;
+.
+:isAssessedBy
+  rdf:type owl:ObjectProperty ;
+.
+:isInterventionOf
+  rdf:type owl:ObjectProperty ;
+  owl:inverseOf :hasIntervention ;
+.
+:isSignOf
+  rdf:type owl:ObjectProperty ;
+  owl:inverseOf :hasSignSymptom ;
+.
+:laboratory_analysis
+  rdf:type owl:Class ;
+  rdfs:label "Laboratory analysis"^^xsd:string ;
+  rdfs:subClassOf :problem_assessment ;
+.
+:problem_assessment
+  rdf:type owl:Class ;
+  rdfs:comment "Aspect that assess the condition of the patient during the first encounter and whenever a re-evaluation is required."^^xsd:string ;
+  rdfs:label "Problem assessment"^^xsd:string ;
+  rdfs:subClassOf owl:Thing ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :evaluates ;
+      owl:someValuesFrom :signsymptom ;
+    ] ;
+.
+:sign
+  rdf:type owl:Class ;
+  rdfs:comment "Objective evidence of the presence of a disease or disorder."^^xsd:string ;
+  rdfs:label "Sign"^^xsd:string ;
+  rdfs:subClassOf :signsymptom ;
+.
+:signsymptom
+  rdf:type owl:Class ;
+  rdfs:comment "Union of signs and symptoms"^^xsd:string ;
+  rdfs:label "Sign symptom"^^xsd:string ;
+  rdfs:subClassOf owl:Thing ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :isAssessedBy ;
+      owl:someValuesFrom :problem_assessment ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :isSignOf ;
+      owl:someValuesFrom :disease ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :isSignOf ;
+      owl:someValuesFrom :social_issue ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :isSignOf ;
+      owl:someValuesFrom :syndrome ;
+    ] ;
+.
+:social_issue
+  rdf:type owl:Class ;
+  rdfs:comment "Matters that can be explained only by factors outside an individual's control and immediate social environment which affect the patient, e.g. poverty, violence, justice, crime."^^xsd:string ;
+  rdfs:label "Social issue"^^xsd:string ;
+  rdfs:subClassOf owl:Thing ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :hasIntervention ;
+      owl:someValuesFrom :intervention ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :hasSignSymptom ;
+      owl:someValuesFrom :signsymptom ;
+    ] ;
+.
+:symptom
+  rdf:type owl:Class ;
+  rdfs:comment "Sensation or change in health function experienced by a patient."^^xsd:string ;
+  rdfs:label "Symptom"^^xsd:string ;
+  rdfs:subClassOf :signsymptom ;
+.
+:syndrome
+  rdf:type owl:Class ;
+  rdfs:comment "Complex health situation in which a combination of sign and symptoms occurs more frequently than it would be expected on the basis of chance alone and generates a functional decline."^^xsd:string ;
+  rdfs:label "Syndrome"^^xsd:string ;
+  rdfs:subClassOf owl:Thing ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :canBeExpressionOf ;
+      owl:someValuesFrom :disease ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :hasIntervention ;
+      owl:someValuesFrom :intervention ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :hasSignSymptom ;
+      owl:someValuesFrom :signsymptom ;
+    ] ;
+.

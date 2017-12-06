@@ -1,0 +1,17 @@
+Semantics Ontology sem (Hans-Ulrich Krieger)
+
+The "semantics" ontology is tailored to the specific needs of games, played in
+PAL (quiz & sorting game).
+For this, we deviate from the FrameNet Frame semantics (which would require heavy
+modification & extension as it is very general) and developed a simple frame
+semantics, oriented along _thematic roles_.
+For this, we define a most general concept sem:Frame with the usual "suspects",
+viz., properties sem:agent and sem:patient typed to sem:Actor, property sem:theme,
+typed to sem:Entity (the superclass of Actor), and property sem:manner, typed to
+sem:Manner.
+Thus, these properties are all valid for subclasses of sem:Frames, as, for instance,
+sem:Answering, sem:Asking, sem:BeingCorrect, sem:Continuing, or sem:Playing.
+The subclass sem:AssigningRole defines a further property of its own, viz.,
+sem:purpose, typed to sem:Frame.  Thus this property will allow us to represent
+a role assignment to a specific participient; e.g., assigning the person who asks,
+the person who plays, etc.

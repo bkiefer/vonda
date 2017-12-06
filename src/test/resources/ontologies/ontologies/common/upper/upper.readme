@@ -1,0 +1,11 @@
+Upper Ontology upper (Hans-Ulrich Krieger)
+
+The upper ontology is a minimal and stripped-down upper ontology that
+we have originally developed for the EU projects Musing, Monnet, and
+TrendMiner, showing a tri-partite structure with the top-most classes
+upp:Abstract, upp:Happening, and upp:Physical.
+Most notable for PAL is the Happening representation which distinguishes
+between atomic upp:Situations and decomposable upp:Events, using
+properties such as upp:startsWith, upp:continuesWith, and upp:endsWith.
+This allows us to encode PDL-like processes and makes it also possible
+to define pre- and post-conditions.

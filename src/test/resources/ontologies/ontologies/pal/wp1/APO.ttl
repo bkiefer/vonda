@@ -1,0 +1,211 @@
+# baseURI: http://pal.eu/actor
+
+@prefix : <http://pal.eu/actor#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://pal.eu/actor>
+  rdf:type owl:Ontology ;
+  owl:versionInfo "Created with TopBraid Composer"^^xsd:string ;
+.
+:Avatar
+  rdf:type :machine ;
+.
+:Child
+  rdf:type :patient ;
+.
+:Healthcare_professional
+  rdf:type :healthcare_practitioner ;
+.
+:Parent
+  rdf:type :relative ;
+.
+:Robot
+  rdf:type :machine ;
+.
+:action
+  rdf:type owl:Class ;
+  rdfs:comment "Represents the single step that should be done to perform a service."^^xsd:string ;
+  rdfs:label "Action"^^xsd:string ;
+  rdfs:subClassOf owl:Thing ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:maxCardinality "1"^^xsd:int ;
+      owl:onProperty :hasObject ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :hasObject ;
+      owl:someValuesFrom :patient ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :hasSubject ;
+      owl:someValuesFrom :entity ;
+    ] ;
+.
+:actor
+  rdf:type owl:Class ;
+  rdfs:label "Actor"^^xsd:string ;
+  rdfs:subClassOf :entity ;
+.
+:caregiver
+  rdf:type owl:Class ;
+  rdfs:label "Caregiver"^^xsd:string ;
+  rdfs:subClassOf :person ;
+.
+:dietitian
+  rdf:type owl:Class ;
+  rdfs:label "Dietitian"^^xsd:string ;
+  rdfs:subClassOf :healthcare_practitioner ;
+.
+:doesAction
+  rdf:type owl:ObjectProperty ;
+  owl:inverseOf :hasSubject ;
+.
+:entity
+  rdf:type owl:Class ;
+  rdfs:label "Entity"^^xsd:string ;
+  rdfs:subClassOf owl:Thing ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :doesAction ;
+      owl:someValuesFrom :action ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :initiatesService ;
+      owl:someValuesFrom :service ;
+    ] ;
+.
+:group
+  rdf:type owl:Class ;
+  rdfs:label "Group"^^xsd:string ;
+  rdfs:subClassOf :entity ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:allValuesFrom :actor ;
+      owl:onProperty :hasMember ;
+    ] ;
+.
+:hasMember
+  rdf:type owl:ObjectProperty ;
+.
+:hasObject
+  rdf:type owl:ObjectProperty ;
+.
+:hasProcedure
+  rdf:type owl:ObjectProperty ;
+  owl:inverseOf :isProcedureOf ;
+.
+:hasStep
+  rdf:type rdf:Property ;
+.
+:hasSubject
+  rdf:type owl:ObjectProperty ;
+  owl:inverseOf :doesAction ;
+.
+:healthcare_practitioner
+  rdf:type owl:Class ;
+  rdfs:label "Healthcare Practitioner"^^xsd:string ;
+  rdfs:subClassOf :caregiver ;
+.
+:healthcare_support
+  rdf:type owl:Class ;
+  rdfs:label "Healthcare support"^^xsd:string ;
+  rdfs:subClassOf :caregiver ;
+.
+:initiatesService
+  rdf:type owl:ObjectProperty ;
+  owl:inverseOf :serviceInitiatedBy ;
+.
+:isProcedureOf
+  rdf:type owl:ObjectProperty ;
+  owl:inverseOf :hasProcedure ;
+.
+:machine
+  rdf:type owl:Class ;
+  rdfs:subClassOf :actor ;
+.
+:nurse
+  rdf:type owl:Class ;
+  rdfs:label "Nurse"^^xsd:string ;
+  rdfs:subClassOf :healthcare_practitioner ;
+.
+:patient
+  rdf:type owl:Class ;
+  rdfs:label "Patient"^^xsd:string ;
+  rdfs:subClassOf :person ;
+.
+:person
+  rdf:type owl:Class ;
+  rdfs:label "Person"^^xsd:string ;
+  rdfs:subClassOf :actor ;
+.
+:physician
+  rdf:type owl:Class ;
+  rdfs:label "Physician"^^xsd:string ;
+  rdfs:subClassOf :healthcare_practitioner ;
+.
+:procedure
+  rdf:type owl:Class ;
+  rdfs:comment "The representation of the way a Service is provided in terms of a set of the rest of services or available simpler actions."^^xsd:string ;
+  rdfs:label "Procedure"^^xsd:string ;
+  rdfs:subClassOf owl:Thing ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:cardinality "1"^^xsd:nonNegativeInteger ;
+      owl:onProperty :isProcedureOf ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :hasStep ;
+      owl:someValuesFrom :action ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :hasStep ;
+      owl:someValuesFrom :service ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :isProcedureOf ;
+      owl:someValuesFrom :service ;
+    ] ;
+.
+:relative
+  rdf:type owl:Class ;
+  rdfs:label "Relative"^^xsd:string ;
+  rdfs:subClassOf :healthcare_support ;
+.
+:service
+  rdf:type owl:Class ;
+  rdfs:label "Service"^^xsd:string ;
+  rdfs:subClassOf owl:Thing ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:minCardinality "1"^^xsd:nonNegativeInteger ;
+      owl:onProperty :hasProcedure ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :hasProcedure ;
+      owl:someValuesFrom :procedure ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty :serviceInitiatedBy ;
+      owl:someValuesFrom :entity ;
+    ] ;
+.
+:serviceInitiatedBy
+  rdf:type owl:ObjectProperty ;
+  owl:inverseOf :initiatesService ;
+.
+:social_worker
+  rdf:type owl:Class ;
+  rdfs:label "Social worker"^^xsd:string ;
+  rdfs:subClassOf :healthcare_support ;
+.

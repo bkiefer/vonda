@@ -1,0 +1,975 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.dfki.de/lt/onto/pal/timelinedata.owl#"
+     xml:base="http://www.dfki.de/lt/onto/pal/timelinedata.owl"
+     xmlns:tml="http://www.dfki.de/lt/onto/pal/timeline.owl#"
+     xmlns:dom="http://www.dfki.de/lt/onto/pal/domain.owl#"
+     xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl">
+        <owl:imports rdf:resource="http://www.dfki.de/lt/onto/pal/pal.owl"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#age -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#age"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#birthdate -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#birthdate"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#forename -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#forename"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#hasBrother -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#hasBrother"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#hasColor -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#hasColor"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#hasEducation -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#hasEducation"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#hasFather -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#hasFather"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#hasGender -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#hasGender"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#hasGoal -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#hasGoal"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#hasHobby -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#hasHobby"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#hasMother -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#hasMother"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#hasPreference -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#hasPreference"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#hasRelative -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#hasRelative"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#hasSister -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#hasSister"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#hasSport -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#hasSport"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#hasTreatment -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#hasTreatment"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#image -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#image"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#name -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#name"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#surname -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#surname"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#useDevice -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#useDevice"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#amount -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#amount"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#cho -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#cho"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#description -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#description"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#hasFood -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#hasFood"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#typeOfMeal -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#typeOfMeal"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#correctionType -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#correctionType"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#emotionValue -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#emotionValue"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#endsAt -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#endsAt"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#firstCategoryType -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#firstCategoryType"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#glycemiaValue -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#glycemiaValue"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#hasCorrection -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#hasCorrection"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#hasInsuline -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#hasInsuline"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#insulineValue -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#insulineValue"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#madeByHimself -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#madeByHimself"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#note -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#note"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#picture -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#picture"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#secondCategoryType -->
+
+    <owl:AnnotationProperty rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#secondCategoryType"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Datatypes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#cal -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#cal"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#date -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#date"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#gr -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#gr"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#iu -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#iu"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#mg_dL -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#mg_dL"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#Brother -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Brother"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#Child -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Child"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#Color -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Color"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#Father -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Father"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#Goal -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Goal"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#Hobby -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Hobby"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#Mother -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Mother"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#Preference -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Preference"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#Sister -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Sister"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#Treatment -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Treatment"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#Food -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Food"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#Meal -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Meal"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Correction -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Correction"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Insuline -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Insuline"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#OtherEvent -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#OtherEvent"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#link1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#link1"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#link2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#link2"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#link3 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#link3"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/domain.owl#theatre -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#theatre"/>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Brother_12 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Brother_12">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Brother"/>
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lucas</dom:forename>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#male"/>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visser</dom:surname>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Child_0 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Child_0">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Child"/>
+        <dom:age rdf:datatype="http://www.w3.org/2001/XMLSchema#int">6</dom:age>
+        <dom:birthdate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2010-03-09</dom:birthdate>
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Henk</dom:forename>
+        <dom:hasBrother rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#brother_3"/>
+        <dom:hasEducation rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#link1"/>
+        <dom:hasEducation rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#link2"/>
+        <dom:hasFather rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#father_2"/>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#male"/>
+        <dom:hasMother rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#mother_1"/>
+        <dom:hasPreference rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Preference_for_henk_jansen"/>
+        <dom:image rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">images/henk.png</dom:image>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Jansen</dom:surname>
+        <dom:useDevice rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#pump"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Child_1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Child_1">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Child"/>
+        <dom:birthdate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2005-01-20</dom:birthdate>
+        <dom:hasEducation rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#link2"/>
+        <dom:hasEducation rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#link3"/>
+        <dom:hasFather rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Father_4"/>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#female"/>
+        <dom:hasMother rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Mother_3"/>
+        <dom:hasPreference rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Preference_2_For_Emma"/>
+        <dom:hasRelative rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Mother_3"/>
+        <dom:hasSister rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Sister_6"/>
+        <dom:hasSister rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Sister_7"/>
+        <dom:image rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">images/child1.png</dom:image>
+        <dom:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Emma</dom:name>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string">de Wit</dom:surname>
+        <dom:useDevice rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#pump"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Child_14 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Child_14">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Child"/>
+        <dom:birthdate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2008-04-15</dom:birthdate>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#female"/>
+        <dom:hasTreatment rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Treatment_15"/>
+        <dom:image rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">images/child3.png</dom:image>
+        <dom:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sofia</dom:name>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Iets</dom:surname>
+        <dom:useDevice rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#pen"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Child_8 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Child_8">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Child"/>
+        <dom:birthdate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2006-04-12</dom:birthdate>
+        <dom:hasBrother rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Brother_12"/>
+        <dom:hasEducation rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#link3"/>
+        <dom:hasFather rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Father_9"/>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#male"/>
+        <dom:hasMother rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Mother_11"/>
+        <dom:hasPreference rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Preference_10"/>
+        <dom:hasRelative rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Father_9"/>
+        <dom:hasSister rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Sister_13"/>
+        <dom:image rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"></dom:image>
+        <dom:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sem</dom:name>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visser</dom:surname>
+        <dom:useDevice rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#pen"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Correction_0 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Correction_0">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Correction"/>
+        <correctionType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">nothing</correctionType>
+        <note rdf:datatype="http://www.w3.org/2001/XMLSchema#string">nothing</note>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Father_4 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Father_4">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Father"/>
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Willem</dom:forename>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#male"/>
+        <dom:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></dom:name>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string">de Wit</dom:surname>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Father_9 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Father_9">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Father"/>
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Willem</dom:forename>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#male"/>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visser</dom:surname>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Food_0 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Food_0">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Food"/>
+        <tml:amount rdf:datatype="http://www.w3.org/2001/XMLSchema#gr">100</tml:amount>
+        <tml:cho rdf:datatype="http://www.w3.org/2001/XMLSchema#cal">100</tml:cho>
+        <tml:description>Pasta</tml:description>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Food_1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Food_1">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Food"/>
+        <tml:amount rdf:datatype="http://www.w3.org/2001/XMLSchema#gr">100</tml:amount>
+        <tml:cho rdf:datatype="http://www.w3.org/2001/XMLSchema#cal">100</tml:cho>
+        <tml:description>Lasagna</tml:description>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Food_2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Food_2">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Food"/>
+        <tml:amount rdf:datatype="http://www.w3.org/2001/XMLSchema#gr">50</tml:amount>
+        <tml:cho rdf:datatype="http://www.w3.org/2001/XMLSchema#cal">50</tml:cho>
+        <tml:description>Chocolate</tml:description>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Food_3 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Food_3">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Food"/>
+        <tml:amount rdf:datatype="http://www.w3.org/2001/XMLSchema#gr">100</tml:amount>
+        <tml:cho rdf:datatype="http://www.w3.org/2001/XMLSchema#cal">100</tml:cho>
+        <tml:description>Cereal</tml:description>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia_0 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia_0">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia"/>
+        <emotionValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</emotionValue>
+        <glycemiaValue rdf:datatype="http://www.w3.org/2001/XMLSchema#mg_dL">6.0</glycemiaValue>
+        <hasCorrection rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Correction_0"/>
+        <hasInsuline rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Insuline_0"/>
+        <madeByHimself rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</madeByHimself>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia_1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia_1">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia"/>
+        <emotionValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</emotionValue>
+        <glycemiaValue rdf:datatype="http://www.w3.org/2001/XMLSchema#mg_dL">16.0</glycemiaValue>
+        <hasCorrection rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Correction_0"/>
+        <hasInsuline rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Insuline_0"/>
+        <madeByHimself rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</madeByHimself>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia_2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia_2">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia"/>
+        <emotionValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</emotionValue>
+        <glycemiaValue rdf:datatype="http://www.w3.org/2001/XMLSchema#mg_dL">1.0</glycemiaValue>
+        <hasCorrection rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Correction_0"/>
+        <hasInsuline rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Insuline_0"/>
+        <madeByHimself rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</madeByHimself>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia_3 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia_3">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia"/>
+        <emotionValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</emotionValue>
+        <glycemiaValue rdf:datatype="http://www.w3.org/2001/XMLSchema#mg_dL">8.0</glycemiaValue>
+        <hasCorrection rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Correction_0"/>
+        <hasInsuline rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Insuline_0"/>
+        <madeByHimself rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</madeByHimself>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia_4 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia_4">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Glycemia"/>
+        <emotionValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</emotionValue>
+        <glycemiaValue rdf:datatype="http://www.w3.org/2001/XMLSchema#mg_dL">4.0</glycemiaValue>
+        <hasCorrection rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Correction_0"/>
+        <hasInsuline rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Insuline_0"/>
+        <madeByHimself rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</madeByHimself>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Goal_16 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Goal_16">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Goal"/>
+        <dom:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AN1</dom:name>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&lt;p style=&quot;margin-top: 0&quot;&gt;
+      Links to dmgoal?
+    &lt;/p&gt;</rdfs:comment>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Hobby_3 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Hobby_3">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Hobby"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Insuline_0 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Insuline_0">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Insuline"/>
+        <insulineValue rdf:datatype="http://www.w3.org/2001/XMLSchema#iu">0</insulineValue>
+        <madeByHimself rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</madeByHimself>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Meal_0 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Meal_0">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Meal"/>
+        <tml:hasFood rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Food_0"/>
+        <tml:typeOfMeal rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lunch</tml:typeOfMeal>
+        <emotionValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</emotionValue>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Meal_1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Meal_1">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Meal"/>
+        <tml:hasFood rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Food_1"/>
+        <tml:typeOfMeal rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dinner</tml:typeOfMeal>
+        <emotionValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</emotionValue>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Meal_2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Meal_2">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Meal"/>
+        <tml:hasFood rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Food_2"/>
+        <tml:typeOfMeal rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Snack</tml:typeOfMeal>
+        <emotionValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</emotionValue>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Meal_3 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Meal_3">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Meal"/>
+        <tml:hasFood rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Food_3"/>
+        <tml:typeOfMeal rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Breakfast</tml:typeOfMeal>
+        <emotionValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</emotionValue>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Mother_11 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Mother_11">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Mother"/>
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bea</dom:forename>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#female"/>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visser</dom:surname>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Mother_3 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Mother_3">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Mother"/>
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bea</dom:forename>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#female"/>
+        <dom:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bea</dom:name>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string">de Wit</dom:surname>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#OtherEvent_0_1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#OtherEvent_0_1">
+        <tml:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Football</tml:description>
+        <emotionValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</emotionValue>
+        <endsAt rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2017-02-15</endsAt>
+        <firstCategoryType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Activity</firstCategoryType>
+        <picture rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></picture>
+        <secondCategoryType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hobby</secondCategoryType>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#OtherEvent_0_2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#OtherEvent_0_2">
+        <tml:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Football</tml:description>
+        <emotionValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</emotionValue>
+        <endsAt rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2017-02-16</endsAt>
+        <firstCategoryType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Activity</firstCategoryType>
+        <picture rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></picture>
+        <secondCategoryType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hobby</secondCategoryType>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#OtherEvent_0_3 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#OtherEvent_0_3">
+        <tml:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Football</tml:description>
+        <emotionValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</emotionValue>
+        <endsAt rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2017-02-17</endsAt>
+        <firstCategoryType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Activity</firstCategoryType>
+        <picture rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></picture>
+        <secondCategoryType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hobby</secondCategoryType>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#OtherEvent_0_4 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#OtherEvent_0_4">
+        <tml:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Football</tml:description>
+        <emotionValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</emotionValue>
+        <endsAt rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2017-02-18</endsAt>
+        <firstCategoryType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Activity</firstCategoryType>
+        <picture rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></picture>
+        <secondCategoryType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hobby</secondCategoryType>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#OtherEvent_0_5 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#OtherEvent_0_5">
+        <tml:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Football</tml:description>
+        <emotionValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</emotionValue>
+        <endsAt rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2017-02-19</endsAt>
+        <firstCategoryType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Activity</firstCategoryType>
+        <picture rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></picture>
+        <secondCategoryType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hobby</secondCategoryType>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#OtherEvent_0_6 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#OtherEvent_0_6">
+        <tml:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Football</tml:description>
+        <emotionValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</emotionValue>
+        <endsAt rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2017-02-20</endsAt>
+        <firstCategoryType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Activity</firstCategoryType>
+        <picture rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></picture>
+        <secondCategoryType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hobby</secondCategoryType>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#OtherEvent_1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#OtherEvent_1">
+        <tml:description rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Basketball</tml:description>
+        <emotionValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</emotionValue>
+        <endsAt rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2017-02-28</endsAt>
+        <firstCategoryType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Activity</firstCategoryType>
+        <picture rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></picture>
+        <secondCategoryType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hobby</secondCategoryType>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Preference_10 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Preference_10">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Preference"/>
+        <dom:hasColor rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#green"/>
+        <dom:hasHobby rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#youtube"/>
+        <dom:hasSport rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#handball"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Preference_2_For_Emma -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Preference_2_For_Emma">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Preference"/>
+        <dom:hasColor rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#purple"/>
+        <dom:hasHobby rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#theatre"/>
+        <dom:hasSport rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#gymnastics"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Preference_for_henk_jansen -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Preference_for_henk_jansen">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Preference"/>
+        <dom:hasColor rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#blue"/>
+        <dom:hasHobby rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#minecraft"/>
+        <dom:hasSport rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#football"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Sister_13 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Sister_13">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Sister"/>
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sofie</dom:forename>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#female"/>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visser</dom:surname>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Sister_6 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Sister_6">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Sister"/>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#female"/>
+        <dom:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lotte</dom:name>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string">de Wit</dom:surname>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Sister_7 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Sister_7">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Sister"/>
+        <dom:hasGender rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#female"/>
+        <dom:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Tess</dom:name>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string">de Wit</dom:surname>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#Treatment_15 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Treatment_15">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Treatment"/>
+        <dom:hasGoal rdf:resource="http://www.dfki.de/lt/onto/pal/timelinedata.owl#Goal_16"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#brother_3 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#brother_3">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Brother"/>
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Flipje</dom:forename>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Jansen</dom:surname>
+        <tml:typeOfMeal>
+            <rdf:Description/>
+        </tml:typeOfMeal>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#color -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#color">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Color"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#father_2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#father_2">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Father"/>
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Jan</dom:forename>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Jansen</dom:surname>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timelinedata.owl#mother_1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.dfki.de/lt/onto/pal/timelinedata.owl#mother_1">
+        <rdf:type rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Mother"/>
+        <dom:forename rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mier</dom:forename>
+        <dom:surname rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Truus</dom:surname>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.2.6.20160910-2108) https://github.com/owlcs/owlapi -->
+

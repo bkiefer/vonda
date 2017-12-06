@@ -59,11 +59,11 @@ public class CastTest {
 
   @Test
   public void testCast4() {
-    String in = "Quiz activity; String currentAsker = \"bla\"; if "
-            + "(activity.tabletOrientation != currentAsker) {}";
+    String in = "DiabetesEducation activity; String currentAsker = \"bla\"; if "
+            + "(activity.shortCode != currentAsker) {}";
     String s = generate(in);
     String expected = "Rdf activity;String currentAsker = \"bla\";if ((! "
-        + "(((String)activity.getSingleValue(\"<dom:tabletOrientation>\"))"
+        + "(((String)activity.getSingleValue(\"<edu:shortCode>\"))"
         + ".equals(currentAsker)))) { }";
     assertEquals(expected, getForMarked(s, expected));
   }
@@ -79,9 +79,9 @@ public class CastTest {
 
   @Test
   public void test2() {
-    String in = "QuizHistory turn; int agt; turn.asker = agt;";
+    String in = "QuizHistory turn; int agt; turn.turnId = agt;";
     String s = generate(in);
-    String expected = "Rdf turn;int agt;turn.setValue(\"<dom:asker>\", agt);";
+    String expected = "Rdf turn;int agt;turn.setValue(\"<dom:turnId>\", agt);";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -210,11 +210,12 @@ public class CastTest {
   // TODO: CONSTRUCT A TEST EXAMPLE WITH AT LEAST THREE RDF ACCESSES
   @Test
   public void testMultipleRdfAccess() {
-    String in = "Quiz c ; b = c.hasHistory.correct;";
+    String in = "QuizHistory c ; b = c.hasChildId.hasFather.forename;";
     String s = generate(in);
-    String expected = "Rdf c;Boolean b = ((Boolean)((Rdf)c"
-            + ".getSingleValue(\"<dom:hasHistory>\"))"
-            + ".getSingleValue(\"<dom:correct>\"));";
+    String expected = "Rdf c;String b = ((String)((Rdf)((Rdf)c"
+            + ".getSingleValue(\"<dom:hasChildId>\"))"
+            + ".getSingleValue(\"<dom:hasFather>\"))"
+            + ".getSingleValue(\"<dom:forename>\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
 

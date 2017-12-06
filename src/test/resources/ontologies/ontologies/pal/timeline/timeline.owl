@@ -1,0 +1,468 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.dfki.de/lt/onto/pal/timeline.owl#"
+     xml:base="http://www.dfki.de/lt/onto/pal/timeline.owl"
+     xmlns:tml="http://www.dfki.de/lt/onto/pal/example.owl#"
+     xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Datatypes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#cal -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#cal"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#cm -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#cm"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#date -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#date"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#gm -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#gm"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#iu -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#iu"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#kg -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#kg"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#kg_m2 -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#kg_m2"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#mg_dL -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#mg_dL"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#min-1 -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#min-1"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#mmHg -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#mmHg"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#mmol_L -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#mmol_L"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#hasCorrection -->
+
+    <owl:ObjectProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#hasCorrection">
+        <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Glycemia"/>
+        <rdfs:range rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Correction"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#hasEvent -->
+
+    <owl:ObjectProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#hasEvent">
+        <rdfs:range rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Event"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#hasFood -->
+
+    <owl:ObjectProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#hasFood">
+        <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Meal"/>
+        <rdfs:range rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Food"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#hasGlycemia -->
+
+    <owl:ObjectProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#hasGlycemia">
+        <rdfs:range rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Glycemia"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#hasInsuline -->
+
+    <owl:ObjectProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#hasInsuline">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Glycemia"/>
+        <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Meal"/>
+        <rdfs:range rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Insuline"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#amount -->
+
+    <owl:DatatypeProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#amount">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Food"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#gm"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#cho -->
+
+    <owl:DatatypeProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#cho">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Food"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#correctionType -->
+
+    <owl:DatatypeProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#correctionType">
+        <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Correction"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#date -->
+
+    <owl:DatatypeProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#date">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Timeline"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#deleted -->
+
+    <owl:DatatypeProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#deleted">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Food"/>
+                    <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Glycemia"/>
+                    <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#OtherEvent"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#description -->
+
+    <owl:DatatypeProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#description">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Food"/>
+                    <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#OtherEvent"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#emotionValue -->
+
+    <owl:DatatypeProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#emotionValue">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Event"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#endsAt -->
+
+    <owl:DatatypeProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#endsAt">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#OtherEvent"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&lt;p style=&quot;margin-top: 0&quot;&gt;
+      The duration is in seconds
+    &lt;/p&gt;</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#firstCategoryType -->
+
+    <owl:DatatypeProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#firstCategoryType">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Food"/>
+                    <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#OtherEvent"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#glycemiaValue -->
+
+    <owl:DatatypeProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#glycemiaValue">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Glycemia"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#mg_dL"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#insulineValue -->
+
+    <owl:DatatypeProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#insulineValue">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Insuline"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#iu"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#madeByHimself -->
+
+    <owl:DatatypeProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#madeByHimself">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Glycemia"/>
+                    <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Insuline"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#note -->
+
+    <owl:DatatypeProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#note">
+        <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Correction"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#picture -->
+
+    <owl:DatatypeProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#picture">
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Food"/>
+                    <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#OtherEvent"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#secondCategoryType -->
+
+    <owl:DatatypeProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#secondCategoryType">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Food"/>
+                    <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#OtherEvent"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#typeofMeal -->
+
+    <owl:DatatypeProperty rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#typeofMeal">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Meal"/>
+        <rdfs:range>
+            <rdfs:Datatype>
+                <owl:oneOf>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Breakfast</rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dinner</rdf:first>
+                                <rdf:rest>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lunch</rdf:first>
+                                        <rdf:rest>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Snack</rdf:first>
+                                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                            </rdf:Description>
+                                        </rdf:rest>
+                                    </rdf:Description>
+                                </rdf:rest>
+                            </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                </owl:oneOf>
+            </rdfs:Datatype>
+        </rdfs:range>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#Correction -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Correction">
+        <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Timeline"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#Event -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Event">
+        <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Timeline"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#Food -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Food">
+        <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Timeline"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#Glycemia -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Glycemia">
+        <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#Insuline -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Insuline">
+        <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Timeline"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#Meal -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Meal">
+        <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#OtherEvent -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#OtherEvent">
+        <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/pal/timeline.owl#Timeline -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/pal/timeline.owl#Timeline"/>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.2.6.20160910-2108) https://github.com/owlcs/owlapi -->
+

@@ -1,0 +1,206 @@
+<http://www.dfki.de/lt/onto/common/upper.owl#Ability> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Ability> <http://www.w3.org/2000/01/rdf-schema#comment> "ability is a container to group capabilities of animated objects (= agents), e.g., able to lift 100kg or is allowed to drive a truck, and should NOT refer to individual physical properties (e.g., size = 1.82m or weight = 75kg)"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Ability> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Abstract> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Abstract> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Abstract> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Abstract> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Abstract> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Abstract> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Abstract> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Abstract> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Abstract> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Abstract> <http://www.w3.org/2000/01/rdf-schema#comment> ""^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Abstract> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Entity> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Abstract> <http://www.w3.org/2002/07/owl#disjointWith> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Abstract> <http://www.w3.org/2002/07/owl#disjointWith> <http://www.dfki.de/lt/onto/common/upper.owl#Physical> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Action> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Action> <http://www.w3.org/2000/01/rdf-schema#comment> "actions manifest in real-world happenings"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Action> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Abstract> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Agent> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Agent> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Agent> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Agent> <http://www.w3.org/2000/01/rdf-schema#comment> "Agent makes a fundamental distinction between Singles and Groups of Agents"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Agent> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Physical> .
+<http://www.dfki.de/lt/onto/common/upper.owl#basedOn> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#SynchronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#basedOn> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#basedOn> <http://www.w3.org/2000/01/rdf-schema#comment> "events can be based on specific prerequisites (can be nearly everything); use this to encode pre-conditions;\nthis is a synchronic property, since happenings are unique in time"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#basedOn> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#basedOn> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Entity> .
+<http://www.dfki.de/lt/onto/common/upper.owl#center> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#SynchronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#center> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#center> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#center> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Place> .
+<http://www.dfki.de/lt/onto/common/upper.owl#center> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#point> .
+<http://www.dfki.de/lt/onto/common/upper.owl#continuesWith> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#SynchronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#continuesWith> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#continuesWith> <http://www.w3.org/2000/01/rdf-schema#comment> "this is a synchronic property, since events are unique in time"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#continuesWith> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Event> .
+<http://www.dfki.de/lt/onto/common/upper.owl#continuesWith> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#ends> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#SynchronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#ends> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#ends> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#ends> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#ends> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#long> .
+<http://www.dfki.de/lt/onto/common/upper.owl#endsWith> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#SynchronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#endsWith> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#endsWith> <http://www.w3.org/2000/01/rdf-schema#comment> "this is a synchronic property, since events are unique in time; endsWith needs not to be functional, as events might end with several happenings at the same time (say, a world-wide event ending at several places/continents)"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#endsWith> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Event> .
+<http://www.dfki.de/lt/onto/common/upper.owl#endsWith> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Entity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Entity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Entity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Entity> <http://www.w3.org/2000/01/rdf-schema#comment> "a tri-partite structure: Abstract, Happening, and Physical"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Event> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Event> <http://www.w3.org/2000/01/rdf-schema#comment> "Events allow us to encode simple processes through the distinguished properties startsWith, continuesWith, and endsWith; _loops_ can be implemented by mentioning a Happening at a later point again and _choices_ by having several Happenings at the same time, as the three distinguished properties ar _relational_"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Event> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Event> <http://www.w3.org/2002/07/owl#disjointWith> <http://www.dfki.de/lt/onto/common/upper.owl#Situation> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Group> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Group> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Agent> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Group> <http://www.w3.org/2002/07/owl#disjointWith> <http://www.dfki.de/lt/onto/common/upper.owl#Single> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Happening> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Happening> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Happening> <http://www.w3.org/2000/01/rdf-schema#comment> "Happenings are either atomic Situations or decomposable Events"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Happening> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Entity> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Happening> <http://www.w3.org/2002/07/owl#disjointWith> <http://www.dfki.de/lt/onto/common/upper.owl#Abstract> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Happening> <http://www.w3.org/2002/07/owl#disjointWith> <http://www.dfki.de/lt/onto/common/upper.owl#Physical> .
+<http://www.dfki.de/lt/onto/common/upper.owl#happensAt> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#SynchronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#happensAt> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#happensAt> <http://www.w3.org/2000/01/rdf-schema#comment> "an event happens at (a) physical location(s); might be several ones;\nthis is a synchronic property, since happenings are unique in time"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#happensAt> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#happensAt> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Place> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasAbility> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasAbility> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Agent> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasAbility> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Ability> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasLocation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasLocation> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Place> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasLocation> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#SpatialDescription> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasMember> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#DiachronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasMember> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasMember> <http://www.w3.org/2000/01/rdf-schema#comment> "a group might have subgroups, but in the end, we end up in concrete members, viz., people"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasMember> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Group> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasMember> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Single> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasSubgroup> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#DiachronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasSubgroup> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasSubgroup> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#TransitiveProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasSubgroup> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Group> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasSubgroup> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Group> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasSuperior> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#DiachronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasSuperior> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasSuperior> <http://www.w3.org/2000/01/rdf-schema#comment> "is there a missing/hidden third argument ?"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasSuperior> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Single> .
+<http://www.dfki.de/lt/onto/common/upper.owl#hasSuperior> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Single> .
+<http://www.dfki.de/lt/onto/common/upper.owl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Ontology> .
+<http://www.dfki.de/lt/onto/common/upper.owl> <http://www.w3.org/2000/01/rdf-schema#comment> "author(s): Hans-Ulrich Krieger"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl> <http://www.w3.org/2002/07/owl#imports> <http://www.dfki.de/lt/onto/common/time.owl> .
+<http://www.dfki.de/lt/onto/common/upper.owl> <http://www.w3.org/2002/07/owl#versionInfo> "v0.9.2"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#involvedIn> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#DiachronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#involvedIn> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#involvedIn> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Agent> .
+<http://www.dfki.de/lt/onto/common/upper.owl#involvedIn> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#involvedIn> <http://www.w3.org/2002/07/owl#inverseOf> <http://www.dfki.de/lt/onto/common/upper.owl#involves> .
+<http://www.dfki.de/lt/onto/common/upper.owl#involves> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#SynchronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#involves> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#involves> <http://www.w3.org/2000/01/rdf-schema#comment> "events involve agents, typically people (Person);\nseparate this from property \"basedOn\" in that \"involves\" does not encode pre-conditions"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#involves> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#involves> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Agent> .
+<http://www.dfki.de/lt/onto/common/upper.owl#involves> <http://www.w3.org/2002/07/owl#inverseOf> <http://www.dfki.de/lt/onto/common/upper.owl#involvedIn> .
+<http://www.dfki.de/lt/onto/common/upper.owl#isAwareOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#DiachronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#isAwareOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#isAwareOf> <http://www.w3.org/2000/01/rdf-schema#comment> "agents are aware of Happenings, but this awareness might turn into oblivion (when using additional temporal arguments), thus isAwareOf is a diachronic property; awareness is either established when being present at the happening or through, e.g., story-telling, reading a newspaper, watching TV, etc."^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#isAwareOf> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Agent> .
+<http://www.dfki.de/lt/onto/common/upper.owl#isAwareOf> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#latitude> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#SynchronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#latitude> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#latitude> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#latitude> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Place> .
+<http://www.dfki.de/lt/onto/common/upper.owl#latitude> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#float> .
+<http://www.dfki.de/lt/onto/common/upper.owl#leadsTo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#SynchronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#leadsTo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#leadsTo> <http://www.w3.org/2000/01/rdf-schema#comment> "an event can lead to many things: happenings and abstract or concrete things; use this to ecode post-conditions"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#leadsTo> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#leadsTo> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Entity> .
+<http://www.dfki.de/lt/onto/common/upper.owl#longitude> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#SynchronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#longitude> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#longitude> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#longitude> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Place> .
+<http://www.dfki.de/lt/onto/common/upper.owl#longitude> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#float> .
+<http://www.dfki.de/lt/onto/common/upper.owl#manifestsIn> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#DiachronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#manifestsIn> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#manifestsIn> <http://www.w3.org/2000/01/rdf-schema#comment> "actions can manifest in happenings"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#manifestsIn> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Action> .
+<http://www.dfki.de/lt/onto/common/upper.owl#manifestsIn> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#SynchronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#name> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Entity> .
+<http://www.dfki.de/lt/onto/common/upper.owl#name> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Object> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Object> <http://www.w3.org/2000/01/rdf-schema#comment> ""^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Object> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Physical> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Physical> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Physical> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Physical> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Physical> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Physical> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Physical> <http://www.w3.org/2000/01/rdf-schema#comment> "we destinguish between conscious, self-aware agaent (singles and groups), places in the real world, and everything else (Object)"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Physical> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Entity> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Physical> <http://www.w3.org/2002/07/owl#disjointWith> <http://www.dfki.de/lt/onto/common/upper.owl#Abstract> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Physical> <http://www.w3.org/2002/07/owl#disjointWith> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Place> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Place> <http://www.w3.org/2000/01/rdf-schema#comment> "Place refers to places in the real world; they might be refered to by (i) a SpacialDescription, (ii) a (natural language) name, (iii) a 2D/3D point, or (iv) a coordinate, consisting of a latitude and a longitude"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Place> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Physical> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Plan> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Plan> <http://www.w3.org/2000/01/rdf-schema#comment> "a placeholder for an abstract plan"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Plan> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Abstract> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Single> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Single> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Single> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Agent> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Single> <http://www.w3.org/2002/07/owl#disjointWith> <http://www.dfki.de/lt/onto/common/upper.owl#Group> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Situation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Situation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Situation> <http://www.w3.org/2000/01/rdf-schema#comment> "Situations are atomic, i.e., can not be depomposed any further"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Situation> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#Situation> <http://www.w3.org/2002/07/owl#disjointWith> <http://www.dfki.de/lt/onto/common/upper.owl#Event> .
+<http://www.dfki.de/lt/onto/common/upper.owl#SpatialDescription> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#SpatialDescription> <http://www.w3.org/2000/01/rdf-schema#comment> "a placeholder for spatial descriptions that depict places in the real world"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#SpatialDescription> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Abstract> .
+<http://www.dfki.de/lt/onto/common/upper.owl#spatiallyDescribes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#spatiallyDescribes> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#SpatialDescription> .
+<http://www.dfki.de/lt/onto/common/upper.owl#spatiallyDescribes> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Place> .
+<http://www.dfki.de/lt/onto/common/upper.owl#starts> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#SynchronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#starts> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#starts> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#starts> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#starts> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#long> .
+<http://www.dfki.de/lt/onto/common/upper.owl#startsWith> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#SynchronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#startsWith> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#startsWith> <http://www.w3.org/2000/01/rdf-schema#comment> "this is a synchronic property, since events are unique in time; events need not to be functional, as they might start with several happenings at the same time (say, a world-wide event happening at several places/continents)"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#startsWith> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Event> .
+<http://www.dfki.de/lt/onto/common/upper.owl#startsWith> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#TemporalDescription> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/common/upper.owl#TemporalDescription> <http://www.w3.org/2000/01/rdf-schema#comment> "a placeholder for temporal descriptions that depict happenings in the real world"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#TemporalDescription> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Abstract> .
+<http://www.dfki.de/lt/onto/common/upper.owl#temporallyDescribes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#temporallyDescribes> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#TemporalDescription> .
+<http://www.dfki.de/lt/onto/common/upper.owl#temporallyDescribes> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Happening> .
+<http://www.dfki.de/lt/onto/common/upper.owl#worksFor> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#DiachronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#worksFor> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#worksFor> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Agent> .
+<http://www.dfki.de/lt/onto/common/upper.owl#worksFor> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Agent> .
+<http://www.dfki.de/lt/onto/common/upper.owl#worksIn> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#DiachronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#worksIn> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#worksIn> <http://www.w3.org/2000/01/rdf-schema#comment> "we make this a diachronic property (contrary to placeOfBirth),\nwhere the fourth and fifth argument express the temporal extent\nin which the person grew up at that location"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/common/upper.owl#worksIn> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Agent> .
+<http://www.dfki.de/lt/onto/common/upper.owl#worksIn> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Place> .
+<http://www.dfki.de/lt/onto/common/upper.owl#worksOn> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/common/time.owl#DiachronicProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#worksOn> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/upper.owl#worksOn> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/upper.owl#Agent> .
+<http://www.dfki.de/lt/onto/common/upper.owl#worksOn> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/upper.owl#Entity> .
+<http://www.w3.org/2001/XMLSchema#point> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Datatype> .
+<http://www.w3.org/2002/07/owl#DatatypeProperty> <http://www.w3.org/2002/07/owl#disjointWith> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.w3.org/2002/07/owl#disjointObjectProperty> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.w3.org/2002/07/owl#disjointObjectProperty> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#SymmetricProperty> .
+<http://www.w3.org/2002/07/owl#disjointObjectProperty> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.w3.org/2002/07/owl#disjointObjectProperty> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.w3.org/2002/07/owl#disjointObjectProperty> <http://www.w3.org/2002/07/owl#inverseOf> <http://www.w3.org/2002/07/owl#disjointObjectProperty> .
+<http://www.w3.org/2002/07/owl#ObjectProperty> <http://www.w3.org/2002/07/owl#disjointWith> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.w3.org/2002/07/owl#Thing> <http://www.w3.org/2000/01/rdf-schema#comment> ""^^<http://www.w3.org/2001/XMLSchema#string> .

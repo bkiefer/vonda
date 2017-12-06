@@ -1,0 +1,194 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+    xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
+    xmlns="http://www.dfki.de/lt/onto/pal/bloom.owl#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xml:base="http://www.dfki.de/lt/onto/pal/bloom.owl">
+  <owl:Ontology rdf:about="">
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >version 1</owl:versionInfo>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Author(s): Rifca Peters based on Bloom's Taxonomy for Learning &#xD;Objectives</rdfs:comment>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Bloom's Taxonomy for learning objectives defines three dimensions (knowledge, skill and attitude) and for each dimension hierarchical levels. We added icon properties for visualization.</rdfs:comment>
+  </owl:Ontology>
+  <owl:Class rdf:ID="Naturalization">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Fifth, last, level of skill objectives. Habituation, high level performance without needing to think much about steps and movements. 
+key verbs: create, design, develop, invent, manage, naturally.</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="Skill"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="Valuing">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="Attitude"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Third level of attitude. The ability to attach a value to a phenomena, object, information or behaviour. 
+key verbs:  appreciates, cherish, treasure, demonstrates, initiates, invites, joins, justifies, proposes, respect, shares.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Creating">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="Knowledge"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Sixth (last) level of knowledge. The ability to compile information together in a different way by combining elements in a new pattern or proposing alternative solutions.
+key verbs: designing, constructing, planning, producing, inventing, devising, making.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Precision">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Third level of skill objectives. Refining and becomming more exact in performing actions.
+key verbs: calibrate, demonstrate, master, perfectionism.</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Skill"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#Skill">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="LearningObjective"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Learning objectives in the psycho-motor domain (action-based). Describe physical abilities, movement, coordination and motor-skills. Attitude objectives are aimed at change and/or development in behaviour.
+No official catagories are defined, the one by Dave best fits our domain. Dave defined five catagories: imitation, manipulation, precision, articulation and naturalization.</rdfs:comment>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >reference: Dave, R.H. (1970). Psychomotor levels in Developing and Writing Behavioral Objectives, pp.20-21. R.J. Armstrong, ed. Tucson, Arizona: Educational Innovators Press.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Applying">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Third level of knowledge. The ability to solve problems in new situations by applying acquired knowledge, facts, techniques and rules in a different way.
+key verbs: implementing, carrying out, using, executing.</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Knowledge"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="Manipulation">
+    <rdfs:subClassOf rdf:resource="#Skill"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Second level of skill objectives. The ability to perform certain actions by memory or following instructions.
+key verbs:  act, build, execute, perform.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Articulation">
+    <rdfs:subClassOf rdf:resource="#Skill"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Fourth level of skill objectives. The ability to coordinate and adapt series of actions, reaching internal consistency.
+key verbs: adapt, constructs, combine, creates, customize, modifies, formulate.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Remembering">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >First level of knowledge. The ability to exhibit memory of previously learned knowledge by recalling facts, terms, basic concepts and answers.
+key verbs: recognising, listing, describing, identifying, retrieving, naming, locating, finding</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Knowledge"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#Attitude">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#LearningObjective"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Learning objectives in the affective domain (emotive-based). Objectives are aimed at awareness and growth in attitude, emotion and feelings. Five (gradually in complexity increasing) categories are listed: receiving (awareness), responding, valuing, organizing and characterizing (internalization).</rdfs:comment>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >reference: Krathwohl, D.R., Bloom, B.S., Masia, B.B. (1973). Taxonomy of Educational Objectives, the Classification of Educational Goals. Handbook II: Affective Domain. New York: David McKay Co., Inc.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Understanding">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Knowledge"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Second level of knowledge. The ability to demonstrate understanding of facts and ideas by organizing, comparing, translating, interpreting, giving descriptions and stating main ideas. 
+key verbs:  interpreting, summarising, inferring, paraphrasing, classifying, comparing, explaining, exemplifying</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Evaluating">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Knowledge"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Fifth level of knowledge. The ability to present and defend opinions by making judgements about information, validity of ideas, or quality of work based on criteria.
+key verbs: checking, hypothesising, critiquing, experimenting, judging, testing, detecting, monitoring.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Organizing">
+    <rdfs:subClassOf rdf:resource="#Attitude"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Fourth level of attitude objectives. The ability to put together and prioritize values by contrasting them and resolve conflicts between them.
+key verbs:  compares, relates, synthesizes.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Imitation">
+    <rdfs:subClassOf rdf:resource="#Skill"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >First level of skill objectives. The ability to observe and imitate behaviour.
+key verbs: copy, follow, mimic, repeat, replicate, reproduce, trace.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Characterizing">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Fifth, last, level of attitude objectives. Internalizing values, behaviour is controlled by these values. The behaviour is pervasive, consistent, predictable and important characteristic of the learner.  
+key verbs: acts, discriminates, displays, influences, modifies, performs, qualifies, questions, revises, serves, solves, verifies.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="#Attitude"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Receiving">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >First level of attitude objectives. Focus on awareness of phenomena, passive attention.
+key verbs: acknowledge, asks, attentive, courteous, dutiful, follows, gives, listens, understands.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="#Attitude"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Analysing">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Knowledge"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Fourth level of knowledge. The ability to examine and break information into parts by identifying motives or causes, and make inferences and find evidence to support generalizations. 
+key verbs: comparing, organising, de-constructing, attributing, outlining, finding, structuring, integrating.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="#Knowledge">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >reference: Anderson, L. W., &amp;amp; Krathwohl, D. R. (2001). A taxonomy for learning, teaching, and assessing, Abridged Edition. Boston, MA: Allyn and Bacon</rdfs:comment>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Learning objectives in the cognitive domain (knowledge-based). The REVISED taxonomy includes 6 hierarchical levels: remembering, understanding, applying, analysing, evaluating and creating</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#LearningObjective"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="Responding">
+    <rdfs:subClassOf rdf:resource="#Attitude"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Second level of attitude. Ability to respond to phenomena, active participation. 
+key verbs: answers, assists, aids, complies, conforms, discusses, greets, helps, labels, performs, presents, tells.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="#LearningObjective">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Three dimensions of learning objectives are defined: knowledge, skill and attitude.</rdfs:comment>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >reference: Bloom, B.S. (Ed.). Engelhart, M.D., Furst, E.J., Hill, W.H., Krathwohl, D.R. (1956). Taxonomy of Educational Objectives, Handbook I: The Cognitive Domain. New York: David McKay Co Inc.</rdfs:comment>
+  </owl:Class>
+  <owl:FunctionalProperty rdf:ID="hasIcon">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >icon to display on the goal tree to inform the user of the goal class.</rdfs:comment>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:domain rdf:resource="#LearningObjective"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:FunctionalProperty>
+  <Manipulation rdf:ID="Manipulation_16"/>
+  <Precision rdf:ID="Precision_18"/>
+  <Articulation rdf:ID="Articulation_14"/>
+  <Imitation rdf:ID="Imitation_15"/>
+  <Applying rdf:ID="Applying_9"/>
+  <Valuing rdf:ID="Valuing_7"/>
+  <Naturalization rdf:ID="Naturalization_17"/>
+  <Characterizing rdf:ID="Characterizing_3"/>
+  <Organizing rdf:ID="Organizing_4"/>
+  <Analysing rdf:ID="Analysing_8"/>
+  <Evaluating rdf:ID="Evaluating_11"/>
+  <Creating rdf:ID="Creating_10"/>
+  <Responding rdf:ID="Responding_6"/>
+  <Understanding rdf:ID="Understanding_13"/>
+  <Receiving rdf:ID="Receiving_5"/>
+  <Remembering rdf:ID="Remembering_12"/>
+</rdf:RDF>
+
+<!-- Created with Protege (with OWL Plugin 3.5, Build 663)  http://protege.stanford.edu -->

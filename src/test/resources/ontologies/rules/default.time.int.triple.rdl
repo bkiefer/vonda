@@ -1,0 +1,505 @@
+#
+# this file is an adaption of the quintuple-based version of the temporal
+# entailment rules, based on the Hayes and ter Horst rules for RDFS and OWL;
+# quintuples are simulated here through RDF triples, using the N-ary relation
+# suggestion of W3C's Semantic Web Best Practices Group;
+# @see default.time.int.quintuple.rdl
+#
+# @author Hans-Ulrich Krieger
+# @version Tue Aug 18 15:45:08 CEST 2015
+#
+
+
+# the quintuple-based approach needs two rules: $rdf1_rdfs4a_4b and $rdf1_rdfs4a_4b+time;
+# this rule here subsumes both
+$rdf1_rdfs4a_4b+notime+time
+?_s ?p ?_o
+->
+?p <rdf:type> <rdf:Property>
+
+
+# need to introduce a new RHS (blank) node that needs to be proper
+# named, since otherwise closure computation will NOT terminate;
+# in order to achieve this, use the MakeUri action below
+$rdfs2+time
+?s ?p ?blank
+?blank <nary:starts> ?start
+?blank <nary:ends> ?end
+?p <rdfs:domain> ?dom
+->
+?s <rdf:type> ?new
+?new <rdf:type> <nary:RangePlusTime>
+?new <nary:value> ?dom
+?new <nary:starts> ?start
+?new <nary:ends> ?end
+@test
+?p != <rdf:type>
+@action
+?new = MakeUri ?dom ?start ?end
+
+
+# note that ?o is of type ?new, and NOT ?blank
+$rdfs3+time
+?_s ?p ?blank
+?p <rdf:type> <owl:ObjectProperty>
+?blank <nary:value> ?o
+?blank <nary:starts> ?start
+?blank <nary:ends> ?end
+?p <rdfs:range> ?rng
+->
+?o <rdf:type> ?new
+?new <rdf:type> <nary:RangePlusTime>
+?new <nary:value> ?rng
+?new <nary:starts> ?start
+?new <nary:ends> ?end
+@action
+?new = MakeUri ?rng ?start ?end
+
+
+# does NOT change -- only TBox axiom
+$rdfs5
+?p <rdfs:subPropertyOf> ?q
+?q <rdfs:subPropertyOf> ?r
+->
+?p <rdfs:subPropertyOf> ?r
+@test
+?p != ?q
+?p != ?r
+?q != ?r
+
+
+# does NOT change -- only TBox axiom
+$rdfs6
+?p <rdf:type> <rdf:Property>
+->
+?p <rdfs:subPropertyOf> ?p
+
+
+# NOTE: ?o must NOT be a URI, could also be a blank node or an XSD atom
+$rdfs7+time
+?s ?p ?blank
+?blank <nary:value> ?o
+?blank <nary:starts> ?start
+?blank <nary:ends> ?end
+?p <rdfs:subPropertyOf> ?q
+->
+?s ?q ?new
+?new <rdf:type> <nary:RangePlusTime>
+?new <nary:value> ?o
+?new <nary:starts> ?start
+?new <nary:ends> ?end
+@test
+?p != ?q
+@action
+?new = MakeUri ?o ?start ?end
+
+
+# does NOT change -- only TBox axiom
+$rdfs8_10
+?c <rdf:type> <owl:Class>
+->
+?c <rdfs:subClassOf> ?c
+
+
+#
+$rdfs9+time
+?i <rdf:type> ?blank
+?blank <nary:value> ?c
+?blank <nary:starts> ?start
+?blank <nary:ends> ?end
+?c <rdfs:subClassOf> ?d
+->
+?i <rdf:type> ?new
+?new <rdf:type> <nary:RangePlusTime>
+?new <nary:value> ?d
+?new <nary:starts> ?start
+?new <nary:ends> ?end
+@test
+?c != ?d
+@action
+?new = MakeUri ?d ?start ?end
+
+
+# does NOT change -- only TBox axiom
+$rdfs11
+?c <rdfs:subClassOf> ?d
+?d <rdfs:subClassOf> ?e
+->
+?c <rdfs:subClassOf> ?e
+@test
+?c != ?d
+?c != ?e
+?d != ?e
+
+
+# NOTE: $rdfs12 omitted -- deals with rdfs:member
+# will not fire for our OWL ontologies
+
+
+# NOTE: $rdfs13 omitted -- deals with rdfs:Literal
+# will not fire for our OWL ontologies
+
+
+#
+$owl_invOf+time
+?s ?p ?blank
+?blank <nary:value> ?o
+?blank <nary:starts> ?start
+?blank <nary:ends> ?end
+?p <owl:inverseOf> ?q
+->
+?o ?q ?new
+?new <rdf:type> <nary:RangePlusTime>
+?new <nary:value> ?s
+?new <nary:starts> ?start
+?new <nary:ends> ?end
+@action
+?new = MakeUri ?s ?start ?end
+
+
+# does NOT change -- only TBox axiom
+$owl_invOfBySymProp
+?p <rdf:type> <owl:SymmetricProperty>
+->
+?p <owl:inverseOf> ?p
+
+
+# does NOT change -- only TBox axiom
+$owl_SymPropByInverse
+?p <owl:inverseOf> ?p
+->
+?p <rdf:type> <owl:SymmetricProperty>
+
+
+#
+$owl_SymmetricProperty+time
+?p <rdf:type> <owl:SymmetricProperty>
+?s ?p ?blank
+?blank <nary:value> ?o
+?blank <nary:starts> ?start
+?blank <nary:ends> ?end
+->
+?o ?p ?new
+?new <rdf:type> <nary:RangePlusTime>
+?new <nary:value> ?s
+?new <nary:starts> ?start
+?new <nary:ends> ?end
+@action
+?new = MakeUri ?s ?start ?end
+
+
+# NOTE: RHS-only vars ?start and ?end are not allowed at the moment
+#       to be args of action MakeUri;
+#       otherwise ?new = MakeUri ?z ?start ?end
+$owl_TransProp+time
+?p <rdf:type> <owl:TransitiveProperty>
+?x ?p ?blank1
+?blank1 <nary:value> ?y
+?blank1 <nary:starts> ?start1
+?blank1 <nary:ends> ?end1
+?y ?p ?blank2
+?blank2 <nary:value> ?z
+?blank2 <nary:starts> ?start2
+?blank2 <nary:ends> ?end2
+->
+?x ?p ?new
+?new <rdf:type> <nary:RangePlusTime>
+?new <nary:value> ?z
+?new <nary:starts> ?start
+?new <nary:ends> ?end
+@test
+?x != ?y
+?y != ?z
+IIntersectionNotEmpty ?start1 ?end1 ?start2 ?end2
+@action
+?start = IMax2 ?start1 ?start2
+?end = IMin2 ?end1 ?end2
+?new = MakeUri ?z ?start1 ?end1 ?start2 ?end2
+
+
+#
+$owl_FunctPropObject
+?p <rdf:type> <owl:FunctionalProperty>
+?p <rdf:type> <owl:ObjectProperty>
+?x ?p ?blank1
+?blank1 <nary:value> ?y
+?blank1 <nary:starts> ?start1
+?blank1 <nary:ends> ?end1
+?x ?p ?blank2
+?blank2 <nary:value> ?z
+?blank2 <nary:starts> ?start2
+?blank2 <nary:ends> ?end2
+->
+?y <owl:sameAs> ?z
+@test
+?y != ?z
+?p != <rdf:type>
+IIntersectionNotEmpty ?start1 ?end1 ?start2 ?end2
+
+
+# NOTE: RHS-only vars ?start and ?end are not allowed at the moment
+#       to be args of action MakeUri;
+#       otherwise ?new = MakeUri <owl:Nothing> ?start ?end
+$owl_FunctPropDatatype
+?p <rdf:type> <owl:FunctionalProperty>
+?p <rdf:type> <owl:DatatypeProperty>
+?x ?p ?blank1
+?blank1 <nary:value> ?y
+?blank1 <nary:starts> ?start1
+?blank1 <nary:ends> ?end1
+?x ?p ?blank2
+?blank2 <nary:value> ?z
+?blank2 <nary:starts> ?start2
+?blank2 <nary:ends> ?end2
+->
+?x <rdf:type> ?new
+?new <rdf:type> <nary:RangePlusTime>
+?new <nary:value> <owl:Nothing>
+?new <nary:starts> ?start
+?new <nary:ends> ?end
+@test
+?y != ?z
+?p != <rdf:type>
+IIntersectionNotEmpty ?start1 ?end1 ?start2 ?end2
+@action
+?start = IMax2 ?start1 ?start2
+?end = IMin2 ?end1 ?end2
+?new = MakeUri <owl:Nothing> ?start1 ?end1 ?start2 ?end2
+
+
+#
+$owl_InvFunctProp
+?p <rdf:type> <owl:InverseFunctionalProperty>
+?y ?p ?blank1
+?blank1 <nary:value> ?x
+?blank1 <nary:starts> ?start1
+?blank1 <nary:ends> ?end1
+?z ?p ?blank2
+?blank2 <nary:value> ?x
+?blank2 <nary:starts> ?start2
+?blank2 <nary:ends> ?end2
+->
+?y <owl:sameAs> ?z
+@test
+?y != ?z
+?p != <rdf:type>
+IIntersectionNotEmpty ?start1 ?end1 ?start2 ?end2
+
+
+# easier than the quintuple version: blank node can be taken over
+$owl_sameAsCopySubj
+?x <owl:sameAs> ?y
+?x ?p ?blank
+->
+?y ?p ?blank
+@test
+?x != ?y
+?p != <owl:sameAs>
+
+
+# easier than quintuple version: blank node can be taken over
+$owl_equivalentPropertyCopyPred
+?p <owl:equivalentProperty> ?q
+?x ?p ?blank
+->
+?x ?q ?blank
+@test
+?p != ?q
+
+
+# more complex than quintuple version
+$owl_sameAsCopyObj
+?x <owl:sameAs> ?y
+?z ?p ?blank
+?blank <nary:value> ?x
+?blank <nary:starts> ?start
+?blank <nary:ends> ?end
+->
+?z ?p ?new
+?new <rdf:type> <nary:RangePlusTime>
+?new <nary:value> ?y
+?new <nary:starts> ?start
+?new <nary:ends> ?end
+@test
+?x != ?y
+?p != <owl:sameAs>
+@action
+?new = MakeUri ?y ?start ?end
+
+
+# does NOT change -- only TBox axiom
+$owl_EquivClassBySubClass
+?x <rdfs:subClassOf> ?y
+?y <rdfs:subClassOf> ?x
+->
+?x <owl:equivalentClass> ?y
+@test
+?x != ?y
+
+
+# does NOT change -- only TBox axiom
+$owl_EquivPropBySubProp
+?p <rdfs:subPropertyOf> ?q
+?q <rdfs:subPropertyOf> ?p
+->
+?p <owl:equivalentProperty> ?q
+@test
+?p != ?q
+
+
+# NOTE: RHS-only vars ?start and ?end are not allowed at the moment
+#       to be args of action MakeUri;
+#       otherwise ?new = MakeUri <owl:Nothing> ?start ?end
+$owl_typeByAllVal
+?x <owl:onProperty> ?p
+?u <rdf:type> ?blank1
+?blank1 <nary:value> ?x
+?blank1 <nary:starts> ?start1
+?blank1 <nary:ends> ?end1
+?x <owl:allValuesFrom> ?y
+?u ?p ?blank2
+?blank2 <nary:value> ?v
+?blank2 <nary:starts> ?start2
+?blank2 <nary:ends> ?end2
+->
+?v <rdf:type> ?new
+?new <rdf:type> <nary:RangePlusTime>
+?new <nary:value> ?y
+?new <nary:starts> ?start
+?new <nary:ends> ?end
+@test
+IIntersectionNotEmpty ?start1 ?end1 ?start2 ?end2
+@action
+?start = IMax2 ?start1 ?start2
+?end = IMin2 ?end1 ?end2
+?new = MakeUri ?y ?start1 ?end1 ?start2 ?end2
+
+
+#
+$owl_typeByHasVal
+?r <owl:onProperty> ?p
+?r <owl:hasValue> ?v
+?i ?p ?blank
+?blank <nary:value> ?v
+?blank <nary:starts> ?start
+?blank <nary:ends> ?end
+->
+?i <rdf:type> ?new
+?new <rdf:type> <nary:RangePlusTime>
+?new <nary:value> ?r
+?new <nary:starts> ?start
+?new <nary:ends> ?end
+@action
+?new = MakeUri ?r ?start ?end
+
+
+#
+$owl_AttrByHasVal
+?x <owl:hasValue> ?y
+?x <owl:onProperty> ?p
+?u <rdf:type> ?blank
+?blank <nary:value> ?x
+?blank <nary:starts> ?start
+?blank <nary:ends> ?end
+->
+?u ?p ?new
+?new <rdf:type> <nary:RangePlusTime>
+?new <nary:value> ?y
+?new <nary:starts> ?start
+?new <nary:ends> ?end
+@action
+?new = MakeUri ?y ?start ?end
+
+
+# NOTE: RHS-only vars ?start and ?end are not allowed at the moment
+#       to be args of action MakeUri;
+#       otherwise ?new = MakeUri <owl:Nothing> ?start ?end
+$owl_typeBySomeVal
+?q <rdf:type> ?blank1
+?blank1 <nary:value> ?c
+?blank1 <nary:starts> ?start1
+?blank1 <nary:ends> ?end1
+?r <owl:onProperty> ?p
+?r <owl:someValuesFrom> ?c
+?i ?p ?blank2
+?blank2 <nary:value> ?q
+?blank2 <nary:starts> ?start2
+?blank2 <nary:ends> ?end2
+->
+?i <rdf:type> ?new
+?new <rdf:type> <nary:RangePlusTime>
+?new <nary:value> ?r
+?new <nary:starts> ?start
+?new <nary:ends> ?end
+@test
+IIntersectionNotEmpty ?start1 ?end1 ?start2 ?end2
+@action
+?start = IMax2 ?start1 ?start2
+?end = IMin2 ?end1 ?end2
+?new = MakeUri ?r ?start1 ?end1 ?start2 ?end2
+
+
+# does NOT change -- only TBox axiom
+$owl_subClassByInters1
+?c <owl:intersectionOf> ?x
+?x <rdf:first> ?y
+->
+?c <rdfs:subClassOf> ?x
+?c <rdfs:subClassOf> ?y
+
+
+# does NOT change -- only TBox axiom
+$owl_subClassByInters2
+?x <rdf:rest> ?y
+?c <owl:intersectionOf> ?x
+->
+?x <owl:intersectionOf> ?y
+@test
+?y != <rdf:nil>
+
+
+#
+$owl_typeByIntersect_1
+?b <rdf:first> ?c
+?b <rdf:rest> <rdf:nil>
+?z <owl:intersectionOf> ?b
+?i <rdf:type> ?blank
+?blank <nary:value> ?c
+?blank <nary:starts> ?start
+?blank <nary:ends> ?end
+->
+?i <rdf:type> ?new
+?new <rdf:type> <nary:RangePlusTime>
+?new <nary:value> ?b
+?new <nary:starts> ?start
+?new <nary:ends> ?end
+@action
+?new = MakeUri ?b ?start ?end
+
+
+# NOTE: RHS-only vars ?start and ?end are not allowed at the moment
+#       to be args of action MakeUri;
+#       otherwise ?new = MakeUri <owl:Nothing> ?start ?end
+$owl_typeByIntersect_2
+?b <rdf:first> ?c
+?i <rdf:type> ?blank1
+?blank1 <nary:value> ?c
+?blank1 <nary:starts> ?start1
+?blank1 <nary:ends> ?end1
+?i <rdf:type> ?blank2
+?blank2 <nary:value> ?b
+?blank2 <nary:starts> ?start2
+?blank2 <nary:ends> ?end2
+?n <owl:intersectionOf> ?b
+->
+?i <rdf:type> ?new
+?new <rdf:type> <nary:RangePlusTime>
+?new <nary:value> ?n
+?new <nary:starts> ?start
+?new <nary:ends> ?end
+@test
+IIntersectionNotEmpty ?start1 ?end1 ?start2 ?end2
+@action
+?start = IMax2 ?start1 ?start2
+?end = IMin2 ?end1 ?end2
+?new = MakeUri ?n ?start1 ?end1 ?start2 ?end2

@@ -28,7 +28,7 @@ public class RudibuggerTest {
   public static void setUpRudimant() throws FileNotFoundException {
     setUpEmpty();
     configs.put("outputDirectory", "../../../target/generatedTestFiles");
-    configs.put("ontologyFile", "ontos/pal.quads.ini");
+    configs.put("ontologyFile", "ontologies/inits/pal.inference.ini");
     configs.put("failOnError", false);
   }
 

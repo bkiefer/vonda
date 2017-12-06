@@ -1,0 +1,17 @@
+Domain Ontology dom (Hans-Ulrich Krieger)
+
+The domain ontology represents knowledge about the PAL domain,
+basically distinguishing between classes and subclasses dom:Actor
+(e.g., dom:Child), dom:Medium (e.g., dom:Diary), Location (e.g.,
+dom:Nursery), Disease (e.g., dom:Diabetes), etc.
+The domain ontology also defines further XSD datatypes, such as
+xsd:kg, xsd:cm, xsd:mmol_L, etc. for domain-specific properties,
+such as dom:weight, dom:height, or, dom:bsl.
+
+Version 0.9.4 addresses Rifca Peters JSON format of children
+records, incl. super-property hasRelative, relating a child
+to all its relatives.
+
+Version 0.9.5 removes hasCaregiver in favor of isTreatedBy
+(and inverse property treats), now generalizing domain to
+Professional (with subtypes Caregiver and Doctor)
