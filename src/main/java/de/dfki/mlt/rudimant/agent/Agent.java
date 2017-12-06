@@ -5,6 +5,7 @@ import static de.dfki.mlt.rudimant.common.Constants.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.slf4j.Logger;
@@ -832,6 +833,24 @@ public abstract class Agent implements StreamingClient {
     for(T elt : coll)
       if (p.test(elt)) ++result;
     return result;
+  }
+
+  /** Map the elements of the input collection to an output collection
+   * @throws IllegalAccessException
+   * @throws InstantiationException
+   */
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  public <T, S>
+  Collection<S> map(Collection<T> coll, Function<? super T, ? extends S> f) {
+    try {
+      Collection c = coll.getClass().newInstance();
+      for(T elt : coll)
+      c.add(f.apply(elt));
+      return c;
+    } catch (InstantiationException | IllegalAccessException e) {
+      // Won't happen.
+    }
+    return null;
   }
 
   // ######################################################################

@@ -69,12 +69,13 @@ void info(String s, int i);
 void clearBehavioursAndProposals();
 void shutdown();
 
-// lambda
+// lambda: first class argument of Function is return type of function object
 boolean contains(Collection coll, Function<Boolean, Object> pred);
 boolean all(Collection coll, Function<Boolean, Object> pred);
 List<Object> filter(Collection coll, Function<Boolean, Object> pred);
 List<Object> sort(Collection coll, Function<Integer, Object, Object> c);
-
+Collection<T> map(Collection<S> coll, Function<S, T> f);
+ 
 // all Agent variables we should know
 
 //RdfProxy _proxy;
