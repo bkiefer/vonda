@@ -485,7 +485,7 @@ public class Type {
         if (pType == null)  // for visualization
           sb.append("null");
         else if (pType.isRdfType())
-          sb.append("Object");
+          sb.append(pType.toJava());
         else
           pType.toString(sb);
         first = false;

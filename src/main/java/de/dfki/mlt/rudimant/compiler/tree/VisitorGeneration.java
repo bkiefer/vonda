@@ -145,7 +145,7 @@ public class VisitorGeneration implements RudiVisitor {
     if (node.type != null) {
       if (node.type.needsCast(node.right.getType())
           && !(node.right instanceof ExpNew)) {
-          // then there is either sth wrong here, what would at least have resulted
+        // then there is either sth wrong here, what would at least have resulted
         // in warnings in type testing, or it is possible to cast the right part
         out.append("(" + node.type.toJava() + ") ");
       }

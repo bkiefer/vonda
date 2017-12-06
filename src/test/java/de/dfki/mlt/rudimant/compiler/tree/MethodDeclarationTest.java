@@ -25,9 +25,9 @@ public class MethodDeclarationTest {
   @Test
   public void testParType() {
     String methdecl = " void foo(List<Child> cs) { Child c = cs.get(0); }";
-    String s = generate(methdecl, true);
-    String expected = "public void foo(List<Object> cs)"
-        + " { Rdf c = (Rdf)cs.get(0); }";
+    String s = generate(methdecl);
+    String expected = "public void foo(List<Rdf> cs)"
+        + " { Rdf c = cs.get(0); }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
