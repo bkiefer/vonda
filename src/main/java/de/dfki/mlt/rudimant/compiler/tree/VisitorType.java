@@ -825,11 +825,6 @@ public class VisitorType implements RudiVisitor {
   public void visitNode(StatReturn node) {
     if (node.returnExp != null) {
       node.returnExp.visit(this);
-      // if (mem.variableExists(node.returnExp.fullexp)
-      //     && mem.isActiveRule(node.returnExp.fullexp)){
-      //   typeError("Return used with a rule name that also is a variable, "
-      //       + "will use the rule functionality.", node);
-      // }
     }
   }
 

@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 import com.ibm.icu.text.RuleBasedNumberFormat;
 
 import de.dfki.lt.tr.dialogue.cplan.*;
-import de.dfki.lt.tr.dialogue.cplan.BatchTest.BatchType;
 import de.dfki.lt.tr.dialogue.cplan.functions.FunctionFactory;
 
 public class CPlannerNlg {
