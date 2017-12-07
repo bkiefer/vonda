@@ -615,7 +615,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitVariable(VariableContext ctx) {
-    // VARIABLE | field_access
+    // VARIABLE
     return new ExpVariable(ctx.getText()).setPosition(ctx, currentClass);
   }
 
@@ -639,6 +639,14 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     }
     return new ExpFuncCall(ctx.getChild(0).getText(),
         expList, true).setPosition(ctx, currentClass);
+  }
+
+  @Override
+  public RudiTree visitArray_access(Array_accessContext ctx) {
+    // variable '[' arithmetic ']'
+    return new ExpArrayAccess((RTExpression)visit(ctx.getChild(0)),
+        (RTExpression)visit(ctx.getChild(2)))
+        .setPosition(ctx, currentClass);
   }
 
 }

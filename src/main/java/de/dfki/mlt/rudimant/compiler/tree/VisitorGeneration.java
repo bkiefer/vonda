@@ -833,4 +833,12 @@ public class VisitorGeneration implements RudiVisitor {
   String stringEscape(String in) {
     return in.replaceAll("\\\"", "\\\\\"");
   }
+
+  @Override
+  public void visitNode(ExpArrayAccess node) {
+    node.array.visitWithComments(this);
+    out.append("[");
+    node.index.visit(this);
+    out.append("]");
+  }
 }

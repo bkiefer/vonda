@@ -151,10 +151,12 @@ type_spec
     | VARIABLE
     ;
 
-variable
-  : VARIABLE '[' arithmetic ']'
-  | VARIABLE
+variable:
+  //: VARIABLE '[' arithmetic ']' |
+  VARIABLE
   ;
+
+array_access: VARIABLE '[' arithmetic ']';
 
 exp
   : '(' type_spec ')' exp
@@ -254,7 +256,7 @@ factor
   ;
 
 number
-  : ( '+' | '-' )? INT | FLOAT | VARIABLE | field_access | function_call
+  : ( '+' | '-' )? INT | FLOAT | VARIABLE | field_access | function_call | array_access
 
   ;
 

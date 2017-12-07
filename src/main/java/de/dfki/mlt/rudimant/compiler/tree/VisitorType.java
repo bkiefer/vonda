@@ -397,10 +397,13 @@ public class VisitorType implements RudiVisitor {
       Type mergeType = node.varType.unifyTypes(innerIterableType);
       if (mergeType == null) {
         if (innerIterableType.equals(new Type("Object"))) {
-          // Then handle this as an implicit cast, but warn the user that it might crash
-          typeWarning("Implicit casting of list Object to "
+          // Then handle this as an implicit cast (but warn the user that it might crash)
+          logger.trace(node.getLocation() + "  Implicit casting of list Object to "
               + node.varType.toString()
-              + " in short for loop, be aware this might crash in Java ", node);
+              + " in short for loop, be aware this might crash in Java ");
+          /* typeWarning("Implicit casting of list Object to "
+              + node.varType.toString()
+              + " in short for loop, be aware this might crash in Java ", node); */
         } else {
           typeError("Incompatible types in short for loop: "
               + node.varType + " : " + innerIterableType, node);
@@ -780,6 +783,24 @@ public class VisitorType implements RudiVisitor {
         }
       } else {
         node.type = Type.getNoType();
+      }
+    }
+  }
+
+  @Override
+  public void visitNode(ExpArrayAccess node) {
+    node.index.visit(this);
+    if (!new Type("int").equals(node.index.type)) {
+      typeError("Array access with non-Integer", node);
+    }
+    node.array.visit(this);
+    // TODO: define Array type so we cannot just access every collection here
+    if (node.array.type.isNull()) {
+      typeWarning("Array access with unknown array type", node);
+    } else {
+      node.type = node.array.type.getInnerType();
+      if (node.type == null) {
+        typeError("Trying to array-access a non-collection type", node);
       }
     }
   }

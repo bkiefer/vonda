@@ -219,20 +219,22 @@ public class CastTest {
     assertEquals(expected, getForMarked(s, expected));
   }
 
-    @Test
-  public void testMultipleRdfAccess2() {
-    // Test set field with POD type
-    String in = "Clazz c; if (c.a.a.a.b) return true;";
-    String s = generate(in);
-    String expected = "Rdf c;if (((((c != null "
-        + "&& ((Rdf)c.getSingleValue(\"<dom:a>\")) != null) "
-        + "&& ((Rdf)((Rdf)c.getSingleValue(\"<dom:a>\")).getSingleValue(\"<dom:a>\")) != null) "
-        + "&& ((Rdf)((Rdf)((Rdf)c.getSingleValue(\"<dom:a>\")).getSingleValue(\"<dom:a>\")).getSingleValue(\"<dom:a>\")) != null) "
-        + "&& exists(((Integer)((Rdf)((Rdf)((Rdf)c.getSingleValue(\"<dom:a>\"))"
-        + ".getSingleValue(\"<dom:a>\")).getSingleValue(\"<dom:a>\"))"
-        + ".getSingleValue(\"<dom:b>\"))))) return true;";
-    assertEquals(expected, getForMarked(s, expected));
-  }
+  /* TODO: find a long Rdf sequence in current ontology to do this test
+  @Test
+public void testMultipleRdfAccess2() {
+  // Test set field with POD type
+  String in = "Clazz c; if (c.a.a.a.b) return true;";
+  String s = generate(in);
+  String expected = "Rdf c;if (((((c != null "
+      + "&& ((Rdf)c.getSingleValue(\"<dom:a>\")) != null) "
+      + "&& ((Rdf)((Rdf)c.getSingleValue(\"<dom:a>\")).getSingleValue(\"<dom:a>\")) != null) "
+      + "&& ((Rdf)((Rdf)((Rdf)c.getSingleValue(\"<dom:a>\")).getSingleValue(\"<dom:a>\")).getSingleValue(\"<dom:a>\")) != null) "
+      + "&& exists(((Integer)((Rdf)((Rdf)((Rdf)c.getSingleValue(\"<dom:a>\"))"
+      + ".getSingleValue(\"<dom:a>\")).getSingleValue(\"<dom:a>\"))"
+      + ".getSingleValue(\"<dom:b>\"))))) return true;";
+  assertEquals(expected, getForMarked(s, expected));
+}
+*/
 
   /* TODO: FIX THE TEST/CODE ITSELF, NOT SURE IF THE INPUT IS LEGAL AT ALL.
   @Test

@@ -40,6 +40,8 @@ public interface RudiVisitor {
   // Expressions
   public void visitNode(ExpArithmetic node);
 
+  public void visitNode(ExpArrayAccess node);
+
   public void visitNode(ExpAssignment node);
 
   public void visitNode(ExpBoolean node);
