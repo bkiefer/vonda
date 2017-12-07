@@ -165,6 +165,11 @@ public class Type {
       for (String par : partypes)
         _parameterTypes.add(new Type("_".equals(par) ? null : par));
       _name = nameSpec;
+    } else if ((i = typeSpec.indexOf('[')) > 0) {
+      assert(typeSpec.substring(i+1).trim().equals("]"));
+      _name = "Array";
+      _parameterTypes = new ArrayList<Type>(1);
+      _parameterTypes.add(new Type(typeSpec.substring(0, i).trim()));
     } else {
       _name = typeSpec;
     }
@@ -261,6 +266,10 @@ public class Type {
   public boolean isBool() {
     return "boolean".equals(_name) || "Boolean".equals(_name)
         || "<xsd:boolean>".equals(_name);
+  }
+
+  public boolean isArray() {
+    return "Array".equals(_name);
   }
 
   public boolean isVoid() {
@@ -465,15 +474,19 @@ public class Type {
   }
 
   private void toString(StringBuffer sb) {
-    if (isDialogueAct())
-      sb.append("DialogueAct");
-    else if (isRdfType())
-      sb.append("Rdf");
-    else if (isXsdType())
-      sb.append(xsdToJavaPodWrapper());
-    else
-      sb.append(_name);
-    paramTypes(sb);
+    if (isArray()) {
+      sb.append(_parameterTypes.get(0).toJava()).append("[]");
+    } else {
+      if (isDialogueAct())
+        sb.append("DialogueAct");
+      else if (isRdfType())
+        sb.append("Rdf");
+      else if (isXsdType())
+        sb.append(xsdToJavaPodWrapper());
+      else
+        sb.append(_name);
+      paramTypes(sb);
+    }
   }
 
   private void paramTypes(StringBuffer sb) {

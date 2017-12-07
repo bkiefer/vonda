@@ -156,6 +156,7 @@ variable:
   VARIABLE
   ;
 
+// TODO: shouldn't there be exp instead of variable?
 array_access: VARIABLE '[' arithmetic ']';
 
 exp

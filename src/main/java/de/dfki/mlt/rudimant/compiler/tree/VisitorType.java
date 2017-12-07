@@ -794,13 +794,12 @@ public class VisitorType implements RudiVisitor {
       typeError("Array access with non-Integer", node);
     }
     node.array.visit(this);
-    // TODO: define Array type so we cannot just access every collection here
-    if (node.array.type.isNull()) {
-      typeWarning("Array access with unknown array type", node);
+    if (! node.array.type.isArray()) {
+      typeError("Array access on non-array type", node);
     } else {
       node.type = node.array.type.getInnerType();
       if (node.type == null) {
-        typeError("Trying to array-access a non-collection type", node);
+        typeError("Type of array elements not specified", node);
       }
     }
   }

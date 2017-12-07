@@ -23,8 +23,14 @@ public class ExpArrayAccess extends RTExpLeaf {
   }
 
   public void propagateType(Type upperType) {
-    // it's not an error if the type is null
+    if (type != null && ! type.isUnspecified()) {
+      logger.error("Why didn't this type percolate up? " + fullexp + " " + type);
+      return;
+    }
     type = upperType;
+    if (array.type.isArray()) {
+      array.getType().setInnerType(type);
+    }
   }
 
 }
