@@ -157,6 +157,7 @@ variable:
   ;
 
 // TODO: shouldn't there be exp instead of variable?
+// aw: no, exp is too permissive. Should probably be simple_exp
 array_access: VARIABLE '[' arithmetic ']';
 
 exp
