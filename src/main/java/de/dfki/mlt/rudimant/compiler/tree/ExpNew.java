@@ -5,7 +5,7 @@
  */
 package de.dfki.mlt.rudimant.compiler.tree;
 
-import java.util.Arrays;
+import java.util.List;
 
 import de.dfki.mlt.rudimant.compiler.Type;
 
@@ -17,18 +17,19 @@ import de.dfki.mlt.rudimant.compiler.Type;
 public class ExpNew extends RTExpression {
 
   // the java object creation as a function call
-  RTExpression construct;
+  List<RTExpression> params;
 
   /**
-   *
-   * @param toCreate set to the rdf object class whose type should be created
-   *                  or to null if this is a java creation
-   * @param construct set to the function call that represents the java creation
-   *                  (to null if no java creation)
+   * @param toCreate the class of the object to create
+   * @param params the parameters to the constructor call
    */
-  public ExpNew(String toCreate, RTExpression constr){
+  public ExpNew(String toCreate, List<RTExpression> params){
     type = new Type(toCreate);
-    construct = constr;
+    this.params = params;
+  }
+
+  public ExpNew(String toCreate){
+    this(toCreate, null);
   }
 
   @Override
@@ -43,8 +44,7 @@ public class ExpNew extends RTExpression {
 
   @Override
   public Iterable<? extends RudiTree> getDtrs() {
-    RudiTree[] dtrs = { construct };
-    return Arrays.asList(dtrs);
+    return params;
   }
 
 

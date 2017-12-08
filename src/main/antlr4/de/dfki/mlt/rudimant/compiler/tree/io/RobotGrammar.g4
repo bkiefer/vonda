@@ -111,7 +111,7 @@ switch_label
   ;
 
 var_def
-  : FINAL? type_spec? variable assgn_exp? ';'
+  : FINAL? type_spec? VARIABLE assgn_exp? ';'
   ;
 
 assgn_exp
@@ -130,7 +130,7 @@ method_declaration
 
 // add sth to a collection
 set_operation
-  : (variable | field_access) ('+=' | '-=') exp ';'
+  : (VARIABLE | field_access) ('+=' | '-=') exp ';'
   ;
 
 
@@ -141,7 +141,7 @@ function_call
   ;
 
 field_access
-  : (variable | function_call | STRING | '(' exp ')')
+  : (VARIABLE | function_call | STRING | '(' exp ')')
     ( '.' simple_exp)+
   ;
 
@@ -150,11 +150,6 @@ type_spec
     | VARIABLE '<' type_spec (',' type_spec)* '>'
     | VARIABLE
     ;
-
-variable:
-  //: VARIABLE '[' arithmetic ']' |
-  VARIABLE
-  ;
 
 // TODO: shouldn't there be exp instead of variable?
 // aw: no, exp is too permissive. Should probably be simple_exp
@@ -180,13 +175,14 @@ complex_exp
 // TODO: is that all 'you can assign to' (an lvalue), which can be:
 // a variable, an array element, an rdf slot (did i forget sth?)
 assignment
-  : variable assgn_exp
+  : VARIABLE assgn_exp
   | field_access assgn_exp
   ;
 
+// This has only one "child", therefore it's "simple"
 simple_exp
   : '(' exp ')'
-  | variable
+  | VARIABLE
   | function_call
   | field_access
   | STRING
@@ -217,11 +213,8 @@ simple_b_exp
 
 new_exp
   : NEW VARIABLE
-  | NEW spec_func_call
-  ;
-
-spec_func_call
-  : type_spec '(' ( exp ( ',' exp )* )? ')'
+  | NEW type_spec '(' ( exp ( ',' exp )* )? ')'
+  | NEW VARIABLE '[' arithmetic ']'
   ;
 
 lambda_exp: '(' VARIABLE (',' VARIABLE)* ')' '->' (exp|statement_block);

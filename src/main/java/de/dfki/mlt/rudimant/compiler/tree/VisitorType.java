@@ -836,13 +836,9 @@ public class VisitorType implements RudiVisitor {
 
   @Override
   public void visitNode(ExpNew node) {
-    if (node.construct != null) {
-      if(node.construct instanceof ExpFuncCall){
-        ((ExpFuncCall)node.construct).newexp = true;
-      }
-      node.construct.visit(this);
-      // the type is the (java) object created
-      node.type = node.construct.type;
+    if (node.params != null) {
+      for (RTExpression param : node.params)
+        param.visit(this);
     }
   }
 

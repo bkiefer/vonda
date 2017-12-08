@@ -1,12 +1,12 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
-import static org.junit.Assert.assertTrue;
+import static de.dfki.mlt.rudimant.compiler.Visualize.generate;
+import static org.junit.Assert.*;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.dfki.mlt.rudimant.compiler.Type;
 import de.dfki.mlt.rudimant.compiler.Visualize;
 import de.dfki.mlt.rudimant.compiler.tree.ExpNew;
 import de.dfki.mlt.rudimant.compiler.tree.RudiTree;
@@ -39,4 +39,12 @@ public class NewTest {
     assertTrue(((ExpNew)dtr).type.toJava().equals("Integer"));
   }
 
+  @Test
+  public void testNewArray() {
+    String conditionalExp = "x = new Integer[7];";
+
+    String s = generate(conditionalExp);
+    String expected = "Rdf i;if (true) { i = _proxy.getClass(\"<dom:Child>\").getNewInstance(DEFNS); }";
+    assertEquals(expected, getForMarked(s, expected));
+  }
 }

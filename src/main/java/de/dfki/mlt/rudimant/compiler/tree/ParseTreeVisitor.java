@@ -289,16 +289,22 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   @Override
   public RudiTree visitNew_exp(New_expContext ctx) {
-    // NEW VARIABLE | NEW function_call
-    String toCreate = null;
-    RTExpression construct = null;
-    if (ctx.getChild(1).getText().contains("(")) {
-      construct = (RTExpression) visit(ctx.getChild(1));
-    } else {
-      toCreate = ctx.getChild(1).getText();
+    // NEW VARIABLE | NEW function_call | NEW VARIABLE '[' arithmetic ']'
+    if (ctx.getChildCount() == 2) {
+      return new ExpNew(ctx.getChild(1).getText())
+          .setPosition(ctx, currentClass);
     }
-    return new ExpNew(toCreate, construct)
-        .setPosition(ctx, currentClass);
+    // type_spec LPAR exp? (COMMA exp)* RPAR
+    ArrayList<RTExpression> expList = new ArrayList<RTExpression>();
+    for (int i = 3; i < ctx.getChildCount() - 1;) {
+      expList.add((RTExpression) visit(ctx.getChild(i)));
+      i += 2;   // skip comma
+    }
+    String typeString = ctx.getChild(1).getText();
+    if ("[".equals(ctx.getChild(2))) { typeString += "[]"; }
+
+    return new ExpNew(typeString,
+        expList).setPosition(ctx, currentClass);
   }
 
   private RudiTree boolExp(ParserRuleContext ctx) {
@@ -613,13 +619,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     return visit(ctx.getChild(1));
   }
 
-  @Override
-  public RudiTree visitVariable(VariableContext ctx) {
-    // VARIABLE
-    return new ExpVariable(ctx.getText()).setPosition(ctx, currentClass);
-  }
-
-  @Override
   public RudiTree visitDa_token(Da_tokenContext ctx) {
     return visit(ctx.getChild(ctx.getChildCount() - 1)).setPosition(ctx, currentClass);
   }
@@ -627,18 +626,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
   @Override
   public RudiTree visit(ParseTree pt) {
     return pt == null ? null : pt.accept(this);
-  }
-
-  @Override
-  public RudiTree visitSpec_func_call(Spec_func_callContext ctx) {
-    // type_spec LPAR exp? (COMMA exp)* RPAR
-    ArrayList<RTExpression> expList = new ArrayList<RTExpression>();
-    for (int i = 2; i < ctx.getChildCount() - 1;) {
-      expList.add((RTExpression) visit(ctx.getChild(i)));
-      i += 2;   // skip comma
-    }
-    return new ExpFuncCall(ctx.getChild(0).getText(),
-        expList, true).setPosition(ctx, currentClass);
   }
 
   @Override

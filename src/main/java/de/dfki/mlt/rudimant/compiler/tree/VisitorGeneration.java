@@ -439,9 +439,17 @@ public class VisitorGeneration implements RudiVisitor {
 
   @Override
   public void visitNode(ExpNew node) {
-    if (node.construct != null) {
+    if (node.params != null) {
       out.append("new ");
-      node.construct.visitWithComments(this);
+      if (node.type.isArray()) {
+        out.append(node.type.getInnerType().toJava()).append('[');
+      } else {
+        out.append(node.type.toJava()).append('(');
+      }
+      for(RTExpression param : node.params) {
+        param.visitWithComments(this);
+      }
+      out.append(node.type.isArray() ? ']' : ')');
     } else {
       accessTopLevelInstance();
       out.append("_proxy.getClass(\"").append(node.type.getRdfClass().toString())
