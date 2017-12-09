@@ -301,7 +301,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
       i += 2;   // skip comma
     }
     String typeString = ctx.getChild(1).getText();
-    if ("[".equals(ctx.getChild(2))) { typeString += "[]"; }
+    if ("[".equals(ctx.getChild(2).getText())) { typeString += "[]"; }
 
     return new ExpNew(typeString,
         expList).setPosition(ctx, currentClass);

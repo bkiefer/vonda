@@ -44,7 +44,7 @@ public class NewTest {
     String conditionalExp = "x = new Integer[7];";
 
     String s = generate(conditionalExp);
-    String expected = "Rdf i;if (true) { i = _proxy.getClass(\"<dom:Child>\").getNewInstance(DEFNS); }";
+    String expected = "Integer[] x = new Integer[7];";
     assertEquals(expected, getForMarked(s, expected));
   }
 }
