@@ -18,7 +18,7 @@ import org.junit.*;
 public class LambdaTest {
   @BeforeClass
   public static void setUpClass() {
-    setUpNonEmpty();
+    setUpEmpty();
   }
 
   /*
@@ -27,12 +27,23 @@ public class LambdaTest {
    */
 
   @Test
-  public void test() {
-    String in = "a = (dingsbums, dingsbams) -> true;";
-    // according to Anna, this function doesn't work yet (1.12.2016)
-    // RudiTree dtr = getNodeOfInterest(parseAndTypecheck(in));
-    // assertTrue(dtr instanceof ExpLambda);
-    // TODO: this is now working and already tested in TestTypes.testLambdaExp, add examples that make sense here!
+  public void testLambdaExp() {
+    String in = "Set<Child> cs; cs.contains((c) -> ((Child)c).forename.equals(\"John\"));";
+    String r = generate(in);
+    String expected = "public Set<Rdf> cs;/**/cs.contains((c) -> "
+            + "((String)((Rdf)c).getSingleValue(\"<dom:forename>\")).equals(\"John\"));";
+    assertEquals(expected, getForMarked(r, expected));
+    assertTrue(r.contains("Set<Rdf> cs;"));
+  }
+
+  @Test
+  public void testComplexLambdaExp() {
+    String in = "Set<Child> cs; cs.contains((c) -> {((Child)c).forename.equals(\"John\");});";
+    String r = generate(in);
+    String expected = "public Set<Rdf> cs;/**/cs.contains((c) -> {"
+            + " ((String)((Rdf)c).getSingleValue(\"<dom:forename>\")).equals(\"John\"); } );";
+    assertEquals(expected, getForMarked(r, expected));
+    assertTrue(r.contains("Set<Rdf> cs;"));
   }
 
 }

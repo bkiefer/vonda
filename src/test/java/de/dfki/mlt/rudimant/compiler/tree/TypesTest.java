@@ -101,26 +101,6 @@ public class TypesTest {
   }
 
   @Test
-  public void testLambdaExp() {
-    String in = "Set<Child> cs; cs.contains((c) -> ((Child)c).forename.equals(\"John\"));";
-    String r = generate(in);
-    String expected = "public Set<Rdf> cs;/**/cs.contains((c) -> "
-            + "((String)((Rdf)c).getSingleValue(\"<dom:forename>\")).equals(\"John\"));";
-    assertEquals(expected, getForMarked(r, expected));
-    assertTrue(r.contains("Set<Rdf> cs;"));
-  }
-
-  @Test
-  public void testComplexLambdaExp() {
-    String in = "Set<Child> cs; cs.contains((c) -> {((Child)c).forename.equals(\"John\");});";
-    String r = generate(in);
-    String expected = "public Set<Rdf> cs;/**/cs.contains((c) -> {"
-            + " ((String)((Rdf)c).getSingleValue(\"<dom:forename>\")).equals(\"John\"); } );";
-    assertEquals(expected, getForMarked(r, expected));
-    assertTrue(r.contains("Set<Rdf> cs;"));
-  }
-
-  @Test
   public void testListRdftype() {
     String in = "List<Quiz> q = {};";
     String r = generate(in);
