@@ -177,6 +177,7 @@ complex_exp
 assignment
   : VARIABLE assgn_exp
   | field_access assgn_exp
+  | array_access assgn_exp
   ;
 
 // This has only one "child", therefore it's "simple"
