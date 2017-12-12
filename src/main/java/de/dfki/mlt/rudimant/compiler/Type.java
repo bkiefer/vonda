@@ -143,6 +143,12 @@ public class Type {
   /** The RDF class of this type, if any */
   private RdfClass _class;
 
+  /** When true, the type appears to be Object in the Java code, but we know
+   *  it's something more specific (mostly because we're treating an RDF
+   *  collection of things.
+   */
+  private boolean _castRequired = false;
+
   private Type() { }
 
   private void rdfIfy() {
@@ -177,14 +183,20 @@ public class Type {
 
 
   /** This is only to be used to create complex types for lambda expressions */
-  public Type(Type ... parameterTypes) {
-    if (parameterTypes.length == 1 && parameterTypes[0] == null) {
-      _name = null;
-      return;
+  public static Type getComplexType(String name, Type ... parameterTypes) {
+    Type result = new Type(name);
+    result._parameterTypes = new ArrayList<>(parameterTypes.length);
+    result._parameterTypes.addAll(Arrays.asList(parameterTypes));
+    return result;
+  }
+
+  /** This is only to be used to create complex types for lambda expressions */
+  public static Type getRdfComplexType(String name, Type ... parameterTypes) {
+    Type result = getComplexType(name, parameterTypes);
+    for(Type p : parameterTypes) {
+      p._castRequired = true;
     }
-    _name = "Function";
-    _parameterTypes = new ArrayList<>(parameterTypes.length);
-    _parameterTypes.addAll(Arrays.asList(parameterTypes));
+    return result;
   }
 
   public Type(String typeSpec) {

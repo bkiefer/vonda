@@ -308,7 +308,7 @@ public class VisitorType implements RudiVisitor {
       typeError(node.fullexp + ": type of then and else differ: "
           + node.thenexp.getType().toString() + " vs. "
           + node.elseexp.getType().toString(), node);
-      unified = new Type(unified);
+      unified = Type.getNoType();
     }
     node.type = unified;
   }
@@ -326,7 +326,7 @@ public class VisitorType implements RudiVisitor {
       RTExpression exp = (RTExpression)node.body;
       visitNode(exp);
       parTypes[0] = exp.getType();
-      node.type = new Type(parTypes);
+      node.type = Type.getComplexType("Function", parTypes);
     } else {
       visitNode((StatAbstractBlock)node.body);
     }
@@ -644,7 +644,8 @@ public class VisitorType implements RudiVisitor {
     boolean isFunctional = (predType & RdfClass.FUNCTIONAL_PROPERTY) != 0;
     if (! isFunctional) {
       //currentType = "Set<"+currentType+">";
-      currentType = new Type("Set<Object>");
+      //currentType = new Type("Set<Object>");
+      currentType = Type.getRdfComplexType("Set", currentType);
     }
     // the type of this is set to Object by default (not null)
     return new ExpPropertyAccess(var.content, var, false, currentType, isFunctional);
