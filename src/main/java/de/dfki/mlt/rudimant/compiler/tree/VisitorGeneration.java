@@ -446,7 +446,11 @@ public class VisitorGeneration implements RudiVisitor {
       } else {
         out.append(node.type.toJava()).append('(');
       }
+      boolean first = true;
       for(RTExpression param : node.params) {
+        if (! first) {
+          out.append(", ");
+        } else first = false;
         param.visitWithComments(this);
       }
       out.append(node.type.isArray() ? ']' : ')');
