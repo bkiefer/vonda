@@ -82,7 +82,7 @@ public class Environment {
           if (!f.isReturnType(functype)) {
             // TODO: add a description about where we are in the input file
             logger.warn("redeclaring function " + funcname
-                    + " with new return type - was: " + f.getReturnType(calledUpon)
+                    + " with new return type - was: " + f.getReturnType(calledUpon, null)
                     + " is: " + functype);
           }
           return;
@@ -121,7 +121,7 @@ public class Environment {
     for (Function f : functions.get(funcname)) {
       if (f.areParametertypes(partypes)
           && (calledUpon == null || f.canCallUpon(calledUpon))) {
-        return f.getReturnType(calledUpon);
+        return f.getReturnType(calledUpon, partypes);
       }
     }
     return null;

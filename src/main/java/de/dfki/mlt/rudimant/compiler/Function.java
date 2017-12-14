@@ -1,5 +1,6 @@
 package de.dfki.mlt.rudimant.compiler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class Function {
@@ -35,14 +36,78 @@ class Function {
   public Type getCalledUpon() {
     return _calledUpon;
   }
+  /*
+  private Type createTypeFromGeneric(Type concrete, Type withGeneric) {
+    if (withGeneric == null) return null;
+    // TODO: might want to extend this to other place holders than T
+    String resultType = "T".equals(withGeneric.get_name())? concrete.get_name() : withGeneric.get_name();
+    if (withGeneric.getParameterTypes() != null && withGeneric.getParameterTypes().size() > 1) {
+      List<Type> inner = new ArrayList<>();
+      for (int i = 0; i < withGeneric.getParameterTypes().size(); i++) {
+        inner.add(createTypeFromGeneric(concrete.getParameterTypes().get(i),
+            withGeneric.getParameterTypes().get(i)));
+      }
+      return Type.getComplexType(resultType, (Type[]) inner.toArray());
+    } else {
+      Type result = new Type(resultType);
+      if (withGeneric.getParameterTypes() != null && withGeneric.getParameterTypes().size() == 1) {
+        result.setInnerType(createTypeFromGeneric(concrete.getParameterTypes().get(0),
+            withGeneric.getParameterTypes().get(0)));
+      }
+      return result;
+    }
+  }*/
+  
+  private Type findTypeForGeneric(Type concrete, Type withGeneric) {
+    if (withGeneric == null) return null;
+    // TODO: might want to extend this to other place holders than T
+    if ("T".equals(withGeneric.get_name())) return concrete;
+    if (withGeneric.getParameterTypes() != null) {
+      Type found = null;
+      for (int i = 0; i < withGeneric.getParameterTypes().size(); i++) {
+        found = findTypeForGeneric(concrete.getParameterTypes().get(i),
+            withGeneric.getParameterTypes().get(i));
+        if (found != null) return found;
+      }
+    }
+    return null;
+  }
+  
+  private Type createTypeFromGeneric(Type concrete, Type withGeneric) {
+    if (withGeneric.toJava().equals("T")) return concrete;
+    // TODO: can this really happen?
+    String resultType = "T".equals(withGeneric.get_name())? concrete.toJava() : withGeneric.get_name();
+    List<Type> inner = new ArrayList<>();
+    for (int i = 0; i < withGeneric.getParameterTypes().size(); i++) {
+      inner.add(createTypeFromGeneric(concrete, withGeneric.getParameterTypes().get(i)));
+    }
+    Type result = new Type(resultType);
+    result.setParameterTypes(inner);
+    return result;
+  }
 
-  public Type getReturnType(Type calledUpon) {
-    String rn = _returnType.get_name();
-    if(calledUpon != null &&
-        // TODO: THIS SEEMS TO BE A CRUDE HOAX
-        (rn.contains("<T>") || rn.equals("T"))){
-      Type ret = calledUpon.getInnerType();
-      return ret;
+  public Type getReturnType(Type calledUpon, List<Type> partypes) {
+    String rn = _returnType.toJava();
+    // TODO: THIS SEEMS TO BE A CRUDE HOAX
+    if (rn.contains("<T>") || rn.equals("T")){
+      Type tType = null;
+      if (calledUpon != null && canCallUpon(calledUpon)) {
+        tType = findTypeForGeneric(calledUpon, _calledUpon);
+      } else {
+        for (int i = 0; i < _parameterTypes.size(); i++) {
+          if (_parameterTypes.get(i).toJava().contains("<T>")
+              || _parameterTypes.get(i).toJava().equals("T")) {
+            tType = findTypeForGeneric(partypes.get(i), _parameterTypes.get(i));
+            break;
+          }
+        }
+      }
+      if (tType != null) {
+        return createTypeFromGeneric(tType, _returnType);
+      }
+      /* if (calledUpon != null) {
+        return calledUpon.getInnerType();
+      } */
     }
     return _returnType;
   }

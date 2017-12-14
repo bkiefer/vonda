@@ -308,10 +308,18 @@ public class Type {
       return _parameterTypes.get(0);
     return null;
   }
+  
+  public List<Type> getParameterTypes() {
+    return _parameterTypes;
+  }
 
   public void setInnerType(Type inner) {
     _parameterTypes = new ArrayList<>(1);
     _parameterTypes.add(inner);
+  }
+  
+  public void setParameterTypes(List<Type> params) {
+    _parameterTypes = params;
   }
 
   public Type unifyTypes(Type right) {
