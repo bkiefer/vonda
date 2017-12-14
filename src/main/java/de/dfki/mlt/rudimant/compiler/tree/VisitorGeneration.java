@@ -694,6 +694,10 @@ public class VisitorGeneration implements RudiVisitor {
       out.append(node.type.toJava()).append(" ");
     }
     if (node.toAssign != null) {
+      // if the (complete, not inner) type of right is not known to Java,
+      // we need to cast to it
+      if (node.toAssign.type.castRequired())
+        out.append("(").append(node.toAssign.type.toJava()).append(")");
       node.toAssign.visitWithComments(this);
     } else {
       out.append(node.variable);
@@ -839,7 +843,10 @@ public class VisitorGeneration implements RudiVisitor {
     if (realOrigin != null) {
       out.append(lowerCaseFirst(realOrigin) + "." );
     }
+    if (node.type.castRequired())
+      out.append("((").append(node.type.toJava()).append(")");
     out.append(node.content);
+    if (node.type.castRequired()) out.append(")");
   }
 
   String stringEscape(String in) {

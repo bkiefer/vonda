@@ -9,6 +9,8 @@ import static de.dfki.mlt.rudimant.compiler.Visualize.*;
 import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.*;
 
+import java.util.Set;
+
 import org.junit.*;
 
 /**
@@ -50,20 +52,18 @@ public class LambdaTest {
   public void test1() {
     String in = "Quiz p; p.hasHistory.contains((c) -> c.turnId == 1);";
     String r = generate(in);
-    String expected = "Rdf p;/**/p.getValue(\"<dom:hasSport>\").contains((c) -> "
-            + "((String)((Rdf)c).getSingleValue(\"<dom:name>\")).equals(\"Game\"));";
+    String expected = "public Rdf p;/**/((Set<Object>)p.getValue(\"<dom:hasHistory>\"))"
+        + ".contains((c) -> (((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1));";
     assertEquals(expected, getForMarked(r, expected));
-    assertTrue(r.contains("Set<Rdf> cs;"));
   }
 
   @Test
   public void test2() {
     String in = "Quiz p; h = p.hasHistory; h.contains((c) -> c.turnId == 1);";
     String r = generate(in);
-    String expected = "Rdf p;/**/p.getValue(\"<dom:hasSport>\").contains((c) -> "
-            + "((String)((Rdf)c).getSingleValue(\"<dom:name>\")).equals(\"Game\"));";
+    String expected = "public Rdf p;public Set<Object> h;/**/h = ((Set<Object>)p.getValue(\"<dom:hasHistory>\"));"
+        + "h.contains((c) -> (((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1));";
     assertEquals(expected, getForMarked(r, expected));
-    assertTrue(r.contains("Set<Rdf> cs;"));
   }
 
 }

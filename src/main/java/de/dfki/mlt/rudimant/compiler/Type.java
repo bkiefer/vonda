@@ -148,6 +148,8 @@ public class Type {
    *  collection of things.
    */
   private boolean _castRequired = false;
+  
+  public boolean castRequired() { return _castRequired;};
 
   private Type() { }
 
@@ -509,6 +511,10 @@ public class Type {
         if (! first) sb.append(", ");
         if (pType == null)  // for visualization
           sb.append("null");
+        // if this exact parameter type can only be known by Java
+        // through casting, we need to put Object here
+        else if (pType._castRequired)
+          sb.append("Object");
         else if (pType.isRdfType())
           sb.append(pType.toJava());
         else

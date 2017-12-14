@@ -319,6 +319,7 @@ public class VisitorType implements RudiVisitor {
     Type[] parTypes = new Type[node.parameters.size()+ 1];
     int i = 1;
     for(String arg : node.parameters){
+      // TODO: might be necessary to set _castRequired to true in all parTypes
       mem.addVariableDeclaration(arg, node.parType);
       parTypes[i++] = node.parType;
     }
