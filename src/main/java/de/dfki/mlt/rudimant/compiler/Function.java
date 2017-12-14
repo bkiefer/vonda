@@ -59,7 +59,8 @@ class Function {
   }*/
   
   private Type findTypeForGeneric(Type concrete, Type withGeneric) {
-    if (withGeneric == null) return null;
+    if (withGeneric == null || concrete == null
+        || concrete.getParameterTypes().size() != withGeneric.getParameterTypes().size()) return null;
     // TODO: might want to extend this to other place holders than T
     if ("T".equals(withGeneric.get_name())) return concrete;
     if (withGeneric.getParameterTypes() != null) {

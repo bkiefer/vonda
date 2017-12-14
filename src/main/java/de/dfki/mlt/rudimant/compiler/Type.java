@@ -310,7 +310,7 @@ public class Type {
   }
   
   public List<Type> getParameterTypes() {
-    return _parameterTypes;
+    return _parameterTypes != null? _parameterTypes: new ArrayList<>();
   }
 
   public void setInnerType(Type inner) {
