@@ -720,11 +720,21 @@ public class VisitorType implements RudiVisitor {
   public void visitNode(ExpFuncCall node) {
     // test whether the given parameters are of the correct type
     List<Type> partypes = new ArrayList<Type>();
-    if(node.params != null)
-      for (RTExpression e : node.params) {
-        e.visit(this);
-        partypes.add(e.getType());
+    if(node.params != null) {
+      if (node.params.size() == 2 && node.params.get(1) instanceof ExpLambda) {
+        // Trick to explicitely find filter, contains, etc
+        node.params.get(0).visit(this);
+        partypes.add(node.params.get(0).getType());
+        ((ExpLambda)node.params.get(1)).parType = node.params.get(0).getType().getInnerType();
+        node.params.get(1).visit(this);
+        partypes.add(node.params.get(1).getType());
+      } else {
+        for (RTExpression e : node.params) {
+          e.visit(this);
+          partypes.add(e.getType());
+        }
       }
+    }
     // if this was used in a new Expression, handle it accordingly
     if(node.newexp){
       node.type = new Type(node.content);

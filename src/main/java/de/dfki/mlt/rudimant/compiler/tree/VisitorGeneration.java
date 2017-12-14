@@ -696,8 +696,9 @@ public class VisitorGeneration implements RudiVisitor {
     if (node.toAssign != null) {
       // if the (complete, not inner) type of right is not known to Java,
       // we need to cast to it
-      if (node.toAssign.type.castRequired())
+      if (node.toAssign.type.castRequired()) {
         out.append("(").append(node.toAssign.type.toJava()).append(")");
+      }
       node.toAssign.visitWithComments(this);
     } else {
       out.append(node.variable);
@@ -762,7 +763,8 @@ public class VisitorGeneration implements RudiVisitor {
     }
 
     // changed the direction of the for loop; should be enough
-    for (int i = to - 1; i > 0; i--) {
+    // for (int i = to - 1; i > 0; i--) {
+    for (int i = to - 1; i >= 0; i--) {
       if (node.parts.get(i) instanceof ExpPropertyAccess) {
         ExpPropertyAccess pa = (ExpPropertyAccess) node.parts.get(i);
         String cast = pa.getType().toJava();
@@ -771,9 +773,14 @@ public class VisitorGeneration implements RudiVisitor {
         out.append("((");
         out.append((!pa.functional) ? "Set<Object>" : cast);
         out.append(")");
+      }  else if (node.parts.get(i).getType().castRequired()) {
+        out.append("((");
+        out.append(node.parts.get(i).getType().toJava());
+        out.append(")");
       }
     }
     node.parts.get(0).visitWithComments(this);
+    if (node.parts.get(0).getType().castRequired()) out.append(")");
     Type currentType = ((RTExpression) node.parts.get(0)).type;
     for (int i = 1; i < to; i++) {
       RTExpression currentPart = node.parts.get(i);
@@ -789,6 +796,7 @@ public class VisitorGeneration implements RudiVisitor {
         out.append("))");
         currentType = pa.type;
       } else {
+        if (node.parts.get(i).getType().castRequired()) out.append(")");
         out.append(".");
         currentPart.visitWithComments(this);
         currentType = ((RTExpression) currentPart).type;
@@ -843,10 +851,7 @@ public class VisitorGeneration implements RudiVisitor {
     if (realOrigin != null) {
       out.append(lowerCaseFirst(realOrigin) + "." );
     }
-    if (node.type.castRequired())
-      out.append("((").append(node.type.toJava()).append(")");
     out.append(node.content);
-    if (node.type.castRequired()) out.append(")");
   }
 
   String stringEscape(String in) {

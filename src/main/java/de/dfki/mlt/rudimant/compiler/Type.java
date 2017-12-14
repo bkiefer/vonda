@@ -557,7 +557,7 @@ public class Type {
    */
   public boolean needsCast(Type right) {
     Type res = unifyTypes(right);
-    return ! res.equals(this);
+    return (! res.equals(this) || right._castRequired);
   }
 
   /** Only for the visualisation */
