@@ -66,4 +66,31 @@ public class LambdaTest {
     assertEquals(expected, getForMarked(r, expected));
   }
 
+  @Test
+  public void test3() {
+    String in = "Quiz p; h = filter(p.hasHistory, (c) -> c.turnId == 1);";
+    String r = generate(in);
+    String expected = "public Rdf p;List<Object> h;/**/h = filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
+        + " (c) -> (((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1));";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void test4() {
+    String in = "Quiz p; h = filter(p.hasHistory, (c) -> c.turnId == 1); x = h.get(1);";
+    String r = generate(in);
+    String expected = "public Rdf p;public List<Object> h;public Rdf x/**/h = filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
+        + " (c) -> (((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1)); x = h.get(1);";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void test5() {
+    String in = "Quiz p; h = p.hasHistory.filter((c) -> c.turnId == 1); x = h.get(1);";
+    String r = generate(in);
+    String expected = "public Rdf p;public List<Object> h;public Rdf x/**/h = ((Set<Object>)p.getValue(\"<dom:hasHistory>\")).filter("
+        + " (c) -> (((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1)); x = h.get(1);";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
 }
