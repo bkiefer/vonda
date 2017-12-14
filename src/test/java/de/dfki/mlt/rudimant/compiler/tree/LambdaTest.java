@@ -80,7 +80,7 @@ public class LambdaTest {
     String in = "Quiz p; h = filter(p.hasHistory, (c) -> c.turnId == 1); x = h.get(1);";
     String r = generate(in);
     String expected = "public Rdf p;public List<Object> h;public Rdf x;/**/h = filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
-        + " (c) -> (((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1)); x = (Rdf) h.get(1);";
+        + " (c) -> (((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1));x = (Rdf) ((Rdf)h.get(1));";
     assertEquals(expected, getForMarked(r, expected));
   }
 /* TODO: should this work or not?
