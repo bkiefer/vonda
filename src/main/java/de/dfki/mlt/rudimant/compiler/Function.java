@@ -109,6 +109,9 @@ class Function {
       /* if (calledUpon != null) {
         return calledUpon.getInnerType();
       } */
+      // if we did not find a concrete type representation, we are left with the generic
+      // one, what basically means that we have no clue
+      return Type.getNoType();
     }
     return _returnType;
   }

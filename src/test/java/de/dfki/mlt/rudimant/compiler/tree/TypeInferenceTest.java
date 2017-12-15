@@ -185,4 +185,16 @@ public class TypeInferenceTest {
     assertTrue(s.contains("public int sum1;"));
     assertTrue(s.contains("public int sum2;"));
   }
+
+  @Test
+  public void test14() {
+	// if there are field accesses to unknown Java classes involved, we do want to believe
+	// the user when it comes to type assumptions (!no casting to (Object /* (unknown) */) here)
+    String in = " SomeUnk nownClass = new Someunk(); String v = nownClass.something.get(i);";
+    String s = generate(in);
+    String expected = "nownClass = new Someunk();v = nownClass.something.get(i);";
+    assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("public SomeUnk nownClass;"));
+    assertTrue(s.contains("public String v;"));
+  }
 }
