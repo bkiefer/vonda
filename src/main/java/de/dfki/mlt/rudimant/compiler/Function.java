@@ -75,9 +75,9 @@ class Function {
   }
   
   private Type createTypeFromGeneric(Type concrete, Type withGeneric) {
-    if (withGeneric.toJava().equals("T")) return concrete;
-    // TODO: can this really happen?
-    String resultType = "T".equals(withGeneric.get_name())? concrete.toJava() : withGeneric.get_name();
+    if (withGeneric.isGeneric()) return concrete;
+    // TODO: assuming here that there cannot be generics like T<String>
+    String resultType = withGeneric.get_name();
     List<Type> inner = new ArrayList<>();
     for (int i = 0; i < withGeneric.getParameterTypes().size(); i++) {
       inner.add(createTypeFromGeneric(concrete, withGeneric.getParameterTypes().get(i)));
@@ -88,16 +88,14 @@ class Function {
   }
 
   public Type getReturnType(Type calledUpon, List<Type> partypes) {
-    String rn = _returnType.toJava();
     // TODO: THIS SEEMS TO BE A CRUDE HOAX
-    if (rn.contains("<T>") || rn.equals("T")){
+    if (_returnType.containsGeneric()){
       Type tType = null;
       if (calledUpon != null && canCallUpon(calledUpon)) {
         tType = findTypeForGeneric(calledUpon, _calledUpon);
       } else {
         for (int i = 0; i < _parameterTypes.size(); i++) {
-          if (_parameterTypes.get(i).toJava().contains("<T>")
-              || _parameterTypes.get(i).toJava().equals("T")) {
+          if (_parameterTypes.get(i).containsGeneric()) {
             tType = findTypeForGeneric(partypes.get(i), _parameterTypes.get(i));
             break;
           }

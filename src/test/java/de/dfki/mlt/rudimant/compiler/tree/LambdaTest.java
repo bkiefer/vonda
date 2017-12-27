@@ -13,6 +13,8 @@ import java.util.Set;
 
 import org.junit.*;
 
+import de.dfki.mlt.rudimant.compiler.Type;
+
 /**
  *
  * @author christophe
@@ -92,6 +94,29 @@ public class LambdaTest {
         + " (c) -> (((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1));x = (Rdf) ((Rdf)h.get(1));y = (Rdf) ((Rdf)h.get(2));";
     assertEquals(expected, getForMarked(r, expected));
   }
+
+  @Test
+  public void test6() {
+    String in = "List<List<String>> l; h = filter(l, (e) -> contains(e, (f) -> f)); x = h.get(1);";
+    String r = generate(in);
+    String expected = "public List<List<String>> l;public List<String> h;public String x;/**/"
+        + "h = filter(l, (e) -> contains(e, (f) -> !f.isEmpty));x = h.get(1);";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void testSome() {
+    Type a = new Type("A");
+    assertTrue(a.isGeneric());
+    Type b = new Type("b");
+    assertFalse(b.isGeneric());
+    Type c = new Type("Set<C>");
+    assertTrue(c.containsGeneric());
+    assertFalse(c.isGeneric());
+    Type d = new Type("Set<d>");
+    assertFalse(d.containsGeneric());
+  }
+  
 /* TODO: should this work or not?
   @Test
   public void test5() {

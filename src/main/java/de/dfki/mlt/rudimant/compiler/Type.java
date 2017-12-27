@@ -154,6 +154,9 @@ public class Type {
   private Type() { }
 
   private void rdfIfy() {
+    // this line was added only for testing purposes
+    if (PROXY == null) return;
+    
     if (typeCodes.containsKey(_name)) return;
     if (_name.charAt(0) == '<') {
       // xsd or RDF type
@@ -292,6 +295,20 @@ public class Type {
 
   public boolean isUnspecified() {
     return _name == null;
+  }
+  
+  public boolean isGeneric() {
+    return !isUnspecified() && _name.matches("[A-Z]");
+  }
+  
+  public boolean containsGeneric() {
+    if (_parameterTypes == null)
+      return isGeneric();
+    for (Type p : _parameterTypes) {
+      if (p.containsGeneric())
+        return true;
+    }
+    return false;
   }
 
   public RdfClass getRdfClass() { return _class; }
