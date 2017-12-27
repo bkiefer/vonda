@@ -107,12 +107,12 @@ public class LambdaTest {
   @Test
   public void testSome() {
     Type a = new Type("A");
-    assertTrue(a.isGeneric());
+    assertTrue(a.isUnaryGeneric());
     Type b = new Type("b");
-    assertFalse(b.isGeneric());
+    assertFalse(b.isUnaryGeneric());
     Type c = new Type("Set<C>");
     assertTrue(c.containsGeneric());
-    assertFalse(c.isGeneric());
+    assertFalse(c.isUnaryGeneric());
     Type d = new Type("Set<d>");
     assertFalse(d.containsGeneric());
   }

@@ -20,8 +20,10 @@ import de.dfki.mlt.rudimant.common.BasicInfo;
 import de.dfki.mlt.rudimant.common.ErrorInfo;
 import de.dfki.mlt.rudimant.common.ImportInfo;
 import de.dfki.mlt.rudimant.common.RuleInfo;
+import de.dfki.mlt.rudimant.compiler.tree.ExpFuncCall;
 import de.dfki.mlt.rudimant.compiler.tree.RTBlockNode;
 import de.dfki.mlt.rudimant.compiler.tree.ToplevelBlock;
+import de.dfki.mlt.rudimant.compiler.tree.VisitorType;
 
 /**
  * this is rudimants memory, used for type checking
@@ -304,5 +306,15 @@ public class Mem {
       current = current.getParent();
     ImportInfo info = (ImportInfo)current;
     info.getErrors().add(new ErrorInfo(errorMessage, location));
+  }
+  
+  public void resolveGenericTypes(ExpFuncCall func, VisitorType visitor) {
+    // idea: find those parameters that know their types and thereby resolve
+    // some of the uncertainty. Add that knowledge to genericToType.
+    // then, if this is not yet solved, let visitor visit the remaining
+    // uncertain elements. On its way, it should insert every knowledge piece
+    // from genericToType that is applicable.
+    // Do that again and again, until list of unknown generic nodes is empty
+    // or we do not find new information anymore
   }
 }
