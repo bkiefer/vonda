@@ -23,28 +23,37 @@ public class NewTest {
 
   @Test
   public void testRdfType(){
-    String conditionalExp = "new Activity;";
+    String src = "new Activity;";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(conditionalExp));
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(src));
     assertTrue(dtr instanceof ExpNew);
     assertTrue(((ExpNew)dtr).type.isRdfType());
   }
 
   @Test
   public void testJavaType() {
-    String conditionalExp = "new Integer();";
+    String src = "new Integer();";
 
-    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(conditionalExp));
+    RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(src));
     assertTrue(dtr instanceof ExpNew);
     assertTrue(((ExpNew)dtr).type.toJava().equals("Integer"));
   }
 
   @Test
   public void testNewArray() {
-    String conditionalExp = "x = new Integer[7];";
+    String src = "x = new Integer[7];";
 
-    String s = generate(conditionalExp);
+    String s = generate(src);
     String expected = "Integer[] x = new Integer[7];";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
+  @Test
+  public void testArrayInitialization() {
+    String src = "int[] x = { 1, 2 };";
+
+    String s = generate(src);
+    String expected = "int[] x = {1, 2};";
     assertEquals(expected, getForMarked(s, expected));
   }
 }

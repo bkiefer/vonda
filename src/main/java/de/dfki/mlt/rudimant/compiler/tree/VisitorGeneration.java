@@ -32,7 +32,7 @@ public class VisitorGeneration implements RudiVisitor {
 
   SilentWriter out;
   private Mem mem;
-  //private VisitorConditionLog condV;
+
   LinkedList<Token> collectedTokens;
 
   boolean whatToLog;
@@ -43,7 +43,7 @@ public class VisitorGeneration implements RudiVisitor {
   // to count the base terms when generating code for logging the rules
   int baseTerm;
 
-  // A kind of "dynamic bound" flag to suspend rule logging generation for
+  // A kind of "dynamically bound" flag to suspend rule logging generation for
   // ExpBoolean embedded in base terms
   private boolean ruleIfSuspended = false;
 
@@ -582,8 +582,21 @@ public class VisitorGeneration implements RudiVisitor {
 
   @Override
   public void visitNode(ExpListLiteral node) {
-    out.append(" new ").append(node.type.toConcreteCollection()).append("()");
+    if (node.type.isArray()) {
+      out.append("{");
+      boolean first = true;
+      for (RTExpression e : node.objects) {
+        if (! first) out.append(", ");
+        else first = false;
+        e.visitWithComments(this);
+      }
+      out.append("}");
+    } else {
+      out.append(" new ").append(node.type.toConcreteCollection()).append("()");
+    }
+
     /*
+    // This functionality is now in other form in visitNode(StatVarDef node)
     if (! node.objects.isEmpty()) {
       out.append("{{");
       for (RTExpression e : node.objects) {
@@ -706,7 +719,7 @@ public class VisitorGeneration implements RudiVisitor {
         ((ExpAssignment)node.toAssign).right instanceof ExpListLiteral) {
       ExpListLiteral listNode =
           (ExpListLiteral)((ExpAssignment)node.toAssign).right;
-      if (! listNode.objects.isEmpty()) {
+      if (!listNode.type.isArray() && ! listNode.objects.isEmpty()) {
         for (RTExpression e : listNode.objects) {
           out.append(node.variable).append(".add(");
           visitNode(e);
