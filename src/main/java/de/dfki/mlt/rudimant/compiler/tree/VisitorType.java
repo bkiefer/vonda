@@ -669,6 +669,7 @@ public class VisitorType implements RudiVisitor {
     partOfFieldAccess = true;
     for (int i = 1; i < node.parts.size(); ++i) {
       currentNode = node.parts.get(i);
+      /*
       if (currentType.isCollection()
           && currentNode instanceof ExpFuncCall
           && ! ((ExpFuncCall)currentNode).params.isEmpty()
@@ -676,6 +677,7 @@ public class VisitorType implements RudiVisitor {
         ((ExpLambda)((ExpFuncCall)currentNode).params.get(0)).parType =
         		currentType.getInnerType();
       }
+      */
       // if this is a funccall performed on anything, tell the function the type it was called on
       if(currentNode instanceof ExpFuncCall) {
         ((ExpFuncCall)currentNode).calledUpon = currentType;

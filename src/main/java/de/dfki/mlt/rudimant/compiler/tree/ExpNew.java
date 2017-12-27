@@ -24,12 +24,20 @@ public class ExpNew extends RTExpression {
    * @param params the parameters to the constructor call
    */
   public ExpNew(String toCreate, List<RTExpression> params){
-    type = new Type(toCreate);
-    this.params = params;
+    this(new Type(toCreate), params);
   }
 
   public ExpNew(String toCreate){
     this(toCreate, null);
+  }
+
+  public ExpNew(Type toCreate){
+    this(toCreate, null);
+  }
+
+  public ExpNew(Type type, List<RTExpression> params) {
+    this.type = type;
+    this.params = params;
   }
 
   @Override

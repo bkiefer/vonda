@@ -24,11 +24,11 @@ public class StatVarDef extends RTStatement {
   boolean varIsFinal;
   boolean isDefinition;
 
-  public StatVarDef(boolean isFinal, String type, String variable,
+  public StatVarDef(boolean isFinal, Type type, String variable,
       RTExpression assign) {
     this.varIsFinal = isFinal;
-    this.isDefinition = isFinal || type != null;
-    this.type = new Type(type);
+    this.isDefinition = isFinal || type.isNull();
+    this.type = type;
     this.variable = variable;
     this.toAssign = assign;
   }

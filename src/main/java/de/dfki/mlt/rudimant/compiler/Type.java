@@ -148,7 +148,7 @@ public class Type {
    *  collection of things.
    */
   private boolean _castRequired = false;
-  
+
   public boolean castRequired() { return _castRequired;};
 
   private Type() { }
@@ -208,6 +208,11 @@ public class Type {
     }
     splitIfy(typeSpec);
     rdfIfy();
+  }
+
+  public Type(String outer, Type ... inner) {
+    _name = outer;
+    _parameterTypes = Arrays.asList(inner);
   }
 
   public String get_name() {
@@ -308,7 +313,7 @@ public class Type {
       return _parameterTypes.get(0);
     return null;
   }
-  
+
   public List<Type> getParameterTypes() {
     return _parameterTypes != null? _parameterTypes: new ArrayList<>();
   }
@@ -317,7 +322,7 @@ public class Type {
     _parameterTypes = new ArrayList<>(1);
     _parameterTypes.add(inner);
   }
-  
+
   public void setParameterTypes(List<Type> params) {
     _parameterTypes = params;
   }

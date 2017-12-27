@@ -20,7 +20,7 @@ public class StatFor1 extends RTStatement {
   RTExpression increment;
   RTStatement statblock;
 
-  public StatFor1(StatVarDef assignment, ExpBoolean condition,
+  public StatFor1(StatVarDef assignment, RTExpression condition,
           RTExpression arithmetic, RTStatement statblock) {
     this.initialization = assignment;
     this.condition = condition;

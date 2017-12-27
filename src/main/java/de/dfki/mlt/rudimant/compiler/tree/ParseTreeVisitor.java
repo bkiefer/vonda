@@ -14,6 +14,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import de.dfki.mlt.rudimant.compiler.Type;
 import de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarParser;
 import de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarVisitor;
@@ -455,7 +456,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
           ctx.getChild(3).getText());
       var.setPosition(ctx.VARIABLE(0), currentClass);
       // FOR '(' (DEC_VAR | type_spec) VARIABLE ':' exp ')' loop_statement_block
-      return new StatFor2(ctx.getChild(2).getText(), var,
+      return new StatFor2(new Type(ctx.getChild(2).getText()), var,
           (RTExpression) visit(ctx.getChild(5)),
           visit(ctx.getChild(7)).ensureStatement()).setPosition(ctx, currentClass);
     } else if (ctx.getChild(2).getText().endsWith(";") ||
@@ -557,7 +558,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     if (firstPos < ctx.getChildCount() - 1) {
       toAssign = (RTExpression) visit(ctx.getChild(firstPos));
     }
-    return new StatVarDef(isFinal, type, varName, toAssign)
+    return new StatVarDef(isFinal, new Type(type), varName, toAssign)
         .setPosition(ctx, currentClass);
   }
 

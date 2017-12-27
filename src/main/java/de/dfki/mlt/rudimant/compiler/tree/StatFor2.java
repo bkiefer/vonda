@@ -29,7 +29,7 @@ public class StatFor2 extends RTStatement {
     varType = Type.getNoType();
   }
 
-  public StatFor2(String vType, ExpVariable v, RTExpression exp,
+  public StatFor2(Type vType, ExpVariable v, RTExpression exp,
       RTStatement stat) {
     var = v;
     initialization = exp;
@@ -37,7 +37,7 @@ public class StatFor2 extends RTStatement {
     if (vType.equals("var")) {
       varType = Type.getNoType();
     } else {
-      varType = new Type(vType);
+      varType = vType;
     }
   }
 

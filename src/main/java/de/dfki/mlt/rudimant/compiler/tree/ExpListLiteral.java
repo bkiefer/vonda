@@ -5,7 +5,7 @@
  */
 package de.dfki.mlt.rudimant.compiler.tree;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.dfki.mlt.rudimant.compiler.Type;
 
@@ -15,9 +15,9 @@ import de.dfki.mlt.rudimant.compiler.Type;
  */
 public class ExpListLiteral extends RTExpression {
 
-  ArrayList<RTExpression> objects;
+  List<RTExpression> objects;
 
-  public ExpListLiteral(ArrayList<RTExpression> objs) {
+  public ExpListLiteral(List<RTExpression> objs) {
     objects = objs;
     // don't know what this is.
     type = Type.getNoType();

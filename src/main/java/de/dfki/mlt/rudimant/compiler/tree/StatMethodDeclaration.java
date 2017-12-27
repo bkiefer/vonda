@@ -45,6 +45,10 @@ public class StatMethodDeclaration extends RTStatement implements RTBlockNode {
     calledUpon = new Type(calledUpn);
   }
 
+  public void setVisibility(String vis) {
+    visibility = vis;
+  }
+
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);
