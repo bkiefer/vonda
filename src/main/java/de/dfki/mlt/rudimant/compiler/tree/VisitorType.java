@@ -720,6 +720,10 @@ public class VisitorType implements RudiVisitor {
    */
   @Override
   public void visitNode(ExpFuncCall node) {
+    // if there are generics involved in the computation of return type or parameter
+    // types for this function, we need to resolve them first
+    mem.resolveGenericTypes(node, this);
+    
     // test whether the given parameters are of the correct type
     List<Type> partypes = new ArrayList<Type>();
     if(node.params != null) {

@@ -154,6 +154,9 @@ public class Type {
   private Type() { }
 
   private void rdfIfy() {
+    // this line was added only for testing purposes
+    if (PROXY == null) return;
+    
     if (typeCodes.containsKey(_name)) return;
     if (_name.charAt(0) == '<') {
       // xsd or RDF type
@@ -297,6 +300,20 @@ public class Type {
 
   public boolean isUnspecified() {
     return _name == null;
+  }
+  
+  public boolean isUnaryGeneric() {
+    return !isUnspecified() && _name.matches("[A-Z]");
+  }
+  
+  public boolean containsGeneric() {
+    if (_parameterTypes == null)
+      return isUnaryGeneric();
+    for (Type p : _parameterTypes) {
+      if (p.containsGeneric())
+        return true;
+    }
+    return false;
   }
 
   public RdfClass getRdfClass() { return _class; }
@@ -570,5 +587,34 @@ public class Type {
     if (_class != null) return _class.toString();
     if (isRdfType()) return _name;
     return toJava();
+  }
+  
+  public static Type findTypeForGeneric(Type concrete, Type withGeneric) {
+    if (withGeneric == null || concrete == null
+        || concrete.getParameterTypes().size() != withGeneric.getParameterTypes().size()) return null;
+    // TODO: might want to extend this to other place holders than T
+    if (withGeneric.isUnaryGeneric()) return concrete;
+    if (withGeneric.getParameterTypes() != null) {
+      Type found = null;
+      for (int i = 0; i < withGeneric.getParameterTypes().size(); i++) {
+        found = findTypeForGeneric(concrete.getParameterTypes().get(i),
+            withGeneric.getParameterTypes().get(i));
+        if (found != null) return found;
+      }
+    }
+    return null;
+  }
+  
+  public static Type createTypeFromGeneric(Type concrete, Type withGeneric) {
+    if (withGeneric.isUnaryGeneric()) return concrete;
+    // TODO: assuming here that there cannot be generics like T<String>
+    String resultType = withGeneric.get_name();
+    List<Type> inner = new ArrayList<>();
+    for (int i = 0; i < withGeneric.getParameterTypes().size(); i++) {
+      inner.add(createTypeFromGeneric(concrete, withGeneric.getParameterTypes().get(i)));
+    }
+    Type result = new Type(resultType);
+    result.setParameterTypes(inner);
+    return result;
   }
 }

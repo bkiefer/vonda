@@ -57,54 +57,23 @@ class Function {
       return result;
     }
   }*/
-  
-  private Type findTypeForGeneric(Type concrete, Type withGeneric) {
-    if (withGeneric == null || concrete == null
-        || concrete.getParameterTypes().size() != withGeneric.getParameterTypes().size()) return null;
-    // TODO: might want to extend this to other place holders than T
-    if ("T".equals(withGeneric.get_name())) return concrete;
-    if (withGeneric.getParameterTypes() != null) {
-      Type found = null;
-      for (int i = 0; i < withGeneric.getParameterTypes().size(); i++) {
-        found = findTypeForGeneric(concrete.getParameterTypes().get(i),
-            withGeneric.getParameterTypes().get(i));
-        if (found != null) return found;
-      }
-    }
-    return null;
-  }
-  
-  private Type createTypeFromGeneric(Type concrete, Type withGeneric) {
-    if (withGeneric.toJava().equals("T")) return concrete;
-    // TODO: can this really happen?
-    String resultType = "T".equals(withGeneric.get_name())? concrete.toJava() : withGeneric.get_name();
-    List<Type> inner = new ArrayList<>();
-    for (int i = 0; i < withGeneric.getParameterTypes().size(); i++) {
-      inner.add(createTypeFromGeneric(concrete, withGeneric.getParameterTypes().get(i)));
-    }
-    Type result = new Type(resultType);
-    result.setParameterTypes(inner);
-    return result;
-  }
 
   public Type getReturnType(Type calledUpon, List<Type> partypes) {
-    String rn = _returnType.toJava();
     // TODO: THIS SEEMS TO BE A CRUDE HOAX
-    if (rn.contains("<T>") || rn.equals("T")){
+    if (_returnType.containsGeneric()){
       Type tType = null;
       if (calledUpon != null && canCallUpon(calledUpon)) {
-        tType = findTypeForGeneric(calledUpon, _calledUpon);
+        tType = Type.findTypeForGeneric(calledUpon, _calledUpon);
       } else {
         for (int i = 0; i < _parameterTypes.size(); i++) {
-          if (_parameterTypes.get(i).toJava().contains("<T>")
-              || _parameterTypes.get(i).toJava().equals("T")) {
-            tType = findTypeForGeneric(partypes.get(i), _parameterTypes.get(i));
+          if (_parameterTypes.get(i).containsGeneric()) {
+            tType = Type.findTypeForGeneric(partypes.get(i), _parameterTypes.get(i));
             break;
           }
         }
       }
       if (tType != null) {
-        return createTypeFromGeneric(tType, _returnType);
+        return Type.createTypeFromGeneric(tType, _returnType);
       }
       /* if (calledUpon != null) {
         return calledUpon.getInnerType();

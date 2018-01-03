@@ -24,6 +24,7 @@ public class Environment {
 
   private Map<String, Type> variableToType;
   private Map<String, String> variableOrigin;
+  private Map<String, Type> genericToType;
   private HashMap<String, Set<Function>> functions;
 
   public Environment() {
@@ -125,5 +126,15 @@ public class Environment {
       }
     }
     return null;
+  }
+  
+  public void addGeneric(String gen, Type concrete) {
+    genericToType.put(gen, concrete);
+  }
+  
+  public Type getTypeForGeneric(String gen) {
+    if (genericToType.containsKey(gen))
+      return genericToType.get(gen);
+    return Type.getNoType();
   }
 }
