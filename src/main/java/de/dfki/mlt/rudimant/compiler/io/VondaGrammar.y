@@ -4,6 +4,7 @@
 
 import java.io.Reader;
 import java.util.*;
+import de.dfki.mlt.rudimant.compiler.Type;
 import de.dfki.mlt.rudimant.compiler.tree.*;
 
 @SuppressWarnings({"serial", "unchecked", "fallthrough", "unused"})
@@ -14,7 +15,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %type <String> visibility_spec
 %type <LinkedList<RudiTree>> grammar_file
 %type <LinkedList<RTExpression>> nonempty_exp_list nonempty_args_list
-%type <LinkedList<RTExpression>> field_access_rest
+%type <LinkedList<RTExpression>> field_access_rest da_args
 %type <RTExpression> exp assgn_exp lambda_exp if_exp assignment
 %type <RTExpression> ConditionalOrExpression ConditionalAndExpression
 %type <RTExpression> dialogueact_exp InclusiveOrExpression
@@ -24,7 +25,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %type <RTExpression> LogicalUnaryExpression UnaryExpression PostfixExpression
 %type <RTExpression> PrimaryExpression NotJustName ComplexPrimary new_exp
 %type <RTExpression> ComplexPrimaryNoParenthesis field_access ArrayAccess
-%type <RTExpression> function_call simple_nofa_exp
+%type <RTExpression> function_call simple_nofa_exp da_token
 %type <StatVarDef> var_def
 %type <RTStatement> statement blk_statement set_operation
 %type <RTStatement> return_statement propose_statement timeout_statement
@@ -45,7 +46,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 
 %locations
 
-%define package "de.dfki.mlt.rudimant.compiler"
+%define package "de.dfki.mlt.rudimant.compiler.io"
 
 %define public
 
@@ -54,29 +55,41 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %define parse.error verbose
 
 // keywords
-%token IMPORT
-%token IF
-%token ELSE
-%token WHILE
-%token DO
-%token SWITCH
-%token CASE
-%token DEFAULT
-%token CONTINUE
 %token BREAK
 %token CANCEL
 %token CANCEL_ALL
-%token FOR
-%token NULL
-%token RETURN
-%token PUBLIC
-%token PROTECTED
-%token PRIVATE
-%token NEW
+%token CASE
+%token CONTINUE
+%token DEFAULT
+%token DO
+%token ELSE
 %token FINAL
+%token FOR
+%token IF
+%token IMPORT
+%token NEW
+%token NULL
+%token PRIVATE
 %token PROPOSE
+%token PROTECTED
+%token PUBLIC
+%token RETURN
+%token SWITCH
 %token TIMEOUT
 %token TIMEOUT_BEHAVIOUR
+%token WHILE
+
+%token ARROW
+%token ANDAND
+%token OROR
+%token EQEQ
+%token NOTEQ
+%token GTEQ
+%token LTEQ
+%token MINUSEQ
+%token PLUSEQ
+%token MINUSMINUS
+%token PLUSPLUS
 
 // real tokens
 %token < String > STRING
@@ -215,7 +228,9 @@ timeout_statement
   ;
 
 switch_statement
-  : SWITCH '(' exp ')' '{' switch_block '}' { }
+  : SWITCH '(' exp ')' '{' switch_block '}' {
+    $$ = new StatSwitch($3, $6);
+  }
   ;
 
 switch_block
@@ -321,20 +336,28 @@ args_list
 
 // add sth to a collection
 set_operation
-  : VARIABLE "+=" exp ';' {}
-  | VARIABLE "-=" exp ';' {}
-  | ArrayAccess "+=" exp ';' {}
-  | ArrayAccess "-=" exp ';' {}
-  | field_access "+=" exp ';' {}
-  | field_access "-=" exp ';' {}
+  : VARIABLE PLUSEQ exp ';' {
+    $$ = new StatSetOperation(new ExpVariable($1), true, $3);
+  }
+  | VARIABLE MINUSEQ exp ';' {
+    $$ = new StatSetOperation(new ExpVariable($1), false, $3);
+  }
+  | ArrayAccess PLUSEQ exp ';' { $$ = new StatSetOperation($1, true, $3); }
+  | ArrayAccess MINUSEQ exp ';' { $$ = new StatSetOperation($1, false, $3); }
+  | field_access PLUSEQ exp ';' { $$ = new StatSetOperation($1, true, $3); }
+  | field_access MINUSEQ exp ';' { $$ = new StatSetOperation($1, false, $3); }
   ;
 
 
 ////////////////// EXPRESSIONS ////////////////////////////////
 
 function_call
-  : VARIABLE '(' ')' {}
-  | VARIABLE '(' nonempty_args_list ')'  {}
+  : VARIABLE '(' ')' {
+    $$ = new ExpFuncCall($1, new LinkedList<RTExpression>(), false);
+  }
+  | VARIABLE '(' nonempty_args_list ')'  {
+    $$ = new ExpFuncCall($1, $3, false);
+  }
   ;
 
 nonempty_args_list
@@ -367,14 +390,14 @@ exp
   ;
 
 ConditionalOrExpression
-  : ConditionalOrExpression "||" ConditionalAndExpression {
+  : ConditionalOrExpression OROR ConditionalAndExpression {
     $$ = new ExpBoolean($1, $3, "||");
   }
   | ConditionalAndExpression { $$ = $1; }
   ;
 
 ConditionalAndExpression
-  : ConditionalAndExpression "&&" InclusiveOrExpression {
+  : ConditionalAndExpression ANDAND InclusiveOrExpression {
     $$ = new ExpBoolean($1, $3, "&&");
   }
   | InclusiveOrExpression { $$ = $1; }
@@ -403,10 +426,10 @@ AndExpression
 
 EqualityExpression
   : RelationalExpression { $$ = $1; }
-  | EqualityExpression "==" RelationalExpression {
+  | EqualityExpression EQEQ RelationalExpression {
     $$ = new ExpBoolean($1, $3, "==");
   }
-  | EqualityExpression "!=" RelationalExpression {
+  | EqualityExpression NOTEQ RelationalExpression {
     $$ = new ExpBoolean($1, $3, "!=");
   }
   ;
@@ -419,10 +442,10 @@ RelationalExpression
   | RelationalExpression '>' AdditiveExpression {
     $$ = new ExpBoolean($1, $3, ">");
   }
-  | RelationalExpression ">=" AdditiveExpression {
+  | RelationalExpression GTEQ AdditiveExpression {
     $$ = new ExpBoolean($1, $3, ">=");
   }
-  | RelationalExpression "<=" AdditiveExpression {
+  | RelationalExpression LTEQ AdditiveExpression {
     $$ = new ExpBoolean($1, $3, "<=");
   }
   ;
@@ -463,10 +486,10 @@ LogicalUnaryExpression
   ;
 
 UnaryExpression
-  : "++" UnaryExpression {
+  : PLUSPLUS UnaryExpression {
     $$ = new ExpArithmetic($2, new ExpSingleValue("1", "int"), "+");
   }
-  | "--" UnaryExpression {
+  | MINUSMINUS UnaryExpression {
     $$ = new ExpArithmetic($2, new ExpSingleValue("1", "int"), "-");
   }
   | '+' CastExpression { $$ = new ExpArithmetic($2, null, "+"); }
@@ -582,32 +605,40 @@ new_exp
   ;
 
 lambda_exp
-  : '(' var_list ')' "->" exp {}
-  | '(' var_list ')' "->" block {}
-  | '(' ')' "->" exp {}
-  | '(' ')' "->" block {}
+  : '(' args_list ARROW exp {
+    $$ = new ExpLambda($2, new StatExpression($4));
+  }
+  | '(' args_list ARROW block {
+    $$ = new ExpLambda($2, $4);
+  }
+  | '(' ')' ARROW exp {
+    $$ = new ExpLambda(new LinkedList<>(), new StatExpression($4));
+  }
+  | '(' ')' ARROW block { $$ = new ExpLambda(new LinkedList<>(), $4); }
   ;
 
-var_list
-  : NotJustName
-  | var_list ',' NotJustName
-  ;
 
 dialogueact_exp
-  : '#' da_token '(' ')' {}
-  | '#' da_token '(' da_token da_args ')' {}
+  : '#' da_token '(' da_token ')' {
+    $$ = new ExpDialogueAct($2, $4, new LinkedList<RTExpression>());
+  }
+  | '#' da_token '(' da_token da_args ')' {
+    $$ = new ExpDialogueAct($2, $4, $5);
+  }
   ;
 
 da_token
-  : '^' exp {}
-  | VARIABLE {}
-  | STRING {}
-  | WILDCARD {}
+  : '^' exp { $$ = $2; }
+  | VARIABLE { $$ = $1; }
+  | STRING { $$ = $1; }
+  | WILDCARD { $$ = $1; }
   ;
 
 da_args
-  : ',' da_token '=' da_token da_args  {}
-  | %empty {}
+  : ',' da_token '=' da_token da_args  {
+    $$ = $5; $5.addFirst($4); $5.addFirst($2);
+  }
+  | %empty { new LinkedList<RTExpression>(); }
   ;
 
 
