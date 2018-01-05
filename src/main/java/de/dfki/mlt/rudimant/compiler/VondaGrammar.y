@@ -26,20 +26,21 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %type <RTExpression> ComplexPrimaryNoParenthesis field_access ArrayAccess
 %type <RTExpression> function_call simple_nofa_exp
 %type <StatVarDef> var_def
-%type <RTStatement> statement tl_statement set_operation
+%type <RTStatement> statement blk_statement set_operation
 %type <RTStatement> return_statement propose_statement timeout_statement
 %type <RTStatement> timeout_behaviour_statement while_statement for_statement
-%type <RTStatement> switch_statement
-%type <StatAbstractBlock> block opt_block
+%type <RTStatement> switch_statement switch_label
+%type <StatAbstractBlock> block opt_block switch_block
 %type <StatIf> if_statement
 %type <Import> imports
 %type <StatMethodDeclaration> method_declaration
 %type <List<String>> path
-%type <LinkedList<RTStatement>> statements
+%type <LinkedList<RTStatement>> statements switch_labels switch_cont
 %type <StatGrammarRule> grammar_rule
-%type <Type> type_spec parameterized_type
+%type <Type> type_spec parameterized_type class_spec
 %type <LinkedList<Type>> type_spec_list
 %type <ExpSingleValue> Literal
+%type <LinkedList> args_list
 
 
 %locations
@@ -133,7 +134,7 @@ statement
   | switch_statement { $$ = $1; }
   ;
 
-tl_statement
+blk_statement
   : statement { $$ = $1; }
   | var_def { $$ = $1; }
   ;
@@ -144,8 +145,8 @@ block
   : '{' statements '}' { $$ = new StatAbstractBlock($2, true); }
   | '{' '}' { $$ = new StatAbstractBlock(new ArrayList<RTStatement>(), true); }
 
-statements: tl_statement { $$ = new LinkedList<RTStatement>(){{ add($1); }}; }
-  | tl_statement statements { $$ = $2; $2.addFirst($1); }
+statements: blk_statement { $$ = new LinkedList<RTStatement>(){{ add($1); }}; }
+  | blk_statement statements { $$ = $2; $2.addFirst($1); }
   ;
 
 grammar_rule
@@ -214,34 +215,40 @@ timeout_statement
   ;
 
 switch_statement
-  : SWITCH '(' exp ')' '{' switch_block '}' {}
+  : SWITCH '(' exp ')' '{' switch_block '}' { }
   ;
 
 switch_block
-  : switch_groups {}
-  | switch_labels {}
-  | switch_groups switch_labels {}
+  : switch_labels switch_cont {
+    List<RTStatement> elts = $1;
+    elts.addAll($2);
+    $$ = new StatAbstractBlock(elts, false);
+  }
   ;
 
-switch_group
-  : switch_labels statements {}
-  ;
-
-switch_groups
-  : switch_group {}
-  | switch_group switch_groups {}
+switch_cont
+  : statements switch_labels switch_cont { }
+  | %empty { $$ = new ArrayList<RTExpression>(); }
   ;
 
 switch_labels
-  : switch_label switch_labels {}
-  | switch_label {}
+  : switch_label switch_labels { $$ = $2; $2.addFirst($1); }
+  | switch_label { $$ = new LinkedList<RTStatement>(){{ add($1); }}; }
   ;
 
 switch_label
-  : CASE STRING ':' {}
-  | CASE INT ':' {}
-  | CASE VARIABLE ':' {}
-  | DEFAULT ':' {}
+  : CASE STRING ':'   {
+    $$ = new ExpSingleValue("case " + $2 + ":", "label").ensureStatement();
+  }
+  | CASE INT ':'      {
+    $$ = new ExpSingleValue("case " + $2 + ":", "label").ensureStatement();
+  }
+  | CASE VARIABLE ':' {
+    $$ = new ExpSingleValue("case " + $2 + ":", "label").ensureStatement();
+  }
+  | DEFAULT ':'       {
+    $$ = new ExpSingleValue("default:", "label").ensureStatement();
+  }
   ;
 
 var_def
@@ -268,17 +275,33 @@ nonempty_exp_list
   ;
 
 method_declaration
-  : class_spec type_spec VARIABLE '(' ')' opt_block {}
-  | class_spec type_spec VARIABLE '(' args_list opt_block {}
-  | class_spec           VARIABLE '(' ')' opt_block {}
-  | class_spec           VARIABLE '(' args_list opt_block {}
-  |            type_spec VARIABLE '(' ')' opt_block {}
-  |            type_spec VARIABLE '(' args_list opt_block {}
-  |                      VARIABLE '(' ')' block {}
-  |                      VARIABLE '(' args_list block {}
+  : class_spec type_spec VARIABLE '(' ')' opt_block {
+    $$ = new StatMethodDeclaration("public", $2, $1, $3, null, $6);
+  }
+  | class_spec type_spec VARIABLE '(' args_list opt_block {
+    $$ = new StatMethodDeclaration("public", $2, $1, $3, $5, $6);
+  }
+  | class_spec           VARIABLE '(' ')' opt_block {
+    $$ = new StatMethodDeclaration("public", null, $1, $2, null, $5);
+  }
+  | class_spec           VARIABLE '(' args_list opt_block {
+    $$ = new StatMethodDeclaration("public", null, $1, $2, $4, $5);
+  }
+  |            type_spec VARIABLE '(' ')' opt_block {
+    $$ = new StatMethodDeclaration("public", $1, null, $2, null, $5);
+  }
+  |            type_spec VARIABLE '(' args_list opt_block {
+    $$ = new StatMethodDeclaration("public", $1, null, $2, $4, $5);
+  }
+  |                      VARIABLE '(' ')' block {
+    $$ = new StatMethodDeclaration("public", null, null, $1, null, $4);
+  }
+  |                      VARIABLE '(' args_list block {
+    $$ = new StatMethodDeclaration("public", null, null, $1, $3, $4);
+  }
   ;
 
-class_spec: '[' type_spec '.' ']' {}
+class_spec: '[' type_spec '.' ']' { $$ = $2; }
   ;
 
 opt_block
@@ -287,10 +310,12 @@ opt_block
   ;
 
 args_list
-  : VARIABLE ')' {}
-  | type_spec VARIABLE ')'
-  | VARIABLE ',' args_list {}
-  | type_spec VARIABLE ',' args_list {}
+  : VARIABLE ')' { $$ = new LinkedList(){{ add($1); }}; }
+  | type_spec VARIABLE ')' { $$ = new LinkedList(){{ add($1); add($2); }}; }
+  | VARIABLE ',' args_list { $$ = $3; $3.addFirst($1); }
+  | type_spec VARIABLE ',' args_list {
+    $$ = $4; $4.addFirst($2); $4.addFirst($1);
+  }
   ;
 
 

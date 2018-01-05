@@ -8,6 +8,7 @@ package de.dfki.mlt.rudimant.compiler.tree;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import de.dfki.mlt.rudimant.compiler.Environment;
 import de.dfki.mlt.rudimant.compiler.Type;
@@ -23,16 +24,28 @@ public class StatMethodDeclaration extends RTStatement implements RTBlockNode {
   String visibility;
   Type return_type;
   String name;
-  ArrayList<String> parameters;
-  ArrayList<Type> partypes;
+  List<String> parameters;
+  List<Type> partypes;
   RTStatement block;
   // the type this method should be called upon; null if the method
   // is rudi-defined!
   Type calledUpon;
 
+  public StatMethodDeclaration(String vis, Type ret_type,
+      Type calledUpn, String nm, List parmsAndTypes,
+      RTStatement blk) {
+    visibility = vis;
+    return_type = ret_type == null ? Type.getNoType() : ret_type;
+    name = nm;
+    parameters = new ArrayList<>();
+    partypes = new ArrayList<>();
+    block = blk;
+    calledUpon = calledUpn == null ? Type.getNoType() : calledUpn;
+  }
+
   public StatMethodDeclaration(String vis, String ret_type,
-		  String calledUpn, String nm, ArrayList<String> parms,
-		  ArrayList<String> parmTypes, RTStatement blk) {
+		  String calledUpn, String nm, List<String> parms,
+		  List<String> parmTypes, RTStatement blk) {
     visibility = vis;
     return_type = new Type(ret_type);
     name = nm;
