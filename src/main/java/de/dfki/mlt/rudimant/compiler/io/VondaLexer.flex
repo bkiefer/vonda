@@ -20,6 +20,9 @@
 
 package de.dfki.mlt.rudimant.compiler.io;
 
+import de.dfki.mlt.rudimant.compiler.Position;
+import de.dfki.mlt.rudimant.compiler.tree.ExpSingleValue;
+
 %%
 
 %public
@@ -35,7 +38,73 @@ package de.dfki.mlt.rudimant.compiler.io;
 %byaccj
 
 %{
+  private Object yylval;
+  private StringBuffer string;
 
+  private int charLiteral(String charval) {
+    yylval = new ExpSingleValue(charval, "char");
+    return VondaGrammar.Lexer.OTHER_LITERAL;
+  }
+
+  private int intLiteral(String intval) {
+    yylval = new ExpSingleValue(intval, "int");
+    return VondaGrammar.Lexer.INT;
+  }
+
+  private int floatLiteral(String floatval) {
+    yylval = new ExpSingleValue(floatval, "float");
+    return VondaGrammar.Lexer.OTHER_LITERAL;
+  }
+
+  private int booleanLiteral(String boolval) {
+    yylval = new ExpSingleValue(boolval, "boolean");
+    return VondaGrammar.Lexer.OTHER_LITERAL;
+  }
+
+  /**
+   * Method to retrieve the beginning position of the last scanned token.
+   * @return the position at which the last scanned token starts.
+   */
+  public Position getStartPos() {
+    return null;
+  }
+
+  /**
+   * Method to retrieve the ending position of the last scanned token.
+   * @return the first position beyond the last scanned token.
+   */
+  public Position getEndPos() {
+    return null;
+  }
+
+  /**
+   * Method to retrieve the semantic value of the last scanned token.
+   * @return the semantic value of the last scanned token.
+   */
+  public Object getLVal() {
+    Object result = yylval;
+    yylval = null;
+    return result;
+  }
+
+  /**
+   * Entry point for the scanner.  Returns the token identifier corresponding
+   * to the next token and prepares to return the semantic value
+   * and beginning/ending positions of the token.
+   * @return the token identifier corresponding to the next token.
+   */
+  //    int yylex() throws java.io.IOException {    }
+
+  /**
+   * Entry point for error reporting.  Emits an error
+   * referring to the given location in a user-defined way.
+   *
+   * @param loc The location of the element to which the
+   *                error message is related
+   * @param msg The string for the error message.
+   */
+  public void yyerror (VondaGrammar.Location loc, String msg) {
+  }
 %}
 
 /* main character classes */
@@ -106,15 +175,14 @@ SingleCharacter = [^\r\n\'\\]
   "protected"                    { return VondaGrammar.Lexer.PROTECTED; }
   "public"                       { return VondaGrammar.Lexer.PUBLIC; }
   "return"                       { return VondaGrammar.Lexer.RETURN; }
-  "short"                        { return VondaGrammar.Lexer.SHORT; }
   "switch"                       { return VondaGrammar.Lexer.SWITCH; }
   "timeout"                      { return VondaGrammar.Lexer.TIMEOUT; }
   "timeout_behaviour"            { return VondaGrammar.Lexer.TIMEOUT_BEHAVIOUR; }
   "while"                        { return VondaGrammar.Lexer.WHILE; }
 
   /* boolean literals */
-  "true"                         { return VondaGrammar.Lexer.BOOLEAN_LITERAL, true; }
-  "false"                        { return VondaGrammar.Lexer.BOOLEAN_LITERAL, false; }
+  "true"                         |
+  "false"                        { return booleanLiteral(yytext()); }
 
   /* null literal */
   "null"                         { return VondaGrammar.Lexer.NULL; }
@@ -186,20 +254,20 @@ SingleCharacter = [^\r\n\'\\]
 
   /* This is matched together with the minus, because the number is too big to
      be represented by a positive integer. */
-  "-2147483648"                  { return symbol(INTEGER_LITERAL, new Integer(Integer.MIN_VALUE)); }
+  "-2147483648"                  { return intLiteral(yytext()); }
 
-  {DecIntegerLiteral}            { return symbol(INTEGER_LITERAL, new Integer(yytext())); }
-  {DecLongLiteral}               { return symbol(INTEGER_LITERAL, new Long(yytext().substring(0,yylength()-1))); }
+  {DecIntegerLiteral}            { return intLiteral(yytext()); }
+  {DecLongLiteral}               { return intLiteral(yytext()); }
 
-  {HexIntegerLiteral}            { return symbol(INTEGER_LITERAL, new Integer((int) parseLong(2, yylength(), 16))); }
-  {HexLongLiteral}               { return symbol(INTEGER_LITERAL, new Long(parseLong(2, yylength()-1, 16))); }
+  {HexIntegerLiteral}            { return intLiteral(yytext()); }
+  {HexLongLiteral}               { return intLiteral(yytext()); }
 
-  {OctIntegerLiteral}            { return symbol(INTEGER_LITERAL, new Integer((int) parseLong(0, yylength(), 8))); }
-  {OctLongLiteral}               { return symbol(INTEGER_LITERAL, new Long(parseLong(0, yylength()-1, 8))); }
+  {OctIntegerLiteral}            { return intLiteral(yytext()); }
+  {OctLongLiteral}               { return intLiteral(yytext()); }
 
-  {FloatLiteral}                 { return symbol(FLOATING_POINT_LITERAL, new Float(yytext().substring(0,yylength()-1))); }
-  {DoubleLiteral}                { return symbol(FLOATING_POINT_LITERAL, new Double(yytext())); }
-  {DoubleLiteral}[dD]            { return symbol(FLOATING_POINT_LITERAL, new Double(yytext().substring(0,yylength()-1))); }
+  {FloatLiteral}                 { return floatLiteral(yytext()); }
+  {DoubleLiteral}                { return floatLiteral(yytext()); }
+  {DoubleLiteral}[dD]            { return floatLiteral(yytext()); }
 
   /* comments */
   {Comment}                      { /* ignore */ }
@@ -208,25 +276,26 @@ SingleCharacter = [^\r\n\'\\]
   {WhiteSpace}                   { /* ignore */ }
 
   /* identifiers */
-  {Identifier}                   { return symbol(IDENTIFIER, yytext()); }
+  {Identifier}                   { yylval = yytext(); return VondaGrammar.Lexer.VARIABLE; }
 }
 
 <STRING> {
-  \"                             { yybegin(YYINITIAL); return symbol(STRING_LITERAL, string.toString()); }
+  \"                             { yybegin(YYINITIAL);
+                                   yylval = new ExpSingleValue(string.toString(), "String");
+                                   return VondaGrammar.Lexer.STRING; }
 
-  {StringCharacter}+             { string.append( yytext() ); }
+  {StringCharacter}+             |
 
   /* escape sequences */
-  "\\b"                          { string.append( '\b' ); }
-  "\\t"                          { string.append( '\t' ); }
-  "\\n"                          { string.append( '\n' ); }
-  "\\f"                          { string.append( '\f' ); }
-  "\\r"                          { string.append( '\r' ); }
-  "\\\""                         { string.append( '\"' ); }
-  "\\'"                          { string.append( '\'' ); }
-  "\\\\"                         { string.append( '\\' ); }
-  \\[0-3]?{OctDigit}?{OctDigit}  { char val = (char) Integer.parseInt(yytext().substring(1),8);
-                        				   string.append( val ); }
+  "\\b"                          |
+  "\\t"                          |
+  "\\n"                          |
+  "\\f"                          |
+  "\\r"                          |
+  "\\\""                         |
+  "\\'"                          |
+  "\\\\"                         |
+  \\[0-3]?{OctDigit}?{OctDigit}  { string.append( yytext() ); }
 
   /* error cases */
   \\.                            { throw new RuntimeException("Illegal escape sequence \""+yytext()+"\""); }
@@ -234,20 +303,18 @@ SingleCharacter = [^\r\n\'\\]
 }
 
 <CHARLITERAL> {
-  {SingleCharacter}\'            { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, yytext().charAt(0)); }
+  {SingleCharacter}\'            |
 
   /* escape sequences */
-  "\\b"\'                        { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\b');}
-  "\\t"\'                        { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\t');}
-  "\\n"\'                        { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\n');}
-  "\\f"\'                        { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\f');}
-  "\\r"\'                        { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\r');}
-  "\\\""\'                       { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\"');}
-  "\\'"\'                        { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\'');}
-  "\\\\"\'                       { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\\'); }
-  \\[0-3]?{OctDigit}?{OctDigit}\' { yybegin(YYINITIAL);
-			                              int val = Integer.parseInt(yytext().substring(1,yylength()-1),8);
-			                            return symbol(CHARACTER_LITERAL, (char)val); }
+  "\\b"\'                        |
+  "\\t"\'                        |
+  "\\n"\'                        |
+  "\\f"\'                        |
+  "\\r"\'                        |
+  "\\\""\'                       |
+  "\\'"\'                        |
+  "\\\\"\'                       |
+  \\[0-3]?{OctDigit}?{OctDigit}\' { yybegin(YYINITIAL); return charLiteral(yytext()); }
 
   /* error cases */
   \\.                            { throw new RuntimeException("Illegal escape sequence \""+yytext()+"\""); }
