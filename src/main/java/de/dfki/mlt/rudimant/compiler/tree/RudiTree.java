@@ -12,7 +12,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import de.dfki.mlt.rudimant.compiler.Location;
+import de.dfki.mlt.rudimant.common.Location;
 
 /**
  * all classes that can be created by the ParseTreeVisitor should implement this
