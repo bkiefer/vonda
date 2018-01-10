@@ -723,7 +723,7 @@ public class VisitorType implements RudiVisitor {
     // if there are generics involved in the computation of return type or parameter
     // types for this function, we need to resolve them first
     mem.resolveGenericTypes(node, this);
-    
+
     // test whether the given parameters are of the correct type
     List<Type> partypes = new ArrayList<Type>();
     if(node.params != null) {
@@ -857,6 +857,9 @@ public class VisitorType implements RudiVisitor {
     if (node.params != null) {
       for (RTExpression param : node.params)
         param.visit(this);
+    } else {
+      if (node.type.getRdfClass() == null)
+        typeError("new Rdf with unknown RDF class: " + node.type, node);
     }
   }
 

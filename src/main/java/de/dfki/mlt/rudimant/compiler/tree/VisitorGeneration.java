@@ -15,6 +15,7 @@ import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.mlt.rudimant.common.RuleInfo;
 import de.dfki.mlt.rudimant.compiler.Mem;
 import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
@@ -455,8 +456,10 @@ public class VisitorGeneration implements RudiVisitor {
       }
       out.append(node.type.isArray() ? ']' : ')');
     } else {
+      RdfClass clz = node.type.getRdfClass();
+      String clazz = (clz == null ? node.type.toJava() : clz.toString());
       accessTopLevelInstance();
-      out.append("_proxy.getClass(\"").append(node.type.getRdfClass().toString())
+      out.append("_proxy.getClass(\"").append(clazz)
          .append("\").getNewInstance(");
       accessTopLevelInstance();
       out.append("DEFNS)");

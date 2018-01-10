@@ -23,10 +23,6 @@
       <name>FORSCHUNGSSOFTWARE</name>
       <url>http://www.forschungssoftware.de/nexus/content/groups/public/</url>
     </repository>
-    <repository>
-      <id>local-repo</id>
-      <url>file://${basedir}/repo</url>
-    </repository>
   </repositories>
 
   <dependencies>
@@ -164,17 +160,20 @@
               <goal>single</goal>
             </goals>
             <configuration>
-              <finalName>vonda-${project.version}</finalName>
-              <attach>true</attach>
+              <finalName>vonda-compiler-${project.version}</finalName>
+              <attach>false</attach>
               <appendAssemblyId>false</appendAssemblyId>
               <archive>
                 <manifest>
                   <mainClass>de.dfki.mlt.rudimant.compiler.CompilerMain</mainClass>
                 </manifest>
               </archive>
-              <descriptorRefs>
+              <descriptors>
+                <descriptor>src/assembly/fatjar.xml</descriptor>
+              </descriptors>
+              <!--<descriptorRefs>
                 <descriptorRef>jar-with-dependencies</descriptorRef>
-              </descriptorRefs>
+              </descriptorRefs>-->
             </configuration>
           </execution>
           <execution>
@@ -194,14 +193,21 @@
 
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.1</version>
+        <version>3.0.2</version>
+        <configuration>
+          <includes>
+            <include>**/agent/**/*</include>
+            <include>**/common/*</include>
+          </includes>
+        </configuration>
+        <!-- put the default-jar in the none phase to skip it from being created
         <executions>
           <execution>
             <id>default-jar</id>
-            <!-- put the default-jar in the none phase to skip it from being created -->
-            <phase>none</phase>
+                 <phase>none</phase>
           </execution>
         </executions>
+        -->
       </plugin>
 
       <plugin>
@@ -232,21 +238,6 @@
             <log4j.configuration>file:${project.build.testSourceDirectory}/../resources/log4j.properties</log4j.configuration>
           </systemPropertyVariables>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>2.1.2</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
 
       <plugin>

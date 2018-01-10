@@ -1,7 +1,5 @@
 package de.dfki.mlt.rudimant.common;
 
-import de.dfki.mlt.rudimant.compiler.Location;
-
 public class ErrorInfo {
   private Location _location;
 

@@ -18,6 +18,7 @@ import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
+import de.dfki.mlt.rudimant.common.Location;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
 
 public class RudimantCompiler {
