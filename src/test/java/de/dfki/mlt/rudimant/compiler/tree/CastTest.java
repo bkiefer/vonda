@@ -62,9 +62,9 @@ public class CastTest {
     String in = "DiabetesEducation activity; String currentAsker = \"bla\"; if "
             + "(activity.shortCode != currentAsker) {}";
     String s = generate(in);
-    String expected = "Rdf activity;String currentAsker = \"bla\";if ((! "
+    String expected = "Rdf activity;String currentAsker = \"bla\";if (! "
         + "(((String)activity.getSingleValue(\"<edu:shortCode>\"))"
-        + ".equals(currentAsker)))) { }";
+        + ".equals(currentAsker))) { }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -97,8 +97,8 @@ public class CastTest {
   public void test4() {
      String in = "Activity activity; bool = (activity.status == \"gameProposed\");";
     String s = generate(in);
-    String expected = "Rdf activity;boolean bool = ((((String)activity"
-            + ".getSingleValue(\"<dom:status>\")).equals(\"gameProposed\")));";
+    String expected = "Rdf activity;boolean bool = (((String)activity"
+            + ".getSingleValue(\"<dom:status>\")).equals(\"gameProposed\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -114,8 +114,8 @@ public class CastTest {
   public void test6() {
     String in = "Child user; user.isLocatedAt == toRdf(\"<dom:Home>\");";
     String s = generate(in);
-    String expected = "Rdf user;(((Rdf)user.getSingleValue(\"<dom:isLocatedAt>\"))"
-        + ".equals(toRdf(\"<dom:Home>\")));";
+    String expected = "Rdf user;((Rdf)user.getSingleValue(\"<dom:isLocatedAt>\"))"
+        + ".equals(toRdf(\"<dom:Home>\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -132,8 +132,8 @@ public class CastTest {
   public void test7() {
     String in = "Child user; b = (user.forename == \"John\");";
     String s = generate(in);
-    String expected = "Rdf user;boolean b = ((((String)user"
-            + ".getSingleValue(\"<dom:forename>\")).equals(\"John\")));";
+    String expected = "Rdf user;boolean b = (((String)user"
+            + ".getSingleValue(\"<dom:forename>\")).equals(\"John\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -158,7 +158,7 @@ public class CastTest {
   public void test10() {
     String in = "DialogueAct a; DialogueAct b; boolean isSmaller; isSmaller = a<b;";
     String s = generate(in);
-    String expected = "DialogueAct a;DialogueAct b;boolean isSmaller;isSmaller = (a.strictlySubsumes(b));";
+    String expected = "DialogueAct a;DialogueAct b;boolean isSmaller;isSmaller = a.strictlySubsumes(b);";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -186,7 +186,7 @@ public class CastTest {
   public void test13() {
     String in = "DialogueAct a; DialogueAct b; boolean isGreater; isGreater = a>b;";
     String s = generate(in);
-    String expected = "DialogueAct a;DialogueAct b;boolean isGreater;isGreater = (a.isStrictlySubsumedBy(b));";
+    String expected = "DialogueAct a;DialogueAct b;boolean isGreater;isGreater = a.isStrictlySubsumedBy(b);";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -260,7 +260,7 @@ public void testMultipleRdfAccess2() {
     // Test set field with POD type
     String in = "if (((Rdf)d) <= Child) return true;";
     String s = generate(in);
-    String expected = "if (((((Rdf)d)).getClazz().isSubclassOf(getRdfClass(\"Child\")))) return true;";
+    String expected = "if ((((Rdf)d)).getClazz().isSubclassOf(getRdfClass(\"Child\"))) return true;";
     assertEquals(expected, getForMarked(s, expected));
   }
 

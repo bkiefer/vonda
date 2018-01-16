@@ -30,7 +30,7 @@ public class StatementTest {
     String in = "Object foo;"
             + "while (foo.slot == 1){foo.slot = 2;}";
     String r = generate(in);
-    String expected = "Object foo;while ((foo.slot == 1)){ foo.slot = 2; }";
+    String expected = "Object foo;while (foo.slot == 1){ foo.slot = 2; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -55,7 +55,7 @@ public class StatementTest {
     String in = "Object foo;  if (foo.slot == 1){"
             + "foo.slot = 2;} else {foo.slot = 1;}";
     String r = generate(in);
-    String expected = "Object foo;if ((foo.slot == 1)) { foo.slot = 2; } else { foo.slot = 1; }";
+    String expected = "Object foo;if (foo.slot == 1) { foo.slot = 2; } else { foo.slot = 1; }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -64,7 +64,7 @@ public class StatementTest {
     String in = "Object foo;  "
             + "do {foo.slot = 2;} while (foo.slot == 1)";
     String r = generate(in);
-    String expected = "Object foo;do{ foo.slot = 2; } while ((foo.slot == 1));";
+    String expected = "Object foo;do{ foo.slot = 2; } while (foo.slot == 1);";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -111,7 +111,7 @@ public class StatementTest {
     String in = "Object foo;  "
             + "for (int i = 1; i <= 2; i = i+1){foo.slot = 1;}";
    String r = generate(in);
-   String expected = "Object foo;for ( int i = 1;(i <= 2);i = (i+1)){ foo.slot = 1; }";
+   String expected = "Object foo;for ( int i = 1;i <= 2;i = (i+1)){ foo.slot = 1; }";
    assertEquals(expected, getForMarked(r, expected));
  }
 
@@ -128,7 +128,7 @@ public class StatementTest {
  public void IfTest1(){
    String in = "String s = \"bla\"; if (s == null) {}";
    String r = generate(in);
-   String expected = "String s = \"bla\";if ((s == null)) {";
+   String expected = "String s = \"bla\";if (s == null) {";
    assertEquals(expected, getForMarked(r, expected));
  }
 
@@ -136,7 +136,7 @@ public class StatementTest {
  public void IfTest2(){
    String in = "String s = \"bla\"; if (s != null) {}";
    String r = generate(in);
-   String expected = "String s = \"bla\";if ((s != null)) {";
+   String expected = "String s = \"bla\";if (s != null) {";
    assertEquals(expected, getForMarked(r, expected));
  }
 
@@ -160,7 +160,7 @@ public class StatementTest {
  public void AssignConditionTest(){
    String in = "Child user; Agent agent; Robot I_ROBOT; agent = (agent == user) ? (Agent)I_ROBOT : (Agent)user;";
    String r = generate(in);
-   String expected = "Rdf user;Rdf agent;Rdf I_ROBOT;agent = (((agent.equals(user))) ? ((Rdf)I_ROBOT) : ((Rdf)user));";
+   String expected = "Rdf user;Rdf agent;Rdf I_ROBOT;agent = ((agent.equals(user)) ? ((Rdf)I_ROBOT) : ((Rdf)user));";
    assertEquals(expected, getForMarked(r, expected));
  }
 

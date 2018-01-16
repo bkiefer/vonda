@@ -68,7 +68,7 @@ public class AdditionalTest {
         + "demo_rule: if (true) break demo_rule; "
         + "/*@ public String postBlock() { return \"postBlock\"; }@*/";
     String s = generate(stat);
-    String expected = "public String preBlock() { return \"preBlock\";} public int demo_rule(){ boolean[] __x0 = new boolean[1]; __x0[0] = true; logRule(0, __x0); demo_rule: if (__x0[0])break demo_rule; return 0; } public String postBlock() { return \"postBlock\"; } }";
+    String expected = "public String preBlock() { return \"preBlock\";} public int demo_rule(){ boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); demo_rule: if (__x0[0])break demo_rule; return 0; } public String postBlock() { return \"postBlock\"; } }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -80,6 +80,17 @@ public class AdditionalTest {
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));
     assertTrue(s.contains("int x;"));
+  }
+
+  // test single synthetic boolean in rule: check for base term handling
+  @Test
+  public void testSyntheticBaseTerm() {
+    String in = "a = 1; rule: if(a) a=7;";
+    String exp = "a = 1;res = rule(); if (res != 0) return (res - 1); public int rule(){ "
+        + "boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = a != 0); logRule(0, __x0); rule: if (__x0[0])a = 7; return 0; } }";
+
+    String s = generate(in);
+    assertEquals(exp, getForMarked(s, exp));
   }
 
 }

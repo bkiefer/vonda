@@ -30,7 +30,7 @@ public class ForStatementsTest {
                     "Iterator<DialogueAct> lastDAs();\n" +
                     "initiate_greet: if(true){ for(seat : getSeats()){} }";
     String s = generate(ifstat);
-    String expected = "public int initiate_greet(){ boolean[] __x0 = new boolean[1]; __x0[0] = true; logRule(0, __x0); initiate_greet: if (__x0[0]){ for (Object seat_outer : getSeats()) { Rdf seat = (Rdf)seat_outer; { } } } return 0; } }";
+    String expected = "public int initiate_greet(){ boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); initiate_greet: if (__x0[0]){ for (Object seat_outer : getSeats()) { Rdf seat = (Rdf)seat_outer; { } } } return 0; } }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -42,7 +42,7 @@ public class ForStatementsTest {
                     "  if(true){\n" +
                     "    for(k : kids()){}}";
     String s = generate(ifstat);
-    String expected = "public int initiate_greet(){ boolean[] __x0 = new boolean[1]; __x0[0] = true; logRule(0, __x0); initiate_greet: if (__x0[0]){ for (Object k_outer : kids()) { Rdf k = (Rdf)k_outer; { } } } return 0; } }";
+    String expected = "public int initiate_greet(){ boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); initiate_greet: if (__x0[0]){ for (Object k_outer : kids()) { Rdf k = (Rdf)k_outer; { } } } return 0; } }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -52,7 +52,7 @@ public class ForStatementsTest {
             "for(s : getI()){"
             + "label: if(true) {s = null;}}";
     String s = generate(ifstat);
-    String expected = "for (Object s_outer : getI()) { Object s = (Object)s_outer; { // Rule label boolean[] __x0 = new boolean[1]; __x0[0] = true; logRule(0, __x0); label: if (__x0[0]){ s = null; } } } }";
+    String expected = "for (Object s_outer : getI()) { Object s = (Object)s_outer; { // Rule label boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); label: if (__x0[0]){ s = null; } } } }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -60,7 +60,7 @@ public class ForStatementsTest {
   public void test4() {
     String stat = "for (int i = 0; i < 10; i++){}";
     String s = generate(stat);
-    String expected = "for ( int i = 0;(i < 10);i = (i+1)){ }";
+    String expected = "for ( int i = 0;i < 10;i = (i+1)){ }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -77,7 +77,7 @@ public class ForStatementsTest {
   public void testWhile() {
     String stat = "{ int n = 0; while ((n = random(7)) == correct) { n++; } }";
     String s = generate(stat);
-    String expected = "{ int n = 0;while (((n = random(7)) == correct)){ n = (n+1); }";
+    String expected = "{ int n = 0;while ((n = random(7)) == correct){ n = (n+1); }";
     assertEquals(expected, getForMarked(s, expected));
   }
 

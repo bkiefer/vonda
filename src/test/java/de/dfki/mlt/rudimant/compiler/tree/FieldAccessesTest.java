@@ -24,7 +24,7 @@ public class FieldAccessesTest {
 	  public void testFieldAccess1() {
 	    String in = "if (lastDA().name){}";
 	    String s = generate(in);
-	    String expected = "if ((lastDA() != null && lastDA().hasSlot(\"name\")))";
+	    String expected = "if (lastDA() != null && lastDA().hasSlot(\"name\"))";
 	    assertEquals(expected, getForMarked(s, expected));
 	  }
 
@@ -32,8 +32,8 @@ public class FieldAccessesTest {
 	  public void testFieldAccess2() {
 	    String in = "if(! c.user.personality.nonchalance ){}";
 	    String s = generate(in);
-	    String expected = "if (!((((c != null && c.user != null) && c.user.personality != null)"
-	    		+ " && c.user.personality.nonchalance != null)))";
+	    String expected = "if (!(c != null && c.user != null && c.user.personality != null"
+	    		+ " && c.user.personality.nonchalance != null))";
 	    assertEquals(expected, getForMarked(s, expected));
 	  }
 
@@ -41,9 +41,9 @@ public class FieldAccessesTest {
 	  public void testFieldAccess3() {
 	    String in = "Child c; yesterday = \"Lukas\"; if(c.name.equals(yesterday)){}";
 	    String s = generate(in);
-	    String expected = "Rdf c;String yesterday = \"Lukas\";if (((c != null &&"
-	        + " exists(((Set<Object>)c.getValue(\"<upper:name>\")))) &&"
-	    		+ " ((Set<Object>)c.getValue(\"<upper:name>\")).equals(yesterday)))";
+	    String expected = "Rdf c;String yesterday = \"Lukas\";if (c != null &&"
+	        + " exists(((Set<Object>)c.getValue(\"<upper:name>\"))) &&"
+	    		+ " ((Set<Object>)c.getValue(\"<upper:name>\")).equals(yesterday))";
 	    assertEquals(expected, getForMarked(s, expected));
 	  }
 

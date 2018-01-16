@@ -26,7 +26,7 @@ public class ComparisonTest {
   public void testGenerationComparisonPODPOD() {
     String in = "int i; long j; if (i == j) return true;";
     String r = generate(in);
-    String expected = "int i;long j;if ((i == j)) return true;";
+    String expected = "int i;long j;if (i == j) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -34,7 +34,7 @@ public class ComparisonTest {
   public void testGenerationComparisonPODContainer() {
     String in = "int i; Long j; if (i == j) return true;";
     String r = generate(in);
-    String expected = "int i;Long j;if ((i == j)) return true;";
+    String expected = "int i;Long j;if (i == j) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -42,7 +42,7 @@ public class ComparisonTest {
   public void testGenerationComparisonStringString() {
     String in = "String i; String j; if (i <= j) return true;";
     String r = generate(in);
-    String expected = "String i;String j;if ((i.compareTo(j) <= 0)) return true;";
+    String expected = "String i;String j;if (i.compareTo(j) <= 0) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -51,7 +51,7 @@ public class ComparisonTest {
     // maybe check all variants of comparison operators in the end
     String in = "String i; if (i <= #Accept(Return)) return true;";
     String r = generate(in);
-    String expected = "String i;if ((new DialogueAct(i).subsumes(new DialogueAct(\"Accept\", \"Return\")))) return true;";
+    String expected = "String i;if (new DialogueAct(i).subsumes(new DialogueAct(\"Accept\", \"Return\"))) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -59,7 +59,7 @@ public class ComparisonTest {
   public void testGenerationComparisonStringRdf() {
     String in = "String i; Child j; if (i <= j) return true;";
     String r = generate(in);
-    String expected = "String i;Rdf j;if ((i.getClazz().isSubclassOf(j.getClazz()))) return true;";
+    String expected = "String i;Rdf j;if (i.getClazz().isSubclassOf(j.getClazz())) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -67,7 +67,7 @@ public class ComparisonTest {
   public void testGenerationComparisonStringRdfClass() {
     String in = "String j; if (Child <= j) return true;";
     String r = generate(in);
-    String expected = "String j;if ((getRdfClass(\"Child\").isSubclassOf(j.getClazz()))) return true;";
+    String expected = "String j;if (getRdfClass(\"Child\").isSubclassOf(j.getClazz())) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -86,7 +86,7 @@ public class ComparisonTest {
     // other operators than == don't make sense here.
     String in = "Child a; Child b; if (a == b) return true;";
     String r = generate(in);
-    String expected = "Rdf a;Rdf b;if ((a.equals(b))) return true;";
+    String expected = "Rdf a;Rdf b;if (a.equals(b)) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -94,7 +94,7 @@ public class ComparisonTest {
   public void testGenerationComparisonRdfRdfClass() {
     String in = "Child j; if (Child <= j) return true;";
     String r = generate(in);
-    String expected = "Rdf j;if ((getRdfClass(\"Child\").isSubclassOf(j.getClazz()))) return true;";
+    String expected = "Rdf j;if (getRdfClass(\"Child\").isSubclassOf(j.getClazz())) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -103,7 +103,7 @@ public class ComparisonTest {
     // maybe check all variants of comparison operators in the end
     String in = "DialogueAct d; if (d >= #Accept(Return)) return true;";
     String r = generate(in);
-    String expected = "DialogueAct d;if ((d.isSubsumedBy(new DialogueAct(\"Accept\", \"Return\")))) return true;";
+    String expected = "DialogueAct d;if (d.isSubsumedBy(new DialogueAct(\"Accept\", \"Return\"))) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -112,8 +112,8 @@ public class ComparisonTest {
     // other operators than == don't make sense here.
     String in = "Child a; if (a.hasTreatment) return true;";
     String r = generate(in);
-    String expected = "Rdf a;if ((a != null &&"
-        + " ((Rdf)a.getSingleValue(\"<dom:hasTreatment>\")) != null)) return true;";
+    String expected = "Rdf a;if (a != null &&"
+        + " ((Rdf)a.getSingleValue(\"<dom:hasTreatment>\")) != null) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -122,8 +122,8 @@ public class ComparisonTest {
     // other operators than == don't make sense here.
     String in = "final Child a; if (a.age) return true;";
     String r = generate(in);
-    String expected = "final Rdf a;if ((a != null && "
-        + "exists(((Integer)a.getSingleValue(\"<dom:age>\"))))) return true;";
+    String expected = "final Rdf a;if (a != null && "
+        + "exists(((Integer)a.getSingleValue(\"<dom:age>\")))) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -132,7 +132,7 @@ public class ComparisonTest {
     // other operators than == don't make sense here.
     String in = "Child a; if (a.birthdate) return true;";
     String r = generate(in);
-    String expected = "Rdf a;if ((a != null && ((XsdDate)a.getSingleValue(\"<dom:birthdate>\")) != null)) return true;";
+    String expected = "Rdf a;if (a != null && ((XsdDate)a.getSingleValue(\"<dom:birthdate>\")) != null) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -141,7 +141,7 @@ public class ComparisonTest {
     // other operators than == don't make sense here.
     String in = "final Activity a; if (a.status) return true;";
     String r = generate(in);
-    String expected = "final Rdf a;if ((a != null && exists(((String)a.getSingleValue(\"<dom:status>\"))))) return true;";
+    String expected = "final Rdf a;if (a != null && exists(((String)a.getSingleValue(\"<dom:status>\")))) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -150,7 +150,7 @@ public class ComparisonTest {
     // other operators than == don't make sense here.
     String in = "Activity a; if (a.status != \"foo\") return true;";
     String r = generate(in);
-    String expected = "Rdf a;if ((! (((String)a.getSingleValue(\"<dom:status>\")).equals(\"foo\")))) return true;";
+    String expected = "Rdf a;if (! (((String)a.getSingleValue(\"<dom:status>\")).equals(\"foo\"))) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -159,6 +159,6 @@ public class ComparisonTest {
     // other operators than == don't make sense here.
     String in = "final Child c; if (c.hasBrother != null) return true;";
     String r = generate(in);
-    String expected = "final Rdf c;if ((((Set<Object>)c.getValue(\"<dom:hasBrother>\")) != null)) return true;";
+    String expected = "final Rdf c;if (((Set<Object>)c.getValue(\"<dom:hasBrother>\")) != null) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }}

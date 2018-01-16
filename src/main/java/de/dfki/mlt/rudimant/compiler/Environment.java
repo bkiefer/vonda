@@ -22,22 +22,31 @@ public class Environment {
 
   private static Logger logger = LoggerFactory.getLogger(Environment.class);
 
+  private Environment _parent;
+
   private Map<String, Type> variableToType;
   private Map<String, String> variableOrigin;
   private Map<String, Type> genericToType;
   private HashMap<String, Set<Function>> functions;
 
-  public Environment() {
+  public static Environment getEnvironment(Environment parent) {
+    // by copying the existing environment, we avoid searching through all
+    // lower environments at the cost of bigger space consumption
+    return parent == null ? new Environment() : parent.deepCopy();
+  }
+
+  private Environment() {
     variableToType = new HashMap<>();
     variableOrigin = new HashMap<>();
     functions = new HashMap<>();
   }
 
-  public Environment deepCopy() {
+  private Environment deepCopy() {
     Environment newEnv = new Environment();
     newEnv.variableOrigin.putAll(variableOrigin);
     newEnv.variableToType.putAll(variableToType);
     newEnv.functions.putAll(functions);
+    newEnv._parent = this;
     return newEnv;
   }
 
@@ -127,14 +136,19 @@ public class Environment {
     }
     return null;
   }
-  
+
   public void addGeneric(String gen, Type concrete) {
     genericToType.put(gen, concrete);
   }
-  
+
   public Type getTypeForGeneric(String gen) {
     if (genericToType.containsKey(gen))
       return genericToType.get(gen);
     return Type.getNoType();
+  }
+
+  /** Environment is a stack, return the parent of this environment */
+  public Environment getParent() {
+    return _parent;
   }
 }

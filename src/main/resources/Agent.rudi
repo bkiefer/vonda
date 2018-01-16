@@ -6,10 +6,9 @@
 [String]. boolean endsWith(String s);
 [String]. String substring(int i);
 [List<T>]. T get(int a);
-[List<T>]. void add(Object a);
-[Set<T>]. void add(Object a);
-[List<T>]. boolean contains(Object a);
-[Set<T>]. boolean contains(Object a);
+[Collection<T>]. void add(Object a);
+[Collection<T>]. boolean contains(Object a);
+[Collection<T>]. int size();
 
 // all Agent methods we should know
 
@@ -75,7 +74,7 @@ boolean all(Collection<T> coll, Function<Boolean, T> pred);
 List<T> filter(Collection<T> coll, Function<Boolean, T> pred);
 List<T> sort(Collection<T> coll, Function<Integer, T, T> c);
 Collection<T> map(Collection<S> coll, Function<T, S> f);
- 
+
 // all Agent variables we should know
 
 //RdfProxy _proxy;
