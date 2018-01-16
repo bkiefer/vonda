@@ -291,14 +291,19 @@ public class VisitorGeneration implements RudiVisitor {
     return (activeInfo != null && ! ruleIfSuspended);
   }
 
-  private void handleRuleLogging(ExpBoolean node) {
+  private boolean handleRuleLogging(ExpBoolean node) {
     if (collectTerms()) {
-      if (! isBooleanOperator(node.operator) || node.synthetic) {
-        out.append(activeInfo.resultVarName())
+      if (node.operator == null
+          || (! isBooleanOperator(node.operator))
+          || node.synthetic) {
+        out.append("(")
+           .append(activeInfo.resultVarName())
            .append('[').append(Integer.toString(baseTerm++)).append("] = ");
         ruleIfSuspended = true;
+        return true;
       }
     }
+    return false;
   }
 
   /** Treat the special case where we prepare for rule logging in this function
@@ -329,6 +334,7 @@ public class VisitorGeneration implements RudiVisitor {
    */
   @Override
   public void visitNode(ExpBoolean node) {
+    boolean closeParen = false;
     boolean oldSuspendState = ruleIfSuspended;
     if (node.right != null) { // binary expression?
       /* What combinations are we expecting?
@@ -340,8 +346,7 @@ public class VisitorGeneration implements RudiVisitor {
        * DA vs DA, DA vs String --> isSubsumed and the like.
        * Rdf == Rdf --> equals
        */
-      out.append("(");
-      handleRuleLogging(node);
+      closeParen = handleRuleLogging(node);
 
       if (isComparisonOperator(node.operator)
           && !node.left.type.isPODType() && !node.right.type.isPODType()) {
@@ -370,15 +375,19 @@ public class VisitorGeneration implements RudiVisitor {
         out.append(" " + node.operator + " ");
         visitExpBoolChild(node.right);
       }
-      out.append(")");
+      if (closeParen) out.append(")");
     } else { // unary boolean expression
       if (null == node.operator) {
+        closeParen = handleRuleLogging(node);
         // collectTerms is guaranteed to be false here!
-        visitExpBoolChild(node.left); //.visitWithComments(this);
+        node.left.visitWithComments(this);
+        if (closeParen) out.append(")");
       } else if (node.operator.equals("<>")) {
         // marker for generation, to probably wrap the right tests around?
         // collectTerms is guaranteed to be false here!
+        closeParen = handleRuleLogging(node);
         massageTest(node.left);
+        if (closeParen) out.append(")");
       } else {
         out.append(node.operator + '(');
         visitExpBoolChild(node.left);

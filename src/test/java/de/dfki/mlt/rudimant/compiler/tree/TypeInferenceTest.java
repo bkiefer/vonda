@@ -27,7 +27,7 @@ public class TypeInferenceTest {
     String boolexp = ""
             + "public void foo() { b = 5 < 1; }";
     String s = generate(boolexp);
-    String expected = "public void foo() { boolean b = (5 < 1);";
+    String expected = "public void foo() { boolean b = 5 < 1;";
     assertEquals(expected, getForMarked(s, expected));
 
 
@@ -114,8 +114,8 @@ public class TypeInferenceTest {
   public void test8() {
     String in = " QuizHistory q; if(q.correct) i = 7; ";
     String s = generate(in);
-    String expected = "public Rdf q;/**/if ((q != null && "
-        + "((Boolean)q.getSingleValue(\"<dom:correct>\")))) int i = 7;";
+    String expected = "public Rdf q;/**/if (q != null && "
+        + "((Boolean)q.getSingleValue(\"<dom:correct>\"))) int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("Rdf q;"));
   }
@@ -124,8 +124,8 @@ public class TypeInferenceTest {
   public void test9() {
     String in = "DiabetesEducation q;if(q.shortCode) i = 7; ";
     String s = generate(in);
-    String expected = "public Rdf q;/**/if ((q != null && "
-        + "exists(((String)q.getSingleValue(\"<edu:shortCode>\")))))"
+    String expected = "public Rdf q;/**/if (q != null && "
+        + "exists(((String)q.getSingleValue(\"<edu:shortCode>\"))))"
         + " int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("Rdf q;"));

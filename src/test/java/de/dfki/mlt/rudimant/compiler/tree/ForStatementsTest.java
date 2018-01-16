@@ -60,7 +60,7 @@ public class ForStatementsTest {
   public void test4() {
     String stat = "for (int i = 0; i < 10; i++){}";
     String s = generate(stat);
-    String expected = "for ( int i = 0;(i < 10);i = (i+1)){ }";
+    String expected = "for ( int i = 0;i < 10;i = (i+1)){ }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -77,7 +77,7 @@ public class ForStatementsTest {
   public void testWhile() {
     String stat = "{ int n = 0; while ((n = random(7)) == correct) { n++; } }";
     String s = generate(stat);
-    String expected = "{ int n = 0;while (((n = random(7)) == correct)){ n = (n+1); }";
+    String expected = "{ int n = 0;while ((n = random(7)) == correct){ n = (n+1); }";
     assertEquals(expected, getForMarked(s, expected));
   }
 

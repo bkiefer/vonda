@@ -82,4 +82,15 @@ public class AdditionalTest {
     assertTrue(s.contains("int x;"));
   }
 
+  // test single synthetic boolean in rule: check for base term handling
+  @Test
+  public void testSyntheticBaseTerm() {
+    String in = "a = 1; rule: if(a) a=7;";
+    String exp = "a = 1;res = rule(); if (res != 0) return (res - 1); public int rule(){ "
+        + "boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = a != 0); logRule(0, __x0); rule: if (__x0[0])a = 7; return 0; } }";
+
+    String s = generate(in);
+    assertEquals(exp, getForMarked(s, exp));
+  }
+
 }
