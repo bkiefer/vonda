@@ -384,8 +384,8 @@ public class VisitorGeneration implements RudiVisitor {
         if (closeParen) out.append(")");
       } else if (node.operator.equals("<>")) {
         // marker for generation, to probably wrap the right tests around?
-        // collectTerms is guaranteed to be false here!
         closeParen = handleRuleLogging(node);
+        // collectTerms is guaranteed to be false here!
         massageTest(node.left);
         if (closeParen) out.append(")");
       } else {
@@ -493,11 +493,8 @@ public class VisitorGeneration implements RudiVisitor {
     StatIf ifNode = node.ifstat;
     // first assign final result, then call log function, then execute if
     out.append(varName).append("[0] = ");
-    // if only one base term, avoid handling of base terms, since the top level
-    // result contains all the info. Only partly true if there's a negation,
-    // so i wonder if the condition should be different, or we want to remove
-    // this completely TODO: decide and fix
-    ruleIfSuspended = false ; // (activeInfo.noBaseTerms() == 1);
+
+    ruleIfSuspended = activeInfo == null ;
     baseTerm = 1;
     ifNode.condition.visitWithComments(this);
     out.append(";\n");
@@ -506,7 +503,7 @@ public class VisitorGeneration implements RudiVisitor {
        .append(", ").append(varName).append(");\n");
     out.append(node.label + ":\n");
     out.append("if (").append(varName).append("[0])");
-    activeInfo = null;
+    ruleIfSuspended = true;
 
     ifNode.statblockIf.visitWithComments(this);
     out.append("\n");
