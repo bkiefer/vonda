@@ -58,13 +58,12 @@ public class StatMethodDeclaration extends RTStatement implements RTBlockNode {
 
   // ==== IMPLEMENTATION OF RTBLOCKNODE =====================================
 
-  private Environment _localBindings, _parentBindings;
+  private Environment _localBindings;
 
-  public void setBindings(Environment parent, Environment local) {
-    _parentBindings = parent; _localBindings = local;
+  public Environment getParentBindings() { return _localBindings.getParent(); }
+
+  public Environment enterEnvironment(Environment parent) {
+    return _localBindings != null ? _localBindings
+        : (_localBindings = Environment.getEnvironment(parent));
   }
-
-  public Environment getBindings() { return _localBindings; }
-
-  public Environment getParentBindings() { return _parentBindings; }
 }

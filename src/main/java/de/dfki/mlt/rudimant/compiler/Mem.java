@@ -259,14 +259,7 @@ public class Mem {
   /** enter a new Environment (variable binding level) in TypeVisitor */
   public void enterEnvironment(RTBlockNode node) {
     logger.trace("Enter level {}", blockNesting);
-    // by copying the existing environment, we avoid searching through all
-    // lower environments at the cost of bigger space consumption
-    Environment newEnv = node.getBindings();
-    if (newEnv == null) {
-      newEnv = currentEnv == null ? new Environment() : currentEnv.deepCopy();
-      node.setBindings(currentEnv, newEnv);
-    }
-    currentEnv = newEnv;
+    currentEnv = node.enterEnvironment(currentEnv);
     ++blockNesting;
   }
 
@@ -304,7 +297,7 @@ public class Mem {
     ImportInfo info = (ImportInfo)current;
     info.getErrors().add(new ErrorInfo(errorMessage, location));
   }
-  
+
   public void resolveGenericTypes(ExpFuncCall func, VisitorType visitor) {
     // idea: find those parameters that know their types and thereby resolve
     // some of the uncertainty. Add that knowledge to genericToType.
