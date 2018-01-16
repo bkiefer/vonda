@@ -374,7 +374,7 @@ public class VisitorGeneration implements RudiVisitor {
     } else { // unary boolean expression
       if (null == node.operator) {
         // collectTerms is guaranteed to be false here!
-        node.left.visitWithComments(this);
+        visitExpBoolChild(node.left); //.visitWithComments(this);
       } else if (node.operator.equals("<>")) {
         // marker for generation, to probably wrap the right tests around?
         // collectTerms is guaranteed to be false here!

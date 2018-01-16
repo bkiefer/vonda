@@ -68,7 +68,7 @@ public class AdditionalTest {
         + "demo_rule: if (true) break demo_rule; "
         + "/*@ public String postBlock() { return \"postBlock\"; }@*/";
     String s = generate(stat);
-    String expected = "public String preBlock() { return \"preBlock\";} public int demo_rule(){ boolean[] __x0 = new boolean[1]; __x0[0] = true; logRule(0, __x0); demo_rule: if (__x0[0])break demo_rule; return 0; } public String postBlock() { return \"postBlock\"; } }";
+    String expected = "public String preBlock() { return \"preBlock\";} public int demo_rule(){ boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); demo_rule: if (__x0[0])break demo_rule; return 0; } public String postBlock() { return \"postBlock\"; } }";
     assertEquals(expected, getForMarked(s, expected));
   }
 

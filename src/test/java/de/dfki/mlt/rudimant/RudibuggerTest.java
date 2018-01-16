@@ -163,4 +163,33 @@ public class RudibuggerTest {
     String output = out.toString();
     assertEquals("(rule_two) FALSE: ![true: user]\n", output);
   }
+
+  @Test
+  public void testConvertedToBoolean() {
+    BasicInfo i = generateAndGetRulesInfo(new File(RUDIBUGGER_TEST_RES_DIR
+        + "convertedBoolTest/ConvertedBooleans.rudi"));
+    RuleLogger rl = new RuleLogger();
+    rl.setRootInfo(i);
+    rl.setPrinter(new DefaultLogger());
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    PrintStream pri = new PrintStream(out);
+    PrintStream old = System.out;
+    System.setOut(pri);
+    rl.logAllRules();
+    boolean[] res = { true, true } ;
+    rl.logRule(0, res);
+    System.setOut(old);
+    String output = out.toString();
+    assertEquals("(rule_one) TRUE: [true: a]\n", output);
+    out = new ByteArrayOutputStream();
+    pri = new PrintStream(out);
+    System.setOut(pri);
+    rl.logAllRules();
+    boolean[] res2 = { false, false } ;
+    rl.logRule(1, res2);
+    System.setOut(old);
+    output = out.toString();
+    assertEquals("(rule_two) FALSE: [false: b.forename]\n", output);
+  }
+
 }

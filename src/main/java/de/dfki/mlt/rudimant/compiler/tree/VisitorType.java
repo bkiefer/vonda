@@ -348,7 +348,7 @@ public class VisitorType implements RudiVisitor {
       mem.enterEnvironment(node);
     }
     StatIf ifNode = node.ifstat;
-    ifNode.condition.visit(this);
+    visitExpBoolChild(ifNode.condition);//.visit(this);
     activeInfo = null;
     ifNode.statblockIf.visit(this);
     if (ifNode.statblockElse != null) {
