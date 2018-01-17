@@ -44,10 +44,6 @@ public class VisitorGeneration implements RudiVisitor {
   // to count the base terms when generating code for logging the rules
   int baseTerm;
 
-  // A kind of "dynamically bound" flag to suspend rule logging generation for
-  // ExpBoolean embedded in base terms
-  private boolean ruleIfSuspended = false;
-
   // The active rule info when generating logging info for rules
   private RuleInfo activeInfo = null;
 
@@ -287,19 +283,15 @@ public class VisitorGeneration implements RudiVisitor {
     }
   }
 
-  private boolean collectTerms() {
-    return (activeInfo != null && ! ruleIfSuspended);
-  }
-
   private boolean handleRuleLogging(ExpBoolean node) {
-    if (collectTerms()) {
+    if (activeInfo != null) {
       if (node.operator == null
           || (! isBooleanOperator(node.operator))
           || node.synthetic) {
         out.append("(")
            .append(activeInfo.resultVarName())
            .append('[').append(Integer.toString(baseTerm++)).append("] = ");
-        ruleIfSuspended = true;
+        activeInfo = null;
         return true;
       }
     }
@@ -310,17 +302,17 @@ public class VisitorGeneration implements RudiVisitor {
    *  and then delegate to the "real" generation method
    */
   private void visitExpBoolChild(RudiTree node) {
-    boolean oldSuspendState = ruleIfSuspended;
-    boolean emitAssign = collectTerms() &&
+    RuleInfo info = activeInfo;
+    boolean emitAssign = activeInfo != null &&
         (! (node instanceof ExpBoolean) || ((ExpBoolean)node).synthetic);
     if (emitAssign) {
       out.append('(').append(activeInfo.resultVarName())
          .append('[').append(Integer.toString(baseTerm++)).append("] = ");
-      ruleIfSuspended = true;
+      activeInfo = null;
     }
     node.visitWithComments(this);
     if (emitAssign) out.append(')');
-    ruleIfSuspended = oldSuspendState;
+    activeInfo = info;
   }
 
   /** In case activeInfo is not null and ruleIfSuspended is false, we have to
@@ -335,7 +327,7 @@ public class VisitorGeneration implements RudiVisitor {
   @Override
   public void visitNode(ExpBoolean node) {
     boolean closeParen = false;
-    boolean oldSuspendState = ruleIfSuspended;
+    RuleInfo info = activeInfo;
     if (node.right != null) { // binary expression?
       /* What combinations are we expecting?
        * POD vs POD --> keep operator
@@ -395,7 +387,7 @@ public class VisitorGeneration implements RudiVisitor {
       }
     }
     // reset ruleIfSuspended to state when entering this method
-    ruleIfSuspended = oldSuspendState;
+    activeInfo = info;
   }
 
   @Override
@@ -477,7 +469,6 @@ public class VisitorGeneration implements RudiVisitor {
 
   @Override
   public void visitNode(StatGrammarRule node) {
-    activeInfo = mem.enterRule(node.ruleId);
     if (node.toplevel) {
       mem.enterEnvironment(node);
       // is a top level rule and will be converted to a method
@@ -486,6 +477,10 @@ public class VisitorGeneration implements RudiVisitor {
       // a sub-level rule: ordinary <if>
       out.append("// Rule ").append(node.label).append("\n");
     }
+    // generate output for rule logging. This is the "toplevel", because
+    // activeInfo is non-Null, the visit call to ifNode.condition will generate
+    // the appropriate assignments of baseterms to the bool array.
+    activeInfo = mem.enterRule(node.ruleId);
     String varName = activeInfo.resultVarName();
     out.append("boolean[] ").append(varName).append(" = new boolean[")
        .append(Integer.toString(activeInfo.noBaseTerms() + 1))
@@ -494,7 +489,6 @@ public class VisitorGeneration implements RudiVisitor {
     // first assign final result, then call log function, then execute if
     out.append(varName).append("[0] = ");
 
-    ruleIfSuspended = activeInfo == null ;
     baseTerm = 1;
     ifNode.condition.visitWithComments(this);
     out.append(";\n");
@@ -503,7 +497,7 @@ public class VisitorGeneration implements RudiVisitor {
        .append(", ").append(varName).append(");\n");
     out.append(node.label + ":\n");
     out.append("if (").append(varName).append("[0])");
-    ruleIfSuspended = true;
+    activeInfo = null;  // no more rule logging code from here on
 
     ifNode.statblockIf.visitWithComments(this);
     out.append("\n");
