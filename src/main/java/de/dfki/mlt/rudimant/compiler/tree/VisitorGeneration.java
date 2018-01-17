@@ -44,10 +44,6 @@ public class VisitorGeneration implements RudiVisitor {
   // to count the base terms when generating code for logging the rules
   int baseTerm;
 
-  // A kind of "dynamically bound" flag to suspend rule logging generation for
-  // ExpBoolean embedded in base terms
-  private boolean ruleIfSuspended = false;
-
   // The active rule info when generating logging info for rules
   private RuleInfo activeInfo = null;
 
@@ -242,7 +238,6 @@ public class VisitorGeneration implements RudiVisitor {
         ">", ".compareTo() > 0"
     };
     for(int i = 0; i < stri.length; i += 2) {
-
       striOpMap.put(stri[i], stri[i+1]);
     }
   }
@@ -287,40 +282,65 @@ public class VisitorGeneration implements RudiVisitor {
     }
   }
 
-  private boolean collectTerms() {
-    return (activeInfo != null && ! ruleIfSuspended);
+  /** Massage comparisons if necessary
+   * What combinations are we expecting?
+   * POD vs POD --> keep operator
+   * POD vs Container --> container may be null! Ignore for now?
+   * String vs String --> i.compareTo(j) < 0 etc.
+   * String vs DialogueAct --> convert String and apply DA vs DA (isSubsumed, etc.)
+   * String vs Rdf --> convert to RdfClass and use isSub/SuperclassOf
+   * DA vs DA, DA vs String --> isSubsumed and the like.
+   * Rdf == Rdf --> equals
+   */
+  private void massageComparison(ExpBoolean node) {
+    String operator = node.operator;
+    if (operator.equals("!=")) {
+      operator = "==";
+      out.append("! (");
+    }
+    // TODO: THERE'S A SPECIAL CASE IF BOTH ARE RDF AND OPERATOR IS ==
+    // THEN, IT SHOULD JUST BE a.equals(b)
+    Type resultType = assessTypes(node.left.type, node.right.type);
+    String newOp = massageOperator(operator, resultType);
+    int lastClosing = newOp.lastIndexOf(')');
+    String pref, suff;
+    if (lastClosing >= 0) {
+      pref = newOp.substring(0, lastClosing);
+      suff = newOp.substring(lastClosing);
+    } else {
+      pref = " " + newOp + " ";
+      suff = "";
+    }
+    this.generateAndMassageType(node.left, resultType, operator);
+    out.append(pref);
+    this.generateAndMassageType(node.right, resultType, operator);
+    out.append(suff);
+    if ("!=".equals(node.operator)) out.append(')');
   }
 
-  private boolean handleRuleLogging(ExpBoolean node) {
-    if (collectTerms()) {
-      if (node.operator == null
-          || (! isBooleanOperator(node.operator))
-          || node.synthetic) {
-        out.append("(")
-           .append(activeInfo.resultVarName())
-           .append('[').append(Integer.toString(baseTerm++)).append("] = ");
-        ruleIfSuspended = true;
-        return true;
-      }
+  private boolean handleRuleLogging(RudiTree node) {
+    if (activeInfo == null) return false;
+    if (node instanceof ExpBoolean) {
+      ExpBoolean n = (ExpBoolean)node;
+      if (! n.synthetic && n.operator != null && isBooleanOperator(n.operator))
+        return false;
     }
-    return false;
+    out.append("(")
+    .append(activeInfo.resultVarName())
+    .append('[').append(Integer.toString(baseTerm++)).append("] = ");
+    activeInfo = null;
+    return true;
   }
 
   /** Treat the special case where we prepare for rule logging in this function
    *  and then delegate to the "real" generation method
    */
   private void visitExpBoolChild(RudiTree node) {
-    boolean oldSuspendState = ruleIfSuspended;
-    boolean emitAssign = collectTerms() &&
-        (! (node instanceof ExpBoolean) || ((ExpBoolean)node).synthetic);
-    if (emitAssign) {
-      out.append('(').append(activeInfo.resultVarName())
-         .append('[').append(Integer.toString(baseTerm++)).append("] = ");
-      ruleIfSuspended = true;
-    }
+    RuleInfo info = activeInfo;
+    boolean closeParen = handleRuleLogging(node);
     node.visitWithComments(this);
-    if (emitAssign) out.append(')');
-    ruleIfSuspended = oldSuspendState;
+    if (closeParen) out.append(')');
+    activeInfo = info;
   }
 
   /** In case activeInfo is not null and ruleIfSuspended is false, we have to
@@ -334,68 +354,34 @@ public class VisitorGeneration implements RudiVisitor {
    */
   @Override
   public void visitNode(ExpBoolean node) {
-    boolean closeParen = false;
-    boolean oldSuspendState = ruleIfSuspended;
+    RuleInfo info = activeInfo;
+    boolean closeParen = handleRuleLogging(node);
     if (node.right != null) { // binary expression?
-      /* What combinations are we expecting?
-       * POD vs POD --> keep operator
-       * POD vs Container --> container may be null! Ignore for now?
-       * String vs String --> i.compareTo(j) < 0 etc.
-       * String vs DialogueAct --> convert String and apply DA vs DA (isSubsumed, etc.)
-       * String vs Rdf --> convert to RdfClass and use isSub/SuperclassOf
-       * DA vs DA, DA vs String --> isSubsumed and the like.
-       * Rdf == Rdf --> equals
-       */
-      closeParen = handleRuleLogging(node);
-
       if (isComparisonOperator(node.operator)
           && !node.left.type.isPODType() && !node.right.type.isPODType()) {
-        // collectTerms is guaranteed to be false here!
-        String operator = node.operator;
-        if (operator.equals("!=")) {
-          operator = "==";
-          out.append("! (");
-        }
-        // TODO: THERE'S A SPECIAL CASE IF BOTH ARE RDF AND OPERATOR IS ==
-        // THEN, IT SHOULD JUST BE a.equals(b)
-        Type resultType = assessTypes(node.left.type, node.right.type);
-        String newOp = massageOperator(operator, resultType);
-        int lastClosing = newOp.lastIndexOf(')');
-        String pref = (lastClosing >= 0)
-            ? newOp.substring(0, lastClosing)
-            : " " + newOp + " ";
-        String suff = (lastClosing >= 0) ? newOp.substring(lastClosing) : "";
-        this.generateAndMassageType(node.left, resultType, operator);
-        out.append(pref);
-        this.generateAndMassageType(node.right, resultType, operator);
-        out.append(suff);
-        out.append(("!=".equals(node.operator)) ? ")" : "");
+        massageComparison(node);
       } else {
         visitExpBoolChild(node.left);
         out.append(" " + node.operator + " ");
         visitExpBoolChild(node.right);
       }
-      if (closeParen) out.append(")");
     } else { // unary boolean expression
       if (null == node.operator) {
-        closeParen = handleRuleLogging(node);
-        // collectTerms is guaranteed to be false here!
+        // activeInfo is guaranteed to be null here!
         node.left.visitWithComments(this);
-        if (closeParen) out.append(")");
       } else if (node.operator.equals("<>")) {
         // marker for generation, to probably wrap the right tests around?
-        closeParen = handleRuleLogging(node);
-        // collectTerms is guaranteed to be false here!
+        // activeInfo is guaranteed to be null here!
         massageTest(node.left);
-        if (closeParen) out.append(")");
       } else {
         out.append(node.operator + '(');
         visitExpBoolChild(node.left);
         out.append(')');
       }
     }
-    // reset ruleIfSuspended to state when entering this method
-    ruleIfSuspended = oldSuspendState;
+    if (closeParen) out.append(")");
+    // reset activeInfo to state when entering this method
+    activeInfo = info;
   }
 
   @Override
@@ -477,7 +463,6 @@ public class VisitorGeneration implements RudiVisitor {
 
   @Override
   public void visitNode(StatGrammarRule node) {
-    activeInfo = mem.enterRule(node.ruleId);
     if (node.toplevel) {
       mem.enterEnvironment(node);
       // is a top level rule and will be converted to a method
@@ -486,6 +471,10 @@ public class VisitorGeneration implements RudiVisitor {
       // a sub-level rule: ordinary <if>
       out.append("// Rule ").append(node.label).append("\n");
     }
+    // generate output for rule logging. This is the "toplevel", because
+    // activeInfo is non-Null, the visit call to ifNode.condition will generate
+    // the appropriate assignments of baseterms to the bool array.
+    activeInfo = mem.enterRule(node.ruleId);
     String varName = activeInfo.resultVarName();
     out.append("boolean[] ").append(varName).append(" = new boolean[")
        .append(Integer.toString(activeInfo.noBaseTerms() + 1))
@@ -494,7 +483,6 @@ public class VisitorGeneration implements RudiVisitor {
     // first assign final result, then call log function, then execute if
     out.append(varName).append("[0] = ");
 
-    ruleIfSuspended = activeInfo == null ;
     baseTerm = 1;
     ifNode.condition.visitWithComments(this);
     out.append(";\n");
@@ -503,7 +491,7 @@ public class VisitorGeneration implements RudiVisitor {
        .append(", ").append(varName).append(");\n");
     out.append(node.label + ":\n");
     out.append("if (").append(varName).append("[0])");
-    ruleIfSuspended = true;
+    activeInfo = null;  // no more rule logging code from here on
 
     ifNode.statblockIf.visitWithComments(this);
     out.append("\n");
@@ -826,12 +814,18 @@ public class VisitorGeneration implements RudiVisitor {
     if (node.realOrigin != null && node.calledUpon == null) {
       out.append(lowerCaseFirst(node.realOrigin) + ".");
     }
+    int start = 0;
+    if (node.content.charAt(0) == '.') {
+      assert(node.params.size() > 0);
+      node.params.get(0).visitWithComments(this);
+      start = 1;
+    }
     if (node.newexp){
       out.append(node.type.toJava() + "(");
     } else {
       out.append(node.content + "(");
     }
-    for (int i = 0; i < node.params.size(); i++) {
+    for (int i = start; i < node.params.size(); i++) {
       node.params.get(i).visitWithComments(this);
       if (i != node.params.size() - 1) {
         out.append(", ");

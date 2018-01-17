@@ -73,6 +73,18 @@ public class VisitorType implements RudiVisitor {
     node.visit(this);
   }
 
+  @SuppressWarnings("serial")
+  private RTExpression convertToString(RTExpression ex) {
+    ExpFuncCall result;
+    String funName = ex.type.getStringConversionFunction();
+    result = new ExpFuncCall(funName,
+        new ArrayList<RTExpression>(){{add(ex);}}, false);
+    result.type = new Type("String");
+    if (funName.charAt(0) == '.') result.calledUpon = ex.type;
+    ex.fixFields(result);
+    return result;
+  }
+
   /**
    * If that is a binary expression, the resulting type should be the more
    * specific of both. If they are incompatible there should be a warning. Maybe
@@ -82,36 +94,52 @@ public class VisitorType implements RudiVisitor {
   @Override
   public void visitNode(ExpArithmetic node) {
     node.left.visit(this);
+    Type ltype = node.left.type;
+    Type type = ltype;
     if (node.right != null) {
       node.right.visit(this);
-
-      if (node.left.type.isUnspecified()) {
+      Type rtype = node.right.type;
+      if (ltype.isUnspecified()) {
         // unknown type to the left
-        if (node.right.type.isUnspecified()) {
+        if (rtype.isUnspecified()) {
           // unknown type on both branches
           typeError("Expression with unknown type: " + node.fullexp, node);
         } else {
-          typeWarning("propagating " + node.right.type + " to unknown left part: "
+          typeWarning("propagating " + rtype + " to unknown left part: "
               + node.fullexp, node);
           // propagate type from the right branch to the left
-          node.left.propagateType(node.right.type);
+          node.left.propagateType(rtype);
+          type = rtype;
         }
-      } else if (node.right.type.isUnspecified()) {
-        typeWarning("propagating " + node.left.type + " to unknown right part: "
+      } else if (rtype.isUnspecified()) {
+        typeWarning("propagating " + ltype + " to unknown right part: "
             + node.fullexp, node);
         // propagate type from the left branch to the right
-        node.right.propagateType(node.left.type);
+        node.right.propagateType(ltype);
+        type = ltype;
       } else {
         // check type compatibility
-        Type type = node.left.type.unifyTypes(node.right.type);
+        type = ltype.unifyTypes(rtype);
+        if (type == null && "+".equals(node.operator)) {
+          // cast to string if we think we now how
+          if (ltype.isString() && rtype.isStringConvertible()) {
+            type = ltype;
+            node.right = convertToString(node.right);
+          }
+          if (rtype.isString() && ltype.isStringConvertible()) {
+            type = rtype;
+            node.left = convertToString(node.left);
+          }
+        }
         if (type == null) {
           typeError("Incompatible types in " + node + ": "
-                  + node.left.type + " vs. " + node.right.type, node);
+                  + ltype + " vs. " + rtype, node);
+          type = ltype;
         }
       }
     }
     // may be wrong if type unification failed
-    node.type = node.left.type;
+    node.type = type;
   }
 
   /**
@@ -161,6 +189,11 @@ public class VisitorType implements RudiVisitor {
             node.right instanceof ExpSingleValue &&
             ((ExpSingleValue)node.right).content.equals("null")) {
           // this is a "clear" operation, to be resolved later.
+          mergeType = node.left.type;
+        } else if (node.left.type.isString()
+            && node.right.type.isStringConvertible()) {
+          // cast to string if we think we now how
+          node.right = convertToString(node.right);
           mergeType = node.left.type;
         } else {
           mergeType = Type.getNoType();
@@ -255,8 +288,26 @@ public class VisitorType implements RudiVisitor {
     node.expression.type = node.type;
   }
 
-  public static ExpSingleValue degradeToString(ExpVariable variable){
-    return variable.fixFields(new ExpSingleValue(variable.toString(), "String"));
+  public RTExpression degradeToString(RTExpression expr, ExpDialogueAct node){
+    RTExpression res = expr;
+    if (expr instanceof ExpVariable) {
+      ExpVariable variable = (ExpVariable) expr;
+      if (!mem.variableExists(variable.content)) {
+        res = new ExpSingleValue(variable.toString(), "String");
+        variable.fixFields(res);
+      }
+    }
+    res.visit(this);
+    if (! res.type.isString()) {
+      if (res.type.isStringConvertible()) {
+        // cast to string if we think we now how
+        res = convertToString(res);
+      } else {
+        typeError(node.fullexp + ": DialogueAct argument not a string: "
+            + res.type, node);
+      }
+    }
+    return res;
   }
 
   /**
@@ -267,26 +318,11 @@ public class VisitorType implements RudiVisitor {
    */
   @Override
   public void visitNode(ExpDialogueAct node) {
-    if (node.daType instanceof ExpVariable) {
-      if (!mem.variableExists(((ExpVariable) node.daType).content)) {
-        node.daType = degradeToString((ExpVariable) node.daType);
-      }
-    }
-    node.daType.visit(this);
-    if (node.proposition instanceof ExpVariable) {
-      if (!mem.variableExists(((ExpVariable) node.proposition).content)) {
-        node.proposition = degradeToString((ExpVariable) node.proposition);
-      }
-    }
-    node.proposition.visit(this);
+    node.daType = degradeToString(node.daType, node);
+    node.proposition = degradeToString(node.proposition, node);
     int i = 0;
     for (RTExpression e : node.exps) {
-      if (e instanceof ExpVariable) {
-        if (!mem.variableExists(((ExpVariable) e).content)) {
-          node.exps.set(i, degradeToString((ExpVariable) e));
-        }
-      }
-      e.visit(this);
+      node.exps.set(i, degradeToString(e, node));
       i++;
     }
   }

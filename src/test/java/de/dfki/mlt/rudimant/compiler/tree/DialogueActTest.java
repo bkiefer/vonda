@@ -44,4 +44,22 @@ public class DialogueActTest {
     assertEquals(expected, getForMarked(r, expected));
   }
 
+  @Test
+  public void testDA2() {
+    String in = "emitDA(#Inform(Answer, what=^random(10)));";
+    String r = generate(in);
+    String expected = "emitDA(new DialogueAct(\"Inform\", \"Answer\", \"what\", Integer.toString(random(10))));";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void testToStringDA() {
+    // Test set string var with POD type
+    String in = "DialogueAct c = #Confirm(Correct, value=^10);";
+    String s = generate(in);
+    String expected =
+        "DialogueAct c = new DialogueAct(\"Confirm\", \"Correct\", \"value\", Integer.toString(10))";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
 }
