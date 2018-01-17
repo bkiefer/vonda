@@ -15,11 +15,11 @@ public class Type {
   private static RdfProxy PROXY;
   private static RdfClass DIALACT_CLASS;
 
-  static Map<String, Long> assignCodes = new HashMap<>();
-  static Map<Long, String> assigncode2type = new HashMap<>();
+  static final Map<String, Long> assignCodes = new HashMap<>();
+  static final Map<Long, String> assigncode2type = new HashMap<>();
 
-  static Map<String, Long> typeCodes = new HashMap<>();
-  static Map<Long, String> code2type = new HashMap<>();
+  static final Map<String, Long> typeCodes = new HashMap<>();
+  static final Map<Long, String> code2type = new HashMap<>();
 
   private static final Map<String, String> xsd2java = new HashMap<>();
 
@@ -148,7 +148,7 @@ public class Type {
    *  collection of things.
    */
   private boolean _castRequired = false;
-  
+
   public boolean castRequired() { return _castRequired;};
 
   private Type() { }
@@ -156,7 +156,7 @@ public class Type {
   private void rdfIfy() {
     // this line was added only for testing purposes
     if (PROXY == null) return;
-    
+
     if (typeCodes.containsKey(_name)) return;
     if (_name.charAt(0) == '<') {
       // xsd or RDF type
@@ -296,11 +296,29 @@ public class Type {
   public boolean isUnspecified() {
     return _name == null;
   }
-  
+
   public boolean isUnaryGeneric() {
     return !isUnspecified() && _name.matches("[A-Z]");
   }
-  
+
+  public boolean isStringConvertible() {
+    return isPODType() || isRdfType() || isNumber();
+  }
+
+  public String getStringConversionFunction() {
+    assert(isStringConvertible());
+    String typeName = _name;
+    if (isPODType()) {
+      Long code = typeCodes.get(_name);
+      if (code == null) typeName =  _name;
+      typeName = code2type.get(code | 0b100);
+      typeName += ".toString";
+    } else {
+      typeName = ".toString";
+    }
+    return typeName;
+  }
+
   public boolean containsGeneric() {
     if (_parameterTypes == null)
       return isUnaryGeneric();
@@ -325,7 +343,7 @@ public class Type {
       return _parameterTypes.get(0);
     return null;
   }
-  
+
   public List<Type> getParameterTypes() {
     return _parameterTypes != null? _parameterTypes: new ArrayList<>();
   }
@@ -334,7 +352,7 @@ public class Type {
     _parameterTypes = new ArrayList<>(1);
     _parameterTypes.add(inner);
   }
-  
+
   public void setParameterTypes(List<Type> params) {
     _parameterTypes = params;
   }
@@ -583,7 +601,7 @@ public class Type {
     if (isRdfType()) return _name;
     return toJava();
   }
-  
+
   public static Type findTypeForGeneric(Type concrete, Type withGeneric) {
     if (withGeneric == null || concrete == null
         || concrete.getParameterTypes().size() != withGeneric.getParameterTypes().size()) return null;
@@ -599,7 +617,7 @@ public class Type {
     }
     return null;
   }
-  
+
   public static Type createTypeFromGeneric(Type concrete, Type withGeneric) {
     if (withGeneric.isUnaryGeneric()) return concrete;
     // TODO: assuming here that there cannot be generics like T<String>

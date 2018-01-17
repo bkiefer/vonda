@@ -814,12 +814,18 @@ public class VisitorGeneration implements RudiVisitor {
     if (node.realOrigin != null && node.calledUpon == null) {
       out.append(lowerCaseFirst(node.realOrigin) + ".");
     }
+    int start = 0;
+    if (node.content.charAt(0) == '.') {
+      assert(node.params.size() > 0);
+      node.params.get(0).visitWithComments(this);
+      start = 1;
+    }
     if (node.newexp){
       out.append(node.type.toJava() + "(");
     } else {
       out.append(node.content + "(");
     }
-    for (int i = 0; i < node.params.size(); i++) {
+    for (int i = start; i < node.params.size(); i++) {
       node.params.get(i).visitWithComments(this);
       if (i != node.params.size() - 1) {
         out.append(", ");
