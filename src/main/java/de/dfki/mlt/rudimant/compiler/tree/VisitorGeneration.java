@@ -238,7 +238,6 @@ public class VisitorGeneration implements RudiVisitor {
         ">", ".compareTo() > 0"
     };
     for(int i = 0; i < stri.length; i += 2) {
-
       striOpMap.put(stri[i], stri[i+1]);
     }
   }
@@ -283,19 +282,54 @@ public class VisitorGeneration implements RudiVisitor {
     }
   }
 
-  private boolean handleRuleLogging(ExpBoolean node) {
-    if (activeInfo != null) {
-      if (node.operator == null
-          || (! isBooleanOperator(node.operator))
-          || node.synthetic) {
-        out.append("(")
-           .append(activeInfo.resultVarName())
-           .append('[').append(Integer.toString(baseTerm++)).append("] = ");
-        activeInfo = null;
-        return true;
-      }
+  /** Massage comparisons if necessary
+   * What combinations are we expecting?
+   * POD vs POD --> keep operator
+   * POD vs Container --> container may be null! Ignore for now?
+   * String vs String --> i.compareTo(j) < 0 etc.
+   * String vs DialogueAct --> convert String and apply DA vs DA (isSubsumed, etc.)
+   * String vs Rdf --> convert to RdfClass and use isSub/SuperclassOf
+   * DA vs DA, DA vs String --> isSubsumed and the like.
+   * Rdf == Rdf --> equals
+   */
+  private void massageComparison(ExpBoolean node) {
+    String operator = node.operator;
+    if (operator.equals("!=")) {
+      operator = "==";
+      out.append("! (");
     }
-    return false;
+    // TODO: THERE'S A SPECIAL CASE IF BOTH ARE RDF AND OPERATOR IS ==
+    // THEN, IT SHOULD JUST BE a.equals(b)
+    Type resultType = assessTypes(node.left.type, node.right.type);
+    String newOp = massageOperator(operator, resultType);
+    int lastClosing = newOp.lastIndexOf(')');
+    String pref, suff;
+    if (lastClosing >= 0) {
+      pref = newOp.substring(0, lastClosing);
+      suff = newOp.substring(lastClosing);
+    } else {
+      pref = " " + newOp + " ";
+      suff = "";
+    }
+    this.generateAndMassageType(node.left, resultType, operator);
+    out.append(pref);
+    this.generateAndMassageType(node.right, resultType, operator);
+    out.append(suff);
+    if ("!=".equals(node.operator)) out.append(')');
+  }
+
+  private boolean handleRuleLogging(RudiTree node) {
+    if (activeInfo == null) return false;
+    if (node instanceof ExpBoolean) {
+      ExpBoolean n = (ExpBoolean)node;
+      if (! n.synthetic && n.operator != null && isBooleanOperator(n.operator))
+        return false;
+    }
+    out.append("(")
+    .append(activeInfo.resultVarName())
+    .append('[').append(Integer.toString(baseTerm++)).append("] = ");
+    activeInfo = null;
+    return true;
   }
 
   /** Treat the special case where we prepare for rule logging in this function
@@ -303,15 +337,9 @@ public class VisitorGeneration implements RudiVisitor {
    */
   private void visitExpBoolChild(RudiTree node) {
     RuleInfo info = activeInfo;
-    boolean emitAssign = activeInfo != null &&
-        (! (node instanceof ExpBoolean) || ((ExpBoolean)node).synthetic);
-    if (emitAssign) {
-      out.append('(').append(activeInfo.resultVarName())
-         .append('[').append(Integer.toString(baseTerm++)).append("] = ");
-      activeInfo = null;
-    }
+    boolean closeParen = handleRuleLogging(node);
     node.visitWithComments(this);
-    if (emitAssign) out.append(')');
+    if (closeParen) out.append(')');
     activeInfo = info;
   }
 
@@ -326,67 +354,33 @@ public class VisitorGeneration implements RudiVisitor {
    */
   @Override
   public void visitNode(ExpBoolean node) {
-    boolean closeParen = false;
     RuleInfo info = activeInfo;
+    boolean closeParen = handleRuleLogging(node);
     if (node.right != null) { // binary expression?
-      /* What combinations are we expecting?
-       * POD vs POD --> keep operator
-       * POD vs Container --> container may be null! Ignore for now?
-       * String vs String --> i.compareTo(j) < 0 etc.
-       * String vs DialogueAct --> convert String and apply DA vs DA (isSubsumed, etc.)
-       * String vs Rdf --> convert to RdfClass and use isSub/SuperclassOf
-       * DA vs DA, DA vs String --> isSubsumed and the like.
-       * Rdf == Rdf --> equals
-       */
-      closeParen = handleRuleLogging(node);
-
       if (isComparisonOperator(node.operator)
           && !node.left.type.isPODType() && !node.right.type.isPODType()) {
-        // collectTerms is guaranteed to be false here!
-        String operator = node.operator;
-        if (operator.equals("!=")) {
-          operator = "==";
-          out.append("! (");
-        }
-        // TODO: THERE'S A SPECIAL CASE IF BOTH ARE RDF AND OPERATOR IS ==
-        // THEN, IT SHOULD JUST BE a.equals(b)
-        Type resultType = assessTypes(node.left.type, node.right.type);
-        String newOp = massageOperator(operator, resultType);
-        int lastClosing = newOp.lastIndexOf(')');
-        String pref = (lastClosing >= 0)
-            ? newOp.substring(0, lastClosing)
-            : " " + newOp + " ";
-        String suff = (lastClosing >= 0) ? newOp.substring(lastClosing) : "";
-        this.generateAndMassageType(node.left, resultType, operator);
-        out.append(pref);
-        this.generateAndMassageType(node.right, resultType, operator);
-        out.append(suff);
-        out.append(("!=".equals(node.operator)) ? ")" : "");
+        massageComparison(node);
       } else {
         visitExpBoolChild(node.left);
         out.append(" " + node.operator + " ");
         visitExpBoolChild(node.right);
       }
-      if (closeParen) out.append(")");
     } else { // unary boolean expression
       if (null == node.operator) {
-        closeParen = handleRuleLogging(node);
-        // collectTerms is guaranteed to be false here!
+        // activeInfo is guaranteed to be null here!
         node.left.visitWithComments(this);
-        if (closeParen) out.append(")");
       } else if (node.operator.equals("<>")) {
         // marker for generation, to probably wrap the right tests around?
-        closeParen = handleRuleLogging(node);
-        // collectTerms is guaranteed to be false here!
+        // activeInfo is guaranteed to be null here!
         massageTest(node.left);
-        if (closeParen) out.append(")");
       } else {
         out.append(node.operator + '(');
         visitExpBoolChild(node.left);
         out.append(')');
       }
     }
-    // reset ruleIfSuspended to state when entering this method
+    if (closeParen) out.append(")");
+    // reset activeInfo to state when entering this method
     activeInfo = info;
   }
 
