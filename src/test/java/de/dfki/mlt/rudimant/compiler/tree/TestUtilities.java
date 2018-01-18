@@ -37,7 +37,7 @@ public class TestUtilities {
     StringWriter out = new StringWriter();
     parseAndTypecheckWithError(in, out);
     StringBuffer sb = out.getBuffer();
-    return normalizeSpaces(sb.subSequence(prefix + 34, sb.length() - suffix).toString());
+    return sb.toString();
   }
 
   public static RudiTree getNodeOfInterest(GrammarFile rt) {

@@ -168,7 +168,7 @@ public class CastTest {
     // documentation: NO, this is a REDEFINITION
     String in = "int i; boolean i; i = 2; ";
     String s = getTypeError(in);
-    //String expected = "int i;boolean i; i = 2;";
+    String expected = "int i;boolean i; i = 2;";
     //assertEquals(expected, getForMarked(s, expected));
   }
 
