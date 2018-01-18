@@ -423,6 +423,12 @@ public abstract class Agent implements StreamingClient {
     return random.nextInt(bound);
   }
 
+  /** Return the POD represented by the string */
+  public int toInt(String s) { return Integer.parseInt(s); }
+  public float toFloat(String s) { return Float.parseFloat(s); }
+  public double toDouble(String s) { return Double.parseDouble(s); }
+  public boolean toBool(String s) { return Boolean.getBoolean(s); }
+
   public DialogueAct analyse(String input) {
     return asr.interpret(input);
   }
