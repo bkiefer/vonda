@@ -5,6 +5,12 @@
 [String]. boolean startsWith(String s);
 [String]. boolean endsWith(String s);
 [String]. String substring(int i);
+
+int toInt(String s);
+float toFloat(String s);
+double toDouble(String s);
+boolean toBool(String s);
+
 [List<T>]. T get(int a);
 [Collection<T>]. void add(Object a);
 [Collection<T>]. boolean contains(Object a);
