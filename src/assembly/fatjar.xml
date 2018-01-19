@@ -15,7 +15,6 @@
   </fileSets>
   <dependencySets>
     <dependencySet>
-      <excludes><exclude>vonda*</exclude></excludes>
       <outputDirectory>/</outputDirectory>
       <useProjectArtifact>true</useProjectArtifact>
       <unpack>true</unpack>
