@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Calendar;
-import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,40 +29,36 @@ public class SimpleClient {
     _portNumber = portNumber;
   }
 
-  private Date nextTryToConnect;
-  private Date nextLog;
+  // msecs
+  private long nextTryToConnect = 0 ;
+  private long nextLog;
 
-  private final int noLogInterval = 10;
-  private final int reconnectInterval = 1;
+  // both in msec
+  private long noLogInterval = 30000;
+  private long reconnectInterval = 1000;
 
   private boolean initClient() {
-    Date currentTime = new Date();
-    if (nextTryToConnect == null || currentTime.after(nextTryToConnect)) {
+    long currentTime = System.currentTimeMillis();
+    if (currentTime - nextTryToConnect > 0) {
       try {
-        /* make sure that only one try per second occurs */
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.SECOND, reconnectInterval);
-        nextTryToConnect = cal.getTime();
+        /* make sure that only one try per reconnectInterval occurs */
+        nextTryToConnect = currentTime + reconnectInterval;
 
         socket = new Socket(hostName, _portNumber);
         out = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
         logger.debug("Client has been connected.");
         return true;
       } catch (UnknownHostException e) {
-        logger.error(e.toString());
+        logger.error("Unknown host {}: {}", hostName, e.toString());
         return false;
       } catch (IOException e) {
-        if (nextLog == null || currentTime.after(nextLog)) {
-          /* make sure only every 10 seconds this will be logged */
-          Calendar cal = Calendar.getInstance();
-          cal.setTime(new Date());
-          cal.add(Calendar.SECOND, noLogInterval);
-          nextLog = cal.getTime();
+        // make sure only every noLogInterval milliseconds this will be logged
+        if (currentTime - nextLog > 0) {
+          nextLog = currentTime + noLogInterval;
 
-          logger.error("Client could not connect (Reconnect every "
-            + reconnectInterval + " second(s), no log for " + noLogInterval
-            + " second(s)): " + e.toString());
+          logger.error("Debug client could not connect (Reconnect every "
+              + reconnectInterval / 1000.0 + " second(s), no log for "
+              + noLogInterval / 1000.0 + " second(s)): {}", e);
         }
         return false;
       }
