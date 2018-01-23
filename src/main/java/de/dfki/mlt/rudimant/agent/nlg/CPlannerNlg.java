@@ -40,7 +40,7 @@ public class CPlannerNlg {
    */
   public CPlannerNlg(File pluginDirectory, File projectFile, String language)
           throws FileNotFoundException, IOException {
-    _planner = new UtterancePlanner() {
+    _planner = new CcgUtterancePlanner() {
       /** Load all things contained in the configuration in the right way */
       protected void load() {
         // initHierachy();
