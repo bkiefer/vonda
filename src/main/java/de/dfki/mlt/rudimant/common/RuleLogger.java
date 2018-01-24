@@ -21,7 +21,7 @@ public class RuleLogger {
   private List<RuleInfo> ruleInfos;
 
   /** A class that does the printing */
-  private LogPrinter printer;
+  private List<LogPrinter> printers;
 
   /** The next two variable determine which rudi rules are logged */
   public BitSet rulesToLogTrue = new BitSet();
@@ -52,16 +52,18 @@ public class RuleLogger {
   }
 
   public RuleLogger() {
+    printers = new ArrayList();
     ruleInfos = null;
   }
 
   public RuleLogger(LogPrinter p){
-    printer = p;
+    this();
+    registerPrinter(p);
     loadFromResource();
   }
 
-  public void setPrinter(LogPrinter p) {
-    printer = p;
+  public void registerPrinter(LogPrinter p) {
+    printers.add(p);
   }
 
   public void setRootInfo(BasicInfo i) {
@@ -106,6 +108,7 @@ public class RuleLogger {
    */
   public void logRule(int ruleId, boolean[] result) {
     if (ruleInfos != null && shouldLog(ruleId, result[0]))
-      printer.printLog(ruleInfos.get(ruleId), result);
+      for (LogPrinter printer : printers)
+        printer.printLog(ruleInfos.get(ruleId), result);
   }
 }

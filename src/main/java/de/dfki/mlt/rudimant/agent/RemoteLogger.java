@@ -12,8 +12,8 @@ public class RemoteLogger implements LogPrinter {
   /** A client that connects to the server on localhost at the given port to
    *  send log information to the debugger.
    */
-  public RemoteLogger(int portNumber) {
-    client = new SimpleClient(portNumber);
+  public RemoteLogger(String hostname, int port) {
+    client = new SimpleClient(hostname, port);
   }
 
   @Override

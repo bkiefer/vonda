@@ -113,7 +113,7 @@ public class RudibuggerTest {
         + "nestedRulesTest/NestedRules.rudi"));
     RuleLogger rl = new RuleLogger();
     rl.setRootInfo(i);
-    rl.setPrinter(new DefaultLogger());
+    rl.registerPrinter(new DefaultLogger());
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     PrintStream pri = new PrintStream(out);
     PrintStream old = System.out;
@@ -132,7 +132,7 @@ public class RudibuggerTest {
         + "nestedRulesTest/NestedRules.rudi"));
     RuleLogger rl = new RuleLogger();
     rl.setRootInfo(i);
-    rl.setPrinter(new DefaultLogger());
+    rl.registerPrinter(new DefaultLogger());
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     PrintStream pri = new PrintStream(out);
     PrintStream old = System.out;
@@ -151,7 +151,7 @@ public class RudibuggerTest {
         + "nestedRulesTest/NestedRules.rudi"));
     RuleLogger rl = new RuleLogger();
     rl.setRootInfo(i);
-    rl.setPrinter(new DefaultLogger());
+    rl.registerPrinter(new DefaultLogger());
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     PrintStream pri = new PrintStream(out);
     PrintStream old = System.out;
@@ -170,7 +170,7 @@ public class RudibuggerTest {
         + "convertedBoolTest/ConvertedBooleans.rudi"));
     RuleLogger rl = new RuleLogger();
     rl.setRootInfo(i);
-    rl.setPrinter(new DefaultLogger());
+    rl.registerPrinter(new DefaultLogger());
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     PrintStream pri = new PrintStream(out);
     PrintStream old = System.out;

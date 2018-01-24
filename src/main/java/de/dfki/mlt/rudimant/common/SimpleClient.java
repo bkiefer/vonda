@@ -2,8 +2,9 @@ package de.dfki.mlt.rudimant.common;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
+
+import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,9 +16,11 @@ public class SimpleClient {
 
   private final int _portNumber;
 
-  public static String hostName = "localhost";
+  private final String _hostName;
 
   private OutputStreamWriter out;
+
+  private SocketAddress _addr;
 
   /**
    * A client that connects to the server on localhost at the given port to send
@@ -25,8 +28,11 @@ public class SimpleClient {
    *
    * @param portNumber
    */
-  public SimpleClient(int portNumber) {
+  public SimpleClient(String hostname, int portNumber) {
+    _hostName = hostname;
     _portNumber = portNumber;
+    socket = new Socket();
+    _addr = new InetSocketAddress(_hostName, _portNumber);
   }
 
   // msecs
@@ -44,12 +50,13 @@ public class SimpleClient {
         /* make sure that only one try per reconnectInterval occurs */
         nextTryToConnect = currentTime + reconnectInterval;
 
-        socket = new Socket(hostName, _portNumber);
+        socket = new Socket();
+        socket.connect(_addr);
         out = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
         logger.debug("Client has been connected.");
         return true;
       } catch (UnknownHostException e) {
-        logger.error("Unknown host {}: {}", hostName, e.toString());
+        logger.error("Unknown host {}: {}", _hostName, e.toString());
         return false;
       } catch (IOException e) {
         // make sure only every noLogInterval milliseconds this will be logged
@@ -58,7 +65,7 @@ public class SimpleClient {
 
           logger.error("Debug client could not connect (Reconnect every "
               + reconnectInterval / 1000.0 + " second(s), no log for "
-              + noLogInterval / 1000.0 + " second(s)): {}", e);
+              + noLogInterval / 1000.0 + " second(s)): {}", e.getMessage());
         }
         return false;
       }
@@ -94,10 +101,10 @@ public class SimpleClient {
 
 
   public static void main(String[] args) throws IOException, InterruptedException {
-    SimpleClient scl = new SimpleClient(3665);
+    SimpleClient scl = new SimpleClient("localhost", 3665);
     try {
       int i = 0;
-      while (i++ < 50) {
+      while (i++ < 500) {
         scl.send("test", "345", "12345", "14");
         Thread.sleep(250);
 //        scl.send("printLog", Integer.toString(i), "234", "12");
