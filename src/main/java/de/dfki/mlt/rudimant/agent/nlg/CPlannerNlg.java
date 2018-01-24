@@ -18,7 +18,7 @@ import de.dfki.lt.tr.dialogue.cplan.functions.FunctionFactory;
 
 public class CPlannerNlg {
 
-  UtterancePlanner _planner;
+  CcgUtterancePlanner _planner;
 
   Logger logger = Logger.getLogger(CPlannerNlg.class);
 
@@ -183,8 +183,7 @@ public class CPlannerNlg {
         logger.trace("Canned text: " + result);
       }
     } else {
-      // TODO: CHECK IF TO REACTIVATE
-      // result = _planner.realize(cplanOutput).trim();
+      result = _planner.realize(cplanOutput).trim();
       if (result == null || result.isEmpty()) {
         if (! emptyRealizations.contains(input)) {
           emptyRealizations.add(input);
