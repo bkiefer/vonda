@@ -5,13 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
 import com.ibm.icu.text.RuleBasedNumberFormat;
+import com.ibm.icu.util.ULocale;
 
 import de.dfki.lt.tr.dialogue.cplan.*;
 import de.dfki.lt.tr.dialogue.cplan.functions.FunctionFactory;
@@ -23,6 +23,24 @@ public class CPlannerNlg {
   Logger logger = Logger.getLogger(CPlannerNlg.class);
 
   public RuleBasedNumberFormat numberFormatter;
+
+  private static String langToTag(String language) {
+    switch (language) {
+    case "dut":
+    case "nl":
+    case "du":
+    case "dutch": return "nl_NL";
+    case "ita":
+    case "it": return "it_IT";
+    case "ger":
+    case "deu":
+    case "de": return "de_DE";
+    case "eng":
+    case "en": return "en_US";
+    }
+    return language;
+  }
+
 
   /**
    * Constructor: get a new natural language generation component with built-in
@@ -41,10 +59,10 @@ public class CPlannerNlg {
   public CPlannerNlg(File pluginDirectory, File projectFile, String language)
           throws FileNotFoundException, IOException {
     _planner = new CcgUtterancePlanner() {
-      /** Load all things contained in the configuration in the right way */
+      /* Load all things contained in the configuration in the right way */
       protected void load() {
         // initHierachy();
-        /** First load the plugins, then the rules */
+        // First load the plugins, then the rules
         loadPlugins();
         loadRules();
       }
@@ -55,8 +73,8 @@ public class CPlannerNlg {
     if (null != pluginDirectory) {
       FunctionFactory.registerPlugins(pluginDirectory, _planner);
     }
-    numberFormatter = new RuleBasedNumberFormat(new Locale(language),
-            RuleBasedNumberFormat.SPELLOUT);
+    numberFormatter = new RuleBasedNumberFormat(new ULocale(langToTag(language)),
+        RuleBasedNumberFormat.SPELLOUT);
   }
 
   /** Constructor: get a new natural language generation component with built-in
@@ -104,8 +122,8 @@ public class CPlannerNlg {
    *         a number to text converter
    */
   public static String numbersToText(String in, String language) {
-    return numbersToText(in, new RuleBasedNumberFormat(new Locale(language),
-        RuleBasedNumberFormat.SPELLOUT));
+    return numbersToText(in, new RuleBasedNumberFormat(
+        new ULocale(langToTag(language)), RuleBasedNumberFormat.SPELLOUT));
   }
 
   /** Replace numbers in input string by text using icu4j functionality in the
