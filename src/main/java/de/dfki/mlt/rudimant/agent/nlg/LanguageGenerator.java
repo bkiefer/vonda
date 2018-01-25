@@ -143,7 +143,9 @@ public class LanguageGenerator {
    */
   private void setLanguage(File configDir, String lang) throws IOException {
     cplanner = new CPlannerNlg(
-        new File(configDir, (String) configs.get(GENERATION_PROJECT)), lang);
+        new File(configDir, (String) configs.get(GENERATION_PROJECT)),
+        lang,
+        (Boolean) configs.get(TRANSLATE_NUMBERS));
   }
 
   public void registerAccess(String what, BaseInfoStateAccess access) {

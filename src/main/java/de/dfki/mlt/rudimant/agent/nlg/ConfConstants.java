@@ -19,4 +19,6 @@ public interface ConfConstants {
 
   public static final String GENERATION_PROJECT = "generationProject";
 
+  public static final String TRANSLATE_NUMBERS = "translateNumbers";
+
 }

@@ -20,9 +20,9 @@ public class CPlannerNlg {
 
   CcgUtterancePlanner _planner;
 
-  Logger logger = Logger.getLogger(CPlannerNlg.class);
+  private static final Logger logger = Logger.getLogger(CPlannerNlg.class);
 
-  public RuleBasedNumberFormat numberFormatter;
+  private RuleBasedNumberFormat numberFormatter = null;
 
   private static String langToTag(String language) {
     switch (language) {
@@ -56,7 +56,8 @@ public class CPlannerNlg {
    * @param language a valid three character language identifier to initialize a
    * number to text converter
    */
-  public CPlannerNlg(File pluginDirectory, File projectFile, String language)
+  public CPlannerNlg(File pluginDirectory, File projectFile, String language,
+      boolean translateNumbers)
           throws FileNotFoundException, IOException {
     _planner = new CcgUtterancePlanner();
     _planner.readProjectFile(projectFile);
@@ -64,8 +65,9 @@ public class CPlannerNlg {
     if (null != pluginDirectory) {
       FunctionFactory.registerPlugins(pluginDirectory, _planner);
     }
-    numberFormatter = new RuleBasedNumberFormat(new ULocale(langToTag(language)),
-        RuleBasedNumberFormat.SPELLOUT);
+    if (translateNumbers)
+      numberFormatter = new RuleBasedNumberFormat(new ULocale(langToTag(language)),
+          RuleBasedNumberFormat.SPELLOUT);
   }
 
   /** Constructor: get a new natural language generation component with built-in
@@ -77,9 +79,9 @@ public class CPlannerNlg {
    *  @param language a valid three character language identifier to initialize
    *         a number to text converter
    */
-  public CPlannerNlg(File projectFile, String language)
+  public CPlannerNlg(File projectFile, String language, boolean translateNumbers)
   throws FileNotFoundException, IOException {
-    this(null, projectFile, language);
+    this(null, projectFile, language, translateNumbers);
   }
 
   private static final Pattern punctRegex =
@@ -121,6 +123,7 @@ public class CPlannerNlg {
    *  language of this interface
    */
   public String numbersToText(String in) {
+    if (numberFormatter == null) return in;
     return numbersToText(in, numberFormatter);
   }
 
