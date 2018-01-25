@@ -58,16 +58,7 @@ public class CPlannerNlg {
    */
   public CPlannerNlg(File pluginDirectory, File projectFile, String language)
           throws FileNotFoundException, IOException {
-    _planner = new CcgUtterancePlanner() {
-      /* Load all things contained in the configuration in the right way */
-      protected void load() {
-        // initHierachy();
-        // First load the plugins, then the rules
-        loadPlugins();
-        loadRules();
-      }
-    };
-
+    _planner = new CcgUtterancePlanner();
     _planner.readProjectFile(projectFile);
 
     if (null != pluginDirectory) {
