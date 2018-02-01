@@ -192,6 +192,8 @@ public abstract class Agent implements StreamingClient {
   public DialogueAct emitDA(int delay, DialogueAct da) {
     Pair<String, String> toSay = asr.generate(da.getDag());
     emitBehaviour(new Behaviour(generateId(), toSay.second, toSay.first, delay));
+    // enter into database
+    daToDB(da);
     return addToMyDA(da);
   }
 
@@ -296,6 +298,8 @@ public abstract class Agent implements StreamingClient {
       return null;
     }
     lastDAs.addFirst(newDA);
+    // enter into database
+    daToDB(newDA);
     //++unprocessedDAs;
     newData();
     return newDA;
@@ -322,6 +326,56 @@ public abstract class Agent implements StreamingClient {
   /** Get the dialogue act type from the dialogue act */
   public static String getDialogueAct(DialogueAct diaAct) {
     return diaAct.getDialogueActType();
+  }
+  
+  private String propertyToSlot(String uri) {
+    return uri.substring(uri.indexOf(":"), uri.lastIndexOf(">"));
+  }
+  
+  /** Serialize DialogueAct da to database */
+  public void daToDB(DialogueAct da) {
+    // TODO: verify namespaces (what is the DEFNS here?)
+    Rdf entered = _proxy.getClass(da.getDialogueActType())
+        .getNewInstance("dial");
+    
+    for (String prop : entered.getClazz().getProperties()) {
+      String slot = propertyToSlot(prop);
+      if (da.hasSlot(slot)) 
+        entered.add(prop, da.getValue(slot));
+    }
+    
+    Rdf frame = _proxy.getRdfClass(da.getProposition()).getNewInstance("dial");
+    if (frame == null)
+      throw new RuntimeException("unknown frame in dialogue act: ".concat(da.getProposition()));
+
+    for (String prop : frame.getClazz().getProperties()) {
+      String slot = propertyToSlot(prop);
+      if (da.hasSlot(slot)) 
+        frame.add(prop, da.getValue(slot));
+    }
+    
+    entered.setValue("<dial:frame>", frame);
+  }
+  
+  /** Serialize DialogueAct da from database */
+  public DialogueAct rdfToDA(Rdf da) {
+    // TODO: verify that that Rdf is some subclass of DialogueAct
+    
+    String rawDA = da.getClass().getSimpleName();
+    rawDA += "(" + da.getValue("<dial:frame>").getClass().getSimpleName();
+
+    for (String prop : da.getClazz().getProperties()) {
+      if (da.has(prop))
+        rawDA += ", " + propertyToSlot(prop) + "=" + da.getValue(prop);
+    }
+
+    Rdf frame = (Rdf) da.getValue("<dial:frame>");
+    for (String prop : frame.getClazz().getProperties()) {
+      if (frame.has(prop))
+        rawDA += ", " + propertyToSlot(prop) + "=" + frame.getValue(prop);
+    }
+
+    return new DialogueAct(rawDA + ")");
   }
 
   // **********************************************************************
