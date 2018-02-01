@@ -188,13 +188,22 @@ public class TypeInferenceTest {
 
   @Test
   public void test14() {
-	// if there are field accesses to unknown Java classes involved, we do want to believe
-	// the user when it comes to type assumptions (!no casting to (Object /* (unknown) */) here)
+  // if there are field accesses to unknown Java classes involved, we do want to believe
+  // the user when it comes to type assumptions (!no casting to (Object /* (unknown) */) here)
     String in = " SomeUnk nownClass = new Someunk(); String v = nownClass.something.get(i);";
     String s = generate(in);
     String expected = "nownClass = new Someunk();v = nownClass.something.get(i);";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("public SomeUnk nownClass;"));
     assertTrue(s.contains("public String v;"));
+  }
+
+  @Test
+  public void test15() {
+    String in = "Set<String> slotBlacklist; if (slotBlacklist.contains(lastDA().agent)) {}";
+    String s = generate(in);
+    String expected = "public Set<String> slotBlacklist;/**/"
+        + "if (exists(slotBlacklist) && slotBlacklist.contains(((String)lastDA().getValue(\"agent\")))) { }";
+    assertEquals(expected, getForMarked(s, expected));
   }
 }
