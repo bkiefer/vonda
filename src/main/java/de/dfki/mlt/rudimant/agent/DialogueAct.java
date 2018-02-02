@@ -1,16 +1,20 @@
 package de.dfki.mlt.rudimant.agent;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.lt.hfc.db.Table;
+import de.dfki.lt.hfc.db.rdfProxy.Rdf;
+import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
+import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.tr.dialogue.cplan.DagEdge;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 
 public class DialogueAct {
+
+  public static String DIAL_NS = "dial:";
 
   private static Logger logger = LoggerFactory.getLogger(DialogueAct.class);
 
@@ -142,14 +146,71 @@ public class DialogueAct {
     return new DialogueAct(_dag.copySafely());
   }
 
-  // TODO
-  public static DialogueAct fromRdf(String uri) {
-    return null;
+  private static String propertyToSlot(String uri) {
+    return uri.substring(uri.indexOf(":"), uri.lastIndexOf(">"));
+  }
+
+  // TODO finish and test
+  public static DialogueAct fromRdf(String uri, RdfProxy proxy) {
+
+    // TODO: verify that that Rdf is some subclass of DialogueAct
+    Rdf da = proxy.getRdf(uri);
+    if (! da.getClazz().isSubclassOf(proxy.getClass("<dial:DialogueAct>"))) {
+      logger.error("URI does not point to a DialogueAct: {}", uri);
+    }
+    Table propsValues =
+        proxy.selectQuery("select ?s ?p ?o where {} ?p ?o ?_", uri).getTable();
+    String rawDA = da.getClass().getSimpleName();
+
+    rawDA += "(" + da.getValue("<dial:frame>").getClass().getSimpleName();
+
+    // first is prop, second is value
+    for (List<String> propVal: propsValues.getRows()) {
+      String prop = propVal.get(0);
+      if (! "<dial:frame>".equals(prop))
+        rawDA += ", " + propertyToSlot(prop) + "=" + da.getValue(prop);
+    }
+
+    Rdf frame = (Rdf) da.getValue("<dial:frame>");
+    propsValues =
+        proxy.selectQuery("select ?s ?p ?o where {} ?p ?o ?_", frame.getURI()).getTable();
+    // TODO similar for loop like above, for all props & values
+    return new DialogueAct(rawDA + ")");
   }
 
   // TODO
-  public void toRdf() {
+  public void toRdf(RdfProxy proxy) {
+    RdfClass diaClass = proxy.getClass(getDialogueActType());
+    if (diaClass == null) {
+      logger.error("No Subclass of DialougeAct: {}", getDialogueActType());
+      diaClass = proxy.getClass("<dial:DialogueAct>");
+    }
+    Rdf da = diaClass.getNewInstance(DIAL_NS);
+    RdfClass frameClass = proxy.getClass(getProposition());
+    if (frameClass == null) {
+      logger.error("No Subclass of Framme: {}", getProposition());
+      frameClass = proxy.getClass("<sem:Frame>");
+    }
+    Rdf frame = frameClass.getNewInstance(DIAL_NS);
+    da.setValue("<dial:frame>", frame);
 
+    Iterator<DagEdge> dit = _dag.getEdgeIterator();
+    while (dit.hasNext()) {
+      DagEdge d = dit.next();
+      if (d.getFeature() != DagNode.PROP_FEAT_ID
+          && d.getFeature() != DagNode.TYPE_FEAT_ID) {
+        String prop = diaClass.fetchProperty(d.getName());
+        if (prop != null) {
+          da.setValue(prop, d.getValue().getTypeName());
+        } else {
+          prop = frameClass.fetchProperty(d.getName());
+          if (prop == null) {
+            prop = "<sem:" + d.getName() + ">";
+          }
+          frame.setValue(prop, d.getValue().getTypeName());
+        }
+      }
+    }
   }
 
   /** Get a set of all slots of this dialogue act */
