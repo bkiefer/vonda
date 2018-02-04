@@ -4,9 +4,16 @@ import static de.dfki.mlt.rudimant.compiler.GenerationConstants.*;
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Iterator;
+import java.util.Map;
+
+import de.dfki.lt.hfc.WrongFormatException;
+import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import de.dfki.lt.hfc.db.server.HfcDbApiHandler;
 
 public class TestUtilities {
   public static final String RESOURCE_DIR = "src/test/resources/";
@@ -25,6 +32,19 @@ public class TestUtilities {
     RudiTree r = it.next();
     if (r instanceof StatExpression) return ((StatExpression)r).expression;
     return r;
+  }
+  
+  public static RdfProxy startClient(File configDir, Map<String, Object> configs)
+      throws IOException, WrongFormatException {
+    String ontoFileName = (String) configs.get("ontologyFile");
+    if (ontoFileName == null) {
+      throw new IOException("Ontology file is missing.");
+    }
+    HfcDbApiHandler handler = new HfcDbApiHandler();
+    handler.readConfig(new File(configDir, ontoFileName));
+    RdfProxy proxy = new RdfProxy(handler);
+    handler.registerStreamingClient(proxy);
+    return proxy;
   }
 
   static int prefix = 252, suffix = 55;

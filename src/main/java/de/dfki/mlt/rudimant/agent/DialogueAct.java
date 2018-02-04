@@ -153,13 +153,13 @@ public class DialogueAct {
   // TODO finish and test
   public static DialogueAct fromRdf(String uri, RdfProxy proxy) {
 
-    // TODO: verify that that Rdf is some subclass of DialogueAct
     Rdf da = proxy.getRdf(uri);
     if (! da.getClazz().isSubclassOf(proxy.getClass("<dial:DialogueAct>"))) {
       logger.error("URI does not point to a DialogueAct: {}", uri);
     }
     Table propsValues =
-        proxy.selectQuery("select ?s ?p ?o where {} ?p ?o ?_", uri).getTable();
+        proxy.selectQuery("select ?p ?o where {} ?p ?o ?_", uri).getTable();
+    // String rawDA = da.getClass().getSimpleName();
     String rawDA = da.getClass().getSimpleName();
 
     rawDA += "(" + da.getValue("<dial:frame>").getClass().getSimpleName();
@@ -171,10 +171,15 @@ public class DialogueAct {
         rawDA += ", " + propertyToSlot(prop) + "=" + da.getValue(prop);
     }
 
-    Rdf frame = (Rdf) da.getValue("<dial:frame>");
+    Rdf frame = (Rdf) da.getSingleValue("<dial:frame>");
     propsValues =
-        proxy.selectQuery("select ?s ?p ?o where {} ?p ?o ?_", frame.getURI()).getTable();
+        proxy.selectQuery("select ?p ?o where {} ?p ?o ?_", frame.getURI()).getTable();
+    
     // TODO similar for loop like above, for all props & values
+    for (List<String> propVal: propsValues.getRows()) {
+      String prop = propVal.get(0);
+      rawDA += ", " + propertyToSlot(prop) + "=" + da.getValue(prop);
+    }
     return new DialogueAct(rawDA + ")");
   }
 
