@@ -146,10 +146,12 @@ public class DialogueAct {
     return new DialogueAct(_dag.copySafely());
   }
 
-  private static String propertyToSlot(String uri) {
+  /** Remove the namespace and the angle brackets, leaving only the name */
+  private static String uriToName(String uri) {
     return uri.substring(uri.indexOf(":") + 1, uri.lastIndexOf(">"));
   }
 
+  /** Add all the feature/value pairs from the given dag structure */
   private static void extractArguments(StringBuilder sb, Rdf rdf, RdfProxy proxy) {
     Table propsValues =
         proxy.selectQuery("select ?p ?o where {} ?p ?o ?_", rdf.getURI()).getTable();
@@ -161,7 +163,7 @@ public class DialogueAct {
         Set<Object> valSet = rdf.getValue(prop);
         assert(valSet.size() == 1);
         Object val = valSet.iterator().next();
-        sb.append(", " + propertyToSlot(prop) + "=\"" + val.toString() +'"');
+        sb.append(", " + uriToName(prop) + "=\"" + val.toString() +'"');
       }
     }
   }
@@ -178,13 +180,11 @@ public class DialogueAct {
       logger.error("URI does not point to a DialogueAct: {}", uri);
     }
     StringBuilder rawDA = new StringBuilder();
-    rawDA.append(propertyToSlot(da.getClazz().toString()));
+    rawDA.append(uriToName(da.getClazz().toString()));
     String frameName = (String)frame.getSingleValue("<sem:label>");
-    rawDA.append("(");
-    if (frameName != null)
-      rawDA.append(frameName);
-    else
-      rawDA.append(propertyToSlot(frame.getClazz().toString()));
+    if (frameName == null)
+      frameName = uriToName(frame.getClazz().toString());
+    rawDA.append("(").append(frameName);
     extractArguments(rawDA, da, proxy);
     extractArguments(rawDA, frame, proxy);
     rawDA.append(')');
