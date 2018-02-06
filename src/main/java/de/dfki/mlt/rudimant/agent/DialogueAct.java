@@ -147,7 +147,7 @@ public class DialogueAct {
   }
 
   private static String propertyToSlot(String uri) {
-    return uri.substring(uri.indexOf(":"), uri.lastIndexOf(">"));
+    return uri.substring(uri.indexOf(":") + 1, uri.lastIndexOf(">"));
   }
 
   // TODO finish and test
@@ -160,9 +160,8 @@ public class DialogueAct {
     Table propsValues =
         proxy.selectQuery("select ?p ?o where {} ?p ?o ?_", uri).getTable();
     // String rawDA = da.getClass().getSimpleName();
-    String rawDA = da.getClass().getSimpleName();
-
-    rawDA += "(" + da.getValue("<dial:frame>").getClass().getSimpleName();
+    String rawDA = propertyToSlot(da.getClazz().toString());
+    rawDA += "(" + propertyToSlot(((Rdf)da.getSingleValue("<dial:frame>")).getClazz().toString());
 
     // first is prop, second is value
     for (List<String> propVal: propsValues.getRows()) {
@@ -180,6 +179,7 @@ public class DialogueAct {
       String prop = propVal.get(0);
       rawDA += ", " + propertyToSlot(prop) + "=" + da.getValue(prop);
     }
+    System.out.println(rawDA);
     return new DialogueAct(rawDA + ")");
   }
 

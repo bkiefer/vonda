@@ -90,7 +90,7 @@ public class DialogueActTest {
     da.setValue("<dial:sender>", "someone");
     Rdf frame = _proxy.getClass("<dial:Answer>").getNewInstance("dial:");
     frame.setValue("<sem:agent>", "someone else");
-    da.setValue("<sem:frame>", frame);
+    da.setValue("<dial:frame>", frame);
     
     DialogueAct transformed = DialogueAct.fromRdf(da.getURI(), _proxy);
     
