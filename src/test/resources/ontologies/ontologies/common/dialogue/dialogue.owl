@@ -71,21 +71,21 @@
   <owl:Class rdf:ID="AggregateFunction">
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >&lt;p style="margin-top: 0"&gt;
-      this subclass of DialogueAct is intended to cross-classify dialogue acts 
-      which are subclasses of GeneralPurposeFunction; the idea behind this is 
-      to address uncertainty in the recognition of &amp;quot;related&amp;quot; dialogue acts 
+      this subclass of DialogueAct is intended to cross-classify dialogue acts
+      which are subclasses of GeneralPurposeFunction; the idea behind this is
+      to address uncertainty in the recognition of &amp;quot;related&amp;quot; dialogue acts
       through a _single_ class;
     &lt;/p&gt;
     &lt;p style="margin-top: 0"&gt;
-      currently, we suggest to have three subclasses of AggregateFunction for 
+      currently, we suggest to have three subclasses of AggregateFunction for
       which I list their subclasses below:
     &lt;/p&gt;
     &lt;p style="margin-top: 0"&gt;
-      * Accept &amp;gt; 
+      * Accept &amp;gt;
       {AcceptOffer,AcceptSuggestion,AcceptRequest,Confirm,CheckPositive,Agreement}
     &lt;/p&gt;
     &lt;p style="margin-top: 0"&gt;
-      * Decline &amp;gt; 
+      * Decline &amp;gt;
       {DeclineOffer,DeclineSuggestion,DeclineRequest,Disconfirm,CheckNegative,Disagreement}
     &lt;/p&gt;
     &lt;p style="margin-top: 0"&gt;
@@ -165,8 +165,8 @@
     </rdfs:subClassOf>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >&lt;p style="margin-top: 0"&gt;
-      Allo-Feedback acts are about the speaker's beliefs about the addressee's 
-      attention and processing of an utterance in the speaker's last turn (see 
+      Allo-Feedback acts are about the speaker's beliefs about the addressee's
+      attention and processing of an utterance in the speaker's last turn (see
       http://dit.uvt.nl/#dit_allo-fb-functions)
     &lt;/p&gt;</rdfs:comment>
   </owl:Class>
@@ -181,8 +181,8 @@
     </rdfs:subClassOf>
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >&lt;p style="margin-top: 0"&gt;
-      Auto-Feedback acts are about the speaker's own attention and processing 
-      of an utterance in the addressee's last turn (see 
+      Auto-Feedback acts are about the speaker's own attention and processing
+      of an utterance in the addressee's last turn (see
       http://dit.uvt.nl/#dit_auto-fb-functions)
     &lt;/p&gt;</rdfs:comment>
   </owl:Class>
@@ -521,15 +521,16 @@ act annotation')</rdfs:comment>
     >the addressee(s) of the dialogue act; in case several actors need to be specified, we usually "bundle" them in a container (group) object whose definition should come from an upper or domain ontology;
 sometimes called 'speaker'; not used at the moment !!</rdfs:comment>
   </owl:ObjectProperty>
-  <owl:ObjectProperty rdf:ID="frame">
+  <owl:FunctionalProperty rdf:ID="frame">
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >the frame which encodes the (shallow) semantics/the semantic content of 
-    the dialogue act; in principle, this property should be part of a 
-    domain-specific ontology which interfaces dialogue acts and FrameNet 
-    frames through the property frame, by defining a domain (viz., 
+    >the frame which encodes the (shallow) semantics/the semantic content of
+    the dialogue act; in principle, this property should be part of a
+    domain-specific ontology which interfaces dialogue acts and FrameNet
+    frames through the property frame, by defining a domain (viz.,
     dial:DialogueAct) and a range (viz., sem:Frame) restriction</rdfs:comment>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:domain rdf:resource="#DialogueAct"/>
-  </owl:ObjectProperty>
+  </owl:FunctionalProperty>
   <owl:ObjectProperty rdf:ID="refersTo">
     <rdfs:range rdf:resource="#DialogueAct"/>
     <rdfs:domain rdf:resource="#DialogueAct"/>

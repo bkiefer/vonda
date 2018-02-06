@@ -1,16 +1,20 @@
 package de.dfki.mlt.rudimant.agent;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.lt.hfc.db.Table;
+import de.dfki.lt.hfc.db.rdfProxy.Rdf;
+import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
+import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.tr.dialogue.cplan.DagEdge;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 
 public class DialogueAct {
+
+  public static String DIAL_NS = "dial:";
 
   private static Logger logger = LoggerFactory.getLogger(DialogueAct.class);
 
@@ -142,14 +146,93 @@ public class DialogueAct {
     return new DialogueAct(_dag.copySafely());
   }
 
-  // TODO
-  public static DialogueAct fromRdf(String uri) {
-    return null;
+  private static String propertyToSlot(String uri) {
+    return uri.substring(uri.indexOf(":") + 1, uri.lastIndexOf(">"));
   }
 
-  // TODO
-  public void toRdf() {
+  private static void extractArguments(StringBuilder sb, Rdf rdf, RdfProxy proxy) {
+    Table propsValues =
+        proxy.selectQuery("select ?p ?o where {} ?p ?o ?_", rdf.getURI()).getTable();
+    // first is prop, second is value
+    for (List<String> propVal: propsValues.getRows()) {
 
+      String prop = propVal.get(0);
+      if (! "<dial:frame>".equals(prop) && !"<rdf:type>".equals(prop)) {
+        Set<Object> valSet = rdf.getValue(prop);
+        assert(valSet.size() == 1);
+        Object val = valSet.iterator().next();
+        sb.append(", " + propertyToSlot(prop) + "=\"" + val.toString() +'"');
+      }
+    }
+  }
+
+  /** Read a DialogueAct from the database, with uri being the root node.
+   *
+   * As for toRdf, this will only work on restricted shallow representations.
+   */
+  public static DialogueAct fromRdf(String uri, RdfProxy proxy) {
+
+    Rdf da = proxy.getRdf(uri);
+    Rdf frame = (Rdf) da.getSingleValue("<dial:frame>");
+    if (! da.getClazz().isSubclassOf(proxy.getClass("<dial:DialogueAct>"))) {
+      logger.error("URI does not point to a DialogueAct: {}", uri);
+    }
+    StringBuilder rawDA = new StringBuilder();
+    rawDA.append(propertyToSlot(da.getClazz().toString()));
+    String frameName = (String)frame.getSingleValue("<sem:label>");
+    rawDA.append("(");
+    if (frameName != null)
+      rawDA.append(frameName);
+    else
+      rawDA.append(propertyToSlot(frame.getClazz().toString()));
+    extractArguments(rawDA, da, proxy);
+    extractArguments(rawDA, frame, proxy);
+    rawDA.append(')');
+    return new DialogueAct(rawDA.toString());
+  }
+
+  /** Write a DialogueAct to the database.
+   *
+   * This implementation is not fully general, it will only write shallow
+   * structures without coreferences correctly.
+   */
+  public Rdf toRdf(RdfProxy proxy) {
+    RdfClass diaClass = proxy.getRdfClass(getDialogueActType());
+    if (diaClass == null) {
+      logger.error("No Subclass of DialougeAct: {}", getDialogueActType());
+      diaClass = proxy.getClass("<dial:DialogueAct>");
+    }
+    Rdf da = diaClass.getNewInstance(DIAL_NS);
+    RdfClass frameClass = proxy.getRdfClass(getProposition());
+    boolean syntheticFrame = frameClass == null;
+    if (syntheticFrame) {
+      logger.error("No Subclass of Framme: {}", getProposition());
+      frameClass = proxy.getClass("<sem:Frame>");
+    }
+    Rdf frame = frameClass.getNewInstance(DIAL_NS);
+    if (syntheticFrame)
+      frame.setValue("<sem:label>", getProposition());
+    da.setValue("<dial:frame>", frame);
+
+    Iterator<DagEdge> dit = _dag.getEdgeIterator();
+    while (dit.hasNext()) {
+      DagEdge d = dit.next();
+      if (d.getFeature() != DagNode.PROP_FEAT_ID
+          && d.getFeature() != DagNode.TYPE_FEAT_ID
+          && d.getFeature() != DagNode.ID_FEAT_ID) {
+        String prop = diaClass.fetchProperty(d.getName());
+        if (prop != null) {
+          da.setValue(prop, d.getValue().getTypeName());
+        } else {
+          prop = frameClass.fetchProperty(d.getName());
+          if (prop == null) {
+            prop = "<sem:" + d.getName() + ">";
+          }
+          frame.setValue(prop, d.getValue().getTypeName());
+        }
+      }
+    }
+    return da;
   }
 
   /** Get a set of all slots of this dialogue act */

@@ -12,6 +12,6 @@
     <uri id="User Entered Import Resolution" name="http://www.dfki.de/lt/onto/pal/domain.owl" uri="file:/home/kiefer/palProject/subprojects/ontologies/ontologies/pal/domain/domain.owl"/>
     <uri id="User Entered Import Resolution" name="http://www.dfki.de/lt/onto/pal/timeline.owl" uri="file:/home/kiefer/palProject/subprojects/ontologies/ontologies/pal/timeline/timeline.owl"/>
     <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
-        <uri id="Automatically generated entry, Timestamp=1512572617428" name="http://www.dfki.de/lt/onto/pal/pal.owl" uri="pal.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1515778099832" name="http://www.dfki.de/lt/onto/pal/pal.owl" uri="pal.owl"/>
     </group>
 </catalog>
