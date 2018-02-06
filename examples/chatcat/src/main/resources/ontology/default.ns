@@ -1,0 +1,31 @@
+# short to long namespace name mappings: use &short2long directive
+
+&short2long
+xsd  http://www.w3.org/2001/XMLSchema#
+rdf  http://www.w3.org/1999/02/22-rdf-syntax-ns#
+rdfs  http://www.w3.org/2000/01/rdf-schema#
+owl  http://www.w3.org/2002/07/owl#
+
+
+# short namespace type URIs to HFC classes: use &type2class directive
+# note: all (custom) type classes should be put in package
+#       de.dfki.lt.hfc.types
+
+&type2class
+xsd:boolean  XsdBoolean
+xsd:int  XsdInt
+xsd:long  XsdLong
+xsd:float  XsdFloat
+xsd:double  XsdDouble
+xsd:string  XsdString
+xsd:anyURI  XsdAnyURI
+xsd:duration  XsdDuration
+xsd:date  XsdDate
+xsd:dateTime  XsdDateTime
+xsd:gYear  XsdGYear
+xsd:gYearMonth  XsdGYearMonth
+xsd:gMonth  XsdGMonth
+xsd:gMonthDay  XsdGMonthDay
+xsd:gDay  XsdGDay
+xsd:uDateTime  XsdUDateTime
+xsd:monetary  XsdMonetary

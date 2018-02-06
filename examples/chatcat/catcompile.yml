@@ -1,0 +1,7 @@
+outputDirectory:    src/main/gen-java
+wrapperClass:       de.dfki.chatcat.ChatAgent
+ontologyFile:       src/main/resources/ontology/chatcat.ini
+checkTypes:         true
+failOnError:        false
+targetConstructor:
+rootPackage:        de.dfki.chatcat

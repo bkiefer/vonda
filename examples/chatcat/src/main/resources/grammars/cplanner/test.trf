@@ -1,0 +1,10 @@
+// test grammar to check if working with grammar works
+// should greet back:
+
+raw:ReturnGreeting ^ Greet
+->
+# =  :canned ^ <string>"*knock-knock*".
+
+raw:SecondReturnGreeting ^ Greet
+->
+# =  :canned ^ <string>"*knock-knock^2*".
