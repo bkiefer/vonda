@@ -1,2 +1,4 @@
+../task/?forceReadOnly=true
+../bloom/?forceReadOnly=true
 http://www.dfki.de/lt/onto/common/upper.owl
 http://www.dfki.de/lt/onto/common/time.owl

@@ -434,6 +434,56 @@
       	&amp;quot;can I start asking the questions?&amp;quot;&#xD;
     &lt;/p&gt;</rdfs:comment>
   </owl:Class>
+  <owl:Class rdf:ID="Remaining">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >&lt;p style="margin-top: 0"&gt;&#xD;
+      Inform(Remaining, theme=life, what=2)&#xD;
+    &lt;/p&gt;&#xD;
+    &lt;p style="margin-top: 0"&gt;&#xD;
+      	&amp;quot;You have two lives left.&amp;quot;&#xD;
+    &lt;/p&gt;</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Mode">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >&lt;p style="margin-top: 0"&gt;&#xD;
+      WHQuestion(Mode)&#xD;
+    &lt;/p&gt;&#xD;
+    &lt;p style="margin-top: 0"&gt;&#xD;
+      	&amp;quot;Which type of game do you want to play?&amp;quot;&#xD;
+    &lt;/p&gt;</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Gaining">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >&lt;p style="margin-top: 0"&gt;&#xD;
+      Praise(Gaining, theme=life)&#xD;
+    &lt;/p&gt;&#xD;
+    &lt;p style="margin-top: 0"&gt;&#xD;
+      	&amp;quot;Great, you won a life!&amp;quot;&#xD;
+    &lt;/p&gt;</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Losing">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >&lt;p style="margin-top: 0"&gt;&#xD;
+      Commiseration(Losing, theme=game)&#xD;
+    &lt;/p&gt;&#xD;
+    &lt;p style="margin-top: 0"&gt;&#xD;
+      	&amp;quot;Too bad, you lose!&amp;quot;&#xD;
+    &lt;/p&gt;</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Winning">
+    <rdfs:subClassOf rdf:resource="#Frame"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >&lt;p style="margin-top: 0"&gt;&#xD;
+      Inform(Winning, theme=game)&#xD;
+    &lt;/p&gt;&#xD;
+    &lt;p style="margin-top: 0"&gt;&#xD;
+      	&amp;quot;You win!&amp;quot;&#xD;
+    &lt;/p&gt;</rdfs:comment>
+  </owl:Class>
   <owl:ObjectProperty rdf:ID="manner">
     <rdfs:range rdf:resource="#Manner"/>
     <rdfs:domain rdf:resource="#Frame"/>
@@ -450,6 +500,11 @@
     <rdfs:domain rdf:resource="#Frame"/>
     <rdfs:range rdf:resource="#Actor"/>
   </owl:ObjectProperty>
+  <owl:FunctionalProperty rdf:ID="label">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:domain rdf:resource="#Frame"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:FunctionalProperty>
 </rdf:RDF>
 
 <!-- Created with Protege (with OWL Plugin 3.5, Build 663)  http://protege.stanford.edu -->

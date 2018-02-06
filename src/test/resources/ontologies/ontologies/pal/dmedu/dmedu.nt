@@ -4,84 +4,98 @@ _:genid11 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.dfki.de
 _:genid11 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid12 .
 _:genid12 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.dfki.de/lt/onto/pal/dmedu.owl#AchievementType> .
 _:genid12 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
-_:genid13 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DataRange> .
-_:genid13 <http://www.w3.org/2002/07/owl#oneOf> _:genid14 .
-_:genid14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "active"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid13 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+_:genid13 <http://www.w3.org/2002/07/owl#unionOf> _:genid14 .
+_:genid14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningGoalType> .
 _:genid14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid15 .
-_:genid15 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "inactive"^^<http://www.w3.org/2001/XMLSchema#string> .
-_:genid15 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
-_:genid16 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DataRange> .
-_:genid16 <http://www.w3.org/2002/07/owl#oneOf> _:genid17 .
-_:genid17 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Glucose"^^<http://www.w3.org/2001/XMLSchema#string> .
-_:genid17 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid18 .
-_:genid18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Insulin"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid15 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.dfki.de/lt/onto/pal/dmedu.owl#AchievementType> .
+_:genid15 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid16 .
+_:genid16 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty> .
+_:genid16 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:genid17 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DataRange> .
+_:genid17 <http://www.w3.org/2002/07/owl#oneOf> _:genid18 .
+_:genid18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "1"^^<http://www.w3.org/2001/XMLSchema#int> .
 _:genid18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid19 .
-_:genid19 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Nutrition"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid19 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "2"^^<http://www.w3.org/2001/XMLSchema#int> .
 _:genid19 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid20 .
 _:genid1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 _:genid1 <http://www.w3.org/2002/07/owl#unionOf> _:genid2 .
-_:genid20 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Activity"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid20 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "3"^^<http://www.w3.org/2001/XMLSchema#int> .
 _:genid20 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid21 .
-_:genid21 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Self-Management"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid21 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "4"^^<http://www.w3.org/2001/XMLSchema#int> .
 _:genid21 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid22 .
-_:genid22 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Self-control"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid22 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "5"^^<http://www.w3.org/2001/XMLSchema#int> .
 _:genid22 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid23 .
-_:genid23 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Diabetes"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid23 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "6"^^<http://www.w3.org/2001/XMLSchema#int> .
 _:genid23 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:genid24 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DataRange> .
 _:genid24 <http://www.w3.org/2002/07/owl#oneOf> _:genid25 .
-_:genid25 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Nutrition"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid25 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "high"^^<http://www.w3.org/2001/XMLSchema#string> .
 _:genid25 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid26 .
-_:genid26 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Insulin"^^<http://www.w3.org/2001/XMLSchema#string> .
-_:genid26 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid27 .
-_:genid27 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Glucose"^^<http://www.w3.org/2001/XMLSchema#string> .
-_:genid27 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid28 .
-_:genid28 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Activity"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid26 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "low"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid26 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:genid27 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+_:genid27 <http://www.w3.org/2002/07/owl#unionOf> _:genid28 .
+_:genid28 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.dfki.de/lt/onto/pal/dmedu.owl#DiabetesEducation> .
 _:genid28 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid29 .
-_:genid29 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Diabetes"^^<http://www.w3.org/2001/XMLSchema#string> .
-_:genid29 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid30 .
+_:genid29 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty> .
+_:genid29 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:genid2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningGoalType> .
 _:genid2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid3 .
-_:genid30 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Self-control"^^<http://www.w3.org/2001/XMLSchema#string> .
-_:genid30 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid31 .
-_:genid31 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Self-management"^^<http://www.w3.org/2001/XMLSchema#string> .
-_:genid31 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
-_:genid32 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
-_:genid32 <http://www.w3.org/2002/07/owl#unionOf> _:genid33 .
-_:genid33 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningGoalType> .
-_:genid33 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid34 .
-_:genid34 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.dfki.de/lt/onto/pal/dmedu.owl#AchievementType> .
-_:genid34 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
-_:genid35 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DataRange> .
-_:genid35 <http://www.w3.org/2002/07/owl#oneOf> _:genid36 .
-_:genid36 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "1"^^<http://www.w3.org/2001/XMLSchema#int> .
-_:genid36 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid37 .
-_:genid37 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "2"^^<http://www.w3.org/2001/XMLSchema#int> .
+_:genid30 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DataRange> .
+_:genid30 <http://www.w3.org/2002/07/owl#oneOf> _:genid31 .
+_:genid31 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "user"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid31 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid32 .
+_:genid32 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "system"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid32 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:genid33 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+_:genid33 <http://www.w3.org/2002/07/owl#unionOf> _:genid34 .
+_:genid34 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent> .
+_:genid34 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid35 .
+_:genid35 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Videocontent> .
+_:genid35 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:genid36 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DataRange> .
+_:genid36 <http://www.w3.org/2002/07/owl#oneOf> _:genid37 .
+_:genid37 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "active"^^<http://www.w3.org/2001/XMLSchema#string> .
 _:genid37 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid38 .
-_:genid38 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "3"^^<http://www.w3.org/2001/XMLSchema#int> .
-_:genid38 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid39 .
-_:genid39 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "4"^^<http://www.w3.org/2001/XMLSchema#int> .
-_:genid39 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid40 .
+_:genid38 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "inactive"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid38 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:genid39 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DataRange> .
+_:genid39 <http://www.w3.org/2002/07/owl#oneOf> _:genid40 .
 _:genid3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.dfki.de/lt/onto/pal/dmedu.owl#AchievementType> .
 _:genid3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
-_:genid40 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "5"^^<http://www.w3.org/2001/XMLSchema#int> .
+_:genid40 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Glucose"^^<http://www.w3.org/2001/XMLSchema#string> .
 _:genid40 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid41 .
-_:genid41 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "6"^^<http://www.w3.org/2001/XMLSchema#int> .
-_:genid41 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
-_:genid42 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DataRange> .
-_:genid42 <http://www.w3.org/2002/07/owl#oneOf> _:genid43 .
-_:genid43 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "high"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid41 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Insulin"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid41 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid42 .
+_:genid42 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Nutrition"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid42 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid43 .
+_:genid43 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Activity"^^<http://www.w3.org/2001/XMLSchema#string> .
 _:genid43 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid44 .
-_:genid44 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "low"^^<http://www.w3.org/2001/XMLSchema#string> .
-_:genid44 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
-_:genid45 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DataRange> .
-_:genid45 <http://www.w3.org/2002/07/owl#oneOf> _:genid46 .
-_:genid46 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "user"^^<http://www.w3.org/2001/XMLSchema#string> .
-_:genid46 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid47 .
-_:genid47 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "system"^^<http://www.w3.org/2001/XMLSchema#string> .
-_:genid47 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:genid44 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Self-Management"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid44 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid45 .
+_:genid45 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Self-control"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid45 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid46 .
+_:genid46 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Diabetes"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid46 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:genid47 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DataRange> .
+_:genid47 <http://www.w3.org/2002/07/owl#oneOf> _:genid48 .
+_:genid48 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Nutrition"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid48 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid49 .
+_:genid49 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Insulin"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid49 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid50 .
 _:genid4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 _:genid4 <http://www.w3.org/2002/07/owl#unionOf> _:genid5 .
+_:genid50 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Glucose"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid50 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid51 .
+_:genid51 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Activity"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid51 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid52 .
+_:genid52 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Diabetes"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid52 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid53 .
+_:genid53 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Self-control"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid53 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid54 .
+_:genid54 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "Self-management"^^<http://www.w3.org/2001/XMLSchema#string> .
+_:genid54 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:genid5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningGoalType> .
 _:genid5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:genid6 .
 _:genid6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.dfki.de/lt/onto/pal/dmedu.owl#AchievementType> .
@@ -122,7 +136,7 @@ _:genid9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/19
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#AdaptFood> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningGoalType> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#AdaptFood> <http://www.w3.org/2000/01/rdf-schema#comment> ""^^<http://www.w3.org/2001/XMLSchema#string> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#addedBy> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#addedBy> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#addedBy> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningContent> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#addedBy> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Professional> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#addedBy> <http://www.w3.org/2002/07/owl#inverseOf> <http://www.dfki.de/lt/onto/pal/dmedu.owl#add> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#add> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
@@ -665,6 +679,44 @@ _:genid9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/19
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#description> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#DiabetesEducation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#DiabetesEducation> <http://www.w3.org/2000/01/rdf-schema#comment> "The stucture for diabetes specific learning goals and task. Their individuals are predefined. Moreover, prerequisites are set."^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty1> <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasColor> "cd5c5c"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty1> <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasDifficulty> "1"^^<http://www.w3.org/2001/XMLSchema#int> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty1> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Novice"@en .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty1> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Novice"@nl .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty1> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Novizio"@it .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty2> <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasColor> "ff7f50"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty2> <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasDifficulty> "2"^^<http://www.w3.org/2001/XMLSchema#int> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty2> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Advanced Beginner"@en .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty2> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Gevorderde Beginner"@nl .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty2> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Principiante Avanzato"@it .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty3> <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasColor> "f4a460"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty3> <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasDifficulty> "3"^^<http://www.w3.org/2001/XMLSchema#int> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty3> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Competente"@it .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty3> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Competent"@en .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty3> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Competent"@nl .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty4> <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasColor> "f0e68c"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty4> <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasDifficulty> "4"^^<http://www.w3.org/2001/XMLSchema#int> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty4> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Bekwaam"@nl .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty4> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Proficient"@en .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty4> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Provetto"@it .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty4> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty5> <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasColor> "8fbc8f"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty5> <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasDifficulty> "5"^^<http://www.w3.org/2001/XMLSchema#int> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty5> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Deskundig"@nl .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty5> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Esperto"@it .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty5> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Expert"@en .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty5> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty6> <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasColor> "3cb371"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty6> <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasDifficulty> "6"^^<http://www.w3.org/2001/XMLSchema#int> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty6> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Maestro"@it .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty6> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Master"@en .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty6> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Meester"@nl .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty6> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty> <http://www.w3.org/2000/01/rdf-schema#comment> "<p style=\"margin-top: 0\">\r\n      The\r\n    </p>"@en .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#EducationObjective> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#EducationObjective> <http://www.w3.org/2000/01/rdf-schema#comment> "Education specific, but domain independent, learning objective concepts. Including learningGoal and LearningTask as subclasses of the more general Task and Goal in the task world. (Additionally, learning content to store materials to support learning and thus goal attainment.)"^^<http://www.w3.org/2001/XMLSchema#string> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#EnterActivity> <http://www.dfki.de/lt/onto/pal/dmedu.owl#description> "Eerste activiteit op de timeline toegevoegd"@nl .
@@ -745,7 +797,7 @@ _:genid9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/19
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#FoodAndActivity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningGoalType> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#forGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#forGoal> <http://www.w3.org/2000/01/rdf-schema#comment> "The learninggoaltype(s) the webcontent is related with"@en .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#forGoal> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#forGoal> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningContent> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#forGoal> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningGoalType> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#GeneralDiabetes> <http://www.dfki.de/lt/onto/pal/dmedu.owl#description> "All knowledge on diabetes obtained at level 3"@en .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#GeneralDiabetes> <http://www.dfki.de/lt/onto/pal/dmedu.owl#description> "Nozioni generali sul diabete (livello 3)"@it .
@@ -811,22 +863,29 @@ _:genid9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/19
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasAchievementTopic> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasAchievementTopic> <http://www.w3.org/2000/01/rdf-schema#comment> "The topic of the goal(set) e.g. Nutrition, Insuline, etc. Topics should be \rrestricted to a finite set to avoid different names for similair topics, \rhowever the list of possibilities is under discussion."@en .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasAchievementTopic> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmedu.owl#AchievementType> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasAchievementTopic> <http://www.w3.org/2000/01/rdf-schema#range> _:genid16 .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasAchievementTopic> <http://www.w3.org/2000/01/rdf-schema#range> _:genid39 .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasColor> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasColor> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasColor> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Difficulty> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasColor> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasDifficulty> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasDifficulty> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasDifficulty> <http://www.w3.org/2000/01/rdf-schema#comment> "The difficulty (FORMERLY NAMED LEVEL) of the goal ranges from 1 upto 6, 1 being the start and \r6 the end when self-managment is achieved.\nDifficulties are suggested to be apprpriate for specific age ranges: 1 - \r6-7jr, 2 - 8-9jr, 3 - 10-11jr, 4 - 12-13jr, 5 - 14-15jr and 6 - 16+"@en .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasDifficulty> <http://www.w3.org/2000/01/rdf-schema#domain> _:genid32 .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasDifficulty> <http://www.w3.org/2000/01/rdf-schema#range> _:genid35 .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasDifficulty> <http://www.w3.org/2000/01/rdf-schema#domain> _:genid13 .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasDifficulty> <http://www.w3.org/2000/01/rdf-schema#range> _:genid17 .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasGoalTopic> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasGoalTopic> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasGoalTopic> <http://www.w3.org/2000/01/rdf-schema#comment> "The topic of a goal e.g. Nutrition, Insulin."^^<http://www.w3.org/2001/XMLSchema#string> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasGoalTopic> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningGoalType> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasGoalTopic> <http://www.w3.org/2000/01/rdf-schema#range> _:genid24 .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasGoalTopic> <http://www.w3.org/2000/01/rdf-schema#range> _:genid47 .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasGoalType> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasGoalType> <http://www.w3.org/2000/01/rdf-schema#comment> "task(type) contributes to attainment of goal(type). May be one or more."^^<http://www.w3.org/2001/XMLSchema#string> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasGoalType> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningTaskType> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasGoalType> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningGoalType> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasGoalType> <http://www.w3.org/2002/07/owl#inverseOf> <http://www.dfki.de/lt/onto/pal/dmedu.owl#attainedBy> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasIcon> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasIcon> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasIcon> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasLearningGoal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasLearningGoal> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Child> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasLearningGoal> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningGoal> .
@@ -840,7 +899,7 @@ _:genid9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/19
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasPriority> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasPriority> <http://www.w3.org/2000/01/rdf-schema#comment> "The priority given to a set of goals either high or low.\nGoals can be either active or inactive. Active goals should be reached by \rthe child in the future. To focus education i.e. to decide the goals and \rtasks to focus on goalsets should be given a priority. Active goals in a \rgoalset with a high priority will be used for task and content selection. \rWhen no active goals within a high priority goalset are set content and \rtasks for activegoals in low priority goalsets should be used."@en .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasPriority> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Achievement> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasPriority> <http://www.w3.org/2000/01/rdf-schema#range> _:genid42 .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#hasPriority> <http://www.w3.org/2000/01/rdf-schema#range> _:genid24 .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasProgress> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasProgress> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hasProgress> <http://www.w3.org/2000/01/rdf-schema#comment> "Percentage of completion of the goal calculated based on task completion"^^<http://www.w3.org/2001/XMLSchema#string> .
@@ -855,7 +914,7 @@ _:genid9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/19
 <http://www.dfki.de/lt/onto/pal/dmedu.owl> <http://www.w3.org/2002/07/owl#versionInfo> "v1.2"^^<http://www.w3.org/2001/XMLSchema#string> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hyperlink> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#hyperlink> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#hyperlink> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#hyperlink> <http://www.w3.org/2000/01/rdf-schema#domain> _:genid33 .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#Impact> <http://www.dfki.de/lt/onto/pal/dmedu.owl#contributeTo> <http://www.dfki.de/lt/onto/pal/dmedu.owl#AdvancedDiabetes> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#Impact> <http://www.dfki.de/lt/onto/pal/dmedu.owl#description> "So come gestire il diabete tutti i giorni"@it .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#Impact> <http://www.dfki.de/lt/onto/pal/dmedu.owl#description> "Understand what diabetes is and it's impact on daily life"@en .
@@ -975,7 +1034,7 @@ _:genid9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/19
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#isAchivedBy> <http://www.w3.org/2000/01/rdf-schema#subPropertyOf> <http://www.dfki.de/lt/onto/common/upper.owl#leadsTo> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> <http://www.w3.org/2000/01/rdf-schema#comment> "Multilingual short description of the goal for display in authoring tool or any other interface."^^<http://www.w3.org/2001/XMLSchema#string> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#label> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmedu.owl#DiabetesEducation> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#label> <http://www.w3.org/2000/01/rdf-schema#domain> _:genid27 .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningContent> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningContent> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/common/upper.owl#Abstract> .
@@ -1316,9 +1375,9 @@ _:genid9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/19
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#SelfManagement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/pal/dmedu.owl#AchievementType> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#setBy> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#setBy> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#setBy> <http://www.w3.org/2000/01/rdf-schema#comment> "Indicates if goal/achievement attainment was indicated by the user (pal control) or system (goal calculator). Default value is system. If progress is updated to 1 (=attained) from PAL Control, value is set to user."^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#setBy> <http://www.w3.org/2000/01/rdf-schema#comment> "Indicates if goal/achievement progress was last changed by the user (pal control) or system (goal calculator). If progress is updated to 1 (=attained) from PAL Control, value is set to user."^^<http://www.w3.org/2001/XMLSchema#string> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#setBy> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmedu.owl#EducationObjective> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#setBy> <http://www.w3.org/2000/01/rdf-schema#range> _:genid45 .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#setBy> <http://www.w3.org/2000/01/rdf-schema#range> _:genid30 .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#shortCode> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#shortCode> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#shortCode> <http://www.w3.org/2000/01/rdf-schema#comment> "Short 'id' of the task used by the quizlogic module to select the related quiz questions."@en .
@@ -1338,7 +1397,7 @@ _:genid9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/19
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#status> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#status> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#status> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/pal/dmedu.owl#EducationObjective> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#status> <http://www.w3.org/2000/01/rdf-schema#range> _:genid13 .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#status> <http://www.w3.org/2000/01/rdf-schema#range> _:genid36 .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#Symtoms> <http://www.dfki.de/lt/onto/pal/dmedu.owl#attainedBy> <http://www.dfki.de/lt/onto/pal/dmedu.owl#AnswerG14> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#Symtoms> <http://www.dfki.de/lt/onto/pal/dmedu.owl#contributeTo> <http://www.dfki.de/lt/onto/pal/dmedu.owl#ExpertGlucose> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#Symtoms> <http://www.dfki.de/lt/onto/pal/dmedu.owl#description> "Conosco i sintomi della glicemia alta e bassa e so come gestirli "@it .
@@ -1404,6 +1463,8 @@ _:genid9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/19
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#ValueLow> <http://www.dfki.de/lt/onto/pal/dmedu.owl#requiredFor> <http://www.dfki.de/lt/onto/pal/dmedu.owl#CauseHypo> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#ValueLow> <http://www.dfki.de/lt/onto/pal/dmedu.owl#shortCode> "H5"^^<http://www.w3.org/2001/XMLSchema#string> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#ValueLow> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningGoalType> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Videocontent> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://www.dfki.de/lt/onto/pal/dmedu.owl#Videocontent> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningContent> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#VideoTask> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#VideoTask> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningTaskType> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#WatchVideoSports> <http://www.dfki.de/lt/onto/pal/dmedu.owl#description> "Bekijk een video over een topsporter met diabetes"@nl .
@@ -1413,19 +1474,6 @@ _:genid9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/19
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#WatchVideoSports> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Guardare video di un grande sportivo"@it .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#WatchVideoSports> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Watch video top sporter"@en .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#WatchVideoSports> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/pal/dmedu.owl#VideoTask> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent_1> <http://www.dfki.de/lt/onto/pal/dmedu.owl#forGoal> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Impact> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent_1> <http://www.dfki.de/lt/onto/pal/dmedu.owl#hyperlink> "https://www.sugarkids.nl/files/sugarkids/Spreekbeurt3.ppt"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent_1> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "PowerPoint voor spreekbeurt over diabetes"@nl .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent_1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent_6> <http://www.dfki.de/lt/onto/pal/dmedu.owl#forGoal> <http://www.dfki.de/lt/onto/pal/dmedu.owl#AmountFood> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent_6> <http://www.dfki.de/lt/onto/pal/dmedu.owl#hyperlink> "https://disneystorycentral.com/book/elililly/9781423167280"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent_6> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Logeren"@nl .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent_6> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent_7> <http://www.dfki.de/lt/onto/pal/dmedu.owl#forGoal> <http://www.dfki.de/lt/onto/pal/dmedu.owl#CauseHypo> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent_7> <http://www.dfki.de/lt/onto/pal/dmedu.owl#forGoal> <http://www.dfki.de/lt/onto/pal/dmedu.owl#CorrectHypo> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent_7> <http://www.dfki.de/lt/onto/pal/dmedu.owl#hyperlink> "LowBloodSugarEN.pdf"^^<http://www.w3.org/2001/XMLSchema#anyURI> .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent_7> <http://www.dfki.de/lt/onto/pal/dmedu.owl#label> "Hypo"@nl .
-<http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent_7> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#Webcontent> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningContent> .
 <http://www.dfki.de/lt/onto/pal/dmedu.owl#WhatEat> <http://www.dfki.de/lt/onto/pal/dmedu.owl#attainedBy> <http://www.dfki.de/lt/onto/pal/dmedu.owl#AnswerN2> .

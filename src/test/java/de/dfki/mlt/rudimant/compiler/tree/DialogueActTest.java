@@ -68,9 +68,9 @@ public class DialogueActTest {
 
   @Test
   public void testDA2() {
-    String in = "emitDA(#Inform(Answer, what=^random(10)));";
+    String in = "emitDA(#Inform(Answering, what=^random(10)));";
     String r = generate(in);
-    String expected = "emitDA(new DialogueAct(\"Inform\", \"Answer\", \"what\", Integer.toString(random(10))));";
+    String expected = "emitDA(new DialogueAct(\"Inform\", \"Answering\", \"what\", Integer.toString(random(10))));";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -83,25 +83,55 @@ public class DialogueActTest {
         "DialogueAct c = new DialogueAct(\"Confirm\", \"Correct\", \"value\", Integer.toString(10))";
     assertEquals(expected, getForMarked(s, expected));
   }
-  
+
   @Test
   public void testFromRdf() {
     Rdf da = _proxy.getClass("<dial:Accept>").getNewInstance("dial:");
     da.setValue("<dial:sender>", "someone");
-    Rdf frame = _proxy.getClass("<dial:Answer>").getNewInstance("dial:");
+    Rdf frame = _proxy.getClass("<sem:Answering>").getNewInstance("dial:");
     frame.setValue("<sem:agent>", "someone else");
     da.setValue("<dial:frame>", frame);
-    
+
     DialogueAct transformed = DialogueAct.fromRdf(da.getURI(), _proxy);
-    
-    assertTrue(transformed.getDialogueActType().equals("Accept"));
-    assertTrue(transformed.getProposition().equals("Answer"));
-    assertTrue(transformed.hasSlot("sender")
-        && transformed.getValue("sender").equals("someone"));
-    assertTrue(transformed.hasSlot("agent")
-        && transformed.getValue("agent").equals("someone else"));
+
+    assertEquals("<dial:Accept>", transformed.getDialogueActType());
+    assertEquals("Answering", transformed.getProposition());
+    assertTrue(transformed.hasSlot("sender"));
+    assertEquals("someone", transformed.getValue("sender"));
+    assertTrue(transformed.hasSlot("agent"));
+    assertEquals("someone else", transformed.getValue("agent"));
   }
-  
+
+  @Test
+  public void testFromRdf2() {
+    Rdf da = _proxy.getClass("<dial:Accept>").getNewInstance("dial:");
+    da.setValue("<dial:sender>", "someone");
+    Rdf frame = _proxy.getClass("<sem:Frame>").getNewInstance("dial:");
+    frame.setValue("<sem:agent>", "someone else");
+    frame.setValue("<sem:label>", "Foo");
+    da.setValue("<dial:frame>", frame);
+
+    DialogueAct transformed = DialogueAct.fromRdf(da.getURI(), _proxy);
+
+    assertEquals("<dial:Accept>", transformed.getDialogueActType());
+    assertEquals("Foo", transformed.getProposition());
+    assertTrue(transformed.hasSlot("sender"));
+    assertEquals("someone", transformed.getValue("sender"));
+    assertTrue(transformed.hasSlot("agent"));
+    assertEquals("someone else", transformed.getValue("agent"));
+  }
+
+  @Test
+  public void testToRdf2() {
+    DialogueAct da = new DialogueAct("@raw:ReturnGreeting(Meeting"
+        + " ^ <Time>afternoon ^ <addressee>\"<rifca:Child_8>\""
+        + " ^ <sender>\"<pal:Child_8_nao_0>\")");
+    Rdf rep = da.toRdf(_proxy);
+    QueryResult res =
+        _proxy.selectQuery("select ?p ?q where {} ?p ?q ?_", rep.getURI());
+    assertEquals(4, res.getTable().getRows().size());
+  }
+
   @Test
   public void testToRdf1() {
     // use information about entry time to make sure we do not only find an old entry
