@@ -9,7 +9,6 @@ import de.dfki.lt.hfc.db.Table;
 import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.lt.hfc.db.rdfProxy.RdfSet;
 import de.dfki.lt.tr.dialogue.cplan.DagEdge;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 
@@ -167,7 +166,10 @@ public class DialogueAct {
     }
   }
 
-  // TODO finish and test
+  /** Read a DialogueAct from the database, with uri being the root node.
+   *
+   * As for toRdf, this will only work on restricted shallow representations.
+   */
   public static DialogueAct fromRdf(String uri, RdfProxy proxy) {
 
     Rdf da = proxy.getRdf(uri);
@@ -189,15 +191,19 @@ public class DialogueAct {
     return new DialogueAct(rawDA.toString());
   }
 
-  // TODO
+  /** Write a DialogueAct to the database.
+   *
+   * This implementation is not fully general, it will only write shallow
+   * structures without coreferences correctly.
+   */
   public Rdf toRdf(RdfProxy proxy) {
-    RdfClass diaClass = proxy.getClass(getDialogueActType());
+    RdfClass diaClass = proxy.getRdfClass(getDialogueActType());
     if (diaClass == null) {
       logger.error("No Subclass of DialougeAct: {}", getDialogueActType());
       diaClass = proxy.getClass("<dial:DialogueAct>");
     }
     Rdf da = diaClass.getNewInstance(DIAL_NS);
-    RdfClass frameClass = proxy.fetchClass(getProposition());
+    RdfClass frameClass = proxy.getRdfClass(getProposition());
     boolean syntheticFrame = frameClass == null;
     if (syntheticFrame) {
       logger.error("No Subclass of Framme: {}", getProposition());
@@ -212,7 +218,8 @@ public class DialogueAct {
     while (dit.hasNext()) {
       DagEdge d = dit.next();
       if (d.getFeature() != DagNode.PROP_FEAT_ID
-          && d.getFeature() != DagNode.TYPE_FEAT_ID) {
+          && d.getFeature() != DagNode.TYPE_FEAT_ID
+          && d.getFeature() != DagNode.ID_FEAT_ID) {
         String prop = diaClass.fetchProperty(d.getName());
         if (prop != null) {
           da.setValue(prop, d.getValue().getTypeName());
