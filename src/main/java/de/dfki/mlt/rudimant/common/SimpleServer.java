@@ -29,18 +29,25 @@ public class SimpleServer extends SimpleConnector {
 
   /** starts the debugging service for the agent */
   public boolean startServer() {
-    try {
-      serverSocket = new ServerSocket(_portNumber);
-      socket = serverSocket.accept();
-      in = new InputStreamReader(socket.getInputStream(), "UTF-8");
-      out = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
-      startReading();
-      logger.info("Agent debug server started");
-      return true;
-    } catch (IOException exception) {
-      logger.error("Agent debug server: " + exception.toString());
-    }
-    return false;
+    Thread t = new Thread() {
+      public void run() {
+        try {
+          serverSocket = new ServerSocket(_portNumber);
+          socket = serverSocket.accept();
+          in = new InputStreamReader(socket.getInputStream(), "UTF-8");
+          out = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+          startReading();
+          logger.info("Agent debug server started");
+
+        } catch (IOException exception) {
+          logger.error("Agent debug server: " + exception.toString());
+        }
+      }
+    };
+    t.setDaemon(true);
+    t.setName("StartServer");
+    t.start();
+    return true;
   }
 
   protected boolean init() { return false; }
