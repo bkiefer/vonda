@@ -4,16 +4,16 @@ import java.io.IOException;
 
 import de.dfki.mlt.rudimant.common.LogPrinter;
 import de.dfki.mlt.rudimant.common.RuleInfo;
-import de.dfki.mlt.rudimant.common.SimpleClient;
+import de.dfki.mlt.rudimant.common.SimpleServer;
 
 public class RemoteLogger implements LogPrinter {
-  private SimpleClient client;
+  private SimpleServer _server;
 
   /** A client that connects to the server on localhost at the given port to
    *  send log information to the debugger.
    */
-  public RemoteLogger(String hostname, int port) {
-    client = new SimpleClient(hostname, port);
+  public RemoteLogger(SimpleServer server) {
+    _server = server;
   }
 
   @Override
@@ -25,7 +25,7 @@ public class RemoteLogger implements LogPrinter {
       for (int i = 0; i < result.length; ++i) {
         toSend[i + 2] = Boolean.toString(result[i]);
       }
-      client.send(toSend);
+      _server.send(toSend);
     } catch (IOException e) {
       Agent.logger.error(e.getMessage());
     }

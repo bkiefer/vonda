@@ -1,24 +1,22 @@
 package de.dfki.mlt.rudimant.common;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.*;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.function.Consumer;
 
-import org.apache.log4j.BasicConfigurator;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SimpleClient {
+public class SimpleClient extends SimpleConnector {
 
-  private static Logger logger = LoggerFactory.getLogger(SimpleClient.class);
-
-  private Socket socket;
-
-  private final int _portNumber;
+  static { logger = LoggerFactory.getLogger(SimpleServer.class); }
 
   private final String _hostName;
-
-  private OutputStreamWriter out;
 
   private SocketAddress _addr;
 
@@ -28,10 +26,10 @@ public class SimpleClient {
    *
    * @param portNumber
    */
-  public SimpleClient(String hostname, int portNumber) {
+  public SimpleClient(String hostname, int portNumber,
+      Consumer<String[]> c, String name) {
+    super(portNumber, c, name);
     _hostName = hostname;
-    _portNumber = portNumber;
-    socket = new Socket();
     _addr = new InetSocketAddress(_hostName, _portNumber);
   }
 
@@ -43,7 +41,7 @@ public class SimpleClient {
   private long noLogInterval = 30000;
   private long reconnectInterval = 1000;
 
-  private boolean initClient() {
+  public boolean initClient() {
     long currentTime = System.currentTimeMillis();
     if (currentTime - nextTryToConnect > 0) {
       try {
@@ -53,6 +51,9 @@ public class SimpleClient {
         socket = new Socket();
         socket.connect(_addr);
         out = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+        in = new InputStreamReader(socket.getInputStream(), "UTF-8");
+        closeRequested = false;
+        startReading();
         logger.debug("Client has been connected.");
         return true;
       } catch (UnknownHostException e) {
@@ -73,35 +74,22 @@ public class SimpleClient {
     return false;
   }
 
-  public boolean isConnected() {
-    return socket != null && socket.isConnected();
-  }
+  protected boolean init() { return initClient(); }
 
   public void disconnect() throws IOException {
     if (socket == null) return;
+    closeRequested = true;
     out.write("\0");
     out.flush();
     socket.close();
     socket = null;
   }
 
-  public void send(String ... s) throws IOException {
-    if (! isConnected()) {
-      if (! initClient()) return;
-    }
-    boolean first = true;
-    for (String o : s) {
-      if (! first) out.write(";");
-      else first = false;
-      out.write(o.toString());
-    }
-    out.write("\t");
-    out.flush();
-  }
-
-
   public static void main(String[] args) throws IOException, InterruptedException {
-    SimpleClient scl = new SimpleClient("localhost", 3665);
+    SimpleClient scl = new SimpleClient(
+        "localhost", 3664,
+        (s) -> {System.out.println("Client: " + Arrays.toString(s));},
+        "testClient");
     try {
       int i = 0;
       while (i++ < 500) {
