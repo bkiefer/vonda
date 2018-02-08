@@ -52,7 +52,7 @@ public class RuleLogger {
   }
 
   public RuleLogger() {
-    printers = new ArrayList();
+    printers = new ArrayList<>();
     ruleInfos = null;
   }
 
@@ -90,6 +90,7 @@ public class RuleLogger {
 
   /** Start logging a specific rule */
   public void logRule(int id, int what) {
+    logAllRules = false;
     rulesToLogTrue.set(id, ((what & STATE_IF_TRUE) != 0));
     rulesToLogFalse.set(id, ((what & STATE_IF_FALSE) != 0));
   }
