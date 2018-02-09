@@ -69,7 +69,7 @@ public class FieldAccessesTest {
     public void testFieldAccess6() {
       String in = "Child c; property = \"name\"; l = c.property;";
       String s = generate(in);
-      String expected = "Rdf c;String property = \"name\";Object /* (unknown) */ l = (Object /* (unknown) */) ((Set<Object>)c.getValue(property)); }";
+      String expected = "Rdf c;String property = \"name\";Set<Object> l = ((Set<Object>)c.getValue(property)); }";
       assertEquals(expected, getForMarked(s, expected));
     }
 
@@ -79,6 +79,25 @@ public class FieldAccessesTest {
       String in = "Child c; c.name = null;";
       String s = generate(in);
       String expected = "Rdf c;c.clearValue(\"<upper:name>\");";
+      assertEquals(expected, getForMarked(s, expected));
+    }
+
+    @Test
+    public void testFieldAccess8() {
+      String in = "Child c; a: if(c.name){}";
+      String s = generate(in);
+      String expected = "Rdf c;// Rule a boolean[] __x1 = new boolean[2];"
+          + " __x1[0] = (__x1[1] = c != null && exists(((Set<Object>)c.getValue(\"<upper:name>\"))));";
+      assertEquals(expected, getForMarked(s, expected));
+    }
+
+    @Test
+    public void testFieldAccess9() {
+      String in = "Child c; s=\"<upper:name>\"; a: if(c.s){}";
+      String s = generate(in);
+      String expected = "Rdf c;String s = \"<upper:name>\";// Rule a boolean[] __x1 = new boolean[2];"
+          + " __x1[0] = (__x1[1] = c != null && exists(((Set<Object>)c.getValue(s))));";
+
       assertEquals(expected, getForMarked(s, expected));
     }
 }

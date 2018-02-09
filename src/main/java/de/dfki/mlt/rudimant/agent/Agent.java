@@ -449,7 +449,6 @@ public abstract class Agent implements StreamingClient {
     if (s instanceof String) return ! ((String)s).isEmpty();
     if (s instanceof Boolean) return (Boolean)s;
     if (s instanceof Collection) return !((Collection)s).isEmpty();
-    if (s instanceof Map) return !((Map)s).isEmpty();
     return true;
   }
 

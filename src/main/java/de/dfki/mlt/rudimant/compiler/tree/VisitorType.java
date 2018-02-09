@@ -627,7 +627,7 @@ public class VisitorType implements RudiVisitor {
         mem.getVariableType(var.content).isString()) {
       // the literal represents a variable, so we can't determine the type of
       // the access
-      return new ExpPropertyAccess(var.content, var, true, Type.getNoType(), false);
+      return new ExpPropertyAccess(var.content, var, true, new Type("Set<Object>"), false);
     }
     if (currentType.isDialogueAct()) {
       // the return type will be string, this is a call to getSlot
