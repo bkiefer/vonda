@@ -1,107 +1,95 @@
 package de.dfki.mlt.rudimant.common;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.Arrays;
+import java.util.function.Consumer;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * establishes an server in the agent to be able to modify which rules are
  * logged, and to see watched objects in the DB in the future
  */
-public class SimpleServer  {
+public class SimpleServer extends SimpleConnector {
 
-  private static Logger logger = LoggerFactory.getLogger(SimpleServer.class);
+  static { logger = LoggerFactory.getLogger(SimpleServer.class); }
 
-  public interface Callable {
-    public void execute(String[] args);
-  }
+  private ServerSocket serverSocket;
 
-  private Thread serverThread;
-
-  private Callable _callable;
-
-  Socket clientSocket;
-
-  private boolean closeRequested = false;
-
-  public SimpleServer(Callable c) throws IOException {
-    _callable = c;
+  public SimpleServer(Consumer<String[]> c, int port, String name) throws IOException {
+    super(port, c, name);
   }
 
   public boolean isAlive() {
-    return serverThread == null || serverThread.isAlive();
+    return readerThread == null || readerThread.isAlive();
   }
 
   /** starts the debugging service for the agent */
-  public void startServer(int port, String name) {
-    try {
-      serverThread = new Thread() {
-        public void run() {
-          try (ServerSocket serverSocket = new ServerSocket(port)) {
-            clientSocket = serverSocket.accept();
-            InputStream in = clientSocket.getInputStream();
-            InputStreamReader inReader = new InputStreamReader(in, "UTF-8");
-            int c;
-            StringBuffer sb = new StringBuffer();
-            do {
-              c = inReader.read();
-              switch (c) {
-              case '\t':
-                  String s = sb.toString();
-                  String[] args = s.split(";");
-                  _callable.execute(args);
-                  sb = new StringBuffer();
-                  break;
-                case '\0':
-                  return;
-                default:
-                  sb.append((char)c);
-              }
-            } while (clientSocket.isConnected() && ! clientSocket.isClosed()
-                    || closeRequested);
-            serverSocket.close();
-          } catch (IOException ex) {
-            logger.error("Error reading DebuggingService Stream: {}", ex);
-          }
+  public boolean startServer() {
+    Thread t = new Thread() {
+      public void run() {
+        try {
+          serverSocket = new ServerSocket(_portNumber);
+          socket = serverSocket.accept();
+          in = new InputStreamReader(socket.getInputStream(), "UTF-8");
+          out = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+          startReading();
+          logger.info("Agent debug server started");
+
+        } catch (IOException exception) {
+          logger.error("Agent debug server: " + exception.toString());
         }
-      };
-      serverThread.setName(name);
-      serverThread.setDaemon(true);
-      serverThread.start();
-      logger.info("Agent debug server started");
-    } catch (Exception exception) {
-      logger.error("Agent debug server: " + exception.toString());
-    }
+      }
+    };
+    t.setDaemon(true);
+    t.setName("StartServer");
+    t.start();
+    return true;
   }
 
-  public void stopServer() {
+  protected boolean init() { return false; }
+
+  public void stop()  {
+    if (serverSocket == null) return;
     closeRequested = true;
+    try {
+      serverSocket.close();
+      socket.close();
+    } catch (IOException ex) {
+      logger.error("Error closing socket: {}", ex);
+    } finally {
+      serverSocket = null;
+      socket = null;
+    }
   }
 
   public static void main(String[] args) throws IOException {
     final SimpleServer simplServ = new SimpleServer(
-        (s) -> {System.out.println(Arrays.toString(s));}
+        (s) -> {System.out.println(Arrays.toString(s));},
+        3664, "testServer"
         );
 
     Thread sideThread = new Thread() {
       public void run() {
         try {
-          int i =0;
           while (true && simplServ.isAlive()) {
             System.out.println("Rödeln...");
             Thread.sleep(5000);
+            simplServ.send("one", "two");
           }
         } catch (InterruptedException v) {
           System.out.println(v);
+        } catch (IOException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
         }
       }
     };
 
     sideThread.start();
-    simplServ.startServer(3664, "testServer");
+    simplServ.startServer();
   }
 }

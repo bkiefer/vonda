@@ -142,10 +142,11 @@ public class LanguageGenerator {
    * @throws IOException
    */
   private void setLanguage(File configDir, String lang) throws IOException {
+    Boolean translateNumbers = (Boolean) configs.get(TRANSLATE_NUMBERS);
+    if (translateNumbers == null) translateNumbers = false;
     cplanner = new CPlannerNlg(
         new File(configDir, (String) configs.get(GENERATION_PROJECT)),
-        lang,
-        (Boolean) configs.get(TRANSLATE_NUMBERS));
+        lang, translateNumbers);
   }
 
   public void registerAccess(String what, BaseInfoStateAccess access) {

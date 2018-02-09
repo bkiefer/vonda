@@ -68,7 +68,6 @@ float random();
 
 // logging methods
 Logger logger;
-void info(String s, int i);
 
 // discarding actions and shutdown
 void clearBehavioursAndProposals();

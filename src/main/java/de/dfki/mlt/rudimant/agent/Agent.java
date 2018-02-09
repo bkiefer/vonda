@@ -19,6 +19,7 @@ import de.dfki.lt.hfc.db.server.StreamingClient;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
 import de.dfki.mlt.rudimant.common.RuleLogger;
+import de.dfki.mlt.rudimant.common.SimpleServer;
 
 /**
  *
@@ -448,7 +449,6 @@ public abstract class Agent implements StreamingClient {
     if (s instanceof String) return ! ((String)s).isEmpty();
     if (s instanceof Boolean) return (Boolean)s;
     if (s instanceof Collection) return !((Collection)s).isEmpty();
-    if (s instanceof Map) return !((Map)s).isEmpty();
     return true;
   }
 
@@ -540,17 +540,6 @@ public abstract class Agent implements StreamingClient {
    */
   public void setCommunicationHub(CommunicationHub hub) {
     _hub = hub;
-  }
-
-  private static final int AGENT_SERVER_PORT = 2000, DEBUG_PORT = 3000;
-  private static String DEBUG_HOST = "localhost";
-
-  public void startDebuggerGui() {
-    try {
-      connectToDebugger(AGENT_SERVER_PORT, DEBUG_HOST, DEBUG_PORT);
-    } catch (IOException ex) {
-      logger.error("Can not connect to debugger: {}", ex);
-    }
   }
 
   // ######################################################################
@@ -906,13 +895,12 @@ public abstract class Agent implements StreamingClient {
   // Connection to rudibugger
   // ######################################################################
 
-  public void connectToDebugger(int ownPort, String debugHost, int debugPort) throws IOException {
-    DebuggingService ds = new DebuggingService(this);
-    ds.startServer(ownPort);
-    logger.debug("DebuggingService has been started on port [" + ownPort + "].");
-    RemoteLogger logprinter = new RemoteLogger(debugHost, debugPort);
+  public void connectToDebugger(String debugHost, int debugPort)
+      throws IOException {
+    DebuggingService ds = new DebuggingService(this, debugPort);
+    SimpleServer s = ds.startServer();
+    RemoteLogger logprinter = new RemoteLogger(s);
     this.ruleLogger.registerPrinter(logprinter);
-    logger.debug("RemoteLogger started looking for server on port ["
-        + debugPort + "].");
+    logger.debug("DebuggingService has been started on port [" + debugPort + "].");
   }
 }
