@@ -1,5 +1,6 @@
 ROOT       = $(HOME)/src/external/jflex
-JFLEX      = $(ROOT)/jflex/bin/jflex
+#JFLEX      = $(ROOT)/jflex/bin/jflex
+JFLEX	   = jflex
 JAVA       = java
 JAVAC      = javac
 BISON	   = bison

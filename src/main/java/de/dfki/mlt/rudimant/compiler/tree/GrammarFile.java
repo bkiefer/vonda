@@ -5,21 +5,26 @@
  */
 package de.dfki.mlt.rudimant.compiler.tree;
 
-import static de.dfki.mlt.rudimant.compiler.Utils.*;
 import static de.dfki.mlt.rudimant.compiler.GenerationConstants.*;
-import static de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarParser.*;
+import static de.dfki.mlt.rudimant.compiler.Utils.*;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.mlt.rudimant.compiler.*;
-import de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarLexer;
-import de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarParser;
+import de.dfki.mlt.rudimant.compiler.AntlrParser;
+import de.dfki.mlt.rudimant.compiler.Environment;
+import de.dfki.mlt.rudimant.compiler.Mem;
+import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
 
 /**
  * class that represents a top-level file that was handed over to GrammarMain (=
@@ -44,42 +49,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
 
   private static GrammarFile parseInput(final String realName, InputStream in)
       throws IOException {
-    // initialise the lexer with given input file
-    RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(in));
-
-    List<Integer> toCollect = Arrays.asList(
-        new Integer[] { JAVA_CODE, ONE_L_COMMENT, MULTI_L_COMMENT, NLWS });
-    CollectorTokenSource collector = new CollectorTokenSource(lexer, toCollect);
-
-    // initialise the parser
-    RobotGrammarParser parser =
-        new RobotGrammarParser(new CommonTokenStream(collector));
-    final boolean[] errorOccured = { false };
-    parser.addErrorListener(new BaseErrorListener() {
-      @Override
-      public void syntaxError(Recognizer<?, ?> recognizer,
-          Object offendingSymbol, int line, int charPositionInLine, String msg,
-          RecognitionException e) {
-        errorOccured[0] = true;
-        logger.error("{}.rudi:{}:{}: {}", realName, line, charPositionInLine, msg);
-      }
-    });
-
-    // create a parse tree; grammar_file is the start rule
-    ParseTree tree = parser.grammar_file();
-    if (errorOccured[0])
-      return null;
-
-    // initialise the visitor that will do all the work
-    ParseTreeVisitor visitor = new ParseTreeVisitor(realName);
-
-    // create the abstract syntax tree
-    RudiTree myTree = visitor.visit(tree);
-    if (! (myTree instanceof GrammarFile))
-      return null;
-    GrammarFile result = (GrammarFile)myTree;
-    result.tokens = collector.getCollectedTokens();
-    return (GrammarFile)myTree;
+    return AntlrParser.parse(realName, in);
   }
 
 

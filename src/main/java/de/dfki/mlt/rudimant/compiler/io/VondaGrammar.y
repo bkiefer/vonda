@@ -55,6 +55,14 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 
 %define parse.error verbose
 
+%code {
+  private List<RudiTree> _statements = new LinkedList<>();
+
+  private GrammarFile _result = new GrammarFile(_statements);
+
+  public GrammarFile getResult() { return _result; }
+}
+
 // keywords
 %token BREAK
 %token CANCEL
@@ -104,16 +112,16 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 // start rule
 grammar_file
   : visibility_spec method_declaration grammar_file {
-    $$ = $2; $2.setVisibility($1); $3.add($2);
+    $$ = $3; $2.setVisibility($1); $3.addFirst($2);
   }
-  | method_declaration grammar_file { $$ = $2; $2.add($1); }
-  | statement grammar_file { $$ = $2; $2.add($1); }
+  | method_declaration grammar_file { $$ = $2; $2.addFirst($1); }
+  | statement grammar_file { $$ = $2; $2.addFirst($1); }
   // | ANNOTATION grammar_file { $$ = $2; $2.add($1); }
-  | imports grammar_file { $$ = $2; $2.add($1); }
+  | imports grammar_file { $$ = $2; $2.addFirst($1); }
   | visibility_spec var_def grammar_file  {
-    $$ = $2; $3.add(new StatFieldDef($1, $2));
+    $$ = $3; $3.addFirst(new StatFieldDef($1, $2));
   }
-  | %empty { $$ = new ArrayList<RudiTree>();}
+  | %empty { $$ = _statements;}
   ;
 
 visibility_spec
