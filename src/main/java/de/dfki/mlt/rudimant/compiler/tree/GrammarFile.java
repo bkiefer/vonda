@@ -25,6 +25,7 @@ import de.dfki.mlt.rudimant.compiler.AntlrParser;
 import de.dfki.mlt.rudimant.compiler.Environment;
 import de.dfki.mlt.rudimant.compiler.Mem;
 import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
+import de.dfki.mlt.rudimant.compiler.io.BisonParser;
 
 /**
  * class that represents a top-level file that was handed over to GrammarMain (=
@@ -50,6 +51,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
   private static GrammarFile parseInput(final String realName, InputStream in)
       throws IOException {
     return AntlrParser.parse(realName, in);
+    //return BisonParser.parse(realName, in);
   }
 
 

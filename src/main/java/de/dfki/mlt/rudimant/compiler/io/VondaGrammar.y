@@ -121,7 +121,9 @@ grammar_file
   | visibility_spec var_def grammar_file  {
     $$ = $3; $3.addFirst(new StatFieldDef($1, $2));
   }
-  | %empty { $$ = _statements;}
+  | var_def grammar_file  {
+    $$ = $2; $2.addFirst(new StatFieldDef(null, $1));
+  }| %empty { $$ = _statements;}
   ;
 
 visibility_spec
@@ -284,6 +286,15 @@ var_def
   }
   | FINAL type_spec VARIABLE assgn_exp ';' {
     $$ = new StatVarDef(true, $2, $3, $4);
+  }
+  | FINAL VARIABLE ';' {
+    $$ = new StatVarDef(true, null, $2, null);
+  }
+  | type_spec VARIABLE ';' {
+    $$ = new StatVarDef(false, $1, $2, null);
+  }
+  | FINAL type_spec VARIABLE ';' {
+    $$ = new StatVarDef(true, $2, $3, null);
   }
   ;
 

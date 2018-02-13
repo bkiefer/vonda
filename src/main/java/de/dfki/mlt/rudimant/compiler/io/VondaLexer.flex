@@ -20,14 +20,19 @@
 
 package de.dfki.mlt.rudimant.compiler.io;
 
+import java.util.*;
+
 import de.dfki.mlt.rudimant.compiler.Position;
 import de.dfki.mlt.rudimant.compiler.tree.ExpSingleValue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 %%
 
 %public
 %class VondaLexer
 %implements VondaGrammar.Lexer
+%function yylex_internal
 
 %unicode
 
@@ -37,9 +42,14 @@ import de.dfki.mlt.rudimant.compiler.tree.ExpSingleValue;
 
 %byaccj
 
+
 %{
+  private static final Logger logger = LoggerFactory.getLogger(VondaLexer.class);
+
   private Object yylval;
   private StringBuffer string;
+
+  private List<String> collectedTokens = new ArrayList<String>();
 
   private int charLiteral(String charval) {
     yylval = new ExpSingleValue(charval, "char");
@@ -66,7 +76,7 @@ import de.dfki.mlt.rudimant.compiler.tree.ExpSingleValue;
    * @return the position at which the last scanned token starts.
    */
   public Position getStartPos() {
-    return null;
+    return new Position(yyline, yycolumn, "");
   }
 
   /**
@@ -74,7 +84,7 @@ import de.dfki.mlt.rudimant.compiler.tree.ExpSingleValue;
    * @return the first position beyond the last scanned token.
    */
   public Position getEndPos() {
-    return null;
+    return new Position(yyline, yycolumn + yylength(), "");
   }
 
   /**
@@ -91,9 +101,18 @@ import de.dfki.mlt.rudimant.compiler.tree.ExpSingleValue;
    * Entry point for the scanner.  Returns the token identifier corresponding
    * to the next token and prepares to return the semantic value
    * and beginning/ending positions of the token.
+   *
+   * This is a wrapper around the internal yylex method to collect tokens such
+   * as comments, whitespace, etc. to use them later on in the compiler's
+   * output. Also, other necessary functionality can be put her (extracting
+   * the full input text?)
+   *
    * @return the token identifier corresponding to the next token.
    */
-  //    int yylex() throws java.io.IOException {    }
+  public int yylex() throws java.io.IOException {
+    int result = yylex_internal();
+    return result;
+  }
 
   /**
    * Entry point for error reporting.  Emits an error
@@ -104,7 +123,12 @@ import de.dfki.mlt.rudimant.compiler.tree.ExpSingleValue;
    * @param msg The string for the error message.
    */
   public void yyerror (VondaGrammar.Location loc, String msg) {
+    logger.error("ERROR:{}: {}", loc, msg);
   }
+
+  /** Return the collected tokens
+   */
+  public List<String> getCollectedTokens() { return collectedTokens; }
 %}
 
 /* main character classes */
@@ -270,10 +294,10 @@ SingleCharacter = [^\r\n\'\\]
   {DoubleLiteral}[dD]            { return floatLiteral(yytext()); }
 
   /* comments */
-  {Comment}                      { /* ignore */ }
+  {Comment}                      { collectedTokens.add(yytext()); }
 
   /* whitespace */
-  {WhiteSpace}                   { /* ignore */ }
+  {WhiteSpace}                   { collectedTokens.add(yytext()); }
 
   /* identifiers */
   {Identifier}                   { yylval = yytext(); return VondaGrammar.Lexer.VARIABLE; }
