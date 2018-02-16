@@ -13,6 +13,7 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import de.dfki.mlt.rudimant.common.Location;
+import de.dfki.mlt.rudimant.compiler.io.VondaGrammar;
 
 /**
  * all classes that can be created by the ParseTreeVisitor should implement this
@@ -109,6 +110,42 @@ public abstract class RudiTree {
     };
     location = new Location(originClass, context.getStart().getLine());
     fullexp = context.getText();
+    return this;
+  }
+
+  /**
+   * setPosition is used to store the start and stop position of a Token given
+   * its ParserRuleContext.
+   *
+   * @param context The ParserRuleContext.
+   * @return RudiTree
+   */
+  public RudiTree setPos(VondaGrammar.Location loc) {
+    String originClass = ""; // TODO: GET IT FROM SOMEWHERE
+    positions = new int[]{ // TODO: does not match the old functionality
+        loc.begin.column, loc.begin.line,
+        loc.end.column, loc.end.line
+    };
+    location = new Location(originClass, loc.begin.line);
+    fullexp = ""; // TODO
+    return this;
+  }
+
+  /**
+   * setPosition is used to store the start and stop position of a Token given
+   * its ParserRuleContext.
+   *
+   * @param context The ParserRuleContext.
+   * @return RudiTree
+   */
+  public RudiTree setPos(VondaGrammar.Location start, VondaGrammar.Location end) {
+    String originClass = ""; // TODO: SEE ABOVE
+    positions = new int[]{
+        start.begin.column, start.begin.line,
+        end.end.column, end.end.line
+    };
+    location = new Location(originClass, start.begin.line);
+    fullexp = "";
     return this;
   }
 

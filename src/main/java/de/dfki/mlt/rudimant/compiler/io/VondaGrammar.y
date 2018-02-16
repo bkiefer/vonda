@@ -119,10 +119,10 @@ grammar_file
   // | ANNOTATION grammar_file { $$ = $2; $2.add($1); }
   | imports grammar_file { $$ = $2; $2.addFirst($1); }
   | visibility_spec var_def grammar_file  {
-    $$ = $3; $3.addFirst(new StatFieldDef($1, $2));
+    $$ = $3; $3.addFirst(new StatFieldDef($1, $2).setPos(@1, @2));
   }
   | var_def grammar_file  {
-    $$ = $2; $2.addFirst(new StatFieldDef(null, $1));
+    $$ = $2; $2.addFirst(new StatFieldDef(null, $1).setPos(@1));
   }| %empty { $$ = _statements;}
   ;
 
@@ -145,7 +145,7 @@ path
 
 statement
   : block { $$ = $1; }
-  | exp ';' { $$ = new StatExpression($1); }
+| exp ';' { $$ = new StatExpression($1).setPos(@$); }
   | grammar_rule { $$ = $1; }
   | set_operation { $$ = $1; }
   | return_statement { $$ = $1; }
@@ -166,81 +166,83 @@ blk_statement
 ////////// STATEMENTS ///////////////////
 
 block
-  : '{' statements '}' { $$ = new StatAbstractBlock($2, true); }
-  | '{' '}' { $$ = new StatAbstractBlock(new ArrayList<RTStatement>(), true); }
+: '{' statements '}' { $$ = new StatAbstractBlock($2, true).setPos(@$); }
+  | '{' '}' {
+    $$ = new StatAbstractBlock(new ArrayList<RTStatement>(), true).setPos(@$);
+  }
 
 statements: blk_statement { $$ = new LinkedList<RTStatement>(){{ add($1); }}; }
   | blk_statement statements { $$ = $2; $2.addFirst($1); }
   ;
 
 grammar_rule
-  : VARIABLE ':' if_statement { $$ = new StatGrammarRule($1, $3); }
+  : VARIABLE ':' if_statement { $$ = new StatGrammarRule($1, $3).setPos(@$); }
   ;
 
 return_statement
-  : RETURN ';' { $$ = new StatReturn("return"); }
-  | RETURN exp ';' { $$ = new StatReturn($2); }
-  | BREAK ';' { $$ = new StatReturn("break"); }
-  | BREAK VARIABLE ';' { $$ = new StatReturn("break", $2); }
-  | CANCEL ';' { $$ = new StatReturn("cancel"); }
-  | CANCEL_ALL ';' { $$ = new StatReturn("cancel_all"); }
-  | CONTINUE ';' { $$ = new StatReturn("continue"); }
+  : RETURN ';' { $$ = new StatReturn("return").setPos(@$); }
+  | RETURN exp ';' { $$ = new StatReturn($2).setPos(@$); }
+  | BREAK ';' { $$ = new StatReturn("break").setPos(@$); }
+  | BREAK VARIABLE ';' { $$ = new StatReturn("break", $2).setPos(@$); }
+  | CANCEL ';' { $$ = new StatReturn("cancel").setPos(@$); }
+  | CANCEL_ALL ';' { $$ = new StatReturn("cancel_all").setPos(@$); }
+  | CONTINUE ';' { $$ = new StatReturn("continue").setPos(@$); }
   ;
 
 if_statement
-  : IF '(' exp ')' statement { $$ = new StatIf($3, $5, null); }
+  : IF '(' exp ')' statement { $$ = new StatIf($3, $5, null).setPos(@$); }
   | IF '(' exp ')' statement ELSE statement {
-    $$ = new StatIf($3, $5, $7);
+    $$ = new StatIf($3, $5, $7).setPos(@$);
   }
   ;
 
 while_statement
-  : WHILE '(' exp ')' statement { $$ = new StatWhile($3, $5, true); }
+  : WHILE '(' exp ')' statement { $$ = new StatWhile($3, $5, true).setPos(@$); }
   | DO statement WHILE '(' exp ')' {
-    $$ = new StatWhile($5, $2, false);
+    $$ = new StatWhile($5, $2, false).setPos(@$);
   }
   ;
 
 for_statement
   : FOR '(' var_def exp ';' exp ')' statement {
-    $$ = new StatFor1($3, $4, $6, $8); }
+    $$ = new StatFor1($3, $4, $6, $8).setPos(@$); }
   | FOR '(' var_def     ';' exp ')' statement {
-    $$ = new StatFor1($3, null, $5, $7); }
+    $$ = new StatFor1($3, null, $5, $7).setPos(@$); }
   | FOR '(' var_def exp ';'     ')' statement {
-    $$ = new StatFor1($3, $4, null, $7); }
+    $$ = new StatFor1($3, $4, null, $7).setPos(@$); }
   | FOR '(' var_def     ';'     ')' statement {
-    $$ = new StatFor1($3, null, null, $6); }
+    $$ = new StatFor1($3, null, null, $6).setPos(@$); }
   | FOR '('     ';' exp ';' exp ')' statement {
-    $$ = new StatFor1(null, $4, $6, $8); }
+    $$ = new StatFor1(null, $4, $6, $8).setPos(@$); }
   | FOR '(' VARIABLE ':' exp ')' statement {
-    $$ = new StatFor2(new ExpVariable($3), $5, $7);
+    $$ = new StatFor2(new ExpVariable($3), $5, $7).setPos(@$);
   }
   | FOR '(' type_spec VARIABLE ':' exp ')' statement {
-    $$ = new StatFor2($3, new ExpVariable($4), $6, $8);
+    $$ = new StatFor2($3, new ExpVariable($4), $6, $8).setPos(@$);
   }
   // for loop with destructuring into a tuple
   //| FOR '(' '(' VARIABLE ( ',' VARIABLE )+ ')' ':' exp ')' statement {}
   ;
 
 propose_statement
-  : PROPOSE '(' exp ')' block { $$ = new StatPropose($3, $5); }
+  : PROPOSE '(' exp ')' block { $$ = new StatPropose($3, $5).setPos(@$); }
   ;
 
 timeout_behaviour_statement
   : TIMEOUT_BEHAVIOUR '(' exp ')' block {
-    $$ = new StatTimeout(null, $3, $5);
+    $$ = new StatTimeout(null, $3, $5).setPos(@$);
   }
   ;
 
 timeout_statement
   : TIMEOUT '(' exp ',' exp ')' block {
-    $$ = new StatTimeout($3, $5, $7);
+    $$ = new StatTimeout($3, $5, $7).setPos(@$);
   }
   ;
 
 switch_statement
   : SWITCH '(' exp ')' '{' switch_block '}' {
-    $$ = new StatSwitch($3, $6);
+    $$ = new StatSwitch($3, $6).setPos(@$);
   }
   ;
 
@@ -248,7 +250,7 @@ switch_block
   : switch_labels switch_cont {
     List<RTStatement> elts = $1;
     elts.addAll($2);
-    $$ = new StatAbstractBlock(elts, false);
+    $$ = new StatAbstractBlock(elts, false).setPos(@$);
   }
   ;
 
@@ -279,22 +281,22 @@ switch_label
 
 var_def
   : FINAL VARIABLE assgn_exp ';' {
-    $$ = new StatVarDef(true, null, $2, $3);
+    $$ = new StatVarDef(true, null, $2, $3).setPos(@$);
   }
   | type_spec VARIABLE assgn_exp ';' {
-    $$ = new StatVarDef(false, $1, $2, $3);
+    $$ = new StatVarDef(false, $1, $2, $3).setPos(@$);
   }
   | FINAL type_spec VARIABLE assgn_exp ';' {
-    $$ = new StatVarDef(true, $2, $3, $4);
+    $$ = new StatVarDef(true, $2, $3, $4).setPos(@$);
   }
   | FINAL VARIABLE ';' {
-    $$ = new StatVarDef(true, null, $2, null);
+    $$ = new StatVarDef(true, null, $2, null).setPos(@$);
   }
   | type_spec VARIABLE ';' {
-    $$ = new StatVarDef(false, $1, $2, null);
+    $$ = new StatVarDef(false, $1, $2, null).setPos(@$);
   }
   | FINAL type_spec VARIABLE ';' {
-    $$ = new StatVarDef(true, $2, $3, null);
+    $$ = new StatVarDef(true, $2, $3, null).setPos(@$);
   }
   ;
 
@@ -311,28 +313,28 @@ nonempty_exp_list
 
 method_declaration
   : class_spec type_spec VARIABLE '(' ')' opt_block {
-    $$ = new StatMethodDeclaration("public", $2, $1, $3, null, $6);
+    $$ = new StatMethodDeclaration("public", $2, $1, $3, null, $6).setPos(@$);
   }
   | class_spec type_spec VARIABLE '(' args_list opt_block {
-    $$ = new StatMethodDeclaration("public", $2, $1, $3, $5, $6);
+    $$ = new StatMethodDeclaration("public", $2, $1, $3, $5, $6).setPos(@$);
   }
   | class_spec           VARIABLE '(' ')' opt_block {
-    $$ = new StatMethodDeclaration("public", null, $1, $2, null, $5);
+    $$ = new StatMethodDeclaration("public", null, $1, $2, null, $5).setPos(@$);
   }
   | class_spec           VARIABLE '(' args_list opt_block {
-    $$ = new StatMethodDeclaration("public", null, $1, $2, $4, $5);
+    $$ = new StatMethodDeclaration("public", null, $1, $2, $4, $5).setPos(@$);
   }
   |            type_spec VARIABLE '(' ')' opt_block {
-    $$ = new StatMethodDeclaration("public", $1, null, $2, null, $5);
+    $$ = new StatMethodDeclaration("public", $1, null, $2, null, $5).setPos(@$);
   }
   |            type_spec VARIABLE '(' args_list opt_block {
-    $$ = new StatMethodDeclaration("public", $1, null, $2, $4, $5);
+    $$ = new StatMethodDeclaration("public", $1, null, $2, $4, $5).setPos(@$);
   }
   |                      VARIABLE '(' ')' block {
-    $$ = new StatMethodDeclaration("public", null, null, $1, null, $4);
+    $$ = new StatMethodDeclaration("public", null, null, $1, null, $4).setPos(@$);
   }
   |                      VARIABLE '(' args_list block {
-    $$ = new StatMethodDeclaration("public", null, null, $1, $3, $4);
+    $$ = new StatMethodDeclaration("public", null, null, $1, $3, $4).setPos(@$);
   }
   ;
 
@@ -357,15 +359,23 @@ args_list
 // add sth to a collection
 set_operation
   : VARIABLE PLUSEQ exp ';' {
-    $$ = new StatSetOperation(new ExpVariable($1), true, $3);
+    $$ = new StatSetOperation(new ExpVariable($1), true, $3).setPos(@$);
   }
   | VARIABLE MINUSEQ exp ';' {
-    $$ = new StatSetOperation(new ExpVariable($1), false, $3);
+    $$ = new StatSetOperation(new ExpVariable($1), false, $3).setPos(@$);
   }
-  | ArrayAccess PLUSEQ exp ';' { $$ = new StatSetOperation($1, true, $3); }
-  | ArrayAccess MINUSEQ exp ';' { $$ = new StatSetOperation($1, false, $3); }
-  | field_access PLUSEQ exp ';' { $$ = new StatSetOperation($1, true, $3); }
-  | field_access MINUSEQ exp ';' { $$ = new StatSetOperation($1, false, $3); }
+  | ArrayAccess PLUSEQ exp ';' {
+    $$ = new StatSetOperation($1, true, $3).setPos(@$);
+  }
+  | ArrayAccess MINUSEQ exp ';' {
+    $$ = new StatSetOperation($1, false, $3).setPos(@$);
+  }
+  | field_access PLUSEQ exp ';' {
+    $$ = new StatSetOperation($1, true, $3).setPos(@$);
+  }
+  | field_access MINUSEQ exp ';' {
+    $$ = new StatSetOperation($1, false, $3).setPos(@$);
+  }
   ;
 
 
@@ -373,10 +383,10 @@ set_operation
 
 function_call
   : VARIABLE '(' ')' {
-    $$ = new ExpFuncCall($1, new LinkedList<RTExpression>(), false);
+    $$ = new ExpFuncCall($1, new LinkedList<RTExpression>(), false).setPos(@$);
   }
   | VARIABLE '(' nonempty_args_list ')'  {
-    $$ = new ExpFuncCall($1, $3, false);
+    $$ = new ExpFuncCall($1, $3, false).setPos(@$);
   }
   ;
 
@@ -411,14 +421,14 @@ exp
 
 ConditionalOrExpression
   : ConditionalOrExpression OROR ConditionalAndExpression {
-    $$ = new ExpBoolean($1, $3, "||");
+    $$ = new ExpBoolean($1, $3, "||").setPos(@$);
   }
   | ConditionalAndExpression { $$ = $1; }
   ;
 
 ConditionalAndExpression
   : ConditionalAndExpression ANDAND InclusiveOrExpression {
-    $$ = new ExpBoolean($1, $3, "&&");
+    $$ = new ExpBoolean($1, $3, "&&").setPos(@$);
   }
   | InclusiveOrExpression { $$ = $1; }
   ;
@@ -426,94 +436,94 @@ ConditionalAndExpression
 InclusiveOrExpression
   : ExclusiveOrExpression { $$ = $1; }
   | InclusiveOrExpression '|' ExclusiveOrExpression {
-    $$ = new ExpArithmetic($1, $3, "|");
+    $$ = new ExpArithmetic($1, $3, "|").setPos(@$);
   }
   ;
 
 ExclusiveOrExpression
   : AndExpression { $$ = $1; }
   | ExclusiveOrExpression '^' AndExpression {
-    $$ = new ExpArithmetic($1, $3, "^");
+    $$ = new ExpArithmetic($1, $3, "^").setPos(@$);
   }
   ;
 
 AndExpression
   : EqualityExpression { $$ = $1; }
   | AndExpression '&' EqualityExpression {
-    $$ = new ExpArithmetic($1, $3, "&");
+    $$ = new ExpArithmetic($1, $3, "&").setPos(@$);
   }
   ;
 
 EqualityExpression
   : RelationalExpression { $$ = $1; }
   | EqualityExpression EQEQ RelationalExpression {
-    $$ = new ExpBoolean($1, $3, "==");
+    $$ = new ExpBoolean($1, $3, "==").setPos(@$);
   }
   | EqualityExpression NOTEQ RelationalExpression {
-    $$ = new ExpBoolean($1, $3, "!=");
+    $$ = new ExpBoolean($1, $3, "!=").setPos(@$);
   }
   ;
 
 RelationalExpression
   : AdditiveExpression { $$ = $1; }
   | RelationalExpression '<' AdditiveExpression {
-    $$ = new ExpBoolean($1, $3, "<");
+    $$ = new ExpBoolean($1, $3, "<").setPos(@$);
   }
   | RelationalExpression '>' AdditiveExpression {
-    $$ = new ExpBoolean($1, $3, ">");
+    $$ = new ExpBoolean($1, $3, ">").setPos(@$);
   }
   | RelationalExpression GTEQ AdditiveExpression {
-    $$ = new ExpBoolean($1, $3, ">=");
+    $$ = new ExpBoolean($1, $3, ">=").setPos(@$);
   }
   | RelationalExpression LTEQ AdditiveExpression {
-    $$ = new ExpBoolean($1, $3, "<=");
+    $$ = new ExpBoolean($1, $3, "<=").setPos(@$);
   }
   ;
 
 AdditiveExpression
   : MultiplicativeExpression { $$ = $1; }
   | AdditiveExpression '+' MultiplicativeExpression {
-    $$ = new ExpArithmetic($1, $3, "+");
+    $$ = new ExpArithmetic($1, $3, "+").setPos(@$);
   }
   | AdditiveExpression '-' MultiplicativeExpression {
-    $$ = new ExpArithmetic($1, $3, "-");
+    $$ = new ExpArithmetic($1, $3, "-").setPos(@$);
   }
   ;
 
 MultiplicativeExpression
   : CastExpression { $$ = $1; }
   | MultiplicativeExpression '*' CastExpression {
-    $$ = new ExpArithmetic($1, $3, "*");
+    $$ = new ExpArithmetic($1, $3, "*").setPos(@$);
   }
   | MultiplicativeExpression '/' CastExpression {
-    $$ = new ExpArithmetic($1, $3, "/");
+    $$ = new ExpArithmetic($1, $3, "/").setPos(@$);
   }
   | MultiplicativeExpression '%' CastExpression {
-    $$ = new ExpArithmetic($1, $3, "%");
+    $$ = new ExpArithmetic($1, $3, "%").setPos(@$);
   }
   ;
 
 CastExpression
   : UnaryExpression { $$ = $1; }
-  | '(' type_spec ')' CastExpression { new ExpCast($2, $4); }
+  | '(' type_spec ')' CastExpression { new ExpCast($2, $4).setPos(@$); }
   ;
 //  | '(' exp ')' LogicalUnaryExpression { new ExpCast($2, $4); }
 
 LogicalUnaryExpression
   : PostfixExpression { $$ = $1; }
-  | '!' UnaryExpression { $$ = new ExpBoolean($2, null, "!"); }
-  | '~' UnaryExpression { $$ = new ExpArithmetic($2, null, "~"); }
+  | '!' UnaryExpression { $$ = new ExpBoolean($2, null, "!").setPos(@$); }
+  | '~' UnaryExpression { $$ = new ExpArithmetic($2, null, "~").setPos(@$); }
   ;
 
 UnaryExpression
   : PLUSPLUS UnaryExpression {
-    $$ = new ExpArithmetic($2, new ExpSingleValue("1", "int"), "+");
+    $$ = new ExpArithmetic($2, new ExpSingleValue("1", "int"), "+").setPos(@$);
   }
   | MINUSMINUS UnaryExpression {
-    $$ = new ExpArithmetic($2, new ExpSingleValue("1", "int"), "-");
+    $$ = new ExpArithmetic($2, new ExpSingleValue("1", "int"), "-").setPos(@$);
   }
-  | '+' CastExpression { $$ = new ExpArithmetic($2, null, "+"); }
-  | '-' CastExpression { $$ = new ExpArithmetic($2, null, "-"); }
+  | '+' CastExpression { $$ = new ExpArithmetic($2, null, "+").setPos(@$); }
+  | '-' CastExpression { $$ = new ExpArithmetic($2, null, "-").setPos(@$); }
   | LogicalUnaryExpression { $$ = $1; }
   ;
 
@@ -524,13 +534,13 @@ PostfixExpression
   ;
 
 PrimaryExpression
-  : NULL { $$ = new ExpSingleValue("null", "null"); }
+  : NULL { $$ = new ExpSingleValue("null", "null").setPos(@$); }
   | NotJustName { $$ = $1; }
   | ComplexPrimary { $$ = $1; }
   ;
 
 NotJustName
-  : VARIABLE { $$ = new ExpVariable($1); }
+  : VARIABLE { $$ = new ExpVariable($1).setPos(@$); }
   | new_exp { $$ = $1; }
   ;
 
@@ -553,12 +563,14 @@ Literal
   ;
 
 ArrayAccess
-  : VARIABLE '[' exp ']' { $$ = new ExpArrayAccess(new ExpVariable($1), $3); }
-  | ComplexPrimary '[' exp ']' { $$ = new ExpArrayAccess($1, $3); }
+  : VARIABLE '[' exp ']' {
+    $$ = new ExpArrayAccess(new ExpVariable($1), $3).setPos(@$);
+  }
+  | ComplexPrimary '[' exp ']' { $$ = new ExpArrayAccess($1, $3).setPos(@$); }
   ;
 
 if_exp
-  : exp '?' exp ':' exp { $$ = new ExpConditional($1, $3, $5); }
+  : exp '?' exp ':' exp { $$ = new ExpConditional($1, $3, $5).setPos(@$); }
   ;
 
 /*
@@ -586,9 +598,11 @@ nonbool_exp
 // TODO: is that all 'what you can assign to' (an lvalue), which can be:
 // a variable, an array element, an rdf slot (did i forget sth?)
 assignment
-  : VARIABLE assgn_exp { $$ = new ExpAssignment(new ExpVariable($1), $2); }
-  | field_access assgn_exp { $$ = new ExpAssignment($1, $2); }
-  | ArrayAccess assgn_exp { $$ = new ExpAssignment($1, $2); }
+  : VARIABLE assgn_exp {
+    $$ = new ExpAssignment(new ExpVariable($1), $2).setPos(@$);
+  }
+  | field_access assgn_exp { $$ = new ExpAssignment($1, $2).setPos(@$); }
+  | ArrayAccess assgn_exp { $$ = new ExpAssignment($1, $2).setPos(@$); }
   ;
 
 field_access
@@ -603,49 +617,53 @@ field_access_rest
   ;
 
 simple_nofa_exp
-  : VARIABLE { $$ = new ExpVariable($1); }
+  : VARIABLE { $$ = new ExpVariable($1).setPos(@$); }
   | function_call { $$ = $1; }
   | '(' exp ')' { $$ = $2; }
   ;
 
 new_exp
-  : NEW VARIABLE { $$ = new ExpNew(new Type($2)); }
-  | NEW VARIABLE '(' ')' { $$ = new ExpNew(new Type($2), new LinkedList<>()); }
+  : NEW VARIABLE { $$ = new ExpNew(new Type($2)).setPos(@$); }
+  | NEW VARIABLE '(' ')' {
+    $$ = new ExpNew(new Type($2), new LinkedList<>()).setPos(@$);
+  }
   | NEW VARIABLE '(' nonempty_exp_list ')' {
-    $$ = new ExpNew(new Type($2), $4);
+    $$ = new ExpNew(new Type($2), $4).setPos(@$);
   }
   | NEW parameterized_type '(' ')' {
-    $$ = new ExpNew($2, new LinkedList<>());
+    $$ = new ExpNew($2, new LinkedList<>()).setPos(@$);
   }
   | NEW parameterized_type '(' nonempty_exp_list')' {
-    $$ = new ExpNew($2, $4);
+    $$ = new ExpNew($2, $4).setPos(@$);
   }
   | NEW VARIABLE '[' exp ']' {
     $$ = new ExpNew(new Type("Array", new Type($2)),
-                    new LinkedList<RTExpression>(){{ add($4); }});
+                    new LinkedList<RTExpression>(){{ add($4); }}).setPos(@$);
   }
   ;
 
 lambda_exp
   : '(' args_list ARROW exp {
-    $$ = new ExpLambda($2, new StatExpression($4));
+    $$ = new ExpLambda($2, new StatExpression($4)).setPos(@$);
   }
   | '(' args_list ARROW block {
-    $$ = new ExpLambda($2, $4);
+    $$ = new ExpLambda($2, $4).setPos(@$);
   }
   | '(' ')' ARROW exp {
-    $$ = new ExpLambda(new LinkedList<>(), new StatExpression($4));
+    $$ = new ExpLambda(new LinkedList<>(), new StatExpression($4)).setPos(@$);
   }
-  | '(' ')' ARROW block { $$ = new ExpLambda(new LinkedList<>(), $4); }
+  | '(' ')' ARROW block {
+    $$ = new ExpLambda(new LinkedList<>(), $4).setPos(@$);
+  }
   ;
 
 
 dialogueact_exp
   : '#' da_token '(' da_token ')' {
-    $$ = new ExpDialogueAct($2, $4, new LinkedList<RTExpression>());
+    $$ = new ExpDialogueAct($2, $4, new LinkedList<RTExpression>()).setPos(@$);
   }
   | '#' da_token '(' da_token da_args ')' {
-    $$ = new ExpDialogueAct($2, $4, $5);
+    $$ = new ExpDialogueAct($2, $4, $5).setPos(@$);
   }
   ;
 
