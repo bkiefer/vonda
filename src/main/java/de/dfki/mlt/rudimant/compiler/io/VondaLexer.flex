@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
   private static final Logger logger = LoggerFactory.getLogger(VondaLexer.class);
 
   private Object yylval;
-  private StringBuffer string;
+  private StringBuffer string = new StringBuffer();
 
   private List<String> collectedTokens = new ArrayList<String>();
 

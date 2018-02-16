@@ -404,7 +404,7 @@ public class Type {
       if ("Rdf".equals(right._name)) return this;
       return null;
     }
-    
+
     // if one of those is a generic type, the real type is the more
     // specific one and they are compatible
     // (necessary because this method is also used for funccall evaluation)
@@ -518,7 +518,7 @@ public class Type {
         if (pType == null)  // for visualization
           sb.append("null");
         else if (pType.isRdfType())
-          sb.append("Object[").append(_class.toString()).append("]");
+          sb.append("Object[").append(pType._class.toString()).append("]");
         else
           pType.toDebugString(sb);
         first = false;

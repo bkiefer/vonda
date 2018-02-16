@@ -4,9 +4,9 @@
 
 * Dialogue Acts
   - hierarchy of Frames from the ontology with access functions
-  - Serialize DialogueAct to / from RDF
 * processor / abstract processor
-  + behaviour sync with optional delays
+  + behaviour sync
+    - with optional delays ? (before/after)
 
 * Application examples
   - PAL system
@@ -27,3 +27,4 @@
 + hierarchy of DAs
 + functionality: integrate jtfs for subsumption etc.
 + Final refactoring logging
+  + Serialize DialogueAct to / from RDF

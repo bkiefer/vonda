@@ -101,9 +101,9 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %token PLUSPLUS
 
 // real tokens
-%token < String > STRING
+%token < ExpSingleValue > STRING
 %token < String > WILDCARD
-%token < String > INT
+%token < ExpSingleValue > INT
 %token < String > VARIABLE
 %token < ExpSingleValue > OTHER_LITERAL
 
@@ -547,8 +547,8 @@ ComplexPrimaryNoParenthesis
   ;
 
 Literal
-  : STRING { $$ = new ExpSingleValue($1, "String"); }
-  | INT { $$ = new ExpSingleValue($1, "int"); }
+  : STRING { $$ = $1; }
+  | INT { $$ = $1; }
   | OTHER_LITERAL { $$ = $1; }
   ;
 
@@ -592,7 +592,9 @@ assignment
   ;
 
 field_access
-  : NotJustName field_access_rest { $$ = $2; $2.addFirst($1); }
+  : NotJustName field_access_rest {
+    $$ = new ExpFieldAccess($2, new ArrayList<>()); $2.addFirst($1);
+  }
   ;
 
 field_access_rest
@@ -601,7 +603,7 @@ field_access_rest
   ;
 
 simple_nofa_exp
-  : VARIABLE { $$ = $1; }
+  : VARIABLE { $$ = new ExpVariable($1); }
   | function_call { $$ = $1; }
   | '(' exp ')' { $$ = $2; }
   ;
