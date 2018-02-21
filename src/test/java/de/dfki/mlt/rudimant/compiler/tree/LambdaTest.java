@@ -32,7 +32,7 @@ public class LambdaTest {
 
   @Test
   public void testLambdaExp() {
-    String in = "Set<Child> cs; cs.contains((c) -> ((Child)c).forename.equals(\"John\"));";
+    String in = "Set<Child> cs; b = cs.contains((c) -> ((Child)c).forename.equals(\"John\"));";
     String r = generate(in);
     String expected = "public Set<Rdf> cs;/**/cs.contains((c) -> "
             + "((String)((Rdf)c).getSingleValue(\"<dom:forename>\")).equals(\"John\"));";
@@ -53,7 +53,7 @@ public class LambdaTest {
 
   @Test
   public void test1() {
-    String in = "Quiz p; p.hasHistory.contains((c) -> c.turnId == 1);";
+    String in = "Quiz p; b = p.hasHistory.contains((c) -> c.turnId == 1);";
     String r = generate(in);
     String expected = "public Rdf p;/**/((Set<Object>)p.getValue(\"<dom:hasHistory>\"))"
         + ".contains((c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);";
@@ -63,7 +63,7 @@ public class LambdaTest {
 
   @Test
   public void test2() {
-    String in = "Quiz p; h = p.hasHistory; h.contains((c) -> c.turnId == 1);";
+    String in = "Quiz p; h = p.hasHistory; b = h.contains((c) -> c.turnId == 1);";
     String r = generate(in);
     String expected = "public Rdf p;public Set<Object> h;/**/h = ((Set<Object>)p.getValue(\"<dom:hasHistory>\"));"
         + "h.contains((c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);";

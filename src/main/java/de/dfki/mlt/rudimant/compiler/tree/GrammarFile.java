@@ -50,8 +50,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
 
   private static GrammarFile parseInput(final String realName, InputStream in)
       throws IOException {
-    return AntlrParser.parse(realName, in);
-    //return BisonParser.parse(realName, in);
+    //return AntlrParser.parse(realName, in);
+    return BisonParser.parse(realName, in);
   }
 
 

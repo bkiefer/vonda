@@ -304,9 +304,11 @@ SingleCharacter = [^\r\n\'\\]
 }
 
 <STRING> {
-  \"                             { yybegin(YYINITIAL);
-                                   yylval = new ExpSingleValue(string.toString(), "String");
-                                   return VondaGrammar.Lexer.STRING; }
+  \"                             {
+  yybegin(YYINITIAL);
+  yylval = new ExpSingleValue(string.toString(), "String");
+  return VondaGrammar.Lexer.STRING;
+                                 }
 
   {StringCharacter}+             |
 

@@ -112,7 +112,7 @@ public class CastTest {
 
   @Test
   public void test6() {
-    String in = "Child user; user.isLocatedAt == toRdf(\"<dom:Home>\");";
+    String in = "Child user; b = user.isLocatedAt == toRdf(\"<dom:Home>\");";
     String s = generate(in);
     String expected = "Rdf user;((Rdf)user.getSingleValue(\"<dom:isLocatedAt>\"))"
         + ".equals(toRdf(\"<dom:Home>\"));";

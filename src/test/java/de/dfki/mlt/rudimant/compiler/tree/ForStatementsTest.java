@@ -58,7 +58,7 @@ public class ForStatementsTest {
 
   @Test
   public void test4() {
-    String stat = "for (int i = 0; i < 10; i++){}";
+    String stat = "for (int i = 0; i < 10; ++i){}";
     String s = generate(stat);
     String expected = "for ( int i = 0;i < 10;i = (i+1)){ }";
     assertEquals(expected, getForMarked(s, expected));

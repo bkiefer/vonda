@@ -199,19 +199,16 @@ public class TypesTest {
 
   @Test
   public void testArrayAccess1() {
-    // TODO: define test once arrray generation is fixed
-    // this should give a typeError complaining that test is not defined
-    // however, it should not complain "unknown variable: test[1]"
-    String methdecl = "test[1];";
+    String methdecl = "int[] test; x = test[1];";
     String s = generate(methdecl);
-    String expected = "test[1]";
+    String expected = "int x = test[1]";
     assertEquals(expected, getForMarked(s, expected));
   }
 
   @Test(expected=TypeException.class)
   public void testArrayAccess2() throws Throwable {
     // this should complain that a non-array type is accessed in an array way
-    String in = "String test; test[1];";
+    String in = "String test; x = test[1];";
     //String s = generate(in);
     getTypeError(in);
   }

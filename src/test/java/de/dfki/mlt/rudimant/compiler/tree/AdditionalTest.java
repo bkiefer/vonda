@@ -75,7 +75,7 @@ public class AdditionalTest {
   // exp to statement in else of if
   @Test
   public void testDialogueAct() {
-    String in = "int x=27;emitDA(#I(Greet, val=^x));";
+    String in = "int x=27;emitDA(#I(Greet, val={x}));";
     String exp = "x = 27;emitDA(new DialogueAct(\"I\", \"Greet\", \"val\", Integer.toString(x)));";
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));

@@ -59,7 +59,7 @@ public class DialogueActTest {
 
   @Test
   public void testDA1() {
-    String in = "inf = \"Inform\"; emitDA(#^inf(Answer, what=solution));";
+    String in = "inf = \"Inform\"; emitDA(#{inf}(Answer, what=solution));";
     String r = generate(in);
     String expected = "String inf = \"Inform\";"
         + "emitDA(new DialogueAct(inf, \"Answer\", \"what\", \"solution\"));";
@@ -68,7 +68,7 @@ public class DialogueActTest {
 
   @Test
   public void testDA2() {
-    String in = "emitDA(#Inform(Answering, what=^random(10)));";
+    String in = "emitDA(#Inform(Answering, what={random(10)}));";
     String r = generate(in);
     String expected = "emitDA(new DialogueAct(\"Inform\", \"Answering\", \"what\", Integer.toString(random(10))));";
     assertEquals(expected, getForMarked(r, expected));
@@ -77,7 +77,7 @@ public class DialogueActTest {
   @Test
   public void testToStringDA() {
     // Test set string var with POD type
-    String in = "DialogueAct c = #Confirm(Correct, value=^10);";
+    String in = "DialogueAct c = #Confirm(Correct, value={10});";
     String s = generate(in);
     String expected =
         "DialogueAct c = new DialogueAct(\"Confirm\", \"Correct\", \"value\", Integer.toString(10))";

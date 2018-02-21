@@ -552,35 +552,35 @@ public class VondaGrammar
 
   case 8:
   if (yyn == 8)
-    /* "VondaGrammar.y":126  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":127  */ /* lalr1.java:489  */
     { yyval = _statements;};
   break;
     
 
   case 9:
   if (yyn == 9)
-    /* "VondaGrammar.y":130  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":131  */ /* lalr1.java:489  */
     { yyval = "public"; };
   break;
     
 
   case 10:
   if (yyn == 10)
-    /* "VondaGrammar.y":131  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":132  */ /* lalr1.java:489  */
     { yyval = "protected"; };
   break;
     
 
   case 11:
   if (yyn == 11)
-    /* "VondaGrammar.y":132  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":133  */ /* lalr1.java:489  */
     { yyval = "private"; };
   break;
     
 
   case 12:
   if (yyn == 12)
-    /* "VondaGrammar.y":136  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":137  */ /* lalr1.java:489  */
     {
     new Import((( String )(yystack.valueAt (4-(2)))), ((List<String>)(yystack.valueAt (4-(3)))).toArray(new String[((List<String>)(yystack.valueAt (4-(3)))).size()]));
   };
@@ -589,1305 +589,1304 @@ public class VondaGrammar
 
   case 13:
   if (yyn == 13)
-    /* "VondaGrammar.y":142  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":143  */ /* lalr1.java:489  */
     { yyval = new ArrayList<String>(); };
   break;
     
 
   case 14:
   if (yyn == 14)
-    /* "VondaGrammar.y":143  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":144  */ /* lalr1.java:489  */
     { yyval = ((List<String>)(yystack.valueAt (3-(3)))); ((List<String>)(yystack.valueAt (3-(3)))).add((( String )(yystack.valueAt (3-(2))))); };
   break;
     
 
   case 15:
   if (yyn == 15)
-    /* "VondaGrammar.y":147  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":148  */ /* lalr1.java:489  */
     { yyval = ((StatAbstractBlock)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 16:
   if (yyn == 16)
-    /* "VondaGrammar.y":148  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":149  */ /* lalr1.java:489  */
     { yyval = new StatExpression(((RTExpression)(yystack.valueAt (2-(1))))).setPos((yyloc)); };
   break;
     
 
   case 17:
   if (yyn == 17)
-    /* "VondaGrammar.y":149  */ /* lalr1.java:489  */
-    { yyval = ((StatGrammarRule)(yystack.valueAt (1-(1)))); };
+    /* "VondaGrammar.y":150  */ /* lalr1.java:489  */
+    { yyval = new StatExpression(((RTExpression)(yystack.valueAt (2-(1))))).setPos((yyloc)); };
   break;
     
 
   case 18:
   if (yyn == 18)
-    /* "VondaGrammar.y":150  */ /* lalr1.java:489  */
-    { yyval = ((RTStatement)(yystack.valueAt (1-(1)))); };
+    /* "VondaGrammar.y":151  */ /* lalr1.java:489  */
+    { yyval = ((StatGrammarRule)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 19:
   if (yyn == 19)
-    /* "VondaGrammar.y":151  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":152  */ /* lalr1.java:489  */
     { yyval = ((RTStatement)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 20:
   if (yyn == 20)
-    /* "VondaGrammar.y":152  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":153  */ /* lalr1.java:489  */
     { yyval = ((RTStatement)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 21:
   if (yyn == 21)
-    /* "VondaGrammar.y":153  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":154  */ /* lalr1.java:489  */
     { yyval = ((RTStatement)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 22:
   if (yyn == 22)
-    /* "VondaGrammar.y":154  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":155  */ /* lalr1.java:489  */
     { yyval = ((RTStatement)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 23:
   if (yyn == 23)
-    /* "VondaGrammar.y":155  */ /* lalr1.java:489  */
-    { yyval = ((StatIf)(yystack.valueAt (1-(1)))); };
-  break;
-    
-
-  case 24:
-  if (yyn == 24)
     /* "VondaGrammar.y":156  */ /* lalr1.java:489  */
     { yyval = ((RTStatement)(yystack.valueAt (1-(1)))); };
   break;
     
 
+  case 24:
+  if (yyn == 24)
+    /* "VondaGrammar.y":157  */ /* lalr1.java:489  */
+    { yyval = ((StatIf)(yystack.valueAt (1-(1)))); };
+  break;
+    
+
   case 25:
   if (yyn == 25)
-    /* "VondaGrammar.y":157  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":158  */ /* lalr1.java:489  */
     { yyval = ((RTStatement)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 26:
   if (yyn == 26)
-    /* "VondaGrammar.y":158  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":159  */ /* lalr1.java:489  */
     { yyval = ((RTStatement)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 27:
   if (yyn == 27)
-    /* "VondaGrammar.y":162  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":160  */ /* lalr1.java:489  */
     { yyval = ((RTStatement)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 28:
   if (yyn == 28)
-    /* "VondaGrammar.y":163  */ /* lalr1.java:489  */
-    { yyval = ((StatVarDef)(yystack.valueAt (1-(1)))); };
+    /* "VondaGrammar.y":161  */ /* lalr1.java:489  */
+    { yyval = ((RTStatement)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 29:
   if (yyn == 29)
-    /* "VondaGrammar.y":169  */ /* lalr1.java:489  */
-    { yyval = new StatAbstractBlock(((LinkedList<RTStatement>)(yystack.valueAt (3-(2)))), true).setPos((yyloc)); };
+    /* "VondaGrammar.y":165  */ /* lalr1.java:489  */
+    { yyval = ((RTStatement)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 30:
   if (yyn == 30)
-    /* "VondaGrammar.y":170  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":166  */ /* lalr1.java:489  */
+    { yyval = ((StatVarDef)(yystack.valueAt (1-(1)))); };
+  break;
+    
+
+  case 31:
+  if (yyn == 31)
+    /* "VondaGrammar.y":172  */ /* lalr1.java:489  */
+    { yyval = new StatAbstractBlock(((LinkedList<RTStatement>)(yystack.valueAt (3-(2)))), true).setPos((yyloc)); };
+  break;
+    
+
+  case 32:
+  if (yyn == 32)
+    /* "VondaGrammar.y":173  */ /* lalr1.java:489  */
     {
     yyval = new StatAbstractBlock(new ArrayList<RTStatement>(), true).setPos((yyloc));
   };
   break;
     
 
-  case 31:
-  if (yyn == 31)
-    /* "VondaGrammar.y":174  */ /* lalr1.java:489  */
-    { yyval = new LinkedList<RTStatement>(){{ add(((RTStatement)(yystack.valueAt (1-(1))))); }}; };
-  break;
-    
-
-  case 32:
-  if (yyn == 32)
-    /* "VondaGrammar.y":175  */ /* lalr1.java:489  */
-    { yyval = ((LinkedList<RTStatement>)(yystack.valueAt (2-(2)))); ((LinkedList<RTStatement>)(yystack.valueAt (2-(2)))).addFirst(((RTStatement)(yystack.valueAt (2-(1))))); };
-  break;
-    
-
   case 33:
   if (yyn == 33)
-    /* "VondaGrammar.y":179  */ /* lalr1.java:489  */
-    { yyval = new StatGrammarRule((( String )(yystack.valueAt (3-(1)))), ((StatIf)(yystack.valueAt (3-(3))))).setPos((yyloc)); };
+    /* "VondaGrammar.y":177  */ /* lalr1.java:489  */
+    { yyval = new LinkedList<RTStatement>(){{ add(((RTStatement)(yystack.valueAt (1-(1))))); }}; };
   break;
     
 
   case 34:
   if (yyn == 34)
-    /* "VondaGrammar.y":183  */ /* lalr1.java:489  */
-    { yyval = new StatReturn("return").setPos((yyloc)); };
+    /* "VondaGrammar.y":178  */ /* lalr1.java:489  */
+    { yyval = ((LinkedList<RTStatement>)(yystack.valueAt (2-(2)))); ((LinkedList<RTStatement>)(yystack.valueAt (2-(2)))).addFirst(((RTStatement)(yystack.valueAt (2-(1))))); };
   break;
     
 
   case 35:
   if (yyn == 35)
-    /* "VondaGrammar.y":184  */ /* lalr1.java:489  */
-    { yyval = new StatReturn(((RTExpression)(yystack.valueAt (3-(2))))).setPos((yyloc)); };
+    /* "VondaGrammar.y":182  */ /* lalr1.java:489  */
+    { yyval = new StatGrammarRule((( String )(yystack.valueAt (3-(1)))), ((StatIf)(yystack.valueAt (3-(3))))).setPos((yyloc)); };
   break;
     
 
   case 36:
   if (yyn == 36)
-    /* "VondaGrammar.y":185  */ /* lalr1.java:489  */
-    { yyval = new StatReturn("break").setPos((yyloc)); };
+    /* "VondaGrammar.y":186  */ /* lalr1.java:489  */
+    { yyval = new StatReturn("return").setPos((yyloc)); };
   break;
     
 
   case 37:
   if (yyn == 37)
-    /* "VondaGrammar.y":186  */ /* lalr1.java:489  */
-    { yyval = new StatReturn("break", (( String )(yystack.valueAt (3-(2))))).setPos((yyloc)); };
+    /* "VondaGrammar.y":187  */ /* lalr1.java:489  */
+    { yyval = new StatReturn(((RTExpression)(yystack.valueAt (3-(2))))).setPos((yyloc)); };
   break;
     
 
   case 38:
   if (yyn == 38)
-    /* "VondaGrammar.y":187  */ /* lalr1.java:489  */
-    { yyval = new StatReturn("cancel").setPos((yyloc)); };
+    /* "VondaGrammar.y":188  */ /* lalr1.java:489  */
+    { yyval = new StatReturn("break").setPos((yyloc)); };
   break;
     
 
   case 39:
   if (yyn == 39)
-    /* "VondaGrammar.y":188  */ /* lalr1.java:489  */
-    { yyval = new StatReturn("cancel_all").setPos((yyloc)); };
+    /* "VondaGrammar.y":189  */ /* lalr1.java:489  */
+    { yyval = new StatReturn("break", (( String )(yystack.valueAt (3-(2))))).setPos((yyloc)); };
   break;
     
 
   case 40:
   if (yyn == 40)
-    /* "VondaGrammar.y":189  */ /* lalr1.java:489  */
-    { yyval = new StatReturn("continue").setPos((yyloc)); };
+    /* "VondaGrammar.y":190  */ /* lalr1.java:489  */
+    { yyval = new StatReturn("cancel").setPos((yyloc)); };
   break;
     
 
   case 41:
   if (yyn == 41)
-    /* "VondaGrammar.y":193  */ /* lalr1.java:489  */
-    { yyval = new StatIf(((RTExpression)(yystack.valueAt (5-(3)))), ((RTStatement)(yystack.valueAt (5-(5)))), null).setPos((yyloc)); };
+    /* "VondaGrammar.y":191  */ /* lalr1.java:489  */
+    { yyval = new StatReturn("cancel_all").setPos((yyloc)); };
   break;
     
 
   case 42:
   if (yyn == 42)
-    /* "VondaGrammar.y":194  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":192  */ /* lalr1.java:489  */
+    { yyval = new StatReturn("continue").setPos((yyloc)); };
+  break;
+    
+
+  case 43:
+  if (yyn == 43)
+    /* "VondaGrammar.y":196  */ /* lalr1.java:489  */
+    { yyval = new StatIf(((RTExpression)(yystack.valueAt (5-(3)))), ((RTStatement)(yystack.valueAt (5-(5)))), null).setPos((yyloc)); };
+  break;
+    
+
+  case 44:
+  if (yyn == 44)
+    /* "VondaGrammar.y":197  */ /* lalr1.java:489  */
     {
     yyval = new StatIf(((RTExpression)(yystack.valueAt (7-(3)))), ((RTStatement)(yystack.valueAt (7-(5)))), ((RTStatement)(yystack.valueAt (7-(7))))).setPos((yyloc));
   };
   break;
     
 
-  case 43:
-  if (yyn == 43)
-    /* "VondaGrammar.y":200  */ /* lalr1.java:489  */
+  case 45:
+  if (yyn == 45)
+    /* "VondaGrammar.y":203  */ /* lalr1.java:489  */
     { yyval = new StatWhile(((RTExpression)(yystack.valueAt (5-(3)))), ((RTStatement)(yystack.valueAt (5-(5)))), true).setPos((yyloc)); };
   break;
     
 
-  case 44:
-  if (yyn == 44)
-    /* "VondaGrammar.y":201  */ /* lalr1.java:489  */
+  case 46:
+  if (yyn == 46)
+    /* "VondaGrammar.y":204  */ /* lalr1.java:489  */
     {
     yyval = new StatWhile(((RTExpression)(yystack.valueAt (6-(5)))), ((RTStatement)(yystack.valueAt (6-(2)))), false).setPos((yyloc));
   };
   break;
     
 
-  case 45:
-  if (yyn == 45)
-    /* "VondaGrammar.y":207  */ /* lalr1.java:489  */
+  case 47:
+  if (yyn == 47)
+    /* "VondaGrammar.y":210  */ /* lalr1.java:489  */
     {
     yyval = new StatFor1(((StatVarDef)(yystack.valueAt (8-(3)))), ((RTExpression)(yystack.valueAt (8-(4)))), ((RTExpression)(yystack.valueAt (8-(6)))), ((RTStatement)(yystack.valueAt (8-(8))))).setPos((yyloc)); };
   break;
     
 
-  case 46:
-  if (yyn == 46)
-    /* "VondaGrammar.y":209  */ /* lalr1.java:489  */
+  case 48:
+  if (yyn == 48)
+    /* "VondaGrammar.y":212  */ /* lalr1.java:489  */
     {
     yyval = new StatFor1(((StatVarDef)(yystack.valueAt (7-(3)))), null, ((RTExpression)(yystack.valueAt (7-(5)))), ((RTStatement)(yystack.valueAt (7-(7))))).setPos((yyloc)); };
   break;
     
 
-  case 47:
-  if (yyn == 47)
-    /* "VondaGrammar.y":211  */ /* lalr1.java:489  */
+  case 49:
+  if (yyn == 49)
+    /* "VondaGrammar.y":214  */ /* lalr1.java:489  */
     {
     yyval = new StatFor1(((StatVarDef)(yystack.valueAt (7-(3)))), ((RTExpression)(yystack.valueAt (7-(4)))), null, ((RTStatement)(yystack.valueAt (7-(7))))).setPos((yyloc)); };
   break;
     
 
-  case 48:
-  if (yyn == 48)
-    /* "VondaGrammar.y":213  */ /* lalr1.java:489  */
+  case 50:
+  if (yyn == 50)
+    /* "VondaGrammar.y":216  */ /* lalr1.java:489  */
     {
     yyval = new StatFor1(((StatVarDef)(yystack.valueAt (6-(3)))), null, null, ((RTStatement)(yystack.valueAt (6-(6))))).setPos((yyloc)); };
   break;
     
 
-  case 49:
-  if (yyn == 49)
-    /* "VondaGrammar.y":215  */ /* lalr1.java:489  */
+  case 51:
+  if (yyn == 51)
+    /* "VondaGrammar.y":218  */ /* lalr1.java:489  */
     {
     yyval = new StatFor1(null, ((RTExpression)(yystack.valueAt (8-(4)))), ((RTExpression)(yystack.valueAt (8-(6)))), ((RTStatement)(yystack.valueAt (8-(8))))).setPos((yyloc)); };
   break;
     
 
-  case 50:
-  if (yyn == 50)
-    /* "VondaGrammar.y":217  */ /* lalr1.java:489  */
-    {
-    yyval = new StatFor2(new ExpVariable((( String )(yystack.valueAt (7-(3))))), ((RTExpression)(yystack.valueAt (7-(5)))), ((RTStatement)(yystack.valueAt (7-(7))))).setPos((yyloc));
-  };
-  break;
-    
-
-  case 51:
-  if (yyn == 51)
-    /* "VondaGrammar.y":220  */ /* lalr1.java:489  */
-    {
-    yyval = new StatFor2(((Type)(yystack.valueAt (8-(3)))), new ExpVariable((( String )(yystack.valueAt (8-(4))))), ((RTExpression)(yystack.valueAt (8-(6)))), ((RTStatement)(yystack.valueAt (8-(8))))).setPos((yyloc));
-  };
-  break;
-    
-
   case 52:
   if (yyn == 52)
-    /* "VondaGrammar.y":228  */ /* lalr1.java:489  */
-    { yyval = new StatPropose(((RTExpression)(yystack.valueAt (5-(3)))), ((StatAbstractBlock)(yystack.valueAt (5-(5))))).setPos((yyloc)); };
+    /* "VondaGrammar.y":220  */ /* lalr1.java:489  */
+    {
+    ExpVariable var = new ExpVariable((( String )(yystack.valueAt (7-(3))))); var.setPos(yystack.locationAt (7-(3)));
+    yyval = new StatFor2(var, ((RTExpression)(yystack.valueAt (7-(5)))), ((RTStatement)(yystack.valueAt (7-(7))))).setPos((yyloc));
+  };
   break;
     
 
   case 53:
   if (yyn == 53)
-    /* "VondaGrammar.y":232  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":224  */ /* lalr1.java:489  */
     {
-    yyval = new StatTimeout(null, ((RTExpression)(yystack.valueAt (5-(3)))), ((StatAbstractBlock)(yystack.valueAt (5-(5))))).setPos((yyloc));
+    ExpVariable var = new ExpVariable((( String )(yystack.valueAt (8-(4))))); var.setPos(yystack.locationAt (8-(4)));
+    yyval = new StatFor2(((Type)(yystack.valueAt (8-(3)))), var, ((RTExpression)(yystack.valueAt (8-(6)))), ((RTStatement)(yystack.valueAt (8-(8))))).setPos((yyloc));
   };
   break;
     
 
   case 54:
   if (yyn == 54)
-    /* "VondaGrammar.y":238  */ /* lalr1.java:489  */
-    {
-    yyval = new StatTimeout(((RTExpression)(yystack.valueAt (7-(3)))), ((RTExpression)(yystack.valueAt (7-(5)))), ((StatAbstractBlock)(yystack.valueAt (7-(7))))).setPos((yyloc));
-  };
+    /* "VondaGrammar.y":233  */ /* lalr1.java:489  */
+    { yyval = new StatPropose(((RTExpression)(yystack.valueAt (5-(3)))), ((StatAbstractBlock)(yystack.valueAt (5-(5))))).setPos((yyloc)); };
   break;
     
 
   case 55:
   if (yyn == 55)
-    /* "VondaGrammar.y":244  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":237  */ /* lalr1.java:489  */
     {
-    yyval = new StatSwitch(((RTExpression)(yystack.valueAt (7-(3)))), ((StatAbstractBlock)(yystack.valueAt (7-(6))))).setPos((yyloc));
+    yyval = new StatTimeout(null, ((RTExpression)(yystack.valueAt (5-(3)))), ((StatAbstractBlock)(yystack.valueAt (5-(5))))).setPos((yyloc));
   };
   break;
     
 
   case 56:
   if (yyn == 56)
-    /* "VondaGrammar.y":250  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":243  */ /* lalr1.java:489  */
     {
-    List<RTStatement> elts = ((LinkedList<RTStatement>)(yystack.valueAt (2-(1))));
-    elts.addAll(((LinkedList<RTStatement>)(yystack.valueAt (2-(2)))));
-    yyval = new StatAbstractBlock(elts, false).setPos((yyloc));
+    yyval = new StatTimeout(((RTExpression)(yystack.valueAt (7-(3)))), ((RTExpression)(yystack.valueAt (7-(5)))), ((StatAbstractBlock)(yystack.valueAt (7-(7))))).setPos((yyloc));
   };
   break;
     
 
   case 57:
   if (yyn == 57)
-    /* "VondaGrammar.y":258  */ /* lalr1.java:489  */
-    { };
+    /* "VondaGrammar.y":249  */ /* lalr1.java:489  */
+    {
+    yyval = new StatSwitch(((RTExpression)(yystack.valueAt (5-(3)))), ((StatAbstractBlock)(yystack.valueAt (5-(5))))).setPos((yyloc));
+  };
   break;
     
 
   case 58:
   if (yyn == 58)
-    /* "VondaGrammar.y":259  */ /* lalr1.java:489  */
-    { yyval = new ArrayList<RTExpression>(); };
+    /* "VondaGrammar.y":275  */ /* lalr1.java:489  */
+    {
+    ExpSingleValue val =
+      new ExpSingleValue("case " + (( ExpSingleValue )(yystack.valueAt (3-(2)))).toString() + ":", "label");
+    RTStatement lbl = val.ensureStatement();
+    val.setPos((yyloc)); lbl.setPos((yyloc));
+    yyval = lbl;
+  };
   break;
     
 
   case 59:
   if (yyn == 59)
-    /* "VondaGrammar.y":263  */ /* lalr1.java:489  */
-    { yyval = ((LinkedList<RTStatement>)(yystack.valueAt (2-(2)))); ((LinkedList<RTStatement>)(yystack.valueAt (2-(2)))).addFirst(((RTStatement)(yystack.valueAt (2-(1))))); };
+    /* "VondaGrammar.y":282  */ /* lalr1.java:489  */
+    {
+    ExpSingleValue val =
+      new ExpSingleValue("case " + (( ExpSingleValue )(yystack.valueAt (3-(2)))).toString() + ":", "label");
+    RTStatement lbl = val.ensureStatement();
+    val.setPos((yyloc)); lbl.setPos((yyloc));
+    yyval = lbl;
+  };
   break;
     
 
   case 60:
   if (yyn == 60)
-    /* "VondaGrammar.y":264  */ /* lalr1.java:489  */
-    { yyval = new LinkedList<RTStatement>(){{ add(((RTStatement)(yystack.valueAt (1-(1))))); }}; };
+    /* "VondaGrammar.y":289  */ /* lalr1.java:489  */
+    {
+    ExpSingleValue val =
+      new ExpSingleValue("case " + (( String )(yystack.valueAt (3-(2)))) + ":", "label");
+    RTStatement lbl = val.ensureStatement();
+    val.setPos((yyloc)); lbl.setPos((yyloc));
+    yyval = lbl;
+  };
   break;
     
 
   case 61:
   if (yyn == 61)
-    /* "VondaGrammar.y":268  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":296  */ /* lalr1.java:489  */
     {
-    yyval = new ExpSingleValue("case " + (( ExpSingleValue )(yystack.valueAt (3-(2)))) + ":", "label").ensureStatement();
+    ExpSingleValue val = new ExpSingleValue("default:", "label");
+    RTStatement lbl = val.ensureStatement();
+    val.setPos((yyloc)); lbl.setPos((yyloc));
+    yyval = lbl;
   };
   break;
     
 
   case 62:
   if (yyn == 62)
-    /* "VondaGrammar.y":271  */ /* lalr1.java:489  */
-    {
-    yyval = new ExpSingleValue("case " + (( ExpSingleValue )(yystack.valueAt (3-(2)))) + ":", "label").ensureStatement();
-  };
-  break;
-    
-
-  case 63:
-  if (yyn == 63)
-    /* "VondaGrammar.y":274  */ /* lalr1.java:489  */
-    {
-    yyval = new ExpSingleValue("case " + (( String )(yystack.valueAt (3-(2)))) + ":", "label").ensureStatement();
-  };
-  break;
-    
-
-  case 64:
-  if (yyn == 64)
-    /* "VondaGrammar.y":277  */ /* lalr1.java:489  */
-    {
-    yyval = new ExpSingleValue("default:", "label").ensureStatement();
-  };
-  break;
-    
-
-  case 65:
-  if (yyn == 65)
-    /* "VondaGrammar.y":283  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":305  */ /* lalr1.java:489  */
     {
     yyval = new StatVarDef(true, null, (( String )(yystack.valueAt (4-(2)))), ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
   };
   break;
     
 
-  case 66:
-  if (yyn == 66)
-    /* "VondaGrammar.y":286  */ /* lalr1.java:489  */
+  case 63:
+  if (yyn == 63)
+    /* "VondaGrammar.y":308  */ /* lalr1.java:489  */
     {
     yyval = new StatVarDef(false, ((Type)(yystack.valueAt (4-(1)))), (( String )(yystack.valueAt (4-(2)))), ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
   };
   break;
     
 
-  case 67:
-  if (yyn == 67)
-    /* "VondaGrammar.y":289  */ /* lalr1.java:489  */
+  case 64:
+  if (yyn == 64)
+    /* "VondaGrammar.y":311  */ /* lalr1.java:489  */
     {
     yyval = new StatVarDef(true, ((Type)(yystack.valueAt (5-(2)))), (( String )(yystack.valueAt (5-(3)))), ((RTExpression)(yystack.valueAt (5-(4))))).setPos((yyloc));
   };
   break;
     
 
-  case 68:
-  if (yyn == 68)
-    /* "VondaGrammar.y":292  */ /* lalr1.java:489  */
+  case 65:
+  if (yyn == 65)
+    /* "VondaGrammar.y":314  */ /* lalr1.java:489  */
     {
     yyval = new StatVarDef(true, null, (( String )(yystack.valueAt (3-(2)))), null).setPos((yyloc));
   };
   break;
     
 
-  case 69:
-  if (yyn == 69)
-    /* "VondaGrammar.y":295  */ /* lalr1.java:489  */
+  case 66:
+  if (yyn == 66)
+    /* "VondaGrammar.y":317  */ /* lalr1.java:489  */
     {
     yyval = new StatVarDef(false, ((Type)(yystack.valueAt (3-(1)))), (( String )(yystack.valueAt (3-(2)))), null).setPos((yyloc));
   };
   break;
     
 
-  case 70:
-  if (yyn == 70)
-    /* "VondaGrammar.y":298  */ /* lalr1.java:489  */
+  case 67:
+  if (yyn == 67)
+    /* "VondaGrammar.y":320  */ /* lalr1.java:489  */
     {
     yyval = new StatVarDef(true, ((Type)(yystack.valueAt (4-(2)))), (( String )(yystack.valueAt (4-(3)))), null).setPos((yyloc));
   };
   break;
     
 
+  case 68:
+  if (yyn == 68)
+    /* "VondaGrammar.y":326  */ /* lalr1.java:489  */
+    { yyval = ((RTExpression)(yystack.valueAt (2-(2)))); };
+  break;
+    
+
+  case 69:
+  if (yyn == 69)
+    /* "VondaGrammar.y":327  */ /* lalr1.java:489  */
+    {
+    yyval = new ExpListLiteral(new LinkedList<RTExpression>()).setPos(yystack.locationAt (3-(2)), yystack.locationAt (3-(3)));
+  };
+  break;
+    
+
+  case 70:
+  if (yyn == 70)
+    /* "VondaGrammar.y":330  */ /* lalr1.java:489  */
+    {
+    yyval = new ExpListLiteral(((LinkedList<RTExpression>)(yystack.valueAt (4-(3))))).setPos(yystack.locationAt (4-(2)), yystack.locationAt (4-(4)));
+  };
+  break;
+    
+
   case 71:
   if (yyn == 71)
-    /* "VondaGrammar.y":304  */ /* lalr1.java:489  */
-    { yyval = ((RTExpression)(yystack.valueAt (2-(2)))); };
+    /* "VondaGrammar.y":336  */ /* lalr1.java:489  */
+    { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (1-(1))))); }}; };
   break;
     
 
   case 72:
   if (yyn == 72)
-    /* "VondaGrammar.y":305  */ /* lalr1.java:489  */
-    { yyval = new ExpListLiteral(new LinkedList<RTExpression>()); };
+    /* "VondaGrammar.y":337  */ /* lalr1.java:489  */
+    { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))); ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))).addFirst(((RTExpression)(yystack.valueAt (3-(1))))); };
   break;
     
 
   case 73:
   if (yyn == 73)
-    /* "VondaGrammar.y":306  */ /* lalr1.java:489  */
-    { yyval = new ExpListLiteral(((LinkedList<RTExpression>)(yystack.valueAt (4-(3))))); };
-  break;
-    
-
-  case 74:
-  if (yyn == 74)
-    /* "VondaGrammar.y":310  */ /* lalr1.java:489  */
-    { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (1-(1))))); }}; };
-  break;
-    
-
-  case 75:
-  if (yyn == 75)
-    /* "VondaGrammar.y":311  */ /* lalr1.java:489  */
-    { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))); ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))).addFirst(((RTExpression)(yystack.valueAt (3-(1))))); };
-  break;
-    
-
-  case 76:
-  if (yyn == 76)
-    /* "VondaGrammar.y":315  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":341  */ /* lalr1.java:489  */
     {
     yyval = new StatMethodDeclaration("public", ((Type)(yystack.valueAt (6-(2)))), ((Type)(yystack.valueAt (6-(1)))), (( String )(yystack.valueAt (6-(3)))), null, ((StatAbstractBlock)(yystack.valueAt (6-(6))))).setPos((yyloc));
   };
   break;
     
 
-  case 77:
-  if (yyn == 77)
-    /* "VondaGrammar.y":318  */ /* lalr1.java:489  */
+  case 74:
+  if (yyn == 74)
+    /* "VondaGrammar.y":344  */ /* lalr1.java:489  */
     {
     yyval = new StatMethodDeclaration("public", ((Type)(yystack.valueAt (6-(2)))), ((Type)(yystack.valueAt (6-(1)))), (( String )(yystack.valueAt (6-(3)))), ((LinkedList)(yystack.valueAt (6-(5)))), ((StatAbstractBlock)(yystack.valueAt (6-(6))))).setPos((yyloc));
   };
   break;
     
 
-  case 78:
-  if (yyn == 78)
-    /* "VondaGrammar.y":321  */ /* lalr1.java:489  */
+  case 75:
+  if (yyn == 75)
+    /* "VondaGrammar.y":347  */ /* lalr1.java:489  */
     {
     yyval = new StatMethodDeclaration("public", null, ((Type)(yystack.valueAt (5-(1)))), (( String )(yystack.valueAt (5-(2)))), null, ((StatAbstractBlock)(yystack.valueAt (5-(5))))).setPos((yyloc));
   };
   break;
     
 
-  case 79:
-  if (yyn == 79)
-    /* "VondaGrammar.y":324  */ /* lalr1.java:489  */
+  case 76:
+  if (yyn == 76)
+    /* "VondaGrammar.y":350  */ /* lalr1.java:489  */
     {
     yyval = new StatMethodDeclaration("public", null, ((Type)(yystack.valueAt (5-(1)))), (( String )(yystack.valueAt (5-(2)))), ((LinkedList)(yystack.valueAt (5-(4)))), ((StatAbstractBlock)(yystack.valueAt (5-(5))))).setPos((yyloc));
   };
   break;
     
 
-  case 80:
-  if (yyn == 80)
-    /* "VondaGrammar.y":327  */ /* lalr1.java:489  */
+  case 77:
+  if (yyn == 77)
+    /* "VondaGrammar.y":353  */ /* lalr1.java:489  */
     {
     yyval = new StatMethodDeclaration("public", ((Type)(yystack.valueAt (5-(1)))), null, (( String )(yystack.valueAt (5-(2)))), null, ((StatAbstractBlock)(yystack.valueAt (5-(5))))).setPos((yyloc));
   };
   break;
     
 
-  case 81:
-  if (yyn == 81)
-    /* "VondaGrammar.y":330  */ /* lalr1.java:489  */
+  case 78:
+  if (yyn == 78)
+    /* "VondaGrammar.y":356  */ /* lalr1.java:489  */
     {
     yyval = new StatMethodDeclaration("public", ((Type)(yystack.valueAt (5-(1)))), null, (( String )(yystack.valueAt (5-(2)))), ((LinkedList)(yystack.valueAt (5-(4)))), ((StatAbstractBlock)(yystack.valueAt (5-(5))))).setPos((yyloc));
   };
   break;
     
 
-  case 82:
-  if (yyn == 82)
-    /* "VondaGrammar.y":333  */ /* lalr1.java:489  */
+  case 79:
+  if (yyn == 79)
+    /* "VondaGrammar.y":359  */ /* lalr1.java:489  */
     {
     yyval = new StatMethodDeclaration("public", null, null, (( String )(yystack.valueAt (4-(1)))), null, ((StatAbstractBlock)(yystack.valueAt (4-(4))))).setPos((yyloc));
   };
   break;
     
 
-  case 83:
-  if (yyn == 83)
-    /* "VondaGrammar.y":336  */ /* lalr1.java:489  */
+  case 80:
+  if (yyn == 80)
+    /* "VondaGrammar.y":362  */ /* lalr1.java:489  */
     {
     yyval = new StatMethodDeclaration("public", null, null, (( String )(yystack.valueAt (4-(1)))), ((LinkedList)(yystack.valueAt (4-(3)))), ((StatAbstractBlock)(yystack.valueAt (4-(4))))).setPos((yyloc));
   };
   break;
     
 
+  case 81:
+  if (yyn == 81)
+    /* "VondaGrammar.y":367  */ /* lalr1.java:489  */
+    { yyval = ((Type)(yystack.valueAt (4-(2)))); };
+  break;
+    
+
+  case 82:
+  if (yyn == 82)
+    /* "VondaGrammar.y":371  */ /* lalr1.java:489  */
+    { yyval = ((StatAbstractBlock)(yystack.valueAt (1-(1)))); };
+  break;
+    
+
+  case 83:
+  if (yyn == 83)
+    /* "VondaGrammar.y":372  */ /* lalr1.java:489  */
+    { yyval = null; };
+  break;
+    
+
   case 84:
   if (yyn == 84)
-    /* "VondaGrammar.y":341  */ /* lalr1.java:489  */
-    { yyval = ((Type)(yystack.valueAt (4-(2)))); };
+    /* "VondaGrammar.y":376  */ /* lalr1.java:489  */
+    { yyval = new LinkedList(){{ add((( String )(yystack.valueAt (2-(1))))); }}; };
   break;
     
 
   case 85:
   if (yyn == 85)
-    /* "VondaGrammar.y":345  */ /* lalr1.java:489  */
-    { yyval = ((StatAbstractBlock)(yystack.valueAt (1-(1)))); };
+    /* "VondaGrammar.y":377  */ /* lalr1.java:489  */
+    { yyval = new LinkedList(){{ add(((Type)(yystack.valueAt (3-(1))))); add((( String )(yystack.valueAt (3-(2))))); }}; };
   break;
     
 
   case 86:
   if (yyn == 86)
-    /* "VondaGrammar.y":346  */ /* lalr1.java:489  */
-    { yyval = null; };
+    /* "VondaGrammar.y":378  */ /* lalr1.java:489  */
+    { yyval = ((LinkedList)(yystack.valueAt (3-(3)))); ((LinkedList)(yystack.valueAt (3-(3)))).addFirst((( String )(yystack.valueAt (3-(1))))); };
   break;
     
 
   case 87:
   if (yyn == 87)
-    /* "VondaGrammar.y":350  */ /* lalr1.java:489  */
-    { yyval = new LinkedList(){{ add((( String )(yystack.valueAt (2-(1))))); }}; };
-  break;
-    
-
-  case 88:
-  if (yyn == 88)
-    /* "VondaGrammar.y":351  */ /* lalr1.java:489  */
-    { yyval = new LinkedList(){{ add(((Type)(yystack.valueAt (3-(1))))); add((( String )(yystack.valueAt (3-(2))))); }}; };
-  break;
-    
-
-  case 89:
-  if (yyn == 89)
-    /* "VondaGrammar.y":352  */ /* lalr1.java:489  */
-    { yyval = ((LinkedList)(yystack.valueAt (3-(3)))); ((LinkedList)(yystack.valueAt (3-(3)))).addFirst((( String )(yystack.valueAt (3-(1))))); };
-  break;
-    
-
-  case 90:
-  if (yyn == 90)
-    /* "VondaGrammar.y":353  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":379  */ /* lalr1.java:489  */
     {
     yyval = ((LinkedList)(yystack.valueAt (4-(4)))); ((LinkedList)(yystack.valueAt (4-(4)))).addFirst((( String )(yystack.valueAt (4-(2))))); ((LinkedList)(yystack.valueAt (4-(4)))).addFirst(((Type)(yystack.valueAt (4-(1)))));
   };
   break;
     
 
+  case 88:
+  if (yyn == 88)
+    /* "VondaGrammar.y":387  */ /* lalr1.java:489  */
+    {
+    ExpVariable var = new ExpVariable((( String )(yystack.valueAt (4-(1))))); var.setPos(yystack.locationAt (4-(1)));
+    yyval = new StatSetOperation(var, true, ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
+  };
+  break;
+    
+
+  case 89:
+  if (yyn == 89)
+    /* "VondaGrammar.y":391  */ /* lalr1.java:489  */
+    {
+    ExpVariable var = new ExpVariable((( String )(yystack.valueAt (4-(1))))); var.setPos(yystack.locationAt (4-(1)));
+    yyval = new StatSetOperation(var, false, ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
+  };
+  break;
+    
+
+  case 90:
+  if (yyn == 90)
+    /* "VondaGrammar.y":395  */ /* lalr1.java:489  */
+    {
+    yyval = new StatSetOperation(((RTExpression)(yystack.valueAt (4-(1)))), true, ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
+  };
+  break;
+    
+
   case 91:
   if (yyn == 91)
-    /* "VondaGrammar.y":361  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":398  */ /* lalr1.java:489  */
     {
-    yyval = new StatSetOperation(new ExpVariable((( String )(yystack.valueAt (4-(1))))), true, ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
+    yyval = new StatSetOperation(((RTExpression)(yystack.valueAt (4-(1)))), false, ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
   };
   break;
     
 
   case 92:
   if (yyn == 92)
-    /* "VondaGrammar.y":364  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":401  */ /* lalr1.java:489  */
     {
-    yyval = new StatSetOperation(new ExpVariable((( String )(yystack.valueAt (4-(1))))), false, ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
+    yyval = new StatSetOperation(((RTExpression)(yystack.valueAt (4-(1)))), true, ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
   };
   break;
     
 
   case 93:
   if (yyn == 93)
-    /* "VondaGrammar.y":367  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":404  */ /* lalr1.java:489  */
     {
-    yyval = new StatSetOperation(((RTExpression)(yystack.valueAt (4-(1)))), true, ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
+    yyval = new StatSetOperation(((RTExpression)(yystack.valueAt (4-(1)))), false, ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
   };
   break;
     
 
   case 94:
   if (yyn == 94)
-    /* "VondaGrammar.y":370  */ /* lalr1.java:489  */
-    {
-    yyval = new StatSetOperation(((RTExpression)(yystack.valueAt (4-(1)))), false, ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
-  };
-  break;
-    
-
-  case 95:
-  if (yyn == 95)
-    /* "VondaGrammar.y":373  */ /* lalr1.java:489  */
-    {
-    yyval = new StatSetOperation(((RTExpression)(yystack.valueAt (4-(1)))), true, ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
-  };
-  break;
-    
-
-  case 96:
-  if (yyn == 96)
-    /* "VondaGrammar.y":376  */ /* lalr1.java:489  */
-    {
-    yyval = new StatSetOperation(((RTExpression)(yystack.valueAt (4-(1)))), false, ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
-  };
-  break;
-    
-
-  case 97:
-  if (yyn == 97)
-    /* "VondaGrammar.y":385  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":413  */ /* lalr1.java:489  */
     {
     yyval = new ExpFuncCall((( String )(yystack.valueAt (3-(1)))), new LinkedList<RTExpression>(), false).setPos((yyloc));
   };
   break;
     
 
-  case 98:
-  if (yyn == 98)
-    /* "VondaGrammar.y":388  */ /* lalr1.java:489  */
+  case 95:
+  if (yyn == 95)
+    /* "VondaGrammar.y":416  */ /* lalr1.java:489  */
     {
     yyval = new ExpFuncCall((( String )(yystack.valueAt (4-(1)))), ((LinkedList<RTExpression>)(yystack.valueAt (4-(3)))), false).setPos((yyloc));
   };
   break;
     
 
+  case 96:
+  if (yyn == 96)
+    /* "VondaGrammar.y":422  */ /* lalr1.java:489  */
+    { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (1-(1))))); }}; };
+  break;
+    
+
+  case 97:
+  if (yyn == 97)
+    /* "VondaGrammar.y":423  */ /* lalr1.java:489  */
+    { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (1-(1))))); }}; };
+  break;
+    
+
+  case 98:
+  if (yyn == 98)
+    /* "VondaGrammar.y":424  */ /* lalr1.java:489  */
+    { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))); ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))).addFirst(((RTExpression)(yystack.valueAt (3-(1))))); };
+  break;
+    
+
   case 99:
   if (yyn == 99)
-    /* "VondaGrammar.y":394  */ /* lalr1.java:489  */
-    { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (1-(1))))); }}; };
+    /* "VondaGrammar.y":425  */ /* lalr1.java:489  */
+    { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))); ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))).addFirst(((RTExpression)(yystack.valueAt (3-(1))))); };
   break;
     
 
   case 100:
   if (yyn == 100)
-    /* "VondaGrammar.y":395  */ /* lalr1.java:489  */
-    { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (1-(1))))); }}; };
+    /* "VondaGrammar.y":429  */ /* lalr1.java:489  */
+    { yyval = new Type("Array", new Type((( String )(yystack.valueAt (3-(1)))))); };
   break;
     
 
   case 101:
   if (yyn == 101)
-    /* "VondaGrammar.y":396  */ /* lalr1.java:489  */
-    { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))); ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))).addFirst(((RTExpression)(yystack.valueAt (3-(1))))); };
+    /* "VondaGrammar.y":430  */ /* lalr1.java:489  */
+    { yyval = new Type((( String )(yystack.valueAt (1-(1))))); };
   break;
     
 
   case 102:
   if (yyn == 102)
-    /* "VondaGrammar.y":397  */ /* lalr1.java:489  */
-    { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))); ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))).addFirst(((RTExpression)(yystack.valueAt (3-(1))))); };
+    /* "VondaGrammar.y":431  */ /* lalr1.java:489  */
+    {
+    yyval = new Type((( String )(yystack.valueAt (4-(1)))), ((LinkedList<Type>)(yystack.valueAt (4-(3)))).toArray(new Type[((LinkedList<Type>)(yystack.valueAt (4-(3)))).size()]));
+  };
   break;
     
 
   case 103:
   if (yyn == 103)
-    /* "VondaGrammar.y":401  */ /* lalr1.java:489  */
-    { yyval = new Type("Array", new Type((( String )(yystack.valueAt (3-(1)))))); };
+    /* "VondaGrammar.y":437  */ /* lalr1.java:489  */
+    { yyval = new LinkedList<Type>(){{ add(((Type)(yystack.valueAt (1-(1))))); }}; };
   break;
     
 
   case 104:
   if (yyn == 104)
-    /* "VondaGrammar.y":402  */ /* lalr1.java:489  */
-    { yyval = new Type((( String )(yystack.valueAt (1-(1))))); };
+    /* "VondaGrammar.y":438  */ /* lalr1.java:489  */
+    { yyval = ((LinkedList<Type>)(yystack.valueAt (3-(3)))); ((LinkedList<Type>)(yystack.valueAt (3-(3)))).addFirst(((Type)(yystack.valueAt (3-(1))))); };
   break;
     
 
   case 105:
   if (yyn == 105)
-    /* "VondaGrammar.y":403  */ /* lalr1.java:489  */
-    { yyval = ((Type)(yystack.valueAt (1-(1)))); };
+    /* "VondaGrammar.y":442  */ /* lalr1.java:489  */
+    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 106:
   if (yyn == 106)
-    /* "VondaGrammar.y":407  */ /* lalr1.java:489  */
-    { yyval = new Type((( String )(yystack.valueAt (4-(1)))), ((LinkedList<Type>)(yystack.valueAt (4-(3)))).toArray(new Type[((LinkedList<Type>)(yystack.valueAt (4-(3)))).size()])); };
+    /* "VondaGrammar.y":443  */ /* lalr1.java:489  */
+    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 107:
   if (yyn == 107)
-    /* "VondaGrammar.y":411  */ /* lalr1.java:489  */
-    { yyval = new LinkedList<Type>(){{ add(((Type)(yystack.valueAt (1-(1))))); }}; };
+    /* "VondaGrammar.y":444  */ /* lalr1.java:489  */
+    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 108:
   if (yyn == 108)
-    /* "VondaGrammar.y":412  */ /* lalr1.java:489  */
-    { yyval = ((LinkedList<Type>)(yystack.valueAt (3-(3)))); ((LinkedList<Type>)(yystack.valueAt (3-(3)))).addFirst(((Type)(yystack.valueAt (3-(1))))); };
-  break;
-    
-
-  case 109:
-  if (yyn == 109)
-    /* "VondaGrammar.y":416  */ /* lalr1.java:489  */
-    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
-  break;
-    
-
-  case 110:
-  if (yyn == 110)
-    /* "VondaGrammar.y":417  */ /* lalr1.java:489  */
-    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
-  break;
-    
-
-  case 111:
-  if (yyn == 111)
-    /* "VondaGrammar.y":418  */ /* lalr1.java:489  */
-    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
-  break;
-    
-
-  case 112:
-  if (yyn == 112)
-    /* "VondaGrammar.y":419  */ /* lalr1.java:489  */
-    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
-  break;
-    
-
-  case 113:
-  if (yyn == 113)
-    /* "VondaGrammar.y":423  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":449  */ /* lalr1.java:489  */
     {
     yyval = new ExpBoolean(((RTExpression)(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(3)))), "||").setPos((yyloc));
   };
   break;
     
 
-  case 114:
-  if (yyn == 114)
-    /* "VondaGrammar.y":426  */ /* lalr1.java:489  */
+  case 109:
+  if (yyn == 109)
+    /* "VondaGrammar.y":452  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
-  case 115:
-  if (yyn == 115)
-    /* "VondaGrammar.y":430  */ /* lalr1.java:489  */
+  case 110:
+  if (yyn == 110)
+    /* "VondaGrammar.y":456  */ /* lalr1.java:489  */
     {
     yyval = new ExpBoolean(((RTExpression)(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(3)))), "&&").setPos((yyloc));
   };
   break;
     
 
-  case 116:
-  if (yyn == 116)
-    /* "VondaGrammar.y":433  */ /* lalr1.java:489  */
+  case 111:
+  if (yyn == 111)
+    /* "VondaGrammar.y":459  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
-  case 117:
-  if (yyn == 117)
-    /* "VondaGrammar.y":437  */ /* lalr1.java:489  */
+  case 112:
+  if (yyn == 112)
+    /* "VondaGrammar.y":463  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
-  case 118:
-  if (yyn == 118)
-    /* "VondaGrammar.y":438  */ /* lalr1.java:489  */
+  case 113:
+  if (yyn == 113)
+    /* "VondaGrammar.y":464  */ /* lalr1.java:489  */
     {
     yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(3)))), "|").setPos((yyloc));
   };
   break;
     
 
-  case 119:
-  if (yyn == 119)
-    /* "VondaGrammar.y":444  */ /* lalr1.java:489  */
+  case 114:
+  if (yyn == 114)
+    /* "VondaGrammar.y":470  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
-  case 120:
-  if (yyn == 120)
-    /* "VondaGrammar.y":445  */ /* lalr1.java:489  */
+  case 115:
+  if (yyn == 115)
+    /* "VondaGrammar.y":471  */ /* lalr1.java:489  */
     {
     yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(3)))), "^").setPos((yyloc));
   };
   break;
     
 
-  case 121:
-  if (yyn == 121)
-    /* "VondaGrammar.y":451  */ /* lalr1.java:489  */
+  case 116:
+  if (yyn == 116)
+    /* "VondaGrammar.y":477  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
-  case 122:
-  if (yyn == 122)
-    /* "VondaGrammar.y":452  */ /* lalr1.java:489  */
+  case 117:
+  if (yyn == 117)
+    /* "VondaGrammar.y":478  */ /* lalr1.java:489  */
     {
     yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(3)))), "&").setPos((yyloc));
   };
   break;
     
 
-  case 123:
-  if (yyn == 123)
-    /* "VondaGrammar.y":458  */ /* lalr1.java:489  */
+  case 118:
+  if (yyn == 118)
+    /* "VondaGrammar.y":484  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
-  case 124:
-  if (yyn == 124)
-    /* "VondaGrammar.y":459  */ /* lalr1.java:489  */
+  case 119:
+  if (yyn == 119)
+    /* "VondaGrammar.y":485  */ /* lalr1.java:489  */
     {
     yyval = new ExpBoolean(((RTExpression)(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(3)))), "==").setPos((yyloc));
   };
   break;
     
 
-  case 125:
-  if (yyn == 125)
-    /* "VondaGrammar.y":462  */ /* lalr1.java:489  */
+  case 120:
+  if (yyn == 120)
+    /* "VondaGrammar.y":488  */ /* lalr1.java:489  */
     {
     yyval = new ExpBoolean(((RTExpression)(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(3)))), "!=").setPos((yyloc));
   };
   break;
     
 
-  case 126:
-  if (yyn == 126)
-    /* "VondaGrammar.y":468  */ /* lalr1.java:489  */
+  case 121:
+  if (yyn == 121)
+    /* "VondaGrammar.y":494  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
-  case 127:
-  if (yyn == 127)
-    /* "VondaGrammar.y":469  */ /* lalr1.java:489  */
+  case 122:
+  if (yyn == 122)
+    /* "VondaGrammar.y":495  */ /* lalr1.java:489  */
     {
     yyval = new ExpBoolean(((RTExpression)(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(3)))), "<").setPos((yyloc));
   };
   break;
     
 
-  case 128:
-  if (yyn == 128)
-    /* "VondaGrammar.y":472  */ /* lalr1.java:489  */
+  case 123:
+  if (yyn == 123)
+    /* "VondaGrammar.y":498  */ /* lalr1.java:489  */
     {
     yyval = new ExpBoolean(((RTExpression)(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(3)))), ">").setPos((yyloc));
   };
   break;
     
 
-  case 129:
-  if (yyn == 129)
-    /* "VondaGrammar.y":475  */ /* lalr1.java:489  */
+  case 124:
+  if (yyn == 124)
+    /* "VondaGrammar.y":501  */ /* lalr1.java:489  */
     {
     yyval = new ExpBoolean(((RTExpression)(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(3)))), ">=").setPos((yyloc));
   };
   break;
     
 
-  case 130:
-  if (yyn == 130)
-    /* "VondaGrammar.y":478  */ /* lalr1.java:489  */
+  case 125:
+  if (yyn == 125)
+    /* "VondaGrammar.y":504  */ /* lalr1.java:489  */
     {
     yyval = new ExpBoolean(((RTExpression)(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(3)))), "<=").setPos((yyloc));
   };
   break;
     
 
-  case 131:
-  if (yyn == 131)
-    /* "VondaGrammar.y":484  */ /* lalr1.java:489  */
+  case 126:
+  if (yyn == 126)
+    /* "VondaGrammar.y":510  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
-  case 132:
-  if (yyn == 132)
-    /* "VondaGrammar.y":485  */ /* lalr1.java:489  */
+  case 127:
+  if (yyn == 127)
+    /* "VondaGrammar.y":511  */ /* lalr1.java:489  */
     {
     yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(3)))), "+").setPos((yyloc));
   };
   break;
     
 
-  case 133:
-  if (yyn == 133)
-    /* "VondaGrammar.y":488  */ /* lalr1.java:489  */
+  case 128:
+  if (yyn == 128)
+    /* "VondaGrammar.y":514  */ /* lalr1.java:489  */
     {
     yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(3)))), "-").setPos((yyloc));
   };
   break;
     
 
-  case 134:
-  if (yyn == 134)
-    /* "VondaGrammar.y":494  */ /* lalr1.java:489  */
+  case 129:
+  if (yyn == 129)
+    /* "VondaGrammar.y":520  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
-  case 135:
-  if (yyn == 135)
-    /* "VondaGrammar.y":495  */ /* lalr1.java:489  */
+  case 130:
+  if (yyn == 130)
+    /* "VondaGrammar.y":521  */ /* lalr1.java:489  */
     {
     yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(3)))), "*").setPos((yyloc));
   };
   break;
     
 
-  case 136:
-  if (yyn == 136)
-    /* "VondaGrammar.y":498  */ /* lalr1.java:489  */
+  case 131:
+  if (yyn == 131)
+    /* "VondaGrammar.y":524  */ /* lalr1.java:489  */
     {
     yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(3)))), "/").setPos((yyloc));
   };
   break;
     
 
-  case 137:
-  if (yyn == 137)
-    /* "VondaGrammar.y":501  */ /* lalr1.java:489  */
+  case 132:
+  if (yyn == 132)
+    /* "VondaGrammar.y":527  */ /* lalr1.java:489  */
     {
     yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(3)))), "%").setPos((yyloc));
   };
   break;
     
 
+  case 133:
+  if (yyn == 133)
+    /* "VondaGrammar.y":533  */ /* lalr1.java:489  */
+    {
+    ExpSingleValue es = new ExpSingleValue("1", "int"); es.setPos((yyloc));
+    yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (2-(2)))), es, "+").setPos((yyloc));
+  };
+  break;
+    
+
+  case 134:
+  if (yyn == 134)
+    /* "VondaGrammar.y":537  */ /* lalr1.java:489  */
+    {
+    ExpSingleValue es = new ExpSingleValue("1", "int"); es.setPos((yyloc));
+    yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (2-(2)))), es, "-").setPos((yyloc));
+  };
+  break;
+    
+
+  case 135:
+  if (yyn == 135)
+    /* "VondaGrammar.y":541  */ /* lalr1.java:489  */
+    { yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (2-(2)))), null, "+").setPos((yyloc)); };
+  break;
+    
+
+  case 136:
+  if (yyn == 136)
+    /* "VondaGrammar.y":542  */ /* lalr1.java:489  */
+    { yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (2-(2)))), null, "-").setPos((yyloc)); };
+  break;
+    
+
+  case 137:
+  if (yyn == 137)
+    /* "VondaGrammar.y":543  */ /* lalr1.java:489  */
+    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
+  break;
+    
+
   case 138:
   if (yyn == 138)
-    /* "VondaGrammar.y":507  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":547  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 139:
   if (yyn == 139)
-    /* "VondaGrammar.y":508  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":548  */ /* lalr1.java:489  */
     { new ExpCast(((Type)(yystack.valueAt (4-(2)))), ((RTExpression)(yystack.valueAt (4-(4))))).setPos((yyloc)); };
   break;
     
 
   case 140:
   if (yyn == 140)
-    /* "VondaGrammar.y":513  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":553  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 141:
   if (yyn == 141)
-    /* "VondaGrammar.y":514  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":554  */ /* lalr1.java:489  */
     { yyval = new ExpBoolean(((RTExpression)(yystack.valueAt (2-(2)))), null, "!").setPos((yyloc)); };
   break;
     
 
   case 142:
   if (yyn == 142)
-    /* "VondaGrammar.y":515  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":555  */ /* lalr1.java:489  */
     { yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (2-(2)))), null, "~").setPos((yyloc)); };
   break;
     
 
   case 143:
   if (yyn == 143)
-    /* "VondaGrammar.y":519  */ /* lalr1.java:489  */
-    {
-    yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (2-(2)))), new ExpSingleValue("1", "int"), "+").setPos((yyloc));
-  };
+    /* "VondaGrammar.y":559  */ /* lalr1.java:489  */
+    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 144:
   if (yyn == 144)
-    /* "VondaGrammar.y":522  */ /* lalr1.java:489  */
-    {
-    yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (2-(2)))), new ExpSingleValue("1", "int"), "-").setPos((yyloc));
-  };
+    /* "VondaGrammar.y":565  */ /* lalr1.java:489  */
+    { yyval = new ExpSingleValue("null", "null").setPos((yyloc)); };
   break;
     
 
   case 145:
   if (yyn == 145)
-    /* "VondaGrammar.y":525  */ /* lalr1.java:489  */
-    { yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (2-(2)))), null, "+").setPos((yyloc)); };
+    /* "VondaGrammar.y":566  */ /* lalr1.java:489  */
+    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 146:
   if (yyn == 146)
-    /* "VondaGrammar.y":526  */ /* lalr1.java:489  */
-    { yyval = new ExpArithmetic(((RTExpression)(yystack.valueAt (2-(2)))), null, "-").setPos((yyloc)); };
+    /* "VondaGrammar.y":567  */ /* lalr1.java:489  */
+    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 147:
   if (yyn == 147)
-    /* "VondaGrammar.y":527  */ /* lalr1.java:489  */
-    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
+    /* "VondaGrammar.y":571  */ /* lalr1.java:489  */
+    { yyval = new ExpVariable((( String )(yystack.valueAt (1-(1))))).setPos((yyloc)); };
   break;
     
 
   case 148:
   if (yyn == 148)
-    /* "VondaGrammar.y":531  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":572  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 149:
   if (yyn == 149)
-    /* "VondaGrammar.y":537  */ /* lalr1.java:489  */
-    { yyval = new ExpSingleValue("null", "null").setPos((yyloc)); };
+    /* "VondaGrammar.y":576  */ /* lalr1.java:489  */
+    { yyval = ((RTExpression)(yystack.valueAt (3-(2)))); };
   break;
     
 
   case 150:
   if (yyn == 150)
-    /* "VondaGrammar.y":538  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":577  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 151:
   if (yyn == 151)
-    /* "VondaGrammar.y":539  */ /* lalr1.java:489  */
-    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
+    /* "VondaGrammar.y":581  */ /* lalr1.java:489  */
+    { yyval = ((ExpSingleValue)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 152:
   if (yyn == 152)
-    /* "VondaGrammar.y":543  */ /* lalr1.java:489  */
-    { yyval = new ExpVariable((( String )(yystack.valueAt (1-(1))))).setPos((yyloc)); };
+    /* "VondaGrammar.y":582  */ /* lalr1.java:489  */
+    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 153:
   if (yyn == 153)
-    /* "VondaGrammar.y":544  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":583  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 154:
   if (yyn == 154)
-    /* "VondaGrammar.y":548  */ /* lalr1.java:489  */
-    { yyval = ((RTExpression)(yystack.valueAt (3-(2)))); };
+    /* "VondaGrammar.y":584  */ /* lalr1.java:489  */
+    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 155:
   if (yyn == 155)
-    /* "VondaGrammar.y":549  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":585  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 156:
   if (yyn == 156)
-    /* "VondaGrammar.y":553  */ /* lalr1.java:489  */
-    { yyval = ((ExpSingleValue)(yystack.valueAt (1-(1)))); };
+    /* "VondaGrammar.y":589  */ /* lalr1.java:489  */
+    { yyval = (( ExpSingleValue )(yystack.valueAt (1-(1)))); (( ExpSingleValue )(yystack.valueAt (1-(1)))).setPos((yyloc)); };
   break;
     
 
   case 157:
   if (yyn == 157)
-    /* "VondaGrammar.y":554  */ /* lalr1.java:489  */
-    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
+    /* "VondaGrammar.y":590  */ /* lalr1.java:489  */
+    { yyval = (( ExpSingleValue )(yystack.valueAt (1-(1)))); (( ExpSingleValue )(yystack.valueAt (1-(1)))).setPos((yyloc)); };
   break;
     
 
   case 158:
   if (yyn == 158)
-    /* "VondaGrammar.y":555  */ /* lalr1.java:489  */
-    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
+    /* "VondaGrammar.y":591  */ /* lalr1.java:489  */
+    { yyval = (( ExpSingleValue )(yystack.valueAt (1-(1)))); (( ExpSingleValue )(yystack.valueAt (1-(1)))).setPos((yyloc)); };
   break;
     
 
   case 159:
   if (yyn == 159)
-    /* "VondaGrammar.y":556  */ /* lalr1.java:489  */
-    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
+    /* "VondaGrammar.y":595  */ /* lalr1.java:489  */
+    {
+    ExpVariable var = new ExpVariable((( String )(yystack.valueAt (4-(1))))); var.setPos(yystack.locationAt (4-(1)));
+    yyval = new ExpArrayAccess(var, ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
+  };
   break;
     
 
   case 160:
   if (yyn == 160)
-    /* "VondaGrammar.y":560  */ /* lalr1.java:489  */
-    { yyval = (( ExpSingleValue )(yystack.valueAt (1-(1)))); };
+    /* "VondaGrammar.y":599  */ /* lalr1.java:489  */
+    { yyval = new ExpArrayAccess(((RTExpression)(yystack.valueAt (4-(1)))), ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc)); };
   break;
     
 
   case 161:
   if (yyn == 161)
-    /* "VondaGrammar.y":561  */ /* lalr1.java:489  */
-    { yyval = (( ExpSingleValue )(yystack.valueAt (1-(1)))); };
+    /* "VondaGrammar.y":603  */ /* lalr1.java:489  */
+    { yyval = new ExpConditional(((RTExpression)(yystack.valueAt (5-(1)))), ((RTExpression)(yystack.valueAt (5-(3)))), ((RTExpression)(yystack.valueAt (5-(5))))).setPos((yyloc)); };
   break;
     
 
   case 162:
   if (yyn == 162)
-    /* "VondaGrammar.y":562  */ /* lalr1.java:489  */
-    { yyval = (( ExpSingleValue )(yystack.valueAt (1-(1)))); };
+    /* "VondaGrammar.y":631  */ /* lalr1.java:489  */
+    {
+    ExpVariable var = new ExpVariable((( String )(yystack.valueAt (2-(1))))); var.setPos(yystack.locationAt (2-(1)));
+    yyval = new ExpAssignment(var, ((RTExpression)(yystack.valueAt (2-(2))))).setPos((yyloc));
+  };
   break;
     
 
   case 163:
   if (yyn == 163)
-    /* "VondaGrammar.y":566  */ /* lalr1.java:489  */
-    {
-    yyval = new ExpArrayAccess(new ExpVariable((( String )(yystack.valueAt (4-(1))))), ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
-  };
+    /* "VondaGrammar.y":635  */ /* lalr1.java:489  */
+    { yyval = new ExpAssignment(((RTExpression)(yystack.valueAt (2-(1)))), ((RTExpression)(yystack.valueAt (2-(2))))).setPos((yyloc)); };
   break;
     
 
   case 164:
   if (yyn == 164)
-    /* "VondaGrammar.y":569  */ /* lalr1.java:489  */
-    { yyval = new ExpArrayAccess(((RTExpression)(yystack.valueAt (4-(1)))), ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc)); };
+    /* "VondaGrammar.y":636  */ /* lalr1.java:489  */
+    { yyval = new ExpAssignment(((RTExpression)(yystack.valueAt (2-(1)))), ((RTExpression)(yystack.valueAt (2-(2))))).setPos((yyloc)); };
   break;
     
 
   case 165:
   if (yyn == 165)
-    /* "VondaGrammar.y":573  */ /* lalr1.java:489  */
-    { yyval = new ExpConditional(((RTExpression)(yystack.valueAt (5-(1)))), ((RTExpression)(yystack.valueAt (5-(3)))), ((RTExpression)(yystack.valueAt (5-(5))))).setPos((yyloc)); };
+    /* "VondaGrammar.y":640  */ /* lalr1.java:489  */
+    {
+    List<String> repr = new ArrayList<>(((LinkedList<RTExpression>)(yystack.valueAt (2-(2)))).size());
+    for (int i = 0; i < ((LinkedList<RTExpression>)(yystack.valueAt (2-(2)))).size(); ++i) repr.add("");
+    yyval = new ExpFieldAccess(((LinkedList<RTExpression>)(yystack.valueAt (2-(2)))), repr).setPos((yyloc)); ((LinkedList<RTExpression>)(yystack.valueAt (2-(2)))).addFirst(((RTExpression)(yystack.valueAt (2-(1)))));
+  };
   break;
     
 
   case 166:
   if (yyn == 166)
-    /* "VondaGrammar.y":601  */ /* lalr1.java:489  */
-    {
-    yyval = new ExpAssignment(new ExpVariable((( String )(yystack.valueAt (2-(1))))), ((RTExpression)(yystack.valueAt (2-(2))))).setPos((yyloc));
-  };
+    /* "VondaGrammar.y":648  */ /* lalr1.java:489  */
+    { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))); ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))).addFirst(((RTExpression)(yystack.valueAt (3-(2))))); };
   break;
     
 
   case 167:
   if (yyn == 167)
-    /* "VondaGrammar.y":604  */ /* lalr1.java:489  */
-    { yyval = new ExpAssignment(((RTExpression)(yystack.valueAt (2-(1)))), ((RTExpression)(yystack.valueAt (2-(2))))).setPos((yyloc)); };
+    /* "VondaGrammar.y":649  */ /* lalr1.java:489  */
+    { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (2-(2))))); }}; };
   break;
     
 
   case 168:
   if (yyn == 168)
-    /* "VondaGrammar.y":605  */ /* lalr1.java:489  */
-    { yyval = new ExpAssignment(((RTExpression)(yystack.valueAt (2-(1)))), ((RTExpression)(yystack.valueAt (2-(2))))).setPos((yyloc)); };
+    /* "VondaGrammar.y":653  */ /* lalr1.java:489  */
+    { yyval = new ExpVariable((( String )(yystack.valueAt (1-(1))))).setPos((yyloc)); };
   break;
     
 
   case 169:
   if (yyn == 169)
-    /* "VondaGrammar.y":609  */ /* lalr1.java:489  */
-    {
-    yyval = new ExpFieldAccess(((LinkedList<RTExpression>)(yystack.valueAt (2-(2)))), new ArrayList<>()); ((LinkedList<RTExpression>)(yystack.valueAt (2-(2)))).addFirst(((RTExpression)(yystack.valueAt (2-(1)))));
-  };
+    /* "VondaGrammar.y":654  */ /* lalr1.java:489  */
+    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 170:
   if (yyn == 170)
-    /* "VondaGrammar.y":615  */ /* lalr1.java:489  */
-    { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))); ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))).addFirst(((RTExpression)(yystack.valueAt (3-(2))))); };
+    /* "VondaGrammar.y":655  */ /* lalr1.java:489  */
+    { yyval = ((RTExpression)(yystack.valueAt (3-(2)))); };
   break;
     
 
   case 171:
   if (yyn == 171)
-    /* "VondaGrammar.y":616  */ /* lalr1.java:489  */
-    { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (2-(2))))); }}; };
+    /* "VondaGrammar.y":659  */ /* lalr1.java:489  */
+    { yyval = new ExpNew(new Type((( String )(yystack.valueAt (2-(2)))))).setPos((yyloc)); };
   break;
     
 
   case 172:
   if (yyn == 172)
-    /* "VondaGrammar.y":620  */ /* lalr1.java:489  */
-    { yyval = new ExpVariable((( String )(yystack.valueAt (1-(1))))).setPos((yyloc)); };
-  break;
-    
-
-  case 173:
-  if (yyn == 173)
-    /* "VondaGrammar.y":621  */ /* lalr1.java:489  */
-    { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
-  break;
-    
-
-  case 174:
-  if (yyn == 174)
-    /* "VondaGrammar.y":622  */ /* lalr1.java:489  */
-    { yyval = ((RTExpression)(yystack.valueAt (3-(2)))); };
-  break;
-    
-
-  case 175:
-  if (yyn == 175)
-    /* "VondaGrammar.y":626  */ /* lalr1.java:489  */
-    { yyval = new ExpNew(new Type((( String )(yystack.valueAt (2-(2)))))).setPos((yyloc)); };
-  break;
-    
-
-  case 176:
-  if (yyn == 176)
-    /* "VondaGrammar.y":627  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":660  */ /* lalr1.java:489  */
     {
     yyval = new ExpNew(new Type((( String )(yystack.valueAt (4-(2))))), new LinkedList<>()).setPos((yyloc));
   };
   break;
     
 
-  case 177:
-  if (yyn == 177)
-    /* "VondaGrammar.y":630  */ /* lalr1.java:489  */
+  case 173:
+  if (yyn == 173)
+    /* "VondaGrammar.y":663  */ /* lalr1.java:489  */
     {
     yyval = new ExpNew(new Type((( String )(yystack.valueAt (5-(2))))), ((LinkedList<RTExpression>)(yystack.valueAt (5-(4))))).setPos((yyloc));
   };
   break;
     
 
-  case 178:
-  if (yyn == 178)
-    /* "VondaGrammar.y":633  */ /* lalr1.java:489  */
+  case 174:
+  if (yyn == 174)
+    /* "VondaGrammar.y":666  */ /* lalr1.java:489  */
     {
     yyval = new ExpNew(((Type)(yystack.valueAt (4-(2)))), new LinkedList<>()).setPos((yyloc));
   };
   break;
     
 
-  case 179:
-  if (yyn == 179)
-    /* "VondaGrammar.y":636  */ /* lalr1.java:489  */
+  case 175:
+  if (yyn == 175)
+    /* "VondaGrammar.y":669  */ /* lalr1.java:489  */
     {
     yyval = new ExpNew(((Type)(yystack.valueAt (5-(2)))), ((LinkedList<RTExpression>)(yystack.valueAt (5-(4))))).setPos((yyloc));
   };
   break;
     
 
-  case 180:
-  if (yyn == 180)
-    /* "VondaGrammar.y":639  */ /* lalr1.java:489  */
+  case 176:
+  if (yyn == 176)
+    /* "VondaGrammar.y":672  */ /* lalr1.java:489  */
     {
     yyval = new ExpNew(new Type("Array", new Type((( String )(yystack.valueAt (5-(2)))))),
                     new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (5-(4))))); }}).setPos((yyloc));
@@ -1895,106 +1894,106 @@ public class VondaGrammar
   break;
     
 
-  case 181:
-  if (yyn == 181)
-    /* "VondaGrammar.y":646  */ /* lalr1.java:489  */
+  case 177:
+  if (yyn == 177)
+    /* "VondaGrammar.y":679  */ /* lalr1.java:489  */
     {
-    yyval = new ExpLambda(((LinkedList)(yystack.valueAt (4-(2)))), new StatExpression(((RTExpression)(yystack.valueAt (4-(4)))))).setPos((yyloc));
+    yyval = new ExpLambda(((LinkedList)(yystack.valueAt (4-(2)))), ((RTExpression)(yystack.valueAt (4-(4))))).setPos((yyloc));
   };
   break;
     
 
-  case 182:
-  if (yyn == 182)
-    /* "VondaGrammar.y":649  */ /* lalr1.java:489  */
+  case 178:
+  if (yyn == 178)
+    /* "VondaGrammar.y":682  */ /* lalr1.java:489  */
     {
     yyval = new ExpLambda(((LinkedList)(yystack.valueAt (4-(2)))), ((StatAbstractBlock)(yystack.valueAt (4-(4))))).setPos((yyloc));
   };
   break;
     
 
-  case 183:
-  if (yyn == 183)
-    /* "VondaGrammar.y":652  */ /* lalr1.java:489  */
+  case 179:
+  if (yyn == 179)
+    /* "VondaGrammar.y":685  */ /* lalr1.java:489  */
     {
-    yyval = new ExpLambda(new LinkedList<>(), new StatExpression(((RTExpression)(yystack.valueAt (4-(4)))))).setPos((yyloc));
+    yyval = new ExpLambda(new LinkedList<>(), ((RTExpression)(yystack.valueAt (4-(4))))).setPos((yyloc));
   };
   break;
     
 
-  case 184:
-  if (yyn == 184)
-    /* "VondaGrammar.y":655  */ /* lalr1.java:489  */
+  case 180:
+  if (yyn == 180)
+    /* "VondaGrammar.y":688  */ /* lalr1.java:489  */
     {
     yyval = new ExpLambda(new LinkedList<>(), ((StatAbstractBlock)(yystack.valueAt (4-(4))))).setPos((yyloc));
   };
   break;
     
 
-  case 185:
-  if (yyn == 185)
-    /* "VondaGrammar.y":662  */ /* lalr1.java:489  */
+  case 181:
+  if (yyn == 181)
+    /* "VondaGrammar.y":695  */ /* lalr1.java:489  */
     {
     yyval = new ExpDialogueAct(((RTExpression)(yystack.valueAt (5-(2)))), ((RTExpression)(yystack.valueAt (5-(4)))), new LinkedList<RTExpression>()).setPos((yyloc));
   };
   break;
     
 
-  case 186:
-  if (yyn == 186)
-    /* "VondaGrammar.y":665  */ /* lalr1.java:489  */
+  case 182:
+  if (yyn == 182)
+    /* "VondaGrammar.y":698  */ /* lalr1.java:489  */
     {
     yyval = new ExpDialogueAct(((RTExpression)(yystack.valueAt (6-(2)))), ((RTExpression)(yystack.valueAt (6-(4)))), ((LinkedList<RTExpression>)(yystack.valueAt (6-(5))))).setPos((yyloc));
   };
   break;
     
 
-  case 187:
-  if (yyn == 187)
-    /* "VondaGrammar.y":671  */ /* lalr1.java:489  */
-    { yyval = ((RTExpression)(yystack.valueAt (2-(2)))); };
+  case 183:
+  if (yyn == 183)
+    /* "VondaGrammar.y":704  */ /* lalr1.java:489  */
+    { yyval = ((RTExpression)(yystack.valueAt (3-(2)))); };
   break;
     
 
-  case 188:
-  if (yyn == 188)
-    /* "VondaGrammar.y":672  */ /* lalr1.java:489  */
-    { yyval = (( String )(yystack.valueAt (1-(1)))); };
+  case 184:
+  if (yyn == 184)
+    /* "VondaGrammar.y":705  */ /* lalr1.java:489  */
+    { yyval = new ExpVariable((( String )(yystack.valueAt (1-(1))))).setPos((yyloc)); };
   break;
     
 
-  case 189:
-  if (yyn == 189)
-    /* "VondaGrammar.y":673  */ /* lalr1.java:489  */
+  case 185:
+  if (yyn == 185)
+    /* "VondaGrammar.y":706  */ /* lalr1.java:489  */
     { yyval = (( ExpSingleValue )(yystack.valueAt (1-(1)))); };
   break;
     
 
-  case 190:
-  if (yyn == 190)
-    /* "VondaGrammar.y":674  */ /* lalr1.java:489  */
-    { yyval = (( String )(yystack.valueAt (1-(1)))); };
+  case 186:
+  if (yyn == 186)
+    /* "VondaGrammar.y":707  */ /* lalr1.java:489  */
+    { yyval = new ExpSingleValue((( String )(yystack.valueAt (1-(1)))), "String").setPos((yyloc)); };
   break;
     
 
-  case 191:
-  if (yyn == 191)
-    /* "VondaGrammar.y":678  */ /* lalr1.java:489  */
+  case 187:
+  if (yyn == 187)
+    /* "VondaGrammar.y":711  */ /* lalr1.java:489  */
     {
     yyval = ((LinkedList<RTExpression>)(yystack.valueAt (5-(5)))); ((LinkedList<RTExpression>)(yystack.valueAt (5-(5)))).addFirst(((RTExpression)(yystack.valueAt (5-(4))))); ((LinkedList<RTExpression>)(yystack.valueAt (5-(5)))).addFirst(((RTExpression)(yystack.valueAt (5-(2)))));
   };
   break;
     
 
-  case 192:
-  if (yyn == 192)
-    /* "VondaGrammar.y":681  */ /* lalr1.java:489  */
-    { new LinkedList<RTExpression>(); };
+  case 188:
+  if (yyn == 188)
+    /* "VondaGrammar.y":714  */ /* lalr1.java:489  */
+    { yyval = new LinkedList<RTExpression>(); };
   break;
     
 
 
-/* "VondaGrammar.java":1998  */ /* lalr1.java:489  */
+/* "VondaGrammar.java":1997  */ /* lalr1.java:489  */
         default: break;
       }
 
@@ -2416,8 +2415,8 @@ public class VondaGrammar
     return yyvalue == yytable_ninf_;
   }
 
-  private static final short yypact_ninf_ = -301;
-  private static final short yytable_ninf_ = -105;
+  private static final short yypact_ninf_ = -306;
+  private static final short yytable_ninf_ = -148;
 
   /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
@@ -2426,48 +2425,48 @@ public class VondaGrammar
   {
     return new short[]
     {
-     579,    61,   -19,    -8,    19,   764,    72,    74,    88,   110,
-     145,  -301,  -301,   225,  -301,  -301,   367,   238,   265,   325,
-     330,   252,   252,  -301,  -301,   210,  -301,   478,  1146,   250,
-    1205,  1205,   252,   252,   -21,   317,     3,   579,   579,  -301,
-    -301,  -301,  -301,  -301,  -301,  -301,  -301,  -301,  -301,   579,
-     579,   290,  -301,  -301,   341,  -301,   -29,   356,   363,   331,
-     349,   353,   276,    20,   321,   273,  -301,  -301,  -301,  -301,
-    -301,   379,   378,  -301,  -301,    73,  -301,  -301,   139,  -301,
-    -301,   390,  -301,  -301,  -301,  -301,    86,   411,   227,   398,
-       4,  1159,   396,     9,   395,  1159,   208,  -301,   -18,   393,
-     393,  1159,  1159,  1159,  1159,   294,  1159,  -301,  -301,  -301,
-    -301,  1159,  1159,   431,   613,   777,   810,   250,  -301,   274,
-    -301,  -301,   700,   400,  -301,   406,   296,   399,    28,   178,
-     405,  -301,  -301,  -301,  -301,  -301,  -301,  -301,  1159,   402,
-    -301,   179,   579,   579,  -301,  -301,  -301,  -301,   301,   412,
-     -22,  -301,  1159,  1205,  1205,  1205,  1205,  1205,  1205,  1205,
-    1205,  1205,  1205,  1205,  1205,  1205,  1205,  1205,  1205,   104,
-    -301,  1159,  1159,  1159,  -301,  1159,  1159,  -301,  -301,   843,
-    1159,   404,  -301,   401,   413,   185,   228,  1159,   877,   416,
-      46,   417,   422,   910,  1159,   944,    60,  -301,   121,    65,
-     127,   130,    17,    23,  -301,   289,   978,   414,   414,   418,
-     427,   175,   419,  1012,   407,  -301,   122,   420,   423,  -301,
-    -301,   212,  1205,  -301,   424,   407,   -21,   254,  -301,  -301,
-     255,   432,  -301,   256,   436,    44,   363,   331,   349,   353,
-     276,    20,    20,   321,   321,   321,   321,   273,   273,  -301,
-    -301,  -301,   433,  1159,  -301,   379,   181,    26,    35,    45,
-      50,  -301,  1159,  -301,  -301,   442,  1159,    53,  1045,    62,
-      99,   764,   396,  -301,  -301,   438,   176,   201,  -301,   440,
-     414,   448,  1159,   414,   764,  -301,  -301,  -301,   455,   472,
-     479,   261,  -301,  -301,  -301,   352,  1192,  1192,  -301,   459,
-    -301,   250,  -301,  -301,  -301,   369,   307,   414,   309,   309,
-     283,   309,   309,  -301,  1159,   131,  -301,  -301,  -301,  -301,
-    -301,  -301,   132,  -301,   133,  1159,   764,   134,  1079,  1159,
-     496,  -301,  -301,  1159,  -301,  -301,  -301,   357,   135,  -301,
-    -301,  -301,  1113,  1113,  -301,   455,  -301,  -301,  -301,  -301,
-    -301,   -21,   460,  -301,  -301,  -301,  -301,   309,   309,  -301,
-    -301,   407,  -301,  -301,   764,   169,  -301,   764,   764,   171,
-     173,   764,  -301,   322,   461,   464,   700,   357,   414,  -301,
-     407,  -301,   407,  -301,   462,  -301,  -301,  -301,  -301,   764,
-    -301,  -301,   764,   764,  -301,   470,   474,   475,  -301,  -301,
-     357,  -301,  -301,  -301,   -21,  -301,  -301,  -301,  -301,  -301,
-    -301,   700,   477,  -301,  -301
+     685,   277,   -39,   -18,   376,    21,    43,   849,   -10,    65,
+      76,   103,   109,  -306,   112,  -306,  -306,   305,   137,   208,
+     213,   227,  -306,  -306,   194,  -306,   754,  1192,   113,   286,
+     191,     3,   685,   685,  -306,  -306,  -306,  -306,  -306,  -306,
+    -306,  -306,  -306,  -306,  -306,   685,   685,   249,  -306,   237,
+     259,   267,   271,  -306,  -306,    40,   291,    80,  -306,  -306,
+     294,  -306,  -306,  -306,   293,   304,   309,  -306,  -306,    86,
+     337,   211,   335,    18,  1192,   336,   306,   348,  1192,  -306,
+    1205,  1205,   261,  -306,  1238,  1251,  1251,  1205,  1205,  -306,
+     -38,   355,   372,   353,   381,   383,   358,    39,   333,   366,
+    -306,  -306,  -306,  -306,  -306,   267,   271,   394,  -306,  -306,
+     394,  1192,  1192,  1192,  1192,  1192,  1192,   432,   844,   882,
+     897,   113,  -306,   405,  -306,  -306,   800,   401,  -306,   407,
+      17,   274,   414,  -306,  -306,  -306,  1192,   415,  -306,   314,
+     685,   685,  -306,  -306,  -306,  -306,   319,   421,  -306,   231,
+     -12,  -306,  1192,  1192,  1192,  -306,  -306,  1192,  1192,  -306,
+    -306,  -306,  -306,  -306,   935,  1192,   416,  -306,   412,   423,
+     215,   254,  1192,   949,   427,    29,   428,   429,   987,   897,
+    1001,    50,   192,  -306,  -306,  -306,  -306,   284,   422,  -306,
+    -306,  -306,  -306,  -306,  1192,  1251,  1251,  1251,  1251,  1251,
+    1251,  1251,  1251,  1251,  1251,  1251,  1251,  1251,  1251,  1251,
+    1251,    59,    60,    73,   100,   -31,   -29,  -306,   132,  1039,
+     430,   430,   425,   436,    62,   431,  1054,   413,  -306,    87,
+     434,   433,  -306,  -306,   225,  -306,   437,    19,   286,   240,
+    -306,  -306,   246,   438,  -306,   253,   435,   439,  1192,  -306,
+     267,   184,    10,    14,    26,    30,  -306,  1192,  -306,  -306,
+     442,  1192,    34,  1091,    41,   245,   849,   336,  -306,  -306,
+     440,    69,   207,  -306,   443,   430,  1251,   -40,   372,   353,
+     381,   383,   358,    39,    39,   333,   333,   333,   333,   366,
+     366,  -306,  -306,  -306,   430,  1192,   430,   849,  -306,  -306,
+    -306,   441,   453,   464,   256,  -306,  -306,  -306,   356,  1284,
+    1284,  -306,   447,  -306,   113,  -306,  -306,  -306,   363,   325,
+     430,   316,   316,   258,   316,   316,  -306,   102,  -306,  -306,
+    -306,  -306,  -306,  -306,   123,  -306,   127,  1192,   849,   181,
+    1125,  1192,   483,  -306,  -306,  1192,  -306,  -306,  -306,  -306,
+    1192,  -306,   183,  -306,  -306,  -306,  1159,  1159,  -306,   441,
+    -306,  -306,  -306,  -306,  -306,   286,   446,  -306,  -306,  -306,
+    -306,   316,   316,  -306,  -306,  -306,  -306,   849,   185,  -306,
+     849,   849,   186,   187,   849,  -306,   413,   430,  -306,   413,
+    -306,   413,  -306,   445,  -306,  -306,  -306,  -306,   849,  -306,
+    -306,   849,   849,  -306,  -306,   286,  -306,  -306,  -306,   448,
+    -306
     };
   }
 
@@ -2480,47 +2479,47 @@ public class VondaGrammar
     return new short[]
     {
        8,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,   149,    11,     0,    10,     9,     0,     0,     0,     0,
-       0,     0,     0,   160,   161,   152,   162,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     8,     8,    15,
-      17,    19,    23,    24,    25,    20,    22,    21,    26,     8,
-       8,     0,    18,   159,     0,   105,     0,   111,   114,   116,
-     117,   119,   121,   123,   126,   131,   134,   147,   138,   140,
-     148,   150,   151,   155,   156,   157,   109,   110,   158,   153,
-     112,     0,    36,    38,    39,    40,   152,     0,   104,     0,
-       0,     0,    13,   175,     0,     0,   152,    34,     0,   157,
-     158,     0,     0,     0,     0,   152,     0,   144,   157,   158,
-     143,     0,     0,     0,     0,     0,     0,     0,   166,   152,
-      30,    27,    31,     0,    28,     0,   152,     0,     0,   104,
-       0,   145,   146,   141,   142,   189,   190,   188,     0,     0,
-       1,   104,     8,     8,     5,     4,     7,     3,   104,     0,
-       0,    16,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,    11,     0,    10,     9,     0,     0,     0,
+       0,     0,   156,   157,   101,   158,     0,     0,     0,     0,
+       0,     0,     8,     8,    15,    18,    20,    24,    25,    26,
+      21,    23,    22,    27,    28,     8,     8,     0,    19,   154,
+       0,     0,     0,   150,   151,   152,     0,   153,   148,   155,
+       0,    38,    40,    41,     0,     0,     0,    42,    61,   147,
+       0,   101,     0,     0,     0,    13,   171,     0,     0,   144,
+       0,     0,   147,    36,     0,     0,     0,     0,     0,   154,
+       0,   107,   109,   111,   112,   114,   116,   118,   121,   126,
+     138,   129,   137,   140,   143,   145,   146,   152,   105,   106,
+     153,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,   162,   101,    32,    29,    33,     0,    30,     0,
+       0,   101,     0,   185,   186,   184,     0,     0,     1,   101,
+       8,     8,     5,     4,     7,     3,   101,     0,    17,     0,
+       0,   165,     0,     0,     0,   164,    16,     0,     0,   163,
+      39,    58,    59,    60,     0,     0,     0,    65,     0,     0,
+       0,   101,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,   147,   134,   152,   153,   133,   147,     0,   135,
+     136,   141,   142,    37,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-     169,     0,     0,     0,   168,     0,     0,   167,    37,     0,
-       0,     0,    68,     0,     0,     0,   104,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,    35,     0,     0,
-       0,     0,     0,     0,    33,   152,     0,    97,     0,     0,
-       0,    99,   100,     0,    71,   103,     0,   107,     0,    32,
-      29,     0,     0,   154,     0,   187,     0,     0,     6,     2,
-       0,     0,    69,     0,     0,     0,   113,   115,   118,   120,
-     122,   124,   125,   129,   130,   127,   128,   132,   133,   135,
-     136,   137,   172,     0,   173,   171,     0,     0,     0,     0,
-       0,    97,     0,    65,    70,     0,     0,     0,     0,     0,
-       0,     0,    13,    12,   176,     0,    74,     0,   178,     0,
-       0,     0,     0,     0,     0,    92,    91,    87,     0,     0,
-       0,     0,    82,    83,    98,     0,     0,     0,    72,     0,
-     163,     0,   106,   139,    84,     0,   104,     0,     0,     0,
-       0,     0,     0,    66,     0,     0,   170,   164,    94,    93,
-      96,    95,     0,    67,     0,     0,     0,     0,     0,     0,
-      41,    14,   177,     0,   180,   179,    52,     0,     0,    53,
-      43,    89,     0,     0,    88,     0,   101,   102,    73,   108,
-     185,     0,     0,    86,    85,    78,    79,     0,     0,    80,
-      81,   165,   174,    44,     0,     0,    48,     0,     0,     0,
-       0,     0,    75,     0,     0,     0,    58,    60,     0,   184,
-     183,   182,   181,    90,     0,   186,    76,    77,    50,     0,
-      46,    47,     0,     0,    42,     0,     0,     0,    64,    55,
-       0,    56,    59,    54,     0,    49,    45,    51,    61,    62,
-      63,    58,   192,    57,   191
+       0,     0,     0,     0,     0,     0,     0,    35,   147,     0,
+      94,     0,     0,     0,    96,    97,     0,    68,   100,     0,
+     103,     0,    34,    31,     0,   149,     0,     0,     0,     0,
+       6,     2,     0,     0,    66,     0,     0,   168,     0,   169,
+     167,     0,     0,     0,     0,     0,    94,     0,    62,    67,
+       0,     0,     0,     0,     0,     0,     0,    13,    12,   172,
+       0,    71,     0,   174,     0,     0,     0,     0,   108,   110,
+     113,   115,   117,   119,   120,   124,   125,   122,   123,   127,
+     128,   130,   131,   132,     0,     0,     0,     0,    89,    88,
+      84,     0,     0,     0,     0,    79,    80,    95,     0,     0,
+       0,    69,     0,   159,     0,   102,    81,   183,     0,   101,
+       0,     0,     0,     0,     0,     0,    63,     0,   166,   160,
+      91,    90,    93,    92,     0,    64,     0,     0,     0,     0,
+       0,     0,    43,    14,   173,     0,   176,   175,    54,   139,
+       0,    57,     0,    55,    45,    86,     0,     0,    85,     0,
+      98,    99,    70,   104,   181,     0,     0,    83,    82,    75,
+      76,     0,     0,    77,    78,   170,    46,     0,     0,    50,
+       0,     0,     0,     0,     0,    72,   161,     0,   180,   179,
+     178,   177,    87,     0,   182,    73,    74,    52,     0,    48,
+      49,     0,     0,    44,    56,     0,    51,    47,    53,   188,
+     187
     };
   }
 
@@ -2530,13 +2529,13 @@ public class VondaGrammar
   {
     return new short[]
     {
-    -301,    34,  -301,  -301,   257,     2,  -301,   -60,   -23,  -301,
-    -301,   397,  -301,  -301,  -301,  -301,  -301,  -301,  -301,   113,
-    -272,  -301,   -26,   -33,  -187,   491,  -301,  -300,  -117,  -301,
-     364,   124,    12,   518,   239,   359,  -301,   392,   389,   394,
-     403,   391,   269,   236,   270,   -28,  -301,   243,  -301,  -301,
-    -301,  -301,  -301,  -301,     0,  -301,  -301,    48,   295,  -301,
-    -301,  -301,  -301,  -220,   143
+    -306,   -24,  -306,  -306,   229,    52,  -306,   239,   373,  -306,
+    -306,   384,  -306,  -306,  -306,  -306,  -306,  -306,  -306,   -16,
+      -2,  -179,   467,  -306,  -305,  -201,  -306,     5,   121,   230,
+     188,   493,  -306,   308,   310,   303,   313,   317,   234,   217,
+     236,   106,   -46,  -306,  -306,  -306,   128,   144,  -306,  -306,
+       0,  -306,   283,    16,   257,  -306,  -306,  -306,  -306,  -236,
+      95
     };
   }
 
@@ -2546,13 +2545,13 @@ public class VondaGrammar
   {
     return new short[]
     {
-      -1,    35,    36,    37,   192,    38,   122,    39,   400,    40,
-      41,    42,    43,    44,    45,    46,    47,    48,   375,   401,
-     376,   377,    49,   118,   275,    50,    51,   355,   208,    52,
-      53,   209,    54,    55,   218,    56,    57,    58,    59,    60,
-      61,    62,    63,    64,    65,    66,    67,    68,    69,    70,
-      71,    72,    73,    74,    99,    76,    77,   100,   170,   255,
-      79,   212,    80,   139,   352
+      -1,    30,    31,    32,   177,    33,   126,    34,   127,    35,
+      36,    37,    38,    39,    40,    41,    42,    43,    44,    45,
+     122,   270,    46,    47,   369,   221,    48,    89,   222,    50,
+     231,   224,    91,    92,    93,    94,    95,    96,    97,    98,
+      99,   100,   101,   102,   103,   104,   105,   106,    53,    54,
+     107,   108,   109,   110,   151,   250,    58,   225,    59,   137,
+     366
     };
   }
 
@@ -2564,133 +2563,142 @@ public class VondaGrammar
   {
     return new short[]
     {
-      75,   124,   131,   132,   123,    75,   305,    87,   279,   356,
-     142,   359,   360,   151,     6,     6,   135,   136,    89,   137,
-     232,   108,   108,    83,   197,   233,   299,    75,   115,   121,
-     108,   108,   108,   108,    84,   138,   152,    75,    75,   125,
-     127,   130,   174,   141,   186,   177,   187,   152,    78,    75,
-      75,   160,   161,    78,    29,   184,   193,   386,   387,   285,
-     194,    85,   117,   149,   188,   286,   174,   177,   318,   109,
-     109,   144,   145,   162,   163,    78,   223,   319,   109,   109,
-     109,   109,   152,   146,   147,    78,    78,   320,   152,   290,
-     314,   152,   321,   152,   271,   325,   124,    78,    78,   219,
-     152,    81,   189,    82,   328,   402,   172,   173,   280,   152,
-     152,   152,    88,   309,   282,   152,   312,   234,   152,   111,
-     112,    90,    75,   115,   121,   152,   210,   152,   411,   217,
-     152,   384,   113,   179,   125,    91,   115,   180,   249,   250,
-     251,   232,    75,    75,   252,   329,   372,   292,   293,   115,
-      92,   253,   265,   108,   108,   108,   108,   108,   108,   108,
-     108,   108,   108,   108,   108,   108,   108,   108,   108,   281,
-      78,   341,   175,   176,   300,   283,   228,   229,   284,   362,
-     363,   364,   367,   378,   412,    93,   152,   152,   234,   115,
-      78,    78,   152,   358,   303,   152,   152,   152,   152,   152,
-     152,   109,   109,   109,   109,   109,   109,   109,   109,   109,
-     109,   109,   109,   109,   109,   109,   109,   389,   291,   392,
-     336,   393,   108,   339,   296,   333,   227,   264,   383,   183,
-     183,   117,   117,   317,   152,   115,   152,   234,   152,   210,
-     152,   152,   210,   111,   112,   210,   152,   292,   354,   354,
-    -104,   354,   354,   334,   232,   179,   113,   114,   115,   180,
-     115,   116,   115,   117,   107,   110,   152,    10,    11,   182,
-     109,    75,    95,   330,   266,   133,   134,   115,   183,   183,
-     117,   117,   379,   381,    75,   101,   340,    21,    22,    23,
-     129,    24,   105,    26,   306,   306,   306,   354,   354,   106,
-     210,   295,   307,   308,   311,   158,   159,   111,   112,   222,
-      30,    31,   102,   217,  -104,    32,    33,   140,   403,    78,
-     113,   179,   210,   306,   115,   116,    75,   117,   366,  -104,
-     148,   357,    78,   166,   167,   168,   179,   287,   288,   115,
-     116,   179,   117,   179,  -104,   180,   115,   116,   230,   117,
-     124,   353,   183,    27,   117,   287,   288,   210,   183,   395,
-     117,   396,   397,   373,    75,   374,   388,    75,    75,   390,
-     391,    75,   103,   394,    78,    98,    75,   104,   121,   164,
-     165,   150,    10,    11,   153,   124,   155,   128,   125,    75,
-     154,   405,    75,    75,   406,   407,   243,   244,   245,   246,
-     344,   345,    21,    22,    23,   156,    24,    96,    26,    97,
-     157,    75,    78,   121,    28,    78,    78,   350,   351,    78,
-     346,   347,   169,   125,    78,    30,    31,   241,   242,   171,
-      32,    33,   178,    34,   247,   248,   181,    78,   185,   191,
-      78,    78,   195,   115,     8,   220,   221,   222,   224,   226,
-     190,   262,   231,   215,   196,   263,   270,   272,    27,    78,
-     198,   199,   200,   201,   273,   128,   294,   295,   297,   301,
-     202,   203,   152,   211,   214,   216,   304,   302,   313,   310,
-     179,     1,     2,     3,   323,     4,   332,     5,   335,     6,
-       7,     8,   337,    10,    11,   306,    13,   225,   342,    16,
-      17,    18,    19,    20,   348,   343,   371,   398,   385,   399,
-     204,   235,   404,    21,    22,    23,   408,    24,   119,    26,
-     409,   410,    27,   120,   413,    28,   351,   143,    94,   331,
-     256,   257,   258,   254,   259,   260,    30,    31,   211,   216,
-     349,    32,    33,   237,    34,   236,   267,   269,   240,   238,
-     316,     0,   276,   277,   276,   414,     0,     0,     0,   239,
-       0,     0,     0,     0,     0,   128,     0,     0,     0,     0,
-       0,     0,   276,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     1,     2,     3,     0,     4,     0,     5,     0,
-       6,     7,     8,     9,    10,    11,    12,    13,    14,    15,
-      16,    17,    18,    19,    20,     0,     0,     0,     0,     0,
-       0,     0,   315,     0,    21,    22,    23,     0,    24,    25,
-      26,   322,     0,    27,     0,   324,    28,   327,    10,    11,
-      29,     0,     0,     0,     0,     0,     0,    30,    31,     0,
-       0,   338,    32,    33,     0,    34,     0,     0,    21,    22,
-      23,     0,    24,   205,    26,   211,   211,     0,     0,     0,
-     206,   207,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,    30,    31,   361,     0,     0,    32,    33,     0,    34,
-       0,     0,     0,     0,   365,     0,     0,   369,   370,     0,
-       0,     0,   276,     0,     0,     0,     0,     0,     0,     0,
-       0,   380,   382,     1,     2,     3,     0,     4,     0,     5,
-       0,     6,     7,     8,     0,    10,    11,     0,    13,     0,
-       0,    16,    17,    18,    19,    20,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,    21,    22,    23,     0,    24,
-     119,    26,     0,     0,    27,     0,     0,    28,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,    30,    31,
-       0,     0,     0,    32,    33,     0,    34,     1,     2,     3,
-       0,     4,     0,     5,     0,     0,     7,     8,     0,    10,
-      11,     0,    13,     0,     0,    16,    17,    18,    19,    20,
-       0,     0,    10,    11,     0,     0,     0,     0,     0,    21,
-      22,    23,     0,    24,    86,    26,     0,     0,    27,     0,
-       0,    28,    21,    22,    23,     0,    24,    96,    26,     0,
-       0,   213,    30,    31,    28,    10,    11,    32,    33,     0,
-      34,     0,     0,     0,     0,    30,    31,     0,     0,     0,
-      32,    33,     0,    34,     0,    21,    22,    23,     0,    24,
-      96,    26,     0,     0,     0,     0,     0,    28,    10,    11,
-       0,     0,   215,     0,     0,     0,     0,     0,    30,    31,
-       0,     0,     0,    32,    33,     0,    34,     0,    21,    22,
-      23,     0,    24,    96,    26,     0,     0,     0,     0,     0,
-     206,   261,    10,    11,     0,     0,     0,     0,     0,     0,
-       0,    30,    31,     0,     0,     0,    32,    33,     0,    34,
-       0,     0,    21,    22,    23,     0,    24,    96,    26,   268,
-       0,     0,     0,     0,    28,    10,    11,     0,     0,     0,
-       0,     0,     0,     0,     0,    30,    31,     0,     0,     0,
-      32,    33,     0,    34,     0,    21,    22,    23,     0,    24,
-      96,    26,     0,     0,     0,     0,     0,    28,   274,    10,
-      11,     0,     0,     0,     0,     0,     0,     0,    30,    31,
-       0,     0,     0,    32,    33,     0,    34,     0,     0,    21,
-      22,    23,     0,    24,    96,    26,     0,     0,     0,     0,
-       0,    28,   278,    10,    11,     0,     0,     0,     0,     0,
-       0,     0,    30,    31,     0,     0,     0,    32,    33,     0,
-      34,     0,     0,    21,    22,    23,     0,    24,   205,    26,
-       0,     0,     0,     0,     0,    28,   289,    10,    11,     0,
-       0,     0,     0,     0,     0,     0,    30,    31,     0,     0,
-       0,    32,    33,     0,    34,     0,     0,    21,    22,    23,
-       0,    24,    96,    26,     0,     0,     0,   298,     0,    28,
-      10,    11,     0,     0,     0,     0,     0,     0,     0,     0,
-      30,    31,     0,     0,     0,    32,    33,     0,    34,     0,
-      21,    22,    23,     0,    24,    96,    26,     0,     0,     0,
-       0,     0,    28,   326,    10,    11,     0,     0,     0,     0,
-       0,     0,     0,    30,    31,     0,     0,     0,    32,    33,
-       0,    34,     0,     0,    21,    22,    23,     0,    24,    96,
-      26,     0,     0,     0,     0,     0,    28,   368,    10,    11,
-       0,     0,     0,     0,     0,     0,     0,    30,    31,     0,
-       0,     0,    32,    33,     0,    34,     0,     0,    21,    22,
-      23,     0,    24,    96,    26,     0,     0,    27,     0,     0,
-      28,    10,    11,     0,     0,     0,     0,     0,     0,     0,
-       0,    30,    31,     0,    10,    11,    32,    33,     0,    34,
-       0,    21,    22,    23,     0,    24,   126,    26,     0,     0,
-       0,     0,     0,    28,    21,    22,    23,     0,    24,    96,
-      26,     0,     0,     0,    30,    31,    28,    10,    11,    32,
-      33,     0,    34,     0,     0,     0,     0,    30,    31,     0,
-      10,    11,    32,    33,     0,    34,     0,    21,    22,    23,
-       0,    24,    96,    26,     0,     0,     0,     0,     0,   206,
-      21,    22,    23,     0,    24,   105,    26,     0,     0,     0,
-      30,    31,    28,     0,     0,    32,    33,     0,    34,     0,
-       0,     0,     0,    30,    31,     0,     0,     0,    32,    33
+      55,   274,   318,    62,   193,    49,   350,    55,   142,   143,
+     128,   298,    49,   299,     8,   140,    57,   370,   303,   373,
+     374,   144,   145,    57,    63,   194,    55,   194,   247,     8,
+      71,    49,    55,    55,   194,   248,   194,    49,    49,   189,
+     190,   322,    57,   139,   325,    55,    55,   312,    57,    57,
+      49,    49,   330,   155,    28,   159,   331,   173,   171,    70,
+     172,    57,    57,    67,   317,   235,   395,   396,   332,   169,
+     202,   203,   333,   153,   154,   194,   337,   266,   125,   194,
+     184,   184,   194,   340,   194,   184,   184,   184,   184,    68,
+     119,   194,   204,   205,   194,   194,   185,   185,   275,   194,
+     355,   185,   185,   185,   185,   155,   194,   294,   159,   295,
+     128,   309,    73,   157,   158,   194,   240,   241,   345,   115,
+     116,   296,   372,    74,   194,   194,    55,   194,    51,   393,
+     119,    49,   117,   164,   194,    51,   119,   165,   194,   313,
+      55,    55,    57,    75,    52,    49,    49,   246,   297,    76,
+     375,    52,   194,   131,    51,   249,    57,    57,   392,    78,
+      51,    51,   291,   292,   293,   194,   385,   194,   260,   409,
+      52,   376,  -101,    51,    51,   377,    52,    52,   125,   164,
+     300,   301,   119,   120,   111,   121,   183,   186,   194,    52,
+      52,   138,   194,   191,   192,   184,   184,   184,   184,   184,
+     184,   184,   184,   184,   184,   184,   184,   184,   184,   184,
+     184,   185,   185,   185,   185,   185,   185,   185,   185,   185,
+     185,   185,   185,   185,   185,   185,   185,   115,   116,   380,
+     349,   387,   246,   398,   401,   402,   329,  -147,    72,   164,
+     117,   118,    77,   165,   119,   120,   194,   121,   194,   194,
+     194,   194,   194,   167,    51,   112,   129,   259,   132,   346,
+     113,   119,   168,   246,   121,   119,    55,   244,    51,    51,
+      52,    49,   194,   244,   114,   119,   184,   147,   245,   148,
+     319,   119,    57,    56,    52,    52,   319,   244,   320,   146,
+      56,   341,   185,   319,   321,   119,   308,    55,   319,   149,
+     261,   324,    49,   174,   276,   168,   371,   121,   164,    56,
+     150,   119,   165,    57,   188,    56,    56,    60,   342,    61,
+      12,    79,   152,   133,   134,   168,   135,   121,    56,    56,
+     136,   164,  -101,   156,   119,   120,   160,   121,    55,   161,
+      80,    81,    22,    49,    23,    82,    25,    83,   223,   354,
+     162,   230,    84,   178,    57,   163,   129,   179,   367,   121,
+      26,   239,   166,    85,    86,   168,   242,   121,    87,    88,
+     168,    29,   121,   300,   301,   170,   168,    55,   121,   176,
+      55,    55,    49,   195,    55,    49,    49,   200,   201,    49,
+     379,   206,   207,    57,    51,   180,    57,    57,    55,   196,
+      57,    55,    55,    49,   358,   359,    49,    49,   197,    56,
+      52,   364,   365,    64,    57,    65,    66,    57,    57,   285,
+     286,   287,   288,    56,    56,    51,   208,   209,   210,   397,
+     360,   361,   399,   400,   283,   284,   403,   198,   115,   116,
+     199,    52,   289,   290,   119,    10,   233,   234,  -147,   304,
+     406,   117,   164,   407,   408,   119,   120,   236,   121,   305,
+     306,   243,   238,   257,   228,   258,    51,   265,   267,   223,
+     276,   268,   223,   307,    26,   223,   308,   326,   194,   356,
+     310,   319,    52,   314,   335,   323,   164,   315,   344,   316,
+     357,   347,   362,   384,   394,   405,   343,   365,   141,   232,
+     280,   217,   363,   278,   410,    51,   279,   328,    51,    51,
+      90,   281,    51,     0,   348,     0,   282,     0,     0,     0,
+     130,    52,     0,     0,    52,    52,    51,     0,    52,    51,
+      51,   223,     0,   351,     0,   353,     0,     0,     0,     0,
+       0,     0,    52,     0,   230,    52,    52,     0,     0,    56,
+       0,     0,     0,   223,     0,     0,     0,     0,     0,   305,
+     368,   368,     0,   368,   368,     0,     0,   175,     0,     0,
+       0,   181,     0,     0,     0,     0,     0,   130,     0,     0,
+      56,     0,     0,     0,     0,     0,     0,     0,     0,   223,
+       0,     0,     0,     0,     0,   388,   390,     0,     0,     0,
+       0,     0,     0,     0,   211,   212,   213,   214,   215,   216,
+     368,   368,   227,   229,     0,     0,     0,     0,     0,     0,
+       0,    56,     0,     0,     0,     0,   404,     0,     0,   237,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,   251,   252,   253,     0,     0,
+     254,   255,     0,     0,     0,     0,     0,     0,   229,     0,
+      56,     0,     0,    56,    56,   262,   264,    56,     0,     0,
+       0,   271,   272,   271,     0,     0,     0,     0,     0,     0,
+       0,    56,     0,     0,    56,    56,     0,   277,     1,     2,
+       3,     4,     5,     6,     7,     0,     8,     9,    10,    11,
+      12,     0,    13,    14,    15,    16,    17,    18,    19,    20,
+      21,     0,   130,     0,     0,     0,     0,     0,     0,   271,
+       0,     0,    22,     0,    23,    24,    25,     0,     0,    26,
+       0,     0,    27,     0,     0,     0,    28,     0,     0,     0,
+       0,   327,     0,     0,     0,     0,     0,     0,     0,     0,
+     334,    29,     0,     0,   336,     0,   339,     1,     2,     3,
+       4,     5,     6,     7,     0,     8,     9,    10,     0,    12,
+       0,     0,    14,     0,     0,    17,    18,    19,    20,    21,
+       0,     0,     0,     0,     0,     0,     0,     0,   352,     0,
+       0,    22,     0,    23,   123,    25,     0,     0,    26,   124,
+       0,    27,     0,     1,     2,     3,     4,     5,     6,     7,
+       0,     8,     9,    10,     0,    12,     0,     0,    14,     0,
+      29,    17,    18,    19,    20,    21,     0,     0,     0,     0,
+     378,     0,     0,   382,   383,     0,     0,    22,   271,    23,
+     123,    25,     0,   386,    26,     0,     0,    27,     0,   389,
+     391,     0,     1,     2,     3,     4,     5,     6,     7,    12,
+      79,     9,    10,     0,    12,     0,    29,    14,     0,     0,
+      17,    18,    19,    20,    21,     0,     0,     0,     0,    80,
+      81,    22,     0,    23,   218,    25,    22,     0,    23,    69,
+      25,   219,   220,    26,     0,     0,    27,    12,    79,     0,
+       0,     0,    85,    86,     0,     0,     0,    87,    88,     0,
+      29,     0,    12,    79,     0,    29,     0,    80,    81,    22,
+       0,    23,    82,    25,     0,     0,   226,     0,     0,    84,
+       0,     0,    80,    81,    22,     0,    23,    82,    25,     0,
+      85,    86,     0,     0,    84,    87,    88,     0,    29,   228,
+      12,    79,     0,     0,     0,    85,    86,     0,     0,     0,
+      87,    88,     0,    29,    12,    79,     0,     0,     0,     0,
+      80,    81,    22,     0,    23,    82,    25,     0,     0,     0,
+       0,     0,   219,   256,    80,    81,    22,     0,    23,    82,
+      25,   263,     0,    85,    86,     0,    84,     0,    87,    88,
+       0,    29,    12,    79,     0,     0,     0,    85,    86,     0,
+       0,     0,    87,    88,     0,    29,    12,    79,     0,     0,
+       0,     0,    80,    81,    22,     0,    23,    82,    25,     0,
+       0,     0,     0,     0,    84,   269,    80,    81,    22,     0,
+      23,    82,    25,     0,     0,    85,    86,     0,    84,   273,
+      87,    88,     0,    29,    12,    79,     0,     0,     0,    85,
+      86,     0,     0,     0,    87,    88,     0,    29,     0,    12,
+      79,     0,     0,     0,    80,    81,    22,     0,    23,   218,
+      25,     0,     0,     0,     0,     0,    84,   302,     0,    80,
+      81,    22,     0,    23,    82,    25,     0,    85,    86,   311,
+       0,    84,    87,    88,     0,    29,    12,    79,     0,     0,
+       0,     0,    85,    86,     0,     0,     0,    87,    88,     0,
+      29,     0,     0,     0,     0,     0,    80,    81,    22,     0,
+      23,    82,    25,     0,     0,     0,     0,     0,    84,   338,
+      12,    79,     0,     0,     0,     0,     0,     0,     0,    85,
+      86,     0,     0,     0,    87,    88,     0,    29,     0,     0,
+      80,    81,    22,     0,    23,    82,    25,     0,     0,     0,
+       0,     0,    84,   381,    12,    79,     0,     0,     0,     0,
+       0,     0,     0,    85,    86,     0,     0,     0,    87,    88,
+       0,    29,     0,     0,    80,    81,    22,     0,    23,    82,
+      25,     0,     0,    26,     0,     0,    84,    12,    79,     0,
+       0,     0,     0,     0,     0,     0,     0,    85,    86,     0,
+      12,    79,    87,    88,     0,    29,     0,    80,    81,    22,
+       0,    23,    82,    25,     0,     0,     0,     0,     0,    84,
+      80,    81,    22,     0,    23,   182,    25,     0,     0,     0,
+      85,    86,    27,    12,    79,    87,    88,     0,    29,     0,
+       0,     0,     0,    85,    86,     0,    12,    79,    87,    88,
+       0,    29,     0,    80,    81,    22,     0,    23,   187,    25,
+       0,     0,     0,     0,     0,    84,    80,    81,    22,     0,
+      23,   182,    25,     0,     0,     0,    85,    86,    84,    12,
+      79,    87,    88,     0,    29,     0,     0,     0,     0,    85,
+      86,     0,     0,     0,    87,    88,     0,    29,     0,    80,
+      81,    22,     0,    23,    82,    25,     0,     0,     0,     0,
+       0,   219,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    85,    86,     0,     0,     0,    87,    88,     0,
+      29
     };
   }
 
@@ -2699,214 +2707,222 @@ private static final short yycheck_[] = yycheck_init();
   {
     return new short[]
     {
-       0,    27,    30,    31,    27,     5,   226,     5,   195,   309,
-      36,   311,   312,    42,    11,    11,    37,    38,     6,    40,
-      42,    21,    22,    42,    42,    47,   213,    27,    50,    27,
-      30,    31,    32,    33,    42,    56,    65,    37,    38,    27,
-      28,    29,    75,    40,    40,    78,    42,    65,     0,    49,
-      50,    31,    32,     5,    51,    88,    47,   357,   358,    42,
-      51,    42,    53,    51,    90,    42,    99,   100,    42,    21,
-      22,    37,    38,    53,    54,    27,    48,    42,    30,    31,
-      32,    33,    65,    49,    50,    37,    38,    42,    65,   206,
-      46,    65,    42,    65,    48,    42,   122,    49,    50,   122,
-      65,    40,    90,    42,    42,   377,    33,    34,    48,    65,
-      65,    65,    40,   230,    49,    65,   233,   150,    65,    33,
-      34,    47,   122,    50,   122,    65,   114,    65,   400,   117,
-      65,   351,    46,    47,   122,    47,    50,    51,   166,   167,
-     168,    42,   142,   143,    40,    46,   333,   207,   208,    50,
-      40,    47,   185,   153,   154,   155,   156,   157,   158,   159,
-     160,   161,   162,   163,   164,   165,   166,   167,   168,    48,
-     122,   288,    33,    34,    52,    48,   142,   143,    48,    48,
-      48,    48,    48,    48,   404,    40,    65,    65,   221,    50,
-     142,   143,    65,   310,   222,    65,    65,    65,    65,    65,
-      65,   153,   154,   155,   156,   157,   158,   159,   160,   161,
-     162,   163,   164,   165,   166,   167,   168,    48,   206,    48,
-     280,    48,   222,   283,    49,    49,    47,    42,   345,    51,
-      51,    53,    53,    52,    65,    50,    65,   270,    65,   227,
-      65,    65,   230,    33,    34,   233,    65,   307,   308,   309,
-      40,   311,   312,    52,    42,    47,    46,    47,    50,    51,
-      50,    51,    50,    53,    21,    22,    65,    15,    16,    42,
-     222,   271,    47,   271,    46,    32,    33,    50,    51,    51,
-      53,    53,   342,   343,   284,    47,   284,    35,    36,    37,
-      40,    39,    40,    41,    40,    40,    40,   357,   358,    47,
-     288,    40,    48,    48,    48,    29,    30,    33,    34,    48,
-      58,    59,    47,   301,    40,    63,    64,     0,   378,   271,
-      46,    47,   310,    40,    50,    51,   326,    53,   326,    40,
-      40,    48,   284,    60,    61,    62,    47,    48,    49,    50,
-      51,    47,    53,    47,    48,    51,    50,    51,    47,    53,
-     376,    42,    51,    44,    53,    48,    49,   345,    51,    37,
-      53,    39,    40,     6,   364,     8,   364,   367,   368,   367,
-     368,   371,    47,   371,   326,    16,   376,    47,   376,    58,
-      59,    40,    15,    16,    28,   411,    55,    28,   376,   389,
-      27,   389,   392,   393,   392,   393,   160,   161,   162,   163,
-      48,    49,    35,    36,    37,    56,    39,    40,    41,    42,
-      57,   411,   364,   411,    47,   367,   368,    48,    49,   371,
-     296,   297,    43,   411,   376,    58,    59,   158,   159,    51,
-      63,    64,    42,    66,   164,   165,    25,   389,    40,    43,
-     392,   393,    47,    50,    13,    45,    40,    48,    43,    47,
-      91,    47,    40,    52,    95,    42,    40,    40,    44,   411,
-     101,   102,   103,   104,    42,   106,    48,    40,    49,    49,
-     111,   112,    65,   114,   115,   116,    52,    54,    42,    47,
-      47,     3,     4,     5,    42,     7,    48,     9,    48,    11,
-      12,    13,    44,    15,    16,    40,    18,   138,    26,    21,
-      22,    23,    24,    25,    45,    26,    10,    46,    48,    45,
-     113,   152,    50,    35,    36,    37,    46,    39,    40,    41,
-      46,    46,    44,    45,   411,    47,    49,    36,    10,   272,
-     171,   172,   173,   169,   175,   176,    58,    59,   179,   180,
-     301,    63,    64,   154,    66,   153,   187,   188,   157,   155,
-     255,    -1,   193,   194,   195,   412,    -1,    -1,    -1,   156,
-      -1,    -1,    -1,    -1,    -1,   206,    -1,    -1,    -1,    -1,
-      -1,    -1,   213,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,     3,     4,     5,    -1,     7,    -1,     9,    -1,
-      11,    12,    13,    14,    15,    16,    17,    18,    19,    20,
-      21,    22,    23,    24,    25,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,   253,    -1,    35,    36,    37,    -1,    39,    40,
-      41,   262,    -1,    44,    -1,   266,    47,   268,    15,    16,
-      51,    -1,    -1,    -1,    -1,    -1,    -1,    58,    59,    -1,
-      -1,   282,    63,    64,    -1,    66,    -1,    -1,    35,    36,
-      37,    -1,    39,    40,    41,   296,   297,    -1,    -1,    -1,
-      47,    48,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    58,    59,   314,    -1,    -1,    63,    64,    -1,    66,
-      -1,    -1,    -1,    -1,   325,    -1,    -1,   328,   329,    -1,
-      -1,    -1,   333,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,   342,   343,     3,     4,     5,    -1,     7,    -1,     9,
-      -1,    11,    12,    13,    -1,    15,    16,    -1,    18,    -1,
-      -1,    21,    22,    23,    24,    25,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    35,    36,    37,    -1,    39,
-      40,    41,    -1,    -1,    44,    -1,    -1,    47,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    58,    59,
-      -1,    -1,    -1,    63,    64,    -1,    66,     3,     4,     5,
-      -1,     7,    -1,     9,    -1,    -1,    12,    13,    -1,    15,
-      16,    -1,    18,    -1,    -1,    21,    22,    23,    24,    25,
-      -1,    -1,    15,    16,    -1,    -1,    -1,    -1,    -1,    35,
-      36,    37,    -1,    39,    40,    41,    -1,    -1,    44,    -1,
-      -1,    47,    35,    36,    37,    -1,    39,    40,    41,    -1,
-      -1,    44,    58,    59,    47,    15,    16,    63,    64,    -1,
-      66,    -1,    -1,    -1,    -1,    58,    59,    -1,    -1,    -1,
-      63,    64,    -1,    66,    -1,    35,    36,    37,    -1,    39,
-      40,    41,    -1,    -1,    -1,    -1,    -1,    47,    15,    16,
-      -1,    -1,    52,    -1,    -1,    -1,    -1,    -1,    58,    59,
-      -1,    -1,    -1,    63,    64,    -1,    66,    -1,    35,    36,
-      37,    -1,    39,    40,    41,    -1,    -1,    -1,    -1,    -1,
-      47,    48,    15,    16,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    58,    59,    -1,    -1,    -1,    63,    64,    -1,    66,
-      -1,    -1,    35,    36,    37,    -1,    39,    40,    41,    42,
-      -1,    -1,    -1,    -1,    47,    15,    16,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    58,    59,    -1,    -1,    -1,
-      63,    64,    -1,    66,    -1,    35,    36,    37,    -1,    39,
-      40,    41,    -1,    -1,    -1,    -1,    -1,    47,    48,    15,
-      16,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    58,    59,
-      -1,    -1,    -1,    63,    64,    -1,    66,    -1,    -1,    35,
-      36,    37,    -1,    39,    40,    41,    -1,    -1,    -1,    -1,
-      -1,    47,    48,    15,    16,    -1,    -1,    -1,    -1,    -1,
+       0,   180,   238,    42,    42,     0,    46,     7,    32,    33,
+      26,    42,     7,    42,    11,    31,     0,   322,   219,   324,
+     325,    45,    46,     7,    42,    65,    26,    65,    40,    11,
+      40,    26,    32,    33,    65,    47,    65,    32,    33,    85,
+      86,   242,    26,    40,   245,    45,    46,   226,    32,    33,
+      45,    46,    42,    55,    51,    57,    42,    73,    40,     7,
+      42,    45,    46,    42,    45,    48,   371,   372,    42,    71,
+      31,    32,    42,    33,    34,    65,    42,    48,    26,    65,
+      80,    81,    65,    42,    65,    85,    86,    87,    88,    46,
+      50,    65,    53,    54,    65,    65,    80,    81,    48,    65,
+     301,    85,    86,    87,    88,   107,    65,    48,   110,    49,
+     126,    49,    47,    33,    34,    65,   140,   141,    49,    33,
+      34,    48,   323,    47,    65,    65,   126,    65,     0,   365,
+      50,   126,    46,    47,    65,     7,    50,    51,    65,    52,
+     140,   141,   126,    40,     0,   140,   141,   149,    48,    40,
+      48,     7,    65,    40,    26,   150,   140,   141,   359,    47,
+      32,    33,   208,   209,   210,    65,   345,    65,   170,   405,
+      26,    48,    40,    45,    46,    48,    32,    33,   126,    47,
+      48,    49,    50,    51,    47,    53,    80,    81,    65,    45,
+      46,     0,    65,    87,    88,   195,   196,   197,   198,   199,
+     200,   201,   202,   203,   204,   205,   206,   207,   208,   209,
+     210,   195,   196,   197,   198,   199,   200,   201,   202,   203,
+     204,   205,   206,   207,   208,   209,   210,    33,    34,    48,
+     276,    48,   234,    48,    48,    48,    52,    43,     8,    47,
+      46,    47,    12,    51,    50,    51,    65,    53,    65,    65,
+      65,    65,    65,    42,   126,    47,    26,    42,    28,    52,
+      47,    50,    51,   265,    53,    50,   266,    42,   140,   141,
+     126,   266,    65,    42,    47,    50,   276,    47,    47,    42,
+      40,    50,   266,     0,   140,   141,    40,    42,    48,    40,
+       7,    46,   276,    40,    48,    50,    40,   297,    40,    40,
+      46,    48,   297,    73,    48,    51,    48,    53,    47,    26,
+      43,    50,    51,   297,    84,    32,    33,    40,   266,    42,
+      15,    16,    51,    37,    38,    51,    40,    53,    45,    46,
+      44,    47,    48,    42,    50,    51,    42,    53,   338,    46,
+      35,    36,    37,   338,    39,    40,    41,    42,   118,   297,
+      46,   121,    47,    47,   338,    46,   126,    51,    42,    53,
+      44,    47,    25,    58,    59,    51,    47,    53,    63,    64,
+      51,    66,    53,    48,    49,    40,    51,   377,    53,    43,
+     380,   381,   377,    28,   384,   380,   381,    29,    30,   384,
+     338,    58,    59,   377,   266,    47,   380,   381,   398,    27,
+     384,   401,   402,   398,    48,    49,   401,   402,    55,   126,
+     266,    48,    49,    37,   398,    39,    40,   401,   402,   202,
+     203,   204,   205,   140,   141,   297,    60,    61,    62,   377,
+     309,   310,   380,   381,   200,   201,   384,    56,    33,    34,
+      57,   297,   206,   207,    50,    13,    45,    40,    43,   219,
+     398,    46,    47,   401,   402,    50,    51,    43,    53,   220,
+     221,    40,    47,    47,    52,    42,   338,    40,    40,   239,
+      48,    42,   242,    48,    44,   245,    40,    42,    65,    26,
+      49,    40,   338,    49,    42,    47,    47,    54,    48,    52,
+      26,    48,    45,    10,    48,    50,   267,    49,    31,   126,
+     197,   117,   314,   195,   409,   377,   196,   250,   380,   381,
+      17,   198,   384,    -1,   275,    -1,   199,    -1,    -1,    -1,
+      27,   377,    -1,    -1,   380,   381,   398,    -1,   384,   401,
+     402,   301,    -1,   294,    -1,   296,    -1,    -1,    -1,    -1,
+      -1,    -1,   398,    -1,   314,   401,   402,    -1,    -1,   266,
+      -1,    -1,    -1,   323,    -1,    -1,    -1,    -1,    -1,   320,
+     321,   322,    -1,   324,   325,    -1,    -1,    74,    -1,    -1,
+      -1,    78,    -1,    -1,    -1,    -1,    -1,    84,    -1,    -1,
+     297,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   359,
+      -1,    -1,    -1,    -1,    -1,   356,   357,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,   111,   112,   113,   114,   115,   116,
+     371,   372,   119,   120,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,   338,    -1,    -1,    -1,    -1,   387,    -1,    -1,   136,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,   152,   153,   154,    -1,    -1,
+     157,   158,    -1,    -1,    -1,    -1,    -1,    -1,   165,    -1,
+     377,    -1,    -1,   380,   381,   172,   173,   384,    -1,    -1,
+      -1,   178,   179,   180,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,   398,    -1,    -1,   401,   402,    -1,   194,     3,     4,
+       5,     6,     7,     8,     9,    -1,    11,    12,    13,    14,
+      15,    -1,    17,    18,    19,    20,    21,    22,    23,    24,
+      25,    -1,   219,    -1,    -1,    -1,    -1,    -1,    -1,   226,
+      -1,    -1,    37,    -1,    39,    40,    41,    -1,    -1,    44,
+      -1,    -1,    47,    -1,    -1,    -1,    51,    -1,    -1,    -1,
+      -1,   248,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+     257,    66,    -1,    -1,   261,    -1,   263,     3,     4,     5,
+       6,     7,     8,     9,    -1,    11,    12,    13,    -1,    15,
+      -1,    -1,    18,    -1,    -1,    21,    22,    23,    24,    25,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   295,    -1,
+      -1,    37,    -1,    39,    40,    41,    -1,    -1,    44,    45,
+      -1,    47,    -1,     3,     4,     5,     6,     7,     8,     9,
+      -1,    11,    12,    13,    -1,    15,    -1,    -1,    18,    -1,
+      66,    21,    22,    23,    24,    25,    -1,    -1,    -1,    -1,
+     337,    -1,    -1,   340,   341,    -1,    -1,    37,   345,    39,
+      40,    41,    -1,   350,    44,    -1,    -1,    47,    -1,   356,
+     357,    -1,     3,     4,     5,     6,     7,     8,     9,    15,
+      16,    12,    13,    -1,    15,    -1,    66,    18,    -1,    -1,
+      21,    22,    23,    24,    25,    -1,    -1,    -1,    -1,    35,
+      36,    37,    -1,    39,    40,    41,    37,    -1,    39,    40,
+      41,    47,    48,    44,    -1,    -1,    47,    15,    16,    -1,
       -1,    -1,    58,    59,    -1,    -1,    -1,    63,    64,    -1,
-      66,    -1,    -1,    35,    36,    37,    -1,    39,    40,    41,
-      -1,    -1,    -1,    -1,    -1,    47,    48,    15,    16,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    58,    59,    -1,    -1,
-      -1,    63,    64,    -1,    66,    -1,    -1,    35,    36,    37,
-      -1,    39,    40,    41,    -1,    -1,    -1,    45,    -1,    47,
-      15,    16,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      58,    59,    -1,    -1,    -1,    63,    64,    -1,    66,    -1,
+      66,    -1,    15,    16,    -1,    66,    -1,    35,    36,    37,
+      -1,    39,    40,    41,    -1,    -1,    44,    -1,    -1,    47,
+      -1,    -1,    35,    36,    37,    -1,    39,    40,    41,    -1,
+      58,    59,    -1,    -1,    47,    63,    64,    -1,    66,    52,
+      15,    16,    -1,    -1,    -1,    58,    59,    -1,    -1,    -1,
+      63,    64,    -1,    66,    15,    16,    -1,    -1,    -1,    -1,
+      35,    36,    37,    -1,    39,    40,    41,    -1,    -1,    -1,
+      -1,    -1,    47,    48,    35,    36,    37,    -1,    39,    40,
+      41,    42,    -1,    58,    59,    -1,    47,    -1,    63,    64,
+      -1,    66,    15,    16,    -1,    -1,    -1,    58,    59,    -1,
+      -1,    -1,    63,    64,    -1,    66,    15,    16,    -1,    -1,
+      -1,    -1,    35,    36,    37,    -1,    39,    40,    41,    -1,
+      -1,    -1,    -1,    -1,    47,    48,    35,    36,    37,    -1,
+      39,    40,    41,    -1,    -1,    58,    59,    -1,    47,    48,
+      63,    64,    -1,    66,    15,    16,    -1,    -1,    -1,    58,
+      59,    -1,    -1,    -1,    63,    64,    -1,    66,    -1,    15,
+      16,    -1,    -1,    -1,    35,    36,    37,    -1,    39,    40,
+      41,    -1,    -1,    -1,    -1,    -1,    47,    48,    -1,    35,
+      36,    37,    -1,    39,    40,    41,    -1,    58,    59,    45,
+      -1,    47,    63,    64,    -1,    66,    15,    16,    -1,    -1,
+      -1,    -1,    58,    59,    -1,    -1,    -1,    63,    64,    -1,
+      66,    -1,    -1,    -1,    -1,    -1,    35,    36,    37,    -1,
+      39,    40,    41,    -1,    -1,    -1,    -1,    -1,    47,    48,
+      15,    16,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    58,
+      59,    -1,    -1,    -1,    63,    64,    -1,    66,    -1,    -1,
       35,    36,    37,    -1,    39,    40,    41,    -1,    -1,    -1,
       -1,    -1,    47,    48,    15,    16,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    58,    59,    -1,    -1,    -1,    63,    64,
       -1,    66,    -1,    -1,    35,    36,    37,    -1,    39,    40,
-      41,    -1,    -1,    -1,    -1,    -1,    47,    48,    15,    16,
+      41,    -1,    -1,    44,    -1,    -1,    47,    15,    16,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    58,    59,    -1,
-      -1,    -1,    63,    64,    -1,    66,    -1,    -1,    35,    36,
-      37,    -1,    39,    40,    41,    -1,    -1,    44,    -1,    -1,
-      47,    15,    16,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    58,    59,    -1,    15,    16,    63,    64,    -1,    66,
-      -1,    35,    36,    37,    -1,    39,    40,    41,    -1,    -1,
-      -1,    -1,    -1,    47,    35,    36,    37,    -1,    39,    40,
-      41,    -1,    -1,    -1,    58,    59,    47,    15,    16,    63,
-      64,    -1,    66,    -1,    -1,    -1,    -1,    58,    59,    -1,
       15,    16,    63,    64,    -1,    66,    -1,    35,    36,    37,
       -1,    39,    40,    41,    -1,    -1,    -1,    -1,    -1,    47,
       35,    36,    37,    -1,    39,    40,    41,    -1,    -1,    -1,
-      58,    59,    47,    -1,    -1,    63,    64,    -1,    66,    -1,
-      -1,    -1,    -1,    58,    59,    -1,    -1,    -1,    63,    64
+      58,    59,    47,    15,    16,    63,    64,    -1,    66,    -1,
+      -1,    -1,    -1,    58,    59,    -1,    15,    16,    63,    64,
+      -1,    66,    -1,    35,    36,    37,    -1,    39,    40,    41,
+      -1,    -1,    -1,    -1,    -1,    47,    35,    36,    37,    -1,
+      39,    40,    41,    -1,    -1,    -1,    58,    59,    47,    15,
+      16,    63,    64,    -1,    66,    -1,    -1,    -1,    -1,    58,
+      59,    -1,    -1,    -1,    63,    64,    -1,    66,    -1,    35,
+      36,    37,    -1,    39,    40,    41,    -1,    -1,    -1,    -1,
+      -1,    47,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    58,    59,    -1,    -1,    -1,    63,    64,    -1,
+      66
     };
   }
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
-  private static final short yystos_[] = yystos_init();
-  private static final short[] yystos_init()
+  private static final byte yystos_[] = yystos_init();
+  private static final byte[] yystos_init()
   {
-    return new short[]
+    return new byte[]
     {
-       0,     3,     4,     5,     7,     9,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25,    35,    36,    37,    39,    40,    41,    44,    47,    51,
-      58,    59,    63,    64,    66,    68,    69,    70,    72,    74,
-      76,    77,    78,    79,    80,    81,    82,    83,    84,    89,
-      92,    93,    96,    97,    99,   100,   102,   103,   104,   105,
-     106,   107,   108,   109,   110,   111,   112,   113,   114,   115,
-     116,   117,   118,   119,   120,   121,   122,   123,   124,   127,
-     129,    40,    42,    42,    42,    42,    40,    72,    40,    99,
-      47,    47,    40,    40,   100,    47,    40,    42,   102,   121,
-     124,    47,    47,    47,    47,    40,    47,   114,   121,   124,
-     114,    33,    34,    46,    47,    50,    51,    53,    90,    40,
-      45,    72,    73,    75,    89,    99,    40,    99,   102,    40,
-      99,   112,   112,   114,   114,    37,    38,    40,    56,   130,
-       0,    40,    89,    92,    68,    68,    68,    68,    40,    99,
-      40,    42,    65,    28,    27,    55,    56,    57,    29,    30,
-      31,    32,    53,    54,    58,    59,    60,    61,    62,    43,
-     125,    51,    33,    34,    90,    33,    34,    90,    42,    47,
-      51,    25,    42,    51,    90,    40,    40,    42,    89,    99,
-     102,    43,    71,    47,    51,    47,   102,    42,   102,   102,
-     102,   102,   102,   102,    78,    40,    47,    48,    95,    98,
-      99,   102,   128,    44,   102,    52,   102,    99,   101,    75,
-      45,    40,    48,    48,    43,   102,    47,    47,    68,    68,
-      47,    40,    42,    47,    90,   102,   104,   105,   106,   107,
-     108,   109,   109,   110,   110,   110,   110,   111,   111,   112,
-     112,   112,    40,    47,    97,   126,   102,   102,   102,   102,
-     102,    48,    47,    42,    42,    90,    46,   102,    42,   102,
-      40,    48,    40,    42,    48,    91,   102,   102,    48,    91,
-      48,    48,    49,    48,    48,    42,    42,    48,    49,    48,
-      95,    99,    74,    74,    48,    40,    49,    49,    45,    91,
-      52,    49,    54,   112,    52,   130,    40,    48,    48,    95,
-      47,    48,    95,    42,    46,   102,   125,    52,    42,    42,
-      42,    42,   102,    42,   102,    42,    48,   102,    42,    46,
-      72,    71,    48,    49,    52,    48,    74,    44,   102,    74,
-      72,    95,    26,    26,    48,    49,    98,    98,    45,   101,
-      48,    49,   131,    42,    74,    94,    94,    48,    95,    94,
-      94,   102,    48,    48,    48,   102,    72,    48,    48,   102,
-     102,    10,    91,     6,     8,    85,    87,    88,    48,    74,
-     102,    74,   102,    95,   130,    48,    94,    94,    72,    48,
-      72,    72,    48,    48,    72,    37,    39,    40,    46,    45,
-      75,    86,    87,    74,    50,    72,    72,    72,    46,    46,
-      46,    87,   130,    86,   131
+       0,     3,     4,     5,     6,     7,     8,     9,    11,    12,
+      13,    14,    15,    17,    18,    19,    20,    21,    22,    23,
+      24,    25,    37,    39,    40,    41,    44,    47,    51,    66,
+      68,    69,    70,    72,    74,    76,    77,    78,    79,    80,
+      81,    82,    83,    84,    85,    86,    89,    90,    93,    94,
+      96,   113,   114,   115,   116,   117,   119,   120,   123,   125,
+      40,    42,    42,    42,    37,    39,    40,    42,    46,    40,
+      72,    40,    96,    47,    47,    40,    40,    96,    47,    16,
+      35,    36,    40,    42,    47,    58,    59,    63,    64,    94,
+      98,    99,   100,   101,   102,   103,   104,   105,   106,   107,
+     108,   109,   110,   111,   112,   113,   114,   117,   118,   119,
+     120,    47,    47,    47,    47,    33,    34,    46,    47,    50,
+      51,    53,    87,    40,    45,    72,    73,    75,    86,    96,
+      98,    40,    96,    37,    38,    40,    44,   126,     0,    40,
+      86,    89,    68,    68,    68,    68,    40,    96,    42,    40,
+      43,   121,    51,    33,    34,    87,    42,    33,    34,    87,
+      42,    46,    46,    46,    47,    51,    25,    42,    51,    87,
+      40,    40,    42,    86,    96,    98,    43,    71,    47,    51,
+      47,    98,    40,   108,   117,   120,   108,    40,    96,   109,
+     109,   108,   108,    42,    65,    28,    27,    55,    56,    57,
+      29,    30,    31,    32,    53,    54,    58,    59,    60,    61,
+      62,    98,    98,    98,    98,    98,    98,    78,    40,    47,
+      48,    92,    95,    96,    98,   124,    44,    98,    52,    98,
+      96,    97,    75,    45,    40,    48,    43,    98,    47,    47,
+      68,    68,    47,    40,    42,    47,    87,    40,    47,    94,
+     122,    98,    98,    98,    98,    98,    48,    47,    42,    42,
+      87,    46,    98,    42,    98,    40,    48,    40,    42,    48,
+      88,    98,    98,    48,    88,    48,    48,    98,   100,   101,
+     102,   103,   104,   105,   105,   106,   106,   106,   106,   107,
+     107,   109,   109,   109,    48,    49,    48,    48,    42,    42,
+      48,    49,    48,    92,    96,    74,    74,    48,    40,    49,
+      49,    45,    88,    52,    49,    54,    52,    45,   126,    40,
+      48,    48,    92,    47,    48,    92,    42,    98,   121,    52,
+      42,    42,    42,    42,    98,    42,    98,    42,    48,    98,
+      42,    46,    72,    71,    48,    49,    52,    48,    74,   109,
+      46,    74,    98,    74,    72,    92,    26,    26,    48,    49,
+      95,    95,    45,    97,    48,    49,   127,    42,    74,    91,
+      91,    48,    92,    91,    91,    48,    48,    48,    98,    72,
+      48,    48,    98,    98,    10,    88,    98,    48,    74,    98,
+      74,    98,    92,   126,    48,    91,    91,    72,    48,    72,
+      72,    48,    48,    72,    74,    50,    72,    72,    72,   126,
+     127
     };
   }
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
-  private static final short yyr1_[] = yyr1_init();
-  private static final short[] yyr1_init()
+  private static final byte yyr1_[] = yyr1_init();
+  private static final byte[] yyr1_init()
   {
-    return new short[]
+    return new byte[]
     {
        0,    67,    68,    68,    68,    68,    68,    68,    68,    69,
       69,    69,    70,    71,    71,    72,    72,    72,    72,    72,
-      72,    72,    72,    72,    72,    72,    72,    73,    73,    74,
-      74,    75,    75,    76,    77,    77,    77,    77,    77,    77,
-      77,    78,    78,    79,    79,    80,    80,    80,    80,    80,
-      80,    80,    81,    82,    83,    84,    85,    86,    86,    87,
-      87,    88,    88,    88,    88,    89,    89,    89,    89,    89,
-      89,    90,    90,    90,    91,    91,    92,    92,    92,    92,
-      92,    92,    92,    92,    93,    94,    94,    95,    95,    95,
-      95,    96,    96,    96,    96,    96,    96,    97,    97,    98,
-      98,    98,    98,    99,    99,    99,   100,   101,   101,   102,
-     102,   102,   102,   103,   103,   104,   104,   105,   105,   106,
-     106,   107,   107,   108,   108,   108,   109,   109,   109,   109,
-     109,   110,   110,   110,   111,   111,   111,   111,   112,   112,
-     113,   113,   113,   114,   114,   114,   114,   114,   115,   116,
-     116,   116,   117,   117,   118,   118,   119,   119,   119,   119,
-     120,   120,   120,   121,   121,   122,   123,   123,   123,   124,
-     125,   125,   126,   126,   126,   127,   127,   127,   127,   127,
-     127,   128,   128,   128,   128,   129,   129,   130,   130,   130,
-     130,   131,   131
+      72,    72,    72,    72,    72,    72,    72,    72,    72,    73,
+      73,    74,    74,    75,    75,    76,    77,    77,    77,    77,
+      77,    77,    77,    78,    78,    79,    79,    80,    80,    80,
+      80,    80,    80,    80,    81,    82,    83,    84,    85,    85,
+      85,    85,    86,    86,    86,    86,    86,    86,    87,    87,
+      87,    88,    88,    89,    89,    89,    89,    89,    89,    89,
+      89,    90,    91,    91,    92,    92,    92,    92,    93,    93,
+      93,    93,    93,    93,    94,    94,    95,    95,    95,    95,
+      96,    96,    96,    97,    97,    98,    98,    98,    99,    99,
+     100,   100,   101,   101,   102,   102,   103,   103,   104,   104,
+     104,   105,   105,   105,   105,   105,   106,   106,   106,   107,
+     107,   107,   107,   108,   108,   108,   108,   108,   109,   109,
+     110,   110,   110,   111,   112,   112,   112,   113,   113,   114,
+     114,   115,   115,   115,   115,   115,   116,   116,   116,   117,
+     117,   118,   119,   119,   119,   120,   121,   121,   122,   122,
+     122,   123,   123,   123,   123,   123,   123,   124,   124,   124,
+     124,   125,   125,   126,   126,   126,   126,   127,   127
     };
   }
 
@@ -2917,25 +2933,24 @@ private static final short yycheck_[] = yycheck_init();
     return new byte[]
     {
        0,     2,     3,     2,     2,     2,     3,     2,     0,     1,
-       1,     1,     4,     0,     3,     1,     2,     1,     1,     1,
-       1,     1,     1,     1,     1,     1,     1,     1,     1,     3,
-       2,     1,     2,     3,     2,     3,     2,     3,     2,     2,
-       2,     5,     7,     5,     6,     8,     7,     7,     6,     8,
-       7,     8,     5,     5,     7,     7,     2,     3,     0,     2,
-       1,     3,     3,     3,     2,     4,     4,     5,     3,     3,
-       4,     2,     3,     4,     1,     3,     6,     6,     5,     5,
-       5,     5,     4,     4,     4,     1,     1,     2,     3,     3,
-       4,     4,     4,     4,     4,     4,     4,     3,     4,     1,
-       1,     3,     3,     3,     1,     1,     4,     1,     3,     1,
-       1,     1,     1,     3,     1,     3,     1,     1,     3,     1,
-       3,     1,     3,     1,     3,     3,     1,     3,     3,     3,
-       3,     1,     3,     3,     1,     3,     3,     3,     1,     4,
-       1,     2,     2,     2,     2,     2,     2,     1,     1,     1,
-       1,     1,     1,     1,     3,     1,     1,     1,     1,     1,
-       1,     1,     1,     4,     4,     5,     2,     2,     2,     2,
-       3,     2,     1,     1,     3,     2,     4,     5,     4,     5,
-       5,     4,     4,     4,     4,     5,     6,     2,     1,     1,
-       1,     5,     0
+       1,     1,     4,     0,     3,     1,     2,     2,     1,     1,
+       1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
+       1,     3,     2,     1,     2,     3,     2,     3,     2,     3,
+       2,     2,     2,     5,     7,     5,     6,     8,     7,     7,
+       6,     8,     7,     8,     5,     5,     7,     5,     3,     3,
+       3,     2,     4,     4,     5,     3,     3,     4,     2,     3,
+       4,     1,     3,     6,     6,     5,     5,     5,     5,     4,
+       4,     4,     1,     1,     2,     3,     3,     4,     4,     4,
+       4,     4,     4,     4,     3,     4,     1,     1,     3,     3,
+       3,     1,     4,     1,     3,     1,     1,     1,     3,     1,
+       3,     1,     1,     3,     1,     3,     1,     3,     1,     3,
+       3,     1,     3,     3,     3,     3,     1,     3,     3,     1,
+       3,     3,     3,     2,     2,     2,     2,     1,     1,     4,
+       1,     2,     2,     1,     1,     1,     1,     1,     1,     3,
+       1,     1,     1,     1,     1,     1,     1,     1,     1,     4,
+       4,     5,     2,     2,     2,     2,     3,     2,     1,     1,
+       3,     2,     4,     5,     4,     5,     5,     4,     4,     4,
+       4,     5,     6,     3,     1,     1,     1,     5,     0
     };
   }
 
@@ -2976,15 +2991,14 @@ private static final short yycheck_[] = yycheck_init();
   "blk_statement", "block", "statements", "grammar_rule",
   "return_statement", "if_statement", "while_statement", "for_statement",
   "propose_statement", "timeout_behaviour_statement", "timeout_statement",
-  "switch_statement", "switch_block", "switch_cont", "switch_labels",
-  "switch_label", "var_def", "assgn_exp", "nonempty_exp_list",
-  "method_declaration", "class_spec", "opt_block", "args_list",
-  "set_operation", "function_call", "nonempty_args_list", "type_spec",
-  "parameterized_type", "type_spec_list", "exp", "ConditionalOrExpression",
+  "switch_statement", "label_statement", "var_def", "assgn_exp",
+  "nonempty_exp_list", "method_declaration", "class_spec", "opt_block",
+  "args_list", "set_operation", "function_call", "nonempty_args_list",
+  "type_spec", "type_spec_list", "exp", "ConditionalOrExpression",
   "ConditionalAndExpression", "InclusiveOrExpression",
   "ExclusiveOrExpression", "AndExpression", "EqualityExpression",
   "RelationalExpression", "AdditiveExpression", "MultiplicativeExpression",
-  "CastExpression", "LogicalUnaryExpression", "UnaryExpression",
+  "UnaryExpression", "CastExpression", "LogicalUnaryExpression",
   "PostfixExpression", "PrimaryExpression", "NotJustName",
   "ComplexPrimary", "ComplexPrimaryNoParenthesis", "Literal",
   "ArrayAccess", "if_exp", "assignment", "field_access",
@@ -2999,26 +3013,25 @@ private static final short yycheck_[] = yycheck_init();
   {
     return new short[]
     {
-       0,   114,   114,   117,   118,   120,   121,   124,   126,   130,
-     131,   132,   136,   142,   143,   147,   148,   149,   150,   151,
-     152,   153,   154,   155,   156,   157,   158,   162,   163,   169,
-     170,   174,   175,   179,   183,   184,   185,   186,   187,   188,
-     189,   193,   194,   200,   201,   207,   209,   211,   213,   215,
-     217,   220,   228,   232,   238,   244,   250,   258,   259,   263,
-     264,   268,   271,   274,   277,   283,   286,   289,   292,   295,
-     298,   304,   305,   306,   310,   311,   315,   318,   321,   324,
-     327,   330,   333,   336,   341,   345,   346,   350,   351,   352,
-     353,   361,   364,   367,   370,   373,   376,   385,   388,   394,
-     395,   396,   397,   401,   402,   403,   407,   411,   412,   416,
-     417,   418,   419,   423,   426,   430,   433,   437,   438,   444,
-     445,   451,   452,   458,   459,   462,   468,   469,   472,   475,
-     478,   484,   485,   488,   494,   495,   498,   501,   507,   508,
-     513,   514,   515,   519,   522,   525,   526,   527,   531,   537,
-     538,   539,   543,   544,   548,   549,   553,   554,   555,   556,
-     560,   561,   562,   566,   569,   573,   601,   604,   605,   609,
-     615,   616,   620,   621,   622,   626,   627,   630,   633,   636,
-     639,   646,   649,   652,   655,   662,   665,   671,   672,   673,
-     674,   678,   681
+       0,   114,   114,   117,   118,   120,   121,   124,   127,   131,
+     132,   133,   137,   143,   144,   148,   149,   150,   151,   152,
+     153,   154,   155,   156,   157,   158,   159,   160,   161,   165,
+     166,   172,   173,   177,   178,   182,   186,   187,   188,   189,
+     190,   191,   192,   196,   197,   203,   204,   210,   212,   214,
+     216,   218,   220,   224,   233,   237,   243,   249,   275,   282,
+     289,   296,   305,   308,   311,   314,   317,   320,   326,   327,
+     330,   336,   337,   341,   344,   347,   350,   353,   356,   359,
+     362,   367,   371,   372,   376,   377,   378,   379,   387,   391,
+     395,   398,   401,   404,   413,   416,   422,   423,   424,   425,
+     429,   430,   431,   437,   438,   442,   443,   444,   449,   452,
+     456,   459,   463,   464,   470,   471,   477,   478,   484,   485,
+     488,   494,   495,   498,   501,   504,   510,   511,   514,   520,
+     521,   524,   527,   533,   537,   541,   542,   543,   547,   548,
+     553,   554,   555,   559,   565,   566,   567,   571,   572,   576,
+     577,   581,   582,   583,   584,   585,   589,   590,   591,   595,
+     599,   603,   631,   635,   636,   640,   648,   649,   653,   654,
+     655,   659,   660,   663,   666,   669,   672,   679,   682,   685,
+     688,   695,   698,   704,   705,   706,   707,   711,   714
     };
   }
 
@@ -3090,10 +3103,10 @@ private static final short yycheck_[] = yycheck_init();
       return yyundef_token_;
   }
 
-  private static final int yylast_ = 1269;
-  private static final int yynnts_ = 65;
+  private static final int yylast_ = 1350;
+  private static final int yynnts_ = 61;
   private static final int yyempty_ = -2;
-  private static final int yyfinal_ = 140;
+  private static final int yyfinal_ = 138;
   private static final int yyterror_ = 1;
   private static final int yyerrcode_ = 256;
   private static final int yyntokens_ = 67;
@@ -3111,7 +3124,7 @@ private static final short yycheck_[] = yycheck_init();
 
   public GrammarFile getResult() { return _result; }
 
-/* "VondaGrammar.java":3115  */ /* lalr1.java:1066  */
+/* "VondaGrammar.java":3128  */ /* lalr1.java:1066  */
 
 }
 

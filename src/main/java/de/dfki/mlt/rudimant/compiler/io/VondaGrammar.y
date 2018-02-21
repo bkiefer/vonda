@@ -31,15 +31,15 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %type <RTStatement> statement blk_statement set_operation
 %type <RTStatement> return_statement propose_statement timeout_statement
 %type <RTStatement> timeout_behaviour_statement while_statement for_statement
-%type <RTStatement> switch_statement switch_label
-%type <StatAbstractBlock> block opt_block switch_block
+%type <RTStatement>  label_statement switch_statement
+%type <StatAbstractBlock> block opt_block
 %type <StatIf> if_statement
 %type <Import> imports
 %type <StatMethodDeclaration> method_declaration
 %type <List<String>> path
-%type <LinkedList<RTStatement>> statements switch_labels switch_cont
+%type <LinkedList<RTStatement>> statements
 %type <StatGrammarRule> grammar_rule
-%type <Type> type_spec parameterized_type class_spec
+%type <Type> type_spec class_spec
 %type <LinkedList<Type>> type_spec_list
 %type <ExpSingleValue> Literal
 %type <LinkedList> args_list
@@ -123,7 +123,8 @@ grammar_file
   }
   | var_def grammar_file  {
     $$ = $2; $2.addFirst(new StatFieldDef(null, $1).setPos(@1));
-  }| %empty { $$ = _statements;}
+  }
+  | %empty { $$ = _statements;}
   ;
 
 visibility_spec
@@ -145,7 +146,8 @@ path
 
 statement
   : block { $$ = $1; }
-| exp ';' { $$ = new StatExpression($1).setPos(@$); }
+  | assignment ';' { $$ = new StatExpression($1).setPos(@$); }
+  | function_call ';' { $$ = new StatExpression($1).setPos(@$); }
   | grammar_rule { $$ = $1; }
   | set_operation { $$ = $1; }
   | return_statement { $$ = $1; }
@@ -156,6 +158,7 @@ statement
   | while_statement { $$ = $1; }
   | for_statement { $$ = $1; }
   | switch_statement { $$ = $1; }
+  | label_statement { $$ = $1; }
   ;
 
 blk_statement
@@ -166,7 +169,7 @@ blk_statement
 ////////// STATEMENTS ///////////////////
 
 block
-: '{' statements '}' { $$ = new StatAbstractBlock($2, true).setPos(@$); }
+  : '{' statements '}' { $$ = new StatAbstractBlock($2, true).setPos(@$); }
   | '{' '}' {
     $$ = new StatAbstractBlock(new ArrayList<RTStatement>(), true).setPos(@$);
   }
@@ -215,10 +218,12 @@ for_statement
   | FOR '('     ';' exp ';' exp ')' statement {
     $$ = new StatFor1(null, $4, $6, $8).setPos(@$); }
   | FOR '(' VARIABLE ':' exp ')' statement {
-    $$ = new StatFor2(new ExpVariable($3), $5, $7).setPos(@$);
+    ExpVariable var = new ExpVariable($3); var.setPos(@3);
+    $$ = new StatFor2(var, $5, $7).setPos(@$);
   }
   | FOR '(' type_spec VARIABLE ':' exp ')' statement {
-    $$ = new StatFor2($3, new ExpVariable($4), $6, $8).setPos(@$);
+    ExpVariable var = new ExpVariable($4); var.setPos(@4);
+    $$ = new StatFor2($3, var, $6, $8).setPos(@$);
   }
   // for loop with destructuring into a tuple
   //| FOR '(' '(' VARIABLE ( ',' VARIABLE )+ ')' ':' exp ')' statement {}
@@ -241,11 +246,12 @@ timeout_statement
   ;
 
 switch_statement
-  : SWITCH '(' exp ')' '{' switch_block '}' {
-    $$ = new StatSwitch($3, $6).setPos(@$);
+  : SWITCH '(' exp ')' block {
+    $$ = new StatSwitch($3, $5).setPos(@$);
   }
   ;
 
+/*
 switch_block
   : switch_labels switch_cont {
     List<RTStatement> elts = $1;
@@ -255,7 +261,7 @@ switch_block
   ;
 
 switch_cont
-  : statements switch_labels switch_cont { }
+  : statements switch_labels { }
   | %empty { $$ = new ArrayList<RTExpression>(); }
   ;
 
@@ -263,19 +269,35 @@ switch_labels
   : switch_label switch_labels { $$ = $2; $2.addFirst($1); }
   | switch_label { $$ = new LinkedList<RTStatement>(){{ add($1); }}; }
   ;
+*/
 
-switch_label
+label_statement
   : CASE STRING ':'   {
-    $$ = new ExpSingleValue("case " + $2 + ":", "label").ensureStatement();
+    ExpSingleValue val =
+      new ExpSingleValue("case " + $2.toString() + ":", "label");
+    RTStatement lbl = val.ensureStatement();
+    val.setPos(@$); lbl.setPos(@$);
+    $$ = lbl;
   }
   | CASE INT ':'      {
-    $$ = new ExpSingleValue("case " + $2 + ":", "label").ensureStatement();
+    ExpSingleValue val =
+      new ExpSingleValue("case " + $2.toString() + ":", "label");
+    RTStatement lbl = val.ensureStatement();
+    val.setPos(@$); lbl.setPos(@$);
+    $$ = lbl;
   }
   | CASE VARIABLE ':' {
-    $$ = new ExpSingleValue("case " + $2 + ":", "label").ensureStatement();
+    ExpSingleValue val =
+      new ExpSingleValue("case " + $2 + ":", "label");
+    RTStatement lbl = val.ensureStatement();
+    val.setPos(@$); lbl.setPos(@$);
+    $$ = lbl;
   }
   | DEFAULT ':'       {
-    $$ = new ExpSingleValue("default:", "label").ensureStatement();
+    ExpSingleValue val = new ExpSingleValue("default:", "label");
+    RTStatement lbl = val.ensureStatement();
+    val.setPos(@$); lbl.setPos(@$);
+    $$ = lbl;
   }
   ;
 
@@ -302,8 +324,12 @@ var_def
 
 assgn_exp
   : '=' exp { $$ = $2; }
-  | '=' '{' '}' { $$ = new ExpListLiteral(new LinkedList<RTExpression>()); }
-  | '=' '{' nonempty_exp_list '}' { $$ = new ExpListLiteral($3); }
+  | '=' '{' '}' {
+    $$ = new ExpListLiteral(new LinkedList<RTExpression>()).setPos(@2, @3);
+  }
+  | '=' '{' nonempty_exp_list '}' {
+    $$ = new ExpListLiteral($3).setPos(@2, @4);
+  }
   ;
 
 nonempty_exp_list
@@ -359,10 +385,12 @@ args_list
 // add sth to a collection
 set_operation
   : VARIABLE PLUSEQ exp ';' {
-    $$ = new StatSetOperation(new ExpVariable($1), true, $3).setPos(@$);
+    ExpVariable var = new ExpVariable($1); var.setPos(@1);
+    $$ = new StatSetOperation(var, true, $3).setPos(@$);
   }
   | VARIABLE MINUSEQ exp ';' {
-    $$ = new StatSetOperation(new ExpVariable($1), false, $3).setPos(@$);
+    ExpVariable var = new ExpVariable($1); var.setPos(@1);
+    $$ = new StatSetOperation(var, false, $3).setPos(@$);
   }
   | ArrayAccess PLUSEQ exp ';' {
     $$ = new StatSetOperation($1, true, $3).setPos(@$);
@@ -400,11 +428,9 @@ nonempty_args_list
 type_spec
   : VARIABLE '[' ']' { $$ = new Type("Array", new Type($1)); }
   | VARIABLE { $$ = new Type($1); }
-  | parameterized_type { $$ = $1; }
-  ;
-
-parameterized_type
-  : VARIABLE '<' type_spec_list '>' { $$ = new Type($1, $3.toArray(new Type[$3.size()])); }
+  | VARIABLE '<' type_spec_list '>' {
+    $$ = new Type($1, $3.toArray(new Type[$3.size()]));
+  }
   ;
 
 type_spec_list
@@ -416,7 +442,7 @@ exp
   : if_exp { $$ = $1; }
   | assignment { $$ = $1; }
   | ConditionalOrExpression { $$ = $1; }
-  | dialogueact_exp { $$ = $1; }
+//| dialogueact_exp { $$ = $1; }
   ;
 
 ConditionalOrExpression
@@ -503,6 +529,20 @@ MultiplicativeExpression
   }
   ;
 
+UnaryExpression
+  : PLUSPLUS UnaryExpression {
+    ExpSingleValue es = new ExpSingleValue("1", "int"); es.setPos(@$);
+    $$ = new ExpArithmetic($2, es, "+").setPos(@$);
+  }
+  | MINUSMINUS UnaryExpression {
+    ExpSingleValue es = new ExpSingleValue("1", "int"); es.setPos(@$);
+    $$ = new ExpArithmetic($2, es, "-").setPos(@$);
+  }
+  | '+' CastExpression { $$ = new ExpArithmetic($2, null, "+").setPos(@$); }
+  | '-' CastExpression { $$ = new ExpArithmetic($2, null, "-").setPos(@$); }
+  | LogicalUnaryExpression { $$ = $1; }
+;
+
 CastExpression
   : UnaryExpression { $$ = $1; }
   | '(' type_spec ')' CastExpression { new ExpCast($2, $4).setPos(@$); }
@@ -513,18 +553,6 @@ LogicalUnaryExpression
   : PostfixExpression { $$ = $1; }
   | '!' UnaryExpression { $$ = new ExpBoolean($2, null, "!").setPos(@$); }
   | '~' UnaryExpression { $$ = new ExpArithmetic($2, null, "~").setPos(@$); }
-  ;
-
-UnaryExpression
-  : PLUSPLUS UnaryExpression {
-    $$ = new ExpArithmetic($2, new ExpSingleValue("1", "int"), "+").setPos(@$);
-  }
-  | MINUSMINUS UnaryExpression {
-    $$ = new ExpArithmetic($2, new ExpSingleValue("1", "int"), "-").setPos(@$);
-  }
-  | '+' CastExpression { $$ = new ExpArithmetic($2, null, "+").setPos(@$); }
-  | '-' CastExpression { $$ = new ExpArithmetic($2, null, "-").setPos(@$); }
-  | LogicalUnaryExpression { $$ = $1; }
   ;
 
 PostfixExpression
@@ -554,17 +582,19 @@ ComplexPrimaryNoParenthesis
   | ArrayAccess { $$ = $1; }
   | field_access { $$ = $1; }
   | function_call { $$ = $1; }
+  | dialogueact_exp { $$ = $1; }
   ;
 
 Literal
-  : STRING { $$ = $1; }
-  | INT { $$ = $1; }
-  | OTHER_LITERAL { $$ = $1; }
+  : STRING { $$ = $1; $1.setPos(@$); }
+  | INT { $$ = $1; $1.setPos(@$); }
+  | OTHER_LITERAL { $$ = $1; $1.setPos(@$); }
   ;
 
 ArrayAccess
   : VARIABLE '[' exp ']' {
-    $$ = new ExpArrayAccess(new ExpVariable($1), $3).setPos(@$);
+    ExpVariable var = new ExpVariable($1); var.setPos(@1);
+    $$ = new ExpArrayAccess(var, $3).setPos(@$);
   }
   | ComplexPrimary '[' exp ']' { $$ = new ExpArrayAccess($1, $3).setPos(@$); }
   ;
@@ -599,7 +629,8 @@ nonbool_exp
 // a variable, an array element, an rdf slot (did i forget sth?)
 assignment
   : VARIABLE assgn_exp {
-    $$ = new ExpAssignment(new ExpVariable($1), $2).setPos(@$);
+    ExpVariable var = new ExpVariable($1); var.setPos(@1);
+    $$ = new ExpAssignment(var, $2).setPos(@$);
   }
   | field_access assgn_exp { $$ = new ExpAssignment($1, $2).setPos(@$); }
   | ArrayAccess assgn_exp { $$ = new ExpAssignment($1, $2).setPos(@$); }
@@ -607,7 +638,9 @@ assignment
 
 field_access
   : NotJustName field_access_rest {
-    $$ = new ExpFieldAccess($2, new ArrayList<>()); $2.addFirst($1);
+    List<String> repr = new ArrayList<>($2.size());
+    for (int i = 0; i < $2.size(); ++i) repr.add("");
+    $$ = new ExpFieldAccess($2, repr).setPos(@$); $2.addFirst($1);
   }
   ;
 
@@ -630,10 +663,10 @@ new_exp
   | NEW VARIABLE '(' nonempty_exp_list ')' {
     $$ = new ExpNew(new Type($2), $4).setPos(@$);
   }
-  | NEW parameterized_type '(' ')' {
+  | NEW type_spec '(' ')' {
     $$ = new ExpNew($2, new LinkedList<>()).setPos(@$);
   }
-  | NEW parameterized_type '(' nonempty_exp_list')' {
+  | NEW type_spec '(' nonempty_exp_list')' {
     $$ = new ExpNew($2, $4).setPos(@$);
   }
   | NEW VARIABLE '[' exp ']' {
@@ -644,13 +677,13 @@ new_exp
 
 lambda_exp
   : '(' args_list ARROW exp {
-    $$ = new ExpLambda($2, new StatExpression($4)).setPos(@$);
+    $$ = new ExpLambda($2, $4).setPos(@$);
   }
   | '(' args_list ARROW block {
     $$ = new ExpLambda($2, $4).setPos(@$);
   }
   | '(' ')' ARROW exp {
-    $$ = new ExpLambda(new LinkedList<>(), new StatExpression($4)).setPos(@$);
+    $$ = new ExpLambda(new LinkedList<>(), $4).setPos(@$);
   }
   | '(' ')' ARROW block {
     $$ = new ExpLambda(new LinkedList<>(), $4).setPos(@$);
@@ -668,17 +701,17 @@ dialogueact_exp
   ;
 
 da_token
-  : '^' exp { $$ = $2; }
-  | VARIABLE { $$ = $1; }
+  : '{' exp '}' { $$ = $2; }
+  | VARIABLE { $$ = new ExpVariable($1).setPos(@$); }
   | STRING { $$ = $1; }
-  | WILDCARD { $$ = $1; }
+  | WILDCARD { $$ = new ExpSingleValue($1, "String").setPos(@$); }
   ;
 
 da_args
   : ',' da_token '=' da_token da_args  {
     $$ = $5; $5.addFirst($4); $5.addFirst($2);
   }
-  | %empty { new LinkedList<RTExpression>(); }
+  | %empty { $$ = new LinkedList<RTExpression>(); }
   ;
 
 
