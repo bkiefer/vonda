@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.hfc.db.server.HfcDbHandler;
 
@@ -28,7 +29,7 @@ public class RudimantCompiler {
 
   static String INFO_DIR = "src/main/resources/generated";
 
-  private static HfcDbHandler handler;
+  private HfcDbHandler handler;
 
   private boolean typeCheck = false;
   private boolean visualise = false;
@@ -41,6 +42,61 @@ public class RudimantCompiler {
 
   private Mem mem;
 
+  private void checkOutputDirectory(File configDir, Map<String, Object> configs) {
+    outputRootDir = null;
+    if (configs.containsKey(CFG_OUTPUT_DIRECTORY)) {
+      Object o = configs.get(CFG_OUTPUT_DIRECTORY);
+      if (o instanceof String) {
+        outputRootDir = new File((String)o);
+        if (! outputRootDir.isAbsolute()) {
+          outputRootDir = new File(configDir, (String)o);
+        }
+      } else {
+        outputRootDir = (File)o;
+      }
+    }
+  }
+
+  private void startClient(File configDir, Map<String, Object> configs)
+      throws IOException, WrongFormatException {
+    handler = new HfcDbHandler();
+    String ontoFileName = (String) configs.get(CFG_ONTOLOGY_FILE);
+    if (ontoFileName == null) {
+      throw new IOException("Ontology file is missing.");
+    }
+    handler.readConfig(new File(configDir, ontoFileName));
+  }
+
+  /** Constructor for top-level file */
+  @SuppressWarnings("unchecked")
+  public RudimantCompiler(File configDir, Map<String, Object> configs)
+      throws IOException, WrongFormatException {
+    if(configs.get(CFG_WRAPPER_CLASS) == null) {
+      System.out.println("No implementation class specified, exiting.");
+      System.exit(1);
+    }
+    startClient(configDir, configs);
+    RdfProxy proxy = new RdfProxy(handler);
+    if (configs.containsKey(CFG_NAME_TO_URI)) {
+      proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
+    }
+    String[] rootpkg = configs.get(CFG_PACKAGE) != null
+        ? ((String) configs.get(CFG_PACKAGE)).split("\\.")
+        : new String[0];
+    checkOutputDirectory(configDir, configs);
+    mem = new Mem(proxy, (String)configs.get(CFG_WRAPPER_CLASS), rootpkg);
+
+    if ((configs.containsKey(CFG_TYPE_ERROR_FATAL) &&
+        (boolean)configs.get(CFG_TYPE_ERROR_FATAL))) {
+      throwTypeErrors();
+    }
+    if (configs.containsKey(CFG_VISUALISE) &&
+        (boolean) configs.get(CFG_VISUALISE)) {
+      Visualize.init();
+      showTree();
+    }
+  }
+
   /**
    * Return the inputfile, which is relative to inputDirectory, the subdirectory
    * is specified by the subPackage, and the last entry of subPackage, which is
@@ -52,15 +108,6 @@ public class RudimantCompiler {
       result = new File(result, s);
     }
     return result;
-  }
-
-  /** Constructor for top-level file */
-  public RudimantCompiler(HfcDbHandler handler, RdfProxy proxy,
-      String wrapper, File outDir, String packageName) {
-    RudimantCompiler.handler = handler;
-    String[] rootpkg =  (packageName == null)? new String[0] : packageName.split("\\.");
-    outputRootDir = outDir;
-    mem = new Mem(proxy, wrapper, rootpkg);
   }
 
   /** Process the Agent.rudi, treating all definitions as if they came from
@@ -77,7 +124,7 @@ public class RudimantCompiler {
     }
   }
 
-  public static void shutdown() {
+  public void shutdown() {
     if (handler != null) {
       handler.shutdown();
     }

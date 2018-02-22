@@ -980,7 +980,7 @@ public class VondaGrammar
   if (yyn == 62)
     /* "VondaGrammar.y":305  */ /* lalr1.java:489  */
     {
-    yyval = new StatVarDef(true, null, (( String )(yystack.valueAt (4-(2)))), ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
+    yyval = new StatVarDef(true, new Type(null), (( String )(yystack.valueAt (4-(2)))), ((RTExpression)(yystack.valueAt (4-(3))))).setPos((yyloc));
   };
   break;
     
@@ -1007,7 +1007,7 @@ public class VondaGrammar
   if (yyn == 65)
     /* "VondaGrammar.y":314  */ /* lalr1.java:489  */
     {
-    yyval = new StatVarDef(true, null, (( String )(yystack.valueAt (3-(2)))), null).setPos((yyloc));
+    yyval = new StatVarDef(true, new Type(null), (( String )(yystack.valueAt (3-(2)))), null).setPos((yyloc));
   };
   break;
     
@@ -1610,7 +1610,7 @@ public class VondaGrammar
   case 139:
   if (yyn == 139)
     /* "VondaGrammar.y":548  */ /* lalr1.java:489  */
-    { new ExpCast(((Type)(yystack.valueAt (4-(2)))), ((RTExpression)(yystack.valueAt (4-(4))))).setPos((yyloc)); };
+    { yyval = new ExpCast(((Type)(yystack.valueAt (4-(2)))), ((RTExpression)(yystack.valueAt (4-(4))))).setPos((yyloc)); };
   break;
     
 

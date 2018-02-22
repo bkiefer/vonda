@@ -37,7 +37,7 @@ public class Visualize extends CompilerMain {
   private static RudimantCompiler initRc(boolean fakeReal)
       throws IOException, WrongFormatException {
     RuleInfo.resetIdGenerator();
-    RudimantCompiler rc = init(confDir, configs);
+    RudimantCompiler rc = new RudimantCompiler(confDir, configs);
     RudimantCompiler.INFO_DIR = "target/generatedTestFiles/";
     if (fakeReal) {
       String[] pkg = {};

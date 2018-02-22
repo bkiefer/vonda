@@ -18,8 +18,6 @@ import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.lt.hfc.WrongFormatException;
-import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -102,67 +100,6 @@ public class CompilerMain {
     configs = (Map<String, Object>) yaml.load(new FileReader(confFile));
   }
 
-  private static File checkOutputDirectory(File configDir, Map<String, Object> configs)
-      throws IOException {
-    File outputDirectory = null;
-    if (configs.containsKey(CFG_OUTPUT_DIRECTORY)) {
-      Object o = configs.get(CFG_OUTPUT_DIRECTORY);
-      if (o instanceof String) {
-        outputDirectory = new File((String)o);
-        if (! outputDirectory.isAbsolute()) {
-          outputDirectory = new File(configDir, (String)o);
-        }
-      } else {
-        outputDirectory = (File)o;
-      }
-    }
-    return outputDirectory;
-  }
-
-  private static HfcDbHandler startClient(File configDir, Map<String, Object> configs)
-      throws IOException, WrongFormatException {
-    HfcDbHandler handler = new HfcDbHandler();
-    String ontoFileName = (String) configs.get(CFG_ONTOLOGY_FILE);
-    if (ontoFileName == null) {
-      throw new IOException("Ontology file is missing.");
-    }
-    handler.readConfig(new File(configDir, ontoFileName));
-    return handler;
-  }
-
-  @SuppressWarnings("unchecked")
-  public static RudimantCompiler init(File configDir,
-      Map<String, Object> configs)
-      throws IOException, WrongFormatException {
-    if(configs.get(CFG_WRAPPER_CLASS) == null) {
-      System.out.println("No implementation class specified, exiting.");
-      System.exit(1);
-    }
-    HfcDbHandler handler = startClient(configDir, configs);
-    RdfProxy proxy = new RdfProxy(handler);
-    if (configs.containsKey(CFG_NAME_TO_URI)) {
-      proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
-    }
-    RudimantCompiler rc = new RudimantCompiler(
-        handler, proxy,
-        (String)configs.get(CFG_WRAPPER_CLASS),
-        checkOutputDirectory(configDir, configs),
-        configs.containsKey(CFG_PACKAGE)
-        ? (String) configs.get(CFG_PACKAGE)
-            : null
-        );
-    if ((configs.containsKey(CFG_TYPE_ERROR_FATAL) &&
-        (boolean)configs.get(CFG_TYPE_ERROR_FATAL))) {
-      rc.throwTypeErrors();
-    }
-    if (configs.containsKey(CFG_VISUALISE) &&
-        (boolean) configs.get(CFG_VISUALISE)) {
-      Visualize.init();
-      rc.showTree();
-    }
-    return rc;
-  }
-
   /**
    *
    * @param args: the file that should be parsed without ending (in args[0])
@@ -183,6 +120,7 @@ public class CompilerMain {
     File outputDirectory = null;
     List files = null;
     confDir = new File(".");
+    RudimantCompiler rc = null;
 
     try {
       options = parser.parse(args);
@@ -222,7 +160,8 @@ public class CompilerMain {
         configs.put(CFG_OUTPUT_DIRECTORY, outputDirectory);
       }
       main.setConfig(configs);
-      if (process(init(confDir, configs), (String)files.get(0))) {
+      rc = new RudimantCompiler(confDir, configs);
+      if (process(rc, (String)files.get(0))) {
         System.out.println("Parsing failed");
         System.exit(1);
       }
@@ -231,7 +170,7 @@ public class CompilerMain {
     } catch (IOException ex) {
       usage("A file error occured: " + ex.getMessage());
     } finally {
-      RudimantCompiler.shutdown();
+      if (rc != null) rc.shutdown();
     }
   }
 

@@ -25,7 +25,6 @@ package de.dfki.mlt.rudimant.compiler.io;
 import java.util.*;
 
 import de.dfki.mlt.rudimant.compiler.Position;
-import de.dfki.mlt.rudimant.compiler.io.VondaGrammar.Location;
 import de.dfki.mlt.rudimant.compiler.tree.ExpSingleValue;
 
 import org.slf4j.Logger;
@@ -768,29 +767,23 @@ public class VondaLexer implements VondaGrammar.Lexer {
 
   private List<String> collectedTokens = new ArrayList<String>();
 
-  /*
-  private Location getLocation() {
-    return new Location(getStartPos(), getEndPos());
-  }
-  */
-
   private int charLiteral(String charval) {
-    yylval = new ExpSingleValue(charval, "char");//.setPos(getLocation());
+    yylval = new ExpSingleValue(charval, "char");
     return VondaGrammar.Lexer.OTHER_LITERAL;
   }
 
   private int intLiteral(String intval) {
-    yylval = new ExpSingleValue(intval, "int");//.setPos(getLocation());
+    yylval = new ExpSingleValue(intval, "int");
     return VondaGrammar.Lexer.INT;
   }
 
   private int floatLiteral(String floatval) {
-    yylval = new ExpSingleValue(floatval, "float");//.setPos(getLocation());
+    yylval = new ExpSingleValue(floatval, "float");
     return VondaGrammar.Lexer.OTHER_LITERAL;
   }
 
   private int booleanLiteral(String boolval) {
-    yylval = new ExpSingleValue(boolval, "boolean");//.setPos(getLocation());
+    yylval = new ExpSingleValue(boolval, "boolean");
     return VondaGrammar.Lexer.OTHER_LITERAL;
   }
 
@@ -1280,7 +1273,7 @@ public class VondaLexer implements VondaGrammar.Lexer {
           case 56: break;
           case 10: 
             { yybegin(YYINITIAL);
-  yylval = new ExpSingleValue(string.toString(), "String");//.setPos(getLocation());
+  yylval = new ExpSingleValue(string.toString(), "String");
   return VondaGrammar.Lexer.STRING;
             }
           case 57: break;

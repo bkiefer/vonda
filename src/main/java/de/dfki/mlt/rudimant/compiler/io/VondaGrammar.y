@@ -303,7 +303,7 @@ label_statement
 
 var_def
   : FINAL VARIABLE assgn_exp ';' {
-    $$ = new StatVarDef(true, null, $2, $3).setPos(@$);
+    $$ = new StatVarDef(true, new Type(null), $2, $3).setPos(@$);
   }
   | type_spec VARIABLE assgn_exp ';' {
     $$ = new StatVarDef(false, $1, $2, $3).setPos(@$);
@@ -312,7 +312,7 @@ var_def
     $$ = new StatVarDef(true, $2, $3, $4).setPos(@$);
   }
   | FINAL VARIABLE ';' {
-    $$ = new StatVarDef(true, null, $2, null).setPos(@$);
+    $$ = new StatVarDef(true, new Type(null), $2, null).setPos(@$);
   }
   | type_spec VARIABLE ';' {
     $$ = new StatVarDef(false, $1, $2, null).setPos(@$);
@@ -545,7 +545,7 @@ UnaryExpression
 
 CastExpression
   : UnaryExpression { $$ = $1; }
-  | '(' type_spec ')' CastExpression { new ExpCast($2, $4).setPos(@$); }
+  | '(' type_spec ')' CastExpression { $$ = new ExpCast($2, $4).setPos(@$); }
   ;
 //  | '(' exp ')' LogicalUnaryExpression { new ExpCast($2, $4); }
 
