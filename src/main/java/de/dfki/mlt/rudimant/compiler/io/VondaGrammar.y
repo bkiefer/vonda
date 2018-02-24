@@ -341,14 +341,14 @@ method_declaration
   : class_spec type_spec VARIABLE '(' ')' opt_block {
     $$ = new StatMethodDeclaration("public", $2, $1, $3, null, $6).setPos(@$);
   }
-  | class_spec type_spec VARIABLE '(' args_list opt_block {
-    $$ = new StatMethodDeclaration("public", $2, $1, $3, $5, $6).setPos(@$);
+  | class_spec type_spec VARIABLE '(' args_list ')' opt_block {
+    $$ = new StatMethodDeclaration("public", $2, $1, $3, $5, $7).setPos(@$);
   }
   | class_spec           VARIABLE '(' ')' opt_block {
     $$ = new StatMethodDeclaration("public", null, $1, $2, null, $5).setPos(@$);
   }
-  | class_spec           VARIABLE '(' args_list opt_block {
-    $$ = new StatMethodDeclaration("public", null, $1, $2, $4, $5).setPos(@$);
+  | class_spec           VARIABLE '(' args_list ')' opt_block {
+    $$ = new StatMethodDeclaration("public", null, $1, $2, $4, $6).setPos(@$);
   }
   |            type_spec VARIABLE '(' ')' opt_block {
     $$ = new StatMethodDeclaration("public", $1, null, $2, null, $5).setPos(@$);
@@ -359,8 +359,8 @@ method_declaration
   |                      VARIABLE '(' ')' block {
     $$ = new StatMethodDeclaration("public", null, null, $1, null, $4).setPos(@$);
   }
-  |                      VARIABLE '(' args_list block {
-    $$ = new StatMethodDeclaration("public", null, null, $1, $3, $4).setPos(@$);
+  |                      VARIABLE '(' args_list ')' block {
+    $$ = new StatMethodDeclaration("public", null, null, $1, $3, $5).setPos(@$);
   }
   ;
 
@@ -373,8 +373,8 @@ opt_block
   ;
 
 args_list
-  : VARIABLE ')' { $$ = new LinkedList(){{ add($1); }}; }
-  | type_spec VARIABLE ')' { $$ = new LinkedList(){{ add($1); add($2); }}; }
+  : VARIABLE { $$ = new LinkedList(){{ add($1); }}; }
+  | type_spec VARIABLE { $$ = new LinkedList(){{ add($1); add($2); }}; }
   | VARIABLE ',' args_list { $$ = $3; $3.addFirst($1); }
   | type_spec VARIABLE ',' args_list {
     $$ = $4; $4.addFirst($2); $4.addFirst($1);
@@ -654,11 +654,11 @@ new_exp
   ;
 
 lambda_exp
-  : '(' args_list ARROW exp {
-    $$ = new ExpLambda($2, $4).setPos(@$);
+  : '(' args_list ')' ARROW exp {
+    $$ = new ExpLambda($2, $5).setPos(@$);
   }
-  | '(' args_list ARROW block {
-    $$ = new ExpLambda($2, $4).setPos(@$);
+  | '(' args_list ')' ARROW block {
+    $$ = new ExpLambda($2, $5).setPos(@$);
   }
   | '(' ')' ARROW exp {
     $$ = new ExpLambda(new LinkedList<>(), $4).setPos(@$);
