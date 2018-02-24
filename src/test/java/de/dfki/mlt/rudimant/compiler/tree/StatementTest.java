@@ -91,7 +91,7 @@ public class StatementTest {
  public void StatementTest6(){
    // TODO: the empty statement after case is not wrong, but it is kind of funny
    String in = "int i; boolean truth; "
-           + "switch(truth){case (truth): i=2;  case(truth==false): i=1;}";
+           + "switch(truth){case true: i=2;  case false: i=1;}";
     String r = generate(in);
     String expected = "int i;boolean truth;switch (truth){ case (truth):; "
             + "i = 2;case (truth==false):; i = 1; }";

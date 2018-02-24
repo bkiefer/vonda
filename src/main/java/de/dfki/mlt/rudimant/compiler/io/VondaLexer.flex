@@ -68,7 +68,7 @@ import org.slf4j.LoggerFactory;
 
   private int booleanLiteral(String boolval) {
     yylval = new ExpSingleValue(boolval, "boolean");
-    return VondaGrammar.Lexer.OTHER_LITERAL;
+    return VondaGrammar.Lexer.BOOL_LITERAL;
   }
 
   /**
@@ -251,12 +251,13 @@ SingleCharacter = [^\r\n\'\\]
   "++"                           { return VondaGrammar.Lexer.PLUSPLUS; }
   "--"                           { return VondaGrammar.Lexer.MINUSMINUS; }
 
-  /* NOTUSED
+  "+="                           { return VondaGrammar.Lexer.PLUSEQ; }
+  "-="                           { return VondaGrammar.Lexer.MINUSEQ; }
+
+/* NOTUSED
   "<<"                           { return VondaGrammar.Lexer.LSHIFT; }
   ">>"                           { return VondaGrammar.Lexer.RSHIFT; }
   ">>>"                          { return VondaGrammar.Lexer.URSHIFT; }
-  "+="                           { return VondaGrammar.Lexer.PLUSEQ; }
-  "-="                           { return VondaGrammar.Lexer.MINUSEQ; }
   "*="                           { return VondaGrammar.Lexer.MULTEQ; }
   "/="                           { return VondaGrammar.Lexer.DIVEQ; }
   "&="                           { return VondaGrammar.Lexer.ANDEQ; }

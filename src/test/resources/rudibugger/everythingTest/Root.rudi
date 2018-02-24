@@ -1,9 +1,9 @@
 rule_one:
 if (test = 1) {
-  bla;
+  bla = 0;
   rule_one_a:
   if (test = 10) {
-    blc;
+    blc = 1;
   }
 }
 
@@ -11,8 +11,8 @@ import Import1;
 
 rule_two:
 if (test = 2) {
-  bla;
+  bla = 0;
   rule_two_a:
-  if (test = 3) 
-    bly;
+  if (test = 3)
+    bly = 0;
 }

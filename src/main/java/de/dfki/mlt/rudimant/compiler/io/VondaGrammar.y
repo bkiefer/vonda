@@ -104,6 +104,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %token < ExpSingleValue > STRING
 %token < String > WILDCARD
 %token < ExpSingleValue > INT
+%token < ExpSingleValue > BOOL_LITERAL
 %token < String > VARIABLE
 %token < ExpSingleValue > OTHER_LITERAL
 
@@ -147,6 +148,18 @@ path
 statement
   : block { $$ = $1; }
   | assignment ';' { $$ = new StatExpression($1).setPos(@$); }
+  | PLUSPLUS UnaryExpression ';' {
+    ExpSingleValue es = new ExpSingleValue("1", "int"); es.setPos(@$);
+    ExpArithmetic ar = new ExpArithmetic($2, es, "+");
+    ar.setPos(@$);
+    $$ = new StatExpression(ar).setPos(@$);
+  }
+  | MINUSMINUS UnaryExpression ';' {
+    ExpSingleValue es = new ExpSingleValue("1", "int"); es.setPos(@$);
+    ExpArithmetic ar = new ExpArithmetic($2, es, "-");
+    ar.setPos(@$);
+    $$ = new StatExpression(ar).setPos(@$);
+  }
   | function_call ';' { $$ = new StatExpression($1).setPos(@$); }
   | grammar_rule { $$ = $1; }
   | set_operation { $$ = $1; }
@@ -286,6 +299,13 @@ label_statement
     val.setPos(@$); lbl.setPos(@$);
     $$ = lbl;
   }
+  | CASE BOOL_LITERAL ':'      {
+    ExpSingleValue val =
+      new ExpSingleValue("case " + $2.toString() + ":", "label");
+    RTStatement lbl = val.ensureStatement();
+    val.setPos(@$); lbl.setPos(@$);
+    $$ = lbl;
+  }
   | CASE VARIABLE ':' {
     ExpSingleValue val =
       new ExpSingleValue("case " + $2 + ":", "label");
@@ -353,8 +373,8 @@ method_declaration
   |            type_spec VARIABLE '(' ')' opt_block {
     $$ = new StatMethodDeclaration("public", $1, null, $2, null, $5).setPos(@$);
   }
-  |            type_spec VARIABLE '(' args_list opt_block {
-    $$ = new StatMethodDeclaration("public", $1, null, $2, $4, $5).setPos(@$);
+  |            type_spec VARIABLE '(' args_list ')' opt_block {
+    $$ = new StatMethodDeclaration("public", $1, null, $2, $4, $6).setPos(@$);
   }
   |                      VARIABLE '(' ')' block {
     $$ = new StatMethodDeclaration("public", null, null, $1, null, $4).setPos(@$);
@@ -589,6 +609,7 @@ Literal
   : STRING { $$ = $1; $1.setPos(@$); }
   | INT { $$ = $1; $1.setPos(@$); }
   | OTHER_LITERAL { $$ = $1; $1.setPos(@$); }
+  | BOOL_LITERAL { $$ = $1; $1.setPos(@$); }
   ;
 
 ArrayAccess
@@ -641,15 +662,21 @@ new_exp
   | NEW VARIABLE '(' nonempty_exp_list ')' {
     $$ = new ExpNew(new Type($2), $4).setPos(@$);
   }
-  | NEW type_spec '(' ')' {
-    $$ = new ExpNew($2, new LinkedList<>()).setPos(@$);
-  }
-  | NEW type_spec '(' nonempty_exp_list')' {
-    $$ = new ExpNew($2, $4).setPos(@$);
-  }
   | NEW VARIABLE '[' exp ']' {
     $$ = new ExpNew(new Type("Array", new Type($2)),
                     new LinkedList<RTExpression>(){{ add($4); }}).setPos(@$);
+  }
+  | NEW VARIABLE '[' ']' '(' exp ')'{
+    $$ = new ExpNew(new Type("Array", new Type($2)),
+                    new LinkedList<RTExpression>(){{ add($6); }}).setPos(@$);
+  }
+  | NEW VARIABLE '<' type_spec_list '>' '(' ')' {
+    $$ = new ExpNew(new Type($2, $4.toArray(new Type[$4.size()])),
+                    new LinkedList<>()).setPos(@$);
+  }
+  | NEW VARIABLE '<' type_spec_list '>' '(' nonempty_exp_list ')' {
+    $$ = new ExpNew(new Type($2, $4.toArray(new Type[$4.size()])),
+                    $7).setPos(@$);
   }
   ;
 

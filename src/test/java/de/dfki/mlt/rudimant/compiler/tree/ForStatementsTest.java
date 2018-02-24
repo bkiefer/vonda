@@ -75,7 +75,7 @@ public class ForStatementsTest {
 
   @Test
   public void testWhile() {
-    String stat = "{ int n = 0; while ((n = random(7)) == correct) { n++; } }";
+    String stat = "{ int n = 0; while ((n = random(7)) == correct) { ++n; } }";
     String s = generate(stat);
     String expected = "{ int n = 0;while ((n = random(7)) == correct){ n = (n+1); }";
     assertEquals(expected, getForMarked(s, expected));
@@ -84,7 +84,7 @@ public class ForStatementsTest {
   // exp to statement in for
   @Test
   public void testForExp() {
-    String in = "public int lab(){ for(s : child.sessions) 23; }";
+    String in = "public int lab(){ for(s : child.sessions) x = 23; }";
     String exp = "public int lab() { for (Object s_outer : child.sessions) {"
             + " Object s = (Object)s_outer; 23; } }";
     String s = generate(in);

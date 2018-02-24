@@ -42,7 +42,7 @@ public class LambdaTest {
 
   @Test
   public void testComplexLambdaExp() {
-    String in = "Set<Child> cs; cs.contains((c) -> {((Child)c).forename.equals(\"John\");});";
+    String in = "Set<Child> cs; b = cs.contains((c) -> {((Child)c).forename.equals(\"John\");});";
     String r = generate(in);
     String expected = "public Set<Rdf> cs;/**/cs.contains((c) -> {"
             + " ((String)((Rdf)c).getSingleValue(\"<dom:forename>\")).equals(\"John\"); } );";
