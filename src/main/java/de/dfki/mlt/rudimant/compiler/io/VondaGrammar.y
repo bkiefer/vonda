@@ -17,7 +17,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %type <LinkedList<RudiTree>> grammar_file
 %type <LinkedList<RTExpression>> nonempty_exp_list nonempty_args_list
 %type <LinkedList<RTExpression>> field_access_rest da_args
-%type <RTExpression> exp assgn_exp lambda_exp if_exp assignment
+%type <RTExpression> exp assgn_exp lambda_exp ConditionalExpression assignment
 %type <RTExpression> ConditionalOrExpression ConditionalAndExpression
 %type <RTExpression> dialogueact_exp InclusiveOrExpression
 %type <RTExpression> ExclusiveOrExpression AndExpression EqualityExpression
@@ -439,7 +439,7 @@ type_spec_list
   ;
 
 exp
-  : if_exp { $$ = $1; }
+  : ConditionalExpression { $$ = $1; }
   | assignment { $$ = $1; }
   | ConditionalOrExpression { $$ = $1; }
 //| dialogueact_exp { $$ = $1; }
@@ -599,31 +599,9 @@ ArrayAccess
   | ComplexPrimary '[' exp ']' { $$ = new ExpArrayAccess($1, $3).setPos(@$); }
   ;
 
-if_exp
+ConditionalExpression
   : exp '?' exp ':' exp { $$ = new ExpConditional($1, $3, $5).setPos(@$); }
   ;
-
-/*
-: '(' type_spec ')' exp {}
-//| complex_exp {}
-  | if_exp {}
-//  | string_expression {}
-  | boolean_exp {}
-  | new_exp {}
-  | lambda_exp {}
-//  | nonbool_exp // missing here: in boolean_exp, but incorrecty treated there
-;
-
-
-nonbool_exp
-  : arithmetic {}
-  | dialogueact_exp {}
-  | assignment {}
-  | STRING {}
-  | '(' exp ')' {}
-  | NULL {}
-  ;
-*/
 
 // TODO: is that all 'what you can assign to' (an lvalue), which can be:
 // a variable, an array element, an rdf slot (did i forget sth?)
