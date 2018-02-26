@@ -764,29 +764,42 @@ public class VondaLexer implements VondaGrammar.Lexer {
   /* user code: */
   private static final Logger logger = LoggerFactory.getLogger(VondaLexer.class);
 
+  public class Token {
+    public String s;
+    public Position start, end;
+
+    private Token(String s, Position start, Position  end) {
+      this.s = s;
+      this.start = start;
+      this.end = end;
+    }
+  }
+
   private Object yylval;
   private StringBuffer string = new StringBuffer();
 
-  private List<String> collectedTokens = new ArrayList<String>();
+  private List<Token> commentTokens = new ArrayList<Token>();
+
+  private List<Token> tokens = new ArrayList<Token>();
 
   private int charLiteral(String charval) {
     yylval = new ExpSingleValue(charval, "char");
-    return VondaGrammar.Lexer.OTHER_LITERAL;
+    return token(VondaGrammar.Lexer.OTHER_LITERAL);
   }
 
   private int intLiteral(String intval) {
     yylval = new ExpSingleValue(intval, "int");
-    return VondaGrammar.Lexer.INT;
+    return token(VondaGrammar.Lexer.INT);
   }
 
   private int floatLiteral(String floatval) {
     yylval = new ExpSingleValue(floatval, "float");
-    return VondaGrammar.Lexer.OTHER_LITERAL;
+    return token(VondaGrammar.Lexer.OTHER_LITERAL);
   }
 
   private int booleanLiteral(String boolval) {
     yylval = new ExpSingleValue(boolval, "boolean");
-    return VondaGrammar.Lexer.BOOL_LITERAL;
+    return token(VondaGrammar.Lexer.BOOL_LITERAL);
   }
 
   /**
@@ -794,7 +807,7 @@ public class VondaLexer implements VondaGrammar.Lexer {
    * @return the position at which the last scanned token starts.
    */
   public Position getStartPos() {
-    return new Position(yyline, yycolumn, "");
+    return new Position(yyline, yycolumn, yychar, "");
   }
 
   /**
@@ -802,7 +815,7 @@ public class VondaLexer implements VondaGrammar.Lexer {
    * @return the first position beyond the last scanned token.
    */
   public Position getEndPos() {
-    return new Position(yyline, yycolumn + yylength(), "");
+    return new Position(yyline, yycolumn + yylength(), yychar + yylength(), "");
   }
 
   /**
@@ -846,7 +859,45 @@ public class VondaLexer implements VondaGrammar.Lexer {
 
   /** Return the collected tokens
    */
-  public List<String> getCollectedTokens() { return collectedTokens; }
+  public List<Token> getCollectedTokens() { return commentTokens; }
+
+  /** Add a non-comment and non-whitespace token */
+  public int token(int token) {
+    tokens.add(new Token(yytext(), getStartPos(), getEndPos()));
+    return token;
+  }
+
+  /** Add a comment or whitespace token */
+  public void addComment(String comment) {
+    commentTokens.add(new Token(comment, getStartPos(), getEndPos()));
+  }
+
+  /** find the position of the token that starts at or immediately after pos */
+  public int indexOf(List<Token> tokens, Position start) {
+    for(int i = 0; i < tokens.size(); ++i) {
+      if (tokens.get(i).start.compareTo(start) >= 0) return i;
+    }
+    return -1;
+  }
+
+  public String getFullText(Position start, Position end) {
+    StringBuffer sb = new StringBuffer();
+    // find the positions of the first token starting at start
+    int comm = indexOf(commentTokens, start);
+    int cont = indexOf(tokens, start);
+    while (commentTokens.get(comm).end.compareTo(end) <= 0 ||
+           tokens.get(cont).end.compareTo(end) <= 0) {
+      // find which token is next, append it and increase the appropriate index
+      if (commentTokens.get(comm).start.compareTo(tokens.get(cont).start) <= 0){
+        sb.append(commentTokens.get(comm));
+        ++comm;
+      } else {
+        sb.append(tokens.get(cont));
+        ++cont;
+      }
+    }
+    return sb.toString();
+  }
 
 
   /**
@@ -1242,15 +1293,16 @@ public class VondaLexer implements VondaGrammar.Lexer {
             }
           case 50: break;
           case 2: 
-            { collectedTokens.add(yytext());
+            { addComment(yytext());
             }
           case 51: break;
           case 3: 
-            { return (int)yycharat(0);
+            { return token((int)yycharat(0));
             }
           case 52: break;
           case 4: 
-            { yylval = yytext(); return VondaGrammar.Lexer.VARIABLE;
+            { yylval = yytext();
+  return token(VondaGrammar.Lexer.VARIABLE);
             }
           case 53: break;
           case 5: 
@@ -1276,7 +1328,7 @@ public class VondaLexer implements VondaGrammar.Lexer {
           case 10: 
             { yybegin(YYINITIAL);
   yylval = new ExpSingleValue(string.toString(), "String");
-  return VondaGrammar.Lexer.STRING;
+  return token(VondaGrammar.Lexer.STRING);
             }
           case 59: break;
           case 11: 
@@ -1288,55 +1340,55 @@ public class VondaLexer implements VondaGrammar.Lexer {
             }
           case 61: break;
           case 13: 
-            { return VondaGrammar.Lexer.MINUSMINUS;
+            { return token(VondaGrammar.Lexer.MINUSMINUS);
             }
           case 62: break;
           case 14: 
-            { return VondaGrammar.Lexer.MINUSEQ;
+            { return token(VondaGrammar.Lexer.MINUSEQ);
             }
           case 63: break;
           case 15: 
-            { return VondaGrammar.Lexer.ARROW;
+            { return token(VondaGrammar.Lexer.ARROW);
             }
           case 64: break;
           case 16: 
-            { return VondaGrammar.Lexer.IF;
+            { return token(VondaGrammar.Lexer.IF);
             }
           case 65: break;
           case 17: 
-            { return VondaGrammar.Lexer.DO;
+            { return token(VondaGrammar.Lexer.DO);
             }
           case 66: break;
           case 18: 
-            { return VondaGrammar.Lexer.EQEQ;
+            { return token(VondaGrammar.Lexer.EQEQ);
             }
           case 67: break;
           case 19: 
-            { return VondaGrammar.Lexer.GTEQ;
+            { return token(VondaGrammar.Lexer.GTEQ);
             }
           case 68: break;
           case 20: 
-            { return VondaGrammar.Lexer.LTEQ;
+            { return token(VondaGrammar.Lexer.LTEQ);
             }
           case 69: break;
           case 21: 
-            { return VondaGrammar.Lexer.NOTEQ;
+            { return token(VondaGrammar.Lexer.NOTEQ);
             }
           case 70: break;
           case 22: 
-            { return VondaGrammar.Lexer.PLUSEQ;
+            { return token(VondaGrammar.Lexer.PLUSEQ);
             }
           case 71: break;
           case 23: 
-            { return VondaGrammar.Lexer.PLUSPLUS;
+            { return token(VondaGrammar.Lexer.PLUSPLUS);
             }
           case 72: break;
           case 24: 
-            { return VondaGrammar.Lexer.ANDAND;
+            { return token(VondaGrammar.Lexer.ANDAND);
             }
           case 73: break;
           case 25: 
-            { return VondaGrammar.Lexer.OROR;
+            { return token(VondaGrammar.Lexer.OROR);
             }
           case 74: break;
           case 26: 
@@ -1348,23 +1400,23 @@ public class VondaLexer implements VondaGrammar.Lexer {
             }
           case 76: break;
           case 28: 
-            { return VondaGrammar.Lexer.NEW;
+            { return token(VondaGrammar.Lexer.NEW);
             }
           case 77: break;
           case 29: 
-            { return VondaGrammar.Lexer.FOR;
+            { return token(VondaGrammar.Lexer.FOR);
             }
           case 78: break;
           case 30: 
-            { return VondaGrammar.Lexer.ELSE;
+            { return token(VondaGrammar.Lexer.ELSE);
             }
           case 79: break;
           case 31: 
-            { return VondaGrammar.Lexer.CASE;
+            { return token(VondaGrammar.Lexer.CASE);
             }
           case 80: break;
           case 32: 
-            { return VondaGrammar.Lexer.NULL;
+            { return token(VondaGrammar.Lexer.NULL);
             }
           case 81: break;
           case 33: 
@@ -1372,67 +1424,67 @@ public class VondaLexer implements VondaGrammar.Lexer {
             }
           case 82: break;
           case 34: 
-            { return VondaGrammar.Lexer.BREAK;
+            { return token(VondaGrammar.Lexer.BREAK);
             }
           case 83: break;
           case 35: 
-            { return VondaGrammar.Lexer.FINAL;
+            { return token(VondaGrammar.Lexer.FINAL);
             }
           case 84: break;
           case 36: 
-            { return VondaGrammar.Lexer.WHILE;
+            { return token(VondaGrammar.Lexer.WHILE);
             }
           case 85: break;
           case 37: 
-            { return VondaGrammar.Lexer.RETURN;
+            { return token(VondaGrammar.Lexer.RETURN);
             }
           case 86: break;
           case 38: 
-            { return VondaGrammar.Lexer.CANCEL;
+            { return token(VondaGrammar.Lexer.CANCEL);
             }
           case 87: break;
           case 39: 
-            { return VondaGrammar.Lexer.SWITCH;
+            { return token(VondaGrammar.Lexer.SWITCH);
             }
           case 88: break;
           case 40: 
-            { return VondaGrammar.Lexer.IMPORT;
+            { return token(VondaGrammar.Lexer.IMPORT);
             }
           case 89: break;
           case 41: 
-            { return VondaGrammar.Lexer.PUBLIC;
+            { return token(VondaGrammar.Lexer.PUBLIC);
             }
           case 90: break;
           case 42: 
-            { return VondaGrammar.Lexer.TIMEOUT;
+            { return token(VondaGrammar.Lexer.TIMEOUT);
             }
           case 91: break;
           case 43: 
-            { return VondaGrammar.Lexer.DEFAULT;
+            { return token(VondaGrammar.Lexer.DEFAULT);
             }
           case 92: break;
           case 44: 
-            { return VondaGrammar.Lexer.PROPOSE;
+            { return token(VondaGrammar.Lexer.PROPOSE);
             }
           case 93: break;
           case 45: 
-            { return VondaGrammar.Lexer.PRIVATE;
+            { return token(VondaGrammar.Lexer.PRIVATE);
             }
           case 94: break;
           case 46: 
-            { return VondaGrammar.Lexer.CONTINUE;
+            { return token(VondaGrammar.Lexer.CONTINUE);
             }
           case 95: break;
           case 47: 
-            { return VondaGrammar.Lexer.PROTECTED;
+            { return token(VondaGrammar.Lexer.PROTECTED);
             }
           case 96: break;
           case 48: 
-            { return VondaGrammar.Lexer.CANCEL_ALL;
+            { return token(VondaGrammar.Lexer.CANCEL_ALL);
             }
           case 97: break;
           case 49: 
-            { return VondaGrammar.Lexer.TIMEOUT_BEHAVIOUR;
+            { return token(VondaGrammar.Lexer.TIMEOUT_BEHAVIOUR);
             }
           case 98: break;
           default:

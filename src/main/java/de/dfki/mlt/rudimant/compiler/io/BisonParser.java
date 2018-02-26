@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 
+import de.dfki.mlt.rudimant.compiler.io.VondaLexer.Token;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
 
 public class BisonParser {
@@ -17,7 +18,7 @@ public class BisonParser {
     grammar.setErrorVerbose(true);
     if (! grammar.parse()) return null;
     GrammarFile result = grammar.getResult();
-    result.tokens = new LinkedList();// lexer.getCollectedTokens();
+    result.tokens = new LinkedList(); //lexer.getCollectedTokens();
     return result;
   }
 }

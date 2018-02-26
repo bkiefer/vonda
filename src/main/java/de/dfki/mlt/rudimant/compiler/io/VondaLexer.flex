@@ -46,29 +46,42 @@ import org.slf4j.LoggerFactory;
 %{
   private static final Logger logger = LoggerFactory.getLogger(VondaLexer.class);
 
+  public class Token {
+    public String s;
+    public Position start, end;
+
+    private Token(String s, Position start, Position  end) {
+      this.s = s;
+      this.start = start;
+      this.end = end;
+    }
+  }
+
   private Object yylval;
   private StringBuffer string = new StringBuffer();
 
-  private List<String> collectedTokens = new ArrayList<String>();
+  private List<Token> commentTokens = new ArrayList<Token>();
+
+  private List<Token> tokens = new ArrayList<Token>();
 
   private int charLiteral(String charval) {
     yylval = new ExpSingleValue(charval, "char");
-    return VondaGrammar.Lexer.OTHER_LITERAL;
+    return token(VondaGrammar.Lexer.OTHER_LITERAL);
   }
 
   private int intLiteral(String intval) {
     yylval = new ExpSingleValue(intval, "int");
-    return VondaGrammar.Lexer.INT;
+    return token(VondaGrammar.Lexer.INT);
   }
 
   private int floatLiteral(String floatval) {
     yylval = new ExpSingleValue(floatval, "float");
-    return VondaGrammar.Lexer.OTHER_LITERAL;
+    return token(VondaGrammar.Lexer.OTHER_LITERAL);
   }
 
   private int booleanLiteral(String boolval) {
     yylval = new ExpSingleValue(boolval, "boolean");
-    return VondaGrammar.Lexer.BOOL_LITERAL;
+    return token(VondaGrammar.Lexer.BOOL_LITERAL);
   }
 
   /**
@@ -76,7 +89,7 @@ import org.slf4j.LoggerFactory;
    * @return the position at which the last scanned token starts.
    */
   public Position getStartPos() {
-    return new Position(yyline, yycolumn, "");
+    return new Position(yyline, yycolumn, yychar, "");
   }
 
   /**
@@ -84,7 +97,7 @@ import org.slf4j.LoggerFactory;
    * @return the first position beyond the last scanned token.
    */
   public Position getEndPos() {
-    return new Position(yyline, yycolumn + yylength(), "");
+    return new Position(yyline, yycolumn + yylength(), yychar + yylength(), "");
   }
 
   /**
@@ -128,7 +141,45 @@ import org.slf4j.LoggerFactory;
 
   /** Return the collected tokens
    */
-  public List<String> getCollectedTokens() { return collectedTokens; }
+  public List<Token> getCollectedTokens() { return commentTokens; }
+
+  /** Add a non-comment and non-whitespace token */
+  public int token(int token) {
+    tokens.add(new Token(yytext(), getStartPos(), getEndPos()));
+    return token;
+  }
+
+  /** Add a comment or whitespace token */
+  public void addComment(String comment) {
+    commentTokens.add(new Token(comment, getStartPos(), getEndPos()));
+  }
+
+  /** find the position of the token that starts at or immediately after pos */
+  public int indexOf(List<Token> tokens, Position start) {
+    for(int i = 0; i < tokens.size(); ++i) {
+      if (tokens.get(i).start.compareTo(start) >= 0) return i;
+    }
+    return -1;
+  }
+
+  public String getFullText(Position start, Position end) {
+    StringBuffer sb = new StringBuffer();
+    // find the positions of the first token starting at start
+    int comm = indexOf(commentTokens, start);
+    int cont = indexOf(tokens, start);
+    while (commentTokens.get(comm).end.compareTo(end) <= 0 ||
+           tokens.get(cont).end.compareTo(end) <= 0) {
+      // find which token is next, append it and increase the appropriate index
+      if (commentTokens.get(comm).start.compareTo(tokens.get(cont).start) <= 0){
+        sb.append(commentTokens.get(comm));
+        ++comm;
+      } else {
+        sb.append(tokens.get(cont));
+        ++cont;
+      }
+    }
+    return sb.toString();
+  }
 %}
 
 /* main character classes */
@@ -180,36 +231,36 @@ SingleCharacter = [^\r\n\'\\]
 <YYINITIAL> {
 
   /* keywords */
-  "break"                        { return VondaGrammar.Lexer.BREAK; }
-  "cancel"                       { return VondaGrammar.Lexer.CANCEL; }
-  "cancel_all"                   { return VondaGrammar.Lexer.CANCEL_ALL; }
-  "case"                         { return VondaGrammar.Lexer.CASE; }
-  "continue"                     { return VondaGrammar.Lexer.CONTINUE; }
-  "default"                      { return VondaGrammar.Lexer.DEFAULT; }
-  "do"                           { return VondaGrammar.Lexer.DO; }
-  "else"                         { return VondaGrammar.Lexer.ELSE; }
-  "final"                        { return VondaGrammar.Lexer.FINAL; }
-  "for"                          { return VondaGrammar.Lexer.FOR; }
-  "if"                           { return VondaGrammar.Lexer.IF; }
-  "import"                       { return VondaGrammar.Lexer.IMPORT; }
-  "new"                          { return VondaGrammar.Lexer.NEW; }
-  "null"                         { return VondaGrammar.Lexer.NULL; }
-  "private"                      { return VondaGrammar.Lexer.PRIVATE; }
-  "propose"                      { return VondaGrammar.Lexer.PROPOSE; }
-  "protected"                    { return VondaGrammar.Lexer.PROTECTED; }
-  "public"                       { return VondaGrammar.Lexer.PUBLIC; }
-  "return"                       { return VondaGrammar.Lexer.RETURN; }
-  "switch"                       { return VondaGrammar.Lexer.SWITCH; }
-  "timeout"                      { return VondaGrammar.Lexer.TIMEOUT; }
-  "timeout_behaviour"            { return VondaGrammar.Lexer.TIMEOUT_BEHAVIOUR; }
-  "while"                        { return VondaGrammar.Lexer.WHILE; }
+  "break"                        { return token(VondaGrammar.Lexer.BREAK); }
+  "cancel"                       { return token(VondaGrammar.Lexer.CANCEL); }
+  "cancel_all"                   { return token(VondaGrammar.Lexer.CANCEL_ALL); }
+  "case"                         { return token(VondaGrammar.Lexer.CASE); }
+  "continue"                     { return token(VondaGrammar.Lexer.CONTINUE); }
+  "default"                      { return token(VondaGrammar.Lexer.DEFAULT); }
+  "do"                           { return token(VondaGrammar.Lexer.DO); }
+  "else"                         { return token(VondaGrammar.Lexer.ELSE); }
+  "final"                        { return token(VondaGrammar.Lexer.FINAL); }
+  "for"                          { return token(VondaGrammar.Lexer.FOR); }
+  "if"                           { return token(VondaGrammar.Lexer.IF); }
+  "import"                       { return token(VondaGrammar.Lexer.IMPORT); }
+  "new"                          { return token(VondaGrammar.Lexer.NEW); }
+  "null"                         { return token(VondaGrammar.Lexer.NULL); }
+  "private"                      { return token(VondaGrammar.Lexer.PRIVATE); }
+  "propose"                      { return token(VondaGrammar.Lexer.PROPOSE); }
+  "protected"                    { return token(VondaGrammar.Lexer.PROTECTED); }
+  "public"                       { return token(VondaGrammar.Lexer.PUBLIC); }
+  "return"                       { return token(VondaGrammar.Lexer.RETURN); }
+  "switch"                       { return token(VondaGrammar.Lexer.SWITCH); }
+  "timeout"                      { return token(VondaGrammar.Lexer.TIMEOUT); }
+  "timeout_behaviour"            { return token(VondaGrammar.Lexer.TIMEOUT_BEHAVIOUR); }
+  "while"                        { return token(VondaGrammar.Lexer.WHILE); }
 
   /* boolean literals */
   "true"                         |
   "false"                        { return booleanLiteral(yytext()); }
 
   /* null literal */
-  "null"                         { return VondaGrammar.Lexer.NULL; }
+  "null"                         { return token(VondaGrammar.Lexer.NULL); }
 
 
   /* separators */
@@ -221,7 +272,7 @@ SingleCharacter = [^\r\n\'\\]
   "]" |
   ";" |
   "," |
-  "."                            { return (int)yycharat(0); }
+  "."                            { return token((int)yycharat(0)); }
 
   /* operators */
   "=" |
@@ -239,34 +290,34 @@ SingleCharacter = [^\r\n\'\\]
   "|" |
   "^" |
   "#" |
-  "%"                            { return (int)yycharat(0); }
+  "%"                            { return token((int)yycharat(0)); }
 
-  "->"                           { return VondaGrammar.Lexer.ARROW; }
-  "=="                           { return VondaGrammar.Lexer.EQEQ; }
-  "<="                           { return VondaGrammar.Lexer.LTEQ; }
-  ">="                           { return VondaGrammar.Lexer.GTEQ; }
-  "!="                           { return VondaGrammar.Lexer.NOTEQ; }
-  "&&"                           { return VondaGrammar.Lexer.ANDAND; }
-  "||"                           { return VondaGrammar.Lexer.OROR; }
-  "++"                           { return VondaGrammar.Lexer.PLUSPLUS; }
-  "--"                           { return VondaGrammar.Lexer.MINUSMINUS; }
+  "->"                           { return token(VondaGrammar.Lexer.ARROW); }
+  "=="                           { return token(VondaGrammar.Lexer.EQEQ); }
+  "<="                           { return token(VondaGrammar.Lexer.LTEQ); }
+  ">="                           { return token(VondaGrammar.Lexer.GTEQ); }
+  "!="                           { return token(VondaGrammar.Lexer.NOTEQ); }
+  "&&"                           { return token(VondaGrammar.Lexer.ANDAND); }
+  "||"                           { return token(VondaGrammar.Lexer.OROR); }
+  "++"                           { return token(VondaGrammar.Lexer.PLUSPLUS); }
+  "--"                           { return token(VondaGrammar.Lexer.MINUSMINUS); }
 
-  "+="                           { return VondaGrammar.Lexer.PLUSEQ; }
-  "-="                           { return VondaGrammar.Lexer.MINUSEQ; }
+  "+="                           { return token(VondaGrammar.Lexer.PLUSEQ); }
+  "-="                           { return token(VondaGrammar.Lexer.MINUSEQ); }
 
 /* NOTUSED
-  "<<"                           { return VondaGrammar.Lexer.LSHIFT; }
-  ">>"                           { return VondaGrammar.Lexer.RSHIFT; }
-  ">>>"                          { return VondaGrammar.Lexer.URSHIFT; }
-  "*="                           { return VondaGrammar.Lexer.MULTEQ; }
-  "/="                           { return VondaGrammar.Lexer.DIVEQ; }
-  "&="                           { return VondaGrammar.Lexer.ANDEQ; }
-  "|="                           { return VondaGrammar.Lexer.OREQ; }
-  "^="                           { return VondaGrammar.Lexer.XOREQ; }
-  "%="                           { return VondaGrammar.Lexer.MODEQ; }
-  "<<="                          { return VondaGrammar.Lexer.LSHIFTEQ; }
-  ">>="                          { return VondaGrammar.Lexer.RSHIFTEQ; }
-  ">>>="                         { return VondaGrammar.Lexer.URSHIFTEQ; }
+  "<<"                           { return token(VondaGrammar.Lexer.LSHIFT); }
+  ">>"                           { return token(VondaGrammar.Lexer.RSHIFT); }
+  ">>>"                          { return token(VondaGrammar.Lexer.URSHIFT); }
+  "*="                           { return token(VondaGrammar.Lexer.MULTEQ); }
+  "/="                           { return token(VondaGrammar.Lexer.DIVEQ); }
+  "&="                           { return token(VondaGrammar.Lexer.ANDEQ); }
+  "|="                           { return token(VondaGrammar.Lexer.OREQ); }
+  "^="                           { return token(VondaGrammar.Lexer.XOREQ); }
+  "%="                           { return token(VondaGrammar.Lexer.MODEQ); }
+  "<<="                          { return token(VondaGrammar.Lexer.LSHIFTEQ); }
+  ">>="                          { return token(VondaGrammar.Lexer.RSHIFTEQ); }
+  ">>>="                         { return token(VondaGrammar.Lexer.URSHIFTEQ); }
   */
 
   /* string literal */
@@ -295,20 +346,23 @@ SingleCharacter = [^\r\n\'\\]
   {DoubleLiteral}[dD]            { return floatLiteral(yytext()); }
 
   /* comments */
-  {Comment}                      { collectedTokens.add(yytext()); }
+  {Comment}                      { addComment(yytext()); }
 
   /* whitespace */
-  {WhiteSpace}                   { collectedTokens.add(yytext()); }
+  {WhiteSpace}                   { addComment(yytext()); }
 
   /* identifiers */
-  {Identifier}                   { yylval = yytext(); return VondaGrammar.Lexer.VARIABLE; }
+  {Identifier}                   {
+  yylval = yytext();
+  return token(VondaGrammar.Lexer.VARIABLE);
+                                 }
 }
 
 <STRING> {
   \"                             {
   yybegin(YYINITIAL);
   yylval = new ExpSingleValue(string.toString(), "String");
-  return VondaGrammar.Lexer.STRING;
+  return token(VondaGrammar.Lexer.STRING);
                                  }
 
   {StringCharacter}+             |

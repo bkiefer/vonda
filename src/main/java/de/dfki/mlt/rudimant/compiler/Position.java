@@ -1,15 +1,18 @@
 package de.dfki.mlt.rudimant.compiler;
 
-public class Position {
-  public Position(int line, int column, String msg) {
-    this.line = line;
-    this.column = column;
-    this.msg = msg;
-  }
+public class Position implements Comparable<Position> {
 
   public int line;
   public int column;
+  public int charpos;
   public String msg;
+
+  public Position(int line, int column, int charpos, String msg) {
+    this.line = line;
+    this.column = column;
+    this.charpos = charpos;
+    this.msg = msg;
+  }
 
   @Override
   public boolean equals(Object o) {
@@ -26,5 +29,13 @@ public class Position {
   @Override
   public String toString() {
     return msg + ":" + line + ":" + column;
+  }
+
+  @Override
+  public int compareTo(Position o) {
+    if (charpos >= 0) return o.charpos - charpos;
+    int res = o.line - line;
+    if (res != 0) return res;
+    return o.column - column;
   }
 }
