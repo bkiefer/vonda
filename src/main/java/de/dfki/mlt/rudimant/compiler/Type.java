@@ -372,6 +372,8 @@ public class Type {
     int leftCollCode = getCollectionCode();
     int rightCollCode = right.getCollectionCode();
     if ((leftCollCode | rightCollCode) != 0) {
+      // collection vs. simple type?
+      if (leftCollCode == 0 || rightCollCode == 0) return null;
       Type inner = getInnerType().unifyBasicTypes(right.getInnerType());
       if (inner == null || ((leftCollCode & rightCollCode) == 0))
         return null;
@@ -404,7 +406,7 @@ public class Type {
       if ("Rdf".equals(right._name)) return this;
       return null;
     }
-    
+
     // if one of those is a generic type, the real type is the more
     // specific one and they are compatible
     // (necessary because this method is also used for funccall evaluation)
