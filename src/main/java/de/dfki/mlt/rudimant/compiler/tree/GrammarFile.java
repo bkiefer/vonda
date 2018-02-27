@@ -17,7 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.antlr.v4.runtime.Token;
+//import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +26,7 @@ import de.dfki.mlt.rudimant.compiler.Environment;
 import de.dfki.mlt.rudimant.compiler.Mem;
 import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
 import de.dfki.mlt.rudimant.compiler.io.BisonParser;
+import de.dfki.mlt.rudimant.compiler.io.VondaLexer.Token;
 
 /**
  * class that represents a top-level file that was handed over to GrammarMain (=

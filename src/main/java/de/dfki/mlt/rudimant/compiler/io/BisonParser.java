@@ -18,7 +18,8 @@ public class BisonParser {
     grammar.setErrorVerbose(true);
     if (! grammar.parse()) return null;
     GrammarFile result = grammar.getResult();
-    result.tokens = new LinkedList(); //lexer.getCollectedTokens();
+    result.tokens = lexer.getCollectedTokens();
+    //result.tokens = new LinkedList();
     return result;
   }
 }

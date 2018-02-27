@@ -49,18 +49,31 @@ import org.slf4j.LoggerFactory;
   public class Token {
     public String s;
     public Position start, end;
+    // this is the i'th token in the input file
+    public int index;
 
-    private Token(String s, Position start, Position  end) {
+    private Token(String s, Position start, Position  end, int index) {
       this.s = s;
       this.start = start;
       this.end = end;
+      this.index = index;
+    }
+    
+    public int getTokenIndex() {
+      return this.index;
+    }
+    
+    public String getText() {
+      return this.s;
     }
   }
+  
+  private int currentIndex = 0;
 
   private Object yylval;
   private StringBuffer string = new StringBuffer();
 
-  private List<Token> commentTokens = new ArrayList<Token>();
+  private LinkedList<Token> commentTokens = new LinkedList<Token>();
 
   private List<Token> tokens = new ArrayList<Token>();
 
@@ -141,17 +154,17 @@ import org.slf4j.LoggerFactory;
 
   /** Return the collected tokens
    */
-  public List<Token> getCollectedTokens() { return commentTokens; }
+  public LinkedList<Token> getCollectedTokens() { return commentTokens; }
 
   /** Add a non-comment and non-whitespace token */
   public int token(int token) {
-    tokens.add(new Token(yytext(), getStartPos(), getEndPos()));
+    tokens.add(new Token(yytext(), getStartPos(), getEndPos(), currentIndex++));
     return token;
   }
 
   /** Add a comment or whitespace token */
   public void addComment(String comment) {
-    commentTokens.add(new Token(comment, getStartPos(), getEndPos()));
+    commentTokens.add(new Token(comment, getStartPos(), getEndPos(), currentIndex++));
   }
 
   /** find the position of the token that starts at or immediately after pos */

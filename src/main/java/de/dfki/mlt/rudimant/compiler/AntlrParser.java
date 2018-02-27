@@ -19,7 +19,7 @@ import de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarLexer;
 import de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarParser;
 
 public class AntlrParser {
-
+/*
   public static final Logger logger = LoggerFactory
       .getLogger(RudimantCompiler.class);
 
@@ -63,5 +63,5 @@ public class AntlrParser {
     GrammarFile result = (GrammarFile) myTree;
     result.tokens = collector.getCollectedTokens();
     return result;
-  }
+  }*/
 }

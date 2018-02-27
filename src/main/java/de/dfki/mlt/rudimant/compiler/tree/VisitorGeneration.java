@@ -11,7 +11,7 @@ import static de.dfki.mlt.rudimant.compiler.Utils.*;
 import java.io.Writer;
 import java.util.*;
 
-import org.antlr.v4.runtime.Token;
+//import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +21,7 @@ import de.dfki.mlt.rudimant.compiler.Mem;
 import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
 import de.dfki.mlt.rudimant.compiler.SilentWriter;
 import de.dfki.mlt.rudimant.compiler.Type;
+import de.dfki.mlt.rudimant.compiler.io.VondaLexer.Token;
 
 /**
  * visitor generates the java code

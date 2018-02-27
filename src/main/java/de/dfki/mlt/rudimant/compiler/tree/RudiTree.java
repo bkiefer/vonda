@@ -9,11 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
+//import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import de.dfki.mlt.rudimant.common.Location;
 import de.dfki.mlt.rudimant.compiler.io.VondaGrammar;
+import de.dfki.mlt.rudimant.compiler.io.VondaLexer.Token;
 
 /**
  * all classes that can be created by the ParseTreeVisitor should implement this
