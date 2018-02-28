@@ -71,6 +71,10 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
     rt.setPos(start, end, this);
     return rt;
   }
+
+  public String getFullText(Position start, Position end) {
+  	return ((VondaLexer)this.yylexer).getFullText(start, end);
+  }
 }
 
 // keywords
@@ -161,13 +165,13 @@ statement
   | PLUSPLUS UnaryExpression ';' {
     ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), @$);
     ExpArithmetic ar = new ExpArithmetic($2, es, "+");
-    ar.setPos(@$);
+    setPos(ar, @$);
     $$ = setPos(new StatExpression(ar), @$);
   }
   | MINUSMINUS UnaryExpression ';' {
     ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), @$);
     ExpArithmetic ar = new ExpArithmetic($2, es, "-");
-    ar.setPos(@$);
+    setPos(ar, @$);
     $$ = setPos(new StatExpression(ar), @$);
   }
   | function_call ';' { $$ = setPos(new StatExpression($1), @$); }
@@ -299,34 +303,34 @@ label_statement
     ExpSingleValue val =
       new ExpSingleValue("case " + $2.toString() + ":", "label");
     RTStatement lbl = val.ensureStatement();
-    val.setPos(@$); lbl.setPos(@$);
+    setPos(val, @$); setPos(lbl, @$);
     $$ = lbl;
   }
   | CASE INT ':'      {
     ExpSingleValue val =
       new ExpSingleValue("case " + $2.toString() + ":", "label");
     RTStatement lbl = val.ensureStatement();
-    val.setPos(@$); lbl.setPos(@$);
+    setPos(val, @$); setPos(lbl, @$);
     $$ = lbl;
   }
   | CASE BOOL_LITERAL ':'      {
     ExpSingleValue val =
       new ExpSingleValue("case " + $2.toString() + ":", "label");
     RTStatement lbl = val.ensureStatement();
-    val.setPos(@$); lbl.setPos(@$);
+    setPos(val, @$); setPos(lbl, @$);
     $$ = lbl;
   }
   | CASE VARIABLE ':' {
     ExpSingleValue val =
       new ExpSingleValue("case " + $2 + ":", "label");
     RTStatement lbl = val.ensureStatement();
-    val.setPos(@$); lbl.setPos(@$);
+    setPos(val, @$); setPos(lbl, @$);
     $$ = lbl;
   }
   | DEFAULT ':'       {
     ExpSingleValue val = new ExpSingleValue("default:", "label");
     RTStatement lbl = val.ensureStatement();
-    val.setPos(@$); lbl.setPos(@$);
+    setPos(val, @$); setPos(lbl, @$);
     $$ = lbl;
   }
   ;
@@ -616,10 +620,10 @@ ComplexPrimaryNoParenthesis
   ;
 
 Literal
-  : STRING { $$ = $1; $1.setPos(@$); }
-  | INT { $$ = $1; $1.setPos(@$); }
-  | OTHER_LITERAL { $$ = $1; $1.setPos(@$); }
-  | BOOL_LITERAL { $$ = $1; $1.setPos(@$); }
+  : STRING { $$ = $1; setPos($1, @$); }
+  | INT { $$ = $1; setPos($1, @$); }
+  | OTHER_LITERAL { $$ = $1; setPos($1, @$); }
+  | BOOL_LITERAL { $$ = $1; setPos($1, @$); }
   ;
 
 ArrayAccess
@@ -673,20 +677,20 @@ new_exp
     $$ = setPos(new ExpNew(new Type($2), $4), @$);
   }
   | NEW VARIABLE '[' exp ']' {
-    $$ = new ExpNew(new Type("Array", new Type($2)),
-                    new LinkedList<RTExpression>(){{ add($4); }}).setPos(@$);
+    $$ = setPos(new ExpNew(new Type("Array", new Type($2)),
+                    new LinkedList<RTExpression>(){{ add($4); }}), @$);
   }
   | NEW VARIABLE '[' ']' '(' exp ')'{
-    $$ = new ExpNew(new Type("Array", new Type($2)),
-                    new LinkedList<RTExpression>(){{ add($6); }}).setPos(@$);
+    $$ = setPos(new ExpNew(new Type("Array", new Type($2)),
+                    new LinkedList<RTExpression>(){{ add($6); }}), @$);
   }
   | NEW VARIABLE '<' type_spec_list '>' '(' ')' {
     $$ = setPos(new ExpNew(new Type($2, $4.toArray(new Type[$4.size()])),
                     new LinkedList<>()), @$);
   }
   | NEW VARIABLE '<' type_spec_list '>' '(' nonempty_exp_list ')' {
-    $$ = new ExpNew(new Type($2, $4.toArray(new Type[$4.size()])),
-                    $7).setPos(@$);
+    $$ = setPos(new ExpNew(new Type($2, $4.toArray(new Type[$4.size()])),
+                    $7), @$);
   }
   ;
 

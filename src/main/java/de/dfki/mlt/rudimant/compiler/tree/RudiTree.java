@@ -121,14 +121,14 @@ public abstract class RudiTree {
    * @param context The ParserRuleContext.
    * @return RudiTree
    */
-  public RudiTree setPos(VondaGrammar.Location loc) {
+  public RudiTree setPos(VondaGrammar.Location loc, VondaGrammar gram) {
     String originClass = ""; // TODO: GET IT FROM SOMEWHERE
     positions = new int[]{ // TODO: does not match the old functionality
         loc.begin.column, loc.begin.line,
         loc.end.column, loc.end.line
     };
     location = new Location(originClass, loc.begin.line);
-    fullexp = ""; // TODO
+    fullexp = gram.getFullText(loc.begin, loc.end); // TODO
     return this;
   }
 
@@ -139,14 +139,14 @@ public abstract class RudiTree {
    * @param context The ParserRuleContext.
    * @return RudiTree
    */
-  public RudiTree setPos(VondaGrammar.Location start, VondaGrammar.Location end) {
+  public RudiTree setPos(VondaGrammar.Location start, VondaGrammar.Location end, VondaGrammar gram) {
     String originClass = ""; // TODO: SEE ABOVE
     positions = new int[]{
         start.begin.column, start.begin.line,
         end.end.column, end.end.line
     };
     location = new Location(originClass, start.begin.line);
-    fullexp = "";
+    fullexp = gram.getFullText(start.begin, end.end);
     return this;
   }
 
