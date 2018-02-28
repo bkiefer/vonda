@@ -180,8 +180,10 @@ import org.slf4j.LoggerFactory;
     // find the positions of the first token starting at start
     int comm = indexOf(commentTokens, start);
     int cont = indexOf(tokens, start);
-    while (commentTokens.get(comm).end.compareTo(end) <= 0 ||
-           tokens.get(cont).end.compareTo(end) <= 0) {
+    while ((comm != -1 && comm < commentTokens.size()
+    			&& commentTokens.get(comm).end.compareTo(end) <= 0) ||
+           (cont != -1 && cont < tokens.size()
+           		&& tokens.get(cont).end.compareTo(end) <= 0)) {
       // find which token is next, append it and increase the appropriate index
       if (commentTokens.get(comm).start.compareTo(tokens.get(cont).start) <= 0){
         sb.append(commentTokens.get(comm));
