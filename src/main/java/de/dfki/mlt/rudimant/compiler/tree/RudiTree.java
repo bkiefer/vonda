@@ -139,7 +139,8 @@ public abstract class RudiTree {
    * @param context The ParserRuleContext.
    * @return RudiTree
    */
-  public RudiTree setPos(VondaGrammar.Location start, VondaGrammar.Location end, VondaGrammar gram) {
+  public RudiTree setPos(VondaGrammar.Location start, VondaGrammar.Location end,
+      VondaGrammar gram) {
     String originClass = ""; // TODO: SEE ABOVE
     positions = new int[]{
         start.begin.column, start.begin.line,
