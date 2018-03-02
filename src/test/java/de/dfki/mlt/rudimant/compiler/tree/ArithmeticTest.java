@@ -22,49 +22,58 @@ public class ArithmeticTest {
   public static void setUpClass() throws FileNotFoundException {
     setUpNonEmpty();
   }
+  
+  public void assertArithmetic(RudiTree dtr) {
+    assertTrue(dtr instanceof StatVarDef);
+    dtr = ((StatVarDef)dtr).toAssign;
+    assertTrue(dtr instanceof ExpAssignment);
+    dtr = ((ExpAssignment)dtr).right;
+    assertTrue(dtr instanceof ExpArithmetic);
+  }
 
   @Test
   public void testArithmetic() throws IOException {
-    String arithmeticExp = "1 + 2;";
+    String arithmeticExp = "int i = 1 + 2;";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(getInput(arithmeticExp)));
-    assertTrue(dtr instanceof ExpArithmetic);
+    assertArithmetic(dtr);
   }
 
   @Test
   public void testArithmetic2() throws IOException {
-    String arithmeticExp = "1 * 2;";
+    String arithmeticExp = "int i = 1 * 2;";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(getInput(arithmeticExp)));
-    assertTrue(dtr instanceof ExpArithmetic);
+    assertArithmetic(dtr);
   }
 
   @Test
   public void testArithmetic3() throws IOException {
-    String arithmeticExp = "1 / 2;";
+    String arithmeticExp = "int i = 1 / 2;";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(getInput(arithmeticExp)));
-    assertTrue(dtr instanceof ExpArithmetic);
+    assertArithmetic(dtr);
   }
 
   @Test
   public void testArithmetic4() throws IOException {
-    String arithmeticExp = "1 - 2;";
+    String arithmeticExp = "int i = 1 - 2;";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(getInput(arithmeticExp)));
-    assertTrue(dtr instanceof ExpArithmetic);
+    assertArithmetic(dtr);
 
+    dtr = ((StatVarDef)dtr).toAssign;
+    dtr = ((ExpAssignment)dtr).right;
     String type = ((ExpArithmetic) dtr).getType().toJava();
     assertEquals("type of 1 - 2", "int", type);
   }
 
   @Test
   public void testArith6() {
-    String intExp = "(3 & 1 | 8);";
+    String intExp = "int i = (3 & 1 | 8);";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(intExp));
-
-    assertTrue(dtr instanceof ExpArithmetic);
+    assertArithmetic(dtr);
   }
 
   @Test

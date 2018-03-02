@@ -39,28 +39,39 @@ GREATER: '>';
   public static void setUpClass() {
     setUpNonEmpty();
   }
+  
+  public void assertBoolean(RudiTree dtr) {
+    assertTrue(dtr instanceof StatVarDef);
+    dtr = ((StatVarDef)dtr).toAssign;
+    assertTrue(dtr instanceof ExpAssignment);
+    dtr = ((ExpAssignment)dtr).right;
+    assertTrue(dtr instanceof ExpBoolean);
+  }
 
   @Test
   public void testBoolean() {
-    String booleanExp = "4 < 5;";
+    String booleanExp = "boolean b = 4 < 5;";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
-    assertTrue(dtr instanceof ExpBoolean);
+    assertBoolean(dtr);
   }
 
   @Test
   public void testBoolean2() {
-    String booleanExp = "4 == 5;";
-
+    String booleanExp = "boolean b = 4 == 5;";
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
-    assertTrue(dtr instanceof ExpBoolean);
+    assertBoolean(dtr);
   }
 
   @Test
   public void testBoolean3() {
-    String booleanExp = "false;";
+    String booleanExp = "boolean b = false;";
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
 
+    assertTrue(dtr instanceof StatVarDef);
+    dtr = ((StatVarDef)dtr).toAssign;
+    assertTrue(dtr instanceof ExpAssignment);
+    dtr = ((ExpAssignment)dtr).right;
     assertTrue(dtr instanceof ExpSingleValue);
     assertEquals("false should be of type Boolean", "boolean",
         (((RTExpression) dtr).getType().toJava()));
@@ -68,46 +79,47 @@ GREATER: '>';
 
   @Test
   public void testBoolean4() {
-    String booleanExp = "!(5>5);";
+    String booleanExp = "boolean b = !(5>5);";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
-
-    assertTrue(dtr instanceof ExpBoolean);
+    assertBoolean(dtr);
   }
 
   @Test
   public void testBoolean5() {
-    String booleanExp = "(false && false || true);";
+    String booleanExp = "boolean b = (false && false || true);";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
-
-    assertTrue(dtr instanceof ExpBoolean);
+    assertBoolean(dtr);
   }
 
   @Test
   public void testBoolean7() {
-    String booleanExp = "(var1 != var2);";
+    String booleanExp = "boolean b = (var1 != var2);";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
-
-    assertTrue(dtr instanceof ExpBoolean);
+    assertBoolean(dtr);
   }
 
   @Test
   public void testBoolean8() {
-    String booleanExp = "(var1 >= var2 && var1 <= var2);";
+    String booleanExp = "boolean b = (var1 >= var2 && var1 <= var2);";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
-
-    assertTrue(dtr instanceof ExpBoolean);
+    assertBoolean(dtr);
   }
 
   @Test
   public void testNegationScope() {
-    String booleanExp = "(! var1 == var2 && var1 <= var2 && var2 == var1);";
+    String booleanExp = "boolean b = (! var1 == var2 && var1 <= var2 && var2 == var1);";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
     //Visualize.show(dtr, "foo");
+    assertTrue(dtr instanceof StatVarDef);
+    dtr = ((StatVarDef)dtr).toAssign;
+    assertTrue(dtr instanceof ExpAssignment);
+    dtr = ((ExpAssignment)dtr).right;
+    assertTrue(dtr instanceof ExpBoolean);
     List<RudiTree> dtrs = new ArrayList<>();
     for (RudiTree d : dtr.getDtrs()) { dtrs.add(d); }
     assertEquals("!", ((ExpBoolean)dtrs.get(0)).operator) ;
