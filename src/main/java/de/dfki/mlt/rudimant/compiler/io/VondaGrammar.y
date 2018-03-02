@@ -651,9 +651,10 @@ assignment
 
 field_access
   : NotJustName field_access_rest {
-    List<String> repr = new ArrayList<>($2.size());
-    for (int i = 0; i < $2.size(); ++i) repr.add("");
-    $$ = setPos(new ExpFieldAccess($2, repr), @$); $2.addFirst($1);
+    //List<String> repr = new ArrayList<>($2.size());
+    //for (int i = 0; i < $2.size(); ++i) repr.add("");
+    //$$ = setPos(new ExpFieldAccess($2, repr), @$); $2.addFirst($1);
+    $$ = setPos(new ExpFieldAccess($2), @$); $2.addFirst($1);
   }
   ;
 

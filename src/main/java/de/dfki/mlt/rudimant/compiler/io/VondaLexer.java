@@ -838,15 +838,18 @@ public class VondaLexer implements VondaGrammar.Lexer {
     int comm = indexOf(commentTokens, start);
     int cont = indexOf(tokens, start);
     while ((comm != -1 && comm < commentTokens.size()
-    			&& commentTokens.get(comm).end.compareTo(end) <= 0) ||
+    			&& commentTokens.get(comm).end.compareTo(end) >= 0) ||
            (cont != -1 && cont < tokens.size()
-           	&& tokens.get(cont).end.compareTo(end) <= 0)) {
+           	&& tokens.get(cont).end.compareTo(end) >= 0)) {
       // find which token is next, append it and increase the appropriate index
-      if (commentTokens.get(comm).start.compareTo(tokens.get(cont).start) <= 0){
-        sb.append(commentTokens.get(comm));
+      if (comm != -1 && comm < commentTokens.size()
+          && commentTokens.get(comm).start.compareTo(tokens.get(cont).start) <= 0){
+        sb.append(commentTokens.get(comm).s);
         ++comm;
       } else {
-        sb.append(tokens.get(cont));
+        sb.append(tokens.get(cont).s);
+        // TODO: temporal fix for readability
+        sb.append(" ");
         ++cont;
       }
     }

@@ -5,6 +5,7 @@
  */
 package de.dfki.mlt.rudimant.compiler.tree;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +22,13 @@ public class ExpFieldAccess extends RTExpLeaf {
   public ExpFieldAccess(List<RTExpression> parts, List<String> representation) {
     this.parts = parts;
     this.representation = representation;
+  }
+
+  public ExpFieldAccess(List<RTExpression> parts) {
+    this.representation = new ArrayList<String>();
+    for (int i = 0; i < parts.size(); i++)
+      representation.add(parts.get(i).fullexp);
+    this.parts = parts;
   }
 
   @Override
