@@ -13,6 +13,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import de.dfki.mlt.rudimant.common.Location;
+import de.dfki.mlt.rudimant.compiler.Position;
 import de.dfki.mlt.rudimant.compiler.io.VondaGrammar;
 import de.dfki.mlt.rudimant.compiler.io.VondaLexer.Token;
 
@@ -28,7 +29,7 @@ public abstract class RudiTree {
    * positions contains the start and stop positions of a Token according to its
    * ParserRuleContext. [0] = start of TokenIndex, [1] = stop of TokenIndex
    */
-  public int[] positions;
+  public Position[] positions;
 
   /** contains the origin file and the line Rudi Tree started on */
   public Location location;
@@ -37,12 +38,12 @@ public abstract class RudiTree {
   public String fullexp;
 
   public void visitWithComments(VisitorGeneration v) {
-    int firstPos = positions[0];
+    Position firstPos = positions[0];
     v.out.append(checkComments(v, firstPos));
     visit(v);
     // TODO: as endpos is where this node ends, we will never get to print anything
     //       here, will we?
-    int endPos = positions[1];
+    Position endPos = positions[1];
     v.out.append(checkComments(v, endPos));
   }
 
@@ -75,16 +76,16 @@ public abstract class RudiTree {
     return c;
   }
 
-  private List<Token> getTokensOfInterest(VisitorGeneration v, int firstPos) {
+  private List<Token> getTokensOfInterest(VisitorGeneration v, Position firstPos) {
     List<Token> tokens = new ArrayList<>();
-    while (!v.collectedTokens.isEmpty() && v.collectedTokens.get(0).getTokenIndex() < firstPos) {
+    while (!v.collectedTokens.isEmpty() && v.collectedTokens.get(0).start.charpos < firstPos.charpos) {
       tokens.add(v.collectedTokens.get(0));
       v.collectedTokens.remove();
     }
     return tokens;
   }
 
-  protected String checkComments(VisitorGeneration v, int firstPos) {
+  protected String checkComments(VisitorGeneration v, Position firstPos) {
     List<Token> ts = getTokensOfInterest(v, firstPos);
     String allcomments = "";
     for (int i = 0; i < ts.size(); i++) {
@@ -103,16 +104,16 @@ public abstract class RudiTree {
    *
    * @param context The ParserRuleContext.
    * @return RudiTree
-   */
+   *
   public RudiTree setPosition(ParserRuleContext context, String originClass) {
-    positions = new int[]{
+    positions = new Position[]{
       context.getStart().getTokenIndex(),
       context.getStop().getTokenIndex()
     };
     location = new Location(originClass, context.getStart().getLine());
     fullexp = context.getText();
     return this;
-  }
+  }*/
 
   /**
    * setPosition is used to store the start and stop position of a Token given
@@ -123,9 +124,9 @@ public abstract class RudiTree {
    */
   public RudiTree setPos(VondaGrammar.Location loc, VondaGrammar gram) {
     String originClass = ""; // TODO: GET IT FROM SOMEWHERE
-    positions = new int[]{ // TODO: does not match the old functionality
-        loc.begin.column, loc.begin.line,
-        loc.end.column, loc.end.line
+    positions = new Position[]{ // TODO: does not match the old functionality
+        loc.begin,
+        loc.end
     };
     location = new Location(originClass, loc.begin.line);
     fullexp = gram.getFullText(loc.begin, loc.end); // TODO
@@ -142,9 +143,9 @@ public abstract class RudiTree {
   public RudiTree setPos(VondaGrammar.Location start, VondaGrammar.Location end,
       VondaGrammar gram) {
     String originClass = ""; // TODO: SEE ABOVE
-    positions = new int[]{
-        start.begin.column, start.begin.line,
-        end.end.column, end.end.line
+    positions = new Position[]{
+        start.begin,
+        end.end
     };
     location = new Location(originClass, start.begin.line);
     fullexp = gram.getFullText(start.begin, end.end);
@@ -157,7 +158,7 @@ public abstract class RudiTree {
    *
    * @param tn The TerminalNode
    * @return RudiTree
-   */
+   *
   public RudiTree setPosition(TerminalNode tn, String originClass) {
     positions = new int[]{
       tn.getSymbol().getTokenIndex(),
@@ -166,7 +167,7 @@ public abstract class RudiTree {
     location = new Location(originClass, tn.getSymbol().getTokenIndex());
     fullexp = tn.getText();
     return this;
-  }
+  }*/
 
   public abstract Iterable<? extends RudiTree> getDtrs();
 

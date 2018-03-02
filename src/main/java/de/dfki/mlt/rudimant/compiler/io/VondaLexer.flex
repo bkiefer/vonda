@@ -49,26 +49,17 @@ import org.slf4j.LoggerFactory;
   public class Token {
     public String s;
     public Position start, end;
-    // this is the i'th token in the input file
-    public int index;
 
-    private Token(String s, Position start, Position  end, int index) {
+    private Token(String s, Position start, Position  end) {
       this.s = s;
       this.start = start;
       this.end = end;
-      this.index = index;
-    }
-    
-    public int getTokenIndex() {
-      return this.index;
     }
     
     public String getText() {
       return this.s;
     }
   }
-  
-  private int currentIndex = 0;
 
   private Object yylval;
   private StringBuffer string = new StringBuffer();
@@ -158,13 +149,13 @@ import org.slf4j.LoggerFactory;
 
   /** Add a non-comment and non-whitespace token */
   public int token(int token) {
-    tokens.add(new Token(yytext(), getStartPos(), getEndPos(), currentIndex++));
+    tokens.add(new Token(yytext(), getStartPos(), getEndPos()));
     return token;
   }
 
   /** Add a comment or whitespace token */
   public void addComment(String comment) {
-    commentTokens.add(new Token(comment, getStartPos(), getEndPos(), currentIndex++));
+    commentTokens.add(new Token(comment, getStartPos(), getEndPos()));
   }
 
   /** find the position of the token that starts at or immediately after pos */
@@ -185,7 +176,8 @@ import org.slf4j.LoggerFactory;
            (cont != -1 && cont < tokens.size()
            		&& tokens.get(cont).end.compareTo(end) <= 0)) {
       // find which token is next, append it and increase the appropriate index
-      if (commentTokens.get(comm).start.compareTo(tokens.get(cont).start) <= 0){
+      if (comm != -1 && comm < commentTokens.size()
+          && commentTokens.get(comm).start.compareTo(tokens.get(cont).start) <= 0){
         sb.append(commentTokens.get(comm));
         ++comm;
       } else {

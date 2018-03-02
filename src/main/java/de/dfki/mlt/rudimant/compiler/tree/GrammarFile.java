@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import de.dfki.mlt.rudimant.compiler.AntlrParser;
 import de.dfki.mlt.rudimant.compiler.Environment;
 import de.dfki.mlt.rudimant.compiler.Mem;
+import de.dfki.mlt.rudimant.compiler.Position;
 import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
 import de.dfki.mlt.rudimant.compiler.io.BisonParser;
 import de.dfki.mlt.rudimant.compiler.io.VondaLexer.Token;
@@ -116,9 +117,9 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
   /** Save comments that belong to a postponed part of the code onto another
    *  list (all before pos)
    */
-  private void saveCommentsForLater(VisitorGeneration gv, int pos) {
+  private void saveCommentsForLater(VisitorGeneration gv, Position pos) {
     while (!gv.collectedTokens.isEmpty()
-        && gv.collectedTokens.get(0).getTokenIndex() < pos) {
+        && gv.collectedTokens.get(0).start.charpos < pos.charpos) {
       saveComments.addFirst(gv.collectedTokens.get(0));
       gv.collectedTokens.remove();
     }
@@ -268,11 +269,11 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
 
     // Now, print all initial comments (preceding the first element) before the
     // class starts, for, e.g., imports
-    int firstPos = rules.get(0).positions[0];
+    Position firstPos = rules.get(0).positions[0];
     Iterator<Token> it = tokens.iterator();
     while (it.hasNext()) {
       Token curr = it.next();
-      if (curr.getTokenIndex() < firstPos && curr.getText().startsWith("/*@")) {
+      if (curr.start.charpos < firstPos.charpos && curr.getText().startsWith("/*@")) {
         out.append(RudiTree.removeJavaBrackets(curr.getText()));
         it.remove();
       } else break;

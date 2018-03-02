@@ -8,6 +8,7 @@ package de.dfki.mlt.rudimant.compiler.tree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.mlt.rudimant.compiler.Position;
 import de.dfki.mlt.rudimant.compiler.Type;
 
 /**
@@ -36,12 +37,12 @@ public abstract class RTExpression extends RudiTree {
    * @param v
    */
   public void visitWithComments(VisitorGeneration v) {
-    int firstPos = positions[0];
+    Position firstPos = positions[0];
     v.out.append(checkComments(v, firstPos));
     if (_parens) v.out.append("(");
     visit(v);
     if (_parens) v.out.append(")");
-    int endPos = positions[1];
+    Position endPos = positions[1];
     v.out.append(checkComments(v, endPos));
   }
 

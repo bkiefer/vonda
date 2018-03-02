@@ -24,7 +24,7 @@ import de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarParser.*;
  *
  * @author anna
  */
-public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
+public abstract class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
 
   // What's the class we're currently working on
   private String currentClass;
@@ -35,7 +35,7 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
    * @param masterFile the name of the current rule (filename), please not the
    * name of the resulting java file!!!!
    * @param client
-   */
+   *
   public ParseTreeVisitor(String masterFile) {
     currentClass = masterFile;
   }
@@ -635,6 +635,6 @@ public class ParseTreeVisitor implements RobotGrammarVisitor<RudiTree> {
     return new ExpArrayAccess((RTExpression)visit(ctx.getChild(0)),
         (RTExpression)visit(ctx.getChild(2)))
         .setPosition(ctx, currentClass);
-  }
+  }*/
 
 }
