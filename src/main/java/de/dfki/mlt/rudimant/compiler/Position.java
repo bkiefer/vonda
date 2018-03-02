@@ -33,9 +33,9 @@ public class Position implements Comparable<Position> {
 
   @Override
   public int compareTo(Position o) {
-    if (charpos >= 0) return o.charpos - charpos;
-    int res = o.line - line;
+    if (charpos >= 0) return charpos - o.charpos;
+    int res = line - o.line;
     if (res != 0) return res;
-    return o.column - column;
+    return column - o.column;
   }
 }
