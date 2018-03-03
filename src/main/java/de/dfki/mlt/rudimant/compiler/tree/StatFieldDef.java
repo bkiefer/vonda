@@ -22,7 +22,11 @@ public class StatFieldDef extends RTStatement {
   StatVarDef varDef;
 
   public StatFieldDef(String visibility, StatVarDef varDef) {
-    this.visibility = visibility;
+    if (visibility != null)
+      this.visibility = visibility;
+    else
+      // set to public as default
+      this.visibility = "public";
     this.varDef = varDef;
   }
 

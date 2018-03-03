@@ -1871,49 +1871,49 @@ public class VondaGrammar
 
   case 172:
   if (yyn == 172)
-    /* "VondaGrammar.y":666  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":667  */ /* lalr1.java:489  */
     { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))); ((LinkedList<RTExpression>)(yystack.valueAt (3-(3)))).addFirst(((RTExpression)(yystack.valueAt (3-(2))))); };
   break;
     
 
   case 173:
   if (yyn == 173)
-    /* "VondaGrammar.y":667  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":668  */ /* lalr1.java:489  */
     { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (2-(2))))); }}; };
   break;
     
 
   case 174:
   if (yyn == 174)
-    /* "VondaGrammar.y":671  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":672  */ /* lalr1.java:489  */
     { yyval = setPos(new ExpVariable((( String )(yystack.valueAt (1-(1))))), (yyloc)); };
   break;
     
 
   case 175:
   if (yyn == 175)
-    /* "VondaGrammar.y":672  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":673  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 176:
   if (yyn == 176)
-    /* "VondaGrammar.y":673  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":674  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (3-(2)))); };
   break;
     
 
   case 177:
   if (yyn == 177)
-    /* "VondaGrammar.y":677  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":678  */ /* lalr1.java:489  */
     { yyval = setPos(new ExpNew(new Type((( String )(yystack.valueAt (2-(2)))))), (yyloc)); };
   break;
     
 
   case 178:
   if (yyn == 178)
-    /* "VondaGrammar.y":678  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":679  */ /* lalr1.java:489  */
     {
     yyval = setPos(new ExpNew(new Type((( String )(yystack.valueAt (4-(2))))), new LinkedList<>()), (yyloc));
   };
@@ -1922,7 +1922,7 @@ public class VondaGrammar
 
   case 179:
   if (yyn == 179)
-    /* "VondaGrammar.y":681  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":682  */ /* lalr1.java:489  */
     {
     yyval = setPos(new ExpNew(new Type((( String )(yystack.valueAt (5-(2))))), ((LinkedList<RTExpression>)(yystack.valueAt (5-(4))))), (yyloc));
   };
@@ -1931,7 +1931,7 @@ public class VondaGrammar
 
   case 180:
   if (yyn == 180)
-    /* "VondaGrammar.y":684  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":685  */ /* lalr1.java:489  */
     {
     yyval = setPos(new ExpNew(new Type("Array", new Type((( String )(yystack.valueAt (5-(2)))))),
                     new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (5-(4))))); }}), (yyloc));
@@ -1941,7 +1941,7 @@ public class VondaGrammar
 
   case 181:
   if (yyn == 181)
-    /* "VondaGrammar.y":688  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":689  */ /* lalr1.java:489  */
     {
     yyval = setPos(new ExpNew(new Type("Array", new Type((( String )(yystack.valueAt (7-(2)))))),
                     new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (7-(6))))); }}), (yyloc));
@@ -1951,7 +1951,7 @@ public class VondaGrammar
 
   case 182:
   if (yyn == 182)
-    /* "VondaGrammar.y":692  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":693  */ /* lalr1.java:489  */
     {
     yyval = setPos(new ExpNew(new Type((( String )(yystack.valueAt (7-(2)))), ((LinkedList<Type>)(yystack.valueAt (7-(4)))).toArray(new Type[((LinkedList<Type>)(yystack.valueAt (7-(4)))).size()])),
                     new LinkedList<>()), (yyloc));
@@ -1961,7 +1961,7 @@ public class VondaGrammar
 
   case 183:
   if (yyn == 183)
-    /* "VondaGrammar.y":696  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":697  */ /* lalr1.java:489  */
     {
     yyval = setPos(new ExpNew(new Type((( String )(yystack.valueAt (8-(2)))), ((LinkedList<Type>)(yystack.valueAt (8-(4)))).toArray(new Type[((LinkedList<Type>)(yystack.valueAt (8-(4)))).size()])),
                     ((LinkedList<RTExpression>)(yystack.valueAt (8-(7))))), (yyloc));
@@ -1971,7 +1971,7 @@ public class VondaGrammar
 
   case 184:
   if (yyn == 184)
-    /* "VondaGrammar.y":703  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":704  */ /* lalr1.java:489  */
     {
     yyval = setPos(new ExpLambda(((LinkedList)(yystack.valueAt (5-(2)))), ((RTExpression)(yystack.valueAt (5-(5))))), (yyloc));
   };
@@ -1980,7 +1980,7 @@ public class VondaGrammar
 
   case 185:
   if (yyn == 185)
-    /* "VondaGrammar.y":706  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":707  */ /* lalr1.java:489  */
     {
     yyval = setPos(new ExpLambda(((LinkedList)(yystack.valueAt (5-(2)))), ((StatAbstractBlock)(yystack.valueAt (5-(5))))), (yyloc));
   };
@@ -1989,7 +1989,7 @@ public class VondaGrammar
 
   case 186:
   if (yyn == 186)
-    /* "VondaGrammar.y":709  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":710  */ /* lalr1.java:489  */
     {
     yyval = setPos(new ExpLambda(new LinkedList<>(), ((RTExpression)(yystack.valueAt (4-(4))))), (yyloc));
   };
@@ -1998,7 +1998,7 @@ public class VondaGrammar
 
   case 187:
   if (yyn == 187)
-    /* "VondaGrammar.y":712  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":713  */ /* lalr1.java:489  */
     {
     yyval = setPos(new ExpLambda(new LinkedList<>(), ((StatAbstractBlock)(yystack.valueAt (4-(4))))), (yyloc));
   };
@@ -2007,7 +2007,7 @@ public class VondaGrammar
 
   case 188:
   if (yyn == 188)
-    /* "VondaGrammar.y":719  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":720  */ /* lalr1.java:489  */
     {
     yyval = setPos(new ExpDialogueAct(((RTExpression)(yystack.valueAt (5-(2)))), ((RTExpression)(yystack.valueAt (5-(4)))), new LinkedList<RTExpression>()), (yyloc));
   };
@@ -2016,7 +2016,7 @@ public class VondaGrammar
 
   case 189:
   if (yyn == 189)
-    /* "VondaGrammar.y":722  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":723  */ /* lalr1.java:489  */
     {
     yyval = setPos(new ExpDialogueAct(((RTExpression)(yystack.valueAt (6-(2)))), ((RTExpression)(yystack.valueAt (6-(4)))), ((LinkedList<RTExpression>)(yystack.valueAt (6-(5))))), (yyloc));
   };
@@ -2025,35 +2025,35 @@ public class VondaGrammar
 
   case 190:
   if (yyn == 190)
-    /* "VondaGrammar.y":728  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":729  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (3-(2)))); };
   break;
     
 
   case 191:
   if (yyn == 191)
-    /* "VondaGrammar.y":729  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":730  */ /* lalr1.java:489  */
     { yyval = setPos(new ExpVariable((( String )(yystack.valueAt (1-(1))))), (yyloc)); };
   break;
     
 
   case 192:
   if (yyn == 192)
-    /* "VondaGrammar.y":730  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":731  */ /* lalr1.java:489  */
     { yyval = (( ExpSingleValue )(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 193:
   if (yyn == 193)
-    /* "VondaGrammar.y":731  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":732  */ /* lalr1.java:489  */
     { yyval = setPos(new ExpSingleValue((( String )(yystack.valueAt (1-(1)))), "String"), (yyloc)); };
   break;
     
 
   case 194:
   if (yyn == 194)
-    /* "VondaGrammar.y":735  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":736  */ /* lalr1.java:489  */
     {
     yyval = ((LinkedList<RTExpression>)(yystack.valueAt (5-(5)))); ((LinkedList<RTExpression>)(yystack.valueAt (5-(5)))).addFirst(((RTExpression)(yystack.valueAt (5-(4))))); ((LinkedList<RTExpression>)(yystack.valueAt (5-(5)))).addFirst(((RTExpression)(yystack.valueAt (5-(2)))));
   };
@@ -2062,7 +2062,7 @@ public class VondaGrammar
 
   case 195:
   if (yyn == 195)
-    /* "VondaGrammar.y":738  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":739  */ /* lalr1.java:489  */
     { yyval = new LinkedList<RTExpression>(); };
   break;
     
@@ -3155,9 +3155,9 @@ private static final short yycheck_[] = yycheck_init();
      579,   580,   584,   585,   590,   591,   592,   596,   602,   603,
      604,   608,   609,   613,   614,   618,   619,   620,   621,   622,
      626,   627,   628,   629,   633,   637,   641,   647,   651,   652,
-     656,   662,   666,   667,   671,   672,   673,   677,   678,   681,
-     684,   688,   692,   696,   703,   706,   709,   712,   719,   722,
-     728,   729,   730,   731,   735,   738
+     656,   662,   667,   668,   672,   673,   674,   678,   679,   682,
+     685,   689,   693,   697,   704,   707,   710,   713,   720,   723,
+     729,   730,   731,   732,   736,   739
     };
   }
 
