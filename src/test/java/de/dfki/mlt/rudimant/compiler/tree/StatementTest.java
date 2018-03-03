@@ -119,7 +119,7 @@ public class StatementTest {
   public void TimeoutTest(){
    String in = "time = 2; timeout(\"label\", time) { i = 4; }";
    String r = generate(in);
-   String expected = "int time = 2;"
+   String expected = "int time = 2; "
        + "newTimeout(\"label\",time,new Proposal() {public void run() { int i = 4; } });";
    assertEquals(expected, getForMarked(r, expected));
  }
@@ -168,7 +168,7 @@ public class StatementTest {
  public void StatementTest8(){
    String in = " Child user; n = user.name; List<String> names = { n };";
    String r = generate(in);
-   String expected = "Rdf user;Set<Object> n = ((Set<Object>)user.getValue(\"<upper:name>\"));"
+   String expected = "Rdf user;Set<Object> n = ((Set<Object>)user.getValue(\"<upper:name>\")); "
        + "List<String> names = new ArrayList<>();names.add(n);";
    assertEquals(expected, getForMarked(r, expected));
  }

@@ -345,6 +345,9 @@ var_def
   | FINAL type_spec VARIABLE assgn_exp ';' {
     $$ = setPos(new StatVarDef(true, $2, $3, $4), @$);
   }
+  | VARIABLE assgn_exp ';' {
+    $$ = setPos(new StatVarDef(false, new Type(null), $1, $2), @$);
+  }
   | FINAL VARIABLE ';' {
     $$ = setPos(new StatVarDef(true, new Type(null), $2, null), @$);
   }
