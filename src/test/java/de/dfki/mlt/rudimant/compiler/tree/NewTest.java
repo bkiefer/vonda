@@ -24,7 +24,6 @@ public class NewTest {
   @Test
   public void testRdfType(){
     String src = "new Activity;";
-
     RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(src));
     assertTrue(dtr instanceof ExpNew);
     assertTrue(((ExpNew)dtr).type.isRdfType());

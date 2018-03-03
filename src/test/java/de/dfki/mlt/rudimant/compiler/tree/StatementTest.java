@@ -74,7 +74,7 @@ public class StatementTest {
     // the variable i already exists somewhere
     String in = "int i;  i = 1; return i;";
     String r = generate(in);
-    String expected = "int i;i = 1;return i;";
+    String expected = "int i;i = 1; return i;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
