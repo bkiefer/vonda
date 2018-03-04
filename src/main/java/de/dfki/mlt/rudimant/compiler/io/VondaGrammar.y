@@ -401,7 +401,7 @@ method_declaration
   }
   ;
 
-class_spec: '[' type_spec '.' ']' { $$ = $2; }
+class_spec: '[' type_spec ']' '.' { $$ = $2; }
   ;
 
 opt_block
