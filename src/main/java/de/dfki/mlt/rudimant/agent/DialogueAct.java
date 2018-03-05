@@ -252,7 +252,7 @@ public class DialogueAct {
     RdfClass dialClass = proxy.getClass("<dial:DialogueAct>");
     Rdf dial = dialClass.getNewInstance(DIAL_NS);
     dial.setValue("<dial:repr>", d.toString());
-    sender.setValue("<dial:sender>", dial);
+    dial.setValue("<dial:sender>", sender);
     return dial;
   }
 

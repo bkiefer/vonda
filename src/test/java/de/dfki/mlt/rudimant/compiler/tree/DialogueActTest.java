@@ -130,7 +130,7 @@ public class DialogueActTest {
     Rdf rep = DialogueAct.toRdf(da, _proxy);
     QueryResult res =
         _proxy.selectQuery("select ?p ?q where {} ?p ?q ?_", rep.getURI());
-    assertEquals(2, res.getTable().getRows().size());
+    assertEquals(3, res.getTable().getRows().size());
   }
 
   @Test
