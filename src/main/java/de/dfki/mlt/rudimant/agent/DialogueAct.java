@@ -170,9 +170,12 @@ public class DialogueAct {
 
   /** Read a DialogueAct from the database, with uri being the root node.
    *
+   * Although maybe that's the "right way" to do it, it seems overkill. For the
+   * moment, we go for the simpler way.
+   *
    * As for toRdf, this will only work on restricted shallow representations.
    */
-  public static DialogueAct fromRdf(String uri, RdfProxy proxy) {
+  public static DialogueAct fromRdfProper(String uri, RdfProxy proxy) {
 
     Rdf da = proxy.getRdf(uri);
     Rdf frame = (Rdf) da.getSingleValue("<dial:frame>");
@@ -193,46 +196,64 @@ public class DialogueAct {
 
   /** Write a DialogueAct to the database.
    *
+   * Although maybe that's the "right way" to do it, it seems overkill. For the
+   * moment, we go for the simpler way.
+   *
    * This implementation is not fully general, it will only write shallow
    * structures without coreferences correctly.
    */
-  public Rdf toRdf(RdfProxy proxy) {
-    RdfClass diaClass = proxy.getRdfClass(getDialogueActType());
+  public static Rdf toRdfProper(DialogueAct d, RdfProxy proxy) {
+    RdfClass diaClass = proxy.getRdfClass(d.getDialogueActType());
     if (diaClass == null) {
-      logger.error("No Subclass of DialougeAct: {}", getDialogueActType());
+      logger.error("No Subclass of DialougeAct: {}", d.getDialogueActType());
       diaClass = proxy.getClass("<dial:DialogueAct>");
     }
-    Rdf da = diaClass.getNewInstance(DIAL_NS);
-    RdfClass frameClass = proxy.getRdfClass(getProposition());
+    Rdf rdfDialAct = diaClass.getNewInstance(DIAL_NS);
+    RdfClass frameClass = proxy.getRdfClass(d.getProposition());
     boolean syntheticFrame = frameClass == null;
     if (syntheticFrame) {
-      logger.error("No Subclass of Framme: {}", getProposition());
+      logger.error("No Subclass of Framme: {}", d.getProposition());
       frameClass = proxy.getClass("<sem:Frame>");
     }
     Rdf frame = frameClass.getNewInstance(DIAL_NS);
     if (syntheticFrame)
-      frame.setValue("<sem:label>", getProposition());
-    da.setValue("<dial:frame>", frame);
-
-    Iterator<DagEdge> dit = _dag.getEdgeIterator();
-    while (dit.hasNext()) {
-      DagEdge d = dit.next();
-      if (d.getFeature() != DagNode.PROP_FEAT_ID
-          && d.getFeature() != DagNode.TYPE_FEAT_ID
-          && d.getFeature() != DagNode.ID_FEAT_ID) {
-        String prop = diaClass.fetchProperty(d.getName());
-        if (prop != null) {
-          da.setValue(prop, d.getValue().getTypeName());
-        } else {
-          prop = frameClass.fetchProperty(d.getName());
-          if (prop == null) {
-            prop = "<sem:" + d.getName() + ">";
-          }
-          frame.setValue(prop, d.getValue().getTypeName());
+      frame.setValue("<sem:label>", d.getProposition());
+    rdfDialAct.setValue("<dial:frame>", frame);
+    for (Map.Entry<String, String> entry : d.getValues().entrySet()) {
+      String name = entry.getKey();
+      String val = entry.getValue();
+      String prop = diaClass.fetchProperty(name);
+      if (prop != null) {
+        rdfDialAct.setValue(prop, val);
+      } else {
+        prop = frameClass.fetchProperty(name);
+        if (prop == null) {
+          prop = "<sem:" + name + ">";
         }
+        frame.setValue(prop, val);
       }
     }
-    return da;
+    return rdfDialAct;
+  }
+
+  public static DialogueAct fromRdf(String uri, RdfProxy proxy) {
+    Rdf da = proxy.getRdf(uri);
+    String rep = (String)da.getSingleValue("<dial:repr>");
+    return new DialogueAct(rep);
+  }
+
+  public static Rdf toRdf(DialogueAct d, RdfProxy proxy) {
+    String senderUri = d.getValue("sender");
+    if (senderUri == null) {
+      logger.warn("No sender specified for dialogue act {}", d.toString());
+      return null;
+    }
+    Rdf sender = proxy.getRdf(senderUri);
+    RdfClass dialClass = proxy.getClass("<dial:DialogueAct>");
+    Rdf dial = dialClass.getNewInstance(DIAL_NS);
+    dial.setValue("<dial:repr>", d.toString());
+    sender.setValue("<dial:sender>", dial);
+    return dial;
   }
 
   /** Get a set of all slots of this dialogue act */
@@ -244,6 +265,21 @@ public class DialogueAct {
       slots.add(d.getName());
     }
     return slots;
+  }
+
+  /** Get a set of all slots of this dialogue act */
+  public Map<String, String> getValues() {
+    Map<String, String> args = new LinkedHashMap<>();
+    Iterator<DagEdge> dit = _dag.getEdgeIterator();
+    while (dit.hasNext()) {
+      DagEdge d = dit.next();
+      if (d.getFeature() != DagNode.PROP_FEAT_ID
+          && d.getFeature() != DagNode.TYPE_FEAT_ID
+          && d.getFeature() != DagNode.ID_FEAT_ID) {
+        args.put(d.getName(), d.getValue().getTypeName());
+      }
+    }
+    return args;
   }
 
 }
