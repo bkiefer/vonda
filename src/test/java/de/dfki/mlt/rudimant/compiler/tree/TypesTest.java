@@ -201,7 +201,7 @@ public class TypesTest {
   public void testArrayAccess1() {
     String methdecl = "int[] test; x = test[1];";
     String s = generate(methdecl);
-    String expected = "int x = test[1]";
+    String expected = "public int[] test; public int x; /**/ x = test[1]";
     assertEquals(expected, getForMarked(s, expected));
   }
 

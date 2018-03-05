@@ -33,6 +33,15 @@ public class StatVarDef extends RTStatement {
     this.toAssign = assign;
   }
 
+  public StatVarDef(boolean isFinal, Type type, RudiTree assign) {
+    this.varIsFinal = isFinal;
+    this.isDefinition = isFinal || !type.isUnspecified();
+    this.type = type;
+    assert(assign instanceof ExpAssignment);
+    this.variable = ((ExpVariable)((ExpAssignment)assign).left).content;
+    this.toAssign = ((ExpAssignment)assign).right;
+  }
+
   @Override
   public void visit(RudiVisitor v) {
     v.visitNode(this);

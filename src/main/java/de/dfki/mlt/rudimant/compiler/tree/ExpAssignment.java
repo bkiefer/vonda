@@ -29,6 +29,10 @@ public class ExpAssignment extends RTExpression {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
+  
+  public boolean leftIsVariable() {
+    return left instanceof ExpVariable;
+  }
 
   public Iterable<? extends RudiTree> getDtrs() {
     RudiTree[] dtrs = { left, right };

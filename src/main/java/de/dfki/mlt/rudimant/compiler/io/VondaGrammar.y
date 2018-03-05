@@ -75,6 +75,15 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
   public String getFullText(Position start, Position end) {
   	return ((VondaLexer)this.yylexer).getFullText(start, end);
   }
+  
+  // if the left part is a variable, this must be transformed to StatVarDef
+  private RudiTree getAssignmentStat(RTExpression assign) {
+    assert(assign instanceof ExpAssignment);
+    if (((ExpAssignment)assign).leftIsVariable()) {
+      return new StatVarDef(false, new Type(null), assign);
+    }
+    return new StatExpression(assign);
+  }
 }
 
 // keywords
@@ -161,7 +170,7 @@ path
 
 statement
   : block { $$ = $1; }
-  | assignment ';' { $$ = setPos(new StatExpression($1), @$); }
+  | assignment ';' { $$ = setPos(getAssignmentStat($1), @$); }
   | PLUSPLUS UnaryExpression ';' {
     ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), @$);
     ExpArithmetic ar = new ExpArithmetic($2, es, "+");
