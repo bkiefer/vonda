@@ -372,6 +372,8 @@ public class Type {
     int leftCollCode = getCollectionCode();
     int rightCollCode = right.getCollectionCode();
     if ((leftCollCode | rightCollCode) != 0) {
+      // collection vs. simple type?
+      if (leftCollCode == 0 || rightCollCode == 0) return null;
       Type inner = getInnerType().unifyBasicTypes(right.getInnerType());
       if (inner == null || ((leftCollCode & rightCollCode) == 0))
         return null;
