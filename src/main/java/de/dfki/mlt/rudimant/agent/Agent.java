@@ -429,10 +429,22 @@ public abstract class Agent implements StreamingClient {
   }
 
   /** Return the POD represented by the string */
-  public int toInt(String s) { return Integer.parseInt(s); }
-  public float toFloat(String s) { return Float.parseFloat(s); }
-  public double toDouble(String s) { return Double.parseDouble(s); }
-  public boolean toBool(String s) { return Boolean.getBoolean(s); }
+  public int toInt(String s) {
+    try { return Integer.parseInt(s); }
+    catch (NumberFormatException ex) { return -1; }
+  }
+  public float toFloat(String s) {
+    try { return Float.parseFloat(s); }
+    catch (NumberFormatException ex) { return -1.0f; }
+  }
+  public double toDouble(String s) {
+    try { return Double.parseDouble(s); }
+    catch (NumberFormatException ex) { return -1.0d; }
+  }
+
+  public boolean toBool(String s) {
+    return "true".equals(s.toLowerCase());
+  }
 
   public DialogueAct analyse(String input) {
     return asr.interpret(input);
