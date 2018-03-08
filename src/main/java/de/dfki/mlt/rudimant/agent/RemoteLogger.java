@@ -1,7 +1,5 @@
 package de.dfki.mlt.rudimant.agent;
 
-import java.io.IOException;
-
 import de.dfki.mlt.rudimant.common.LogPrinter;
 import de.dfki.mlt.rudimant.common.RuleInfo;
 import de.dfki.mlt.rudimant.common.SimpleServer;
@@ -18,17 +16,13 @@ public class RemoteLogger implements LogPrinter {
 
   @Override
   public void printLog(RuleInfo ruleId, boolean[] result) {
-    try {
-      String[] toSend = new String[result.length + 2];
-      toSend[0] = "printLog";
-      toSend[1] = Integer.toString(ruleId.getId());
-      for (int i = 0; i < result.length; ++i) {
-        toSend[i + 2] = Boolean.toString(result[i]);
-      }
-      _server.send(toSend);
-    } catch (IOException e) {
-      Agent.logger.error(e.getMessage());
+    String[] toSend = new String[result.length + 2];
+    toSend[0] = "printLog";
+    toSend[1] = Integer.toString(ruleId.getId());
+    for (int i = 0; i < result.length; ++i) {
+      toSend[i + 2] = Boolean.toString(result[i]);
     }
+    _server.send(toSend);
   }
 
 }

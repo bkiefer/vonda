@@ -60,6 +60,7 @@ public class SimpleClient extends SimpleConnector {
         logger.error("Unknown host {}: {}", _hostName, e.toString());
         return false;
       } catch (IOException e) {
+        close();
         // make sure only every noLogInterval milliseconds this will be logged
         if (currentTime - nextLog > 0) {
           nextLog = currentTime + noLogInterval;
@@ -77,12 +78,11 @@ public class SimpleClient extends SimpleConnector {
   protected boolean init() { return initClient(); }
 
   public void disconnect() throws IOException {
-    if (socket == null) return;
     closeRequested = true;
+    if (socket == null) return;
     out.write("\0");
     out.flush();
-    socket.close();
-    socket = null;
+    close();
   }
 
   public static void main(String[] args) throws IOException, InterruptedException {
@@ -93,10 +93,15 @@ public class SimpleClient extends SimpleConnector {
     try {
       int i = 0;
       while (i++ < 500) {
-        scl.send("test", "345", "12345", "14");
+        try {
+          scl.send("test", "345", "12345", "14");
+        } catch (IOException ex) {
+          scl.close();
+          scl.init();
+        }
         Thread.sleep(250);
-//        scl.send("printLog", Integer.toString(i), "234", "12");
-//        Thread.sleep(1000);
+//      scl.send("printLog", Integer.toString(i), "234", "12");
+//      Thread.sleep(1000);
       }
     } catch (InterruptedException e) {
       System.out.println(e);
