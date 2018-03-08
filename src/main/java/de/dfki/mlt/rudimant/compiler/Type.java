@@ -519,9 +519,10 @@ public class Type {
         if (! first) sb.append(", ");
         if (pType == null)  // for visualization
           sb.append("null");
-        else if (pType.isRdfType())
-          sb.append("Object[").append(_class.toString()).append("]");
-        else
+        else if (pType.isRdfType()) {
+          String rdftype = _class == null ? "null" : _class.toString();
+          sb.append("Object[").append(rdftype).append("]");
+        } else
           pType.toDebugString(sb);
         first = false;
       }
