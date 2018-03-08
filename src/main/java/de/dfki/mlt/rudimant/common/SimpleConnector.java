@@ -47,27 +47,31 @@ public abstract class SimpleConnector {
   protected void startReading() {
     readerThread = new Thread() {
       public void run() {
-        int c;
-        StringBuffer sb = new StringBuffer();
-        try {
-          while (socket.isConnected()
-              && (! socket.isClosed() || closeRequested)) {
-            c = in.read();
-            switch (c) {
-            case '\t':
-              String s = sb.toString();
-              String[] args = s.split(";");
-              _callable.accept(args);
-              sb = new StringBuffer();
-              break;
-            case '\0':
-              return;
-            default:
-              sb.append((char)c);
+        while (! closeRequested) {
+          int c;
+          StringBuffer sb = new StringBuffer();
+          try {
+            while (isConnected()
+                && (! socket.isClosed() || closeRequested)) {
+              c = in.read();
+              switch (c) {
+              case '\t':
+                String s = sb.toString();
+                String[] args = s.split(";");
+                _callable.accept(args);
+                sb = new StringBuffer();
+                break;
+              case '\0':
+                return;
+              default:
+                sb.append((char)c);
+              }
             }
+          } catch (IOException ex) {
+            logger.error("Error reading {} Stream: {}", _name, ex);
+            close();
+            return;
           }
-        } catch (IOException ex) {
-          logger.error("Error reading {} Stream: {}", _name, ex);
         }
       }
     };
@@ -78,6 +82,14 @@ public abstract class SimpleConnector {
 
   public boolean isConnected() {
     return socket != null && socket.isConnected();
+  }
+
+  protected void close() {
+    try {
+      if (socket != null) socket.close();
+    } catch (IOException ex) {
+    }
+    socket = null;
   }
 
   public void send(String ... s) throws IOException {

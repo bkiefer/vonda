@@ -3,6 +3,7 @@ package de.dfki.mlt.rudimant.common;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -31,16 +32,15 @@ public class SimpleServer extends SimpleConnector {
   public boolean startServer() {
     Thread t = new Thread() {
       public void run() {
-        try {
-          serverSocket = new ServerSocket(_portNumber);
-          socket = serverSocket.accept();
-          in = new InputStreamReader(socket.getInputStream(), "UTF-8");
-          out = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
-          startReading();
-          logger.info("Agent debug server started");
-
-        } catch (IOException exception) {
-          logger.error("Agent debug server: " + exception.toString());
+        while (! closeRequested) {
+          if (socket == null || ! socket.isConnected()) {
+            init();
+          }
+          try {
+            sleep(1000);
+          } catch (InterruptedException e) {
+            return;
+          }
         }
       }
     };
@@ -50,19 +50,47 @@ public class SimpleServer extends SimpleConnector {
     return true;
   }
 
-  protected boolean init() { return false; }
+  protected boolean init() {
+    try {
+      if (socket == null || ! socket.isConnected()) {
+        close();
+        serverSocket = new ServerSocket(_portNumber);
+        socket = serverSocket.accept();
+        in = new InputStreamReader(socket.getInputStream(), "UTF-8");
+        out = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+        startReading();
+        logger.info("Agent debug server started");
+      }
+    }
+    catch (IOException ex) {
+      return false;
+    }
+    return true;
+  }
 
-  public void stop()  {
+  public void close()  {
     if (serverSocket == null) return;
-    closeRequested = true;
     try {
       serverSocket.close();
-      socket.close();
+      super.close();
     } catch (IOException ex) {
       logger.error("Error closing socket: {}", ex);
     } finally {
       serverSocket = null;
       socket = null;
+    }
+  }
+
+  public void stop() {
+    closeRequested = true;
+    close();
+  }
+
+  public void send(String ... s) {
+    try {
+      super.send(s);
+    } catch (IOException ex) {
+      close();
     }
   }
 
@@ -77,14 +105,11 @@ public class SimpleServer extends SimpleConnector {
         try {
           while (true && simplServ.isAlive()) {
             System.out.println("Rödeln...");
-            Thread.sleep(5000);
+            Thread.sleep(500);
             simplServ.send("one", "two");
           }
         } catch (InterruptedException v) {
           System.out.println(v);
-        } catch (IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
         }
       }
     };
