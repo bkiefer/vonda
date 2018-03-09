@@ -1,8 +1,6 @@
 package de.dfki.mlt.rudimant.common;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -41,19 +39,15 @@ public class SimpleClient extends SimpleConnector {
   private long noLogInterval = 30000;
   private long reconnectInterval = 1000;
 
-  public boolean initClient() {
+  public boolean init() {
     long currentTime = System.currentTimeMillis();
     if (currentTime - nextTryToConnect > 0) {
       try {
         /* make sure that only one try per reconnectInterval occurs */
         nextTryToConnect = currentTime + reconnectInterval;
-
-        socket = new Socket();
-        socket.connect(_addr);
-        out = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
-        in = new InputStreamReader(socket.getInputStream(), "UTF-8");
-        closeRequested = false;
-        startReading();
+        Socket s = new Socket();
+        s.connect(_addr);
+        startReading(s);
         logger.debug("Client has been connected.");
         return true;
       } catch (UnknownHostException e) {
@@ -75,16 +69,6 @@ public class SimpleClient extends SimpleConnector {
     return false;
   }
 
-  protected boolean init() { return initClient(); }
-
-  public void disconnect() throws IOException {
-    closeRequested = true;
-    if (socket == null) return;
-    out.write("\0");
-    out.flush();
-    close();
-  }
-
   public static void main(String[] args) throws IOException, InterruptedException {
     SimpleClient scl = new SimpleClient(
         "localhost", 3664,
@@ -93,15 +77,8 @@ public class SimpleClient extends SimpleConnector {
     try {
       int i = 0;
       while (i++ < 500) {
-        try {
-          scl.send("test", "345", "12345", "14");
-        } catch (IOException ex) {
-          scl.close();
-          scl.init();
-        }
+        scl.send("test", "345", "12345", "14");
         Thread.sleep(250);
-//      scl.send("printLog", Integer.toString(i), "234", "12");
-//      Thread.sleep(1000);
       }
     } catch (InterruptedException e) {
       System.out.println(e);

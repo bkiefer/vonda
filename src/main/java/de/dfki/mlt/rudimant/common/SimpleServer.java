@@ -1,9 +1,6 @@
 package de.dfki.mlt.rudimant.common;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -20,30 +17,14 @@ public class SimpleServer extends SimpleConnector {
 
   private ServerSocket serverSocket;
 
-  public SimpleServer(Consumer<String[]> c, int port, String name) throws IOException {
+  public SimpleServer(Consumer<String[]> c, int port, String name)
+      throws IOException {
     super(port, c, name);
   }
 
-  public boolean isAlive() {
-    return readerThread == null || readerThread.isAlive();
-  }
-
-  /** starts the debugging service for the agent */
+  /** starts the debugging service for the agent (non-blocking) */
   public boolean startServer() {
-    Thread t = new Thread() {
-      public void run() {
-        while (! closeRequested) {
-          if (socket == null || ! socket.isConnected()) {
-            init();
-          }
-          try {
-            sleep(1000);
-          } catch (InterruptedException e) {
-            return;
-          }
-        }
-      }
-    };
+    Thread t = new Thread() { public void run() { init(); } };
     t.setDaemon(true);
     t.setName("StartServer");
     t.start();
@@ -52,14 +33,11 @@ public class SimpleServer extends SimpleConnector {
 
   protected boolean init() {
     try {
-      if (socket == null || ! socket.isConnected()) {
+      if (! isConnected()) {
         close();
         serverSocket = new ServerSocket(_portNumber);
-        socket = serverSocket.accept();
-        in = new InputStreamReader(socket.getInputStream(), "UTF-8");
-        out = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
-        startReading();
-        logger.info("Agent debug server started");
+        startReading(serverSocket.accept());
+        logger.info("Agent debug server started on port {}", _portNumber);
       }
     }
     catch (IOException ex) {
@@ -68,7 +46,7 @@ public class SimpleServer extends SimpleConnector {
     return true;
   }
 
-  public void close()  {
+  protected void close()  {
     if (serverSocket == null) return;
     try {
       serverSocket.close();
@@ -77,20 +55,6 @@ public class SimpleServer extends SimpleConnector {
       logger.error("Error closing socket: {}", ex);
     } finally {
       serverSocket = null;
-      socket = null;
-    }
-  }
-
-  public void stop() {
-    closeRequested = true;
-    close();
-  }
-
-  public void send(String ... s) {
-    try {
-      super.send(s);
-    } catch (IOException ex) {
-      close();
     }
   }
 
