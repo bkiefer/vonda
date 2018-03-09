@@ -114,9 +114,9 @@ public abstract class SimpleConnector {
     closeRequested = true;
   }
 
-  public void send(String ... s) {
+  public boolean send(String ... s) {
     try {
-      if (! isConnected()) return;
+      if (! isConnected()) return false;
       boolean first = true;
       for (String o : s) {
         if (! first) out.write(";");
@@ -127,6 +127,8 @@ public abstract class SimpleConnector {
       out.flush();
     } catch (IOException ex) {
       close();
+      return false;
     }
+    return true;
   }
 }
