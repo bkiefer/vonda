@@ -116,9 +116,7 @@ public abstract class SimpleConnector {
 
   public void send(String ... s) {
     try {
-      if (! isConnected()) {
-        if (! init()) return;
-      }
+      if (! isConnected()) return;
       boolean first = true;
       for (String o : s) {
         if (! first) out.write(";");
