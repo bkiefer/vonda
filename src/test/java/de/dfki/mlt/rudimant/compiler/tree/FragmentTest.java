@@ -20,9 +20,13 @@ public class FragmentTest {
 
   @Test
   public void test1() {
-    String conditionalExp = "true ? 1 : 2;";
+    String conditionalExp = "int i = true ? 1 : 2;";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(conditionalExp));
+    assertTrue(dtr instanceof StatVarDef);
+    dtr = ((StatVarDef)dtr).toAssign;
+    assertTrue(dtr instanceof ExpAssignment);
+    dtr = ((ExpAssignment)dtr).right;
     assertTrue(dtr instanceof ExpConditional);
 
     String type_boolean = ((ExpConditional) dtr).boolexp.getType().toJava();

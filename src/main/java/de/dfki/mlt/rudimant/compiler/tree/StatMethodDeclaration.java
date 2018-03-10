@@ -39,6 +39,11 @@ public class StatMethodDeclaration extends RTStatement implements RTBlockNode {
     name = nm;
     parameters = new ArrayList<>();
     partypes = new ArrayList<>();
+    if (parmsAndTypes != null)
+        for (int i = 0; i < parmsAndTypes.size();) {
+            partypes.add((Type)parmsAndTypes.get(i++));
+            parameters.add((String)parmsAndTypes.get(i++));
+        }
     block = blk;
     calledUpon = calledUpn == null ? Type.getNoType() : calledUpn;
   }
