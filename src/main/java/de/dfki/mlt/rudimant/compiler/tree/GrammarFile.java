@@ -152,7 +152,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
       if (fd != null) {
         if (fd.varDef.toAssign != null && fd.varDef.isDefinition) {
           gv.visitNode(fd); // save comment for assignment
-        } else {
+        } else if (fd.varDef.isDefinition) {
+          // TODO: confirm: if this is no definition, we do not want it here, right?
           fd.visitWithComments(gv);
         }
       }
