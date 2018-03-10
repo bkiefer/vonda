@@ -122,6 +122,8 @@ GREATER: '>';
     assertTrue(dtr instanceof ExpBoolean);
     List<RudiTree> dtrs = new ArrayList<>();
     for (RudiTree d : dtr.getDtrs()) { dtrs.add(d); }
+    // TODO: this ist most probably wrong; at least the ast for this expression
+    //       looks sound
     assertEquals("!", ((ExpBoolean)dtrs.get(0)).operator) ;
     assertEquals("&&", ((ExpBoolean)dtrs.get(1)).operator) ;
 

@@ -114,7 +114,7 @@ public class CastTest {
   public void test6() {
     String in = "Child user; b = user.isLocatedAt == toRdf(\"<dom:Home>\");";
     String s = generate(in);
-    String expected = "Rdf user;((Rdf)user.getSingleValue(\"<dom:isLocatedAt>\"))"
+    String expected = "Rdf user;boolean b = ((Rdf)user.getSingleValue(\"<dom:isLocatedAt>\"))"
         + ".equals(toRdf(\"<dom:Home>\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
