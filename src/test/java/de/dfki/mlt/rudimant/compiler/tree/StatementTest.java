@@ -90,6 +90,7 @@ public class StatementTest {
  @Test
  public void StatementTest6(){
    // TODO: the empty statement after case is not wrong, but it is kind of funny
+   // TODO: what magic is supposed to transform true and false into 'truth'?
    String in = "int i; boolean truth; "
            + "switch(truth){case true: i=2;  case false: i=1;}";
     String r = generate(in);

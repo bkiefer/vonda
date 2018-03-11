@@ -74,6 +74,7 @@ public class GrammarRuleTest {
 
   @Test
   public void testGenerateAssigns2() {
+    // TODO: there is something awkward going on here
     String in = "r: if ((1 == 1 && (2 != 3 || ! 2 != 4))) { int i = 7; }";
     String s = generate(in);
     assertTrue(s.contains("__x0[1] = 1 == 1"));

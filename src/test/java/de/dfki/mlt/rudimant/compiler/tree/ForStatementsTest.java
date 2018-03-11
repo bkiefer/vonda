@@ -84,6 +84,7 @@ public class ForStatementsTest {
   // exp to statement in for
   @Test
   public void testForExp() {
+    // TODO: why do we test that x = disappears?
     String in = "public int lab(){ for(s : child.sessions) x = 23; }";
     String exp = "public int lab() { for (Object s_outer : child.sessions) {"
             + " Object s = (Object)s_outer; 23; } }";
