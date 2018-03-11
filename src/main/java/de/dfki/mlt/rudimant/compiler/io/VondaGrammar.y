@@ -171,6 +171,7 @@ path
 statement_no_def
   : block { $$ = $1; }
   | assignment ';' { $$ = setPos(getAssignmentStat($1), @$); }
+  | field_access ';' { $$ = setPos(new StatExpression($1), @$); }
   | PLUSPLUS UnaryExpression ';' {
     ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), @$);
     ExpArithmetic ar = new ExpArithmetic($2, es, "+");
