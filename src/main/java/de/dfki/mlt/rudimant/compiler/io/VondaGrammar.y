@@ -588,6 +588,14 @@ UnaryExpression
     ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), @$);
     $$ = setPos(new ExpArithmetic($2, es, "-"), @$);
   }
+  | UnaryExpression PLUSPLUS {
+    ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), @$);
+    $$ = setPos(new ExpAssignment($1, setPos(new ExpArithmetic($1, es, "+"), @$)), @$);
+  }
+  | UnaryExpression MINUSMINUS {
+    ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), @$);
+    $$ = setPos(new ExpAssignment($1, setPos(new ExpArithmetic($1, es, "-"), @$)), @$);
+  }
   | '+' CastExpression { $$ = setPos(new ExpArithmetic($2, null, "+"), @$); }
   | '-' CastExpression { $$ = setPos(new ExpArithmetic($2, null, "-"), @$); }
   | LogicalUnaryExpression { $$ = $1; }
