@@ -394,6 +394,12 @@ public class Type {
         || this.equals(right))
       return this;
 
+    // if one of those is a generic type, the real type is the more
+    // specific one and they are compatible
+    // (necessary because this method is also used for funccall evaluation)
+    if (this.isUnaryGeneric()) return right;
+    if (right.isUnaryGeneric()) return this;
+
     // check if these are (real) RDF types and are in a type relation.
     if (_class != null || right._class != null) {
       if (_class != null && right._class != null) {
@@ -406,12 +412,6 @@ public class Type {
       if ("Rdf".equals(right._name)) return this;
       return null;
     }
-
-    // if one of those is a generic type, the real type is the more
-    // specific one and they are compatible
-    // (necessary because this method is also used for funccall evaluation)
-    if (this.isUnaryGeneric()) return right;
-    if (right.isUnaryGeneric()) return this;
 
     String l = xsdToJavaPod();
     String r = right.xsdToJavaPod();

@@ -178,10 +178,10 @@ import org.slf4j.LoggerFactory;
       // find which token is next, append it and increase the appropriate index
       if (comm != -1 && comm < commentTokens.size()
           && commentTokens.get(comm).start.compareTo(tokens.get(cont).start) <= 0){
-        sb.append(commentTokens.get(comm));
+        sb.append(commentTokens.get(comm).getText());
         ++comm;
       } else {
-        sb.append(tokens.get(cont));
+        sb.append(tokens.get(cont).getText());
         ++cont;
       }
     }

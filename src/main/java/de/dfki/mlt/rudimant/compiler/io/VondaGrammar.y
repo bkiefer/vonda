@@ -84,6 +84,15 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
     }
     return new StatExpression(assign);
   }
+
+  // generic method
+  private ExpAssignment createPlusMinus(RTExpression variable, String plusOrMinus,
+                                         Location loc) {
+    ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), loc);
+    ExpArithmetic ar = setPos(new ExpArithmetic(variable, es, plusOrMinus), loc);
+    ExpAssignment ass = setPos(new ExpAssignment(variable, ar), loc);
+    return ass;
+  }
 }
 
 // keywords
@@ -173,16 +182,10 @@ statement_no_def
   | assignment ';' { $$ = setPos(getAssignmentStat($1), @$); }
   | field_access ';' { $$ = setPos(new StatExpression($1), @$); }
   | PLUSPLUS UnaryExpression ';' {
-    ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), @$);
-    ExpArithmetic ar = new ExpArithmetic($2, es, "+");
-    setPos(ar, @$);
-    $$ = setPos(new StatExpression(ar), @$);
+    $$ = setPos(new StatExpression(createPlusMinus($2, "+", @$)), @$);
   }
   | MINUSMINUS UnaryExpression ';' {
-    ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), @$);
-    ExpArithmetic ar = new ExpArithmetic($2, es, "-");
-    setPos(ar, @$);
-    $$ = setPos(new StatExpression(ar), @$);
+    $$ = setPos(new StatExpression(createPlusMinus($2, "+", @$)), @$);
   }
   | function_call ';' { $$ = setPos(new StatExpression($1), @$); }
   | grammar_rule { $$ = $1; }
@@ -582,21 +585,11 @@ MultiplicativeExpression
 
 UnaryExpression
   : PLUSPLUS UnaryExpression {
-    ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), @$);
-    $$ = setPos(new ExpAssignment($2, setPos(new ExpArithmetic($2, es, "+"), @$)), @$);
+    $$ = createPlusMinus($2, "+", @$);
   }
   | MINUSMINUS UnaryExpression {
-    ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), @$);
-    $$ = setPos(new ExpAssignment($2, setPos(new ExpArithmetic($2, es, "-"), @$)), @$);
+    $$ = createPlusMinus($2, "-", @$);
   }
-/*  | UnaryExpression PLUSPLUS {
-    ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), @$);
-    $$ = setPos(new ExpAssignment($1, setPos(new ExpArithmetic($1, es, "+"), @$)), @$);
-  }
-  | UnaryExpression MINUSMINUS {
-    ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), @$);
-    $$ = setPos(new ExpAssignment($1, setPos(new ExpArithmetic($1, es, "-"), @$)), @$);
-  }*/
   | '+' CastExpression { $$ = setPos(new ExpArithmetic($2, null, "+"), @$); }
   | '-' CastExpression { $$ = setPos(new ExpArithmetic($2, null, "-"), @$); }
   | LogicalUnaryExpression { $$ = $1; }
@@ -617,12 +610,10 @@ LogicalUnaryExpression
 PostfixExpression
   : PrimaryExpression { $$ = $1; }
   | PostfixExpression PLUSPLUS {
-    ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), @$);
-    $$ = setPos(new ExpAssignment($1, setPos(new ExpArithmetic($1, es, "+"), @$)), @$);
+    $$ = createPlusMinus($1, "+", @$);
   }
   | PostfixExpression MINUSMINUS {
-    ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), @$);
-    $$ = setPos(new ExpAssignment($1, setPos(new ExpArithmetic($1, es, "-"), @$)), @$);
+    $$ = createPlusMinus($1, "-", @$);
   }
   ;
 

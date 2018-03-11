@@ -320,6 +320,11 @@ public class VisitorGeneration implements RudiVisitor {
   }
 
   private boolean handleRuleLogging(RudiTree node) {
+    if (node instanceof ExpAssignment) {
+        // then there must be parenthesis around this
+        out.append("(");
+        return true;
+    }
     if (activeInfo == null) return false;
     if (node instanceof ExpBoolean) {
       ExpBoolean n = (ExpBoolean)node;
