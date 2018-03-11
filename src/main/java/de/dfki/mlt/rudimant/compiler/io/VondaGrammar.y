@@ -28,7 +28,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %type <RTExpression> ComplexPrimaryNoParenthesis field_access ArrayAccess
 %type <RTExpression> function_call simple_nofa_exp da_token
 %type <StatVarDef> var_def
-%type <RTStatement> statement blk_statement set_operation
+%type <RTStatement> statement_no_def statement blk_statement set_operation
 %type <RTStatement> return_statement propose_statement timeout_statement
 %type <RTStatement> timeout_behaviour_statement while_statement for_statement
 %type <RTStatement>  label_statement switch_statement
@@ -139,7 +139,7 @@ grammar_file
     $$ = $3; $2.setVisibility($1); $3.addFirst($2);
   }
   | method_declaration grammar_file { $$ = $2; $2.addFirst($1); }
-  | statement grammar_file { $$ = $2; $2.addFirst($1); }
+  | statement_no_def grammar_file { $$ = $2; $2.addFirst($1); }
   // | ANNOTATION grammar_file { $$ = $2; $2.add($1); }
   | imports grammar_file { $$ = $2; $2.addFirst($1); }
   | visibility_spec var_def grammar_file  {
@@ -168,7 +168,7 @@ path
   | '.' VARIABLE path { $$ = $3; $3.add($2); }
   ;
 
-statement
+statement_no_def
   : block { $$ = $1; }
   | assignment ';' { $$ = setPos(getAssignmentStat($1), @$); }
   | PLUSPLUS UnaryExpression ';' {
@@ -197,9 +197,13 @@ statement
   | label_statement { $$ = $1; }
   ;
 
+statement
+  : statement_no_def { $$ = $1; }
+  | var_def { $$ = $1; }
+  ;
+
 blk_statement
   : statement { $$ = $1; }
-  | var_def { $$ = $1; }
   ;
 
 ////////// STATEMENTS ///////////////////
