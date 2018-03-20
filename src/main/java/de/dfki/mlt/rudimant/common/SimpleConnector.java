@@ -8,20 +8,18 @@ import java.net.Socket;
 import java.util.function.Consumer;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public abstract class SimpleConnector {
+public class SimpleConnector implements Runnable {
 
   private static final char EOM_CHAR = '\t';
   private static final char EOF_CHAR = '\0';
   protected static final String EOF = "" + EOF_CHAR;
 
-  protected static Logger logger;
+  private static final Logger logger =
+      LoggerFactory.getLogger(SimpleConnector.class);
 
-  private Socket socket;
-
-  protected final int _portNumber;
-
-  private final String _name;
+  private Socket _socket;
 
   protected boolean closeRequested = false;
 
@@ -32,61 +30,48 @@ public abstract class SimpleConnector {
 
   protected final Consumer<String[]> _callable;
 
-  protected abstract boolean init();
-
   /**
    * A client that connects to the server on localhost at the given port to send
    * log information to the debugger.
    *
    * @param portNumber
+   * @throws IOException
+   * @throws UnsupportedEncodingException
    */
-  protected SimpleConnector(int portNumber,
-      Consumer<String[]> c, String name) {
-    _portNumber = portNumber;
-    socket = new Socket();
-    _name = name;
+  protected SimpleConnector(Socket s, Consumer<String[]> c)
+      throws UnsupportedEncodingException, IOException {
+    _socket = s;
     _callable = c;
+    in = new InputStreamReader(_socket.getInputStream(), "UTF-8");
+    out = new OutputStreamWriter(_socket.getOutputStream(), "UTF-8");
   }
 
-  protected void startReading(Socket s)
-      throws UnsupportedEncodingException, IOException {
-    socket = s;
-    in = new InputStreamReader(socket.getInputStream(), "UTF-8");
-    out = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
-    readerThread = new Thread() {
-      public void run() {
-        while (! closeRequested) {
-          int c;
-          StringBuffer sb = new StringBuffer();
-          try {
-            while (isConnected()
-                && (! socket.isClosed() || closeRequested)) {
-              c = in.read();
-              switch (c) {
-              case EOM_CHAR:
-                String s = sb.toString();
-                String[] args = s.split(";");
-                _callable.accept(args);
-                sb = new StringBuffer();
-                break;
-              case EOF_CHAR:
-                return;
-              default:
-                sb.append((char)c);
-                break;
-              }
-            }
-          } catch (IOException ex) {
-            logger.error("Error reading {} Stream: {}", _name, ex);
-            return;
-          }
+  public void run() {
+    int c;
+    StringBuffer sb = new StringBuffer();
+    try {
+      while (isConnected()) {
+        c = in.read();
+        switch (c) {
+        case EOM_CHAR:
+          String s = sb.toString();
+          String[] args = s.split(";");
+          _callable.accept(args);
+          sb = new StringBuffer();
+          break;
+        case EOF_CHAR:
+          return;
+        default:
+          sb.append((char)c);
+          break;
         }
-        close();
       }
-    };
-    readerThread.setName(_name);
-    readerThread.setDaemon(true);
-    readerThread.start();
+    } catch (IOException ex) {
+      logger.error("Error reading stream: {}", ex);
+      return;
+    }
+    close();
+    logger.info("Stopping read loop");
   }
 
   public boolean isAlive() {
@@ -94,23 +79,21 @@ public abstract class SimpleConnector {
   }
 
   public boolean isConnected() {
-    return socket != null && socket.isConnected();
+    return _socket != null && _socket.isConnected() && ! closeRequested;
   }
 
-  protected void close() {
+  public void close() {
     try {
-      if (socket != null) socket.close();
+      if (_socket != null) _socket.close();
     } catch (IOException ex) {
     }
-    socket = null;
+    _socket = null;
   }
 
   public void disconnect() throws IOException {
-    if (! isConnected()) {
-      closeRequested = true;
-      return;
+    if (_socket != null && _socket.isConnected()) {
+      send(EOF);
     }
-    send(EOF);
     closeRequested = true;
   }
 
@@ -126,6 +109,7 @@ public abstract class SimpleConnector {
       out.write(EOM_CHAR);
       out.flush();
     } catch (IOException ex) {
+      logger.error("Closing socket: {}", ex.toString());
       close();
       return false;
     }
