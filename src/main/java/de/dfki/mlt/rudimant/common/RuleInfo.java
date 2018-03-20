@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RuleInfo extends BasicInfo {
-  private int _id;
+  protected int _id;
 
-  private int _state = 0;
+  protected List<Integer> _expr;
 
-  private List<Integer> _expr;
+  protected List<String> _baseTerms;
 
-  private List<String> _baseTerms;
-
-  private static final String[] opId2Op = { "&&", "||", "!" };
+  protected static final String[] opId2Op = { "&&", "||", "!" };
 
   public static boolean isNot(int opId) { return opId == -3;  }
 
@@ -38,12 +36,6 @@ public class RuleInfo extends BasicInfo {
   }
 
   public int getId() { return _id; }
-
-  public void setState(int state) {
-    _state = state;
-  }
-
-  public int getState() { return _state; }
 
   public List<Integer> getExpression() {
     return _expr;
