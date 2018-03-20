@@ -56,12 +56,14 @@ public class VisitorType implements RudiVisitor {
 
   /** use this to report a type checking warning
    *
-   * @param errorMessage
-   * @param node the tree node where the error occured
+   * @param warnMessage
+   * @param node the tree node where the warning occured
    */
-  public static void typeWarning(String errorMessage, RudiTree node) {
+  public void typeWarning(String warnMessage, RudiTree node) {
+    String newWarningMessage = node.getLocation() + " " + warnMessage;
+    mem.registerWarning(warnMessage, node.getLocation());
     // just set a warning into the logger
-    logger.warn(node.getLocation() + " " + errorMessage);
+    logger.warn(newWarningMessage);
   }
 
   public VisitorType(Mem m, boolean errorsFatal) {

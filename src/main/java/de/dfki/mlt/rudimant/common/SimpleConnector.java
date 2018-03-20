@@ -3,106 +3,116 @@ package de.dfki.mlt.rudimant.common;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.util.function.Consumer;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public abstract class SimpleConnector {
+public class SimpleConnector implements Runnable {
 
-  protected static Logger logger;
+  private static final char EOM_CHAR = '\t';
+  private static final char EOF_CHAR = '\0';
+  protected static final String EOF = "" + EOF_CHAR;
 
-  protected Socket socket;
+  private static final Logger logger =
+      LoggerFactory.getLogger(SimpleConnector.class);
 
-  protected final int _portNumber;
-
-  protected final String _name;
+  private Socket _socket;
 
   protected boolean closeRequested = false;
 
-  protected OutputStreamWriter out;
+  private OutputStreamWriter out;
+  private InputStreamReader in;
 
-  protected InputStreamReader in;
-
-  protected Thread readerThread;
+  private Thread readerThread;
 
   protected final Consumer<String[]> _callable;
-
-  protected abstract boolean init();
 
   /**
    * A client that connects to the server on localhost at the given port to send
    * log information to the debugger.
    *
    * @param portNumber
+   * @throws IOException
+   * @throws UnsupportedEncodingException
    */
-  protected SimpleConnector(int portNumber,
-      Consumer<String[]> c, String name) {
-    _portNumber = portNumber;
-    socket = new Socket();
-    _name = name;
+  protected SimpleConnector(Socket s, Consumer<String[]> c)
+      throws UnsupportedEncodingException, IOException {
+    _socket = s;
     _callable = c;
+    in = new InputStreamReader(_socket.getInputStream(), "UTF-8");
+    out = new OutputStreamWriter(_socket.getOutputStream(), "UTF-8");
   }
 
-  protected void startReading() {
-    readerThread = new Thread() {
-      public void run() {
-        while (! closeRequested) {
-          int c;
-          StringBuffer sb = new StringBuffer();
-          try {
-            while (isConnected()
-                && (! socket.isClosed() || closeRequested)) {
-              c = in.read();
-              switch (c) {
-              case '\t':
-                String s = sb.toString();
-                String[] args = s.split(";");
-                _callable.accept(args);
-                sb = new StringBuffer();
-                break;
-              case '\0':
-                return;
-              default:
-                sb.append((char)c);
-              }
-            }
-          } catch (IOException ex) {
-            logger.error("Error reading {} Stream: {}", _name, ex);
-            close();
-            return;
-          }
+  public void run() {
+    int c;
+    StringBuffer sb = new StringBuffer();
+    try {
+      while (isConnected()) {
+        c = in.read();
+        switch (c) {
+        case EOM_CHAR:
+          String s = sb.toString();
+          String[] args = s.split(";");
+          _callable.accept(args);
+          sb = new StringBuffer();
+          break;
+        case EOF_CHAR:
+          return;
+        default:
+          sb.append((char)c);
+          break;
         }
       }
-    };
-    readerThread.setName(_name);
-    readerThread.setDaemon(true);
-    readerThread.start();
+    } catch (IOException ex) {
+      logger.error("Error reading stream: {}", ex);
+      return;
+    }
+    close();
+    logger.info("Stopping read loop");
+  }
+
+  public boolean isAlive() {
+    return readerThread == null || readerThread.isAlive();
   }
 
   public boolean isConnected() {
-    return socket != null && socket.isConnected();
+    return _socket != null && _socket.isConnected() && ! closeRequested;
   }
 
-  protected void close() {
+  public void close() {
     try {
-      if (socket != null) socket.close();
+      if (_socket != null) _socket.close();
     } catch (IOException ex) {
     }
-    socket = null;
+    _socket = null;
   }
 
-  public void send(String ... s) throws IOException {
-    if (! isConnected()) {
-      if (! init()) return;
+  public void disconnect() throws IOException {
+    if (_socket != null && _socket.isConnected()) {
+      send(EOF);
     }
-    boolean first = true;
-    for (String o : s) {
-      if (! first) out.write(";");
-      else first = false;
+    closeRequested = true;
+  }
+
+  public boolean send(String ... s) {
+    try {
+      if (! isConnected()) return false;
+      boolean first = true;
+      for (String o : s) {
+        if (! first) out.write(";");
+        else first = false;
       out.write(o.toString());
+      }
+      out.write(EOM_CHAR);
+      out.flush();
+    } catch (IOException ex) {
+      logger.error("Closing socket: {}", ex.toString());
+      close();
+      return false;
     }
-    out.write("\t");
-    out.flush();
+    return true;
   }
 }

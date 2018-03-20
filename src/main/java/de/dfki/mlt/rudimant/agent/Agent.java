@@ -29,6 +29,8 @@ public abstract class Agent implements StreamingClient {
 
   public static final Logger logger = LoggerFactory.getLogger(Agent.class);
 
+  public static boolean startDebuggerGui = true;
+
   private static DialogueAct IMPOSSIBLE_DIALOGUEACT;
 
   /** To generate unique IDs for behaviours, etc. */
@@ -544,6 +546,13 @@ public abstract class Agent implements StreamingClient {
       System.exit(1);
     }
     ruleLogger = new RuleLogger(new ColorLogger());
+    if (startDebuggerGui) {
+      try {
+        connectToDebugger("localhost", SimpleServer.DEFAULT_PORT);
+      } catch (IOException ex) {
+        logger.error("Can not connect to debugger: {}", ex);
+      }
+    }
     reset();
   }
 

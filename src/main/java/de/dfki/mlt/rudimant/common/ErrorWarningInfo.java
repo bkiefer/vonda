@@ -1,13 +1,13 @@
 package de.dfki.mlt.rudimant.common;
 
-public class ErrorInfo {
+public class ErrorWarningInfo {
   private Location _location;
 
   private String _message;
 
-  public ErrorInfo() {}
+  public ErrorWarningInfo() {}
 
-  public ErrorInfo(String m, Location l) {
+  public ErrorWarningInfo(String m, Location l) {
     _message = m;
     _location = l;
   }

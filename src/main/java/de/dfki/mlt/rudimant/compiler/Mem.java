@@ -295,7 +295,15 @@ public class Mem {
     while (! (current instanceof ImportInfo))
       current = current.getParent();
     ImportInfo info = (ImportInfo)current;
-    info.getErrors().add(new ErrorInfo(errorMessage, location));
+    info.getErrors().add(new ErrorWarningInfo(errorMessage, location));
+  }
+
+  public void registerWarning(String warnMessage, Location location) {
+    BasicInfo current = currentInfo;
+    while (! (current instanceof ImportInfo))
+      current = current.getParent();
+    ImportInfo info = (ImportInfo)current;
+    info.getWarnings().add(new ErrorWarningInfo(warnMessage, location));
   }
 
   public void resolveGenericTypes(ExpFuncCall func, VisitorType visitor) {
