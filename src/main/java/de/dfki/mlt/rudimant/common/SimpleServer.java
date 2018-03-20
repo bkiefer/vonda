@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
  */
 public class SimpleServer extends SimpleConnector {
 
+  public static final int DEFAULT_PORT = 3664;
+
   static { logger = LoggerFactory.getLogger(SimpleServer.class); }
 
   private ServerSocket serverSocket;
