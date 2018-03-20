@@ -52,6 +52,7 @@ public class SimpleConnector implements Runnable {
     try {
       while (isConnected()) {
         c = in.read();
+        if (c < 0) return;
         switch (c) {
         case EOM_CHAR:
           String s = sb.toString();
