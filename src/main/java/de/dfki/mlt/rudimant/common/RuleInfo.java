@@ -1,18 +1,35 @@
+/*
+ * The Creative Commons CC-BY-NC 4.0 License
+ *
+ * http://creativecommons.org/licenses/by-nc/4.0/legalcode
+ *
+ * Creative Commons (CC) by DFKI GmbH
+ *  - Bernd Kiefer <kiefer@dfki.de>
+ *  - Anna Welker <anna.welker@dfki.de>
+ *  - Christophe Biwer <christophe.biwer@dfki.de>
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
+
 package de.dfki.mlt.rudimant.common;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RuleInfo extends BasicInfo {
-  private int _id;
+  protected int _id;
 
-  private int _state = 0;
+  protected List<Integer> _expr;
 
-  private List<Integer> _expr;
+  protected List<String> _baseTerms;
 
-  private List<String> _baseTerms;
-
-  private static final String[] opId2Op = { "&&", "||", "!" };
+  protected static final String[] opId2Op = { "&&", "||", "!" };
 
   public static boolean isNot(int opId) { return opId == -3;  }
 
@@ -38,12 +55,6 @@ public class RuleInfo extends BasicInfo {
   }
 
   public int getId() { return _id; }
-
-  public void setState(int state) {
-    _state = state;
-  }
-
-  public int getState() { return _state; }
 
   public List<Integer> getExpression() {
     return _expr;
