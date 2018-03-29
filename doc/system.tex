@@ -54,13 +54,13 @@ A \vonda project consists of an ontology, a custom extension of the abstract
 \texttt{Agent} class (the so-called \emph{wrapper class}), a client interface
 to connect the communication channels of the application to the agent, and a
 set of rule files that are arranged in a tree, using \texttt{import}
-statements. The blue core in Figure~\ref{fig:agent} is the run-time system that
+statements. The blue core in Figure~\ref{fig:architecture} is the run-time system that
 is part of \vonda, while all green elements are the application specific parts
 of the agent. A \texttt{Yaml} project file contains all necessary information
 for compilation: the ontology, the wrapper class, the top-level rule file and
 other parameters, like custom compile commands.
 
-The \vonda compiler translates rule files with the extension \texttt{.rudi} to Java files. During this process, the ontology storing the RDF classes and properties is used to automatically infer types, resolve whether field accesses are actually accesses to the database, etc (see section \ref{typeinference}).
+The \vonda compiler translates rule files with the extension \texttt{.rudi} to Java files. During this process, the ontology storing the RDF classes and properties is used to automatically infer types, resolve whether field accesses are actually accesses to the database, etc (see section \ref{sec:typeinference}).
 
 Every rule file can define variables and functions in \vonda syntax which are
 then available to all imported files.
@@ -86,12 +86,72 @@ The methods and fields from the custom wrapper class can be made available to al
 %Kommunikationsinterfaces abschirmt.
 
 
-\subsection{\vonda rules}
+\subsection{The \vonda rule language}
 
 %{\Huge TODO: testen, ob alle Beispiele so funktionieren, wie sie sollen !!!!!!}
+\label{sec:language}
+
+\if0
++ labeled rules
++ propose
+  In the compiled code, the proposals are implemented as anonymous classes.
++ timeouts: for proactivity or monitoring on the side of the virtual agent
++ type inference
++ automatic transformation
++ intelligent boolean expressions
++ overloaded operators
++ functions
++ DA syntax
+
+RDF store: HFC, probabilistic extensions (planned) ...
+\fi
+
+\vonda's rule language looks very similar to Java/C++. There are a number of
+specific features which make it much more convenient for the specification of
+dialogue strageties. One of the most important features is the way objects in
+the RDF store can be used throughout the code: RDF objects and classes can be
+treated similarly to those of object oriented programming languages, including
+the type inference and inheritance that comes with type hierarchies.
+
+\subsection{Compiler}
+\label{sec:compiler}
+
+The compiler turns the \vonda source code into Java source code using the information
+in the ontology. Every source file becomes a Java class. The generated code
+will not serve as an example of good programming practice, but a lot of care
+has been taken in making it still readable and debuggable. The
+compile process is separated into three stages: parsing and abstract syntax tree building,
+type checking and inference, and code generation.
+
+The \vonda compiler's internal knowledge about the program structure and the
+RDF hierarchy takes care of transforming the RDF field accesses to reads from and
+writes to the database. Beyond that, the type system, resolving the exact
+Java, RDF or RDF collection type of arbitrary long field accesses automatically
+performs the necessary casts for the ontology accesses.
+
+\subsection{Run-Time Library}
+
+The run-time library contains the basic functionality for handling the rule
+processing, including the proposals and timeouts, and for the on-line
+inspection of the rule evaluation. There is, however, no blueprint for the main
+event loop, since that depends heavily on the host application. It also
+contains methods for the creation and modification of shallow semantic
+structures, and especially for searching the interaction history for specific
+utterances. Most of this functionality is available through the abstract
+\texttt{Agent} class, which has to be extended to a concrete class for each
+application.
+
+There is functionality to talk directly to the HFC database using queries, in
+case the object view is not sufficient or to awkward. The natural language
+understanding and generation components can be exchanged by implementing existing
+interfaces, and the statistical component is connected by a message exchange
+protocol. A simple generation engine based on a graph rewriting module is
+already integrated, and is used in our current system as a template based
+generator. The example application also contains a VoiceXML based
+interpretation module.
 
 \subsubsection{Externe Funktionen und Variablen}
-\label{rudimant-global}
+\label{sec:rudimant-global}
 
 Für Funktionen, die nicht oder nur umständlich in rudi-Code implementiert
 werden können, sollte der Nutzer eine Javaklasse \texttt{MyAgent} von der
@@ -100,7 +160,7 @@ abstrakten Klasse \texttt{Agent} ableiten. Diese Klasse wird als
 dieser Klasse deklariert wurden und später im rudi-Code benutzt werden sollen,
 müssen mit vollständiger Typangabe in einer Datei \texttt{MyAgent.rudi}
 deklariert werden, sodass die Typinferenz von rudimant sie korrekt
-berücksichtigen kann (zur Syntax siehe \ref{rudimant-Typinferenz}).
+berücksichtigen kann (zur Syntax siehe \ref{sec:rudimant-Typinferenz}).
 
 Die Klasse \texttt{MyAgent} inklusive Packagenamen muss in der config.yml Datei
 eines Projektes unter dem Eintrag \texttt{wrapperClass} spezifiziert werden, um
@@ -111,6 +171,61 @@ untergeordneten rudi-Dateien auf diese, sodass korrekte Aufrufe im
 resultierenden Java-Code gewährleistet sind.
 
 \subsubsection{RDF Zugriffe, funktionale vs. relationale Properties}
+\label{sec:rdfaccesses}
+
+\begin{figure}[htb]
+\begin{minipage}{0.5\columnwidth}
+\small%
+\begin{verbatim}
+user = new Animate;
+user.name = "Joe";
+set_age:
+if (user.age <= 0) {
+  user.age = 15;
+}
+\end{verbatim}
+\end{minipage}\ \vrule\hspace{1ex}
+\begin{minipage}{0.44\columnwidth}
+    \small\begin{tikzpicture}[
+  blob/.style={circle, fill=yellow!50!white, minimum width=2mm},
+  txt/.style={node distance=3mm}]
+  \draw (0,0) node (agent) [blob]{};
+  % BEWARE: RIGHT OF= IS DEPRECATED, DON'T USE IT
+  \node (agtxt) [right= 0.1 of agent, txt] {Agent};
+  \node (name) [below= 0.4 of agtxt.west, anchor=west]{\emph{name}: \texttt{xsd:string}};
+  \node (animate) [blob, below=0.7 of agtxt.west]{};
+  \node (antxt) [right= 0.1 of animate, txt] {Animate};
+  \node (name) [below= 0.4 of antxt.west, anchor=west]{\emph{age}: \texttt{xsd:int}};
+  \node (inanimate) [blob, below= 0.5 of animate, node distance=9mm]{};
+  \node (intxt) [right= 0.1 of inanimate, txt] {Inanimate};
+  \draw (agent) |- (animate);
+  \draw (agent) |- (inanimate);
+\end{tikzpicture}
+\end{minipage}
+  \caption{Ontology and \vonda code}
+  \label{fig:rdfobjects}
+\end{figure}
+
+Figure \ref{fig:rdfobjects} shows an example of \vonda code, and how it relates
+to RDF type and property specifications, schematically shown on the right.  The
+domain and range definitions of properties are picked up by the compiler and
+used in various places, e.g., to infer types, do automatic code or data
+conversions, or create ``intelligent'' boolean tests, like in line 4, which
+will expand into two tests, one testing for the existence of the property for
+the object, and in case that succeeeds, a test if the value is greater than
+zero. If there is a chain of more than one field/property access, every part is
+tested for existence in the target code, keeping the source code as concise as
+possible. Also for reasons of brevity, the type of a new variable needs not be
+given if it can be inferred from the value assigned to it.
+
+New RDF objects can be created with \texttt{new}, similar to Java objects; they
+are immediately reflected in the database, as are all changes to already
+existing objects.
+
+Many operators are overloaded, especially boolean operators such as
+\textbf{\texttt{<=}}, which compares numeric values, but can also be used to test if an
+object is of a specific class, for subclass tests between two classes, and for
+subsumption of dialogue acts.
 
 \begin{table}[htbp]
   \centering
@@ -213,7 +328,48 @@ keine nachfolgende Regel, weder lokal, noch auf höheren Ebenen, angewandt.
 Um \texttt{propose} oder \texttt{timeout} Blöcke zu verlassen, muss
 \texttt{return} benutzt werden, da dies normale Funktionsblöcke sind.
 
-\subsubsection{Propose}
+\subsubsection{\texttt{propose} and \texttt{timeout}}
+\begin{figure}[htb]
+  \centering\small%
+\begin{verbatim}
+if (!saidInSession(#Greeting(Meeting)) {
+  // Wait 7 secs before taking initiative
+  timeout("wait_for_greeting", 7000) {
+    if (! receivedInSession(
+              #Greeting(Meeting))
+      propose("greet") {
+        da = #InitialGreeting(Meeting);
+        if (user.name)
+          da.name = user.name;
+        emitDA(da);
+      }
+  }
+
+  if (receivedInSession(#Greeting(Meeting))
+    // We assume we know the name by now
+    propose("greet_back") {
+      emitDA(#ReturnGreeting(Meeting,
+                  name=^user.name);
+    }
+  }
+}
+\end{verbatim}\vspace*{-3ex}
+  \caption{\vonda code example}
+  \label{fig:propose}
+\end{figure}
+
+There are two statements with a special syntax and semantics: \texttt{propose}
+and \texttt{timeout}. \texttt{propose} is \vonda's current way of implementing
+probabilistic selection. All (unique) propose blocks that are in active rule
+actions are collected, frozen in the execution state in which they were
+encountered, like closures known from functional programming languages. When
+all possible proposals have been selected, a statistical component decides
+which one will be taken and the closure is executed.
+
+\texttt{timeout}s also generate closures, but with a different purpose. They
+can be used to trigger proactive behaviour, or to check the state of the system
+after some time period, or in regular intervals. A timeout will only be created
+if there is no active timeout with that name.
 
 \subsubsection{Struktur einer Datei im rudi-Format}
 
@@ -234,19 +390,30 @@ und möglicher importierter Dateien - sofort beendet werden soll.
 Datei-global deklarierte Variablen werden als Klassenvariablen angelegt.
 
 \subsubsection{Dialogakte und Evaluation mittels \caret}
-\label{sub:caret}
+\label{sec:caret}
 
-We are currently using the DIT++ dialogue act hierarchy \cite{bunt2012iso} and
+We are currently using the DIT++ dialogue act hierarchy \citep{bunt2012iso} and
 shallow frame semantics along the lines of FrameNet
-\cite{ruppenhofer2016framenet} to interface with the natural language
+\citep{ruppenhofer2016framenet} to interface with the natural language
 understanding and generation units.
 % While shallow semantics is enough for most applications, we already experience its shortcomings when trying to handle, for example, social talk.
 
-\begin{small}
+\begin{figure}[htb]
+  \centering\small%
 \begin{verbatim}
 emitDA(#Inform(Answer, what=^solution));
-\end{verbatim}
-\end{small}
+\end{verbatim}\vspace*{-3ex}
+  \caption{\vonda code example}
+  \label{fig:DA}
+\end{figure}
+
+Figure~\ref{fig:DA} contains an example of the short-hand notation
+for shallow semantic structures (starting with \textbf{\texttt{\#}}).  Since
+they predominantly contain constant (string) literals, this is the default when
+specifying such structures. The special ``hat'' syntax in
+\texttt{user=\^{}user.name} allows to insert the value of expressions into the
+literal, similar to an \emph{eval}.
+
 Eine wichtige Aufgabe eines Dialogsystems ist zweifellos die Ausgabe von
 Dialogakten, die von der Generierungskomponente zu Kommunikation mit dem Nutzer
 verarbeitet werden können. In rudimant ist die Funktion \texttt{emitDA} hierfür
@@ -267,7 +434,7 @@ Seite einer Zuweisung notwendig, die dafür sorgt, dass der Ausdruck evaluiert
 wird, und nicht als atomares Symbol interpretiert.
 
 \subsubsection{Type inference and overloaded operators}
-\label{typeinference}
+\label{sec:typeinference}
 
 Rudimant erlaubt statische Typzuweisungen sowie Casting, beides ist jedoch
 nicht zwingend notwendig.
@@ -422,7 +589,7 @@ die Auswertung der Regeln anzustoßen. Dies ist nicht nur nützlich zur
 Modularität, da verschiedene 'Unterbäume' der \texttt{import}-Hierarchie leicht
 ausgeklinkt oder aus anderen Projekten wiederverwendet werden können.
 
-\subsubsection{Java-Code verbatim im Regelfile} \label{rudi-verbatim}
+\subsubsection{Java-Code verbatim im Regelfile} \label{sec:rudi-verbatim}
 
 Rudimant verarbeitet eine Regelsprache, die mit voller Absicht nur
 eingeschränkte Java-Funktionalitäten zur Verfügung stellt. Was in rudi-Code
