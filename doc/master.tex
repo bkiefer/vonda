@@ -10,9 +10,15 @@
 \usepackage{fancyvrb}
 \usepackage[textwidth=2.5cm, textsize=small]{todonotes}
 
+% Useful to pretty-print the names and handle whitespaces correctly
+\usepackage{xspace}
+\newcommand{\vonda}{VOnDA\xspace}
+
+\newcommand\BibTeX{B{\sc ib}\TeX}
+
 \begin{document}
 
-\title{Rudimant, the DFKI MLT dialogue engine}
+\title{\vonda, the DFKI MLT dialogue engine}
 \author{Bernd Kiefer, Anna Welker}
 \date{\today}
 
@@ -81,5 +87,8 @@ outgoing dialogue acts into natural language utterances and gestures.
 \input{hfc}
 
 \input{system}
+
+\bibliography{vonda}
+\bibliographystyle{apa}
 
 \end{document}

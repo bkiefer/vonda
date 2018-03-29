@@ -1,34 +1,92 @@
 \newcommand{\caret}{{\large\textbf{\textasciicircum}}}
 
-\section{Rudimant-Kompiler und Laufzeitsystem}
+\section{The \vonda compiler}
 
-Der Rudimant-Kompiler übersetzt Regeldateien mit Extension \texttt{.rudi} in
-Java-Dateien. Dazu braucht er eine Ontologie, in der die RDF Klassen und
-Properties, die im \texttt{.rudi}-Code verwandt werden, spezifiziert sind.
+%Der Rudimant-Kompiler übersetzt Regeldateien mit Extension \texttt{.rudi} in
+%Java-Dateien. Dazu braucht er eine Ontologie, in der die RDF Klassen und
+%Properties, die im \texttt{.rudi}-Code verwandt werden, spezifiziert sind.
+%
+%Im Fall des POC liegen die Quelldateien in \texttt{src/main/rudi} und die
+%dazugehörende Ontologie in \texttt{src/main/resources/ontology}. Damit HFC
+%die Ontologie benutzen kann, muss sie im ntriples-Format vorliegen. Die
+%derzeitige Ontologie wird mit Protégé erstellt und aus dem OWL-XML Format
+%mit Hilfe des \texttt{rapper}-Tools in eine \texttt{.nt} ntriples Datei
+%übersetzt. \texttt{rapper} ist Teil des Ubuntu-Package \texttt{raptor2-utils},
+%das Script \texttt{ntcreate} im \texttt{poc} Verzeichnis updated alle nicht
+%aktuellen \texttt{.nt} Files aus den \texttt{.owl} Versionen.
+%
+%Weitere settings, die für die Kompilation wichtig sind, finden sich in der
+%Datei \texttt{herbea.yml}, die von \texttt{compile} Skript benutzt wird. Auch
+%hier sind alle relativen Pfade relativ zum Verzeichnis, in dem die
+%\texttt{.yml} Datei liegt.
+%
+%Für standalone Mockup-Tests kann der POC auch isoliert mit dem \texttt{run.sh}
+%script gestartet werden, die ``Sensordaten'' werden dann nach und nach in
+%der main-Methode eingespielt.
+%
+%Der folgende Text ist leider unvollständig und muss noch ergänzt werden. Für
+%die meisten Konstrukte gibt es einige Beispiele in den \texttt{rudi}
+%Quelldateien.
 
-Im Fall des POC liegen die Quelldateien in \texttt{src/main/rudi} und die
-dazugehörende Ontologie in \texttt{src/main/resources/ontology}. Damit HFC
-die Ontologie benutzen kann, muss sie im ntriples-Format vorliegen. Die
-derzeitige Ontologie wird mit Protégé erstellt und aus dem OWL-XML Format
-mit Hilfe des \texttt{rapper}-Tools in eine \texttt{.nt} ntriples Datei
-übersetzt. \texttt{rapper} ist Teil des Ubuntu-Package \texttt{raptor2-utils},
-das Script \texttt{ntcreate} im \texttt{poc} Verzeichnis updated alle nicht
-aktuellen \texttt{.nt} Files aus den \texttt{.owl} Versionen.
+\subsection{\vonda's architecture}
 
-Weitere settings, die für die Kompilation wichtig sind, finden sich in der
-Datei \texttt{herbea.yml}, die von \texttt{compile} Skript benutzt wird. Auch
-hier sind alle relativen Pfade relativ zum Verzeichnis, in dem die
-\texttt{.yml} Datei liegt.
+Figure~\ref{fig:architecture} shows the architecture of a runnable \vonda project.
 
-Für standalone Mockup-Tests kann der POC auch isoliert mit dem \texttt{run.sh}
-script gestartet werden, die ``Sensordaten'' werden dann nach und nach in
-der main-Methode eingespielt.
+% Link to google version: https://docs.google.com/drawings/d/1ZgbunHMlfmh9CR9PpGm7Gw8z9Dwz5-crgBEh-fYVBbg/edit
 
-Der folgende Text ist leider unvollständig und muss noch ergänzt werden. Für
-die meisten Konstrukte gibt es einige Beispiele in den \texttt{rudi}
-Quelldateien.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=.8\textwidth]{VOnDAStructureRot2.png}
+  \caption{Gesamtarchitektur von Rudimant}
+  \label{fig:architecture}
+\end{figure}
 
-\subsection{Rudimant Regeln}
+%Rudimant besteht aus einem Compiler und einem Laufzeitsystem. Daraus wird eine
+%konkrete Applikation, indem zunächst eine spezielle Java-Klasse, die sogenannte
+%\emph{Wrapper-Klasse}, von der Klasse \texttt{Agent} abgeleitet wird. Diese
+%kann Implementierungen von \texttt{Agent} erweitern oder
+%überschreiben. Außerdem können eigene Java-Methoden für die Benutzung in den
+%Regelfiles zur Verfügung stellen, die sich nicht ohne weiteres in \texttt{rudi}
+%Dateien implementieren lassen (komplexe Queries an die Datenbank, etc.). Im
+%Bild ist dies \texttt{MyAgent.java}.
+
+A \vonda project consists of an ontology, a custom extension of the abstract
+\texttt{Agent} class (the so-called \emph{wrapper class}), a client interface
+to connect the communication channels of the application to the agent, and a
+set of rule files that are arranged in a tree, using \texttt{import}
+statements. The blue core in Figure~\ref{fig:agent} is the run-time system that
+is part of \vonda, while all green elements are the application specific parts
+of the agent. A \texttt{Yaml} project file contains all necessary information
+for compilation: the ontology, the wrapper class, the top-level rule file and
+other parameters, like custom compile commands.
+
+The \vonda compiler translates rule files with the extension \texttt{.rudi} to Java files. During this process, the ontology storing the RDF classes and properties is used to automatically infer types, resolve whether field accesses are actually accesses to the database, etc (see section \ref{typeinference}).
+
+Every rule file can define variables and functions in \vonda syntax which are
+then available to all imported files.
+
+The current structure assumes that most of the Java functionality that is used
+inside the rule files will be provided by \texttt{Agent} superclass. There are,
+however, alternative ways to use other Java classes directly.
+
+The methods and fields from the custom wrapper class can be made available to all rule files by declaring them in the interface connecting the \texttt{.rudi} code to the Java framework. This interface must have the same name as the wrapper class but end with \texttt{.rudi} (in the example of figure ~\ref{fig:architecture}, this would be \texttt{MyAgent.rudi}).
+
+%Damit der Compiler diese Funktionen kennt, müssen sie in der Datei
+%\texttt{MyAgent.rudi} deklariert werden. Sie beschreibt sozusagen das
+%Interface, auf das der \texttt{rudi} Quellcode zugreifen kann.
+
+%\todo{Das kann man doch in allen .rudi files}
+%Hier können auch statt der generischen Klasse \texttt{Rdf} die Klassen aus der
+%Ontologie spezifiziert werden, wenn diese genauer angegeben werden können. Das
+%hilft dem Kompiler bei der Typinferenz und dem richtigen Zugriff mit
+%RDF-Prädikaten.
+
+%Eine weitere wichtige Klasse ist \texttt{MyClient.java}, der die Kommunikation
+%mit der Außenwelt herstellt und das Laufzeitsystem von konkreten
+%Kommunikationsinterfaces abschirmt.
+
+
+\subsection{\vonda rules}
 
 %{\Huge TODO: testen, ob alle Beispiele so funktionieren, wie sie sollen !!!!!!}
 
@@ -178,6 +236,12 @@ Datei-global deklarierte Variablen werden als Klassenvariablen angelegt.
 \subsubsection{Dialogakte und Evaluation mittels \caret}
 \label{sub:caret}
 
+We are currently using the DIT++ dialogue act hierarchy \cite{bunt2012iso} and
+shallow frame semantics along the lines of FrameNet
+\cite{ruppenhofer2016framenet} to interface with the natural language
+understanding and generation units.
+% While shallow semantics is enough for most applications, we already experience its shortcomings when trying to handle, for example, social talk.
+
 \begin{small}
 \begin{verbatim}
 emitDA(#Inform(Answer, what=^solution));
@@ -202,8 +266,8 @@ oder links eines $=$ stehen, als Strings an den neuen DialogueAct
 Seite einer Zuweisung notwendig, die dafür sorgt, dass der Ausdruck evaluiert
 wird, und nicht als atomares Symbol interpretiert.
 
-\subsubsection{Typinferenz und überladene Vergleichsoperatoren}
-\label{rudimant-Typinferenz}
+\subsubsection{Type inference and overloaded operators}
+\label{typeinference}
 
 Rudimant erlaubt statische Typzuweisungen sowie Casting, beides ist jedoch
 nicht zwingend notwendig.
@@ -376,39 +440,26 @@ Diese Funktionalität kann insbesondere dazu benutzt werden, am Anfang einer
 \texttt{rudi} Datei Java-Klassen zu importieren, die im kompilierten Code
 gebraucht werden.
 
-\subsection{Architektur von Rudimant}
+\section{The run-time system}
 
-In der Abbildung~\ref{fig:architecture} ist die Gesamtarchitektur skizziert.
+A set of reactive rules is executed whenever there is a change in the
+information state (IS). These changes are caused by incoming sensor or
+application data, intents from the speech recognition, or expired timers.
+Rules are labeled if-then-else statements, with complex conditions and shortcut
+logic, as in Java or C. The compiler analyses the base terms and stores their
+values during processing for dynamic logging. A rule can have direct effects,
+like changes in the IS, or system calls. Furthermore, it can generate so-called
+\emph{proposals}, which are (labeled) blocks of code in a frozen state that
+will not be immediately executed, similar to closures.
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=.8\textwidth]{RudimantStructure.png}
-  \caption{Gesamtarchitektur von Rudimant}
-  \label{fig:architecture}
-\end{figure}
+All rules are repeatedly applied until a fix point is reached: No new proposals
+are generated and there is no IS change in the last iteration. Then, the set of
+proposals is evaluated by a statistical component, which will select the best
+alternative. This component can be exchanged to make it as simple or elaborate
+as necessary, taking into account arbitrary features from the data storage.
 
-Rudimant besteht aus einem Compiler und einem Laufzeitsystem. Daraus wird eine
-konkrete Applikation, indem zunächst eine spezielle Java-Klasse, die sogenannte
-\emph{Wrapper-Klasse}, von der Klasse \texttt{Agent} abgeleitet wird. Diese
-kann Implementierungen von \texttt{Agent} erweitern oder
-überschreiben. Außerdem können eigene Java-Methoden für die Benutzung in den
-Regelfiles zur Verfügung stellen, die sich nicht ohne weiteres in \texttt{rudi}
-Dateien implementieren lassen (komplexe Queries an die Datenbank, etc.). Im
-Bild ist dies \texttt{MyAgent.java}.
 
-Damit der Compiler diese Funktionen kennt, müssen sie in der Datei
-\texttt{MyAgent.rudi} deklariert werden. Sie beschreibt sozusagen das
-Interface, auf das der \texttt{rudi} Quellcode zugreifen kann.
 
-\todo{Das kann man doch in allen .rudi files}
-Hier können auch statt der generischen Klasse \texttt{Rdf} die Klassen aus der
-Ontologie spezifiziert werden, wenn diese genauer angegeben werden können. Das
-hilft dem Kompiler bei der Typinferenz und dem richtigen Zugriff mit
-RDF-Prädikaten.
-
-Eine weitere wichtige Klasse ist \texttt{MyClient.java}, der die Kommunikation
-mit der Außenwelt herstellt und das Laufzeitsystem von konkreten
-Kommunikationsinterfaces abschirmt.
 
 \subsection{Default-Funktionalität im Laufzeitsystem}
 Alles was in \texttt{Agent} bereitgestellt wird. Die aktuelle Liste der

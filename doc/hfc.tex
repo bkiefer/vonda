@@ -1,5 +1,18 @@
 \section{The RDF database HFC}
 
+\vonda follows the information state/update paradigm. The information state is
+realized by an RDF store and reasoner with special capabilities
+(HFC \cite{krieger2013efficient}), namely the
+possibility to directly use $n$-tuples instead of triples. This allows to
+attach temporal information to every data chunk \cite{Krieger:FOIS2012,
+  krieger2014detailed}. In this way, the RDF store can represent \emph{dynamic
+  objects}, using either \emph{transaction time} or \emph{valid time}
+attachments, and as a side effect obtain a complete history of all changes.
+HFC is very efficient in terms of processing speed and memory footprint, and
+has recently be extended with stream reasoning facilities. \vonda can use HFC
+either directly as a library, or as a remote server, also allowing for more
+than one instance, if needed.
+
 The following is the syntax of HFC queries (EBNF):
 \begin{table}[htbp]
   \centering\small
@@ -100,3 +113,18 @@ FMin &                       INotEqual &               LMin2 \\
 \caption{Available filter functions}
   \label{tab:hfcfunctions}
 \end{table}
+
+\subsection{Usage of HFC in \vonda}
+
+The RDF store contains the dynamic and the terminological knowledge:
+specifications for the data objects and their properties, as well as a
+hierarchy of  dialogue acts,  semantic frames and their arguments. These
+specifications are also used by the compiler to infer the types for property
+values (see section \ref{sec:language}), and form a declarative API to
+connect new components, e.g., for sensor or application data.
+
+The ontology contains the definitions of dialogue acts, semantic frames, class
+and property specifications for the data objects of the application, and other
+assertional knowledge, such as specifications for ``forgetting'', which could
+be modeled in an orthogonal class hierarchy, and supported by custom deletion
+rules in the reasoner.
