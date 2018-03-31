@@ -2,6 +2,19 @@
 
 \section{The \vonda compiler}
 
+The compiler turns the \vonda source code into Java source code using the information
+in the ontology. Every source file becomes a Java class. The generated code
+will not serve as an example of good programming practice, but a lot of care
+has been taken in making it still readable and debuggable. The
+compile process is separated into three stages: parsing and abstract syntax tree building,
+type checking and inference, and code generation.
+
+The \vonda compiler's internal knowledge about the program structure and the
+RDF hierarchy takes care of transforming the RDF field accesses to reads from and
+writes to the database. Beyond that, the type system, resolving the exact
+Java, RDF or RDF collection type of arbitrary long field accesses automatically
+performs the necessary casts for the ontology accesses.
+
 %Der Rudimant-Kompiler übersetzt Regeldateien mit Extension \texttt{.rudi} in
 %Java-Dateien. Dazu braucht er eine Ontologie, in der die RDF Klassen und
 %Properties, die im \texttt{.rudi}-Code verwandt werden, spezifiziert sind.
@@ -113,64 +126,41 @@ the RDF store can be used throughout the code: RDF objects and classes can be
 treated similarly to those of object oriented programming languages, including
 the type inference and inheritance that comes with type hierarchies.
 
-\subsection{Compiler}
-\label{sec:compiler}
+\todo[inline]{visibility}
 
-The compiler turns the \vonda source code into Java source code using the information
-in the ontology. Every source file becomes a Java class. The generated code
-will not serve as an example of good programming practice, but a lot of care
-has been taken in making it still readable and debuggable. The
-compile process is separated into three stages: parsing and abstract syntax tree building,
-type checking and inference, and code generation.
-
-The \vonda compiler's internal knowledge about the program structure and the
-RDF hierarchy takes care of transforming the RDF field accesses to reads from and
-writes to the database. Beyond that, the type system, resolving the exact
-Java, RDF or RDF collection type of arbitrary long field accesses automatically
-performs the necessary casts for the ontology accesses.
-
-\subsection{Run-Time Library}
-
-The run-time library contains the basic functionality for handling the rule
-processing, including the proposals and timeouts, and for the on-line
-inspection of the rule evaluation. There is, however, no blueprint for the main
-event loop, since that depends heavily on the host application. It also
-contains methods for the creation and modification of shallow semantic
-structures, and especially for searching the interaction history for specific
-utterances. Most of this functionality is available through the abstract
-\texttt{Agent} class, which has to be extended to a concrete class for each
-application.
-
-There is functionality to talk directly to the HFC database using queries, in
-case the object view is not sufficient or to awkward. The natural language
-understanding and generation components can be exchanged by implementing existing
-interfaces, and the statistical component is connected by a message exchange
-protocol. A simple generation engine based on a graph rewriting module is
-already integrated, and is used in our current system as a template based
-generator. The example application also contains a VoiceXML based
-interpretation module.
-
-\subsubsection{Externe Funktionen und Variablen}
+\subsubsection{External methods and fields}
 \label{sec:rudimant-global}
 
-Für Funktionen, die nicht oder nur umständlich in rudi-Code implementiert
-werden können, sollte der Nutzer eine Javaklasse \texttt{MyAgent} von der
-abstrakten Klasse \texttt{Agent} ableiten. Diese Klasse wird als
-\emph{Wrapper-Klasse} bezeichnet. Funktionen und Variablen, die in
-dieser Klasse deklariert wurden und später im rudi-Code benutzt werden sollen,
-müssen mit vollständiger Typangabe in einer Datei \texttt{MyAgent.rudi}
-deklariert werden, sodass die Typinferenz von rudimant sie korrekt
-berücksichtigen kann (zur Syntax siehe \ref{sec:rudimant-Typinferenz}).
+As mentioned before, you can use every method or field that you declare in your custom Agent implementation in your \vonda code. Their declaration in the Java-rudi interface should look like a normal Java field or method definition (cfg. figure ??). It is possible to use generics in these definitions, although they are, for complexity reasons, restricted to be one single uppercase letter.
 
-Die Klasse \texttt{MyAgent} inklusive Packagenamen muss in der config.yml Datei
-eines Projektes unter dem Eintrag \texttt{wrapperClass} spezifiziert werden, um
-im Compile-Schritt einen Effekt zu zeigen. Rudimant nutzt die Klasse
-\texttt{MyAgent} dann als Superklasse der im Compile-Schritt angegebenen Datei
-im rudi-Format und verlinkt Funktionsaufrufe und Variablennutzungen in allen
-untergeordneten rudi-Dateien auf diese, sodass korrekte Aufrufe im
-resultierenden Java-Code gewährleistet sind.
+\todo[inline]{add example}
 
-\subsubsection{RDF Zugriffe, funktionale vs. relationale Properties}
+There is a variety of standard Java methods called on Java classes that \vonda automatically recognizes, like e.g. the substring method for Strings. If you find that you need \vonda to know the return type of a new method that can or should only be called upon instances of a specific class, you can provide \vonda with knowledge about them by adding their definition to the interface as follows:
+
+\todo[inline]{add example}
+
+Of course you can also use generics in these definitions. For example, the get method is defined as follows in the \vonda framework:
+
+\todo[inline]{add example}
+
+%Für Funktionen, die nicht oder nur umständlich in rudi-Code implementiert
+%werden können, sollte der Nutzer eine Javaklasse \texttt{MyAgent} von der
+%abstrakten Klasse \texttt{Agent} ableiten. Diese Klasse wird als
+%\emph{Wrapper-Klasse} bezeichnet. Funktionen und Variablen, die in
+%dieser Klasse deklariert wurden und später im rudi-Code benutzt werden sollen,
+%müssen mit vollständiger Typangabe in einer Datei \texttt{MyAgent.rudi}
+%deklariert werden, sodass die Typinferenz von rudimant sie korrekt
+%berücksichtigen kann (zur Syntax siehe \ref{sec:rudimant-Typinferenz}).
+%
+%Die Klasse \texttt{MyAgent} inklusive Packagenamen muss in der config.yml Datei
+%eines Projektes unter dem Eintrag \texttt{wrapperClass} spezifiziert werden, um
+%im Compile-Schritt einen Effekt zu zeigen. Rudimant nutzt die Klasse
+%\texttt{MyAgent} dann als Superklasse der im Compile-Schritt angegebenen Datei
+%im rudi-Format und verlinkt Funktionsaufrufe und Variablennutzungen in allen
+%untergeordneten rudi-Dateien auf diese, sodass korrekte Aufrufe im
+%resultierenden Java-Code gewährleistet sind.
+
+\subsubsection{RDF accesses and functional vs. relational properties}
 \label{sec:rdfaccesses}
 
 \begin{figure}[htb]
@@ -222,10 +212,11 @@ New RDF objects can be created with \texttt{new}, similar to Java objects; they
 are immediately reflected in the database, as are all changes to already
 existing objects.
 
+\todo[inline]{where to put?:
 Many operators are overloaded, especially boolean operators such as
 \textbf{\texttt{<=}}, which compares numeric values, but can also be used to test if an
 object is of a specific class, for subclass tests between two classes, and for
-subsumption of dialogue acts.
+subsumption of dialogue acts.}
 
 \begin{table}[htbp]
   \centering
@@ -251,34 +242,40 @@ c.remove("<upper:middleNames", "James");
 \end{verbatim}
 \end{minipage}
 \end{small}
-  \caption{Beispiele für RDF Property-Zugriff}
+  \caption{Examples for an RDF property access}
   \label{tab:property-access}
 \end{table}
+\todo[inline]{missing creation of child in right row, plus "Set middle" is no proper code}
 
+%Durch die Verbindung zu \texttt{hfc} während des Compile-Vorganges hat rudimant
+%vollen Zugriff auf die Datenbank und kann nicht nur Rdf-Objekte anhand ihrer
+%Typen erkennen, sondern auch erkennen, wann ein Feldzugriff auf ein Rdf-Objekt
+%erfolgt und ihn in solchen Fällen in einen Zugriff auf die Datenbank
+%umwandeln. Dies ist sowohl für Zugriffe auf Properties als auch für Änderungen
+%ihres Inhalts möglich und lässt sich, sofern dies in der verwendeten Ontologie
+%korrekt möglich ist, beliebig oft hintereinander ausführen.
+%
+Due to the connection of \vonda to HFC during compile time, it has full access to the database. Thereby, it cannot only recognize the correct RDF class to create a new instance from when encountering \texttt{new}, but it can also resolve property accessses to such instances. Field accesses as shown in line 2 and 3 of table \ref{tab:property-access} will be analyzed and transformed into database accessses. \vonda will also draw type information from the database. If the name property of the RDF class \texttt{Child} is of type String\todo{mention xsd:string ??}, exchanging line 2 by the line \texttt{int name = c.name} will result in a warning of the compiler.
 
-Durch die Verbindung zu \texttt{hfc} während des Compile-Vorganges hat rudimant
-vollen Zugriff auf die Datenbank und kann nicht nur Rdf-Objekte anhand ihrer
-Typen erkennen, sondern auch erkennen, wann ein Feldzugriff auf ein Rdf-Objekt
-erfolgt und ihn in solchen Fällen in einen Zugriff auf die Datenbank
-umwandeln. Dies ist sowohl für Zugriffe auf Properties als auch für Änderungen
-ihres Inhalts möglich und lässt sich, sofern dies in der verwendeten Ontologie
-korrekt möglich ist, beliebig oft hintereinander ausführen.
+%Sowohl die Verwendung von relationalen als auch die von funktionalen Prädikaten
+%ist erlaubt. Diese ändern die Aufrufe im rudi-Code jedoch grundsätzlich nicht,
+%da rudimant selbst inferiert, ob ein Zugriff auf die Datenbank ein einfaches
+%Objekt oder ein Set von Objekten zurückgibt. Lediglich die weitere Nutzung
+%dessen, was abgerufen wurde, muss sich (selbstverständlich) an die Art des
+%Ergebnisses des Rdf-Zugriffes anpassen. Versucht man allerdings, den Wert eines
+%relationalen
+%
+Moreover, \vonda can see whether an access is done by functional or relational predicates and will handle it accordingly, deriving a collection type if necessary.
 
-Sowohl die Verwendung von relationalen als auch die von funktionalen Prädikaten
-ist erlaubt. Diese ändern die Aufrufe im rudi-Code jedoch grundsätzlich nicht,
-da rudimant selbst inferiert, ob ein Zugriff auf die Datenbank ein einfaches
-Objekt oder ein Set von Objekten zurückgibt. Lediglich die weitere Nutzung
-dessen, was abgerufen wurde, muss sich (selbstverständlich) an die Art des
-Ergebnisses des Rdf-Zugriffes anpassen. Versucht man allerdings, den Wert eines
-relationalen
+%Die beiden Operatoren \texttt{+=} und \texttt{-=} sind in rudimant
+%überladen. Sie können sowohl wie in Java zum Rechnen mit Integer, float und
+%double verwendet werden, als auch im Zusammenspiel mit Sets und
+%Listen. \texttt{a += b} wird hierbei in \texttt{a.add(b)} umgewandelt,
+%\texttt{a -= b} resultiert in \texttt{a.remove(b)}.
 
-Die beiden Operatoren \texttt{+=} und \texttt{-=} sind in rudimant
-überladen. Sie können sowohl wie in Java zum Rechnen mit Integer, float und
-double verwendet werden, als auch im Zusammenspiel mit Sets und
-Listen. \texttt{a += b} wird hierbei in \texttt{a.add(b)} umgewandelt,
-\texttt{a -= b} resultiert in \texttt{a.remove(b)}.
+In the rule language, the operators \texttt{+=} and \texttt{-=} are overloaded. They can be used with sets and lists as shortcuts for adding and deleting objects. \texttt{a += b} will be compiled to \texttt{a.add(b)} and \texttt{a -= b} results in \texttt{a.remove(b)}.
 
-\subsubsection{Regeln und Labels}
+\subsubsection{Rules and labels}
 
 \begin{small}
 \begin{verbatim}
@@ -296,23 +293,30 @@ introduction:
 \end{verbatim}
 \end{small}
 
-Das Kernstück von rudimant sind die Dialogregeln. Eine Regel beginnt mit ihrem
-Namen, einem möglichst aussagekräftigen Label, gefolgt von einem
-Doppelpunkt. Anschließend folgt ein if-statement. Die Clause des Statements
-drückt die Bedingung aus, unter der die Regel ausgeführt werden soll, im Body
-steht der auszuführende Code.
+%Das Kernstück von rudimant sind die Dialogregeln. Eine Regel beginnt mit ihrem
+%Namen, einem möglichst aussagekräftigen Label, gefolgt von einem
+%Doppelpunkt. Anschließend folgt ein if-statement. Die Clause des Statements
+%drückt die Bedingung aus, unter der die Regel ausgeführt werden soll, im Body
+%steht der auszuführende Code.
+%
+The core of \vonda dialogue management are the dialogue rules, which will be evaluated in the run-time system on every environment trigger.
 
-Auch eingeschachtelte \texttt{if}-Abfragen können mit Labels versehen werden.
-Die Labels dienen einerseits zum debuggen des Codes, da im generierten Code
-Funktionalität enthalten ist, um den Agenten zur Laufzeit zu debuggen. Dazu
-kann man zur Zeit zwei API-Funktionen von \texttt{Agent} benutzen, nämlich
-\texttt{logRule(String rulename)} und \texttt{logAllRules()}
+A rule starts with its name, from now on called label, followed by a colon. Pertaining to this label is an if-statement, possibly with else case. The clause of the if-statement expresses the condition under which the rule, or rather, the if block is to be executed; in the else block you can define what should happen if the rule cannot be executed, like stopping the evaluation of (a sub-tree of) the rules if necessary information is missing.
 
-Der Output des Loggers wird dann das Label jeder Regel, die evaluiert wird,
-zusammen mit der Auswertung der Bedingung und den Werten aller booleschen
-Basisterme, die in der Bedingung vorhanden sind, angeben.
+%Auch eingeschachtelte \texttt{if}-Abfragen können mit Labels versehen werden.
+%Die Labels dienen einerseits zum debuggen des Codes, da im generierten Code
+%Funktionalität enthalten ist, um den Agenten zur Laufzeit zu debuggen. Dazu
+%kann man zur Zeit zwei API-Funktionen von \texttt{Agent} benutzen, nämlich
+%\texttt{logRule(String rulename)} und \texttt{logAllRules()}
+%
+Rules can be nested to arbitrary depth, so if-statements inside a rule body can also be labelled. The labels are a valuable tool for debugging the life system, as they can be logged live with the debugger gui (cfg. chapter \ref{sec:debugger}). The debugger can show you which rules were executed when and what the individual results of each part of the conditions were.
 
-\todo[inline]{Bsp debugging-output}
+%Der Output des Loggers wird dann das Label jeder Regel, die evaluiert wird,
+%zusammen mit der Auswertung der Bedingung und den Werten aller booleschen
+%Basisterme, die in der Bedingung vorhanden sind, angeben.
+
+%For information on rule logging, see chapter \ref{sec:debugger}.
+%\todo[inline]{Bsp debugging-output}
 
 \subsubsection{Ausstieg aus Regeln}
 
@@ -608,6 +612,26 @@ Diese Funktionalität kann insbesondere dazu benutzt werden, am Anfang einer
 gebraucht werden.
 
 \section{The run-time system}
+%\subsection{Run-Time Library}
+
+The run-time library contains the basic functionality for handling the rule
+processing, including the proposals and timeouts, and for the on-line
+inspection of the rule evaluation. There is, however, no blueprint for the main
+event loop, since that depends heavily on the host application. It also
+contains methods for the creation and modification of shallow semantic
+structures, and especially for searching the interaction history for specific
+utterances. Most of this functionality is available through the abstract
+\texttt{Agent} class, which has to be extended to a concrete class for each
+application.
+
+There is functionality to talk directly to the HFC database using queries, in
+case the object view is not sufficient or to awkward. The natural language
+understanding and generation components can be exchanged by implementing existing
+interfaces, and the statistical component is connected by a message exchange
+protocol. A simple generation engine based on a graph rewriting module is
+already integrated, and is used in our current system as a template based
+generator. The example application also contains a VoiceXML based
+interpretation module.
 
 A set of reactive rules is executed whenever there is a change in the
 information state (IS). These changes are caused by incoming sensor or
