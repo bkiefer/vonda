@@ -128,30 +128,6 @@ the type inference and inheritance that comes with type hierarchies.
 
 \todo[inline]{visibility}
 
-\subsubsection{External methods and fields}
-\label{sec:rudimant-global}
-
-As mentioned before, you can use every method or field that you declare in your custom Agent implementation in your \vonda code. Their declaration in the Java-rudi interface should look like a normal Java field or method definition (cfg. figure ??). It is possible to use generics in these definitions, although they are, for complexity reasons, restricted to be one single uppercase letter.
-
-\todo[inline]{add example}
-
-There is a variety of standard Java methods called on Java classes that \vonda automatically recognizes, like e.g. the substring method for Strings. If you find that you need \vonda to know the return type of a new method that can or should only be called upon instances of a specific class, you can provide \vonda with knowledge about them by adding their definition to the interface as follows:
-
-\todo[inline]{add example}
-
-Of course you can also use generics in these definitions. For example, the get method is defined as follows in the \vonda framework:
-
-\todo[inline]{add example}
-
-%Für Funktionen, die nicht oder nur umständlich in rudi-Code implementiert
-%werden können, sollte der Nutzer eine Javaklasse \texttt{MyAgent} von der
-%abstrakten Klasse \texttt{Agent} ableiten. Diese Klasse wird als
-%\emph{Wrapper-Klasse} bezeichnet. Funktionen und Variablen, die in
-%dieser Klasse deklariert wurden und später im rudi-Code benutzt werden sollen,
-%müssen mit vollständiger Typangabe in einer Datei \texttt{MyAgent.rudi}
-%deklariert werden, sodass die Typinferenz von rudimant sie korrekt
-%berücksichtigen kann (zur Syntax siehe \ref{sec:rudimant-Typinferenz}).
-%
 %Die Klasse \texttt{MyAgent} inklusive Packagenamen muss in der config.yml Datei
 %eines Projektes unter dem Eintrag \texttt{wrapperClass} spezifiziert werden, um
 %im Compile-Schritt einen Effekt zu zeigen. Rudimant nutzt die Klasse
@@ -159,6 +135,31 @@ Of course you can also use generics in these definitions. For example, the get m
 %im rudi-Format und verlinkt Funktionsaufrufe und Variablennutzungen in allen
 %untergeordneten rudi-Dateien auf diese, sodass korrekte Aufrufe im
 %resultierenden Java-Code gewährleistet sind.
+
+
+\subsubsection{The structure of a \vonda file}
+
+%Anders als Java stellt rudimant nicht den Anspruch, dass die Einträge in einer
+%Datei in irgendeine Form von übergeordneter Struktur gefasst werden. Die Regeln
+%können ebenso wie Funktionsdeklarationen direkt in die Datei geschrieben
+%werden. Dasselbe gilt für jede Art valider (Java-) Statements, wie etwa
+%Zuweisungen, for-Schleifen usw.. Rudimant wird bei der Kompilation eine
+%Java-Klasse erstellen, in die es die Funktionen sowie die Regeln, zu Funktionen
+%transformiert, einträgt. Alle weiteren Statements werden in der korrekten
+%Reihenfolge in die erzeugte Methode process() verschoben, wobei generierte
+%Aufrufe an die Regelfunktionen zwischen ihnen gewährleisten, dass die Regeln
+%und Statements in der Reihenfolge ausgeführt werden, die im rudi-Code
+%spezifiziert war. Dies ermöglicht also, nicht in Regeln gefasste
+%Abbruchbedingungen einzubauen, unter denen die Ausführung der ganzen Datei -
+%und möglicher importierter Dateien - sofort beendet werden soll.
+%
+\vonda does not demand to group statements in some kind of high-level structure like e.g. a class construct. In fact, it is currently not possible to define classes in \texttt{.rudi} files at all. Rules and method declarations can just be put into the plain file. The same holds true for every kind of valid (Java-) statement, like assignments, for loops etc. From this basis, the compiler will create a Java class where the methods and rules that are transformed to methods are represented as the methods of this specific class. All other statements will be put into the \texttt{process()} method that \vonda creates to build a rule evaluation cycle. In doing so, the order of all statements (including the rules) is preserved.
+
+This functionality offers possibilities to e.g. define and process high-level variables that you might want to have access to in all rules or to insert termination conditions that are not contained in rules.
+
+%Datei-global deklarierte Variablen werden als Klassenvariablen angelegt.
+
+\textbf{Warning:} It is important to know here that variables declared globally in a file will be transformed to fields of the Java class. We found that in very rare occasions, this can lead to unexpected behaviour when using them in a propose or timeout block as well as changing them in a global statement. As proposes and timeouts will not immediately be executed, they need every variable used inside them to be effectively final. \vonda leaves the evaluation of validness of variables for such blocks to Java. We found that Java might mistakenly accept variables that are not effectively final, what might lead to completely unexpected behaviour when proposes and timeouts with changed variable values are executed.
 
 \subsubsection{RDF accesses and functional vs. relational properties}
 \label{sec:rdfaccesses}
@@ -318,19 +319,27 @@ Rules can be nested to arbitrary depth, so if-statements inside a rule body can 
 %For information on rule logging, see chapter \ref{sec:debugger}.
 %\todo[inline]{Bsp debugging-output}
 
-\subsubsection{Ausstieg aus Regeln}
+\subsubsection{Interrupting the rule evaluation cycle}
 
-Es gibt mehrere Möglichkeiten, die Regelverarbeitung lokal oder ganz
-abzubrechen. Aus einer gelabelten Regel kann man z.B. mit
-\verb|break label_name;| aussteigen. Alle danach folgenden Regeln werden dann
-weiter verarbeitet.
+%Es gibt mehrere Möglichkeiten, die Regelverarbeitung lokal oder ganz
+%abzubrechen. Aus einer gelabelten Regel kann man z.B. mit
+%\verb|break label_name;| aussteigen. Alle danach folgenden Regeln werden dann
+%weiter verarbeitet.
+%
+There are multiple ways to stop the rule evaluation locally (i.e. skipping the evaluation of the current subtree) or globally (i.e. stopping the whole evaluation cycle).
 
-Bricht man die Verarbeitung mit \texttt{cancel} ab, wird keine der in
-der Datei folgenden Regeln mehr angewandt, bei \texttt{cancel\_all} wird
-keine nachfolgende Regel, weder lokal, noch auf höheren Ebenen, angewandt.
+You can skip the evaluation of a specific rule you are currently in with the statement\verb|break label_name;|. This will only stop the rule with the respective label (no matter how deep the break statement is nested in it), such that the next following rule is evaluated next.
 
-Um \texttt{propose} oder \texttt{timeout} Blöcke zu verlassen, muss
-\texttt{return} benutzt werden, da dies normale Funktionsblöcke sind.
+%Bricht man die Verarbeitung mit \texttt{cancel} ab, wird keine der in
+%der Datei folgenden Regeln mehr angewandt, bei \texttt{cancel\_all} wird
+%keine nachfolgende Regel, weder lokal, noch auf höheren Ebenen, angewandt.
+%
+If the evaluation is cancelled with the keyword \texttt{cancel;}, all of the following rules in the current file will be skipped (including any imported rules). If the keyword \texttt{cancel\_all} is used, none of the following rules, neither local nor higher in the rule tree, will be evaluated. This is the \vonda way of deciding not to evaluate whatever triggered the current evaluation cycle and should only be used as an 'emergency exit', as the dialogue rules should be rejecting any sound, non-matching trigger by themselves.
+
+%Um \texttt{propose} oder \texttt{timeout} Blöcke zu verlassen, muss
+%\texttt{return} benutzt werden, da dies normale Funktionsblöcke sind.
+
+To leave \texttt{propose} and \texttt{timeout} blocks, you need to use an empty \texttt{return}, as they are only reduced representations of normal function bodies.
 
 \subsubsection{\texttt{propose} and \texttt{timeout}}
 \begin{figure}[htb]
@@ -374,24 +383,6 @@ which one will be taken and the closure is executed.
 can be used to trigger proactive behaviour, or to check the state of the system
 after some time period, or in regular intervals. A timeout will only be created
 if there is no active timeout with that name.
-
-\subsubsection{Struktur einer Datei im rudi-Format}
-
-Anders als Java stellt rudimant nicht den Anspruch, dass die Einträge in einer
-Datei in irgendeine Form von übergeordneter Struktur gefasst werden. Die Regeln
-können ebenso wie Funktionsdeklarationen direkt in die Datei geschrieben
-werden. Dasselbe gilt für jede Art valider (Java-) Statements, wie etwa
-Zuweisungen, for-Schleifen usw.. Rudimant wird bei der Kompilation eine
-Java-Klasse erstellen, in die es die Funktionen sowie die Regeln, zu Funktionen
-transformiert, einträgt. Alle weiteren Statements werden in der korrekten
-Reihenfolge in die erzeugte Methode process() verschoben, wobei generierte
-Aufrufe an die Regelfunktionen zwischen ihnen gewährleisten, dass die Regeln
-und Statements in der Reihenfolge ausgeführt werden, die im rudi-Code
-spezifiziert war. Dies ermöglicht also, nicht in Regeln gefasste
-Abbruchbedingungen einzubauen, unter denen die Ausführung der ganzen Datei -
-und möglicher importierter Dateien - sofort beendet werden soll.
-
-Datei-global deklarierte Variablen werden als Klassenvariablen angelegt.
 
 \subsubsection{Dialogakte und Evaluation mittels \caret}
 \label{sec:caret}
@@ -503,13 +494,10 @@ if (sa.isSubsumedBy(new DialogueAct("Question")) {
   \label{tab:overloaded-comparison}
 \end{table}
 
-\paragraph{Rudimant Typinformationen zur Verfügung stellen}
+%\paragraph{Rudimant Typinformationen zur Verfügung stellen}
+\subsubsection{External methods and fields}
 
-In manchen Fällen, wie etwa der Benutzung von außerhalb der rudi-Dateien
-deklarierten Funktionen und Variablen, ist es notwendig, rudimant Informationen
-über Typen zu geben. Dabei gilt folgendes Schema, nach dem Typen an beliebiger
-Stelle, für gewöhnlich jedoch in der Datei MyAgent.rudi (siehe
-\ref{rudimant-global}) deklariert werden können:
+As mentioned before, you can use every method or field that you declare in your custom Agent implementation in your \vonda code. Their declaration in the Java-rudi interface should look like a normal Java field or method definition (cfg. figure ??). It is possible to use generics in these definitions, although they are, for complexity reasons, restricted to be one single uppercase letter.
 
 
 \begin{table}[htbp]
@@ -522,7 +510,20 @@ Stelle, für gewöhnlich jedoch in der Datei MyAgent.rudi (siehe
     \texttt{myType someFunction(typeA a, typeB b);}
     &  Funktion someFunction nimmt Argumente vom Typ \texttt{typeA} und
       \texttt{typeB} und gibt ein Objekt vom Typ \texttt{myType} zurück (void =
-      void) \\
+      void)
+  \end{tabular}
+
+  \caption{Defintions of existing Java fields and methods for \vonda}
+  \label{tab:typeinference}
+\end{table}
+
+There is a variety of standard Java methods called on Java classes that \vonda automatically recognizes, like e.g. the substring method for Strings. If you find that you need \vonda to know the return type of a new method that can or should only be called upon instances of a specific class, you can provide \vonda with knowledge about them by adding their definition to the interface as follows:
+
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{lp{.45\textwidth}}
 
     \texttt{[type]. myType Function(typeA a);}
     & Funktionsdeklaration wie oben; die Funktion muss auf einem Objekt der
@@ -531,33 +532,55 @@ Stelle, für gewöhnlich jedoch in der Datei MyAgent.rudi (siehe
       Beispiel:\newline\texttt{[List<T>]. T get(int i);}
   \end{tabular}
 
-  \caption{Typinferenz}
+  \caption{Definition of a non-static method of Java objects}
   \label{tab:typeinference}
 \end{table}
 
-Wichtig ist: Diese Deklarationen werden nur für die Berechnung der Typen durch
-rudimant angegeben und werden nicht in den kompilierten Code
-übernommen. Insbesondere Zeilen wie \texttt{int i;} oder \texttt{void
-  someFunction();} entsprechen damit nicht einer gleich aussehenden Deklaration
-im Java-Code. Falls es einen Grund geben sollte, dass die Zeilen als im
-Compile-Ergebnis als dringend erforderlich betrachtet werden, hilft die in
-Kapitel \ref{rudi-verbatim} beschriebene Methode.
+Of course you can also use generics in these definitions. For example, the get method on lists is defined as follows in the \vonda framework:
+
+\begin{figure}[htbp]
+\centering
+\texttt{[List<T>]. T get(int a);}
+\end{figure}
+%Für Funktionen, die nicht oder nur umständlich in rudi-Code implementiert
+%werden können, sollte der Nutzer eine Javaklasse \texttt{MyAgent} von der
+%abstrakten Klasse \texttt{Agent} ableiten. Diese Klasse wird als
+%\emph{Wrapper-Klasse} bezeichnet. Funktionen und Variablen, die in
+%dieser Klasse deklariert wurden und später im rudi-Code benutzt werden sollen,
+%müssen mit vollständiger Typangabe in einer Datei \texttt{MyAgent.rudi}
+%deklariert werden, sodass die Typinferenz von rudimant sie korrekt
+%berücksichtigen kann (zur Syntax siehe \ref{sec:rudimant-Typinferenz}).
+%
+
+%In manchen Fällen, wie etwa der Benutzung von außerhalb der rudi-Dateien
+%deklarierten Funktionen und Variablen, ist es notwendig, rudimant Informationen
+%über Typen zu geben. Dabei gilt folgendes Schema, nach dem Typen an beliebiger
+%Stelle, für gewöhnlich jedoch in der Datei MyAgent.rudi (siehe
+%\ref{rudimant-global}) deklariert werden können:
+
+It is important to realize that whatever declarations are in the interface are only compile information for \vonda and will not be transferred to the compiled code.
+\todo[inline]{is it still true that this also accounts for declarations in rudi?}
+
+%Wichtig ist: Diese Deklarationen werden nur für die Berechnung der Typen durch
+%rudimant angegeben und werden nicht in den kompilierten Code
+%übernommen. Insbesondere Zeilen wie \texttt{int i;} oder \texttt{void
+%  someFunction();} entsprechen damit nicht einer gleich aussehenden Deklaration
+%im Java-Code. Falls es einen Grund geben sollte, dass die Zeilen als im
+%Compile-Ergebnis als dringend erforderlich betrachtet werden, hilft die in
+%Kapitel \ref{rudi-verbatim} beschriebene Methode.
 
 %\subsubsection{Überladene Vergleichsoperatoren und Tests}
 %Dies überschneidet sich in großen Teilen mit dem Doku-Teil zur Typinferenz; wurde dort untergebracht
 
-\subsubsection{Funktionale Konstrukte (lambda)}
+\subsubsection{Functional constructs}
 
-Rudimant erlaubt die Verwendung von lambda-Konstrukten. Im moment können sie
-aber nur für die Implementierung von \texttt{Predicate}
-resp. \texttt{Comparator} in den im folgenden angegebenen vier
-Funktionen. Diese Funktionen sind in \texttt{Agent} vordefiniert. Ein
-einfaches Beispiel zum Filtern von Objekten mit einer Subtyprelation wäre:
-
-\begin{verbatim}
-des = filter(agent.desires, (d) -> ((Desire)d) <= UrgentDesire);
-\end{verbatim}
-
+%Rudimant erlaubt die Verwendung von lambda-Konstrukten. Im moment können sie
+%aber nur für die Implementierung von \texttt{Predicate}
+%resp. \texttt{Comparator} in den im folgenden angegebenen vier
+%Funktionen. Diese Funktionen sind in \texttt{Agent} vordefiniert. Ein
+%einfaches Beispiel zum Filtern von Objekten mit einer Subtyprelation wäre:
+\todo[inline]{is this still true?}
+\vonda allows for using lambda constructions. At the moment, their usage is limited to the implementation of \texttt{Predicate} or \texttt{Comparator} in the following functions that are pre-defined in the Agent framework.
 
 \begin{table}[htbp]
   \centering
@@ -573,6 +596,12 @@ List<Object> sort(Collection coll, Comparator c);
   \caption{Funktionen, die mit Lambda-Ausdrücken benutzt werden können.}
   \label{tab:lambda-functions}
 \end{table}
+
+For example, if you want to filter a set of RDF objects by a subtype relation, you can write:
+
+\begin{verbatim}
+des = filter(agent.desires, (d) -> ((Desire)d) <= UrgentDesire);
+\end{verbatim}
 
 \subsubsection{\texttt{import}}
 
