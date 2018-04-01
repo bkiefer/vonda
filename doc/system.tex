@@ -213,11 +213,7 @@ New RDF objects can be created with \texttt{new}, similar to Java objects; they
 are immediately reflected in the database, as are all changes to already
 existing objects.
 
-\todo[inline]{where to put?:
-Many operators are overloaded, especially boolean operators such as
-\textbf{\texttt{<=}}, which compares numeric values, but can also be used to test if an
-object is of a specific class, for subclass tests between two classes, and for
-subsumption of dialogue acts.}
+
 
 \begin{table}[htbp]
   \centering
@@ -433,12 +429,18 @@ The dialogue act passed to \texttt{emitDA} should look as shown in figure \ref{f
 \subsubsection{Type inference and overloaded operators}
 \label{sec:typeinference}
 
-Rudimant erlaubt statische Typzuweisungen sowie Casting, beides ist jedoch
-nicht zwingend notwendig.
+%Rudimant erlaubt statische Typzuweisungen sowie Casting, beides ist jedoch
+%nicht zwingend notwendig.
+%
+\vonda allows static type assignments and casting, but neither of them is always necessary.
 
-Ist beispielsweise der Typ der rechten Seite einer Variablendeklaration mit
-Zuweisung bekannt oder inferierbar, so ist es nicht notwendig, den Typ der
-Variablen explizit anzugeben.
+%Ist beispielsweise der Typ der rechten Seite einer Variablendeklaration mit
+%Zuweisung bekannt oder inferierbar, so ist es nicht notwendig, den Typ der
+%Variablen explizit anzugeben.
+
+If, for example, the type of the expression on the right-hand side of declaration assignment is known or inferrable, it is not necessary to explicitely state it.
+
+You can also declare variables final.
 
 \begin{table}[htbp]
   \centering
@@ -458,20 +460,27 @@ Variablen explizit anzugeben.
 \end{BVerbatim}
 \end{small}
 
-\caption{Übersetzung komplexer Zugriffe}
+\caption{Transformation of complex boolean expressions}
 \label{tab:multi-predaccess}
 \end{table}
 \vspace*{10pt}
 
-Als zeitsparendes Feature bietet rudimant insbesondere das automatische
-Vervollständingen von bool'schen Ausdrücken in den Clauses von if, while und
-for an. Da in diesem Fall bekannt ist, dass das Ergebnis boolean sein muss,
-ergänzt rudimant automatisch den Test auf die Existenz eines Objektes in der
-Clause, sollte dieses nicht Typ boolean sein. Bei Feldzugriffen testet es für
-jeden Teilzugriff, dass das erhaltene Objekt nicht null ist, um einer
-NullPointerException zur Laufzeit des generierten Codes vorzubeugen.
+%Als zeitsparendes Feature bietet rudimant insbesondere das automatische
+%Vervollständingen von bool'schen Ausdrücken in den Clauses von if, while und
+%for an. Da in diesem Fall bekannt ist, dass das Ergebnis boolean sein muss,
+%ergänzt rudimant automatisch den Test auf die Existenz eines Objektes in der
+%Clause, sollte dieses nicht Typ boolean sein. Bei Feldzugriffen testet es für
+%jeden Teilzugriff, dass das erhaltene Objekt nicht null ist, um einer
+%NullPointerException zur Laufzeit des generierten Codes vorzubeugen.
 
-Die Vergleichsoperatoren in rudimant sind überladen. Neben den aus Java bekannten Anwendungen als Vergleichsoperatoren können sie auch auf Dialogakte angewendet werden. In diesen Fällen werden sie zu Subsumptionsoperatoren.
+A time-saving (and code-readability-improving) feature of \vonda is the automatic completion of boolean expressions in the clauses of if, while and for statements. As it is obvious in these cases that the result of the expression must be of type boolean, \vonda automatically fills in a test for existence if it is not boolean. When encountering field accesses, it makes sure that every partial access is tested for existence (i.e., not \texttt{null}) to avoid a NullPointerException in the runtime execution of the generated code.
+
+%Die Vergleichsoperatoren in rudimant sind überladen. Neben den aus Java bekannten Anwendungen als Vergleichsoperatoren können sie auch auf Dialogakte angewendet werden. In diesen Fällen werden sie zu Subsumptionsoperatoren.
+
+Many operators are overloaded, especially boolean operators such as
+\textbf{\texttt{<=}}, which compares numeric values, but can also be used to test if an
+object is of a specific class, for subclass tests between two classes, and for
+subsumption of dialogue acts.
 
 \begin{table}[htbp]
   \centering
@@ -492,15 +501,15 @@ if (sa.isSubsumedBy(new DialogueAct("Question")) {
     \end{minipage}
   \end{footnotesize}
 
-  \caption{Überladene Vergleichsoperatoren}
+  \caption{Overloaded comparison operators}
   \label{tab:overloaded-comparison}
 \end{table}
 
 %\paragraph{Rudimant Typinformationen zur Verfügung stellen}
 \subsubsection{External methods and fields}
+\label{sec:javatypes}
 
-As mentioned before, you can use every method or field that you declare in your custom Agent implementation in your \vonda code. Their declaration in the Java-rudi interface should look like a normal Java field or method definition (cfg. figure ??). It is possible to use generics in these definitions, although they are, for complexity reasons, restricted to be one single uppercase letter.
-
+As mentioned before, you can use every method or field that you declare in your custom Agent implementation in your \vonda code. Their declaration in the Java-rudi interface should look like a normal Java field or method definition (cfg. figure \ref{tab:typeinference}). It is possible to use generics in these definitions, although they are, for complexity reasons, restricted to be one single uppercase letter.
 
 \begin{table}[htbp]
   \centering
@@ -595,7 +604,7 @@ List<Object> sort(Collection coll, Comparator c);
 \end{verbatim}
   \end{small}
 
-  \caption{Funktionen, die mit Lambda-Ausdrücken benutzt werden können.}
+  \caption{Functions that take lambda expressions as an argument}
   \label{tab:lambda-functions}
 \end{table}
 
@@ -607,40 +616,52 @@ des = filter(agent.desires, (d) -> ((Desire)d) <= UrgentDesire);
 
 \subsubsection{\texttt{import}}
 
-\texttt{import} ist ein Schlüsselwort in rudimant. Eine Zeile ''\texttt{import
-  File;}'' auf globaler Ebene, an einer beliebigen Stelle zwischenn den Regeln,
-bedeutet die Inklusion der Datei File.rudi an exakt dieser Stelle. Hiermit wird
-zum einen erreicht, dass rudimant auch diese Datei zu ausführbarem Java-Code
-kompiliert, sodass nicht alle Dateien eines Projektes separat kompiliert werden
-müssen. Zum anderen wird das vollständige Regelinventar der Datei an der
-entsprechenden Stelle im Java-Code mithilfe ihrer process-Methode aufgerufen
-und durchgearbeitet.
+%\texttt{import} ist ein Schlüsselwort in rudimant. Eine Zeile ''\texttt{import
+%  File;}'' auf globaler Ebene, an einer beliebigen Stelle zwischenn den Regeln,
+%bedeutet die Inklusion der Datei File.rudi an exakt dieser Stelle. Hiermit wird
+%zum einen erreicht, dass rudimant auch diese Datei zu ausführbarem Java-Code
+%kompiliert, sodass nicht alle Dateien eines Projektes separat kompiliert werden
+%müssen. Zum anderen wird das vollständige Regelinventar der Datei an der
+%entsprechenden Stelle im Java-Code mithilfe ihrer process-Methode aufgerufen
+%und durchgearbeitet.
+%
+\texttt{import} is a keyword in the \vonda language. A global line like ''\texttt{import File;}'', to be placed at an arbitrary positions between the rules, results in the inclusion of the file \texttt{File.rudi} at exactly this position.
 
-\texttt{import} ermöglicht es also, das Regelinventar für ein Projekt auf
-mehrere Dateien bzw. mehrere Module aufzuteilen und diese zusammenzustecken,
-sodass ein einziger Aufruf ausreicht, um sie zu kompilieren und später auch, um
-die Auswertung der Regeln anzustoßen. Dies ist nicht nur nützlich zur
-Übersichtlichkeit und Strukturierung des Projektes, sondern fördert auch die
-Modularität, da verschiedene 'Unterbäume' der \texttt{import}-Hierarchie leicht
-ausgeklinkt oder aus anderen Projekten wiederverwendet werden können.
+This inclusion has two important effects. On one side, it triggers the compilation of the included file at exact this point, such that any fields and methods known at this time will be available in the important file and it does not need to be compiled seperately. On the other side, it has the effect that all the rules contained in the important file will be inserted in the rule cycle at the specific point of the \texttt{import}, where in the resulting code the \texttt{process()} method of the imported file will be executed.
+
+%\texttt{import} ermöglicht es also, das Regelinventar für ein Projekt auf
+%mehrere Dateien bzw. mehrere Module aufzuteilen und diese zusammenzustecken,
+%sodass ein einziger Aufruf ausreicht, um sie zu kompilieren und später auch, um
+%die Auswertung der Regeln anzustoßen. Dies ist nicht nur nützlich zur
+%Übersichtlichkeit und Strukturierung des Projektes, sondern fördert auch die
+%Modularität, da verschiedene 'Unterbäume' der \texttt{import}-Hierarchie leicht
+%ausgeklinkt oder aus anderen Projekten wiederverwendet werden können.
+
+So the \texttt{import} functionality make sit possible to distribute the rules of a project into multiple files, respectively modules, and pin them together in such a way that they are handled as one unit when compiling or executing the compilied code. This is not only useful for clarity and structuring of project, but also supports modularity, as different subtrees of the \texttt{import} hierarchy can easily be added, moved, taken away or re-used in different projects.
 
 \subsubsection{Java-Code verbatim im Regelfile} \label{sec:rudi-verbatim}
 
-Rudimant verarbeitet eine Regelsprache, die mit voller Absicht nur
-eingeschränkte Java-Funktionalitäten zur Verfügung stellt. Was in rudi-Code
-nicht umzusetzen ist, sollte in Funktionen in die übergeordnete Java-Klasse
-wandern (vgl. \ref{rudimant-global}).
+%Rudimant verarbeitet eine Regelsprache, die mit voller Absicht nur
+%eingeschränkte Java-Funktionalitäten zur Verfügung stellt. Was in rudi-Code
+%nicht umzusetzen ist, sollte in Funktionen in die übergeordnete Java-Klasse
+%wandern (vgl. \ref{rudimant-global}).
+%
+To maintain simplicitely, \vonda intentionally only provides limited Java functionalities. Whatever is not feasible in \texttt{.rudi} code should be done in methods in the wrapper class (cfg. \ref{rudimant-global}).
 
-Für Fälle, in denen dies nicht genügt und vor Ort eine Funktionalität benötigt
-wird, die rudimant nicht parsen oder nicht richtig darstelllen kann, ist eine
-verbatim-Umgebung vorgesehen. Alles, was innerhalb der Zeichenfolgen \verb|/*@|
-und \verb|@*/| steht, wird behandelt wie ein mehrzeiliges Java-Kommentar, wird
-also in genau diesem Aussehen in den resultierenden Code übertragen. Dabei
-werden die klammernden Zeichenfolgen ausgelassen.
+%Für Fälle, in denen dies nicht genügt und vor Ort eine Funktionalität benötigt
+%wird, die rudimant nicht parsen oder nicht richtig darstelllen kann, ist eine
+%verbatim-Umgebung vorgesehen. Alles, was innerhalb der Zeichenfolgen \verb|/*@|
+%und \verb|@*/| steht, wird behandelt wie ein mehrzeiliges Java-Kommentar, wird
+%also in genau diesem Aussehen in den resultierenden Code übertragen. Dabei
+%werden die klammernden Zeichenfolgen ausgelassen.
+%
+In cases where this is not enough and you urgently need a functionality in a \texttt{.rudi} file that \vonda cannot parse or represent correctly, you can use its verbatim funciton. Everything between \verb|/*@| and \verb|@*/| will be treated like a multi-line Java comment, meaning the content is not parsed or evaluated further. It will be transferred to the compiled code at exactly this position between statements, but without the comment symbols. 
 
-Diese Funktionalität kann insbesondere dazu benutzt werden, am Anfang einer
-\texttt{rudi} Datei Java-Klassen zu importieren, die im kompilierten Code
-gebraucht werden.
+%Diese Funktionalität kann insbesondere dazu benutzt werden, am Anfang einer
+%\texttt{rudi} Datei Java-Klassen zu importieren, die im kompilierten Code
+%gebraucht werden.
+
+In particular, this functionality can be used to import Java classes at the beginning of a rule file. You should however be aware that \vonda will not know these classes nor their methods and fields. It will however accept creations of instances of unknown classes, as well as your casting of results of unknown methods. If, be it for commodity or for other reasons, you want \vonda to have type information about methods called on instances on one of these classes, you can put this information into the type interface of the wrapper class (cfg. chapter \ref{sec:javatypes}).
 
 \section{The run-time system}
 %\subsection{Run-Time Library}
