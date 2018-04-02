@@ -639,7 +639,7 @@ This inclusion has two important effects. On one side, it triggers the compilati
 
 So the \texttt{import} functionality make sit possible to distribute the rules of a project into multiple files, respectively modules, and pin them together in such a way that they are handled as one unit when compiling or executing the compilied code. This is not only useful for clarity and structuring of project, but also supports modularity, as different subtrees of the \texttt{import} hierarchy can easily be added, moved, taken away or re-used in different projects.
 
-\subsubsection{Java-Code verbatim im Regelfile} \label{sec:rudi-verbatim}
+\subsubsection{Java-Code verbatim in rule files} \label{sec:rudi-verbatim}
 
 %Rudimant verarbeitet eine Regelsprache, die mit voller Absicht nur
 %eingeschränkte Java-Funktionalitäten zur Verfügung stellt. Was in rudi-Code
@@ -701,13 +701,13 @@ proposals is evaluated by a statistical component, which will select the best
 alternative. This component can be exchanged to make it as simple or elaborate
 as necessary, taking into account arbitrary features from the data storage.
 
+\subsection{Functionalities (methods) provided by the run-time system}
+%Alles was in \texttt{Agent} bereitgestellt wird. Die aktuelle Liste der
+%bereitgestellten Funktionen finden sich in \texttt{rudimant} unter
+%\texttt{src/main/resources/Agent.rudi}.
+The following methods are declared in \texttt{src/main/resources/Agent.rudi} and implemented in the \vonda framework.
 
-
-
-\subsection{Default-Funktionalität im Laufzeitsystem}
-Alles was in \texttt{Agent} bereitgestellt wird. Die aktuelle Liste der
-bereitgestellten Funktionen finden sich in \texttt{rudimant} unter
-\texttt{src/main/resources/Agent.rudi}.
+\todo[inline]{TODO: update}
 
 \begin{itemize}
 \item timeouts
