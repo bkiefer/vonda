@@ -1,6 +1,19 @@
-\section{HFC Rdf-Datenbank}
+\section{The RDF database HFC}
 
-Die Queries, die an die Datenbank stellen kann haben folgende Syntax (EBNF):
+\vonda follows the information state/update paradigm. The information state is
+realized by an RDF store and reasoner with special capabilities
+(HFC \cite{krieger2013efficient}), namely the
+possibility to directly use $n$-tuples instead of triples. This allows to
+attach temporal information to every data chunk \cite{Krieger:FOIS2012,
+  krieger2014detailed}. In this way, the RDF store can represent \emph{dynamic
+  objects}, using either \emph{transaction time} or \emph{valid time}
+attachments, and as a side effect obtain a complete history of all changes.
+HFC is very efficient in terms of processing speed and memory footprint, and
+has recently be extended with stream reasoning facilities. \vonda can use HFC
+either directly as a library, or as a remote server, also allowing for more
+than one instance, if needed.
+
+The following is the syntax of HFC queries (EBNF):
 \begin{table}[htbp]
   \centering\small
 \begin{verbatim}
@@ -30,37 +43,31 @@ Die Queries, die an die Datenbank stellen kann haben folgende Syntax (EBNF):
 <funcall>   ::= <var>^+ "=" <function> <literal>^*
 <function>  ::= <nwchar>^+
 \end{verbatim}
-  \caption{BNF der Datenbank-Querysprache}
+  \caption{BNF of the database query language}
   \label{tab:hfcquerybnf}
 \end{table}
 
-\paragraph{Anmerkungen}
+\paragraph{Notes}
 
-Die reservierten Symbole \texttt{ASK}, \texttt{SELECT}, \texttt{SELECTALL},
-\texttt{DISTINCT}, \texttt{WHERE}, \texttt{FILTER}, und \texttt{AGGREGATE}
-müssen \emph{nicht} in Großbuchstaben sein.
+The reserved symbols \texttt{ASK}, \texttt{SELECT}, \texttt{SELECTALL},
+\texttt{DISTINCT}, \texttt{WHERE}, \texttt{FILTER} and \texttt{AGGREGATE}
+do \emph{not} need to be written in uppercase.
 
-Weder \texttt{filter} Prädikate noch \texttt{aggregate} Funktionen dürfen
-reservierte Symbole als Namen tragen.
+Neither \texttt{filter} predicates nor \texttt{aggregate} functions should be named like reserved symbols.
 
-\emph{don't-care} Variablen sollten \emph{explizit} markiert sein, indem
-\verb|?_| benutzt wird, vor allem, wenn \texttt{SELECT} mit \verb|*| benutzt
-wird, z.B. in:
+\emph{don't-care} variables should be marked \emph{explicitely} by using
+\verb|?_|, particularly if \texttt{SELECT} is used with \verb|*| as in:
 \begin{verbatim}
      SELECT DISTINCT * WHERE ?s <rdf:type> ?_
      SELECT * WHERE ?s <rdf:type> ?o ?_ ?_
 \end{verbatim}
-Um z.B. die Object Position zu beschränken ohne sie zu projizieren können
-don't-care Variablen benutzt werden:
+To change the object position without projecting it you can use \emph{don't-care} variables:
 \begin{verbatim}
      SELECT ?s WHERE ?s <rdf:type> ?o ?_ ?_ FILTER ?o != <foo-class>
 \end{verbatim}
 
-Aggregate in HFC nehmen ganze Tabellen oder Teile davon und berechnen aus allen
-Einträgen ein Resultat. Weil der Typ von Aggregaten und Filter-Funktionen nicht
-überladen werden kann, gibt es einige ähnliche Funktionen für verschiedene
-Typen, z.B. F für \texttt{float}, L für \texttt{long}, D für \texttt{double}, I
-für \texttt{int}, S für \texttt{String}.
+Aggregates in HFC take whole tables or parts of them and calculate a result based on their entities. As the type of aggregates and filter functions cannot be overloaded, there are multiple similar functions for different types, e.g. F for \texttt{float}, L for \texttt{long}, D for \texttt{double}, I
+for \texttt{int}, and S for \texttt{String}.
 
 \begin{table}[htbp]
   \centering
@@ -72,13 +79,11 @@ für \texttt{int}, S für \texttt{String}.
    DTMax&          LGetLatest&       LGetLatestValues\\
    DTMin&          LGetTimestamped2& Identity     \\
  \end{tabular}
-  \caption{Verfügbare Aggregate}
+  \caption{Available aggregates}
   \label{tab:hfcaggregates}
 \end{table}
 
-Außer \verb|==| und \verb|!=| können in den \texttt{filter} Ausdrücken
-auch funktionale Operatoren benutzt werden. Auch hier gibt es viele
-Versionen der gleichen Funktion für unterschiedliche Datentypen.
+Apart from \verb|==| and \verb|!=|, funcitonal operators can be used in \texttt{filter} expressions as well. As for aggregates, there are multiple versions of the same function for different datatypes.
 
 \begin{table}[htbp]
   \centering\small
@@ -105,6 +110,21 @@ FLess &                      IMin2 &                   LMax2 \\
 FMax &                       IMin &                    LMax \\
 FMin &                       INotEqual &               LMin2 \\
 \end{tabular}
-\caption{Verfügbare Filter-Funktionen}
+\caption{Available filter functions}
   \label{tab:hfcfunctions}
 \end{table}
+
+\subsection{Usage of HFC in \vonda}
+
+The RDF store contains the dynamic and the terminological knowledge:
+specifications for the data objects and their properties, as well as a
+hierarchy of  dialogue acts,  semantic frames and their arguments. These
+specifications are also used by the compiler to infer the types for property
+values (see sections \ref{sec:typeinference} and \ref{sec:rdfaccesses}), and form a declarative API to
+connect new components, e.g., for sensor or application data.
+
+The ontology contains the definitions of dialogue acts, semantic frames, class
+and property specifications for the data objects of the application, and other
+assertional knowledge, such as specifications for ``forgetting'', which could
+be modeled in an orthogonal class hierarchy, and supported by custom deletion
+rules in the reasoner.
