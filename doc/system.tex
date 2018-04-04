@@ -509,7 +509,7 @@ if (sa.isSubsumedBy(new DialogueAct("Question")) {
 \subsubsection{External methods and fields}
 \label{sec:javatypes}
 
-As mentioned before, you can use every method or field that you declare in your custom Agent implementation in your \vonda code. Their declaration in the Java-rudi interface should look like a normal Java field or method definition (cfg. figure \ref{tab:typeinference}). It is possible to use generics in these definitions, although they are, for complexity reasons, restricted to be one single uppercase letter.
+As mentioned before, you can use every method or field that you declare in your custom Agent implementation in your \vonda code. Their declaration in the Java-rudi interface should look like a normal Java field or method definition (cfg. figure \ref{tab:javadef}). It is possible to use generics in these definitions, although they are, for complexity reasons, restricted to be one single uppercase letter.
 
 \begin{table}[htbp]
   \centering
@@ -525,7 +525,7 @@ As mentioned before, you can use every method or field that you declare in your 
   \end{tabular}
 
   \caption{Defintions of existing Java fields and methods for \vonda}
-  \label{tab:typeinference}
+  \label{tab:javadef}
 \end{table}
 
 There is a variety of standard Java methods called on Java classes that \vonda automatically recognizes, like e.g. the substring method for Strings. If you find that you need \vonda to know the return type of a new method that can or should only be called upon instances of a specific class, you can provide \vonda with knowledge about them by adding their definition to the interface as follows:
@@ -544,7 +544,7 @@ There is a variety of standard Java methods called on Java classes that \vonda a
   \end{tabular}
 
   \caption{Definition of a non-static method of Java objects}
-  \label{tab:typeinference}
+  \label{tab:methoddef}
 \end{table}
 
 Of course you can also use generics in these definitions. For example, the get method on lists is defined as follows in the \vonda framework:
@@ -655,7 +655,7 @@ To maintain simplicitely, \vonda intentionally only provides limited Java functi
 %also in genau diesem Aussehen in den resultierenden Code übertragen. Dabei
 %werden die klammernden Zeichenfolgen ausgelassen.
 %
-In cases where this is not enough and you urgently need a functionality in a \texttt{.rudi} file that \vonda cannot parse or represent correctly, you can use its verbatim funciton. Everything between \verb|/*@| and \verb|@*/| will be treated like a multi-line Java comment, meaning the content is not parsed or evaluated further. It will be transferred to the compiled code at exactly this position between statements, but without the comment symbols. 
+In cases where this is not enough and you urgently need a functionality in a \texttt{.rudi} file that \vonda cannot parse or represent correctly, you can use its verbatim funciton. Everything between \verb|/*@| and \verb|@*/| will be treated like a multi-line Java comment, meaning the content is not parsed or evaluated further. It will be transferred to the compiled code at exactly this position between statements, but without the comment symbols.
 
 %Diese Funktionalität kann insbesondere dazu benutzt werden, am Anfang einer
 %\texttt{rudi} Datei Java-Klassen zu importieren, die im kompilierten Code
@@ -741,5 +741,5 @@ void lastDAprocessed();
 
 %%% Local Variables:
 %%% mode: latex
-%%% TeX-master: "master"
+%%% TeX-master: "userguide"
 %%% End:

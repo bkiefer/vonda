@@ -1,8 +1,8 @@
-\documentclass[a4paper]{memoir}
+\documentclass[a4paper]{report}
 
-\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[a4paper,margin=3cm]{geometry}
 \usepackage[utf8]{inputenc}
-\usepackage{times}
+%\usepackage{times}
 \usepackage[english]{babel}
 \usepackage{multirow}
 \usepackage{amsmath,graphicx}
@@ -37,6 +37,8 @@ memory layer relies upon (extended) RDF/OWL, which provides a universal and
 uniform representation, and facilitates interoperability with external data
 sources.
 
+\todo[inline]{Mention HFC and ref to appropriate section}
+
 \vonda consists of three parts: A programming language tailored towards the
 specification of reactive rules and transparent RDF data store usage, a
 compiler that turns source code in this language into Java code, and a run-time
@@ -48,6 +50,46 @@ multi-modal human-robot interaction, but there is currently no \emph{special}
 functionality in the core to either support the multi-modality nor the
 human-robot interaction. The architecture of the framework is open and powerful
 enough to add these things easily.
+
+
+\section{Internal structure}
+
+Figure \ref{fig:arch} shows the main components of a \vonda agent.
+
+
+\begin{figure}[htb]
+\includegraphics[width=.9\textwidth]{rudimant.png}
+\caption{\label{fig:arch}Schematic \vonda agent}
+\end{figure}
+
+At the base there is an RDF store, which takes incoming sensor and interaction
+data, and stores it as RDF data, based on a data specification in the form of
+an ontology developed as part of the dialogue manager, making the data (via the
+specification) available to all other components.
+
+The dialogue manager will get several input types from the nexus, the ones
+currently foreseen are: input from automatic speech recognition (ASR) or typed
+natural input, user parameters, like name, age, hobbies, etc. but also more
+dynamic ones like mood or health data, and also triggers from high-level
+planning.
+
+The second major component is the rule processor for the dialogue management
+rules. The rules can not only use new data, but also the interaction history
+stored in the RDF database to take their decisions.  When new data is added, a
+set of declaratively specified reactive rules will propose dialogue moves or
+other actions and send these proposals to the action selection mechanism. The
+selection mechanism selects the ``best'' of the proposed actions and sends it
+back. If the proposed action results in dialogue acts, these are turned into
+verbal output and gestures with the help of a multimodal generation component,
+which retrieves parameters from the RDF database to adapt the generation to the
+user's likings, and can also take into account sensory data such as her or his
+estimated mood.
+
+The last two parts are a language interpretation module (not
+explicitly shown in the picture), which turns spoken or written utterances
+into dialogue acts, possibly with an intermediate step that involves a more
+elaborate semantic format, and a multimodal generation component, which turns
+outgoing dialogue acts into natural language utterances and gestures.
 
 \chapter{Sketching a Simple Interaction Manager}
 
@@ -122,48 +164,9 @@ goals to support the system requirements described before:
   system
 \end{itemize}
 \fi
-\chapter{Interaction with the overall system}
+%\chapter{Interaction with the overall system}
 
-The interaction manager will get several input types from the nexus, the ones
-currently foreseen are: input from automatic speech recognition (ASR) or typed
-natural input, user parameters, like name, age, hobbies, etc. but also more
-dynamic ones like mood or health data, and also triggers from high-level
-planning.
 
-All these inputs are stored as RDF data, based on an ontology developed as part
-of the interaction manager, and available to all other components as a data
-format specification.
-
-When new data is added, a set of declaratively specified reactive rules will
-propose dialogue moves or other actions and send these proposals to the action
-selection mechanism. The selection mechanism selects the ``best'' of the
-proposed actions and sends it back. If the proposed action results in dialogue
-acts, these are turned into verbal output and gestures with the help of a
-multimodal generation component, which retrieves parameters from the RDF
-database to adapt the generation to the user's likings, and can also take into
-account sensory data such as her or his estimated mood.
-
-\section{Internal structure}
-
-As shown in the picture below, the interaction manager consists of the RDF
-store, which also contains the functionality to store incoming data in the
-format specified by the ontology, thereby making it readily accessible for
-other components.
-
-The second major component is the rule processor for the dialogue management
-rules, which generates proposals for actions when new incoming data
-arrives. The rules not only use the new data, but also the interaction history
-stored in the RDF database to take its decisions.
-
-The last two parts are a robust natural language interpretation module (not
-explicitly shown in the picture), which turns spoken or written utterances
-into dialogue acts, possibly with an intermediate step that involves a more
-elaborate semantic format, and a multimodal generation component, which turns
-outgoing dialogue acts into natural language utterances and gestures.
-
-\vspace*{4ex}
-
-\includegraphics[width=.9\textwidth]{rudimant.png}
 
 %\input{design}
 
