@@ -1,6 +1,6 @@
 \newcommand{\caret}{{\large\textbf{\textasciicircum}}}
 
-\section{The \vonda compiler}
+\section{The \vonda Compiler}
 
 The compiler turns the \vonda source code into Java source code using the information
 in the ontology. Every source file becomes a Java class. The generated code
@@ -41,7 +41,7 @@ performs the necessary casts for the ontology accesses.
 %die meisten Konstrukte gibt es einige Beispiele in den \texttt{rudi}
 %Quelldateien.
 
-\subsection{\vonda's architecture}
+\subsection{\vonda's Architecture}
 
 Figure~\ref{fig:architecture} shows the architecture of a runnable \vonda project.
 
@@ -99,7 +99,7 @@ The methods and fields from the custom wrapper class can be made available to al
 %Kommunikationsinterfaces abschirmt.
 
 
-\subsection{The \vonda rule language}
+\subsection{The \vonda Rule Language}
 
 %{\Huge TODO: testen, ob alle Beispiele so funktionieren, wie sie sollen !!!!!!}
 \label{sec:language}
@@ -167,14 +167,14 @@ This functionality offers possibilities to e.g. define and process high-level va
 \begin{figure}[htb]
 \begin{minipage}{0.5\columnwidth}
 \small%
-\begin{verbatim}
+\begin{lstlisting}[language=Java]
 user = new Animate;
 user.name = "Joe";
 set_age:
 if (user.age <= 0) {
   user.age = 15;
 }
-\end{verbatim}
+\end{lstlisting}
 \end{minipage}\ \vrule\hspace{1ex}
 \begin{minipage}{0.44\columnwidth}
     \small\begin{tikzpicture}[
@@ -219,24 +219,24 @@ existing objects.
   \centering
 \begin{small}
 \begin{minipage}[t]{0.35\textwidth}
-\begin{verbatim}
+\begin{lstlisting}[language=Java]
 Child c;
 String name = c.name;
 c.name = "new name";
 Set middle = c.middleNames;
 c.middleNames += "John";
 c.middleNames -= "James";
-\end{verbatim}
+\end{lstlisting}
 \end{minipage}
 \begin{minipage}[t]{0.6\textwidth}
-\begin{verbatim}
+\begin{lstlisting}[language=Java]
 
 String name = (String)c.getValue("<upper:name>");
 c.setValue("<upper:name>", "new name");
 Set middle = (Set<Object>)c.getValue("<upper:middleNames");
 c.add("<upper:middleNames", "John");
 c.remove("<upper:middleNames", "James");
-\end{verbatim}
+\end{lstlisting}
 \end{minipage}
 \end{small}
   \caption{Examples for an RDF property access}
@@ -275,7 +275,7 @@ In the rule language, the operators \texttt{+=} and \texttt{-=} are overloaded. 
 \subsubsection{Rules and labels}
 
 \begin{small}
-\begin{verbatim}
+\begin{lstlisting}[language=Java]
 introduction:
   if (introduction){
     if (user.unknown){
@@ -287,7 +287,7 @@ introduction:
       greetUser();
     }
   }
-\end{verbatim}
+\end{lstlisting}
 \end{small}
 
 %Das Kernstück von rudimant sind die Dialogregeln. Eine Regel beginnt mit ihrem
@@ -340,7 +340,7 @@ To leave \texttt{propose} and \texttt{timeout} blocks, you need to use an empty 
 \subsubsection{\texttt{propose} and \texttt{timeout}}
 \begin{figure}[htbp]
   \centering\small%
-\begin{verbatim}
+\begin{lstlisting}[language=Java]
 if (!saidInSession(#Greeting(Meeting)) {
   // Wait 7 secs before taking initiative
   timeout("wait_for_greeting", 7000) {
@@ -362,7 +362,7 @@ if (!saidInSession(#Greeting(Meeting)) {
     }
   }
 }
-\end{verbatim}\vspace*{-3ex}
+\end{lstlisting}\vspace*{-3ex}
   \caption{\vonda code example}
   \label{fig:propose}
 \end{figure}
@@ -396,9 +396,9 @@ The dialogue act representation is an internal feature of \vonda. We are current
 
 \begin{figure}[htb]
   \centering\small%
-\begin{verbatim}
+\begin{lstlisting}[language=Java]
 emitDA(#Inform(Answer, what=^solution));
-\end{verbatim}\vspace*{-3ex}
+\end{lstlisting}\vspace*{-3ex}
   \caption{\vonda code example}
   \label{fig:DA}
 \end{figure}
@@ -445,19 +445,19 @@ You can also declare variables final.
 \begin{table}[htbp]
   \centering
   \begin{small}
-    \begin{BVerbatim}
+    \begin{lstlisting}[language=Java]
       if (! c.user.personality.nonchalance){ ... }
-    \end{BVerbatim}
+    \end{lstlisting}
 
     {\Large$\Downarrow$}\\
 
-    \begin{BVerbatim}
+    \begin{lstlisting}[language=Java]
       if (!((((c != null) && (c.user != null))
              && (c.user.personality != null))
             && (c.user.personality.nonchalance != null))) {
          ...
       }
-\end{BVerbatim}
+\end{lstlisting}
 \end{small}
 
 \caption{Transformation of complex boolean expressions}
@@ -486,18 +486,18 @@ subsumption of dialogue acts.
   \centering
   \begin{footnotesize}
     \begin{minipage}{0.3\textwidth}
-\begin{verbatim}
+\begin{lstlisting}[language=Java]
 if (sa <= #Question){
   ...
 }
-\end{verbatim}
+\end{lstlisting}
     \end{minipage}
     \begin{minipage}{0.5\textwidth}
-\begin{verbatim}
+\begin{lstlisting}[language=Java]
 if (sa.isSubsumedBy(new DialogueAct("Question")) {
   ...
 }
-\end{verbatim}
+\end{lstlisting}
     \end{minipage}
   \end{footnotesize}
 
@@ -512,15 +512,19 @@ if (sa.isSubsumedBy(new DialogueAct("Question")) {
 As mentioned before, you can use every method or field that you declare in your custom Agent implementation in your \vonda code. Their declaration in the Java-rudi interface should look like a normal Java field or method definition (cfg. figure \ref{tab:javadef}). It is possible to use generics in these definitions, although they are, for complexity reasons, restricted to be one single uppercase letter.
 
 \begin{table}[htbp]
-  \centering
+  %\centering
   \small
   \begin{tabular}{lp{.45\textwidth}}
-    \texttt{myType someVariable;}
-    &  es gibt die Variable myVariable vom Typ \texttt{myType} \\
+    \begin{lstlisting}[language=Java]
+    myType someVariable;
+    \end{lstlisting}
+    &  there is a variable of type \texttt{myType} \\
 
-    \texttt{myType someFunction(typeA a, typeB b);}
-    &  Funktion someFunction nimmt Argumente vom Typ \texttt{typeA} und
-      \texttt{typeB} und gibt ein Objekt vom Typ \texttt{myType} zurück (void =
+    \begin{lstlisting}[language=Java]
+    myType someFunction(typeA a, typeB b);
+    \end{lstlisting}
+    &  the method someFunction takes arguments of types \texttt{typeA} and
+      \texttt{typeB} and returns an object of type \texttt{myType} (void =
       void)
   \end{tabular}
 
@@ -536,11 +540,11 @@ There is a variety of standard Java methods called on Java classes that \vonda a
   \small
   \begin{tabular}{lp{.45\textwidth}}
 
-    \texttt{[type]. myType Function(typeA a);}
-    & Funktionsdeklaration wie oben; die Funktion muss auf einem Objekt der
-      Klasse \texttt{type} aufgerufen werden. Generics sind eingeschränkt
-      erlaubt, mit T als festgelegtem Namen der Parameter-Klasse,
-      Beispiel:\newline\texttt{[List<T>]. T get(int i);}
+    \begin{lstlisting}[language=Java]
+    //
+    [type]. myType Function(typeA a);
+    \end{lstlisting}
+    & declaration of a function that has to be called on an instance of class \texttt{type}.
   \end{tabular}
 
   \caption{Definition of a non-static method of Java objects}
@@ -551,7 +555,10 @@ Of course you can also use generics in these definitions. For example, the get m
 
 \begin{figure}[htbp]
 \centering
-\texttt{[List<T>]. T get(int a);}
+\begin{lstlisting}[language=Java]
+//
+[List<T>]. T get(int a);
+\end{lstlisting}
 \end{figure}
 %Für Funktionen, die nicht oder nur umständlich in rudi-Code implementiert
 %werden können, sollte der Nutzer eine Javaklasse \texttt{MyAgent} von der
@@ -596,12 +603,12 @@ It is important to realize that whatever declarations are in the interface are o
 \begin{table}[htbp]
   \centering
   \begin{small}
-\begin{verbatim}
+\begin{lstlisting}[language=Java]
 boolean contains(Collection coll, Predicate pred);
 boolean all(Collection coll, Predicate pred);
 List<Object> filter(Collection coll, Predicate pred);
 List<Object> sort(Collection coll, Comparator c);
-\end{verbatim}
+\end{lstlisting}
   \end{small}
 
   \caption{Functions that take lambda expressions as an argument}
@@ -610,9 +617,9 @@ List<Object> sort(Collection coll, Comparator c);
 
 For example, if you want to filter a set of RDF objects by a subtype relation, you can write:
 
-\begin{verbatim}
+\begin{lstlisting}[language=Java]
 des = filter(agent.desires, (d) -> ((Desire)d) <= UrgentDesire);
-\end{verbatim}
+\end{lstlisting}
 
 \subsubsection{\texttt{import}}
 
@@ -663,7 +670,7 @@ In cases where this is not enough and you urgently need a functionality in a \te
 
 In particular, this functionality can be used to import Java classes at the beginning of a rule file. You should however be aware that \vonda will not know these classes nor their methods and fields. It will however accept creations of instances of unknown classes, as well as your casting of results of unknown methods. If, be it for commodity or for other reasons, you want \vonda to have type information about methods called on instances on one of these classes, you can put this information into the type interface of the wrapper class (cfg. chapter \ref{sec:javatypes}).
 
-\section{The run-time system}
+\section{The Run-Time System}
 %\subsection{Run-Time Library}
 
 The run-time library contains the basic functionality for handling the rule
@@ -701,29 +708,71 @@ proposals is evaluated by a statistical component, which will select the best
 alternative. This component can be exchanged to make it as simple or elaborate
 as necessary, taking into account arbitrary features from the data storage.
 
-\subsection{Functionalities (methods) provided by the run-time system}
+\subsection{Functionalities (methods) Provided by the Run-Time System}
 %Alles was in \texttt{Agent} bereitgestellt wird. Die aktuelle Liste der
 %bereitgestellten Funktionen finden sich in \texttt{rudimant} unter
 %\texttt{src/main/resources/Agent.rudi}.
 The following methods are declared in \texttt{src/main/resources/Agent.rudi} and implemented in the \vonda framework.
 
-\todo[inline]{TODO: update}
-
 \begin{itemize}
-\item timeouts
-\begin{verbatim}
+\item Pre-added Java methods
+\begin{lstlisting}[language=Java]
+[Object]. boolean equals(Object e);
+[String]. boolean startsWith(String s);
+[String]. boolean endsWith(String s);
+[String]. String substring(int i);
+
+[List<T>]. T get(int a);
+[Collection<T>]. void add(Object a);
+[Collection<T>]. boolean contains(Object a);
+[Collection<T>]. int size();
+\end{lstlisting}
+
+\item Short-hand conversion methods from Agent
+\begin{lstlisting}[language=Java]
+int toInt(String s);
+float toFloat(String s);
+double toDouble(String s);
+boolean toBool(String s);
+\end{lstlisting}
+
+\item Other Agent methods
+\begin{lstlisting}[language=Java]
+// Telling the Agent that something changed
+void newData();
+
+String getLanguage();
+
+// Math methods
+int random(int limit);
+float random();
+
+// logging methods
+Logger logger;
+
+// discarding actions and shutdown
+void clearBehavioursAndProposals();
+void shutdown();
+\end{lstlisting}
+
+\item Timeouts
+\begin{lstlisting}[language=Java]
 void newTimeout(String name, int millis);
 boolean isTimedOut(String name);
 void removeTimeout(String name);
 boolean hasActiveTimeout(String name);
-\end{verbatim}
-\item Senden von Dialogakten an die Generierung
-\begin{verbatim}
+// cancel and remove an active timeout, will not be executed
+void cancelTimeout(String name);
+\end{lstlisting}
+
+\item Methods handling with dialogue acts
+\begin{lstlisting}[language=Java]
+// sending of dialogue acts
+DialogueAct createEmitDA(DialogueAct da);
 DialogueAct emitDA(int delay, DialogueAct da);
 DialogueAct emitDA(DialogueAct da);
-\end{verbatim}
-\item Zugriff auf DialogAkte aus der Session
-\begin{verbatim}
+
+// Access to dialogue acts of the current session
 // my last outgoing resp. the last incoming dialogue act
 DialogueAct myLastDA();
 DialogueAct lastDA();
@@ -736,7 +785,20 @@ int receivedInSession(DialogueAct da);
 
 boolean waitingForResponse();
 void lastDAprocessed();
-\end{verbatim}
+DialogueAct addLastDA(DialogueAct newDA);
+[DialogueAct]. void setProposition(String prop);
+\end{lstlisting}
+
+\item Methods using lambda expressions
+\begin{lstlisting}[language=Java]
+// lambda: first class argument of Function is return type of function object
+boolean contains(Collection<T> coll, Function<Boolean, T> pred);
+boolean all(Collection<T> coll, Function<Boolean, T> pred);
+List<T> filter(Collection<T> coll, Function<Boolean, T> pred);
+List<T> sort(Collection<T> coll, Function<Integer, T, T> c);
+Collection<T> map(Collection<S> coll, Function<T, S> f);
+\end{lstlisting}
+
 \end{itemize}
 
 %%% Local Variables:
