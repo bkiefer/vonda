@@ -378,7 +378,7 @@ public class GUI extends JFrame {
 
 
   public GUI() {
-    super("Reco / Socrates test environment");
+    super("Chatcat Chat");
 
     mainFrame = this;
 

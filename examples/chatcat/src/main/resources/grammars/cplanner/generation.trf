@@ -3,8 +3,8 @@
 
 raw:ReturnGreeting ^ Greet
 ->
-# =  :canned ^ <string>"*knock-knock*".
+# =  :canned ^ <string>"* Hey, nice to see you *".
 
 raw:SecondReturnGreeting ^ Greet
 ->
-# =  :canned ^ <string>"*knock-knock^2*".
+# =  :canned ^ <string>"* And hello you *".

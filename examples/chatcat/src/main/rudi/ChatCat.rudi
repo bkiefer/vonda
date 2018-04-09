@@ -5,6 +5,7 @@ if (lastDA() && lastDA() <= #InitialGreeting(Greet)) {
   }
   lastDAprocessed();
 }
+
 if (lastDA() && lastDA() <= #SecondGreeting(Greet)) {
   emitDA(#SecondReturnGreeting(Greet));
   lastDAprocessed();

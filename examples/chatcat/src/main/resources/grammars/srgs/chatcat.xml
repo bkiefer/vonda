@@ -5,7 +5,7 @@
     <one-of>
       <item>
         <one-of>
-          <item>Hallo</item>
+          <item>Hello</item>
           <item>Hi</item>
           <item>Guten Tag</item>
         </one-of>
@@ -13,7 +13,7 @@
         <tag> out.da="InitialGreeting" ; out.prop="Greet" </tag>
       </item>
       <item>
-        Hallo zurück
+        Hello again
         <tag> out.da="SecondGreeting" ; out.prop="Greet" </tag>
       </item>
     </one-of>
