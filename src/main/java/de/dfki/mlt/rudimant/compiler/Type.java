@@ -1,3 +1,22 @@
+/*
+ * The Creative Commons CC-BY-NC 4.0 License
+ *
+ * http://creativecommons.org/licenses/by-nc/4.0/legalcode
+ *
+ * Creative Commons (CC) by DFKI GmbH
+ *  - Bernd Kiefer <kiefer@dfki.de>
+ *  - Anna Welker <anna.welker@dfki.de>
+ *  - Christophe Biwer <christophe.biwer@dfki.de>
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
+
 package de.dfki.mlt.rudimant.compiler;
 
 import static de.dfki.mlt.rudimant.compiler.Constants.DIALOGUE_ACT_TYPE;
@@ -372,6 +391,8 @@ public class Type {
     int leftCollCode = getCollectionCode();
     int rightCollCode = right.getCollectionCode();
     if ((leftCollCode | rightCollCode) != 0) {
+      // collection vs. simple type?
+      if (leftCollCode == 0 || rightCollCode == 0) return null;
       Type inner = getInnerType().unifyBasicTypes(right.getInnerType());
       if (inner == null || ((leftCollCode & rightCollCode) == 0))
         return null;
@@ -404,7 +425,7 @@ public class Type {
       if ("Rdf".equals(right._name)) return this;
       return null;
     }
-    
+
     // if one of those is a generic type, the real type is the more
     // specific one and they are compatible
     // (necessary because this method is also used for funccall evaluation)
@@ -518,7 +539,7 @@ public class Type {
         if (pType == null)  // for visualization
           sb.append("null");
         else if (pType.isRdfType())
-          sb.append("Object[").append(_class.toString()).append("]");
+          sb.append("Object[").append(pType._class.toString()).append("]");
         else
           pType.toDebugString(sb);
         first = false;

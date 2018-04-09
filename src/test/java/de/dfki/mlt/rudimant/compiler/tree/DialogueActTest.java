@@ -1,5 +1,25 @@
+/*
+ * The Creative Commons CC-BY-NC 4.0 License
+ *
+ * http://creativecommons.org/licenses/by-nc/4.0/legalcode
+ *
+ * Creative Commons (CC) by DFKI GmbH
+ *  - Bernd Kiefer <kiefer@dfki.de>
+ *  - Anna Welker <anna.welker@dfki.de>
+ *  - Christophe Biwer <christophe.biwer@dfki.de>
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
+
 package de.dfki.mlt.rudimant.compiler.tree;
 
+import static de.dfki.mlt.rudimant.compiler.CompilerMain.configs;
 import static de.dfki.mlt.rudimant.compiler.Visualize.*;
 import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.*;
@@ -7,9 +27,6 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Map;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,14 +35,9 @@ import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.QueryResult;
 import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.lt.hfc.db.server.HfcDbApiHandler;
-import de.dfki.lt.hfc.db.server.HfcDbServer;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.mlt.rudimant.agent.DiaHierarchy;
 import de.dfki.mlt.rudimant.agent.DialogueAct;
-import de.dfki.mlt.rudimant.compiler.tree.ExpDialogueAct;
-import de.dfki.mlt.rudimant.compiler.tree.ExpFuncCall;
-import de.dfki.mlt.rudimant.compiler.tree.RudiTree;
 
 /**
  *
@@ -92,7 +104,7 @@ public class DialogueActTest {
     frame.setValue("<sem:agent>", "someone else");
     da.setValue("<dial:frame>", frame);
 
-    DialogueAct transformed = DialogueAct.fromRdf(da.getURI(), _proxy);
+    DialogueAct transformed = DialogueAct.fromRdfProper(da.getURI(), _proxy);
 
     assertEquals("<dial:Accept>", transformed.getDialogueActType());
     assertEquals("Answering", transformed.getProposition());
@@ -111,7 +123,7 @@ public class DialogueActTest {
     frame.setValue("<sem:label>", "Foo");
     da.setValue("<dial:frame>", frame);
 
-    DialogueAct transformed = DialogueAct.fromRdf(da.getURI(), _proxy);
+    DialogueAct transformed = DialogueAct.fromRdfProper(da.getURI(), _proxy);
 
     assertEquals("<dial:Accept>", transformed.getDialogueActType());
     assertEquals("Foo", transformed.getProposition());
@@ -123,22 +135,25 @@ public class DialogueActTest {
 
   @Test
   public void testToRdf2() {
+    Rdf sender = _proxy.getClass("<dom:Child>").getNewInstance("rifca:");
     DialogueAct da = new DialogueAct("@raw:ReturnGreeting(Meeting"
         + " ^ <Time>afternoon ^ <addressee>\"<rifca:Child_8>\""
-        + " ^ <sender>\"<pal:Child_8_nao_0>\")");
-    Rdf rep = da.toRdf(_proxy);
+        + " ^ <sender>\"" + sender.getURI() + "\")");
+    Rdf rep = DialogueAct.toRdf(da, _proxy);
     QueryResult res =
         _proxy.selectQuery("select ?p ?q where {} ?p ?q ?_", rep.getURI());
-    assertEquals(4, res.getTable().getRows().size());
+    assertEquals(3, res.getTable().getRows().size());
   }
 
   @Test
   public void testToRdf1() {
     // use information about entry time to make sure we do not only find an old entry
     long now = System.currentTimeMillis();
+    Rdf sender = _proxy.getClass("<dom:Child>").getNewInstance("rifca:");
     _proxy.getClass("<dial:Confirm>").getNewInstance("dial:");
-    DialogueAct da = new DialogueAct("Inform", "Answer", "what", "solution");
-    da.toRdf(_proxy);
+    DialogueAct da =
+        new DialogueAct("Inform", "Answer", "what", "solution", "sender", sender.toString() );
+    DialogueAct.toRdf(da, _proxy);
 
     String query = "select ?s ?t where ?s ?_ <dial:Inform> ?t "
         + "filter LLess ?t {} "

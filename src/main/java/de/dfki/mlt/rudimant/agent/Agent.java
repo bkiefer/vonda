@@ -1,3 +1,22 @@
+/*
+ * The Creative Commons CC-BY-NC 4.0 License
+ *
+ * http://creativecommons.org/licenses/by-nc/4.0/legalcode
+ *
+ * Creative Commons (CC) by DFKI GmbH
+ *  - Bernd Kiefer <kiefer@dfki.de>
+ *  - Anna Welker <anna.welker@dfki.de>
+ *  - Christophe Biwer <christophe.biwer@dfki.de>
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
+
 package de.dfki.mlt.rudimant.agent;
 
 import static de.dfki.mlt.rudimant.common.Constants.*;
@@ -28,6 +47,8 @@ import de.dfki.mlt.rudimant.common.SimpleServer;
 public abstract class Agent implements StreamingClient {
 
   public static final Logger logger = LoggerFactory.getLogger(Agent.class);
+
+  public static boolean startDebuggerGui = true;
 
   private static DialogueAct IMPOSSIBLE_DIALOGUEACT;
 
@@ -177,7 +198,7 @@ public abstract class Agent implements StreamingClient {
   public DialogueAct addToMyDA(DialogueAct da) {
     myLastDAs.addFirst(da);
     // enter into database
-    da.toRdf(_proxy);
+    DialogueAct.toRdf(da, _proxy);
     // ++myUnprocessedDAs;
     newData();
     return da;
@@ -300,7 +321,7 @@ public abstract class Agent implements StreamingClient {
     }
     lastDAs.addFirst(newDA);
     // enter into database
-    newDA.toRdf(_proxy);
+    DialogueAct.toRdf(newDA, _proxy);
     //++unprocessedDAs;
     newData();
     return newDA;
@@ -429,10 +450,22 @@ public abstract class Agent implements StreamingClient {
   }
 
   /** Return the POD represented by the string */
-  public int toInt(String s) { return Integer.parseInt(s); }
-  public float toFloat(String s) { return Float.parseFloat(s); }
-  public double toDouble(String s) { return Double.parseDouble(s); }
-  public boolean toBool(String s) { return Boolean.getBoolean(s); }
+  public int toInt(String s) {
+    try { return Integer.parseInt(s); }
+    catch (NumberFormatException ex) { return -1; }
+  }
+  public float toFloat(String s) {
+    try { return Float.parseFloat(s); }
+    catch (NumberFormatException ex) { return -1.0f; }
+  }
+  public double toDouble(String s) {
+    try { return Double.parseDouble(s); }
+    catch (NumberFormatException ex) { return -1.0d; }
+  }
+
+  public boolean toBool(String s) {
+    return "true".equals(s.toLowerCase());
+  }
 
   public DialogueAct analyse(String input) {
     return asr.interpret(input);
@@ -532,6 +565,13 @@ public abstract class Agent implements StreamingClient {
       System.exit(1);
     }
     ruleLogger = new RuleLogger(new ColorLogger());
+    if (startDebuggerGui) {
+      try {
+        connectToDebugger("localhost", SimpleServer.DEFAULT_PORT);
+      } catch (IOException ex) {
+        logger.error("Can not connect to debugger: {}", ex);
+      }
+    }
     reset();
   }
 
