@@ -126,8 +126,6 @@ the RDF store can be used throughout the code: RDF objects and classes can be
 treated similarly to those of object oriented programming languages, including
 the type inference and inheritance that comes with type hierarchies.
 
-\todo[inline]{visibility}
-
 %Die Klasse \texttt{MyAgent} inklusive Packagenamen muss in der config.yml Datei
 %eines Projektes unter dem Eintrag \texttt{wrapperClass} spezifiziert werden, um
 %im Compile-Schritt einen Effekt zu zeigen. Rudimant nutzt die Klasse
@@ -242,7 +240,7 @@ c.remove("<upper:middleNames", "James");
   \caption{Examples for an RDF property access}
   \label{tab:property-access}
 \end{table}
-\todo[inline]{missing creation of child in right row, plus "Set middle" is no proper code}
+%\todo[inline]{missing creation of child in right row, plus "Set middle" is no proper code}
 
 %Durch die Verbindung zu \texttt{hfc} während des Compile-Vorganges hat rudimant
 %vollen Zugriff auf die Datenbank und kann nicht nur Rdf-Objekte anhand ihrer
@@ -252,7 +250,28 @@ c.remove("<upper:middleNames", "James");
 %ihres Inhalts möglich und lässt sich, sofern dies in der verwendeten Ontologie
 %korrekt möglich ist, beliebig oft hintereinander ausführen.
 %
-Due to the connection of \vonda to HFC during compile time, it has full access to the database. Thereby, it cannot only recognize the correct RDF class to create a new instance from when encountering \texttt{new}, but it can also resolve property accessses to such instances. Field accesses as shown in line 2 and 3 of table \ref{tab:property-access} will be analyzed and transformed into database accessses. \vonda will also draw type information from the database. If the name property of the RDF class \texttt{Child} is of type String\todo{mention xsd:string ??}, exchanging line 2 by the line \texttt{int name = c.name} will result in a warning of the compiler.
+Due to the connection of \vonda to HFC during compile time, it has full access to the database. Thereby, it cannot only recognize the correct RDF class to create a new instance from when encountering \texttt{new}, but it can also resolve property accessses to such instances. Field accesses as shown in line 2 and 3 of table \ref{tab:property-access} will be analyzed and transformed into database accessses. \vonda will also draw type information from the database. If the name property of the RDF class \texttt{Child} is of type String, exchanging line 2 by the line \texttt{int name = c.name} will result in a warning of the compiler.
+
+In this process, the compiler will automatically recognize the equivalences of the following RDF and Java types:
+
+\begin{figure}[h]
+\small
+\begin{lstlisting}[language=Java]
+      {"<xsd:int>", "Integer"},
+      {"<xsd:string>", "String"},
+      {"<xsd:boolean>", "Boolean"},
+      {"<xsd:double>", "Double"},
+      {"<xsd:float>", "Float"},
+      {"<xsd:long>", "Long"},
+      {"<xsd:integer>", "Long"},
+      {"<xsd:byte>", "Byte"},
+      {"<xsd:short>", "Short"},
+      {"<xsd:dateTime>", "Date"},
+      {"<xsd:date>", "XsdDate"},
+      {"<xsd:dateTimeStamp>", "Long"}
+\end{lstlisting}
+%\caption{Standard RDF types and the Java types as which they will be recognized}
+\end{figure}
 
 %Sowohl die Verwendung von relationalen als auch die von funktionalen Prädikaten
 %ist erlaubt. Diese ändern die Aufrufe im rudi-Code jedoch grundsätzlich nicht,
@@ -274,6 +293,7 @@ In the rule language, the operators \texttt{+=} and \texttt{-=} are overloaded. 
 
 \subsubsection{Rules and labels}
 
+\begin{figure}
 \begin{small}
 \begin{lstlisting}[language=Java]
 introduction:
@@ -289,6 +309,8 @@ introduction:
   }
 \end{lstlisting}
 \end{small}
+\caption{A simple rule}
+\end{figure}
 
 %Das Kernstück von rudimant sind die Dialogregeln. Eine Regel beginnt mit ihrem
 %Namen, einem möglichst aussagekräftigen Label, gefolgt von einem
@@ -541,8 +563,7 @@ There is a variety of standard Java methods called on Java classes that \vonda a
   \begin{tabular}{lp{.45\textwidth}}
 
     \begin{lstlisting}[language=Java]
-    //
-    [type]. myType Function(typeA a);
+     [type]. myType Function(typeA a);
     \end{lstlisting}
     & declaration of a function that has to be called on an instance of class \texttt{type}.
   \end{tabular}
@@ -555,9 +576,9 @@ Of course you can also use generics in these definitions. For example, the get m
 
 \begin{figure}[htbp]
 \centering
+\small
 \begin{lstlisting}[language=Java]
-//
-[List<T>]. T get(int a);
+ [List<T>]. T get(int a);
 \end{lstlisting}
 \end{figure}
 %Für Funktionen, die nicht oder nur umständlich in rudi-Code implementiert
@@ -576,8 +597,7 @@ Of course you can also use generics in these definitions. For example, the get m
 %Stelle, für gewöhnlich jedoch in der Datei MyAgent.rudi (siehe
 %\ref{rudimant-global}) deklariert werden können:
 
-It is important to realize that whatever declarations are in the interface are only compile information for \vonda and will not be transferred to the compiled code.
-\todo[inline]{is it still true that this also accounts for declarations in rudi?}
+It is important to realize that whatever declarations are in the interface are only compile information for \vonda and will not be transferred to the compiled code, whereas such declarations in the rule code itself will also appear in the compiled code.
 
 %Wichtig ist: Diese Deklarationen werden nur für die Berechnung der Typen durch
 %rudimant angegeben und werden nicht in den kompilierten Code
@@ -597,7 +617,7 @@ It is important to realize that whatever declarations are in the interface are o
 %resp. \texttt{Comparator} in den im folgenden angegebenen vier
 %Funktionen. Diese Funktionen sind in \texttt{Agent} vordefiniert. Ein
 %einfaches Beispiel zum Filtern von Objekten mit einer Subtyprelation wäre:
-\todo[inline]{is this still true?}
+
 \vonda allows for using lambda constructions. At the moment, their usage is limited to the implementation of \texttt{Predicate} or \texttt{Comparator} in the following functions that are pre-defined in the Agent framework.
 
 \begin{table}[htbp]
