@@ -101,15 +101,59 @@ resp. its virtual replacement, the avatar. Generation is based on incoming
 stimuli, like speech or text input, or high-level action requests coming from
 some strategic planning component, or any other sensor input, if available.
 
-To see the example system that is constructed in this chapter, switch to the \textbf{examples} branch of the \vonda git repositor. You will find a folder named examples that contains the play-ground dialogue system ChatCat. More complex examples are planned to be published soon.
-
-\section{Setting up the Base of your Dialogue System}
+To see the example system that is constructed in this chapter, switch to the \textbf{examples} branch of the \vonda git repository. You will find a folder named examples that contains the play-ground dialogue system ChatCat. More complex examples are planned to be published soon.
 
 \section{Setting up the RDF Store of your Project} \label{sec:example-hfc}
 
-\section{Writing some First Rules}
+A dialogue system aiming for social interaction does need some kind of memory representation. Therefore, the first step of building your dialogue manager should be to set up the ontology. It can of course be extended on-the-fly, while your system is becoming more and more elaborate, but you should still create a base which to start from.
+
+\subsection{Creating n-Tuple Files}
+
+use Protege or another tool of your choice to create OWL/RDF file;
+example here: with Protege
+
+Then use the ntcreate.sh script to transform .owl to .nt
+
+\subsection{How to Use the .ini}
+
+Explain how multiple ontologies can be put together here; explain PersistencyFile, mention what [Namespaces] is about
+
+\begin{figure}
+\begin{verbatim}
+[Settings]
+#minNoArgs=3
+#maxNoArgs=4
+#noAtoms=100000
+#noTuples=500000
+#PersistencyFile=/tmp/tuples.nt
+Encoding=UTF-8
+
+[Namespaces]
+# namespaces for XSD, RDF, RDFS, and OWL are already defined
+dial = http://www.dfki.de/lt/onto/common/dialogue.owl#
+
+# instead, you can also load one or more namespace files
+#default.ns
+
+[Tuples]
+# the axiomatic triples for OWL-Horst w/ EQ reduction
+default.eqred.nt
+
+[Tuples]
+# the PAL sub-ontologies
+dialogue.nt
+
+[Rules]
+# we need special rules for transaction time (mixture of triples/quadruples)
+default.eqred.rdl
+\end{verbatim}
+\end{figure}
+
+\section{The Framework: Setting up the Base of your Dialogue System}
 
 \section{Connecting NLU and Generation Components}
+
+\section{Writing some First Rules}
 
 \section{Advanced Features}
 
