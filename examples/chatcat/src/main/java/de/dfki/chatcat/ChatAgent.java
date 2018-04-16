@@ -16,8 +16,7 @@ import de.dfki.mlt.rudimant.agent.DialogueAct;
 public abstract class ChatAgent extends Agent implements Constants {
 
   Rdf user;
-
-  Rdf agent;
+  Rdf robot;
 
   private HfcDbApiHandler handler;
   private HfcDbServer server;
@@ -47,13 +46,13 @@ public abstract class ChatAgent extends Agent implements Constants {
           throws IOException, WrongFormatException {
     RdfProxy proxy = startClient(configDir, configs);
     super.init(configDir, language, proxy, configs);
-    user = proxy.getRdf("<coli:user>");
-    agent = proxy.getRdf(AGENT_URI);
+    robot = proxy.getRdf("<chatcat:robot1>");
   }
 
   public void shutdown() {
     handler.shutdown();
     if (server != null) server.shutdown();
+    super.shutdown();
   }
 
   @Override
