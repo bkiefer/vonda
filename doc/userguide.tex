@@ -117,9 +117,10 @@ At the very least, you are strongly recommended to use the dialogue hierarchy (p
 %example here: with Protege
 HFC loads data from n-Tuple files. You can however create files in the more common OWL format and then automatically transferr it with a simple shell script, using the Raptor \citep{raptor} (e.g. \texttt{examles/chatcat/ntcreate.sh}). This tutorial uses Protégé \citep{Protege}.
 
-\subsection{How to Use the .ini}
+\subsection{Combining multiple ontology files - How to Use the .ini}
 
-Explain how multiple ontologies can be put together here; explain PersistencyFile, mention what [Namespaces] is about
+%Explain how multiple ontologies can be put together here; explain PersistencyFile, mention what [Namespaces] is about
+An HFC ontology is held together - and addressed to - via the ini file. This is a plain text file with the ending \texttt{.ini} that contains various settings and information.
 
 \begin{figure}
 \begin{verbatim}
@@ -128,7 +129,7 @@ Explain how multiple ontologies can be put together here; explain PersistencyFil
 #maxNoArgs=4
 #noAtoms=100000
 #noTuples=500000
-#PersistencyFile=/tmp/tuples.nt
+#PersistencyFile=tuples.nt
 Encoding=UTF-8
 
 [Namespaces]
@@ -150,7 +151,24 @@ dialogue.nt
 # we need special rules for transaction time (mixture of triples/quadruples)
 default.eqred.rdl
 \end{verbatim}
+\caption{An examplary \texttt{.ini} file}
+\label{fig:ini}
 \end{figure}
+
+\paragraph{[Settings]}
+
+For most applications concerning dialogue management, it will be important to specify a \texttt{PersistencyFile}. You can put it anywhere you like (i.e., it will be created automatically in the place you specify), but if your application relies on inter-session memory, you probably don't want it to be lying in some temporary directory. All new Information that your dialogue system enters into the database will be collected here. So, if you want to find out which specific tuples have just been entered, you can refer to this file. At the same time, if you want to wipe the memory of your system, delete this file.
+
+\paragraph{[Namespaces]}
+
+In this section, you can specify abbreviations for your ontology namespaces. With the definition of the variable \texttt{dial} in figure \ref{fig:ini}, it is made possible to refer to classes, predicates and instances of this namespace with e.g. \texttt{<dial:Accept>} instead of \texttt{<http://www.dfki.de/lt/onto/common/dialogue.owl\#Accept>} in your queries to the database.
+
+\paragraph{[Tuples]}
+
+Here you can put all the ontology files that you created. You should also put the file \texttt{dialogue.nt} which, as previously mentioned, contains the specifications of the dialogue acts used by the \vonda framework.
+
+\paragraph{[Rules]}
+
 
 \section{The Framework: Setting up the Base of your Dialogue System}
 
