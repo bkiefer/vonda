@@ -115,7 +115,7 @@ At the very least, you are strongly recommended to use the dialogue hierarchy (p
 
 %use Protege or another tool of your choice to create OWL/RDF file;
 %example here: with Protege
-HFC loads data from n-Tuple files. You can however create files in the more common OWL format and then automatically transferr it with a simple shell script, using the Raptor \citep{raptor} (e.g. \texttt{examples/chatcat/ntcreate.sh}). This tutorial uses Protégé \citep{Protege}.
+HFC loads data from n-Tuple files. You can however create files in the more common OWL format and then automatically transfer it with a simple shell script, using the Raptor \citep{raptor} (e.g. \texttt{examples/chatcat/ntcreate.sh}). This tutorial uses Protégé \citep{Protege}.
 
 Open your favourite IDE and create a new file that includes an RDF class Agent, and two subclasses of this class, Robot and Human.
 
@@ -202,24 +202,26 @@ Here lies the set of rules that HFC uses to build the ontology. It is recommende
 
 \section{The Framework: Setting up the Base of your Dialogue System}
 
-%implement a subclass of Agent with the process method; implement client
 You need to implement your own abstract (Java) agent as a subclass of \texttt{de.dfki.mlt.rudimant.agent.Agent}. Furthermore, you will need an implementation of \texttt{de.dfki.mlt.rudimant.agent.CommunicationHub}. To see an example of how this should be done, take a look in the source folder of ChatCat.
 
-The three most important things here are that you make sure that the database is initialized (as an instance of RdfProxy), that you do have a method similar to \texttt{runReceiveSendCycle()} in your client and that every vital method from Agent that you choose to override calls the original method.
+The two most important things here are that you make sure that the database is initialized (as an instance of RdfProxy) and that you do use an instance of your \vonda Agent implementation in your client. Of course this code will not compile until you build your first rule file, i.e., your \vonda Agent.
+
+After this, the next thing you need is to create some main method where an instance of your client is built and set running using the \texttt{startListening()} method.
 
 As a start, we recommend you to use the ChatCat system as a base for your own system and extend it. This will also provide you with a GUI where you can test your first dialogue steps.
 
 \section{Connecting NLU and Generation Components}
 
-examplary here: srgs for NLU and cplan for generation
-
-\section{Writing some First Rules}
-
-how to react on an incoming greeting; ask for the user's name; create a new instance for the user if name is unknown or retrieve the correct instance from the database; also set a timeout for doing something afterwards
+%examplary here: srgs for NLU and cplan for generation
 
 \section{Specifying how to Compile and Run your Project}
 
 The run-time and compile-time yml
+
+\section{Writing some First Rules}
+
+%how to react on an incoming greeting; ask for the user's name; create a new instance for the user if name is unknown or retrieve the correct instance from the database; also set a timeout for doing something afterwards
+Now that everything else has been arranged, we are set up for writing our first dialogue management rules. 
 
 \section{Advanced Features}
 
