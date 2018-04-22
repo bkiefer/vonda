@@ -27,6 +27,7 @@ import java.util.List;
 public class ImportInfo extends BasicInfo {
   protected List<ErrorWarningInfo> _errors = new ArrayList<>();
   protected List<ErrorWarningInfo> _warnings = new ArrayList<>();
+  protected ErrorWarningInfo _parsingFailure;
   protected String[] relativePath;
 
   public ImportInfo() { }
@@ -50,6 +51,14 @@ public class ImportInfo extends BasicInfo {
 
   public void setErrors(List<ErrorWarningInfo> errors) {
     this._errors = errors;
+  }
+
+  public ErrorWarningInfo getParsingFailure() {
+    return this._parsingFailure;
+  }
+
+  public void setParsingFailure(ErrorWarningInfo fail) {
+    this._parsingFailure = fail;
   }
 
   public Path getFilePath() {

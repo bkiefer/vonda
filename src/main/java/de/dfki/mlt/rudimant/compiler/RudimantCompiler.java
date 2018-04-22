@@ -191,6 +191,14 @@ public class RudimantCompiler {
     }
 
     // save ruleLocMap to .yml file
+    dumpToYaml();
+  }
+
+  /**
+   * Saves generated rule structure or syntax errors to a file called
+   * <code>RuleLoc.yml</code>.
+   */
+  private void dumpToYaml() throws IOException {
     DumperOptions options = new DumperOptions();
     options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
     Yaml yaml = new Yaml(options);
@@ -223,8 +231,10 @@ public class RudimantCompiler {
     logger.info("parsing " + inputFile.getName() + " to " + outputFile);
     GrammarFile gf = parseAndTypecheck(this,
         new FileInputStream(inputFile), name);
-    if (gf == null)
+    if (gf == null) {
+      dumpToYaml();
       throw new UnsupportedOperationException("Parsing failed.");
+    }
     if (visualise)
       Visualize.show(gf, name);
     Writer output = Files.newBufferedWriter(outputFile.toPath());
