@@ -19,6 +19,7 @@
 
 package de.dfki.mlt.rudimant.compiler.tree;
 
+import de.dfki.mlt.rudimant.common.Location;
 import static de.dfki.mlt.rudimant.compiler.Utils.*;
 import static de.dfki.mlt.rudimant.compiler.GenerationConstants.*;
 import static de.dfki.mlt.rudimant.compiler.tree.io.RobotGrammarParser.*;
@@ -56,7 +57,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
   // static methods
   // **********************************************************************
 
-  private static GrammarFile parseInput(final String realName, InputStream in)
+  private static GrammarFile parseInput(final String realName, InputStream in,
+                                        Mem mem)
       throws IOException {
     // initialise the lexer with given input file
     RobotGrammarLexer lexer = new RobotGrammarLexer(new ANTLRInputStream(in));
@@ -76,6 +78,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
           RecognitionException e) {
         errorOccured[0] = true;
         logger.error("{}.rudi:{}:{}: {}", realName, line, charPositionInLine, msg);
+        Location loc = new Location(realName, line, charPositionInLine);
+        mem.registerParsingFailure(msg, loc);
       }
     });
 
@@ -107,7 +111,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
    */
   public static GrammarFile parseAndTypecheck(RudimantCompiler rudi,
       InputStream in, String inputRealName) throws IOException {
-    GrammarFile gf = parseInput(inputRealName, in);
+    GrammarFile gf = parseInput(inputRealName, in, rudi.getMem());
     logger.info("Done parsing ");
     if (gf == null) return null;
 
