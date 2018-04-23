@@ -195,8 +195,7 @@ public class RudimantCompiler {
   }
 
   /**
-   * Saves generated rule structure or syntax errors to a file called
-   * <code>RuleLoc.yml</code>.
+   * Saves generated rule structure and errors/warnings to a YAML file
    */
   private void dumpToYaml() throws IOException {
     DumperOptions options = new DumperOptions();
@@ -204,7 +203,8 @@ public class RudimantCompiler {
     Yaml yaml = new Yaml(options);
     File infoDir = new File(INFO_DIR);
     if (!infoDir.isDirectory()) Files.createDirectories(infoDir.toPath());
-    yaml.dump(mem.getInfo(), new FileWriter(new File(infoDir, RULE_LOCATION_FILE)));
+    yaml.dump(mem.getInfo(),
+              new FileWriter(new File(infoDir, RULE_LOCATION_FILE)));
   }
 
 
