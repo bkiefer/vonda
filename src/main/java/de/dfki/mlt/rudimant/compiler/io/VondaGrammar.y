@@ -498,6 +498,8 @@ exp
   : ConditionalExpression { $$ = $1; }
   | assignment { $$ = $1; }
   | ConditionalOrExpression { $$ = $1; }
+//| lambda_exp { $$  = $1; }
+  | new_exp { $$ = $1; }
 //| dialogueact_exp { $$ = $1; }
   ;
 
@@ -627,7 +629,6 @@ PrimaryExpression
 
 NotJustName
   : VARIABLE { $$ = setPos(new ExpVariable($1), @$); }
-  | new_exp { $$ = $1; }
   | '(' '(' type_spec ')' CastExpression ')' { $$ = setPos(new ExpCast($3, $5), @$); }
   ;
 
