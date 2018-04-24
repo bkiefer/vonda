@@ -27,7 +27,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %type <RTExpression> PrimaryExpression NotJustName ComplexPrimary new_exp
 %type <RTExpression> ComplexPrimaryNoParenthesis field_access ArrayAccess
 %type <RTExpression> function_call simple_nofa_exp da_token
-%type <StatVarDef> var_def
+%type <StatVarDef> var_def var_decl
 %type <RTStatement> statement_no_def statement blk_statement set_operation
 %type <RTStatement> return_statement propose_statement timeout_statement
 %type <RTStatement> timeout_behaviour_statement while_statement for_statement
@@ -253,13 +253,13 @@ while_statement
   ;
 
 for_statement
-  : FOR '(' var_def exp ';' exp ')' statement {
+  : FOR '(' var_decl exp ';' exp ')' statement {
     $$ = setPos(new StatFor1($3, $4, $6, $8), @$); }
-  | FOR '(' var_def     ';' exp ')' statement {
+  | FOR '(' var_decl     ';' exp ')' statement {
     $$ = setPos(new StatFor1($3, null, $5, $7), @$); }
-  | FOR '(' var_def exp ';'     ')' statement {
+  | FOR '(' var_decl exp ';'     ')' statement {
     $$ = setPos(new StatFor1($3, $4, null, $7), @$); }
-  | FOR '(' var_def     ';'     ')' statement {
+  | FOR '(' var_decl     ';'     ')' statement {
     $$ = setPos(new StatFor1($3, null, null, $6), @$); }
   | FOR '('     ';' exp ';' exp ')' statement {
     $$ = setPos(new StatFor1(null, $4, $6, $8), @$); }
@@ -273,6 +273,15 @@ for_statement
   }
   // for loop with destructuring into a tuple
   //| FOR '(' '(' VARIABLE ( ',' VARIABLE )+ ')' ':' exp ')' statement {}
+  ;
+
+var_decl
+  : VARIABLE assgn_exp ';' {
+    $$ = setPos(new StatVarDef(true, new Type(null), $1, $2), @$);
+  }
+  | type_spec VARIABLE assgn_exp ';' {
+    $$ = setPos(new StatVarDef(false, $1, $2, $3), @$);
+  }
   ;
 
 propose_statement
@@ -363,9 +372,6 @@ var_def
   }
   | FINAL type_spec VARIABLE assgn_exp ';' {
     $$ = setPos(new StatVarDef(true, $2, $3, $4), @$);
-  }
-  | VARIABLE assgn_exp ';' {
-    $$ = setPos(new StatVarDef(false, new Type(null), $1, $2), @$);
   }
   | FINAL VARIABLE ';' {
     $$ = setPos(new StatVarDef(true, new Type(null), $2, null), @$);
@@ -498,7 +504,6 @@ exp
   : ConditionalExpression { $$ = $1; }
   | assignment { $$ = $1; }
   | ConditionalOrExpression { $$ = $1; }
-//| lambda_exp { $$  = $1; }
   | new_exp { $$ = $1; }
 //| dialogueact_exp { $$ = $1; }
   ;
