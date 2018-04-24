@@ -35,7 +35,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.mlt.rudimant.compiler.AntlrParser;
 import de.dfki.mlt.rudimant.compiler.Environment;
 import de.dfki.mlt.rudimant.compiler.Mem;
 import de.dfki.mlt.rudimant.compiler.Position;
@@ -64,7 +63,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
   // static methods
   // **********************************************************************
 
-  private static GrammarFile parseInput(final String realName, InputStream in)
+  private static GrammarFile parseInput(final String realName, InputStream in,
+                                        Mem mem)
       throws IOException {
     //return AntlrParser.parse(realName, in);
     return BisonParser.parse(realName, in);
@@ -81,7 +81,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
    */
   public static GrammarFile parseAndTypecheck(RudimantCompiler rudi,
       InputStream in, String inputRealName) throws IOException {
-    GrammarFile gf = parseInput(inputRealName, in);
+    GrammarFile gf = parseInput(inputRealName, in, rudi.getMem());
     logger.info("Done parsing ");
     if (gf == null) return null;
 

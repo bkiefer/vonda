@@ -1,6 +1,5 @@
 // all standard Java methods that we should remember
-// simply adding functions to be performed on objects here will not work anymore;
-// also add them directly to the list of special cases in mem.addFunction
+
 [Object]. boolean equals(Object e);
 [String]. boolean startsWith(String s);
 [String]. boolean endsWith(String s);

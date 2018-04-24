@@ -80,6 +80,9 @@ public class SimpleClient implements Runnable {
           s.connect(_addr);
           _conn = new SimpleConnector(s, _consumer);
           _conn.run();
+          // TODO: This message will be printed when the connection has been
+          // closed. Probably because the preceding run() blocks further
+          // execution.
           logger.debug("Client has been connected.");
         } catch (UnknownHostException e) {
           logger.error("Unknown host {}: {}", _hostName, e.toString());
@@ -123,6 +126,14 @@ public class SimpleClient implements Runnable {
   public void disconnect() {
     closeRequested = true;
     if (_conn != null) {
+      if (_conn.isConnected()) {
+        try {
+          _conn.disconnect();
+        } catch (IOException e) {
+          logger.error("Error while disconnecting from server: {}",
+                       e.toString());
+        }
+      }
       _conn.close();
       _conn = null;
     }

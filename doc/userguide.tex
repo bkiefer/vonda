@@ -1,0 +1,203 @@
+\documentclass[a4paper]{report}
+
+\usepackage[a4paper,margin=3cm]{geometry}
+\usepackage[utf8]{inputenc}
+%\usepackage{times}
+\usepackage[english]{babel}
+\usepackage{multirow}
+\usepackage{amsmath,graphicx}
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{fancyvrb}
+\usepackage[textwidth=2.5cm, textsize=small]{todonotes}
+\usepackage{listings}
+
+\usepackage{xspace}
+\newcommand{\vonda}{VOnDA\xspace}
+
+\pgfdeclareimage[width=.99\columnwidth]{vondagui}{VondaGui}
+
+\begin{document}
+
+\title{\vonda, A Framework for Dialogue Management}
+
+\author{Bernd Kiefer, Anna Welker}
+\date{\today}
+
+\maketitle
+
+\tableofcontents
+
+\chapter{Purpose}
+
+\vonda is a framework to implement the dialogue management functionality in
+dialogue systems. Although domain-independent, \vonda is tailored towards
+dialogue systems with a focus on social communication, which implies the need
+of a long-term memory and high user adaptivity. \vonda's specification and
+memory layer relies upon (extended) RDF/OWL, which provides a universal and
+uniform representation, and facilitates interoperability with external data
+sources.
+
+%\todo[inline]{Mention HFC and ref to appropriate section}
+The RDF store and reasoner of choice used in \vonda is HFC \citep{krieger2013efficient}. For further details about the general funcitonalities of HFC see chapter \ref{sec:hfc}; for an example of HFC as a database in a \vonda project please refer to section \ref{sec:example-hfc}.
+
+\vonda consists of three parts: A programming language tailored towards the
+specification of reactive rules and transparent RDF data store usage, a
+compiler that turns source code in this language into Java code, and a run-time
+core, that supports implementing dialogue management modules using the compiled
+rules.
+
+The framework is domain-independent, it was originally designed to for
+multi-modal human-robot interaction, but there is currently no \emph{special}
+functionality in the core to either support the multi-modality nor the
+human-robot interaction. The architecture of the framework is open and powerful
+enough to add these things easily.
+
+
+\section{Internal Structure}
+
+Figure \ref{fig:arch} shows the main components of a \vonda agent.
+
+
+\begin{figure}[htb]
+\includegraphics[width=.9\textwidth]{rudimant.png}
+\caption{\label{fig:arch}Schematic \vonda agent}
+\end{figure}
+
+At the base there is an RDF store, which takes incoming sensor and interaction
+data, and stores it as RDF data, based on a data specification in the form of
+an ontology developed as part of the dialogue manager, making the data (via the
+specification) available to all other components.
+
+The dialogue manager will get several input types from the nexus, the ones
+currently foreseen are: input from automatic speech recognition (ASR) or typed
+natural input, user parameters, like name, age, hobbies, etc. but also more
+dynamic ones like mood or health data, and also triggers from high-level
+planning.
+
+The second major component is the rule processor for the dialogue management
+rules. The rules can not only use new data, but also the interaction history
+stored in the RDF database to take their decisions.  When new data is added, a
+set of declaratively specified reactive rules will propose dialogue moves or
+other actions and send these proposals to the action selection mechanism. The
+selection mechanism selects the ``best'' of the proposed actions and sends it
+back. If the proposed action results in dialogue acts, these are turned into
+verbal output and gestures with the help of a multimodal generation component,
+which retrieves parameters from the RDF database to adapt the generation to the
+user's likings, and can also take into account sensory data such as her or his
+estimated mood.
+
+The last two parts are a language interpretation module (not
+explicitly shown in the picture), which turns spoken or written utterances
+into dialogue acts, possibly with an intermediate step that involves a more
+elaborate semantic format, and a multimodal generation component, which turns
+outgoing dialogue acts into natural language utterances and gestures.
+
+\chapter{Sketching a Simple Interaction Manager}
+
+The simplest version of an interaction manager analyses natural language
+coming from the user, and generates natural language and gestures for the robot
+resp. its virtual replacement, the avatar. Generation is based on incoming
+stimuli, like speech or text input, or high-level action requests coming from
+some strategic planning component, or any other sensor input, if available.
+
+\section{Writing some First Rules}
+
+\section{Setting up the RDF Store of your Project} \label{sec:hfc}
+
+\section{Connecting NLU and Generation Components}
+
+
+
+
+
+
+
+
+
+
+
+
+\if0
+%The multimodal interaction manager analyses natural language coming from the
+%user, and generates natural language and gestures for the robot resp. its
+%virtual replacement, the avatar. The generation is based on incoming stimuli,
+%like speech or text input, or high-level action requests coming from some
+%strategic planning component, or any other sensor input, if available.
+%
+%The goal is to create engaging interactions with the users that support the
+%currently active high-level goals.
+Natural language dialogue systems are becoming more and more popular, be it as
+virtual assistants such as Siri or Cortana, as Chat Bots on websites providing
+customer support, or as interface in human-robot interactions in areas ranging
+from Industry 4.0 \citep{schwartz2016hybrid} over social human-robot-interaction
+\citep{alize2010} to disaster response \citep{kruijff2015tradr}.
+
+A central component of most systems is the \emph{dialogue manager}, which
+controls the (possibly multi-modal) reactions based on sensory input and the
+current system state. The existing frameworks to implement dialogue management
+components roughly fall into two big groups, those that use symbolic
+information or automata to specify the dialogue flow (IrisTK
+\citep{2012iristk}, RavenClaw \citep{bohus2009ravenclaw}, Visual SceneMaker
+\citep{gebhard2012visual}), and those that mostly use statistical methods
+(PyDial \cite{ultes2017pydial}, Alex \citep{jurvcivcek2014alex}). Somewhat in
+between these is OpenDial \citep{lison2015developing}, which builds on
+probabilistic rules and a Bayesian Network.
+
+When building dialogue components for robotic systems or in-car assistants, the system
+needs to take into account \emph{various} system inputs, first and foremost the
+user utterances, but also other sensoric input that may influence the dialogue,
+such as information from computer vision, gaze detection, or even body and
+environment sensors for cognitive load estimation.
+
+The integration and handling of the different sources such that all data is
+easily accessible to the dialogue management is by no means trivial. Most
+frameworks use plug-ins that directly interface to the dialogue core. The
+multi-modal dialogue platform SiAM-dp \citep{nesselrath2014siam}
+addresses this in a more fundamental way using a modeling approach that allows
+to share variables or objects between different modules.
+
+In the application domain of social robotic assistants, it is vital to be able
+to maintain a relationship with the user over a longer time period. This requires a long-term
+memory which can be used in the dialogue system to exhibit familiarity with the
+user in various aspects, like personal preferences, but also common knowledge
+about past conversations or events, ranging over multiple sessions.
+
+In the following, we will describe \vonda, an open-source framework to
+implement dialogue strategies. It follows the information state/update
+tradition \citep{traum2003information}
+%DR Traum, S Larsson. The information state approach to dialogue management. In: Current and new directions in discourse and dialogue, 2003, pp.  325-353. Kluwer.
+combining a rule-based approach with statistical selection, although in a
+different way than OpenDial. \vonda specifically targets the following design
+goals to support the system requirements described before:
+
+\begin{itemize}
+  \addtolength{\itemsep}{-.6\itemsep}
+\item Flexible and uniform specification of dialogue semantics, knowledge and
+  data structures
+\item Scalable, efficient, and easily accessible storage of interaction history
+  and other data, resulting in a large information state
+\item Readable and compact rule specifications, facilitating access to the
+  underlying RDF database, with the full power of a programming language
+\item Transparent access to Java classes for simple integration with the host
+  system
+\end{itemize}
+\fi
+%\chapter{Interaction with the overall system}
+
+
+
+%\input{design}
+
+\chapter{Installing and Getting Started}
+
+\input{system}
+
+\input{debugger}
+
+\input{hfc}
+
+\bibliography{vonda}
+\bibliographystyle{apa}
+
+\end{document}

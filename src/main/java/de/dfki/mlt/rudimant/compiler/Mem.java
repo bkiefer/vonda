@@ -304,6 +304,15 @@ public class Mem {
     return rootInfo;
   }
 
+  public void registerParsingFailure(String failMessage, Location location) {
+    BasicInfo current = currentInfo;
+    while (! (current instanceof ImportInfo))
+      current = current.getParent();
+    ImportInfo info = (ImportInfo)current;
+    info.setParsingFailure(new ErrorWarningInfo(failMessage, location));
+
+  }
+
   public void registerError(String errorMessage, Location location) {
     BasicInfo current = currentInfo;
     while (! (current instanceof ImportInfo))

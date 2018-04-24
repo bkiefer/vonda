@@ -26,10 +26,18 @@ package de.dfki.mlt.rudimant.common;
 public class Location {
   String originClass;
   int lineNumber;
+  int charPosition;
 
   public Location(String origin, int lineNo) {
     originClass = origin;
     lineNumber = lineNo;
+    charPosition = 0;
+  }
+
+  public Location(String origin, int lineNo, int charPos) {
+    originClass = origin;
+    lineNumber = lineNo;
+    charPosition = charPos;
   }
 
   public Location() {}
@@ -50,8 +58,19 @@ public class Location {
     lineNumber = ln;
   }
 
+  public int getCharPosition() {
+    return charPosition;
+  }
+
+  public void setCharPosition(int cp) {
+    charPosition = cp;
+  }
+
   @Override
   public String toString() {
-    return originClass + ".rudi:" + lineNumber + ":";
+    if (charPosition != 0)
+      return originClass + ".rudi:" + lineNumber + ":" + charPosition + ":";
+    else
+      return originClass + ".rudi:" + lineNumber + ":";
   }
 }

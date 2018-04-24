@@ -118,7 +118,7 @@ public class SimpleServer implements Runnable {
           while (simplServ.isRunning()) {
             System.out.println("Rödeln...");
             Thread.sleep(500);
-            simplServ.send("one", "two");
+            simplServ.send("printLog", "1", "true", "true");
           }
         } catch (InterruptedException v) {
           System.out.println(v);
