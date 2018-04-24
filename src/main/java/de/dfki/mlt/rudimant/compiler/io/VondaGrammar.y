@@ -660,7 +660,7 @@ ArrayAccess
   ;
 
 ConditionalExpression
-  : exp '?' exp ':' exp { $$ = setPos(new ExpConditional($1, $3, $5), @$); }
+  : ConditionalOrExpression '?' exp ':' exp { $$ = setPos(new ExpConditional($1, $3, $5), @$); }
   ;
 
 // TODO: is that all 'what you can assign to' (an lvalue), which can be:
