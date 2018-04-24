@@ -740,10 +740,7 @@ lambda_exp
 
 
 dialogueact_exp
-  : '#' da_token '(' da_token ')' {
-    $$ = setPos(new ExpDialogueAct($2, $4, new LinkedList<RTExpression>()), @$);
-  }
-  | '#' da_token '(' da_token da_args ')' {
+  : '#' da_token '(' da_token da_args ')' {
     $$ = setPos(new ExpDialogueAct($2, $4, $5), @$);
   }
   ;
