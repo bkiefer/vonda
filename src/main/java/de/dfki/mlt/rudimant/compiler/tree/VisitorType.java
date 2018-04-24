@@ -379,10 +379,17 @@ public class VisitorType implements RudiVisitor {
       RTExpression exp = (RTExpression)node.body;
       visitNode(exp);
       parTypes[0] = exp.getType();
-      node.type = Type.getComplexType("Function", parTypes);
     } else {
       visitNode((StatAbstractBlock)node.body);
+      // then the last statement of the block must be the return of some exp
+      RudiTree last = ((StatAbstractBlock)node.body).statblock.get(((StatAbstractBlock)node.body).statblock.size() - 1);
+      if (last instanceof StatReturn) {
+        parTypes[0] = ((StatReturn)last).returnExp.getType();
+      } else {
+        typeError("Block used in functional expression doesn't end with a return", node);
+      }
     }
+     node.type = Type.getComplexType("Function", parTypes);
     mem.leaveEnvironment(node);
   }
 
@@ -780,7 +787,7 @@ public class VisitorType implements RudiVisitor {
     List<Type> partypes = new ArrayList<Type>();
     if(node.params != null) {
       if (node.params.size() == 2 && node.params.get(1) instanceof ExpLambda) {
-        // Trick to explicitely find filter, contains, etc
+        // Trick to explicitely find filter, contains, etc with two arguments (and no calledUpon)
         node.params.get(0).visit(this);
         partypes.add(node.params.get(0).getType());
         ((ExpLambda)node.params.get(1)).parType = node.params.get(0).getType().getInnerType();
