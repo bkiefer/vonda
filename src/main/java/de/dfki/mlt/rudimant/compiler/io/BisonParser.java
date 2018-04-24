@@ -14,8 +14,7 @@ public class BisonParser {
       throws IOException {
     VondaLexer lexer = new VondaLexer(new InputStreamReader(in, "UTF-8"));
     VondaGrammar grammar = new VondaGrammar(lexer);
-    grammar.setDebugLevel(99);
-    grammar.setErrorVerbose(true);
+    //grammar.setDebugLevel(99); grammar.setErrorVerbose(true);
     if (! grammar.parse()) return null;
     GrammarFile result = grammar.getResult();
     result.tokens = lexer.getCollectedTokens();
