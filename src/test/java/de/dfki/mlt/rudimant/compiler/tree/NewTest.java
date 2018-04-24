@@ -42,8 +42,7 @@ public class NewTest {
 
   @Test
   public void testRdfType(){
-    // TODO: Do we allow new_exp to be a statement or not?
-    String src = "new Activity;";
+    String src = "a = new Activity;";
     RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(src));
     assertTrue(dtr instanceof ExpNew);
     assertTrue(((ExpNew)dtr).type.isRdfType());
@@ -51,8 +50,7 @@ public class NewTest {
 
   @Test
   public void testJavaType() {
-    // TODO: Do we allow new_exp to be a statement or not?
-    String src = "new Integer();";
+    String src = "i = new Integer();";
 
     RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(src));
     assertTrue(dtr instanceof ExpNew);

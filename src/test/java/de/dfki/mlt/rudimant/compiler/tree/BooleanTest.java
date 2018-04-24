@@ -55,7 +55,7 @@ GREATER: '>';
   public static void setUpClass() {
     setUpNonEmpty();
   }
-  
+
   public void assertBoolean(RudiTree dtr) {
     assertTrue(dtr instanceof StatVarDef);
     dtr = ((StatVarDef)dtr).toAssign;
@@ -127,7 +127,7 @@ GREATER: '>';
 
   @Test
   public void testNegationScope() {
-    String booleanExp = "boolean b = (! var1 == var2 && var1 <= var2 && var2 == var1);";
+    String booleanExp = "boolean b = (! (var1 == var2) && var1 <= var2 && var2 == var1);";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
     //Visualize.show(dtr, "foo");

@@ -101,7 +101,7 @@ public class ForStatementsTest {
     // TODO: why do we test that x = disappears?
     String in = "public int lab(){ for(s : child.sessions) x = 23; }";
     String exp = "public int lab() { for (Object s_outer : child.sessions) {"
-            + " Object s = (Object)s_outer; 23; } }";
+            + " Object s = (Object)s_outer; int x = 23; } }";
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));
   }

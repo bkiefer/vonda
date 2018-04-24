@@ -46,10 +46,9 @@ public class LambdaTest {
 
   @Test
   public void testLambdaExp() {
-    // TODO: why do we test that b = disappears?
     String in = "Set<Child> cs; b = cs.contains((c) -> ((Child)c).forename.equals(\"John\"));";
     String r = generate(in);
-    String expected = "public Set<Rdf> cs;/**/cs.contains((c) -> "
+    String expected = "public Set<Rdf> cs;public boolean b;/**/b = cs.contains((c) -> "
             + "((String)((Rdf)c).getSingleValue(\"<dom:forename>\")).equals(\"John\"));";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("Set<Rdf> cs;"));
@@ -58,9 +57,9 @@ public class LambdaTest {
   @Test
   public void testComplexLambdaExp() {
     // TODO: why do we test that b = disappears?
-    String in = "Set<Child> cs; b = cs.contains((c) -> {((Child)c).forename.equals(\"John\");});";
+    String in = "Set<Child> cs; b = cs.contains((c) -> { return ((Child)c).forename.equals(\"John\"); });";
     String r = generate(in);
-    String expected = "public Set<Rdf> cs;/**/cs.contains((c) -> {"
+    String expected = "public Set<Rdf> cs;public boolean b;/**/b = cs.contains((c) -> {"
             + " ((String)((Rdf)c).getSingleValue(\"<dom:forename>\")).equals(\"John\"); } );";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("Set<Rdf> cs;"));
