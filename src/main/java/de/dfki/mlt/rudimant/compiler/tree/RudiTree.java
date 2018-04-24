@@ -137,7 +137,7 @@ public abstract class RudiTree {
    * @return RudiTree
    */
   public RudiTree setPos(VondaGrammar.Location loc, VondaGrammar gram) {
-    String originClass = ""; // TODO: GET IT FROM SOMEWHERE
+    String originClass = loc.begin.msg;
     positions = new Position[]{ // TODO: does not match the old functionality
         loc.begin,
         loc.end
@@ -156,7 +156,7 @@ public abstract class RudiTree {
    */
   public RudiTree setPos(VondaGrammar.Location start, VondaGrammar.Location end,
       VondaGrammar gram) {
-    String originClass = ""; // TODO: SEE ABOVE
+    String originClass = start.begin.msg;
     positions = new Position[]{
         start.begin,
         end.end

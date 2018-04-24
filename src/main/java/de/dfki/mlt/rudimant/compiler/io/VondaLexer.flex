@@ -46,6 +46,8 @@ import org.slf4j.LoggerFactory;
 %{
   private static final Logger logger = LoggerFactory.getLogger(VondaLexer.class);
 
+  private String origin;
+
   public class Token {
     public String s;
     public Position start, end;
@@ -55,7 +57,7 @@ import org.slf4j.LoggerFactory;
       this.start = start;
       this.end = end;
     }
-    
+
     public String getText() {
       return this.s;
     }
@@ -93,7 +95,7 @@ import org.slf4j.LoggerFactory;
    * @return the position at which the last scanned token starts.
    */
   public Position getStartPos() {
-    return new Position(yyline, yycolumn, yychar, "");
+    return new Position(yyline, yycolumn, yychar, origin);
   }
 
   /**
@@ -101,7 +103,7 @@ import org.slf4j.LoggerFactory;
    * @return the first position beyond the last scanned token.
    */
   public Position getEndPos() {
-    return new Position(yyline, yycolumn + yylength(), yychar + yylength(), "");
+    return new Position(yyline, yycolumn + yylength(), yychar + yylength(), origin);
   }
 
   /**
@@ -140,8 +142,10 @@ import org.slf4j.LoggerFactory;
    * @param msg The string for the error message.
    */
   public void yyerror (VondaGrammar.Location loc, String msg) {
-    logger.error("ERROR:{}: {}", loc, msg);
+    logger.error("{}: {}", loc, msg);
   }
+
+  public void setOrigin(String s) { origin = s; }
 
   /** Return the collected tokens
    */
