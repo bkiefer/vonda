@@ -23,6 +23,9 @@ import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static de.dfki.mlt.rudimant.compiler.Visualize.generate;
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -44,8 +47,11 @@ public class NewTest {
   public void testRdfType(){
     String src = "a = new Activity;";
     RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(src));
-    assertTrue(dtr instanceof ExpNew);
-    assertTrue(((ExpNew)dtr).type.isRdfType());
+    List<RudiTree> dtrs = new ArrayList<RudiTree>();
+    for (RudiTree d : dtr.getDtrs().iterator().next().getDtrs()) dtrs.add(d);
+
+    assertTrue(dtrs.get(1) instanceof ExpNew);
+    assertTrue(((ExpNew)dtrs.get(1)).type.isRdfType());
   }
 
   @Test
@@ -53,8 +59,10 @@ public class NewTest {
     String src = "i = new Integer();";
 
     RudiTree dtr = getNodeOfInterest(Visualize.parseAndTypecheck(src));
-    assertTrue(dtr instanceof ExpNew);
-    assertTrue(((ExpNew)dtr).type.toJava().equals("Integer"));
+    List<RudiTree> dtrs = new ArrayList<RudiTree>();
+    for (RudiTree d : dtr.getDtrs().iterator().next().getDtrs()) dtrs.add(d);
+    assertTrue(dtrs.get(1) instanceof ExpNew);
+    assertTrue(((ExpNew)dtrs.get(1)).type.toJava().equals("Integer"));
   }
 
   @Test

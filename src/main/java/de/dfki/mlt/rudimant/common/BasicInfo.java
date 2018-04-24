@@ -28,6 +28,8 @@ public class BasicInfo {
   /** To generate successive unique rule ids */
   protected static int ruleId;
 
+  public static boolean PRINT_DEBUG = true;
+
   protected BasicInfo _parent;
   protected int _line;
   protected String _label;
@@ -74,8 +76,23 @@ public class BasicInfo {
     this._children = children;
   }
 
+  private void print_rec(StringBuilder sb) {
+    sb.append(_label).append(':').append(_line).append('[');
+    for (BasicInfo c : _children) {
+      sb.append(' ');
+      c.print_rec(sb);
+    }
+    sb.append(" ]");
+  }
+
+  private String print_rec() {
+    StringBuilder sb = new StringBuilder();
+    print_rec(sb);
+    return sb.toString();
+  }
+
   @Override
-  public String toString() { return _label; }
+  public String toString() { return PRINT_DEBUG ? print_rec() : _label; }
 
   @Override
   public boolean equals(Object other) {

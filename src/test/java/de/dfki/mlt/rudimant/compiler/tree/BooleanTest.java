@@ -29,6 +29,8 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.dfki.mlt.rudimant.compiler.Visualize;
+
 /**
  *
  * @author max
@@ -127,7 +129,7 @@ GREATER: '>';
 
   @Test
   public void testNegationScope() {
-    String booleanExp = "boolean b = (! (var1 == var2) && var1 <= var2 && var2 == var1);";
+    String booleanExp = "boolean b = (! (var1 == var2) && var3 <= var4 && var5 == var6);";
 
     RudiTree dtr = getNodeOfInterest(parseAndTypecheck(booleanExp));
     //Visualize.show(dtr, "foo");
@@ -138,11 +140,14 @@ GREATER: '>';
     assertTrue(dtr instanceof ExpBoolean);
     List<RudiTree> dtrs = new ArrayList<>();
     for (RudiTree d : dtr.getDtrs()) { dtrs.add(d); }
-    //TODO: this ist most probably wrong; at least the ast for this expression
-    //      looks sound
-    assertEquals("!", ((ExpBoolean)dtrs.get(0)).operator) ;
-    assertEquals("&&", ((ExpBoolean)dtrs.get(1)).operator) ;
 
+    assertEquals("&&", ((ExpBoolean)dtrs.get(0)).operator) ;
+    assertEquals("==", ((ExpBoolean)dtrs.get(1)).operator) ;
+    dtr = dtrs.get(0);
+    dtrs.clear();
+    for (RudiTree d : dtr.getDtrs()) { dtrs.add(d); }
+    assertEquals("!", ((ExpBoolean)dtrs.get(0)).operator) ;
+    assertEquals("<=", ((ExpBoolean)dtrs.get(1)).operator) ;
   }
 
 }

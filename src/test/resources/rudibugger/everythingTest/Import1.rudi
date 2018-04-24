@@ -1,9 +1,8 @@
 rule_import:
 if (test = 3) {
-  bla;
+  bla = 1;
   rule_import_a:
   if (test = 5) {
-    blx;
+    blx = 2;
   }
 }
-

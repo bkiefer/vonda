@@ -41,6 +41,6 @@ public class ImportTest {
     });
     assertTrue(new File("target/generated/Main.java").exists());
     assertTrue(new File("target/generated/Import.java").exists());
-    assertTrue(new File("target/generated/sub/Import.java").exists());
+    assertTrue(new File("target/generated/sub/ImportSub.java").exists());
   }
 }

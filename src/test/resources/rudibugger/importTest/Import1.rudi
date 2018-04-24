@@ -1,4 +1,3 @@
 rule_import:
-if (test = 3) 
-  bla;
-
+if (test = 3)
+  bla = 1;

@@ -73,9 +73,9 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
   }
 
   public String getFullText(Position start, Position end) {
-  	return ((VondaLexer)this.yylexer).getFullText(start, end);
+    return ((VondaLexer)this.yylexer).getFullText(start, end);
   }
-  
+
   // if the left part is a variable, this must be transformed to StatVarDef
   private RudiTree getAssignmentStat(RTExpression assign) {
     assert(assign instanceof ExpAssignment);
@@ -167,14 +167,16 @@ visibility_spec
   ;
 
 imports
-  : IMPORT VARIABLE path ';' {
-    new Import($2, $3.toArray(new String[$3.size()]));
+  : IMPORT path ';' {
+    List<String> path = $2;
+    String name = path.remove(path.size() - 1);
+    $$ = setPos(new Import(name, path.toArray(new String[path.size()])), @$);
   }
   ;
 
 path
-  : %empty { $$ = new ArrayList<String>(); }
-  | '.' VARIABLE path { $$ = $3; $3.add($2); }
+  : VARIABLE { $$ = new ArrayList<String>(){{ add($1); }}; }
+  | path '.' VARIABLE { $$ = $1; $1.add($3); }
   ;
 
 statement_no_def

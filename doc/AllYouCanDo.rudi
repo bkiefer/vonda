@@ -121,7 +121,7 @@ anotherint = anotherint < 3? anotherint : 3;
 
 // There are also while and for loops and switch-case blocks available
 while (true) { continue; }
-for (abc = 1; abc < 10; abc++) { abc++;}
+for (abc = 1; abc < 10; abc++) { ++abc;}
 
 ArrayList<String> iterlist;
 // The following two lines are equivalent
@@ -148,7 +148,7 @@ dosort = sort(newlist, (a, b) -> (int)(((String)a).length() - ((String)b).length
 // Creation of dialogue acts. Elements that are Variables need to be
 // preceded by ^, all others will be converted to Strings
 robotname = "Robert";
-dia = #Inform(Liking, agent=username, patient=^robotname);
+dia = #Inform(Liking, agent=username, patient={robotname});
 
 // You can set labelled timeouts that will execute the code given to them
 // once the time (given in milliseconds) is over
@@ -164,4 +164,4 @@ s = "nameOf_" + child;
 // Also in assignments
 String number = 10;
 // And dialogue acts
-DialogueAct da = #Confirm(Correct, number=^10);
+DialogueAct da = #Confirm(Correct, number={10});

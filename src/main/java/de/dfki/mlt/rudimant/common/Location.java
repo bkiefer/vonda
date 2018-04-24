@@ -24,9 +24,9 @@ package de.dfki.mlt.rudimant.common;
  * @author Anna Welker, anna.welker@dfki.de
  */
 public class Location {
-  String originClass;
-  int lineNumber;
-  int charPosition;
+  private String originClass;
+  private int lineNumber;
+  private int charPosition;
 
   public Location(String origin, int lineNo) {
     originClass = origin;

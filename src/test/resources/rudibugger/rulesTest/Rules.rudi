@@ -1,7 +1,7 @@
 rule_one:
-if (test = 1)
+if (test == 1)
   bla = 1;
 
 rule_two:
-if (test = 2)
+if (test == 2)
   bli = 0;

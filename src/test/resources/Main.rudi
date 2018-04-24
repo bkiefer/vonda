@@ -1,5 +1,5 @@
 QuizHistory q;
 
 import Import;
-import sub.Import;
+import sub.ImportSub;
 import After;

@@ -142,7 +142,7 @@ public class RudibuggerTest {
     rl.logRule(0, res);
     System.setOut(old);
     String output = out.toString();
-    assertEquals("(rule_one) FALSE: (([true: (a!=b)]||[unk: (b!=c)])&&[false: (a==c)])\n", output);
+    assertEquals("(rule_one) FALSE: (([true: a != b]||[unk: b != c])&&[false: a == c])\n", output);
   }
 
   @Test
@@ -161,7 +161,7 @@ public class RudibuggerTest {
     rl.logRule(1, res);
     System.setOut(old);
     String output = out.toString();
-    assertEquals("(rule_one_a) FALSE: ([true: b==b]&&![true: (a+b)<(b+c)])\n", output);
+    assertEquals("(rule_one_a) FALSE: ([true: b == b]&&[true: ! (a + b) < (b + c)])\n", output);
   }
 
   @Test
