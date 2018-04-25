@@ -67,7 +67,7 @@ public class CompilerMain {
     { CFG_WRAPPER_CLASS, "w", "TheAgent" },
   };
 
-  public Map<String, Object> defaultConfig() {
+  public static Map<String, Object> defaultConfig() {
     configs = new LinkedHashMap<String, Object>();
     for (Object[] pair : defaults) {
       configs.put((String)pair[0], pair[1]);

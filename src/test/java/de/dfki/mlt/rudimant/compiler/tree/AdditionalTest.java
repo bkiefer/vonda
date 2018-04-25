@@ -112,4 +112,13 @@ public class AdditionalTest {
     assertEquals(exp, getForMarked(s, exp));
   }
 
+  @Test
+  public void testPlainMethodCall() {
+    String in = "v = \"3\"; toInt(v);";
+    String exp = "v = \"3\"; toInt(v);";
+
+    String s = generate(in);
+    assertEquals(exp, getForMarked(s, exp));
+  }
+
 }

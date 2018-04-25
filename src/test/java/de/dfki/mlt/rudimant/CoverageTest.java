@@ -22,22 +22,28 @@ import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.RESOURCE_DIR;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 
 import de.dfki.mlt.rudimant.compiler.CompilerMain;
+import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
+
+import static de.dfki.mlt.rudimant.compiler.Constants.*;
+
 
 public class CoverageTest {
 
   @Test
   public void Test() throws Exception {
     // enter here the file whose compilation you'd like to debug
-    CompilerMain.main(new String[]{
-      "-o", "target/generated/",// "-v",
-      "-r", RESOURCE_DIR + "ontologies/inits/pal.inference.ini",
-      "doc/AllYouCanDo.rudi",
-    });
-
+    Map<String, Object> configs = CompilerMain.defaultConfig();
+    configs.put(CFG_OUTPUT_DIRECTORY, new File("target/generated/"));
+    configs.put(CFG_ONTOLOGY_FILE,
+        RESOURCE_DIR + "ontologies/inits/pal.inference.ini");
+    RudimantCompiler rc = new RudimantCompiler(new File("."), configs);
+    assertFalse(CompilerMain.process(rc, "doc/AllYouCanDo.rudi"));
     assertTrue(new File("target/generated/AllYouCanDo.java").exists());
   }
 }

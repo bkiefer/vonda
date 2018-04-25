@@ -67,9 +67,10 @@ public class TypeInferenceTest {
     RudiTree rt = it.next();
     rt = it.next();
     // in empty setup, this is handled as a proper fielddef now
-    //assertTrue(rt instanceof StatVarDef);
-    assertTrue(rt instanceof StatFieldDef);
-    rt = ((StatFieldDef)rt).varDef;
+    // TODO: it was, and now again is not. Check the implications
+    assertTrue(rt instanceof StatVarDef);
+    //assertTrue(rt instanceof StatFieldDef);
+    //rt = ((StatFieldDef)rt).varDef;
     ExpAssignment ass = (ExpAssignment)((StatVarDef)rt).toAssign;
     assertEquals("boolean", ass.left.type.toJava());
   }
