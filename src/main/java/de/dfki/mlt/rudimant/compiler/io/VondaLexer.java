@@ -27,8 +27,8 @@ import static de.dfki.mlt.rudimant.common.ErrorInfo.ErrorType.*;
 import java.util.*;
 
 import de.dfki.mlt.rudimant.common.Location;
+import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.compiler.Mem;
-import de.dfki.mlt.rudimant.compiler.Position;
 import de.dfki.mlt.rudimant.compiler.tree.ExpSingleValue;
 
 import org.slf4j.Logger;
@@ -867,8 +867,7 @@ public class VondaLexer implements VondaGrammar.Lexer {
    */
   public void yyerror (VondaGrammar.Location loc, String msg) {
     logger.error("{}: {}", loc, msg);
-    mem.registerError(msg, new Location(origin, loc.begin, loc.end),
-                      PARSE_ERROR);
+    mem.registerError(msg, new Location(loc.begin, loc.end), PARSE_ERROR);
   }
 
   public void setOrigin(String s) { origin = s; }

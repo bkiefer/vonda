@@ -17,27 +17,61 @@
  * IN THE SOFTWARE.
  */
 
-package de.dfki.mlt.rudimant.compiler;
+package de.dfki.mlt.rudimant.common;
 
 public class Position implements Comparable<Position> {
 
-  public int line;
-  public int column;
-  public int charpos;
-  public String msg;
+  private int line;
+  private int column;
+  private int charpos;
+  private String origin;
 
-  public Position(int line, int column, int charpos, String msg) {
+  public Position(){};
+
+  public Position(int line, int column, int charpos, String o) {
     this.line = line;
     this.column = column;
     this.charpos = charpos;
-    this.msg = msg;
+    this.origin = o;
+  }
+
+  public int getLine() {
+    return line;
+  }
+
+  public void setLine(int line) {
+    this.line = line;
+  }
+
+  public int getColumn() {
+    return column;
+  }
+
+  public void setColumn(int column) {
+    this.column = column;
+  }
+
+  public int getCharpos() {
+    return charpos;
+  }
+
+  public void setCharpos(int charpos) {
+    this.charpos = charpos;
+  }
+
+  public String getOrigin() {
+    return origin;
+  }
+
+  public void setOrigin(String msg) {
+    this.origin = msg;
   }
 
   @Override
   public boolean equals(Object o) {
     if (! (o instanceof Position)) return false;
     Position p2 = (Position) o;
-    return line == p2.line && column == p2.column && msg.equals(p2.msg);
+    return line == p2.line && column == p2.column && origin.equals(p2.origin);
   }
 
   @Override
@@ -47,7 +81,7 @@ public class Position implements Comparable<Position> {
 
   @Override
   public String toString() {
-    return msg + ":" + line + ":" + column;
+    return origin + ":" + line + ":" + column;
   }
 
   @Override

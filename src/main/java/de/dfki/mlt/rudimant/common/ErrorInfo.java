@@ -28,6 +28,8 @@ public class ErrorInfo {
 
   private ErrorType _type;
 
+  public ErrorInfo(){}
+
   public ErrorInfo(String m, Location l, ErrorType t) {
     _message = m;
     _location = l;
@@ -51,5 +53,7 @@ public class ErrorInfo {
   }
 
   public ErrorType getType() { return _type; }
+
+  public void setType(ErrorType t) { _type = t; }
 
 }

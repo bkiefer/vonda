@@ -20,18 +20,20 @@
 package de.dfki.mlt.rudimant;
 
 import static de.dfki.mlt.rudimant.compiler.CompilerMain.configs;
-import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.RESOURCE_DIR;
-import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.setUpEmpty;
+import static de.dfki.mlt.rudimant.compiler.Visualize.generateAndGetRulesInfo;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.assertEquals;
 
 import java.io.*;
+import java.util.ArrayList;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.introspector.BeanAccess;
 
 import de.dfki.mlt.rudimant.common.*;
-
-import static de.dfki.mlt.rudimant.compiler.Visualize.generateAndGetRulesInfo;
 
 /**
  * These tests check if the harvesting of all rules and imports and its
@@ -211,4 +213,27 @@ public class RudibuggerTest {
     assertEquals("(rule_two) FALSE: [false: b.forename]\n", output);
   }
 
+  @Test
+  public void testYamlDump() throws IOException {
+    String[] path = {"a", "b", "c"};
+    ImportInfo i = new ImportInfo("bla", path, 100, null);
+    ErrorInfo e = new ErrorInfo("err",
+        new Location(new Position(1,1,1, "foo"), new Position(2,2,2, "foo")),
+        ErrorInfo.ErrorType.PARSE_ERROR);
+    i.setErrors(new ArrayList<ErrorInfo>(){{ add(e); }});
+    DumperOptions options = new DumperOptions();
+    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+    //options.setAllowReadOnlyProperties(true);
+    Yaml y = new Yaml(options);
+    //y.setBeanAccess(BeanAccess.FIELD);
+    System.out.println(new File(".").getAbsolutePath());
+    FileWriter w = new FileWriter(new File("target/test.yaml"));
+    y.dump(i, w);
+
+    Yaml x = new Yaml();
+    //x.setBeanAccess(BeanAccess.FIELD);
+    FileReader r = new FileReader(new File("target/test.yaml"));
+    Object z = x.loadAs(r, ImportInfo.class);
+    assertEquals(i, z);
+  }
 }

@@ -235,10 +235,10 @@ public class RudimantCompiler {
       processForReal(className);
     } finally {
       mem.leaveClass();
+      // save ruleLocMap to .yml file
+      dumpToYaml();
     }
 
-    // save ruleLocMap to .yml file
-    dumpToYaml();
   }
 
   /**
@@ -278,10 +278,9 @@ public class RudimantCompiler {
     logger.info("parsing " + inputFile.getName() + " to " + outputFile);
     GrammarFile gf = parseAndTypecheck(this,
         new FileInputStream(inputFile), name);
-    if (gf == null) {
-      dumpToYaml();
+    if (gf == null)
       throw new UnsupportedOperationException("Parsing failed.");
-    }
+
     if (visualise)
       Visualize.show(gf, name);
     Writer output = Files.newBufferedWriter(outputFile.toPath());

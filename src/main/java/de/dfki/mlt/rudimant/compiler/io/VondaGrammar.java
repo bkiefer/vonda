@@ -42,8 +42,9 @@ package de.dfki.mlt.rudimant.compiler.io;
 
 import java.io.Reader;
 import java.util.*;
+
+import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.compiler.Type;
-import de.dfki.mlt.rudimant.compiler.Position;
 import de.dfki.mlt.rudimant.compiler.tree.*;
 
 @SuppressWarnings({"serial", "unchecked", "fallthrough", "unused"})

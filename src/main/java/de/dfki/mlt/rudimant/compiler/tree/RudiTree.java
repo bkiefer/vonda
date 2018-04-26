@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.dfki.mlt.rudimant.common.Location;
-import de.dfki.mlt.rudimant.compiler.Position;
+import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.compiler.io.VondaGrammar;
 import de.dfki.mlt.rudimant.compiler.io.VondaLexer.Token;
 
@@ -82,7 +82,8 @@ public abstract class RudiTree {
 
   private List<Token> getTokensOfInterest(VisitorGeneration v, Position firstPos) {
     List<Token> tokens = new ArrayList<>();
-    while (!v.collectedTokens.isEmpty() && v.collectedTokens.get(0).start.charpos < firstPos.charpos) {
+    while (!v.collectedTokens.isEmpty()
+        && v.collectedTokens.get(0).start.getCharpos() < firstPos.getCharpos()) {
       tokens.add(v.collectedTokens.get(0));
       v.collectedTokens.remove();
     }
@@ -139,8 +140,7 @@ public abstract class RudiTree {
    */
   public RudiTree setPos(VondaGrammar.Location start, VondaGrammar.Location end,
       VondaGrammar gram) {
-    String originClass = start.begin.msg;
-    location = new Location(originClass, start.begin, end.end);
+    location = new Location(start.begin, end.end);
     fullexp = gram.getFullText(start.begin, end.end);
     return this;
   }

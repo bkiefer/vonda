@@ -35,9 +35,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.compiler.Environment;
 import de.dfki.mlt.rudimant.compiler.Mem;
-import de.dfki.mlt.rudimant.compiler.Position;
 import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
 import de.dfki.mlt.rudimant.compiler.io.BisonParser;
 import de.dfki.mlt.rudimant.compiler.io.VondaLexer.Token;
@@ -132,7 +132,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
    */
   private void saveCommentsForLater(VisitorGeneration gv, Position pos) {
     while (!gv.collectedTokens.isEmpty()
-        && gv.collectedTokens.get(0).start.charpos < pos.charpos) {
+        && gv.collectedTokens.get(0).start.getCharpos() < pos.getCharpos()) {
       saveComments.addFirst(gv.collectedTokens.get(0));
       gv.collectedTokens.remove();
     }
@@ -287,7 +287,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     Iterator<Token> it = tokens.iterator();
     while (it.hasNext()) {
       Token curr = it.next();
-      if (curr.start.charpos < firstPos.charpos && curr.getText().startsWith("/*@")) {
+      if (curr.start.getCharpos() < firstPos.getCharpos()
+          && curr.getText().startsWith("/*@")) {
         out.append(RudiTree.removeJavaBrackets(curr.getText()));
         it.remove();
       } else break;

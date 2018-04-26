@@ -22,7 +22,7 @@ package de.dfki.mlt.rudimant.compiler.tree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.mlt.rudimant.compiler.Position;
+import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.compiler.Type;
 
 /**

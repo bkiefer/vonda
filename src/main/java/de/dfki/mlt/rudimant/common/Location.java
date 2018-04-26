@@ -19,18 +19,14 @@
 
 package de.dfki.mlt.rudimant.common;
 
-import de.dfki.mlt.rudimant.compiler.Position;
-
 /**
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
 public class Location {
-  private String originClass;
   private Position begin, end;
 
-  public Location(String origin, Position b, Position e) {
-    originClass = origin;
+  public Location(Position b, Position e) {
     begin = b;
     end = e;
   }
@@ -38,26 +34,27 @@ public class Location {
   public Location() {}
 
   public String getOriginClass() {
-    return originClass;
+    return begin.getOrigin();
   }
 
   public int getLineNumber() {
-    return begin.line;
+    return begin.getLine();
   }
 
   public int getCharPosition() {
-    return begin.charpos;
+    return begin.getCharpos();
   }
 
   public Position getBegin() { return begin; }
+  public void setBegin(Position begin) { this.begin = begin; }
 
   public Position getEnd() { return end; }
+  public void setEnd(Position end) { this.end = end; }
+
 
   @Override
   public String toString() {
-    if (begin.charpos != 0)
-      return originClass + ".rudi:" + begin.line + ":" + begin.charpos + ":";
-    else
-      return originClass + ".rudi:" + begin.line + ":";
+    return getOriginClass() + ".rudi:" + (begin.getLine()+1) +
+        ((begin.getColumn() != 0) ? ":" + begin.getColumn() + ":" : ":");
   }
 }
