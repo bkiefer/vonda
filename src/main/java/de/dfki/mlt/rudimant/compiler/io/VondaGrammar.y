@@ -330,7 +330,7 @@ switch_labels
 label_statement
   : CASE STRING ':'   {
     ExpSingleValue val =
-      new ExpSingleValue("case " + $2.toString() + ":", "label");
+      new ExpSingleValue("case \"" + $2.toString() + "\":", "label");
     RTStatement lbl = val.ensureStatement();
     setPos(val, @$); setPos(lbl, @$);
     $$ = lbl;

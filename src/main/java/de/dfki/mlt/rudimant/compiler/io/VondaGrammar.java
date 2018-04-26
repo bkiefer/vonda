@@ -991,7 +991,7 @@ public class VondaGrammar
     /* "VondaGrammar.y":331  */ /* lalr1.java:489  */
     {
     ExpSingleValue val =
-      new ExpSingleValue("case " + (( ExpSingleValue )(yystack.valueAt (3-(2)))).toString() + ":", "label");
+      new ExpSingleValue("case \"" + (( ExpSingleValue )(yystack.valueAt (3-(2)))).toString() + "\":", "label");
     RTStatement lbl = val.ensureStatement();
     setPos(val, (yyloc)); setPos(lbl, (yyloc));
     yyval = lbl;
