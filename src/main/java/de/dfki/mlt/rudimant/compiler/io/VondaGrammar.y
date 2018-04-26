@@ -39,10 +39,10 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %type <List<String>> path
 %type <LinkedList<RTStatement>> statements
 %type <StatGrammarRule> grammar_rule
-%type <Type> type_spec class_spec
+%type <Type> type_spec
 %type <LinkedList<Type>> type_spec_list
 %type <ExpSingleValue> Literal
-%type <LinkedList> args_list
+%type <LinkedList> args_list opt_args_list
 
 
 %locations
@@ -148,6 +148,7 @@ grammar_file
     $$ = $3; $2.setVisibility($1); $3.addFirst($2);
   }
   | method_declaration grammar_file { $$ = $2; $2.addFirst($1); }
+  | function_call grammar_file { $$ = $2; $2.addFirst($1); }
   | statement_no_def grammar_file { $$ = $2; $2.addFirst($1); }
   // | ANNOTATION grammar_file { $$ = $2; $2.add($1); }
   | imports grammar_file { $$ = $2; $2.addFirst($1); }
@@ -399,39 +400,24 @@ nonempty_exp_list
   | exp ',' nonempty_exp_list { $$ = $3; $3.addFirst($1); }
   ;
 
+/* For method declarations, the return type spec is OBLIGATORY */
 method_declaration
-  : class_spec type_spec VARIABLE '(' ')' opt_block {
-    $$ = setPos(new StatMethodDeclaration("public", $2, $1, $3, null, $6), @$);
+  : '[' type_spec ']' '.' type_spec VARIABLE '(' opt_args_list ')' opt_block {
+    $$ = setPos(new StatMethodDeclaration("public", $5, $2, $6, $8, $10), @$);
   }
-  | class_spec type_spec VARIABLE '(' args_list ')' opt_block {
-    $$ = setPos(new StatMethodDeclaration("public", $2, $1, $3, $5, $7), @$);
-  }
-  | class_spec           VARIABLE '(' ')' opt_block {
-    $$ = setPos(new StatMethodDeclaration("public", null, $1, $2, null, $5), @$);
-  }
-  | class_spec           VARIABLE '(' args_list ')' opt_block {
-    $$ = setPos(new StatMethodDeclaration("public", null, $1, $2, $4, $6), @$);
-  }
-  |            type_spec VARIABLE '(' ')' opt_block {
-    $$ = setPos(new StatMethodDeclaration("public", $1, null, $2, null, $5), @$);
-  }
-  |            type_spec VARIABLE '(' args_list ')' opt_block {
+  | type_spec VARIABLE '(' opt_args_list ')' opt_block {
     $$ = setPos(new StatMethodDeclaration("public", $1, null, $2, $4, $6), @$);
   }
-  |                      VARIABLE '(' ')' block {
-    $$ = setPos(new StatMethodDeclaration("public", null, null, $1, null, $4), @$);
-  }
-  |                      VARIABLE '(' args_list ')' block {
-    $$ = setPos(new StatMethodDeclaration("public", null, null, $1, $3, $5), @$);
-  }
-  ;
-
-class_spec: '[' type_spec ']' '.' { $$ = $2; }
   ;
 
 opt_block
   : block { $$ = $1; }
   | ';' { $$ = null; }
+  ;
+
+opt_args_list
+  : args_list { $$ = $1; }
+  | %empty { $$ = new LinkedList(); }
   ;
 
 args_list
@@ -498,14 +484,6 @@ type_spec
 type_spec_list
   : type_spec { $$ = new LinkedList<Type>(){{ add($1); }}; }
   | type_spec ',' type_spec_list { $$ = $3; $3.addFirst($1); }
-  ;
-
-exp
-  : ConditionalExpression { $$ = $1; }
-  | assignment { $$ = $1; }
-  | ConditionalOrExpression { $$ = $1; }
-  | new_exp { $$ = $1; }
-//| dialogueact_exp { $$ = $1; }
   ;
 
 ConditionalOrExpression
@@ -608,7 +586,7 @@ CastExpression
   : UnaryExpression { $$ = $1; }
   | '(' type_spec ')' CastExpression { $$ = setPos(new ExpCast($2, $4), @$); }
   ;
-//  | '(' exp ')' LogicalUnaryExpression { new ExpCast($2, $4); }
+//  | '(' exp ')' LogicalUnaryExpression { $$ = setPos(new ExpCast($2, $4)); }
 
 LogicalUnaryExpression
   : PostfixExpression { $$ = $1; }
@@ -634,7 +612,7 @@ PrimaryExpression
 
 NotJustName
   : VARIABLE { $$ = setPos(new ExpVariable($1), @$); }
-  | '(' '(' type_spec ')' CastExpression ')' { $$ = setPos(new ExpCast($3, $5), @$); }
+  | '(' '(' type_spec ')' UnaryExpression ')' { $$ = setPos(new ExpCast($3, $5), @$); }
   ;
 
 ComplexPrimary
@@ -667,6 +645,7 @@ ArrayAccess
 
 ConditionalExpression
   : ConditionalOrExpression '?' exp ':' exp { $$ = setPos(new ExpConditional($1, $3, $5), @$); }
+  | ConditionalOrExpression { $$ = $1; }
   ;
 
 // TODO: is that all 'what you can assign to' (an lvalue), which can be:
@@ -729,17 +708,11 @@ new_exp
   ;
 
 lambda_exp
-  : '(' args_list ')' ARROW exp {
+  : '(' opt_args_list ')' ARROW exp {
     $$ = setPos(new ExpLambda($2, $5), @$);
   }
-  | '(' args_list ')' ARROW block {
+  | '(' opt_args_list ')' ARROW block {
     $$ = setPos(new ExpLambda($2, $5), @$);
-  }
-  | '(' ')' ARROW exp {
-    $$ = setPos(new ExpLambda(new LinkedList<>(), $4), @$);
-  }
-  | '(' ')' ARROW block {
-    $$ = setPos(new ExpLambda(new LinkedList<>(), $4), @$);
   }
   ;
 
@@ -764,6 +737,12 @@ da_args
   | %empty { $$ = new LinkedList<RTExpression>(); }
   ;
 
+exp
+  : ConditionalExpression { $$ = $1; }
+  | assignment { $$ = $1; }
+  | new_exp { $$ = $1; }
+//| dialogueact_exp { $$ = $1; }
+  ;
 
 
 /*
