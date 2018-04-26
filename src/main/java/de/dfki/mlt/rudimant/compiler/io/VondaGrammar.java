@@ -1702,7 +1702,7 @@ public class VondaGrammar
   case 151:
   if (yyn == 151)
     /* "VondaGrammar.y":619  */ /* lalr1.java:489  */
-    { yyval = ((RTExpression)(yystack.valueAt (3-(2)))); };
+    { yyval = ((RTExpression)(yystack.valueAt (3-(2)))); ((RTExpression)(yystack.valueAt (3-(2)))).generateParens(); };
   break;
     
 

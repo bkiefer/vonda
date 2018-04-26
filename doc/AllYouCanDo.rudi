@@ -165,3 +165,7 @@ s = "nameOf_" + child;
 String number = 10;
 // And dialogue acts
 DialogueAct da = #Confirm(Correct, number={10});
+
+// you can call any function on the top level
+t = "10";
+toInt(t);

@@ -616,7 +616,7 @@ NotJustName
   ;
 
 ComplexPrimary
-  : '(' exp ')' { $$ = $2; }
+  : '(' exp ')' { $$ = $2; $2.generateParens(); }
   | ComplexPrimaryNoParenthesis { $$ = $1; }
   ;
 

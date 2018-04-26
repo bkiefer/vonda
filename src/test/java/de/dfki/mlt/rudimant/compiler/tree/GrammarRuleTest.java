@@ -97,7 +97,7 @@ public class GrammarRuleTest {
     String s = generate(in);
     assertTrue(s.contains("__x0[1] = 1 == 1"));
     assertTrue(s.contains("__x0[2] = 2 != 3"));
-    assertTrue(s.contains("__x0[3] = 2 != 4"));
+    assertTrue(s.contains("__x0[3] = (2 != 4)"));
   }
 
   @Test

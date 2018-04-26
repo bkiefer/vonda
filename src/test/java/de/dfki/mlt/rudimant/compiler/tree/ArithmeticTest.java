@@ -41,7 +41,7 @@ public class ArithmeticTest {
   public static void setUpClass() throws FileNotFoundException {
     setUpNonEmpty();
   }
-  
+
   public void assertArithmetic(RudiTree dtr) {
     assertTrue(dtr instanceof StatVarDef);
     dtr = ((StatVarDef)dtr).toAssign;
@@ -112,7 +112,7 @@ public class ArithmeticTest {
   public void testArithmetic5() {
     String in = "int i = -(1 + 2);";
     String r = generate(in);
-    String expected = "int i = -((1+2));";
+    String expected = "int i = -(((1+2)));";
     assertEquals(expected, getForMarked(r, expected));
   }
 }

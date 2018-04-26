@@ -29,6 +29,7 @@ import de.dfki.mlt.rudimant.compiler.Type;
  * @author Anna Welker
  */
 public abstract class RTBinaryExp extends RTExpression {
+
   RTExpression left;
   RTExpression right;
 

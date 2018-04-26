@@ -22,6 +22,9 @@ package de.dfki.mlt.rudimant.compiler.tree;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.dfki.mlt.rudimant.common.Location;
 import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.compiler.io.VondaGrammar;
@@ -34,6 +37,7 @@ import de.dfki.mlt.rudimant.compiler.io.VondaLexer.Token;
  * @author Anna Welker
  */
 public abstract class RudiTree {
+  public static final Logger logger = LoggerFactory.getLogger(RudiTree.class);
 
   /** contains the origin file and the line Rudi Tree started on */
   public Location location;

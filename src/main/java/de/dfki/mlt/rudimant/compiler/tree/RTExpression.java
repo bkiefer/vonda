@@ -19,9 +19,6 @@
 
 package de.dfki.mlt.rudimant.compiler.tree;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.compiler.Type;
 
@@ -31,8 +28,6 @@ import de.dfki.mlt.rudimant.compiler.Type;
  * @author Anna Welker
  */
 public abstract class RTExpression extends RudiTree {
-
-  public static final Logger logger = LoggerFactory.getLogger(RudiTree.class);
 
   protected boolean _parens = false;
 
