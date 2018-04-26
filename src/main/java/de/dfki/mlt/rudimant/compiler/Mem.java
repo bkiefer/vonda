@@ -140,7 +140,7 @@ public class Mem {
     }
     ClassEnv newEnv = new ClassEnv(classname, pkg);
     currentInfo = new ImportInfo(classname, pkg,
-        (loc == null ? -1 : (loc.getLineNumber() + 1)), currentInfo);
+        (loc == null ? -1 : (loc.getBegin().getLine() + 1)), currentInfo);
     if (currentBlock == null) {
       topLevelClass = newEnv;
       rootInfo = (ImportInfo)currentInfo;
@@ -174,7 +174,7 @@ public class Mem {
    *  environment.
    */
   public boolean enterRule(String name, Location loc) {
-    currentInfo = new RuleInfo(name, loc.getLineNumber() + 1, currentInfo);
+    currentInfo = new RuleInfo(name, loc.getBegin().getLine() + 1, currentInfo);
     // The condition is: We're in the topmost environment of a file.
     curClass().enterRule((RuleInfo)currentInfo);
     return //curClass().enterRule((RuleInfo)currentInfo)

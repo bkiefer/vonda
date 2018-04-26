@@ -37,14 +37,6 @@ public class Location {
     return begin.getOrigin();
   }
 
-  public int getLineNumber() {
-    return begin.getLine();
-  }
-
-  public int getCharPosition() {
-    return begin.getCharpos();
-  }
-
   public Position getBegin() { return begin; }
   public void setBegin(Position begin) { this.begin = begin; }
 
