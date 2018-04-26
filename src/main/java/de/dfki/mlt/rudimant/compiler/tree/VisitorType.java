@@ -19,6 +19,7 @@
 
 package de.dfki.mlt.rudimant.compiler.tree;
 
+import static de.dfki.mlt.rudimant.common.ErrorInfo.ErrorType.*;
 import static de.dfki.mlt.rudimant.compiler.Utils.isBooleanOperator;
 
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class VisitorType implements RudiVisitor {
    */
   public void typeError(String errorMessage, RudiTree node) {
     String newErrorMessage = node.getLocation() + " " + errorMessage;
-    mem.registerError(errorMessage, node.getLocation());
+    mem.registerError(errorMessage, node.getLocation(), ERROR);
 
     if (typeErrorFatal) {
       // throw a real Exception
@@ -75,7 +76,7 @@ public class VisitorType implements RudiVisitor {
    */
   public void typeWarning(String warnMessage, RudiTree node) {
     String newWarningMessage = node.getLocation() + " " + warnMessage;
-    mem.registerWarning(warnMessage, node.getLocation());
+    mem.registerError(warnMessage, node.getLocation(), WARNING);
     // just set a warning into the logger
     logger.warn(newWarningMessage);
   }

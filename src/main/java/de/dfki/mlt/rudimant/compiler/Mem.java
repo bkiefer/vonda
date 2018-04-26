@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudimant.common.*;
+import de.dfki.mlt.rudimant.common.ErrorInfo.ErrorType;
 import de.dfki.mlt.rudimant.compiler.tree.ExpFuncCall;
 import de.dfki.mlt.rudimant.compiler.tree.RTBlockNode;
 import de.dfki.mlt.rudimant.compiler.tree.ToplevelBlock;
@@ -61,7 +62,8 @@ public class Mem {
   private final RdfProxy _proxy;
 
   /** Info about all imports and rules (tree) */
-  private BasicInfo currentInfo, rootInfo;
+  private ImportInfo rootInfo;
+  private BasicInfo currentInfo;
 
   /** the Java class that will be extended by the topmost rudi file to link
    *  the rule files into a Java project
@@ -141,7 +143,7 @@ public class Mem {
         (loc == null ? -1 : (loc.getLineNumber() + 1)), currentInfo);
     if (currentBlock == null) {
       topLevelClass = newEnv;
-      rootInfo = currentInfo;
+      rootInfo = (ImportInfo)currentInfo;
     }
     ToplevelBlock node = new ToplevelBlock();
     enterEnvironment(node);
@@ -300,33 +302,16 @@ public class Mem {
     return result;
   }
 
-  public BasicInfo getInfo() {
+  public ImportInfo getInfo() {
     return rootInfo;
   }
 
-  public void registerParsingFailure(String failMessage, Location location) {
+  public void registerError(String errorMessage, Location location, ErrorType type) {
     BasicInfo current = currentInfo;
     while (! (current instanceof ImportInfo))
       current = current.getParent();
     ImportInfo info = (ImportInfo)current;
-    info.setParsingFailure(new ErrorWarningInfo(failMessage, location));
-
-  }
-
-  public void registerError(String errorMessage, Location location) {
-    BasicInfo current = currentInfo;
-    while (! (current instanceof ImportInfo))
-      current = current.getParent();
-    ImportInfo info = (ImportInfo)current;
-    info.getErrors().add(new ErrorWarningInfo(errorMessage, location));
-  }
-
-  public void registerWarning(String warnMessage, Location location) {
-    BasicInfo current = currentInfo;
-    while (! (current instanceof ImportInfo))
-      current = current.getParent();
-    ImportInfo info = (ImportInfo)current;
-    info.getWarnings().add(new ErrorWarningInfo(warnMessage, location));
+    info.getErrors().add(new ErrorInfo(errorMessage, location, type));
   }
 
   public void resolveGenericTypes(ExpFuncCall func, VisitorType visitor) {

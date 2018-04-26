@@ -66,8 +66,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
   private static GrammarFile parseInput(final String realName, InputStream in,
                                         Mem mem)
       throws IOException {
-    //return AntlrParser.parse(realName, in);
-    return BisonParser.parse(realName, in);
+    return BisonParser.parse(realName, in, mem);
   }
 
 
@@ -182,7 +181,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         // comments to a laterComments list
         later.add((StatMethodDeclaration)r);
         if (((StatMethodDeclaration)r).block != null)
-          saveCommentsForLater(gv, r.positions[1]);
+          saveCommentsForLater(gv, r.getLocation().getEnd());
       } else if (r instanceof StatVarDef) {
         StatVarDef vd = (StatVarDef)r;
         if (vd.toAssign == null) continue;
@@ -201,11 +200,11 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
           out.append(((StatGrammarRule)r).label).append("();");
           later.add((StatGrammarRule)r);
           // move all appropriate comments to a laterComments list
-          saveCommentsForLater(gv, r.positions[1]);
+          saveCommentsForLater(gv, r.getLocation().getEnd());
           out.append(" if (res != 0)");
         } else {
           Import imp = (Import)r;
-          out.append(r.checkComments(gv, r.positions[0]));
+          out.append(r.checkComments(gv, r.getLocation().getBegin()));
           out.append("res = ");
           // use fully qualified name
           String rootpkg = getPackageName(mem.getTopLevelPackageSpec());
@@ -284,7 +283,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
 
     // Now, print all initial comments (preceding the first element) before the
     // class starts, for, e.g., imports
-    Position firstPos = rules.get(0).positions[0];
+    Position firstPos = rules.get(0).getLocation().getBegin();
     Iterator<Token> it = tokens.iterator();
     while (it.hasNext()) {
       Token curr = it.next();

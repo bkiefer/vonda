@@ -19,25 +19,20 @@
 
 package de.dfki.mlt.rudimant.common;
 
+import de.dfki.mlt.rudimant.compiler.Position;
+
 /**
  *
  * @author Anna Welker, anna.welker@dfki.de
  */
 public class Location {
   private String originClass;
-  private int lineNumber;
-  private int charPosition;
+  private Position begin, end;
 
-  public Location(String origin, int lineNo) {
+  public Location(String origin, Position b, Position e) {
     originClass = origin;
-    lineNumber = lineNo;
-    charPosition = 0;
-  }
-
-  public Location(String origin, int lineNo, int charPos) {
-    originClass = origin;
-    lineNumber = lineNo;
-    charPosition = charPos;
+    begin = b;
+    end = e;
   }
 
   public Location() {}
@@ -46,31 +41,23 @@ public class Location {
     return originClass;
   }
 
-  public void setOriginClass(String oc) {
-    originClass = oc;
-  }
-
   public int getLineNumber() {
-    return lineNumber;
-  }
-
-  public void setLineNumber(int ln) {
-    lineNumber = ln;
+    return begin.line;
   }
 
   public int getCharPosition() {
-    return charPosition;
+    return begin.charpos;
   }
 
-  public void setCharPosition(int cp) {
-    charPosition = cp;
-  }
+  public Position getBegin() { return begin; }
+
+  public Position getEnd() { return end; }
 
   @Override
   public String toString() {
-    if (charPosition != 0)
-      return originClass + ".rudi:" + lineNumber + ":" + charPosition + ":";
+    if (begin.charpos != 0)
+      return originClass + ".rudi:" + begin.line + ":" + begin.charpos + ":";
     else
-      return originClass + ".rudi:" + lineNumber + ":";
+      return originClass + ".rudi:" + begin.line + ":";
   }
 }

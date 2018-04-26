@@ -19,16 +19,19 @@
 
 package de.dfki.mlt.rudimant.common;
 
-public class ErrorWarningInfo {
+public class ErrorInfo {
+  public static enum ErrorType { ERROR, WARNING, PARSE_ERROR };
+
   private Location _location;
 
   private String _message;
 
-  public ErrorWarningInfo() {}
+  private ErrorType _type;
 
-  public ErrorWarningInfo(String m, Location l) {
+  public ErrorInfo(String m, Location l, ErrorType t) {
     _message = m;
     _location = l;
+    _type = t;
   }
 
   public Location getLocation() {
@@ -47,5 +50,6 @@ public class ErrorWarningInfo {
     this._message = message;
   }
 
+  public ErrorType getType() { return _type; }
 
 }

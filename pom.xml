@@ -17,14 +17,6 @@
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
-  <repositories>
-    <repository>
-      <id>FORSCHUNGSSOFTWARE</id>
-      <name>FORSCHUNGSSOFTWARE</name>
-      <url>http://www.forschungssoftware.de/nexus/content/groups/public/</url>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>net.sf.jopt-simple</groupId>
@@ -37,12 +29,6 @@
       <artifactId>junit</artifactId>
       <version>4.11</version>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.antlr</groupId>
-      <artifactId>antlr4-runtime</artifactId>
-      <version>4.5.1-1</version>
     </dependency>
 
     <dependency>
@@ -211,20 +197,18 @@
       </plugin>
 
       <plugin>
-        <groupId>org.antlr</groupId>
-        <artifactId>antlr4-maven-plugin</artifactId>
-        <version>4.5.1</version>
-        <configuration>
-          <arguments>
-            <argument>-visitor</argument>
-          </arguments>
-        </configuration>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.1</version>
         <executions>
           <execution>
-            <id>antlr</id>
-            <goals>
-              <goal>antlr4</goal>
-            </goals>
+            <id>makebisonflex</id>
+            <phase>compile</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <workingDirectory>${project.build.sourceDirectory}/de/dfki/mlt/rudimant/compiler/io</workingDirectory>
+              <executable>make</executable>
+            </configuration>
           </execution>
         </executions>
       </plugin>

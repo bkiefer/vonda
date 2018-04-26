@@ -22,10 +22,6 @@ package de.dfki.mlt.rudimant.compiler.tree;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-//import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.TerminalNode;
-
 import de.dfki.mlt.rudimant.common.Location;
 import de.dfki.mlt.rudimant.compiler.Position;
 import de.dfki.mlt.rudimant.compiler.io.VondaGrammar;
@@ -39,12 +35,6 @@ import de.dfki.mlt.rudimant.compiler.io.VondaLexer.Token;
  */
 public abstract class RudiTree {
 
-  /**
-   * positions contains the start and stop positions of a Token according to its
-   * ParserRuleContext. [0] = start of TokenIndex, [1] = stop of TokenIndex
-   */
-  public Position[] positions;
-
   /** contains the origin file and the line Rudi Tree started on */
   public Location location;
 
@@ -52,12 +42,12 @@ public abstract class RudiTree {
   public String fullexp;
 
   public void visitWithComments(VisitorGeneration v) {
-    Position firstPos = positions[0];
+    Position firstPos = location.getBegin();
     v.out.append(checkComments(v, firstPos));
     visit(v);
     // TODO: as endpos is where this node ends, we will never get to print anything
     //       here, will we?
-    Position endPos = positions[1];
+    Position endPos = location.getEnd();
     v.out.append(checkComments(v, endPos));
   }
 
@@ -70,7 +60,7 @@ public abstract class RudiTree {
    * @return
    */
   public <T extends RudiTree> T fixFields(T b) {
-    b.positions = positions;
+    b.location = location;
     b.fullexp = fullexp;
     return b;
   }
@@ -137,14 +127,7 @@ public abstract class RudiTree {
    * @return RudiTree
    */
   public RudiTree setPos(VondaGrammar.Location loc, VondaGrammar gram) {
-    String originClass = loc.begin.msg;
-    positions = new Position[]{ // TODO: does not match the old functionality
-        loc.begin,
-        loc.end
-    };
-    location = new Location(originClass, loc.begin.line);
-    fullexp = gram.getFullText(loc.begin, loc.end); // TODO
-    return this;
+    return setPos(loc, loc, gram);
   }
 
   /**
@@ -157,11 +140,7 @@ public abstract class RudiTree {
   public RudiTree setPos(VondaGrammar.Location start, VondaGrammar.Location end,
       VondaGrammar gram) {
     String originClass = start.begin.msg;
-    positions = new Position[]{
-        start.begin,
-        end.end
-    };
-    location = new Location(originClass, start.begin.line);
+    location = new Location(originClass, start.begin, end.end);
     fullexp = gram.getFullText(start.begin, end.end);
     return this;
   }

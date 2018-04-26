@@ -22,8 +22,12 @@
 
 package de.dfki.mlt.rudimant.compiler.io;
 
+import static de.dfki.mlt.rudimant.common.ErrorInfo.ErrorType.*;
+
 import java.util.*;
 
+import de.dfki.mlt.rudimant.common.Location;
+import de.dfki.mlt.rudimant.compiler.Mem;
 import de.dfki.mlt.rudimant.compiler.Position;
 import de.dfki.mlt.rudimant.compiler.tree.ExpSingleValue;
 
@@ -766,6 +770,8 @@ public class VondaLexer implements VondaGrammar.Lexer {
 
   private String origin;
 
+  private Mem mem;
+
   public class Token {
     public String s;
     public Position start, end;
@@ -784,9 +790,9 @@ public class VondaLexer implements VondaGrammar.Lexer {
   private Object yylval;
   private StringBuffer string = new StringBuffer();
 
-  private LinkedList<Token> commentTokens = new LinkedList<Token>();
+  private LinkedList<Token> commentTokens = new LinkedList<>();
 
-  private List<Token> tokens = new ArrayList<Token>();
+  private List<Token> tokens = new ArrayList<>();
 
   private int charLiteral(String charval) {
     yylval = new ExpSingleValue(charval, "char");
@@ -861,12 +867,15 @@ public class VondaLexer implements VondaGrammar.Lexer {
    */
   public void yyerror (VondaGrammar.Location loc, String msg) {
     logger.error("{}: {}", loc, msg);
+    mem.registerError(msg, new Location(origin, loc.begin, loc.end),
+                      PARSE_ERROR);
   }
 
   public void setOrigin(String s) { origin = s; }
 
-  /** Return the collected tokens
-   */
+  public void setMem(Mem m) { mem = m; }
+
+  /** Return the collected tokens */
   public LinkedList<Token> getCollectedTokens() { return commentTokens; }
 
   /** Add a non-comment and non-whitespace token */

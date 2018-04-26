@@ -25,9 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ImportInfo extends BasicInfo {
-  protected List<ErrorWarningInfo> _errors = new ArrayList<>();
-  protected List<ErrorWarningInfo> _warnings = new ArrayList<>();
-  protected ErrorWarningInfo _parsingFailure;
+  protected List<ErrorInfo> _errors = new ArrayList<>();
   protected String[] relativePath;
 
   public ImportInfo() { }
@@ -37,28 +35,12 @@ public class ImportInfo extends BasicInfo {
     setRelativePath(pathSpec);
   }
 
-  public List<ErrorWarningInfo> getWarnings() {
-    return _warnings;
-  }
-
-  public void setWarnings(List<ErrorWarningInfo> warnings) {
-    this._warnings = warnings;
-  }
-
-  public List<ErrorWarningInfo> getErrors() {
+  public List<ErrorInfo> getErrors() {
     return _errors;
   }
 
-  public void setErrors(List<ErrorWarningInfo> errors) {
+  public void setErrors(List<ErrorInfo> errors) {
     this._errors = errors;
-  }
-
-  public ErrorWarningInfo getParsingFailure() {
-    return this._parsingFailure;
-  }
-
-  public void setParsingFailure(ErrorWarningInfo fail) {
-    this._parsingFailure = fail;
   }
 
   public Path getFilePath() {
