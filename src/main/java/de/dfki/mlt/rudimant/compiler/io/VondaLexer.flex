@@ -271,7 +271,7 @@ SingleCharacter = [^\r\n\'\\]
   "return"                       { return token(VondaGrammar.Lexer.RETURN); }
   "switch"                       { return token(VondaGrammar.Lexer.SWITCH); }
   "timeout"                      { return token(VondaGrammar.Lexer.TIMEOUT); }
-  "timeout_behaviour"            { return token(VondaGrammar.Lexer.TIMEOUT_BEHAVIOUR); }
+  "behaviour_timeout"            { return token(VondaGrammar.Lexer.TIMEOUT_BEHAVIOUR); }
   "while"                        { return token(VondaGrammar.Lexer.WHILE); }
 
   /* boolean literals */

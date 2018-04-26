@@ -42,9 +42,8 @@ package de.dfki.mlt.rudimant.compiler.io;
 
 import java.io.Reader;
 import java.util.*;
-
-import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.compiler.Type;
+import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.compiler.tree.*;
 
 @SuppressWarnings({"serial", "unchecked", "fallthrough", "unused"})
@@ -1752,28 +1751,28 @@ public class VondaGrammar
   case 158:
   if (yyn == 158)
     /* "VondaGrammar.y":632  */ /* lalr1.java:489  */
-    { yyval = (( ExpSingleValue )(yystack.valueAt (1-(1)))); setPos((( ExpSingleValue )(yystack.valueAt (1-(1)))), (yyloc)); };
+    { yyval = setPos((( ExpSingleValue )(yystack.valueAt (1-(1)))), (yyloc)); };
   break;
     
 
   case 159:
   if (yyn == 159)
     /* "VondaGrammar.y":633  */ /* lalr1.java:489  */
-    { yyval = (( ExpSingleValue )(yystack.valueAt (1-(1)))); setPos((( ExpSingleValue )(yystack.valueAt (1-(1)))), (yyloc)); };
+    { yyval = setPos((( ExpSingleValue )(yystack.valueAt (1-(1)))), (yyloc)); };
   break;
     
 
   case 160:
   if (yyn == 160)
     /* "VondaGrammar.y":634  */ /* lalr1.java:489  */
-    { yyval = (( ExpSingleValue )(yystack.valueAt (1-(1)))); setPos((( ExpSingleValue )(yystack.valueAt (1-(1)))), (yyloc)); };
+    { yyval = setPos((( ExpSingleValue )(yystack.valueAt (1-(1)))), (yyloc)); };
   break;
     
 
   case 161:
   if (yyn == 161)
     /* "VondaGrammar.y":635  */ /* lalr1.java:489  */
-    { yyval = (( ExpSingleValue )(yystack.valueAt (1-(1)))); setPos((( ExpSingleValue )(yystack.valueAt (1-(1)))), (yyloc)); };
+    { yyval = setPos((( ExpSingleValue )(yystack.valueAt (1-(1)))), (yyloc)); };
   break;
     
 
@@ -1995,7 +1994,7 @@ public class VondaGrammar
   case 188:
   if (yyn == 188)
     /* "VondaGrammar.y":729  */ /* lalr1.java:489  */
-    { yyval = (( ExpSingleValue )(yystack.valueAt (1-(1)))); };
+    { yyval = setPos((( ExpSingleValue )(yystack.valueAt (1-(1)))), (yyloc)); };
   break;
     
 

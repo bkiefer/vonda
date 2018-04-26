@@ -5,7 +5,7 @@
 import java.io.Reader;
 import java.util.*;
 import de.dfki.mlt.rudimant.compiler.Type;
-import de.dfki.mlt.rudimant.compiler.Position;
+import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.compiler.tree.*;
 
 @SuppressWarnings({"serial", "unchecked", "fallthrough", "unused"})
@@ -629,10 +629,10 @@ ComplexPrimaryNoParenthesis
   ;
 
 Literal
-  : STRING { $$ = $1; setPos($1, @$); }
-  | INT { $$ = $1; setPos($1, @$); }
-  | OTHER_LITERAL { $$ = $1; setPos($1, @$); }
-  | BOOL_LITERAL { $$ = $1; setPos($1, @$); }
+  : STRING { $$ = setPos($1, @$); }
+  | INT { $$ = setPos($1, @$); }
+  | OTHER_LITERAL { $$ = setPos($1, @$); }
+  | BOOL_LITERAL { $$ = setPos($1, @$); }
   ;
 
 ArrayAccess
@@ -726,7 +726,7 @@ dialogueact_exp
 da_token
   : '{' exp '}' { $$ = $2; }
   | VARIABLE { $$ = setPos(new ExpVariable($1), @$); }
-  | STRING { $$ = $1; }
+  | STRING { $$ = setPos($1, @$); }
   | WILDCARD { $$ = setPos(new ExpSingleValue($1, "String"), @$); }
   ;
 
