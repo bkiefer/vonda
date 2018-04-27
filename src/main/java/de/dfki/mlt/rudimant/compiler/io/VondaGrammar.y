@@ -63,17 +63,12 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
   public GrammarFile getResult() { return _result; }
 
   public <T extends RudiTree> T setPos(T rt, Location l) {
-    rt.setPos(l, this);
-    return rt;
+    return setPos(rt, l, l) ;
   }
 
   public <T extends RudiTree> T setPos(T rt, Location start, Location end) {
-    rt.setPos(start, end, this);
+    rt.location = new de.dfki.mlt.rudimant.common.Location(start.begin, end.end);
     return rt;
-  }
-
-  public String getFullText(Position start, Position end) {
-    return ((VondaLexer)this.yylexer).getFullText(start, end);
   }
 
   // if the left part is a variable, this must be transformed to StatVarDef

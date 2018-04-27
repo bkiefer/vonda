@@ -48,7 +48,7 @@ public class ExpListLiteral extends RTExpression {
   }
 
   @Override
-  public void propagateType(Type upperType) {
+  public void propagateType(Type upperType, VisitorType v) {
     type = upperType;
   }
 }

@@ -52,13 +52,14 @@ public class ExpConditional extends RTExpression {
     return Arrays.asList(dtrs);
   }
 
-  public void propagateType(Type upperType) {
+  public void propagateType(Type upperType, VisitorType v) {
     if (type != null && ! type.isUnspecified()) {
-      logger.error("Why didn't this type percolate up? " + fullexp + " " + type);
+      logger.error("Why didn't this type percolate up? "
+          + v.getFullText(this) + " " + type);
       return;
     }
-    thenexp.propagateType(upperType);
-    elseexp.propagateType(upperType);
+    thenexp.propagateType(upperType, v);
+    elseexp.propagateType(upperType, v);
   }
 
 }

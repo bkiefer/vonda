@@ -19,7 +19,6 @@
 
 package de.dfki.mlt.rudimant.compiler.tree;
 
-import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.compiler.Type;
 
 /**
@@ -46,13 +45,11 @@ public abstract class RTExpression extends RudiTree {
    * @param v
    */
   public void visitWithComments(VisitorGeneration v) {
-    Position firstPos = location.getBegin();
-    v.out.append(checkComments(v, firstPos));
+    v.checkComments(location.getBegin());
     if (_parens) v.out.append("(");
     visit(v);
     if (_parens) v.out.append(")");
-    Position endPos = location.getEnd();
-    v.out.append(checkComments(v, endPos));
+    v.checkComments(location.getEnd());
   }
 
   public Type getInnerType() { return type.getInnerType(); }
@@ -83,6 +80,6 @@ public abstract class RTExpression extends RudiTree {
     return ensureBooleanBasic();
   }
 
-  public abstract void propagateType(Type upperType);
+  public abstract void propagateType(Type upperType, VisitorType v);
 
 }

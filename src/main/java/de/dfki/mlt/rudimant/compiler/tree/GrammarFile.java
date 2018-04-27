@@ -36,11 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.mlt.rudimant.common.Position;
-import de.dfki.mlt.rudimant.compiler.Environment;
-import de.dfki.mlt.rudimant.compiler.Mem;
-import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
+import de.dfki.mlt.rudimant.compiler.*;
 import de.dfki.mlt.rudimant.compiler.io.BisonParser;
-import de.dfki.mlt.rudimant.compiler.io.VondaLexer.Token;
 
 /**
  * class that represents a top-level file that was handed over to GrammarMain (=
@@ -56,7 +53,9 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
   List<RudiTree> rules;
   static Writer out;
 
+
   public LinkedList<Token> tokens;
+  public LinkedList<Token> commentTokens;
 
 
   // **********************************************************************
@@ -105,7 +104,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
   // As expected, this works equally well.
   private void startTypeInference(RudimantCompiler rudi, boolean errorsFatal) {
     Mem mem = rudi.getMem();
-    VisitorType ttv = new VisitorType(mem, errorsFatal);
+    VisitorType ttv = new VisitorType(mem, errorsFatal, tokens, commentTokens);
 
     for (RudiTree t : rules) {
       if (t instanceof Import) {
@@ -132,7 +131,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
    */
   private void saveCommentsForLater(VisitorGeneration gv, Position pos) {
     while (!gv.collectedTokens.isEmpty()
-        && gv.collectedTokens.get(0).start.getCharpos() < pos.getCharpos()) {
+        && gv.collectedTokens.get(0).getStart().getCharpos() < pos.getCharpos()) {
       saveComments.addFirst(gv.collectedTokens.get(0));
       gv.collectedTokens.remove();
     }
@@ -147,8 +146,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
   }
 
   /** Now produce code for all rules and statements in a file */
-  private void writeRuleList(Writer out, Mem mem, VisitorGeneration gv)
-      throws IOException{
+  private void writeRuleList(Mem mem, VisitorGeneration gv) {
+    SilentWriter out = gv.out;
     List<RTStatement> later = new ArrayList<>();
     // do all VarDefs *DEFINITIONS* on toplevel here, those are class attributes
     for(RudiTree r : rules) {
@@ -204,7 +203,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
           out.append(" if (res != 0)");
         } else {
           Import imp = (Import)r;
-          out.append(r.checkComments(gv, r.getLocation().getBegin()));
+          gv.checkComments(r.getLocation().getBegin());
           out.append("res = ");
           // use fully qualified name
           String rootpkg = getPackageName(mem.getTopLevelPackageSpec());
@@ -284,12 +283,12 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     // Now, print all initial comments (preceding the first element) before the
     // class starts, for, e.g., imports
     Position firstPos = rules.get(0).getLocation().getBegin();
-    Iterator<Token> it = tokens.iterator();
+    Iterator<Token> it = commentTokens.iterator();
     while (it.hasNext()) {
       Token curr = it.next();
-      if (curr.start.getCharpos() < firstPos.getCharpos()
+      if (curr.getStart().getCharpos() < firstPos.getCharpos()
           && curr.getText().startsWith("/*@")) {
-        out.append(RudiTree.removeJavaBrackets(curr.getText()));
+        out.append(VisitorGeneration.removeJavaBrackets(curr.getText()));
         it.remove();
       } else break;
     }
@@ -341,17 +340,15 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     // declared in this file
     // ************************************************************
     VisitorGeneration gv =
-        new VisitorGeneration(out, mem, rudi.logRudi(), tokens);
+        new VisitorGeneration(out, mem, rudi.logRudi(), commentTokens);
     mem.enterEnvironment(this);
-    writeRuleList(out, mem, gv);
+    writeRuleList(mem, gv);
     mem.leaveEnvironment(this);
 
     // ************************************************************
     // at the very end of the file, there might still be unprinted comments
     // ************************************************************
-    for (Token comment : gv.collectedTokens) {
-      out.append(RudiTree.removeJavaBrackets(comment.getText())).append("\n");
-    }
+    gv.checkComments(new Position(0, 0, Integer.MAX_VALUE, ""));
     out.append("}\n");
   }
 

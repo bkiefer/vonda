@@ -51,7 +51,7 @@ public class ExpVariable extends RTExpLeaf {
     v.visitNode(this);
   }
 
-  public void propagateType(Type upperType) {
+  public void propagateType(Type upperType, VisitorType v) {
     // it's not an error if the type is null
     type = upperType;
   }

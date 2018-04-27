@@ -27,6 +27,7 @@ import java.util.*;
 import de.dfki.mlt.rudimant.common.Location;
 import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.compiler.Mem;
+import de.dfki.mlt.rudimant.compiler.Token;
 import de.dfki.mlt.rudimant.compiler.tree.ExpSingleValue;
 
 import org.slf4j.Logger;
@@ -54,27 +55,12 @@ import org.slf4j.LoggerFactory;
 
   private Mem mem;
 
-  public class Token {
-    public String s;
-    public Position start, end;
-
-    private Token(String s, Position start, Position  end) {
-      this.s = s;
-      this.start = start;
-      this.end = end;
-    }
-
-    public String getText() {
-      return this.s;
-    }
-  }
-
   private Object yylval;
   private StringBuffer string = new StringBuffer();
 
   private LinkedList<Token> commentTokens = new LinkedList<>();
 
-  private List<Token> tokens = new ArrayList<>();
+  private LinkedList<Token> tokens = new LinkedList<>();
 
   private int charLiteral(String charval) {
     yylval = new ExpSingleValue(charval, "char");
@@ -109,7 +95,8 @@ import org.slf4j.LoggerFactory;
    * @return the first position beyond the last scanned token.
    */
   public Position getEndPos() {
-    return new Position(yyline, yycolumn + yylength(), yychar + yylength(), origin);
+    int len = yylength();
+    return new Position(yyline, yycolumn + len, yychar + len, origin);
   }
 
   /**
@@ -157,7 +144,10 @@ import org.slf4j.LoggerFactory;
   public void setMem(Mem m) { mem = m; }
 
   /** Return the collected tokens */
-  public LinkedList<Token> getCollectedTokens() { return commentTokens; }
+  public LinkedList<Token> getTokens() { return tokens; }
+
+  /** Return the collected comment tokens */
+  public LinkedList<Token> getCommentTokens() { return commentTokens; }
 
   /** Add a non-comment and non-whitespace token */
   public int token(int token) {
@@ -168,36 +158,6 @@ import org.slf4j.LoggerFactory;
   /** Add a comment or whitespace token */
   public void addComment(String comment) {
     commentTokens.add(new Token(comment, getStartPos(), getEndPos()));
-  }
-
-  /** find the position of the token that starts at or immediately after pos */
-  public int indexOf(List<Token> tokens, Position start) {
-    for(int i = 0; i < tokens.size(); ++i) {
-      if (tokens.get(i).start.compareTo(start) >= 0) return i;
-    }
-    return -1;
-  }
-
-  public String getFullText(Position start, Position end) {
-    StringBuffer sb = new StringBuffer();
-    // find the positions of the first token starting at start
-    int comm = indexOf(commentTokens, start);
-    int cont = indexOf(tokens, start);
-    while ((comm != -1 && comm < commentTokens.size()
-    			&& commentTokens.get(comm).end.compareTo(end) <= 0) ||
-           (cont != -1 && cont < tokens.size()
-           		&& tokens.get(cont).end.compareTo(end) <= 0)) {
-      // find which token is next, append it and increase the appropriate index
-      if (comm != -1 && comm < commentTokens.size()
-          && commentTokens.get(comm).start.compareTo(tokens.get(cont).start) <= 0){
-        sb.append(commentTokens.get(comm).getText());
-        ++comm;
-      } else {
-        sb.append(tokens.get(cont).getText());
-        ++cont;
-      }
-    }
-    return sb.toString();
   }
 %}
 

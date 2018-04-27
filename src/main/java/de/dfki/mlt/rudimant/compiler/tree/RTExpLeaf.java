@@ -37,12 +37,13 @@ public abstract class RTExpLeaf extends RTExpression {
   }
 
   public String toString() {
-    return (content == null) ? fullexp : content;
+    return content;
   }
 
-  public void propagateType(Type upperType) {
+  public void propagateType(Type upperType, VisitorType v) {
     if (type != null && ! type.isUnspecified()) {
-      logger.error("Why didn't this type percolate up? " + fullexp + " " + type);
+      logger.error("Why didn't this type percolate up? "
+          + v.getFullText(this) + " " + type);
       return;
     }
     type = upperType;

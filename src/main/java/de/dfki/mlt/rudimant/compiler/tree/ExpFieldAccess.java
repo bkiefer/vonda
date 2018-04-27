@@ -19,7 +19,6 @@
 
 package de.dfki.mlt.rudimant.compiler.tree;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,17 +30,8 @@ import java.util.List;
 public class ExpFieldAccess extends RTExpLeaf {
 
   List<RTExpression> parts;
-  List<String> representation;
-
-  public ExpFieldAccess(List<RTExpression> parts, List<String> representation) {
-    this.parts = parts;
-    this.representation = representation;
-  }
 
   public ExpFieldAccess(List<RTExpression> parts) {
-    this.representation = new ArrayList<String>();
-    for (int i = 0; i < parts.size(); i++)
-      representation.add(parts.get(i).fullexp);
     this.parts = parts;
   }
 
@@ -58,9 +48,7 @@ public class ExpFieldAccess extends RTExpLeaf {
       return parts.get(s).ensureBooleanBasic();
     }
 
-    List<RTExpression> smaller = parts.subList(0, s);
-    List<String> smallerRep = representation.subList(0, s);
-    ExpFieldAccess first = fixFields(new ExpFieldAccess(smaller, smallerRep));
+    ExpFieldAccess first = fixFields(new ExpFieldAccess(parts.subList(0, s)));
     first.type = parts.get(s - 1).type;
     RTExpression right = this.ensureBooleanBasic();
     return fixFields(new ExpBoolean(first.ensureBooleanUFA(), right, "&&", true));

@@ -58,7 +58,8 @@ public class ExpDialogueAct extends RTExpression {
     return dtrs;
   }
 
-  public void propagateType(Type upperType) {
-    logger.error("Why didn't this type percolate up? " + fullexp + " " + type);
+  public void propagateType(Type upperType, VisitorType v) {
+    logger.error("Why didn't this type percolate up? "
+        + v.getFullText(this) + " " + type);
   }
 }

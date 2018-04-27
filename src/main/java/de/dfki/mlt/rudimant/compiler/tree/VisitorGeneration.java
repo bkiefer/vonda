@@ -30,12 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
+import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.common.RuleInfo;
-import de.dfki.mlt.rudimant.compiler.Mem;
-import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
-import de.dfki.mlt.rudimant.compiler.SilentWriter;
-import de.dfki.mlt.rudimant.compiler.Type;
-import de.dfki.mlt.rudimant.compiler.io.VondaLexer.Token;
+import de.dfki.mlt.rudimant.compiler.*;
 
 /**
  * visitor generates the java code
@@ -70,6 +67,32 @@ public class VisitorGeneration implements RudiVisitor {
     //condV = new VisitorConditionLog(this);
     collectedTokens = tokens;
   }
+
+  public static String removeJavaBrackets(String c){
+    // Deal with java code
+    if (c.startsWith("/*@")) {
+      c = c.substring(3, c.length() - 3);
+    }
+    return c;
+  }
+
+  protected void checkComments(Position firstPos) {
+    Iterator<Token> it = collectedTokens.iterator();
+    Token next;
+    boolean content = false;
+    while (it.hasNext()
+        && (next = it.next()).getStart().getCharpos() < firstPos.getCharpos()) {
+      it.remove();
+      String comment = next.getText();
+      comment = removeJavaBrackets(comment);
+      if (!comment.trim().isEmpty()) {
+        out.append(comment);
+        content = true;
+      }
+    }
+    if (content) out.append('\n');
+  }
+
 
   /** If this method is called in a generated class that is *not* the top level
    *  class, the topLevelInstanceName and a dot will be output to guarantee
@@ -275,7 +298,7 @@ public class VisitorGeneration implements RudiVisitor {
         replaceLastWithFuncall = true;
         fa.visitWithComments(this);
         out.append(".hasSlot(\"" +
-            fa.parts.get(fa.parts.size() - 1).fullexp + "\")");
+            ((RTExpLeaf)(fa.parts.get(fa.parts.size() - 1))).content + "\")");
         replaceLastWithFuncall = oldrep;
         return;
       }

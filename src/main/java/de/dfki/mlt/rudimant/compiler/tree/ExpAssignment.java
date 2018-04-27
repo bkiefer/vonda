@@ -43,7 +43,7 @@ public class ExpAssignment extends RTExpression {
   public void visit(RudiVisitor v) {
     v.visitNode(this);
   }
-  
+
   public boolean leftIsVariable() {
     return left instanceof ExpVariable;
   }
@@ -53,12 +53,13 @@ public class ExpAssignment extends RTExpression {
     return Arrays.asList(dtrs);
   }
 
-  public void propagateType(Type upperType) {
+  public void propagateType(Type upperType, VisitorType v) {
     if (type != null && ! type.isUnspecified()) {
-      logger.error("Why didn't this type percolate up? " + fullexp + " " + type);
+      logger.error("Why didn't this type percolate up? "
+          + v.getFullText(this) + " " + type);
       return;
     }
     type = upperType;
-    right.propagateType(upperType);
+    right.propagateType(upperType, v);
   }
 }

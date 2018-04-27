@@ -42,13 +42,14 @@ public abstract class RTBinaryExp extends RTExpression {
         : new RudiTree[]{ left });
   }
 
-  public void propagateType(Type upperType) {
+  public void propagateType(Type upperType, VisitorType v) {
     if (type != null && ! type.isUnspecified()) {
-      logger.error("Why didn't this type percolate up? " + fullexp + " " + type);
+      logger.error("Why didn't this type percolate up? "
+          + v.getFullText(this) + " " + type);
       return;
     }
     type = upperType;
-    right.propagateType(upperType);
-    left.propagateType(upperType);
+    right.propagateType(upperType, v);
+    left.propagateType(upperType, v);
   }
 }

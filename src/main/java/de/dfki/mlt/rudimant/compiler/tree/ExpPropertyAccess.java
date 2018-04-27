@@ -46,7 +46,7 @@ public class ExpPropertyAccess extends RTExpLeaf {
     propertyVariable = var;
     rangeType = rt;
     functional = func;
-    this.fullexp = fullexp;
+    content= fullexp;
   }
 
   @Override

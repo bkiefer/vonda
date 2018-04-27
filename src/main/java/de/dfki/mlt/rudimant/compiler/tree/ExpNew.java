@@ -55,7 +55,7 @@ public class ExpNew extends RTExpression {
   }
 
   @Override
-  public void propagateType(Type upperType) {
+  public void propagateType(Type upperType, VisitorType v) {
     // TODO: does this make sense here????
   }
 

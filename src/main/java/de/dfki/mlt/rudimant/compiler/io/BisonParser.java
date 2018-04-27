@@ -22,7 +22,8 @@ public class BisonParser {
     }
     if (! grammar.parse()) return null;
     GrammarFile result = grammar.getResult();
-    result.tokens = lexer.getCollectedTokens();
+    result.tokens = lexer.getTokens();
+    result.commentTokens = lexer.getCommentTokens();
     return result;
   }
 }

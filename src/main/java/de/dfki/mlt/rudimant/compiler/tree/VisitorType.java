@@ -30,11 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
+import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.common.RuleInfo;
-import de.dfki.mlt.rudimant.compiler.Mem;
-import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
-import de.dfki.mlt.rudimant.compiler.Type;
-import de.dfki.mlt.rudimant.compiler.TypeException;
+import de.dfki.mlt.rudimant.compiler.*;
 
 /**
  * this visitor calculates the types of nodes and checks whether the types are
@@ -49,6 +47,41 @@ public class VisitorType implements RudiVisitor {
   private Mem mem;
 
   boolean typeErrorFatal;
+
+  private List<Token> commentTokens;
+  private List<Token> tokens;
+
+  /** find the position of the token that starts at or immediately after pos */
+  public int indexOf(List<Token> tokens, Position start) {
+    for(int i = 0; i < tokens.size(); ++i) {
+      if (tokens.get(i).getStart().compareTo(start) >= 0) return i;
+    }
+    return -1;
+  }
+
+  public String getFullText(RudiTree node) {
+    Position start = node.getLocation().getBegin();
+    Position end = node.getLocation().getEnd();
+    StringBuffer sb = new StringBuffer();
+    // find the positions of the first token starting at start
+    int comm = indexOf(commentTokens, start);
+    int cont = indexOf(tokens, start);
+    while ((comm != -1 && comm < commentTokens.size()
+          && commentTokens.get(comm).getEnd().compareTo(end) <= 0) ||
+           (cont != -1 && cont < tokens.size()
+              && tokens.get(cont).getEnd().compareTo(end) <= 0)) {
+      // find which token is next, append it and increase the appropriate index
+      if (comm != -1 && comm < commentTokens.size()
+          && commentTokens.get(comm).getStart().compareTo(tokens.get(cont).getStart()) <= 0){
+        sb.append(commentTokens.get(comm).getText());
+        ++comm;
+      } else {
+        sb.append(tokens.get(cont).getText());
+        ++cont;
+      }
+    }
+    return sb.toString();
+  }
 
   /** use this to report a type checking error; it will be handled according to
    *  the set typeCheck parameter
@@ -81,9 +114,12 @@ public class VisitorType implements RudiVisitor {
     logger.warn(newWarningMessage);
   }
 
-  public VisitorType(Mem m, boolean errorsFatal) {
+  public VisitorType(Mem m, boolean errorsFatal,
+      List<Token> tokz, List<Token> ctokz) {
     mem = m;
     typeErrorFatal = errorsFatal;
+    tokens = tokz;
+    commentTokens = ctokz;
   }
 
   public void visitNode(RudiTree node) {
@@ -120,19 +156,19 @@ public class VisitorType implements RudiVisitor {
         // unknown type to the left
         if (rtype.isUnspecified()) {
           // unknown type on both branches
-          typeError("Expression with unknown type: " + node.fullexp, node);
+          typeError("Expression with unknown type: " + getFullText(node), node);
         } else {
           typeWarning("propagating " + rtype + " to unknown left part: "
-              + node.fullexp, node);
+              + getFullText(node), node);
           // propagate type from the right branch to the left
-          node.left.propagateType(rtype);
+          node.left.propagateType(rtype, this);
           type = rtype;
         }
       } else if (rtype.isUnspecified()) {
         typeWarning("propagating " + ltype + " to unknown right part: "
-            + node.fullexp, node);
+            + getFullText(node), node);
         // propagate type from the left branch to the right
-        node.right.propagateType(ltype);
+        node.right.propagateType(ltype, this);
         type = ltype;
       } else {
         // check type compatibility
@@ -222,10 +258,10 @@ public class VisitorType implements RudiVisitor {
     }
     node.type = mergeType;
     if (node.right.type.isUnspecified()) {
-      node.right.propagateType(node.type);
+      node.right.propagateType(node.type, this);
     }
     if (node.left.type.isUnspecified()) {
-      node.left.propagateType(node.type);
+      node.left.propagateType(node.type, this);
     }
   }
 
@@ -240,7 +276,7 @@ public class VisitorType implements RudiVisitor {
       if (isBooleanOperator(node.operator)) {
         activeInfo.addOp(node.operator);
       } else {
-        activeInfo.addBaseTerm(node.fullexp);
+        activeInfo.addBaseTerm(getFullText(node));
         ruleIfSuspended = true;
       }
     }
@@ -249,7 +285,7 @@ public class VisitorType implements RudiVisitor {
   private void visitExpBoolChild(RudiTree node) {
     boolean oldSuspendState = ruleIfSuspended;
     if (collectTerms() && ! (node instanceof ExpBoolean)) {
-      activeInfo.addBaseTerm(node.fullexp);
+      activeInfo.addBaseTerm(getFullText(node));
       ruleIfSuspended = true;
     }
     node.visit(this);
@@ -320,7 +356,7 @@ public class VisitorType implements RudiVisitor {
         // cast to string if we think we now how
         res = convertToString(res);
       } else {
-        typeError(node.fullexp + ": DialogueAct argument not a string: "
+        typeError(getFullText(node) + ": DialogueAct argument not a string: "
             + res.type, node);
       }
     }
@@ -358,7 +394,7 @@ public class VisitorType implements RudiVisitor {
         ?	node.thenexp.getType().unifyTypes(node.elseexp.getType())
             : node.elseexp.getType();
     if (unified == null) {
-      typeError(node.fullexp + ": type of then and else differ: "
+      typeError(getFullText(node) + ": type of then and else differ: "
           + node.thenexp.getType().toString() + " vs. "
           + node.elseexp.getType().toString(), node);
       unified = Type.getNoType();
@@ -504,7 +540,7 @@ public class VisitorType implements RudiVisitor {
     node.type.setInnerType(inner);
     for (RTExpression e : node.objects) {
       if (e.getType().isUnspecified()) {
-        e.propagateType(inner);
+        e.propagateType(inner, this);
       }
     }
   }
