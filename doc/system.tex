@@ -380,7 +380,7 @@ if (!saidInSession(#Greeting(Meeting)) {
     // We assume we know the name by now
     propose("greet_back") {
       emitDA(#ReturnGreeting(Meeting,
-                  name=^user.name);
+                  name=\{user.name\});
     }
   }
 }
@@ -402,7 +402,8 @@ can be used to trigger proactive behaviour, or to check the state of the system
 after some time period, or in regular intervals. A timeout will only be created
 if there is no active timeout with that name.
 
-\subsubsection{Dialogue acts, their evaluation and the \caret}
+%\subsubsection{Dialogue acts, their evaluation and the \caret}
+\subsubsection{Dialogue acts, their evaluation and "real" variables}
 \label{sec:caret}
 
 %Eine wichtige Aufgabe eines Dialogsystems ist zweifellos die Ausgabe von
@@ -419,7 +420,7 @@ The dialogue act representation is an internal feature of \vonda. We are current
 \begin{figure}[htb]
   \centering\small%
 \begin{lstlisting}[language=Java]
-emitDA(#Inform(Answer, what=^solution));
+emitDA(#Inform(Answer, what={solution}));
 \end{lstlisting}\vspace*{-3ex}
   \caption{\vonda code example}
   \label{fig:DA}
@@ -446,7 +447,9 @@ emitDA(#Inform(Answer, what=^solution));
 %Seite einer Zuweisung notwendig, die dafür sorgt, dass der Ausdruck evaluiert
 %wird, und nicht als atomares Symbol interpretiert.
 
-The dialogue act passed to \texttt{emitDA} should look as shown in figure \ref{fig:DA}. \texttt{Inform}\verb|(...)| will be recognized by \vonda as dialogue act because it has been marked with \verb|#|. It will then create a new instance of the class DialogueAct that contains the respective modifications. As a default, arguments of a DialogueAct creation (i.e., character strings on the left and right of $=$) are seen as and transformed to constant (string) literals, because most of the time that is what is needed. The special ``hat'' syntax with \caret allows to mark when the following string is a real variable or an expression and should be evaluated.
+The dialogue act passed to \texttt{emitDA} should look as shown in figure \ref{fig:DA}. \texttt{Inform}\verb|(...)| will be recognized by \vonda as dialogue act because it has been marked with \verb|#|. It will then create a new instance of the class DialogueAct that contains the respective modifications. As a default, arguments of a DialogueAct creation (i.e., character strings on the left and right of $=$) are seen as and transformed to constant (string) literals, because most of the time that is what is needed. 
+%The special ``hat'' syntax with \caret allows to mark when the following string is a real variable or an expression and should be evaluated.
+Surrounding a character  sequence with curly brackets (\{\}) marks it as a real variable or an expression that should be evaluated.
 
 \subsubsection{Type inference and overloaded operators}
 \label{sec:typeinference}
