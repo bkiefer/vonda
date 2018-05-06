@@ -51,7 +51,7 @@ public class FieldAccessesTest {
 	  public void testFieldAccess2() {
 	    String in = "if(! c.user.personality.nonchalance ){}";
 	    String s = generate(in);
-	    System.out.println(s);
+	    //System.out.println(s);
 	    String expected = "if (!(c != null && c.user != null && c.user.personality != null"
 	    		+ " && c.user.personality.nonchalance != null))";
 	    assertEquals(expected, getForMarked(s, expected));
