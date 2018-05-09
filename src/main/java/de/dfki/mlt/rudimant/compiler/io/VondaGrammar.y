@@ -661,6 +661,9 @@ field_access
     //$$ = setPos(new ExpFieldAccess($2, repr), @$); $2.addFirst($1);
     $$ = setPos(new ExpFieldAccess($2), @$); $2.addFirst($1);
   }
+  | STRING field_access_rest {
+    $$ = setPos(new ExpFieldAccess($2), @$); $2.addFirst($1);
+  }
   | function_call field_access_rest { $$ = setPos(new ExpFieldAccess($2), @$); $2.addFirst($1); }
 //  | CastExpression field_access_rest { $$ = setPos(new ExpFieldAccess($2), @$); $2.addFirst($1); }
   ;

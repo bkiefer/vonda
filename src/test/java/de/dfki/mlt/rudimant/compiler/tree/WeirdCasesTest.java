@@ -42,4 +42,15 @@ public class WeirdCasesTest {
     //        + " Object seat = (Object)seat_outer; { } }";
     //assertEquals(expected, getForMarked(r, expected));
   }
+  
+  @Test
+  public void testLambda() {
+    
+    String in = "lab: if(true) {Child c; known2 = filter(c.hasActivities,\n" +
+"                     (p) -> \"someName\".equals(((Activity)p).name));}";
+    String r = generate(in);
+    //String expected = "for (Object seat_outer : getSeats()) {"
+    //        + " Object seat = (Object)seat_outer; { } }";
+    //assertEquals(expected, getForMarked(r, expected));
+  }
 }
