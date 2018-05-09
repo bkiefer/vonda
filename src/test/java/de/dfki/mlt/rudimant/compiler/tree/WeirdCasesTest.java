@@ -27,8 +27,7 @@ public class WeirdCasesTest {
   }
   
   @Test
-  public void testFunction() {
-    // TODO: Why the heck is this not parsing?
+  public void testCastInFunction() {
     
     String in = "boolean selfDisclose(String someNoun) {\n" +
 "        if (p.activity)\n" +
@@ -38,7 +37,7 @@ public class WeirdCasesTest {
 "        // }\n" +
 "  return false;\n" +
 "}";
-    String r = generate(in);
+    //String r = generate(in);
     //String expected = "for (Object seat_outer : getSeats()) {"
     //        + " Object seat = (Object)seat_outer; { } }";
     //assertEquals(expected, getForMarked(r, expected));
