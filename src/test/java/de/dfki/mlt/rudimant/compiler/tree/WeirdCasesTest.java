@@ -49,8 +49,11 @@ public class WeirdCasesTest {
     String in = "lab: if(true) {Child c; known2 = filter(c.hasActivities,\n" +
 "                     (p) -> \"someName\".equals(((Activity)p).name));}";
     String r = generate(in);
-    //String expected = "for (Object seat_outer : getSeats()) {"
-    //        + " Object seat = (Object)seat_outer; { } }";
-    //assertEquals(expected, getForMarked(r, expected));
+    String expected = "public int lab(){ boolean[] __x0 = new boolean[2];"
+            + " __x0[0] = (__x0[1] = true); logRule(0, __x0); lab: " +
+              "if (__x0[0]){ Rdf c;Object /* (unknown) */ known2 = (Object "
+            + "/* (unknown) */) filter(((Set<Object>)c.getValue(\"hasActivities\")), "
+            + "(p) -> \"someName\".equals(((Set<Object>)((Rdf)p).getValue(\"<upper:name>\"))));";
+    assertEquals(expected, getForMarked(r, expected));
   }
 }

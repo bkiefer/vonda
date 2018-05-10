@@ -1847,7 +1847,7 @@ public class VondaGrammar
   if (yyn == 170)
     /* "VondaGrammar.y":664  */ /* lalr1.java:489  */
     {
-    yyval = setPos(new ExpFieldAccess(((LinkedList<RTExpression>)(yystack.valueAt (2-(2))))), (yyloc)); ((LinkedList<RTExpression>)(yystack.valueAt (2-(2)))).addFirst((( ExpSingleValue )(yystack.valueAt (2-(1)))));
+    yyval = setPos(new ExpFieldAccess(((LinkedList<RTExpression>)(yystack.valueAt (2-(2))))), (yyloc)); ((LinkedList<RTExpression>)(yystack.valueAt (2-(2)))).addFirst(setPos((( ExpSingleValue )(yystack.valueAt (2-(1)))), (yyloc)));
   };
   break;
     
