@@ -56,4 +56,12 @@ public class WeirdCasesTest {
             + "(p) -> \"someName\".equals(((Set<Object>)((Rdf)p).getValue(\"<upper:name>\"))));";
     assertEquals(expected, getForMarked(r, expected));
   }
+  
+  @Test
+  public void testPlusPlus() {
+    String in = "int f(int i) {++i; return i++;}";
+    String r = generate(in);
+    String expected = "public int f(int i) { i = (i+1); return i = (i+1);";
+    assertEquals(expected, getForMarked(r, expected));
+  }
 }
