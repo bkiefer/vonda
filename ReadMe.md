@@ -20,7 +20,7 @@ Prerequisites for installing VOnDA are:
 - OpenJDK 8
 - maven build tool [https://maven.apache.org/]()
 - thrift 0.9.3 communication library [http://archive.apache.org/dist/thrift/0.9.3/]()
-- get openccg, dataviz j2emacs, cplanner, srgs2xml libraries and finally vonda form github:
+- get openccg, dataviz, j2emacs, cplanner, srgs2xml libraries and finally vonda from github:
   ```
   for d in openccg dataviz j2emacs cplan srgs2xml vonda; do
     git clone https://github.com/bkiefer/$d.git
