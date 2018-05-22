@@ -52,18 +52,6 @@
     </dependency>
 
     <dependency>
-      <groupId>de.dfki.tecs</groupId>
-      <artifactId>libtecs</artifactId>
-      <version>2.0.6</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.thrift</groupId>
-      <artifactId>libthrift</artifactId>
-      <version>0.9.3</version>
-    </dependency>
-
-    <dependency>
       <groupId>de.dfki.lt.hfc</groupId>
       <artifactId>hfc-db</artifactId>
       <version>1.3-SNAPSHOT</version>
