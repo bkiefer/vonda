@@ -19,9 +19,9 @@
 
   <repositories>
     <repository>
-      <id>FORSCHUNGSSOFTWARE</id>
-      <name>FORSCHUNGSSOFTWARE</name>
-      <url>http://www.forschungssoftware.de/nexus/content/groups/public/</url>
+      <id>project_local</id>
+      <name>project_local</name>
+      <url>file://${project.basedir}/repo</url>
     </repository>
   </repositories>
 
@@ -43,6 +43,18 @@
       <groupId>org.antlr</groupId>
       <artifactId>antlr4-runtime</artifactId>
       <version>4.5.1-1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.dfki.tecs</groupId>
+      <artifactId>libtecs</artifactId>
+      <version>2.0.6</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.thrift</groupId>
+      <artifactId>libthrift</artifactId>
+      <version>0.9.3</version>
     </dependency>
 
     <dependency>
