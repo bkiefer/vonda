@@ -1,9 +1,285 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>de.dfki.lt.hfc</groupId>
   <artifactId>hfc-db</artifactId>
   <version>1.3-SNAPSHOT</version>
-  <description>POM was created from install:install-file</description>
+  <packaging>jar</packaging>
+
+  <inceptionYear>2016</inceptionYear>
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <encoding>UTF-8</encoding>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>project.local</id>
+      <name>project</name>
+      <url>file://${project.basedir}/../../common_lib</url>
+    </repository>
+  </repositories>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.thrift.tools</groupId>
+        <artifactId>maven-thrift-plugin</artifactId>
+        <version>0.1.11</version>
+        <configuration>
+          <thriftExecutable>thrift</thriftExecutable>
+          <thriftSourceRoot>${basedir}/src/main/thrift/</thriftSourceRoot>
+        </configuration>
+        <executions>
+          <execution>
+            <id>generate-thrift-java</id>
+            <phase>generate-sources</phase>
+            <configuration>
+              <generator>java</generator>
+              <outputDirectory>
+                src/main/gen-java/
+              </outputDirectory>
+              <compileOutput>true</compileOutput>
+            </configuration>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>generate-thrift-cpp</id>
+            <phase>generate-sources</phase>
+            <configuration>
+              <generator>cpp</generator>
+              <outputDirectory>
+                src/main/gen-cpp/
+              </outputDirectory>
+              <compileOutput>false</compileOutput>
+            </configuration>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.7.7.201606060606</version>
+        <configuration>
+          <output>file</output>
+          <append>false</append>
+          <exclude>de.dfki.lt.hfc.db.client.TestClient.java</exclude>
+        </configuration>
+        <executions>
+          <execution>
+            <id>jacoco-initialize</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jacoco-site</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.3</version>
+        <configuration>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.5.3</version>
+        <executions>
+          <execution>
+            <id>deploy-assembly</id> <!-- used for inheritance merges -->
+            <phase>package</phase> <!-- bind to the packaging phase -->
+            <configuration>
+              <finalName>${project.build.finalName}</finalName>
+              <attach>false</attach>
+              <appendAssemblyId>false</appendAssemblyId>
+              <archive>
+                <manifest>
+                  <mainClass>de.dfki.lt.hfc.db.server.HfcDbMain</mainClass>
+                </manifest>
+              </archive>
+              <descriptors>
+                <descriptor>deploy-assembly.xml</descriptor>
+              </descriptors>
+            </configuration>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+
+          <execution>
+            <id>server-assembly</id> <!-- used for inheritance merges -->
+            <phase>package</phase> <!-- bind to the packaging phase -->
+            <configuration>
+              <finalName>hfc-server</finalName>
+              <attach>false</attach>
+              <appendAssemblyId>false</appendAssemblyId>
+              <archive>
+                <manifest>
+                  <mainClass>de.dfki.lt.hfc.db.server.HfcDbMain</mainClass>
+                </manifest>
+              </archive>
+              <descriptors>
+                <descriptor>server-assembly.xml</descriptor>
+              </descriptors>
+            </configuration>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+
+          <execution>
+            <id>client-assembly</id> <!-- used for inheritance merges -->
+            <phase>package</phase> <!-- bind to the packaging phase -->
+            <configuration>
+              <finalName>hfc-client</finalName>
+              <attach>false</attach>
+              <appendAssemblyId>false</appendAssemblyId>
+              <archive>
+                <manifest>
+                  <mainClass>de.dfki.lt.hfc.db.client.HfcDbClient</mainClass>
+                </manifest>
+              </archive>
+              <descriptors>
+                <descriptor>client-assembly.xml</descriptor>
+              </descriptors>
+            </configuration>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.9.1</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/main/gen-java/</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>de.dfki.tecs</groupId>
+      <artifactId>libtecs</artifactId>
+      <version>2.0.6</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.thrift</groupId>
+      <artifactId>libthrift</artifactId>
+      <version>0.9.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>pal</groupId>
+      <artifactId>palTECS-utils</artifactId>
+      <version>2.0-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.dfki.lt.hfc</groupId>
+      <artifactId>hfc</artifactId>
+      <version>1.2.0-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>net.sf.trove4j</groupId>
+      <artifactId>trove4j</artifactId>
+      <version>3.0.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>jline</groupId>
+      <artifactId>jline</artifactId>
+      <version>0.9.5</version>
+    </dependency>
+
+    <dependency>
+      <groupId>net.sf.jopt-simple</groupId>
+      <artifactId>jopt-simple</artifactId>
+      <version>5.0.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.12</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.19</version>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.dfki.mlt</groupId>
+      <artifactId>graff</artifactId>
+      <version>0.4-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>1.17</version>
+      <type>jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.6.2</version>
+    </dependency>
+  </dependencies>
+
 </project>
