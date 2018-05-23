@@ -1,0 +1,288 @@
+#
+# this simulates OWLIM's owl-horst_partialRDFS_builtin.pie rule file that builds
+# on the rule semantics for OWL as published by ter Horst which is based on Hayes'
+# work for axiomatizing RDF Schema;
+# I have split up rule $owl_FunctProp into $owl_FunctPropObject and
+# $owl_FunctPropDatatype, since the nature of the object of the triple either
+# leads to a owl:sameAs statement or to the bottom type owl:Nothing;
+#
+# NOTE: this file should only be used with HFC when the Boolean flag
+#       equivalenceClassReduction in class TupleStore is turned on (default = off);
+#       this file thus does NOT contain the rules copying over information
+#       from subject, predicate, and object position as originally specified by
+#         o $owl_sameAsCopySubj
+#         o $owl_equivalentPropertyCopyPred
+#         o $owl_sameAsCopyObj
+#
+# @see TupleStore.equivalenceClassReduction
+#
+# @author Hans-Ulrich Krieger
+# @version Mon Jul  5 16:29:39 CEST 2010
+#
+
+
+
+# NOTE: $rdf1_rdfs4a_4b (= rdf1 & rdfs4a & rdfs4b) modified;
+# not interested that ?s, ?p, and ?o are all of rdf:type rdfs:Resource;
+# only add that ?p is of rdf:type rdf:Property
+$rdf1_rdfs4a_4b
+?_s ?p ?_o "0"^^<xsd:long>
+->
+?p <rdf:type> <rdf:Property> "0"^^<xsd:long>
+
+
+$rdfs2
+?s ?p ?_o "0"^^<xsd:long>
+?p <rdfs:domain> ?dom "0"^^<xsd:long>
+->
+?s <rdf:type> ?dom "0"^^<xsd:long>
+@test
+?p != <rdf:type>
+
+
+# added second clause (HUK)
+$rdfs3
+?_s ?p ?o "0"^^<xsd:long>
+?p <rdf:type> <owl:ObjectProperty> "0"^^<xsd:long>
+?p <rdfs:range> ?rng "0"^^<xsd:long>
+->
+?o <rdf:type> ?rng "0"^^<xsd:long>
+
+
+# NOTE: redundant rule -- implemented through owl:TransitiveProperty
+#$rdfs5
+#?p <rdfs:subPropertyOf> ?q "0"^^<xsd:long>
+#?q <rdfs:subPropertyOf> ?r "0"^^<xsd:long>
+#->
+#?p <rdfs:subPropertyOf> ?r "0"^^<xsd:long>
+#@test
+#?p != ?q
+#?p != ?r
+#?q != ?r
+
+
+$rdfs6
+?p <rdf:type> <rdf:Property> "0"^^<xsd:long>
+->
+?p <rdfs:subPropertyOf> ?p "0"^^<xsd:long>
+
+
+$rdfs7
+?s ?p ?o "0"^^<xsd:long>
+?p <rdfs:subPropertyOf> ?q "0"^^<xsd:long>
+->
+?s ?q ?o "0"^^<xsd:long>
+@test
+?p != ?q
+
+
+# replaced rdfs:Class by owl:Class;
+# or we add a further axiom that owl:Class is a subclass of rdfs:Class as it is
+# enforced for OWL Lite and OWL DL
+# NOTE: this rule only implements rdfs10 (note that ?c is a subclass of rdfs:Resource)
+$rdfs8_10
+?c <rdf:type> <owl:Class> "0"^^<xsd:long>
+->
+?c <rdfs:subClassOf> ?c "0"^^<xsd:long>
+
+
+# universal instantiation
+$rdfs9
+?i <rdf:type> ?c "0"^^<xsd:long>
+?c <rdfs:subClassOf> ?d "0"^^<xsd:long>
+->
+?i <rdf:type> ?d "0"^^<xsd:long>
+@test
+?c != ?d
+
+
+# NOTE: redundant rule -- implemented through owl:TransitiveProperty
+# NOTE: no rule defined for rdfs:subPropertyOf -- again redundant through
+#       the characterization as being a transitive property
+#$rdfs11
+#?c <rdfs:subClassOf> ?d "0"^^<xsd:long>
+#?d <rdfs:subClassOf> ?e "0"^^<xsd:long>
+#->
+#?c <rdfs:subClassOf> ?e "0"^^<xsd:long>
+#@test
+#?c != ?d
+#?c != ?e
+#?d != ?e
+
+
+# NOTE: $rdfs12 omitted -- deals with rdfs:member
+# will not fire for our OWL ontologies
+
+
+# NOTE: $rdfs13 omitted -- deals with rdfs:Literal
+# will not fire for our OWL ontologies
+
+
+$owl_invOf
+?s ?p ?o "0"^^<xsd:long>
+?p <owl:inverseOf> ?q "0"^^<xsd:long>
+->
+?o ?q ?s "0"^^<xsd:long>
+
+
+$owl_invOfBySymProp
+?p <rdf:type> <owl:SymmetricProperty> "0"^^<xsd:long>
+->
+?p <owl:inverseOf> ?p "0"^^<xsd:long>
+
+
+$owl_SymPropByInverse
+?p <owl:inverseOf> ?p "0"^^<xsd:long>
+->
+?p <rdf:type> <owl:SymmetricProperty> "0"^^<xsd:long>
+
+
+# original rule name is: rdfp3;
+# rule was _not_ part of the OWLIM definition (why?)
+$owl_SymmetricProperty
+?p <rdf:type> <owl:SymmetricProperty> "0"^^<xsd:long>
+?s ?p ?o "0"^^<xsd:long>
+->
+?o ?p ?s "0"^^<xsd:long>
+
+
+$owl_TransProp
+?p <rdf:type> <owl:TransitiveProperty> "0"^^<xsd:long>
+?x ?p ?y "0"^^<xsd:long>
+?y ?p ?z "0"^^<xsd:long>
+->
+?x ?p ?z "0"^^<xsd:long>
+@test
+?x != ?y
+?y != ?z
+
+
+# second clause has been added to guarantee proper application context
+# note: rule will be automatically rewritten
+$owl_FunctPropObject
+?p <rdf:type> <owl:FunctionalProperty> "0"^^<xsd:long>
+?p <rdf:type> <owl:ObjectProperty> "0"^^<xsd:long>
+?x ?p ?y "0"^^<xsd:long>
+?x ?p ?z "0"^^<xsd:long>
+->
+?y <owl:sameAs> ?z "0"^^<xsd:long>
+@test
+?y != ?z
+?p != <rdf:type>
+
+
+# NOT part of the original rule set, a kind of integrity constraint, deriving
+# that an individual is of type owl:Nothing;
+# NOTE:  currently commented out  !!!!!!!!!!!!!!
+#$owl_FunctPropDatatype
+#?p <rdf:type> <owl:FunctionalProperty> "0"^^<xsd:long>
+#?p <rdf:type> <owl:DatatypeProperty> "0"^^<xsd:long>
+#?x ?p ?y "0"^^<xsd:long>
+#?x ?p ?z "0"^^<xsd:long>
+#->
+#?x <rdf:type> <owl:Nothing> "0"^^<xsd:long>
+#@test
+#?y != ?z
+#?p != <rdf:type>
+
+
+# holds for both datatype and object properties
+# note: rule will be automatically rewritten
+$owl_InvFunctProp
+?p <rdf:type> <owl:InverseFunctionalProperty> "0"^^<xsd:long>
+?y ?p ?x "0"^^<xsd:long>
+?z ?p ?x "0"^^<xsd:long>
+->
+?y <owl:sameAs> ?z "0"^^<xsd:long>
+@test
+?y != ?z
+?p != <rdf:type>
+
+
+# note: rule will be automatically rewritten
+$owl_EquivClassBySubClass
+?x <rdfs:subClassOf> ?y "0"^^<xsd:long>
+?y <rdfs:subClassOf> ?x "0"^^<xsd:long>
+->
+?x <owl:equivalentClass> ?y "0"^^<xsd:long>
+@test
+?x != ?y
+
+
+# note: rule will be automatically rewritten
+$owl_EquivPropBySubProp
+?p <rdfs:subPropertyOf> ?q "0"^^<xsd:long>
+?q <rdfs:subPropertyOf> ?p "0"^^<xsd:long>
+->
+?p <owl:equivalentProperty> ?q "0"^^<xsd:long>
+@test
+?p != ?q
+
+
+$owl_typeByAllVal
+?x <owl:onProperty> ?p "0"^^<xsd:long>
+?u <rdf:type> ?x "0"^^<xsd:long>
+?x <owl:allValuesFrom> ?y "0"^^<xsd:long>
+?u ?p ?v "0"^^<xsd:long>
+->
+?v <rdf:type> ?y "0"^^<xsd:long>
+
+
+$owl_typeByHasVal
+?r <owl:onProperty> ?p "0"^^<xsd:long>
+?r <owl:hasValue> ?v "0"^^<xsd:long>
+?i ?p ?v "0"^^<xsd:long>
+->
+?i <rdf:type> ?r "0"^^<xsd:long>
+
+
+$owl_AttrByHasVal
+?x <owl:hasValue> ?y "0"^^<xsd:long>
+?x <owl:onProperty> ?p "0"^^<xsd:long>
+?u <rdf:type> ?x "0"^^<xsd:long>
+->
+?u ?p ?y "0"^^<xsd:long>
+
+
+$owl_typeBySomeVal
+?q <rdf:type> ?c "0"^^<xsd:long>
+?r <owl:onProperty> ?p "0"^^<xsd:long>
+?r <owl:someValuesFrom> ?c "0"^^<xsd:long>
+?i ?p ?q "0"^^<xsd:long>
+->
+?i <rdf:type> ?r "0"^^<xsd:long>
+
+
+$owl_subClassByInters1
+?c <owl:intersectionOf> ?x "0"^^<xsd:long>
+?x <rdf:first> ?y "0"^^<xsd:long>
+->
+?c <rdfs:subClassOf> ?x "0"^^<xsd:long>
+?c <rdfs:subClassOf> ?y "0"^^<xsd:long>
+
+
+$owl_subClassByInters2
+?x <rdf:rest> ?y "0"^^<xsd:long>
+?c <owl:intersectionOf> ?x "0"^^<xsd:long>
+->
+?x <owl:intersectionOf> ?y "0"^^<xsd:long>
+@test
+?y != <rdf:nil>
+
+
+$owl_typeByIntersect_1
+?b <rdf:first> ?c "0"^^<xsd:long>
+?b <rdf:rest> <rdf:nil> "0"^^<xsd:long>
+?z <owl:intersectionOf> ?b "0"^^<xsd:long>
+?i <rdf:type> ?c "0"^^<xsd:long>
+->
+?i <rdf:type> ?b "0"^^<xsd:long>
+
+
+$owl_typeByIntersect_2
+?b <rdf:first> ?c "0"^^<xsd:long>
+?i <rdf:type> ?c "0"^^<xsd:long>
+?i <rdf:type> ?b "0"^^<xsd:long>
+?n <owl:intersectionOf> ?b "0"^^<xsd:long>
+->
+?i <rdf:type> ?n "0"^^<xsd:long>

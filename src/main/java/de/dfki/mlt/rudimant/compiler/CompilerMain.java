@@ -114,6 +114,7 @@ public class CompilerMain {
     configs = (Map<String, Object>) yaml.load(new FileReader(confFile));
   }
 
+
   /**
    *
    * @param args: the file that should be parsed without ending (in args[0])

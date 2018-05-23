@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<grammar xmlns="http://www.w3.org/2001/06/grammar" xml:lang="en-US"
+         mode="voice" root="ROOT" tag-format="semantics/1.0" version="1.0">
+  <rule id="ROOT" scope="public">
+    <one-of>
+      <item>
+        <one-of>
+          <item>Hello</item>
+          <item>Hi</item>
+          <item>Guten Tag</item>
+        </one-of>
+        <item repeat="0-1">Cat</item>
+        <tag> out.da="InitialGreeting" ; out.prop="Greet" </tag>
+      </item>
+      <item>
+        Hello again
+        <tag> out.da="SecondGreeting" ; out.prop="Greet" </tag>
+      </item>
+    </one-of>
+  </rule>
+</grammar>

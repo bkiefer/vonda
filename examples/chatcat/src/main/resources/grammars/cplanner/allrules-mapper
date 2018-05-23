@@ -1,0 +1,6 @@
+[Settings]
+encoding = UTF-8
+plugin_directory=.
+
+[Include]
+allrules

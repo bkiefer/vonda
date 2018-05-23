@@ -101,14 +101,132 @@ resp. its virtual replacement, the avatar. Generation is based on incoming
 stimuli, like speech or text input, or high-level action requests coming from
 some strategic planning component, or any other sensor input, if available.
 
-\section{Writing some First Rules}
+In this tutorial, we will create a very simple example system that has a database representation of itself and the user it will interact with. It can greet the user, ask for their name and say goodbye.
 
-\section{Setting up the RDF Store of your Project} \label{sec:hfc}
+To see the example system that is constructed in this chapter, switch to the \textbf{examples} branch of the \vonda git repository. You will find a folder named examples that contains the play-ground dialogue system ChatCat. More complex examples are planned to be published soon.
+
+\section{Setting up the RDF Store of your Project} \label{sec:example-hfc}
+
+A dialogue system aiming for social interaction does need some kind of memory representation. Therefore, the first step of building your dialogue manager should be to set up the ontology. It can of course be extended on-the-fly, while your system is becoming more and more elaborate, but you should still create a base from which to start from.
+
+At the very least, you are strongly recommended to use the dialogue hierarchy (provided in \texttt{examples/chatcat/src/main/resources/ontology/dialogue.nt}) as well as two default information files pertaining to the dialogue acts used in the \vonda framework.
+
+\subsection{Creating n-Tuple Files}
+
+%use Protege or another tool of your choice to create OWL/RDF file;
+%example here: with Protege
+HFC loads data from n-Tuple files. You can however create files in the more common OWL format and then automatically transfer it with a simple shell script, using the Raptor \citep{raptor} (e.g. \texttt{examples/chatcat/ntcreate.sh}). This tutorial uses Protégé \citep{Protege}.
+
+Open your favourite IDE and create a new file that includes an RDF class Agent, and two subclasses of this class, Robot and Human.
+
+After that, create a predicate \texttt{name} for the class Agent that has its range in \texttt{xsd:string}.
+
+\begin{figure}
+	\center
+	    \begin{minipage}{0.45\textwidth}
+		\centering
+		\includegraphics[width=0.6\textwidth]{Images/doc_protege.png}
+		%\caption{first figure}
+	\end{minipage}\hfill
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\includegraphics[width=0.6\textwidth]{Images/doc_protege2.png}
+		%\caption{second figure}
+	\end{minipage}
+\end{figure}
+
+As we do not now the user a priori, we will make the system create an instance for them at run-time. However, we know our robot, so I will create an instance of the class Robot and name it \textit{Robert}.
+
+Now save your new ontology. Then you can use Raptor (i.e., the \texttt{ntcreate.sh}) to transform it into n-tuple format. Afterward, create your \texttt{.ini}-file as described in the next section and add your tuple file to it.
+
+\textbf{Important:} If you are using Protégé, you should save the file in RDF/XML Syntax; the script will not work otherwise.
+
+
+\subsection{Combining multiple ontology files - How to Use the .ini}
+
+%Explain how multiple ontologies can be put together here; explain PersistencyFile, mention what [Namespaces] is about
+An HFC ontology is held together - and addressed to - via the ini file. This is a plain text file with the ending \texttt{.ini} that contains various settings and information. To create your own \texttt{.ini}, best copy the example below and add your ontology information to it as described in the following paragraphs.
+
+\begin{figure} [htbp]
+\begin{verbatim}
+[Settings]
+#minNoArgs=3
+#maxNoArgs=4
+#noAtoms=100000
+#noTuples=500000
+PersistencyFile=tuples.nt
+Encoding=UTF-8
+
+[Namespaces]
+# namespaces for XSD, RDF, RDFS, and OWL are already defined
+dial = http://www.dfki.de/lt/onto/common/dialogue.owl#
+chatcat = http://www.semanticweb.org/anna/ontologies/2018/3/chatcat
+
+# instead, you can also load one or more namespace files
+#default.ns
+
+[Tuples]
+# the axiomatic triples for OWL-Horst w/ EQ reduction
+default.eqred.nt
+
+[Tuples]
+dialogue.nt
+chatcat.nt
+
+[Rules]
+# we need special rules for transaction time (mixture of triples/quadruples)
+default.eqred.quads.rdl
+\end{verbatim}
+\caption{An examplary \texttt{.ini} file}
+\label{fig:ini}
+\end{figure}
+
+\paragraph{[Settings]}
+
+For most applications concerning dialogue management, it will be important to specify a \texttt{PersistencyFile}. You can put it anywhere you like (i.e., it will be created automatically in the place you specify), but if your application relies on inter-session memory, you probably don't want it to be lying in some temporary directory. All new Information that your dialogue system enters into the database will be collected here. So, if you want to find out which specific tuples have just been entered, you can refer to this file. At the same time, if you want to wipe the memory of your system, delete this file.
+
+\paragraph{[Namespaces]}
+
+In this section, you can specify abbreviations for your ontology namespaces. With the definition of the variable \texttt{dial} in figure \ref{fig:ini}, it is made possible to refer to classes, predicates and instances of this namespace with e.g. \texttt{<dial:Accept>} instead of \texttt{<http://www.dfki.de/lt/onto/common/dialogue.owl\#Accept>} in your queries to the database.
+
+As you can see, I included a shortcut for my chatcat ontology here.
+
+\paragraph{[Tuples]}
+
+Here you can put all the ontology files that you created. You should also put the file \texttt{dialogue.nt} which, as previously mentioned, contains the specifications of the dialogue acts used by the \vonda framework.
+
+\paragraph{[Rules]}
+
+Here lies the set of rules that HFC uses to build the ontology. It is recommended to simply use the file \texttt{default.eqred.quads.rdl} here. For further information, please refer to the documentation of HFC.
+
+
+\section{The Framework: Setting up the Base of your Dialogue System}
+
+You need to implement your own abstract (Java) agent as a subclass of \texttt{de.dfki.mlt.rudimant.agent.Agent}. Furthermore, you will need an implementation of \texttt{de.dfki.mlt.rudimant.agent.CommunicationHub}. To see an example of how this should be done, take a look in the source folder of ChatCat.
+
+The two most important things here are that you make sure that the database is initialized (as an instance of RdfProxy) and that you do use an instance of your \vonda Agent implementation in your client. Of course this code will not compile until you build your first rule file, i.e., your \vonda Agent.
+
+After this, the next thing you need is to create some main method where an instance of your client is built and set running using the \texttt{startListening()} method.
+
+As a start, we recommend you to use the ChatCat system as a base for your own system and extend it. This will also provide you with a GUI where you can test your first dialogue steps.
 
 \section{Connecting NLU and Generation Components}
 
+%examplary here: srgs for NLU and cplan for generation
 
+\section{Specifying how to Compile and Run your Project}
 
+The run-time and compile-time yml
+
+\section{Writing some First Rules}
+
+%how to react on an incoming greeting; ask for the user's name; create a new instance for the user if name is unknown or retrieve the correct instance from the database; also set a timeout for doing something afterwards
+Now that everything else has been arranged, we are set up for writing our first dialogue management rules. 
+
+\section{Advanced Features}
+
+\subsection{Connecting to a second HFC Server}
+% e.g., like for Smoto, if loading (a passive part of) the database takes too much time to perform it for every test
 
 
 

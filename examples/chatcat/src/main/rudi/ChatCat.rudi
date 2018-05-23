@@ -1,0 +1,12 @@
+hello_world:
+if (lastDA() && lastDA() <= #InitialGreeting(Greet)) {
+  propose("greet back") {
+    emitDA(#ReturnGreeting(Greet));
+  }
+  lastDAprocessed();
+}
+
+if (lastDA() && lastDA() <= #SecondGreeting(Greet)) {
+  emitDA(#SecondReturnGreeting(Greet));
+  lastDAprocessed();
+}

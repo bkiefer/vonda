@@ -1,8 +1,9 @@
-/target
+**/target
+**/gen-java
 .classpath
 .project
 .settings
-src/main/resources/generated
+**/src/main/resources/generated/*
 **/*~
 /nbproject/
 nbactions.xml

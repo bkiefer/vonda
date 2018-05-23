@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import de.dfki.lt.hfc.db.server.HfcDbApiHandler;
 import de.dfki.lt.hfc.db.server.HfcDbHandler;
 
 import org.yaml.snakeyaml.DumperOptions;
@@ -78,7 +79,7 @@ public class RudimantCompiler {
 
   private void startClient(File configDir, Map<String, Object> configs)
       throws IOException, WrongFormatException {
-    handler = new HfcDbHandler();
+    handler = new HfcDbApiHandler();
     String ontoFileName = (String) configs.get(CFG_ONTOLOGY_FILE);
     if (ontoFileName == null) {
       throw new IOException("Ontology file is missing.");
