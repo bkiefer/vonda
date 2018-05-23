@@ -33,6 +33,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import de.dfki.lt.hfc.db.server.HfcDbApiHandler;
 import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
@@ -135,7 +136,7 @@ public class CompilerMain {
 
   private static HfcDbHandler startClient(File configDir, Map<String, Object> configs)
       throws IOException, WrongFormatException {
-    HfcDbHandler handler = new HfcDbHandler();
+    HfcDbHandler handler = new HfcDbApiHandler();
     String ontoFileName = (String) configs.get(CFG_ONTOLOGY_FILE);
     if (ontoFileName == null) {
       throw new IOException("Ontology file is missing.");

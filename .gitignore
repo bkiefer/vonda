@@ -24,3 +24,4 @@ test.rudi
 **/*.vrb
 **/*.snm
 **/auto
+**/VondaGrammar.output
