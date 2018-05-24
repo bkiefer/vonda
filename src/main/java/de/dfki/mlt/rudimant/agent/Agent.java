@@ -185,7 +185,7 @@ public abstract class Agent implements StreamingClient {
   }
 
   @Override
-  public void compute() {
+  public void compute(Set<String> users) {
     newData();
   }
 
