@@ -607,26 +607,17 @@ public abstract class Agent implements StreamingClient {
     }
   }
 
-  /** Execute this proposal either after maxWait msecs or when the last
-   *  behaviour that was enqueued has finished
-   */
-  public void lastBehaviourTrigger(int maxWait, Proposal p) {
-    bhq.lastBehaviourTrigger(maxWait, p);
-  }
-
-  public boolean waitForBehaviours() {
+  public boolean waitForBehaviours(Behaviour b) {
     for(String id : bhq.removeOverdueBehaviours()) executeTrigger(id);
-    return bhq.waitForBehaviours();
-  }
-
-  /** Put the behaviour into a waiting queue to see when it's finished.
-   *  There will be a SystemInfo "finished" message that contains the id of the
-   *  behaviour
-   * @param c the message containing the behaviour
-   */
-  public void enqueueBehaviour(Behaviour b) {
-    startLastBehaviourTriggerTimeout(b.getId());
-    bhq.enqueueBehaviour(b);
+    boolean result =  bhq.waitForBehaviours();
+    if (result) {
+      // Put the behaviour into a waiting queue to see when it's finished.
+      // There will be a setBehaviourFinished that signals the end of the
+      // behaviour
+      startLastBehaviourTriggerTimeout(b.getId());
+      bhq.enqueueBehaviour(b);
+    }
+    return result;
   }
 
   /** A low level NAO command (or a timeout) signalled that the NAO finished
@@ -636,6 +627,13 @@ public abstract class Agent implements StreamingClient {
    */
   public void setBehaviourFinished(String behaviourId) {
     bhq.setBehaviourFinished(behaviourId);
+  }
+
+  /** Execute this proposal either after maxWait msecs or when the last
+   *  behaviour that was enqueued has finished
+   */
+  public void lastBehaviourTrigger(int maxWait, Proposal p) {
+    bhq.lastBehaviourTrigger(maxWait, p);
   }
 
   // ######################################################################

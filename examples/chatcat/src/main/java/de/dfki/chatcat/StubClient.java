@@ -153,12 +153,9 @@ public class StubClient implements CommunicationHub {
       }
       synchronized (itemsToSend) {
         Object c = itemsToSend.peekFirst();
-        if (c != null && (c instanceof Behaviour)) {
-          if (_agent.waitForBehaviours()) {
-            c = null;
-          } else {
-            _agent.enqueueBehaviour((Behaviour)c);
-          }
+        if (c != null && (c instanceof Behaviour)
+            && _agent.waitForBehaviours((Behaviour)c)) {
+          c = null;
         }
         if (c != null) {
           itemsToSend.removeFirst();
