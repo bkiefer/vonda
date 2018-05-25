@@ -30,6 +30,8 @@ Prerequisites for installing VOnDA are:
   done
   ```
 
+There is also a visual debugger/GUI for VOnDA: [https://github.com/yoshegg/rudibugger]()
+
 ## Documentation
 
 Detailed user documentation can be found in the doc folder of the project.
