@@ -103,7 +103,7 @@ some strategic planning component, or any other sensor input, if available.
 
 In this tutorial, we will create a very simple example system that has a database representation of itself and the user it will interact with. It can greet the user, ask for their name and say goodbye.
 
-To see the example system that is constructed in this chapter, switch to the \textbf{examples} branch of the \vonda git repository. You will find a folder named examples that contains the play-ground dialogue system ChatCat. More complex examples are planned to be published soon.
+To see the example system that is constructed in this chapter, switch to the folder named examples. It contains the play-ground dialogue system ChatCat. More complex examples are planned to be published soon.
 
 \section{Setting up the RDF Store of your Project} \label{sec:example-hfc}
 
@@ -160,7 +160,7 @@ Encoding=UTF-8
 [Namespaces]
 # namespaces for XSD, RDF, RDFS, and OWL are already defined
 dial = http://www.dfki.de/lt/onto/common/dialogue.owl#
-chatcat = http://www.semanticweb.org/anna/ontologies/2018/3/chatcat
+cat = http://www.semanticweb.org/anna/ontologies/2018/3/chatcat
 
 # instead, you can also load one or more namespace files
 #default.ns
@@ -217,6 +217,50 @@ Basically, you can connect any NLU and NLG components to your project that are a
 
 For the sake of simplicity, this example uses SRGS to build a primitive NLU and cplan to create natural language out of the dialogue acts the agent outputs.
 
+\section{Writing some First Rules}
+
+%how to react on an incoming greeting; ask for the user's name; create a new instance for the user if name is unknown or retrieve the correct instance from the database; also set a timeout for doing something afterwards
+Now that everything else has been arranged, we are set up for writing our first dialogue management rules.
+
+So, let's react to the user greeting the system, what we expect to be happening on startup. In the SRGS file (src/main/resources/grammars/srgs/chatcat.xml), we defined that an utterance of the user like ''Hello'' will be parsed as the dialogue act Salutation, with the proposition Greet. We now can define a rule reacting to this utterance:
+
+\begin{lstlisting}[language=Java]
+greet_back:
+  if (lastDA() <= #InitialGreeting(Greet)) {
+  	user = new Human;
+    propose("greet_back") {
+      emitDA(#ReturnGreeting(Greet));
+    }
+    lastDAprocessed();
+  }
+\end{lstlisting}
+
+This will create a new instance of Human, which is stored in a global variable \verb|user| that in our case has been defined in the ChatAgent and will be present during the whole conversation.
+
+After greeting, we want to find out the user's name. We thus define a rule as follows:
+
+\begin{lstlisting}[language=Java]
+ask_for_name:
+  if (!user.name && !()myLastDA() <= #WHQuestion(Name))) {
+    propose("ask_name") {
+      emitDA(#WHQuestion(Name));
+    }
+    lastDAprocessed();
+  }
+\end{lstlisting}
+
+And once we got the answer from the user, we can store this knowledge in the database:
+
+\begin{lstlisting}[language=Java]
+remember_name:
+  if (lastDA() <= #Inform(Name)) {
+    user.name = lastDA().what;
+    lastDAprocessed();
+  }
+\end{lstlisting}
+
+These are enough rules to start a conversation, so let's compile and try out the new dialogue system.
+
 \section{Specifying how to Compile and Run your Project}
 
 You can compile your \vonda rule files by executing the command\\ \verb|<yourVondaDirectory>/compile -c <yourCompileYml> <YourToplevelRudiFile>|.
@@ -238,21 +282,30 @@ To provide the possibility to easily change the Ontology, NLU and NLG components
 \begin{verbatim}
 ontologyFile:       src/main/resources/ontology/chatcat.ini
 NLG:
-	eng:
-		mapperProject: src/main/resources/grammars/cplanner/allrules-mapper
-		generationProject: src/main/resources/grammars/cplanner/allrules
+eng:
+mapperProject: src/main/resources/grammars/cplanner/allrules-mapper
+generationProject: src/main/resources/grammars/cplanner/allrules
 NLU:
-	eng:
-		class: de.dfki.chatcat.SrgsParser
-		grammar: src/main/resources/grammars/srgs/chatcat.xml
+eng:
+class: de.dfki.chatcat.SrgsParser
+grammar: src/main/resources/grammars/srgs/chatcat.xml
 \end{verbatim}
 
 This configuration can then be easily read in when starting your project, and be passed to the init method of Agent, which requires such information.
 
-\section{Writing some First Rules}
-
-%how to react on an incoming greeting; ask for the user's name; create a new instance for the user if name is unknown or retrieve the correct instance from the database; also set a timeout for doing something afterwards
-Now that everything else has been arranged, we are set up for writing our first dialogue management rules. 
+% TOOD: this should be mentioned, but the example was not compiling when messing with dial namespace like this
+%\subsection{Resolving Database Ambiguities}
+%
+%As you might have noticed whilst looking at chatcat.yml, there is another parameter used in the compile configuration of our example project:
+%
+%\begin{verbatim}
+%	nameToURI:
+%	Agent : "<cat:Agent>"
+%\end{verbatim}
+%
+%When trying to compile without these two lines, you will find that \vonda produces the warning '' \texttt{base name Agent can be one of  <http://www.semanticweb.org/anna/ontologies/2018/3/chatcat\#Agent>, <dial:Agent>, please resolve manually.}''.
+%
+%This is telling us that when defining the Rdf class Agent in the database step, we actually redefined an existing class. \vonda warns us about this and urges us to resolve this ambiguity. Thus, we could either rename our class, or explicitly state which namespace should be accessed whenever the class Agent is used. \texttt{nameToURI} can be used to do the latter.
 
 \section{Advanced Features}
 

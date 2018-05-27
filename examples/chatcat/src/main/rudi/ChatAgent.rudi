@@ -1,2 +1,3 @@
 
-Agent user;
+Human user;
+Robot robot;

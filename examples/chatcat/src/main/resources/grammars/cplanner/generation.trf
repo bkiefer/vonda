@@ -8,3 +8,7 @@ raw:ReturnGreeting ^ Greet
 raw:SecondReturnGreeting ^ Greet
 ->
 # =  :canned ^ <string>"* And hello you *".
+
+raw:WHQuestion ^ Name
+->
+# =  :canned ^ <string>"What's your name?".

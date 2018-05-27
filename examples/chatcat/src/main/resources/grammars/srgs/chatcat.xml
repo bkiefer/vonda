@@ -7,14 +7,13 @@
         <one-of>
           <item>Hello</item>
           <item>Hi</item>
-          <item>Guten Tag</item>
         </one-of>
         <item repeat="0-1">Cat</item>
         <tag> out.da="InitialGreeting" ; out.prop="Greet" </tag>
       </item>
       <item>
-        Hello again
-        <tag> out.da="SecondGreeting" ; out.prop="Greet" </tag>
+        My name is Sam
+        <tag> out.da="Inform" ; out.prop="Name" ; out.what="Sam" </tag>
       </item>
     </one-of>
   </rule>
