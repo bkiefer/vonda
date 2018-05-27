@@ -135,11 +135,11 @@ After that, create a predicate \texttt{name} for the class Agent that has its ra
 	\end{minipage}
 \end{figure}
 
-As we do not now the user a priori, we will make the system create an instance for them at run-time. However, we know our robot, so I will create an instance of the class Robot and name it \textit{Robert}.
+As we do not know the user a priori, we will make the system create an instance for them at run-time. However, we know our robot, so we will create an instance of the class Robot and name it \textit{Robert}.
 
-Now save your new ontology. Then you can use Raptor (i.e., the \texttt{ntcreate.sh}) to transform it into n-tuple format. Afterward, create your \texttt{.ini}-file as described in the next section and add your tuple file to it.
+Now save your new ontology. Then you can use Raptor (i.e., the \texttt{ntcreate.sh} script) to transform it into n-tuple format. Afterward, create your \texttt{.ini}-file as described in the next section and add your tuple file to it.
 
-\textbf{Important:} If you are using Protégé, you should save the file in RDF/XML Syntax; the script will not work otherwise.
+\textbf{Important:} If you are using Prot\'eg\'e, you should save the file in RDF/XML Syntax; the script will not work otherwise.
 
 
 \subsection{Combining multiple ontology files - How to Use the .ini}
@@ -183,13 +183,13 @@ default.eqred.quads.rdl
 
 \paragraph{[Settings]}
 
-For most applications concerning dialogue management, it will be important to specify a \texttt{PersistencyFile}. You can put it anywhere you like (i.e., it will be created automatically in the place you specify), but if your application relies on inter-session memory, you probably don't want it to be lying in some temporary directory. All new Information that your dialogue system enters into the database will be collected here. So, if you want to find out which specific tuples have just been entered, you can refer to this file. At the same time, if you want to wipe the memory of your system, delete this file.
+For most applications concerning dialogue management, it will be important to specify a \texttt{PersistencyFile}. You can put it anywhere you like (i.e., it will be created automatically in the place you specify), but if your application relies on inter-session memory, you probably don't want it to reside in some temporary directory. All new information that your dialogue system enters into the database will be collected here. So, if you want to find out which specific tuples have just been entered, you can refer to this file. At the same time, if you want to wipe the memory of your system, delete this file.
 
 \paragraph{[Namespaces]}
 
-In this section, you can specify abbreviations for your ontology namespaces. With the definition of the variable \texttt{dial} in figure \ref{fig:ini}, it is made possible to refer to classes, predicates and instances of this namespace with e.g. \texttt{<dial:Accept>} instead of \texttt{<http://www.dfki.de/lt/onto/common/dialogue.owl\#Accept>} in your queries to the database.
+In this section, you can specify abbreviations for your ontology namespaces. With the definition of the variable \texttt{dial} in figure \ref{fig:ini}, it is made possible to refer to classes, predicates and instances of this namespace with e.g. \texttt{<dial:Accept>} instead of\\ \texttt{<http://www.dfki.de/lt/onto/common/dialogue.owl\#Accept>} in your queries to the database.
 
-As you can see, I included a shortcut for my chatcat ontology here.
+As you can see, we included a shortcut for our chatcat ontology here.
 
 \paragraph{[Tuples]}
 
@@ -197,7 +197,7 @@ Here you can put all the ontology files that you created. You should also put th
 
 \paragraph{[Rules]}
 
-Here lies the set of rules that HFC uses to build the ontology. It is recommended to simply use the file \texttt{default.eqred.quads.rdl} here. For further information, please refer to the documentation of HFC.
+This specifies the set of rules that HFC uses to build the ontology. It is recommended to simply use the file \texttt{default.eqred.quads.rdl} here. For further information, please refer to the documentation of HFC.
 
 
 \section{The Framework: Setting up the Base of your Dialogue System}
@@ -310,9 +310,9 @@ goals to support the system requirements described before:
 \chapter{Installing and Getting Started}
 
 \input{system}
-
+\newpage
 \input{debugger}
-
+\newpage
 \input{hfc}
 
 \bibliography{vonda}
