@@ -1,12 +1,23 @@
-hello_world:
-if (lastDA() && lastDA() <= #InitialGreeting(Greet)) {
-  propose("greet back") {
-    emitDA(#ReturnGreeting(Greet));
+
+ask_for_name:
+if (user && !user.name && !(myLastDA() >= #WHQuestion(Name))) {
+  propose("ask_name") {
+    emitDA(#WHQuestion(Name));
   }
   lastDAprocessed();
 }
 
-if (lastDA() && lastDA() <= #SecondGreeting(Greet)) {
-  emitDA(#SecondReturnGreeting(Greet));
+greet_back:
+if (lastDA() >= #InitialGreeting(Greet)) {
+  propose("greet back") {
+    emitDA(#ReturnGreeting(Greet));
+  }
+  lastDAprocessed();
+  user = new Human;
+}
+
+remember_name:
+if (lastDA() >= #Inform(Name)) {
+  user.name = lastDA().what;
   lastDAprocessed();
 }
