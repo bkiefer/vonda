@@ -213,10 +213,41 @@ As a start, we recommend you to use the ChatCat system as a base for your own sy
 \section{Connecting NLU and Generation Components}
 
 %examplary here: srgs for NLU and cplan for generation
+Basically, you can connect any NLU and NLG components to your project that are able to create or, respectively, process dialogue acts of the format that \vonda provides (cfg. \ref{sec:caret}).
+
+For the sake of simplicity, this example uses SRGS to build a primitive NLU and cplan to create natural language out of the dialogue acts the agent outputs.
 
 \section{Specifying how to Compile and Run your Project}
 
-The run-time and compile-time yml
+You can compile your \vonda rule files by executing the command\\ \verb|<yourVondaDirectory>/compile -c <yourCompileYml> <YourToplevelRudiFile>|.
+
+The compile.yml should contain the following parameters:\\
+
+\begin{tabular}{ll}
+	\verb|outputDirectory:| & Relative to the current location, where should the compiled classes go?\\
+	\verb|wrapperClass:| & The name of your abstract Java Agent, fully qualified with package \\&specifcation\\
+	\verb|ontologyFile:| &The path to your .ini, relative to the current location\\
+	\verb|rootPackage:| &The package where you want the compile results to be in\\
+	\verb|failOnError:| &Set to true to exit compilation on any encountered type errors,\\& otherwise set to false (*)\\
+\end{tabular}\newline
+
+(*) Note that although \vonda type checking is becoming more and more reliable, it is not complete. In some cases, setting this switch to true might make your project uncompilable although when compiling it when ignoring type errors would result in a perfectly sound Java project.
+
+To provide the possibility to easily change the Ontology, NLU and NLG components of your project, it is recommended to create a second yml file containing the following specifications (This is an example from ChatCat):
+
+\begin{verbatim}
+ontologyFile:       src/main/resources/ontology/chatcat.ini
+NLG:
+	eng:
+		mapperProject: src/main/resources/grammars/cplanner/allrules-mapper
+		generationProject: src/main/resources/grammars/cplanner/allrules
+NLU:
+	eng:
+		class: de.dfki.chatcat.SrgsParser
+		grammar: src/main/resources/grammars/srgs/chatcat.xml
+\end{verbatim}
+
+This configuration can then be easily read in when starting your project, and be passed to the init method of Agent, which requires such information.
 
 \section{Writing some First Rules}
 
