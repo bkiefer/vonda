@@ -783,6 +783,7 @@ public class VondaLexer implements VondaGrammar.Lexer {
 
   private Object yylval;
   private StringBuffer string = new StringBuffer();
+  private Position sstart;
 
   private LinkedList<Token> commentTokens = new LinkedList<>();
 
@@ -790,7 +791,8 @@ public class VondaLexer implements VondaGrammar.Lexer {
 
   private int charLiteral(String charval) {
     yylval = new ExpSingleValue(charval, "char");
-    return token(VondaGrammar.Lexer.OTHER_LITERAL);
+    tokens.add(new Token('\'' + charval, sstart, getEndPos()));
+    return VondaGrammar.Lexer.OTHER_LITERAL;
   }
 
   private int intLiteral(String intval) {
@@ -1297,11 +1299,11 @@ public class VondaLexer implements VondaGrammar.Lexer {
             }
           case 54: break;
           case 6: 
-            { yybegin(STRING); string.setLength(0);
+            { sstart = getStartPos(); string.setLength(0); yybegin(STRING);
             }
           case 55: break;
           case 7: 
-            { yybegin(CHARLITERAL);
+            { sstart = getStartPos(); yybegin(CHARLITERAL);
             }
           case 56: break;
           case 8: 
@@ -1314,8 +1316,10 @@ public class VondaLexer implements VondaGrammar.Lexer {
           case 58: break;
           case 10: 
             { yybegin(YYINITIAL);
-  yylval = new ExpSingleValue(string.toString(), "String");
-  return token(VondaGrammar.Lexer.STRING);
+  String s = string.toString();
+  yylval = new ExpSingleValue(s, "String");
+  tokens.add(new Token('"' + s + '"', sstart, getEndPos()));
+  return VondaGrammar.Lexer.STRING;
             }
           case 59: break;
           case 11: 
