@@ -4,4 +4,4 @@ ontologyFile:       src/main/resources/ontology/chatcat.ini
 failOnError:        false
 rootPackage:        de.dfki.chatcat
 nameToURI:
-  Agent : "<cat:Agent>"
+  Agent : <cat:Agent>

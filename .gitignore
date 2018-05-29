@@ -26,3 +26,4 @@ test.rudi
 **/*.snm
 **/auto
 **/VondaGrammar.output
+**/persistent.nt

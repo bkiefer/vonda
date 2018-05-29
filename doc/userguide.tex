@@ -160,7 +160,7 @@ Encoding=UTF-8
 [Namespaces]
 # namespaces for XSD, RDF, RDFS, and OWL are already defined
 dial = http://www.dfki.de/lt/onto/common/dialogue.owl#
-cat = http://www.semanticweb.org/anna/ontologies/2018/3/chatcat
+cat = http://www.semanticweb.org/anna/ontologies/2018/3/chatcat#
 
 # instead, you can also load one or more namespace files
 #default.ns
@@ -293,19 +293,18 @@ grammar: src/main/resources/grammars/srgs/chatcat.xml
 
 This configuration can then be easily read in when starting your project, and be passed to the init method of Agent, which requires such information.
 
-% TOOD: this should be mentioned, but the example was not compiling when messing with dial namespace like this
-%\subsection{Resolving Database Ambiguities}
-%
-%As you might have noticed whilst looking at chatcat.yml, there is another parameter used in the compile configuration of our example project:
-%
-%\begin{verbatim}
-%	nameToURI:
-%	Agent : "<cat:Agent>"
-%\end{verbatim}
-%
-%When trying to compile without these two lines, you will find that \vonda produces the warning '' \texttt{base name Agent can be one of  <http://www.semanticweb.org/anna/ontologies/2018/3/chatcat\#Agent>, <dial:Agent>, please resolve manually.}''.
-%
-%This is telling us that when defining the Rdf class Agent in the database step, we actually redefined an existing class. \vonda warns us about this and urges us to resolve this ambiguity. Thus, we could either rename our class, or explicitly state which namespace should be accessed whenever the class Agent is used. \texttt{nameToURI} can be used to do the latter.
+\subsection{Resolving Namespace Ambiguities}
+
+As you might have noticed whilst looking at chatcat.yml, there is another parameter used in the compile configuration of our example project:
+
+\begin{verbatim}
+	nameToURI:
+	Agent : "<cat:Agent>"
+\end{verbatim}
+
+When trying to compile without these two lines, you will find that \vonda produces the warning '' \texttt{base name Agent can be one of  <http://www.semanticweb.org/anna/ontologies/2018/3/chatcat\#Agent>, <dial:Agent>, please resolve manually.}''.
+
+This is telling the compiler that when defining the Rdf class Agent in the database step, we actually redefined an existing class. \vonda warns us about this and urges us to resolve this ambiguity. Thus, we could either rename our class, or explicitly state which namespace should be accessed whenever the class Agent is used. \texttt{nameToURI} can be used to do the latter.
 
 \section{Advanced Features}
 
