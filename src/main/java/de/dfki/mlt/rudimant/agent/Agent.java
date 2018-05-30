@@ -628,6 +628,8 @@ public abstract class Agent implements StreamingClient {
 
   private void startLastBehaviourTriggerTimeout(String behaviourId) {
     Pair<Proposal, Integer> p = behaviourTriggers.get(behaviourId);
+    // TODO: I'm almost absolutely sure that here behaviourId should be
+    // lastBehaviourId, if not, find out why and document it here!
     if (p != null && ! timeouts.hasActiveTimeout(behaviourId)) {
       timeouts.newTimeout(lastBehaviourId, p.second, new Proposal() {
         public void run() {
@@ -689,9 +691,13 @@ public abstract class Agent implements StreamingClient {
       }
     }
     boolean result = (! _pendingBehaviours.isEmpty());
-    if (result) {
+    // This condition makes sure that by no means a second element will be added
+    // to the queue, which makes the queue a bit of an overkill
+    if (! result) {
       enqueueBehaviour(b);
     }
+    // if we return true, the sending of behaviours (and other system events)
+    // has to be blocked by the calling function !!!
     return result;
   }
 
