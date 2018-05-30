@@ -101,9 +101,14 @@ public class RudibuggerTest {
     RuleInfo rule_one = new RuleInfo("rule_one", 3, expectedRootImport);
     RuleInfo rule_one_a = new RuleInfo("rule_one_a", 6, rule_one);
     RuleInfo rule_two = new RuleInfo("rule_two", 12, expectedRootImport);
+    RuleInfo rule_three = new RuleInfo("rule_three", 16, expectedRootImport);
 
     /* test for equality */
     assertEquals(expectedRootImport, actualRootImport);
+    RuleInfo r = (RuleInfo)actualRootImport.getChildren().get(2);
+    assertEquals("a != \"1\\t\\\"\\n\"", r.getBaseTerm(0));
+    assertEquals("b != '\\n'", r.getBaseTerm(1));
+    assertEquals("d != 7.0", r.getBaseTerm(2));
   }
 
   @Test

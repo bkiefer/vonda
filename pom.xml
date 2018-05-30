@@ -223,7 +223,7 @@
         <executions>
           <execution>
             <id>makebisonflex</id>
-            <phase>compile</phase>
+            <phase>generate-sources</phase>
             <goals><goal>exec</goal></goals>
             <configuration>
               <workingDirectory>${project.build.sourceDirectory}/de/dfki/mlt/rudimant/compiler/io</workingDirectory>

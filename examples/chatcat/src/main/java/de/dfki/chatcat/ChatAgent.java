@@ -17,6 +17,7 @@ public abstract class ChatAgent extends Agent implements Constants {
 
   Rdf user;
   Rdf robot;
+  String DEFNS = "cat";
 
   private HfcDbApiHandler handler;
   private HfcDbServer server;

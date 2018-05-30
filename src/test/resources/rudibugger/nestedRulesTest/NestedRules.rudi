@@ -12,3 +12,7 @@ if (((a != b) || (b != c)) && (a == c)) {
 rule_two:
 if (! user)
   bli = 0;
+
+rule_three:
+if (a != "1\t\"\n" && b != '\n' && d != 7.0)
+  cancel;
