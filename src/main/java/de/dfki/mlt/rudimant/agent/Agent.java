@@ -672,7 +672,7 @@ public abstract class Agent implements StreamingClient {
   }
 
   // Uses BHContainer
-  public boolean waitForBehaviours() {
+  public boolean waitForBehaviours(Behaviour b) {
     long currentTime = System.currentTimeMillis();
     while (!_pendingBehaviours.isEmpty()) {
       BHContainer bc = _pendingBehaviours.peek();
@@ -688,7 +688,11 @@ public abstract class Agent implements StreamingClient {
         break;
       }
     }
-    return (! _pendingBehaviours.isEmpty());
+    boolean result = (! _pendingBehaviours.isEmpty());
+    if (result) {
+      enqueueBehaviour(b);
+    }
+    return result;
   }
 
   /** Put the behaviour into a waiting queue to see when it's finished.
@@ -696,7 +700,7 @@ public abstract class Agent implements StreamingClient {
    *  behaviour
    * @param c the message containing the behaviour
    */
-  public void enqueueBehaviour(Behaviour b) {
+  private void enqueueBehaviour(Behaviour b) {
     startLastBehaviourTriggerTimeout(b.getId());
 
     BHContainer bc = new BHContainer();
