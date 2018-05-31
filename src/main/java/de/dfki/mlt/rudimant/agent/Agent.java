@@ -600,23 +600,32 @@ public abstract class Agent implements StreamingClient {
 
   private void startLastBehaviourTriggerTimeout(String behaviourId) {
     Pair<Proposal, Integer> p = bhq.get(behaviourId);
+    String lastBehaviourId = bhq.getLastId();
+    // TODO: I'm almost absolutely sure that here behaviourId should be
+    // lastBehaviourId, if not, find out why and document it here!
     if (p != null && ! timeouts.hasActiveTimeout(behaviourId)) {
-      timeouts.newTimeout(behaviourId, p.second, new Proposal() {
-        public void run() { executeTrigger(behaviourId); }
+      timeouts.newTimeout(lastBehaviourId, p.second, new Proposal() {
+        public void run() { executeTrigger(lastBehaviourId); }
       });
     }
   }
 
   public boolean waitForBehaviours(Behaviour b) {
-    for(String id : bhq.removeOverdueBehaviours()) executeTrigger(id);
+    for(String id : bhq.removeOverdueBehaviours()) {
+      executeTrigger(id);
+    }
     boolean result =  bhq.waitForBehaviours();
-    if (result) {
+    // This condition makes sure that by no means a second element will be added
+    // to the queue, which makes the queue a bit of an overkill
+    if (! result) {
       // Put the behaviour into a waiting queue to see when it's finished.
       // There will be a setBehaviourFinished that signals the end of the
       // behaviour
       startLastBehaviourTriggerTimeout(b.getId());
       bhq.enqueueBehaviour(b);
     }
+    // if we return true, the sending of behaviours (and other system events)
+    // has to be blocked by the calling function !!!
     return result;
   }
 
@@ -626,7 +635,9 @@ public abstract class Agent implements StreamingClient {
    * If event sending was blocked while waiting for this signal, unblock it now.
    */
   public void setBehaviourFinished(String behaviourId) {
-    bhq.setBehaviourFinished(behaviourId);
+    for (String s : bhq.setBehaviourFinished(behaviourId)) {
+      executeTrigger(s);
+    }
   }
 
   /** Execute this proposal either after maxWait msecs or when the last

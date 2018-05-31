@@ -84,6 +84,10 @@ public class BehaviourQueue {
     lastBehaviourId = id;
   }
 
+  String getLastId() {
+    return lastBehaviourId;
+  }
+
   Pair<Proposal, Integer> get(String behaviourId) {
     return _behaviourTriggers.get(behaviourId);
   }
