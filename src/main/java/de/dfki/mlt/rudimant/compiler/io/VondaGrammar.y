@@ -285,8 +285,8 @@ propose_statement
   ;
 
 timeout_behaviour_statement
-  : TIMEOUT_BEHAVIOUR '(' exp ')' block {
-    $$ = setPos(new StatTimeout(null, $3, $5), @$);
+  : TIMEOUT_BEHAVIOUR '(' exp ',' exp ')' block {
+    $$ = setPos(new StatTimeout($5, $3, $7), @$);
   }
   ;
 

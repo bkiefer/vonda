@@ -156,6 +156,14 @@ timeout("do_something", 15000) {
   callToSomeMethod();
 }
 
+// You can also condition a timeout on the finishing of a behaviour. The code
+// block will be executed when either the specified time runs out or the
+// behaviour finishes
+timeout_behaviour(15000, #Inform(Call, when=soon)) {
+  callToSomeMethod();
+}
+
+
 // Automatic conversion to string of POD types
 s = "number" + 10;
 s = 10.0 + "number";

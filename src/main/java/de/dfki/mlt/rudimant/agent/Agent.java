@@ -208,17 +208,19 @@ public abstract class Agent implements StreamingClient {
 
   /** Send a Behaviour to the Behaviourmanager (communication hub) */
   public final void emitBehaviour(Behaviour b) {
-    //lastBehaviourId = b.getId();
-    bhq.setLastId(b.getId());
     _hub.sendBehaviour(b);
+  }
+
+  private Behaviour createBehaviour(int delay, DialogueAct da) {
+    Pair<String, String> toSay = asr.generate(da.getDag());
+    return new Behaviour(generateId(), toSay.second, toSay.first, delay);
   }
 
   /** Generate text and motion from a raw speech act representation and send it
    *  to the Behaviourmanager
    */
   public DialogueAct emitDA(int delay, DialogueAct da) {
-    Pair<String, String> toSay = asr.generate(da.getDag());
-    emitBehaviour(new Behaviour(generateId(), toSay.second, toSay.first, delay));
+    emitBehaviour(createBehaviour(delay, da));
     return addToMyDA(da);
   }
 
@@ -590,27 +592,36 @@ public abstract class Agent implements StreamingClient {
   // behaviour handling
   // ######################################################################
 
+  /** Cancel any behaviourTimeouts for this behaviour, if any,
+   *  and "execute" the proposal connected to it, again, if applicable.
+   *
+   * @param behaviourId
+   */
   private void executeTrigger(String behaviourId) {
     timeouts.cancelTimeout(behaviourId);
-    Proposal p = bhq.executeTrigger(behaviourId);
+    Proposal p = bhq.checkBehaviourTimeout(behaviourId);
     if (p != null) {
       proposalsToExecute.offerLast(p);
     }
   }
 
-  private void startLastBehaviourTriggerTimeout(String behaviourId) {
-    Pair<Proposal, Integer> p = bhq.get(behaviourId);
-    String lastBehaviourId = bhq.getLastId();
-    // TODO: I'm almost absolutely sure that here behaviourId should be
-    // lastBehaviourId, if not, find out why and document it here!
+  /** This starts the behaviourTimeout, if there is any, because now the
+   *  behaviour is really sent out.
+   *
+   * @param behaviourId
+   */
+  private void startBehaviourTimeout(String behaviourId) {
+    Pair<Proposal, Integer> p = bhq.getTrigger(behaviourId);
     if (p != null && ! timeouts.hasActiveTimeout(behaviourId)) {
-      timeouts.newTimeout(lastBehaviourId, p.second, new Proposal() {
-        public void run() { executeTrigger(lastBehaviourId); }
+      timeouts.newTimeout(behaviourId, p.second, new Proposal() {
+        public void run() { executeTrigger(behaviourId); }
       });
     }
   }
 
   public boolean waitForBehaviours(Behaviour b) {
+    // this kicks out behaviours that take too much time, or are never
+    // acknowledged by a finished message, without using timeouts.
     for(String id : bhq.removeOverdueBehaviours()) {
       executeTrigger(id);
     }
@@ -618,10 +629,12 @@ public abstract class Agent implements StreamingClient {
     // This condition makes sure that by no means a second element will be added
     // to the queue, which makes the queue a bit of an overkill
     if (! result) {
+      // start a timeout for a proposal that is eventually attached to the
+      // behaviour by a behaviourTimeout
+      startBehaviourTimeout(b.getId());
       // Put the behaviour into a waiting queue to see when it's finished.
       // There will be a setBehaviourFinished that signals the end of the
       // behaviour
-      startLastBehaviourTriggerTimeout(b.getId());
       bhq.enqueueBehaviour(b);
     }
     // if we return true, the sending of behaviours (and other system events)
@@ -640,11 +653,14 @@ public abstract class Agent implements StreamingClient {
     }
   }
 
-  /** Execute this proposal either after maxWait msecs or when the last
-   *  behaviour that was enqueued has finished
+  /** Execute this proposal either after maxWait msecs or when the
+   *  behaviour that was enqueued has finished.
    */
-  public void lastBehaviourTrigger(int maxWait, Proposal p) {
-    bhq.lastBehaviourTrigger(maxWait, p);
+  public void behaviourTimeout(DialogueAct da, int maxWait, Proposal p) {
+    Behaviour b = createBehaviour(maxWait + 500, da);
+    emitBehaviour(b);
+    addToMyDA(da);
+    bhq.addBehaviourTimeout(b.getId(), maxWait, p);
   }
 
   // ######################################################################
@@ -728,7 +744,6 @@ public abstract class Agent implements StreamingClient {
   public void shutdown() {
     // remove all behaviours, proposals and timeouts
     clearBehavioursAndProposals();
-    //behaviourTriggers.clear();
     timeouts.clear();
   }
 

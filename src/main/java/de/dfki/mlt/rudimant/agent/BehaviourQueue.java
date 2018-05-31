@@ -47,8 +47,6 @@ public class BehaviourQueue {
    */
   public static long MIN_PAUSE_FOR_FINISHED_BEHAVIOURS = 500;
 
-  protected String lastBehaviourId = null;
-
   /** Don't send the next behaviour before this point in time is reached */
   private long behaviourNotBefore = 0;
 
@@ -71,24 +69,18 @@ public class BehaviourQueue {
   private Map<String, Pair<Proposal, Integer>> _behaviourTriggers = new HashMap<>();
 
   /** Excecute the proposal either after maxWait msecs have passed or the
-   *  last behaviour added has ended
+   *  last behaviour added has ended. This is the only function that attaches
+   *  a proposal to a behaviour, so _behaviourTriggers is only there to handle
+   *  Agent.behaviourTimeout calls.
+   *
    */
-  void lastBehaviourTrigger(int maxWait, Proposal p) {
+  void addBehaviourTimeout(String id, int maxWait, Proposal p) {
     synchronized(_behaviourTriggers) {
-      _behaviourTriggers.put(lastBehaviourId,
-          new Pair<Proposal, Integer>(p, maxWait));
+      _behaviourTriggers.put(id, new Pair<Proposal, Integer>(p, maxWait));
     }
   }
 
-  void setLastId(String id) {
-    lastBehaviourId = id;
-  }
-
-  String getLastId() {
-    return lastBehaviourId;
-  }
-
-  Pair<Proposal, Integer> get(String behaviourId) {
+  Pair<Proposal, Integer> getTrigger(String behaviourId) {
     return _behaviourTriggers.get(behaviourId);
   }
 
@@ -97,7 +89,7 @@ public class BehaviourQueue {
     _behaviourTriggers.clear();
   }
 
-  Proposal executeTrigger(String behaviourId) {
+  Proposal checkBehaviourTimeout(String behaviourId) {
     Proposal result = null;
     synchronized(_behaviourTriggers) {
       if (_behaviourTriggers.containsKey(behaviourId)) {
@@ -108,7 +100,16 @@ public class BehaviourQueue {
     return result;
   }
 
-  // Uses BHContainer
+  private double estimatedTime(int items) {
+    return items * ((double)sumOfDurations / numberOfItems);
+  }
+
+  /** Return a list of overdue behaviours, such that possible attached proposals
+   *  can be executed. Overdue behaviours are deleted from the _pendingBehaviours
+   *
+   *  Uses BHContainer
+   * @return
+   */
   List<String> removeOverdueBehaviours() {
     List<String> result = new ArrayList<>();
     long currentTime = System.currentTimeMillis();
@@ -131,10 +132,6 @@ public class BehaviourQueue {
 
   boolean waitForBehaviours() {
     return (! _pendingBehaviours.isEmpty());
-  }
-
-  double estimatedTime(int items) {
-    return items * ((double)sumOfDurations / numberOfItems);
   }
 
   /** Put the behaviour into a waiting queue to see when it's finished.

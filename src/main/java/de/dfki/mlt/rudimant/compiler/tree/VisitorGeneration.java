@@ -685,13 +685,14 @@ public class VisitorGeneration implements RudiVisitor {
   @Override
   public void visitNode(StatTimeout node) {
     accessTopLevelInstance();
-    if (node.label == null) {
-      out.append("lastBehaviourTrigger(");
+    if (node.label.getType().isDialogueAct()) {
+      out.append("behaviourTimeout(");
     } else {
       out.append("newTimeout(");
-      node.label.visitWithComments(this);
-      out.append(",");
     }
+    node.label.visitWithComments(this);
+    out.append(",");
+
     node.time.visitWithComments(this);
     out.append(",");
     accessTopLevelInstance();
