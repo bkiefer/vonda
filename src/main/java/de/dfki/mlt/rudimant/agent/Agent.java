@@ -196,6 +196,16 @@ public abstract class Agent implements StreamingClient {
   // DialogueAct functions
   // **********************************************************************
 
+  /** Create a behaviour from a dialogue act. Must be overridden by a subclass
+   *  if 1) the DA should be enriched e.g. by sender and addressee by default
+   *  or 2) if the Behaviour should contain additional application-specific
+   *        information
+   */
+  protected Behaviour createBehaviour(int delay, DialogueAct da) {
+    Pair<String, String> toSay = asr.generate(da.getDag());
+    return new Behaviour(generateId(), toSay.second, toSay.first, delay);
+  }
+
   /** Generate DialogueAct from a raw speech act representation */
   public DialogueAct addToMyDA(DialogueAct da) {
     myLastDAs.addFirst(da);
@@ -211,15 +221,10 @@ public abstract class Agent implements StreamingClient {
     _hub.sendBehaviour(b);
   }
 
-  private Behaviour createBehaviour(int delay, DialogueAct da) {
-    Pair<String, String> toSay = asr.generate(da.getDag());
-    return new Behaviour(generateId(), toSay.second, toSay.first, delay);
-  }
-
   /** Generate text and motion from a raw speech act representation and send it
    *  to the Behaviourmanager
    */
-  public DialogueAct emitDA(int delay, DialogueAct da) {
+  public final DialogueAct emitDA(int delay, DialogueAct da) {
     emitBehaviour(createBehaviour(delay, da));
     return addToMyDA(da);
   }
@@ -227,7 +232,7 @@ public abstract class Agent implements StreamingClient {
   /** Generate text and motion from a raw speech act representation and send it
    * to the Behaviourmanager
    */
-  public DialogueAct emitDA(DialogueAct da) {
+  public final DialogueAct emitDA(DialogueAct da) {
     return emitDA(Behaviour.DEFAULT_DELAY, da);
   }
 
