@@ -33,7 +33,10 @@ boolean exists(Object o);
 DialogueAct createEmitDA(DialogueAct da);
 DialogueAct emitDA(int delay, DialogueAct da);
 DialogueAct emitDA(DialogueAct da);
-[DialogueAct]. void setProposition(String prop);
+[DialogueAct]. void getDialogueActType();
+[DialogueAct]. void setDialogueActType(String val);
+[DialogueAct]. void getProposition();
+[DialogueAct]. void setProposition(String val);
 
 // my last outgoing resp. the last incoming dialogue act
 DialogueAct myLastDA();

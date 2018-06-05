@@ -177,3 +177,15 @@ DialogueAct da = #Confirm(Correct, number={10});
 // you can call any function on the top level
 t = "10";
 toInt(t);
+
+// **********************************************************************
+// Access to Dialogue Acts
+// **********************************************************************
+DialogueAct da = #Inform(Posessing);
+if (! da.theme) {
+  da.theme = "Ball";
+}
+System.out.println(da.theme);
+da.setDialogueActType("Confirm");
+da.setProposition("Acquiring");
+//System.out.println(da);
