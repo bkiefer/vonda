@@ -91,7 +91,9 @@ public abstract class Agent implements StreamingClient {
   protected long lastDAprocessed = -1;
   //protected int unprocessedDAs;
 
-  private Timeouts timeouts = new Timeouts();
+  private final Timeouts timeouts = new Timeouts();
+
+  protected final BehaviourQueue bhq = new BehaviourQueue();
 
   /** Proposals to be executed in the next round, coming from fired timeouts
    *  or other triggers, like finished behaviours
@@ -194,6 +196,16 @@ public abstract class Agent implements StreamingClient {
   // DialogueAct functions
   // **********************************************************************
 
+  /** Create a behaviour from a dialogue act. Must be overridden by a subclass
+   *  if 1) the DA should be enriched e.g. by sender and addressee by default
+   *  or 2) if the Behaviour should contain additional application-specific
+   *        information
+   */
+  protected Behaviour createBehaviour(int delay, DialogueAct da) {
+    Pair<String, String> toSay = asr.generate(da.getDag());
+    return new Behaviour(generateId(), toSay.second, toSay.first, delay);
+  }
+
   /** Generate DialogueAct from a raw speech act representation */
   public DialogueAct addToMyDA(DialogueAct da) {
     myLastDAs.addFirst(da);
@@ -206,23 +218,21 @@ public abstract class Agent implements StreamingClient {
 
   /** Send a Behaviour to the Behaviourmanager (communication hub) */
   public final void emitBehaviour(Behaviour b) {
-    lastBehaviourId = b.getId();
     _hub.sendBehaviour(b);
   }
 
   /** Generate text and motion from a raw speech act representation and send it
    *  to the Behaviourmanager
    */
-  public DialogueAct emitDA(int delay, DialogueAct da) {
-    Pair<String, String> toSay = asr.generate(da.getDag());
-    emitBehaviour(new Behaviour(generateId(), toSay.second, toSay.first, delay));
+  public final DialogueAct emitDA(int delay, DialogueAct da) {
+    emitBehaviour(createBehaviour(delay, da));
     return addToMyDA(da);
   }
 
   /** Generate text and motion from a raw speech act representation and send it
    * to the Behaviourmanager
    */
-  public DialogueAct emitDA(DialogueAct da) {
+  public final DialogueAct emitDA(DialogueAct da) {
     return emitDA(Behaviour.DEFAULT_DELAY, da);
   }
 
@@ -584,181 +594,78 @@ public abstract class Agent implements StreamingClient {
   }
 
   // ######################################################################
-  // behaviour handling --> move to another class!
+  // behaviour handling
   // ######################################################################
-  /** How much time in milliseconds must pass between two behaviours, if
-   *  no message came back that the previous behaviour was finished.
+
+  /** Cancel any behaviourTimeouts for this behaviour, if any,
+   *  and "execute" the proposal connected to it, again, if applicable.
+   *
+   * @param behaviourId
    */
-  public static long MIN_TIME_BETWEEN_BEHAVIOURS = 10000;
-
-  /** The minimum pause after we got a signal that the previous behaviour
-   *  was finished.
-   */
-  public static long MIN_PAUSE_FOR_FINISHED_BEHAVIOURS = 500;
-
-  protected String lastBehaviourId = null;
-
-  /** Don't send the next behaviour before this point in time is reached */
-  private long behaviourNotBefore = 0;
-
-  // to estimate the duration per word/motion behaviour, can change during session
-  protected long sumOfDurations = 400;
-  protected long numberOfItems = 1;
-
-  protected class BHContainer {
-    public long delayBefore, delayAfter, issued;
-    public int items; // no of words and motion behaviours in this container
-    String id;
-    Behaviour b;
-  }
-
-  /** The queue of unfinished behaviours already sent out */
-  protected Deque<BHContainer> _pendingBehaviours = new ArrayDeque<>();
-
-  private IdentityHashMap<Behaviour, Integer> _customDelay = new IdentityHashMap<>();
-
-  private Map<String, Pair<Proposal, Integer>> behaviourTriggers = new HashMap<>();
-
-  public void lastBehaviourTrigger(int maxWait, Proposal p) {
-    synchronized(behaviourTriggers) {
-      behaviourTriggers.put(lastBehaviourId,
-          new Pair<Proposal, Integer>(p, maxWait));
+  private void executeTrigger(String behaviourId) {
+    timeouts.cancelTimeout(behaviourId);
+    Proposal p = bhq.checkBehaviourTimeout(behaviourId);
+    if (p != null) {
+      proposalsToExecute.offerLast(p);
     }
   }
 
-  private void startLastBehaviourTriggerTimeout(String behaviourId) {
-    Pair<Proposal, Integer> p = behaviourTriggers.get(behaviourId);
-    // TODO: I'm almost absolutely sure that here behaviourId should be
-    // lastBehaviourId, if not, find out why and document it here!
+  /** This starts the behaviourTimeout, if there is any, because now the
+   *  behaviour is really sent out.
+   *
+   * @param behaviourId
+   */
+  private void startBehaviourTimeout(String behaviourId) {
+    Pair<Proposal, Integer> p = bhq.getTrigger(behaviourId);
     if (p != null && ! timeouts.hasActiveTimeout(behaviourId)) {
-      timeouts.newTimeout(lastBehaviourId, p.second, new Proposal() {
-        public void run() {
-          synchronized(behaviourTriggers) { executeTrigger(lastBehaviourId); }
-        }
+      timeouts.newTimeout(behaviourId, p.second, new Proposal() {
+        public void run() { executeTrigger(behaviourId); }
       });
     }
   }
 
-
-
-  private void executeTrigger(String behaviourId) {
-    synchronized(behaviourTriggers) {
-      timeouts.cancelTimeout(behaviourId);
-      if (behaviourTriggers.containsKey(behaviourId)) {
-        proposalsToExecute.offerLast(behaviourTriggers.get(behaviourId).first);
-        behaviourTriggers.remove(behaviourId);
-      }
-    }
-  }
-
-  // TODO: Replaced by lastBehaviourTrigger?
-  /** Seems agnostic to implementation --> Agent ??
-  boolean waitForBehaviours(Object message) {
-    long currentTime = System.currentTimeMillis();
-    if (currentTime < behaviourNotBefore) {
-      return true;
-    } else {
-      //TODO: check if that does the trick
-      long delay = MIN_TIME_BETWEEN_BEHAVIOURS;
-      if (_customDelay.containsKey(message)) {
-        delay = _customDelay.get(message);
-        _customDelay.remove(message);
-      }
-      behaviourNotBefore = currentTime + delay;
-    }
-    return false;
-  }*/
-
-  double estimatedTime(int items) {
-    return items * ((double)sumOfDurations / numberOfItems);
-  }
-
-  // Uses BHContainer
   public boolean waitForBehaviours(Behaviour b) {
-    long currentTime = System.currentTimeMillis();
-    while (!_pendingBehaviours.isEmpty()) {
-      BHContainer bc = _pendingBehaviours.peek();
-      long timeUsed = currentTime - bc.issued;
-      double timeEstimated = estimatedTime(bc.items);
-      if (timeUsed > 3 * timeEstimated) {
-        _pendingBehaviours.pop();
-        executeTrigger(bc.id);
-        logger.info("removing overdue behaviour {} (ETA {}/{}), was {}", bc.id,
-            timeEstimated, bc.items, timeUsed);
-      } else {
-        // logger.info("Waiting for behaviour {} to finish", bc.id);
-        break;
-      }
+    // this kicks out behaviours that take too much time, or are never
+    // acknowledged by a finished message, without using timeouts.
+    for(String id : bhq.removeOverdueBehaviours()) {
+      executeTrigger(id);
     }
-    boolean result = (! _pendingBehaviours.isEmpty());
+    boolean result =  bhq.waitForBehaviours();
     // This condition makes sure that by no means a second element will be added
     // to the queue, which makes the queue a bit of an overkill
     if (! result) {
-      enqueueBehaviour(b);
+      // start a timeout for a proposal that is eventually attached to the
+      // behaviour by a behaviourTimeout
+      startBehaviourTimeout(b.getId());
+      // Put the behaviour into a waiting queue to see when it's finished.
+      // There will be a setBehaviourFinished that signals the end of the
+      // behaviour
+      bhq.enqueueBehaviour(b);
     }
     // if we return true, the sending of behaviours (and other system events)
     // has to be blocked by the calling function !!!
     return result;
   }
 
-  /** Put the behaviour into a waiting queue to see when it's finished.
-   *  There will be a SystemInfo "finished" message that contains the id of the
-   *  behaviour
-   * @param c the message containing the behaviour
-   */
-  private void enqueueBehaviour(Behaviour b) {
-    startLastBehaviourTriggerTimeout(b.getId());
-
-    BHContainer bc = new BHContainer();
-    bc.items = b.getText().split("  *").length + b.getMotion().split("\\|").length;
-    bc.id = b.getId();
-    bc.b = b;
-    bc.issued = System.currentTimeMillis();
-    /*
-    if (minTime < 0) {
-      bc.delayBefore = - minTime;
-    } else if (minTime > 0) {
-      bc.delayAfter = minTime;
-    }
-    */
-    logger.info("enqueueing behaviour {} (ETA {}/{})", bc.id,
-        (long)estimatedTime(bc.items), bc.items);
-    _pendingBehaviours.push(bc);
-  }
-
-  /**
-   * A low level NAO command (or a timeout) signalled that the NAO finished
-   * speaking / moving
+  /** A low level NAO command (or a timeout) signalled that the NAO finished
+   *  speaking / moving
    *
    * If event sending was blocked while waiting for this signal, unblock it now.
    */
   public void setBehaviourFinished(String behaviourId) {
-    if (_pendingBehaviours.isEmpty()) return;
-    int i = 0;
-    for (BHContainer b : _pendingBehaviours) {
-      if (b.id.equals(behaviourId)) {
-        long timeNeeded = System.currentTimeMillis() - b.issued;
-        logger.info("behaviour {} (ETA {}/{}), was {}", b.id,
-            (long) estimatedTime(b.items), b.items, timeNeeded);
-        sumOfDurations += timeNeeded;
-        numberOfItems += b.items;
-        break;
-      }
-      ++i;
+    for (String s : bhq.setBehaviourFinished(behaviourId)) {
+      executeTrigger(s);
     }
-    if (i == _pendingBehaviours.size()) {
-      logger.warn("no matching behaviour found for: {}", behaviourId);
-      return;
-    } else if (i > 0) {
-      logger.warn("Receiving behaviour id in wrong order: in: {} pending: {}"
-          , behaviourId, _pendingBehaviours.peek().id);
-    }
-    while (i >= 0) {
-      BHContainer bc = _pendingBehaviours.pop();
-      executeTrigger(bc.id);
-      logger.info("removing behaviour {}", bc.id);
-      --i;
-    }
+  }
+
+  /** Execute this proposal either after maxWait msecs or when the
+   *  behaviour that was enqueued has finished.
+   */
+  public void behaviourTimeout(DialogueAct da, int maxWait, Proposal p) {
+    Behaviour b = createBehaviour(maxWait + 500, da);
+    emitBehaviour(b);
+    addToMyDA(da);
+    bhq.addBehaviourTimeout(b.getId(), maxWait, p);
   }
 
   // ######################################################################
@@ -834,14 +741,14 @@ public abstract class Agent implements StreamingClient {
     // remove all behaviours, proposals and timeouts
     pendingProposals.clear();
     proposalsToExecute.clear();
-    _pendingBehaviours.clear();
+    //_pendingBehaviours.clear();
+    bhq.clear();
   }
 
   /** Empty all queues that might make the thing going */
   public void shutdown() {
     // remove all behaviours, proposals and timeouts
     clearBehavioursAndProposals();
-    behaviourTriggers.clear();
     timeouts.clear();
   }
 

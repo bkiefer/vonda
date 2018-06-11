@@ -930,7 +930,12 @@ public class VisitorType implements RudiVisitor {
 
   @Override
   public void visitNode(StatTimeout node) {
-    if (node.label != null) node.label.visit(this);
+    node.label.visit(this);
+    if (! node.label.getType().isString()
+        && ! node.label.getType().isStringConvertible()
+        && ! node.label.getType().isDialogueAct()) {
+      typeError("Argument of timeout must be string or dialogueact", node);
+    }
     node.time.visit(this);
     node.block.visit(this);
   }
