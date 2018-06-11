@@ -270,7 +270,8 @@ public class DialogueAct {
     Rdf sender = proxy.getRdf(senderUri);
     RdfClass dialClass = proxy.getClass("<dial:DialogueAct>");
     Rdf dial = dialClass.getNewInstance(DIAL_NS);
-    dial.setValue("<dial:repr>", d.toString());
+    // to work around a current hfc problem with strings containing '^'
+    dial.setValue("<dial:repr>", '"' + d.toString() + "\"^^<xsd:string>");
     dial.setValue("<dial:sender>", sender);
     return dial;
   }
