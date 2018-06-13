@@ -57,8 +57,8 @@ public abstract class ChatAgent extends Agent implements Constants {
   }
 
   @Override
-  public DialogueAct emitDA(DialogueAct da) {
+  protected Behaviour createBehaviour(int delay, DialogueAct da) {
     System.out.println("Returned DA: " + da.toString());
-    return emitDA(Behaviour.DEFAULT_DELAY, da);
+    return super.createBehaviour(delay, da);
   }
 }
