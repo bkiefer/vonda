@@ -41,11 +41,20 @@ public class DebuggingService  {
   public DebuggingService(Agent agent, int port) throws IOException {
     server = new SimpleServer(
         (args) -> {
-          try {
-            agent.logRule(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
-            logger.debug("set rule " + Integer.parseInt(args[0]) + " to " + Integer.parseInt(args[1]));
-          } catch (Throwable ex) {
-            Agent.logger.error("Illegal DebuggingService Call: {}",
+          String command = args[0];
+          String[] parameters = Arrays.copyOfRange(args, 1, args.length);
+          switch (command) {
+            case "setLogStat":
+              agent.logRule(Integer.parseInt(args[0]),
+                            Integer.parseInt(args[1]));
+              logger.debug("set rule " + Integer.parseInt(args[0]) + " to " +
+                      Integer.parseInt(args[1]));
+              break;
+            case "reqDbInfo":
+              logger.debug("requesting info must be implemented yet");
+              break;
+            default:
+             Agent.logger.error("Illegal DebuggingService Call: {}",
                 Arrays.toString(args));
           }
         }, port, "DebuggingService");
