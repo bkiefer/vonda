@@ -50,7 +50,7 @@ public class DebuggingService  {
               logger.debug("set rule " + Integer.parseInt(args[0]) + " to " +
                       Integer.parseInt(args[1]));
               break;
-            case "reqDbInfo":
+            case "reqFieldInfo":
               logger.debug("requesting info must be implemented yet");
               break;
             default:
