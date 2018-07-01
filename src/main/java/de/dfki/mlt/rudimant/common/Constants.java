@@ -29,4 +29,5 @@ public class Constants {
   public static final int STATE_IF_FALSE = 0b10;
   public static final int STATE_ALWAYS = STATE_IF_TRUE | STATE_IF_FALSE;
   public static final int STATE_PARTLY = 9;
+  public static final int STATE_RULELESS = 10;
 }
