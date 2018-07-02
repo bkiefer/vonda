@@ -2,22 +2,22 @@
 <metadata modelVersion="1.1.0">
   <groupId>de.dfki.lt.hfc</groupId>
   <artifactId>hfc</artifactId>
-  <version>1.2.0-SNAPSHOT</version>
+  <version>1.2.2-SNAPSHOT</version>
   <versioning>
     <snapshot>
       <localCopy>true</localCopy>
     </snapshot>
-    <lastUpdated>20180613161157</lastUpdated>
+    <lastUpdated>20180702150418</lastUpdated>
     <snapshotVersions>
       <snapshotVersion>
         <extension>jar</extension>
-        <value>1.2.0-SNAPSHOT</value>
-        <updated>20180613161157</updated>
+        <value>1.2.2-SNAPSHOT</value>
+        <updated>20180702150418</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>1.2.0-SNAPSHOT</value>
-        <updated>20180613161157</updated>
+        <value>1.2.2-SNAPSHOT</value>
+        <updated>20180702150418</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
