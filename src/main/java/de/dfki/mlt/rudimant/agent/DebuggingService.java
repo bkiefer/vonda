@@ -42,15 +42,16 @@ public class DebuggingService  {
     server = new SimpleServer(
         (args) -> {
           String command = args[0];
-          String[] parameters = Arrays.copyOfRange(args, 1, args.length);
+          //String[] parameters = Arrays.copyOfRange(args, 1, args.length);
           switch (command) {
             case "setLogStat":
-              agent.logRule(Integer.parseInt(args[0]),
-                            Integer.parseInt(args[1]));
-              logger.debug("set rule " + Integer.parseInt(args[0]) + " to " +
-                      Integer.parseInt(args[1]));
+              int ruleId = Integer.parseInt(args[1]);
+              int logMask = Integer.parseInt(args[2]);
+              agent.logRule(ruleId, logMask);
+              logger.debug("set rule {} to {} ", ruleId, logMask);
               break;
             case "reqFieldInfo":
+              String fieldName = args[1];
               logger.debug("requesting info must be implemented yet");
               break;
             default:
