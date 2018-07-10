@@ -481,6 +481,19 @@ public abstract class Agent implements StreamingClient {
     return asr.interpret(input);
   }
 
+  /** Return the epoch time for now */
+  public long now() { return System.currentTimeMillis(); }
+
+  /** Removes namespace and trailing angle bracked from an URI, works only
+   *  for short forms.
+   * @param uri
+   * @return the "name" without namespace and angle brackets
+   * TODO: should be a RdfProxy util method
+   */
+  public static String getUriName(String uri) {
+    return uri.substring(uri.lastIndexOf(':') + 1, uri.length() - 1);
+  }
+
   /* *******************************************************
    * overloaded boolean operator methods
    ********************************************************/
@@ -819,6 +832,23 @@ public abstract class Agent implements StreamingClient {
       // Won't happen.
     }
     return null;
+  }
+
+  /** Return the first element that matches pred */
+  public static <T> T first(Collection<T> coll, Predicate<? super T> pred) {
+    for(T elt : coll)
+      if (pred.test(elt)) return elt;
+    return null;
+  }
+
+  /** Return a random element from the collection */
+  public <T> T random(Collection<T> coll) {
+    int r = random(coll.size());
+    for (T elt: coll) {
+      if (r == 0) return elt;
+      --r;
+    }
+    return null; // should never happen
   }
 
   // ######################################################################

@@ -28,7 +28,7 @@ mkdir $LOCAL_REPO 2>/dev/null
 
 mvi de.dfki.mlt graff 0.4-SNAPSHOT
 
-mvi de.dfki.lt.hfc hfc 1.2.2-SNAPSHOT
+mvi de.dfki.lt.hfc hfc 1.2.3-SNAPSHOT
 
 mvi de.dfki.lt.hfc hfc-db 1.3-SNAPSHOT
 

@@ -3,7 +3,10 @@
 [Object]. boolean equals(Object e);
 [String]. boolean startsWith(String s);
 [String]. boolean endsWith(String s);
-[String]. String substring(int i);
+[String]. String substring(int begin);
+[String]. String substring(int begin, int end);
+//[String]. int length;
+String getUriName(String uri);
 
 int toInt(String s);
 float toFloat(String s);
@@ -69,6 +72,9 @@ String getLanguage();
 int random(int limit);
 float random();
 
+// return the current epoch milliseconds
+long now();
+
 // logging methods
 Logger logger;
 
@@ -82,6 +88,9 @@ boolean all(Collection<T> coll, Function<Boolean, T> pred);
 List<T> filter(Collection<T> coll, Function<Boolean, T> pred);
 List<T> sort(Collection<T> coll, Function<Integer, T, T> c);
 Collection<T> map(Collection<S> coll, Function<T, S> f);
+int count(Collection<T> coll, Function<Boolean, T> pred);
+T first(Collection<T> coll, Function<Boolean, T> pred);
+T random(Collection<T> coll);
 
 // all Agent variables we should know
 
