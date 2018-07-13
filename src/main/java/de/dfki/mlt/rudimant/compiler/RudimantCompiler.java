@@ -98,7 +98,17 @@ public class RudimantCompiler {
     startClient(configDir, configs);
     RdfProxy proxy = new RdfProxy(handler);
     if (configs.containsKey(CFG_NAME_TO_URI)) {
-      proxy.setBaseToUri((Map<String, String>)configs.get(CFG_NAME_TO_URI));
+      Map<String, String> rdfMap = new HashMap<>();
+      Map<String, String> javaMap = new HashMap<>();
+      ((Map<String, String>)configs.get(CFG_NAME_TO_URI)).forEach(
+          (k, v) -> {
+            if (v.charAt(0) == '<')
+              rdfMap.put(k, v);
+            else
+              javaMap.put(k, v);
+          });
+      proxy.setBaseToUri(rdfMap);
+      Type.setJavaClasses(javaMap);
     }
     String[] rootpkg = configs.get(CFG_PACKAGE) != null
         ? ((String) configs.get(CFG_PACKAGE)).split("\\.")

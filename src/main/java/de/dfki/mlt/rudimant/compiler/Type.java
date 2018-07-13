@@ -33,6 +33,7 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 public class Type {
   private static RdfProxy PROXY;
   private static RdfClass DIALACT_CLASS;
+  private static final Map<String, String> JAVA_CLASSES = new HashMap<>();
 
   static final Map<String, Long> assignCodes = new HashMap<>();
   static final Map<Long, String> assigncode2type = new HashMap<>();
@@ -146,6 +147,10 @@ public class Type {
     DIALACT_CLASS = proxy.getClass(DIALOGUE_ACT_TYPE);
   }
 
+  public static void setJavaClasses(Map<String, String> resolved) {
+    JAVA_CLASSES.putAll(resolved);
+  }
+
   public static Type getNoType(){
     return new Type();
   }
@@ -229,7 +234,9 @@ public class Type {
       return;
     }
     splitIfy(typeSpec);
-    rdfIfy();
+    if (! JAVA_CLASSES.containsKey(_name)) {
+      rdfIfy();
+    }
   }
 
   public Type(String outer, Type ... inner) {
