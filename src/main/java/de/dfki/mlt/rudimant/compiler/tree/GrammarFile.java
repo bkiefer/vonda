@@ -282,7 +282,9 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
 
     // Now, print all initial comments (preceding the first element) before the
     // class starts, for, e.g., imports
-    Position firstPos = rules.get(0).getLocation().getBegin();
+    Position firstPos = rules.isEmpty()
+        ? new Position(0,0,Integer.MAX_VALUE,"")
+            : rules.get(0).getLocation().getBegin();
     Iterator<Token> it = commentTokens.iterator();
     while (it.hasNext()) {
       Token curr = it.next();
