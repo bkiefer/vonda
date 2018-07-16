@@ -32,6 +32,7 @@ public interface Constants {
   public static final String CFG_TYPE_ERROR_FATAL = "failOnError";
   public static final String CFG_PACKAGE = "rootPackage";
   public static final String CFG_NAME_TO_URI = "nameToURI";
+  public static final String CFG_NAME_TO_CLASS = "nameToClass";
   public static final String CFG_VISUALISE = "visualise";
   public static final String CFG_LOGGING = "logging";
 
