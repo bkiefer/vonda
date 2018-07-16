@@ -244,6 +244,14 @@ public abstract class Agent implements StreamingClient {
     //return myLastDAs.get(myUnprocessedDAs - 1);
   }
 
+  /** The last dialogue act spoken by the agent */
+  public DialogueAct myLastDA(int back) {
+    DialogueAct result = myLastDAs.size() > back ? myLastDAs.get(back) : null;
+    return (result == null ? getImpossibleDialogueact() : result);
+    //if (myUnprocessedDAs == 0) return null;
+    //return myLastDAs.get(myUnprocessedDAs - 1);
+  }
+
   //public void myLastDAprocessed() { --myUnprocessedDAs; }
 
   /** Return the index of the last speech act equal or more specific than the

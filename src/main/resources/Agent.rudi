@@ -43,6 +43,7 @@ DialogueAct emitDA(DialogueAct da);
 
 // my last outgoing resp. the last incoming dialogue act
 DialogueAct myLastDA();
+DialogueAct myLastDA(int back); // myLastDA() == myLastDA(0);
 //void myLastDAprocessed();
 // did i say something like ta in this session (subsumption)? If so, how many
 // utterances back was it? (otherwise, -1 is returned)
