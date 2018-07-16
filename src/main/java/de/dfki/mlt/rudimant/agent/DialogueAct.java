@@ -50,10 +50,28 @@ public class DialogueAct {
     _dag = da;
   }
 
-  public DialogueAct(String da, String prop, String ... args) {
+  // Only for logging
+  private String catAll(String ... args) {
+    StringBuilder sbb = new StringBuilder();
+    if (args.length > 0)
+      sbb.append(args[0]).append('(');
+    if (args.length > 1)
+      sbb.append(args[1]);
+    for (int i = 2; i < args.length; ++i) sbb.append("|").append(args[i]);
+    sbb.append(')');
+    return sbb.toString();
+  }
+
+  public DialogueAct(String ... args) {
     this();
-    _dag = DagNode.parseLfString(da + "(" + prop + ")");
-    for (int i = 0; i < args.length; i+=2) {
+    if (args.length < 2) {
+      throw new IllegalArgumentException("type or proposition missing: " + catAll(args));
+    }
+    if ((args.length & 1) != 0) {
+      throw new IllegalArgumentException("Odd number of arguments: " + catAll(args));
+    }
+    _dag = DagNode.parseLfString(args[0] + "(" + args[1] + ")");
+    for (int i = 2; i < args.length; i+=2) {
       setValue(args[i], args[i+1]);
     }
   }

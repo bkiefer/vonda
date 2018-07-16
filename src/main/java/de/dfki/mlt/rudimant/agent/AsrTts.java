@@ -85,33 +85,6 @@ public class AsrTts {
     return in;
   }
 
-  public static String toRawSpeechAct(String dialogueAct, String proposition,
-      String ... args) {
-    StringBuilder sb = new StringBuilder();
-    sb.append(dialogueAct) //.toLowerCase())
-      .append('(').append(proposition); // .toLowerCase());
-    int len = args.length;
-    if ((len & 1) != 0) {
-      StringBuilder sbb = new StringBuilder();
-      sbb.append(sb);
-      for (String s : args) sbb.append("|").append(s);
-      sbb.append(')');
-      // length is odd! Illegal!
-      logger.error("Odd number of arguments for constructing raw speechact! {}",
-          sbb.toString());
-      len -= 1;
-    }
-    for(int i = 0; i < args.length; i += 2) {
-      sb.append(", ").append(args[i]).append('=').append(stringify(args[i + 1]));
-    }
-    sb.append(')');
-    return sb.toString();
-  }
-
-  public DagNode toDag(String rawSpeechAct) {
-    return _generator.toDag(rawSpeechAct);
-  }
-
   public Pair<String, String> generate(DagNode saEvent) {
     //logger.info("raw:" + saEvent);
     Pair<String, String> toSay = _generator.getSurfaceFormExtendedLf(saEvent);

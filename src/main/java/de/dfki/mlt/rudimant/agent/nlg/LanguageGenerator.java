@@ -154,7 +154,7 @@ public class LanguageGenerator {
     _infoState.setAccess(what, access);
   }
 
-  public DagNode toDag(String genericDialogueAct) {
+  private DagNode toDag(String genericDialogueAct) {
     return DagNode.parseLfString(genericDialogueAct);
   }
 
