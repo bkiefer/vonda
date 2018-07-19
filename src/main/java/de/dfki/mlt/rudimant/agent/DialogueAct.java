@@ -45,7 +45,7 @@ public class DialogueAct {
     timeStamp = System.currentTimeMillis();
   }
 
-  private DialogueAct(DagNode da) {
+  public DialogueAct(DagNode da) {
     this();
     _dag = da;
   }
