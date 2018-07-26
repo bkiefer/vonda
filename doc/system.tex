@@ -165,7 +165,7 @@ This functionality offers possibilities to e.g. define and process high-level va
 \begin{figure}[htb]
 \begin{minipage}{0.5\columnwidth}
 \small%
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}
 user = new Animate;
 user.name = "Joe";
 set_age:
@@ -215,9 +215,8 @@ existing objects.
 
 \begin{table}[htbp]
   \centering
-\begin{small}
-\begin{minipage}[t]{0.35\textwidth}
-\begin{lstlisting}[language=Java]
+\begin{minipage}[t]{0.355\textwidth}
+\begin{lstlisting}
 Child c;
 String name = c.name;
 c.name = "new name";
@@ -225,10 +224,9 @@ Set middle = c.middleNames;
 c.middleNames += "John";
 c.middleNames -= "James";
 \end{lstlisting}
-\end{minipage}
-\begin{minipage}[t]{0.6\textwidth}
-\begin{lstlisting}[language=Java]
-
+\end{minipage}\\{\Large$\Downarrow$}\\
+\begin{minipage}[t]{0.8\textwidth}
+\begin{lstlisting}
 String name = (String)c.getValue("<upper:name>");
 c.setValue("<upper:name>", "new name");
 Set middle = (Set<Object>)c.getValue("<upper:middleNames");
@@ -236,7 +234,6 @@ c.add("<upper:middleNames", "John");
 c.remove("<upper:middleNames", "James");
 \end{lstlisting}
 \end{minipage}
-\end{small}
   \caption{Examples for an RDF property access}
   \label{tab:property-access}
 \end{table}
@@ -256,7 +253,7 @@ In this process, the compiler will automatically recognize the equivalences of t
 
 \begin{figure}[h]
 \small
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}
       {"<xsd:int>", "Integer"},
       {"<xsd:string>", "String"},
       {"<xsd:boolean>", "Boolean"},
@@ -295,17 +292,14 @@ In the rule language, the operators \texttt{+=} and \texttt{-=} are overloaded. 
 
 \begin{figure}
 \begin{small}
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}
 introduction:
   if (introduction){
     if (user.unknown){
       ask_for_name:
-        if (talkative) {
-          askForName();
-        }
-    } else {
+        if (talkative) askForName();
+    } else
       greetUser();
-    }
   }
 \end{lstlisting}
 \end{small}
@@ -362,25 +356,21 @@ To leave \texttt{propose} and \texttt{timeout} blocks, you need to use an empty 
 \subsubsection{\texttt{propose} and \texttt{timeout}}
 \begin{figure}[htbp]
   \centering\small%
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}
 if (!saidInSession(#Greeting(Meeting)) {
   // Wait 7 secs before taking initiative
   timeout("wait_for_greeting", 7000) {
-    if (! receivedInSession(
-              #Greeting(Meeting))
+    if (! receivedInSession(#Greeting(Meeting))
       propose("greet") {
         da = #InitialGreeting(Meeting);
-        if (user.name)
-          da.name = user.name;
+        if (user.name) da.name = user.name;
         emitDA(da);
       }
   }
 
   if (receivedInSession(#Greeting(Meeting))
-    // We assume we know the name by now
-    propose("greet_back") {
-      emitDA(#ReturnGreeting(Meeting,
-                  name=\{user.name\});
+    propose("greet_back") { // We assume we know the name by now
+      emitDA(#ReturnGreeting(Meeting, name={user.name});
     }
   }
 }
@@ -402,6 +392,14 @@ can be used to trigger proactive behaviour, or to check the state of the system
 after some time period, or in regular intervals. A timeout will only be created
 if there is no active timeout with that name.
 
+There are two variants of \texttt{timeout}: \emph{labeled} timeouts, like the
+one in the previous example, run out after the specified time (unless they are
+cancelled before that using the \texttt{cancelTimeout(\emph{label})} function)
+and then execute their body, and \emph{behaviour timeouts}, where the first
+argument is a dialogue act (see next section) instead of a label. These are
+executed either when the specified time is up or the behaviour that was
+triggered by the dialogue act is finished, whatever comes first.
+
 \subsubsection{Dialogue acts}
 %\subsubsection{Dialogue acts, their evaluation and "real" variables}
 \label{sec:caret}
@@ -419,7 +417,7 @@ The dialogue act representation is an internal feature of \vonda. We are current
 
 \begin{figure}[htb]
   \centering\small%
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}
 emitDA(#Inform(Answer, what={solution}));
 \end{lstlisting}\vspace*{-3ex}
   \caption{\vonda code example}
@@ -472,13 +470,13 @@ You can also declare variables final.
 \begin{table}[htbp]
   \centering
   \begin{small}
-    \begin{lstlisting}[language=Java]
+    \begin{lstlisting}
       if (! c.user.personality.nonchalance){ ... }
     \end{lstlisting}
 
     {\Large$\Downarrow$}\\
 
-    \begin{lstlisting}[language=Java]
+    \begin{lstlisting}
       if (!((((c != null) && (c.user != null))
              && (c.user.personality != null))
             && (c.user.personality.nonchalance != null))) {
@@ -512,15 +510,15 @@ subsumption of dialogue acts.
 \begin{table}[htbp]
   \centering
   \begin{footnotesize}
-    \begin{minipage}{0.3\textwidth}
-\begin{lstlisting}[language=Java]
+    \begin{minipage}{0.28\textwidth}
+\begin{lstlisting}
 if (sa <= #Question){
   ...
 }
 \end{lstlisting}
-    \end{minipage}
+    \end{minipage}\vline\hspace{1em}
     \begin{minipage}{0.5\textwidth}
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}
 if (sa.isSubsumedBy(new DialogueAct("Question")) {
   ...
 }
@@ -542,12 +540,12 @@ As mentioned before, you can use every method or field that you declare in your 
   %\centering
   \small
   \begin{tabular}{lp{.45\textwidth}}
-    \begin{lstlisting}[language=Java]
+    \begin{lstlisting}
     myType someVariable;
     \end{lstlisting}
     &  there is a variable of type \texttt{myType} \\
 
-    \begin{lstlisting}[language=Java]
+    \begin{lstlisting}
     myType someFunction(typeA a, typeB b);
     \end{lstlisting}
     &  the method someFunction takes arguments of types \texttt{typeA} and
@@ -567,7 +565,7 @@ There is a variety of standard Java methods called on Java classes that \vonda a
   \small
   \begin{tabular}{lp{.45\textwidth}}
 
-    \begin{lstlisting}[language=Java]
+    \begin{lstlisting}
      [type]. myType Function(typeA a);
     \end{lstlisting}
     & declaration of a function that has to be called on an instance of class \texttt{type}.
@@ -582,7 +580,7 @@ Of course you can also use generics in these definitions. For example, the get m
 \begin{figure}[htbp]
 \centering
 \small
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}
  [List<T>]. T get(int a);
 \end{lstlisting}
 \end{figure}
@@ -628,7 +626,7 @@ It is important to realize that whatever declarations are in the interface are o
 \begin{table}[htbp]
   \centering
   \begin{small}
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}
 boolean contains(Collection coll, Predicate pred);
 boolean all(Collection coll, Predicate pred);
 List<Object> filter(Collection coll, Predicate pred);
@@ -642,7 +640,7 @@ List<Object> sort(Collection coll, Comparator c);
 
 For example, if you want to filter a set of RDF objects by a subtype relation, you can write:
 
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}
 des = filter(agent.desires, (d) -> ((Desire)d) <= UrgentDesire);
 \end{lstlisting}
 
@@ -741,7 +739,7 @@ The following methods are declared in \texttt{src/main/resources/Agent.rudi} and
 
 \begin{itemize}
 \item Pre-added Java methods
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}
 [Object]. boolean equals(Object e);
 [String]. boolean startsWith(String s);
 [String]. boolean endsWith(String s);
@@ -754,7 +752,7 @@ The following methods are declared in \texttt{src/main/resources/Agent.rudi} and
 \end{lstlisting}
 
 \item Short-hand conversion methods from Agent
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}
 int toInt(String s);
 float toFloat(String s);
 double toDouble(String s);
@@ -762,7 +760,7 @@ boolean toBool(String s);
 \end{lstlisting}
 
 \item Other Agent methods
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}
 // Telling the Agent that something changed
 void newData();
 
@@ -781,7 +779,7 @@ void shutdown();
 \end{lstlisting}
 
 \item Timeouts
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}
 void newTimeout(String name, int millis);
 boolean isTimedOut(String name);
 void removeTimeout(String name);
@@ -791,7 +789,7 @@ void cancelTimeout(String name);
 \end{lstlisting}
 
 \item Methods handling with dialogue acts
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}
 // sending of dialogue acts
 DialogueAct createEmitDA(DialogueAct da);
 DialogueAct emitDA(int delay, DialogueAct da);
@@ -815,7 +813,7 @@ DialogueAct addLastDA(DialogueAct newDA);
 \end{lstlisting}
 
 \item Methods using lambda expressions
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}
 // lambda: first class argument of Function is return type of function object
 boolean contains(Collection<T> coll, Function<Boolean, T> pred);
 boolean all(Collection<T> coll, Function<Boolean, T> pred);

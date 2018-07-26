@@ -11,6 +11,15 @@
 \usepackage{fancyvrb}
 \usepackage[textwidth=2.5cm, textsize=small]{todonotes}
 \usepackage{listings}
+\lstset{% general command to set parameter(s)
+  language=Java,
+  basicstyle=\scriptsize,  % print whole listing small
+  %keywordstyle=\color{black}\bfseries\underbar, % underlined bold black keywords
+  %identifierstyle=,  % nothing happens
+  %commentstyle=\color{white}, % white comments
+  columns=fixed,
+  basicstyle=\ttfamily,  % typewriter type for strings
+  showstringspaces=false} % no special string spaces
 
 \usepackage{xspace}
 \newcommand{\vonda}{VOnDA\xspace}
