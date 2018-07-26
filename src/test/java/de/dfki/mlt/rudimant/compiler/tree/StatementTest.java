@@ -139,6 +139,24 @@ public class StatementTest {
  }
 
  @Test
+  public void BehaviourTimeoutTest1(){
+   String in = "time = 2; timeout(#Inform(Test), time) { i = 4; }";
+   String r = generate(in);
+   String expected = "int time = 2;"
+       + "behaviourTimeout(new DialogueAct(\"Inform\", \"Test\"),time,new Proposal() {public void run() { int i = 4; } });";
+   assertEquals(expected, getForMarked(r, expected));
+ }
+
+ @Test
+ public void BehaviourTimeoutTest2(){
+  String in = "time = 2; da = #Inform(Test); timeout(da, time) { i = 4; }";
+  String r = generate(in);
+  String expected = "int time = 2;DialogueAct da = new DialogueAct(\"Inform\", \"Test\");"
+      + "behaviourTimeout(da,time,new Proposal() {public void run() { int i = 4; } });";
+  assertEquals(expected, getForMarked(r, expected));
+}
+
+ @Test
  public void IfTest1(){
    String in = "String s = \"bla\"; if (s == null) {}";
    String r = generate(in);

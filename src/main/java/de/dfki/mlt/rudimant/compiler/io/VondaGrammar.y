@@ -30,8 +30,8 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %type <StatVarDef> var_def var_decl
 %type <RTStatement> statement_no_def statement blk_statement set_operation
 %type <RTStatement> return_statement propose_statement timeout_statement
-%type <RTStatement> timeout_behaviour_statement while_statement for_statement
-%type <RTStatement>  label_statement switch_statement
+%type <RTStatement> while_statement for_statement
+%type <RTStatement> label_statement switch_statement
 %type <StatAbstractBlock> block opt_block
 %type <StatIf> if_statement
 %type <Import> imports
@@ -112,7 +112,6 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %token RETURN
 %token SWITCH
 %token TIMEOUT
-%token TIMEOUT_BEHAVIOUR
 %token WHILE
 
 %token ARROW
@@ -191,7 +190,6 @@ statement_no_def
   | return_statement { $$ = $1; }
   | propose_statement { $$ = $1; }
   | timeout_statement { $$ = $1; }
-  | timeout_behaviour_statement { $$ = $1; }
   | if_statement { $$ = $1; }
   | while_statement { $$ = $1; }
   | for_statement { $$ = $1; }
@@ -284,14 +282,13 @@ propose_statement
   : PROPOSE '(' exp ')' block { $$ = setPos(new StatPropose($3, $5), @$); }
   ;
 
-timeout_behaviour_statement
-  : TIMEOUT_BEHAVIOUR '(' exp ',' exp ')' block {
-    $$ = setPos(new StatTimeout($5, $3, $7), @$);
-  }
-  ;
-
 timeout_statement
   : TIMEOUT '(' exp ',' exp ')' block {
+    // labeled timeout
+    $$ = setPos(new StatTimeout($3, $5, $7), @$);
+  }
+  | TIMEOUT '(' dialogueact_exp ',' exp ')' block {
+    // behaviour timeout
     $$ = setPos(new StatTimeout($3, $5, $7), @$);
   }
   ;
@@ -785,7 +782,6 @@ ANNOTATION: '@'('0'..'9'|'A'..'z'|'_'|'('|')')+;
 WILDCARD: '_';
 PROPOSE: 'propose';
 TIMEOUT: 'timeout';
-TIMEOUT_BEHAVIOUR: 'behaviour_timeout';
 */
 /// comments (starting with /* or //):
 //JAVA_CODE: '/*@'.*?'@*/' -> channel(HIDDEN);
