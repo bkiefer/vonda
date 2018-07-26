@@ -32,6 +32,7 @@ import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.lt.hfc.WrongFormatException;
+import de.dfki.mlt.rudimant.compiler.io.BisonParser;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -127,7 +128,7 @@ public class CompilerMain {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
-    OptionParser parser = new OptionParser("ver:w:c:o:");
+    OptionParser parser = new OptionParser("vedr:w:c:o:");
     parser.accepts("help");
     OptionSet options = null;
 
@@ -166,6 +167,9 @@ public class CompilerMain {
       }
       if (options.has("v")) {
         configs.put(CFG_VISUALISE, true);
+      }
+      if (options.has("d")) {
+        BisonParser.DEBUG_GRAMMAR = true;
       }
       if (options.has("r")) {
         configs.put(CFG_ONTOLOGY_FILE, options.valueOf("r"));
