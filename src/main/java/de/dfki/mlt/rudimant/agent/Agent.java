@@ -168,7 +168,7 @@ public abstract class Agent implements StreamingClient {
     return result;
   }
 
-  private static DialogueAct getImpossibleDialogueact() {
+  private static DialogueAct getImpossibleDialogueAct() {
     if (IMPOSSIBLE_DIALOGUEACT == null) {
       IMPOSSIBLE_DIALOGUEACT = new DialogueAct("Bottom(Bottom)");
     }
@@ -239,7 +239,7 @@ public abstract class Agent implements StreamingClient {
   /** The last dialogue act spoken by the agent */
   public DialogueAct myLastDA() {
     DialogueAct result = myLastDAs.peekFirst();
-    return (result == null ? getImpossibleDialogueact() : result);
+    return (result == null ? getImpossibleDialogueAct() : result);
     //if (myUnprocessedDAs == 0) return null;
     //return myLastDAs.get(myUnprocessedDAs - 1);
   }
@@ -247,7 +247,7 @@ public abstract class Agent implements StreamingClient {
   /** The last dialogue act spoken by the agent */
   public DialogueAct myLastDA(int back) {
     DialogueAct result = myLastDAs.size() > back ? myLastDAs.get(back) : null;
-    return (result == null ? getImpossibleDialogueact() : result);
+    return (result == null ? getImpossibleDialogueAct() : result);
     //if (myUnprocessedDAs == 0) return null;
     //return myLastDAs.get(myUnprocessedDAs - 1);
   }
@@ -324,7 +324,7 @@ public abstract class Agent implements StreamingClient {
     // TODO: THIS IS NOT QUITE RIGHT. I SHOULD MARK SINGLE INCOMING DA'S AS
     // PROCESSED
     if (last == null || last.timeStamp < lastDAprocessed) {
-      return getImpossibleDialogueact();
+      return getImpossibleDialogueAct();
     }
     //if (unprocessedDAs == 0) return null;
     //DialogueAct last = lastDAs.get(unprocessedDAs - 1);
@@ -506,15 +506,26 @@ public abstract class Agent implements StreamingClient {
    * overloaded boolean operator methods
    ********************************************************/
 
-  @SuppressWarnings("rawtypes")
-  public static boolean exists(Object s) {
-    if (s == null) return false;
-    if (s instanceof Number) return ((Number) s).doubleValue() != 0;
-    if (s instanceof String) return ! ((String)s).isEmpty();
-    if (s instanceof Boolean) return (Boolean)s;
-    if (s instanceof Collection) return !((Collection)s).isEmpty();
-    if (s instanceof Map) return !((Map)s).isEmpty();
-    return true;
+  public static boolean exists(Object s) { return (s != null); }
+
+  public static boolean exists(Number s) {
+    return s != null && s.doubleValue() != 0;
+  }
+
+  public static boolean exists(String s) { return s != null && ! s.isEmpty(); }
+
+  public static boolean exists(Boolean b) { return b != null && b; }
+
+  public static boolean exists(Collection<?> c) {
+    return c != null && ! c.isEmpty();
+  }
+
+  public static boolean exists(Map<?, ?> m) {
+    return m != null && ! m.isEmpty();
+  }
+
+  public static boolean exists(DialogueAct d) {
+    return d != null && d != getImpossibleDialogueAct();
   }
 
 //  /**

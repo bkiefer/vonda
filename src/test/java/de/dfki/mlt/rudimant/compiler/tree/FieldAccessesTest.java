@@ -43,7 +43,7 @@ public class FieldAccessesTest {
 	  public void testFieldAccess1() {
 	    String in = "if (lastDA().name){}";
 	    String s = generate(in);
-	    String expected = "if (lastDA() != null && lastDA().hasSlot(\"name\"))";
+	    String expected = "if (exists(lastDA()) && lastDA().hasSlot(\"name\"))";
 	    assertEquals(expected, getForMarked(s, expected));
 	  }
 

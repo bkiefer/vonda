@@ -356,8 +356,8 @@ public class VisitorType implements RudiVisitor {
         // cast to string if we think we now how
         res = convertToString(res);
       } else {
-        typeError(getFullText(node) + ": DialogueAct argument not a string: "
-            + res.type, node);
+        typeError(getFullText(node) + ": DialogueAct argument "
+            + getFullText(res) + "not a string: " + res.type, node);
       }
     }
     return res;

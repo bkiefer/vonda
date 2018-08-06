@@ -307,7 +307,8 @@ public class VisitorGeneration implements RudiVisitor {
       node.visitWithComments(this);
     } else if (type.isPODType()) {
       node.visitWithComments(this); out.append(" != 0");
-    } else if (type.isCollection() || type.isString() || type.isNumber()) {
+    } else if (type.isCollection() || type.isString() || type.isNumber()
+        || type.isDialogueAct()) {
       Type[] args = { new Type("Object") };
       String orig = mem.getFunctionOrigin("exists", Arrays.asList(args));
       orig = orig == null ? "" : lowerCaseFirst(orig) + ".";
