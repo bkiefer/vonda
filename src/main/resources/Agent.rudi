@@ -36,10 +36,12 @@ boolean exists(Object o);
 DialogueAct createEmitDA(DialogueAct da);
 DialogueAct emitDA(int delay, DialogueAct da);
 DialogueAct emitDA(DialogueAct da);
-[DialogueAct]. void getDialogueActType();
+[DialogueAct]. String getDialogueActType();
 [DialogueAct]. void setDialogueActType(String val);
-[DialogueAct]. void getProposition();
-[DialogueAct]. void setProposition(String val);
+[DialogueAct]. String getProposition();
+[DialogueAct]. boolean hasSlot(String val);
+[DialogueAct]. String getValue(String val);
+
 
 // my last outgoing resp. the last incoming dialogue act
 DialogueAct myLastDA();
