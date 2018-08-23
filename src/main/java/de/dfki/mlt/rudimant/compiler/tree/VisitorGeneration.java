@@ -704,8 +704,7 @@ public class VisitorGeneration implements RudiVisitor {
   @Override
   public void visit(StatVarDef node) {
     if (node.isDefinition) { // Definition of var?
-      if (node.varIsFinal)
-        gen("final ");
+      gen((node.varIsFinal), "final ");
       gen(node.type.toJava()).gen(" ");
     }
     if (node.toAssign != null) {
