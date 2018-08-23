@@ -21,67 +21,67 @@ package de.dfki.mlt.rudimant.compiler.tree;
 
 public interface RudiVisitor {
 
-  public void visitNode(RudiTree node);
+  public void visit(RudiTree node);
 
   // Statements
-  public void visitNode(StatGrammarRule node);
+  public void visit(StatGrammarRule node);
 
-  public void visitNode(StatAbstractBlock node);
+  public void visit(StatAbstractBlock node);
 
-  public void visitNode(StatFor1 node);
+  public void visit(StatFor1 node);
 
-  public void visitNode(StatFor2 node);
+  public void visit(StatFor2 node);
 
-  public void visitNode(StatFor3 node);
+  public void visit(StatFor3 node);
 
-  public void visitNode(StatIf node);
+  public void visit(StatIf node);
 
-  public void visitNode(StatMethodDeclaration node);
+  public void visit(StatMethodDeclaration node);
 
-  public void visitNode(StatPropose node);
+  public void visit(StatPropose node);
 
-  public void visitNode(StatTimeout node);
+  public void visit(StatTimeout node);
 
-  public void visitNode(StatReturn node);
+  public void visit(StatReturn node);
 
-  public void visitNode(StatSetOperation node);
+  public void visit(StatSetOperation node);
 
-  public void visitNode(StatSwitch node);
+  public void visit(StatSwitch node);
 
-  public void visitNode(StatVarDef node);
+  public void visit(StatVarDef node);
 
-  public void visitNode(StatFieldDef node);
+  public void visit(StatFieldDef node);
 
-  public void visitNode(StatWhile node);
+  public void visit(StatWhile node);
 
-  public void visitNode(StatExpression node);
+  public void visit(StatExpression node);
 
   // Expressions
-  public void visitNode(ExpArithmetic node);
+  public void visit(ExpArithmetic node);
 
-  public void visitNode(ExpArrayAccess node);
+  public void visit(ExpArrayAccess node);
 
-  public void visitNode(ExpAssignment node);
+  public void visit(ExpAssignment node);
 
-  public void visitNode(ExpBoolean node);
+  public void visit(ExpBoolean node);
 
-  public void visitNode(ExpCast node);
+  public void visit(ExpCast node);
 
-  public void visitNode(ExpDialogueAct node);
+  public void visit(ExpDialogueAct node);
 
-  public void visitNode(ExpConditional node);
+  public void visit(ExpConditional node);
 
-  public void visitNode(ExpLambda node);
+  public void visit(ExpLambda node);
 
-  public void visitNode(ExpListLiteral node);
+  public void visit(ExpListLiteral node);
 
-  public void visitNode(ExpNew node);
+  public void visit(ExpNew node);
 
-  public void visitNode(ExpFieldAccess node);
+  public void visit(ExpFieldAccess node);
 
-  public void visitNode(ExpFuncCall node);
+  public void visit(ExpFuncCall node);
 
-  public void visitNode(ExpSingleValue node);
+  public void visit(ExpSingleValue node);
 
-  public void visitNode(ExpVariable node);
+  public void visit(ExpVariable node);
 }

@@ -44,7 +44,7 @@ public class ExpLambda extends RTExpLeaf implements RTBlockNode {
 
   @Override
   public void visit(RudiVisitor v) {
-    v.visitNode(this);
+    v.visit(this);
   }
 
   public Iterable<? extends RudiTree> getDtrs() {

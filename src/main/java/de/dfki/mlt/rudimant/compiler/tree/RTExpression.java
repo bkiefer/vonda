@@ -28,8 +28,6 @@ import de.dfki.mlt.rudimant.compiler.Type;
  */
 public abstract class RTExpression extends RudiTree {
 
-  protected boolean _parens = false;
-
   protected Type type;
 
   public Type getType() {
@@ -38,18 +36,6 @@ public abstract class RTExpression extends RudiTree {
 
   public void generateParens() {
     _parens = true;
-  }
-
-  /**
-   * duplicate the method from RudiTree to ensure String return
-   * @param v
-   */
-  public void visitWithComments(VisitorGeneration v) {
-    v.checkComments(location.getBegin());
-    if (_parens) v.out.append("(");
-    visit(v);
-    if (_parens) v.out.append(")");
-    v.checkComments(location.getEnd());
   }
 
   public Type getInnerType() { return type.getInnerType(); }

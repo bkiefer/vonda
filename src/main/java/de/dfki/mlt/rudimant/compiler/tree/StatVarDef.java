@@ -58,7 +58,7 @@ public class StatVarDef extends RTStatement {
 
   @Override
   public void visit(RudiVisitor v) {
-    v.visitNode(this);
+    v.visit(this);
   }
 
   public String toString() {

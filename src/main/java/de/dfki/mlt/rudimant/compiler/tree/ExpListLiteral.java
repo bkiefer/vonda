@@ -40,7 +40,7 @@ public class ExpListLiteral extends RTExpression {
 
   @Override
   public void visit(RudiVisitor v) {
-    v.visitNode(this);
+    v.visit(this);
   }
 
   public Iterable<? extends RudiTree> getDtrs() {

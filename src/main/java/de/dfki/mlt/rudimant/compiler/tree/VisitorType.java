@@ -122,7 +122,7 @@ public class VisitorType implements RudiVisitor {
     commentTokens = ctokz;
   }
 
-  public void visitNode(RudiTree node) {
+  public void visit(RudiTree node) {
     node.visit(this);
   }
 
@@ -145,7 +145,7 @@ public class VisitorType implements RudiVisitor {
    * branch
    */
   @Override
-  public void visitNode(ExpArithmetic node) {
+  public void visit(ExpArithmetic node) {
     node.left.visit(this);
     Type ltype = node.left.type;
     Type type = ltype;
@@ -214,7 +214,7 @@ public class VisitorType implements RudiVisitor {
    * expression have to match.
    */
   @Override
-  public void visitNode(ExpAssignment node) {
+  public void visit(ExpAssignment node) {
     node.right.visit(this);
     if (node.right.type.isVoid())
       typeError("Void can not be assigned", node);
@@ -308,7 +308,7 @@ public class VisitorType implements RudiVisitor {
    *   2. set ruleIfSuspended to true before descending
    */
   @Override
-  public void visitNode(ExpBoolean node) {
+  public void visit(ExpBoolean node) {
     boolean oldSuspendState = ruleIfSuspended;
     // first handle case of ExpBoolean which is a base term
     handleRuleLogging(node);
@@ -331,8 +331,8 @@ public class VisitorType implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpCast node) {
-    visitNode(node.expression);
+  public void visit(ExpCast node) {
+    visit(node.expression);
     Type mergeType = node.type.unifyTypes(node.expression.type);
     if (mergeType == null) {
       typeError("Incompatible types : " + node.expression.type
@@ -370,7 +370,7 @@ public class VisitorType implements RudiVisitor {
    * generation)
    */
   @Override
-  public void visitNode(ExpDialogueAct node) {
+  public void visit(ExpDialogueAct node) {
     node.daType = degradeToString(node.daType, node);
     node.proposition = degradeToString(node.proposition, node);
     int i = 0;
@@ -385,7 +385,7 @@ public class VisitorType implements RudiVisitor {
    * necessary because the bool expression already knows.
    */
   @Override
-  public void visitNode(ExpConditional node) {
+  public void visit(ExpConditional node) {
     node.boolexp.visit(this);
     node.boolexp = node.boolexp.ensureBoolean();
     node.thenexp.visit(this);
@@ -403,7 +403,7 @@ public class VisitorType implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpLambda node) {
+  public void visit(ExpLambda node) {
     mem.enterEnvironment(node);
     Type[] parTypes = new Type[node.parameters.size()+ 1];
     int i = 1;
@@ -414,10 +414,10 @@ public class VisitorType implements RudiVisitor {
     }
     if (node.body instanceof RTExpression) {
       RTExpression exp = (RTExpression)node.body;
-      visitNode(exp);
+      visit(exp);
       parTypes[0] = exp.getType();
     } else {
-      visitNode((StatAbstractBlock)node.body);
+      visit((StatAbstractBlock)node.body);
       // then the last statement of the block must be the return of some exp
       RudiTree last = ((StatAbstractBlock)node.body).statblock.get(((StatAbstractBlock)node.body).statblock.size() - 1);
       if (last instanceof StatReturn) {
@@ -434,7 +434,7 @@ public class VisitorType implements RudiVisitor {
   private RuleInfo activeInfo = null;
 
   @Override
-  public void visitNode(StatGrammarRule node) {
+  public void visit(StatGrammarRule node) {
     node.toplevel = mem.enterRule(node.label, node.getLocation());
     activeInfo = mem.getCurrentRuleInfo();
     node.ruleId = activeInfo.getId();
@@ -459,7 +459,7 @@ public class VisitorType implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatAbstractBlock node) {
+  public void visit(StatAbstractBlock node) {
     // we step down into a new environment (a block, possibly method block)
     // whose variables cannot be seen from the outside
     if (node.braces) {
@@ -477,7 +477,7 @@ public class VisitorType implements RudiVisitor {
    * Short version of for, standard type: for(type a : iterable<varType>) {}
    */
   @Override
-  public void visitNode(StatFor2 node) {
+  public void visit(StatFor2 node) {
     node.initialization.visit(this);
     Type innerIterableType = Type.getNoType();
     if (! node.initialization.type.isUnspecified()) {
@@ -495,12 +495,9 @@ public class VisitorType implements RudiVisitor {
       if (mergeType == null) {
         if (innerIterableType.equals(new Type("Object"))) {
           // Then handle this as an implicit cast (but warn the user that it might crash)
-          logger.trace(node.getLocation() + "  Implicit casting of list Object to "
-              + node.varType.toString()
-              + " in short for loop, be aware this might crash in Java ");
-          /* typeWarning("Implicit casting of list Object to "
-              + node.varType.toString()
-              + " in short for loop, be aware this might crash in Java ", node); */
+          logger.trace("{} Implicit casting of list Object to {} "
+              + "in short for loop, be aware this might crash in Java "
+              , node.getLocation(), node.varType.toString());
         } else {
           typeError("Incompatible types in short for loop: "
               + node.varType + " : " + innerIterableType, node);
@@ -516,7 +513,7 @@ public class VisitorType implements RudiVisitor {
    * short for with decomposition : for ((a,b,c) : complex_iterable) {}
    */
   @Override
-  public void visitNode(StatFor3 node) {
+  public void visit(StatFor3 node) {
     // TODO: this is a bit more complicated; remember the types of the variables
     // that were declared in the condition
     for (String s : node.variables) {
@@ -525,12 +522,12 @@ public class VisitorType implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpListLiteral node) {
+  public void visit(ExpListLiteral node) {
     // TODO check if the elements are all subtypes of the contained type of the
     // collection
     Type inner = node.type.getInnerType();
     for (RTExpression e : node.objects) {
-      visitNode(e);
+      visit(e);
       inner = inner.unifyTypes(e.getType());
       if (inner == null) {
         typeError("Elements of list literal have no common type", node);
@@ -546,7 +543,7 @@ public class VisitorType implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatSetOperation node) {
+  public void visit(StatSetOperation node) {
     // First call type checks for components, then perform the possible local
     // tests: The parameter type of the set should be compatible with what's
     // added.
@@ -571,7 +568,7 @@ public class VisitorType implements RudiVisitor {
 
   /** An explicit variable declaration, without assignment, just definition */
   @Override
-  public void visitNode(StatVarDef node) {
+  public void visit(StatVarDef node) {
     if (node.isDefinition && mem.variableExists(node.variable)) {
       typeError("Re-defined variable " + node.variable
           + " from " + mem.getVariableType(node.variable).toString()
@@ -604,7 +601,7 @@ public class VisitorType implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatMethodDeclaration node) {
+  public void visit(StatMethodDeclaration node) {
     mem.addFunction(node.name, node.return_type, node.calledUpon, node.partypes);
     if (node.block != null) {
       // The following variables (function parameters) are local to the method
@@ -622,7 +619,7 @@ public class VisitorType implements RudiVisitor {
 
   /** Top-level field (variable) definition */
   @Override
-  public void visitNode(StatFieldDef node) {
+  public void visit(StatFieldDef node) {
     node.varDef.visit(this);
   }
 
@@ -635,7 +632,7 @@ public class VisitorType implements RudiVisitor {
    * visit children, ensure boolean exp
    */
   @Override
-  public void visitNode(StatIf node) {
+  public void visit(StatIf node) {
     node.condition.visit(this);
     node.statblockIf.visit(this);
     if (node.statblockElse != null) {
@@ -648,7 +645,7 @@ public class VisitorType implements RudiVisitor {
    * visit children, ensure boolean exp
    */
   @Override
-  public void visitNode(StatWhile node) {
+  public void visit(StatWhile node) {
     node.condition.visit(this);
     node.block.visit(this);
     node.condition = node.condition.ensureBoolean();
@@ -658,7 +655,7 @@ public class VisitorType implements RudiVisitor {
    * for (a;b;c) {}, only visit the sub-parts of this.
    */
   @Override
-  public void visitNode(StatFor1 node) {
+  public void visit(StatFor1 node) {
     node.initialization.visit(this);
     node.condition.visit(this);
     node.increment.visit(this);
@@ -755,7 +752,7 @@ public class VisitorType implements RudiVisitor {
    * TODO CHECK FOR PROPERTIES RANGING OVER XSD DATATYPES, ETC. ALL FUZZY STUFF
    */
   @Override
-  public void visitNode(ExpFieldAccess node) {
+  public void visit(ExpFieldAccess node) {
     RTExpression currentNode = node.parts.get(0); // can not be empty
     currentNode.visit(this);
     // The type to which the next field access item is applied
@@ -815,7 +812,7 @@ public class VisitorType implements RudiVisitor {
    * types? Is it necessary?
    */
   @Override
-  public void visitNode(ExpFuncCall node) {
+  public void visit(ExpFuncCall node) {
     // if there are generics involved in the computation of return type or parameter
     // types for this function, we need to resolve them first
     mem.resolveGenericTypes(node, this);
@@ -868,7 +865,7 @@ public class VisitorType implements RudiVisitor {
    * give the node a proper type; how to do that?
    */
   @Override
-  public void visitNode(ExpSingleValue node) {
+  public void visit(ExpSingleValue node) {
     // nothing to test here
     if (node.type == null)
       // TODO: can this ever happen? SingleValues are things like Strings, chars
@@ -882,7 +879,7 @@ public class VisitorType implements RudiVisitor {
    * information is already stored with it. b)
    */
   @Override
-  public void visitNode(ExpVariable node) {
+  public void visit(ExpVariable node) {
     // get the type of the variable, if defined
     // TODO: is there a way to find out if we try to retrieve the value of an
     // undefined variable?
@@ -902,7 +899,7 @@ public class VisitorType implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpArrayAccess node) {
+  public void visit(ExpArrayAccess node) {
     node.index.visit(this);
     if (!new Type("int").equals(node.index.type)) {
       typeError("Array access with non-Integer", node);
@@ -923,13 +920,13 @@ public class VisitorType implements RudiVisitor {
    * ********************************************************************* */
 
   @Override
-  public void visitNode(StatPropose node) {
+  public void visit(StatPropose node) {
     node.arg.visit(this);
     node.block.visit(this);
   }
 
   @Override
-  public void visitNode(StatTimeout node) {
+  public void visit(StatTimeout node) {
     node.label.visit(this);
     if (! node.label.getType().isString()
         && ! node.label.getType().isStringConvertible()
@@ -941,20 +938,20 @@ public class VisitorType implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatReturn node) {
+  public void visit(StatReturn node) {
     if (node.returnExp != null) {
       node.returnExp.visit(this);
     }
   }
 
   @Override
-  public void visitNode(StatSwitch node) {
+  public void visit(StatSwitch node) {
     node.condition.visit(this);
     node.block.visit(this);
   }
 
   @Override
-  public void visitNode(ExpNew node) {
+  public void visit(ExpNew node) {
     if (node.params != null) {
       for (RTExpression param : node.params)
         param.visit(this);
@@ -965,7 +962,7 @@ public class VisitorType implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(StatExpression node) {
+  public void visit(StatExpression node) {
     node.expression.visit(this);
   }
 

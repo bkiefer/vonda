@@ -38,7 +38,7 @@ public class StatPropose extends RTStatement {
 
   @Override
   public void visit(RudiVisitor v) {
-    v.visitNode(this);
+    v.visit(this);
   }
 
   public Iterable<? extends RudiTree> getDtrs() {

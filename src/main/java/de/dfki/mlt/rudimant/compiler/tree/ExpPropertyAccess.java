@@ -51,7 +51,7 @@ public class ExpPropertyAccess extends RTExpLeaf {
 
   @Override
   public void visit(RudiVisitor v) {
-    v.visitNode(this);
+    v.visit(this);
   }
 
   public Iterable<? extends RudiTree> getDtrs() {

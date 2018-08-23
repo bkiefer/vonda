@@ -38,13 +38,13 @@ public class ExpArrayAccess extends RTExpLeaf {
 
   @Override
   public void visit(RudiVisitor v) {
-    v.visitNode(this);
+    v.visit(this);
   }
 
   public void propagateType(Type upperType, VisitorType v) {
     if (type != null && ! type.isUnspecified()) {
-      logger.error("Why didn't this type percolate up? "
-          + v.getFullText(this) + " " + type);
+      logger.error("Why didn't this type percolate up? {} {}",
+          v.getFullText(this), type);
       return;
     }
     type = upperType;

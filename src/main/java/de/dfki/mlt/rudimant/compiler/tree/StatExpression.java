@@ -32,7 +32,7 @@ public class StatExpression extends RTStatement {
 
   @Override
   public void visit(RudiVisitor v) {
-    v.visitNode(this);
+    v.visit(this);
   }
 
   @SuppressWarnings("serial")

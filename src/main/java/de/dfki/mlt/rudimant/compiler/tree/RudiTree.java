@@ -33,19 +33,10 @@ import de.dfki.mlt.rudimant.common.Location;
 public abstract class RudiTree {
   public static final Logger logger = LoggerFactory.getLogger(RudiTree.class);
 
+  protected boolean _parens = false;
+
   /** contains the origin file and the line Rudi Tree started on */
   public Location location;
-
-  /** The input string that is covered by node */
-  //public String fullexp;
-
-  public void visitWithComments(VisitorGeneration v) {
-    v.checkComments(location.getBegin());
-    visit(v);
-    // TODO: as endpos is where this node ends, we will never get to print anything
-    //       here, will we?
-    v.checkComments(location.getEnd());
-  }
 
   /** visitor method, for double dispatch */
   public abstract void visit(RudiVisitor v);
@@ -57,7 +48,6 @@ public abstract class RudiTree {
    */
   public <T extends RudiTree> T fixFields(T b) {
     b.location = location;
-    //b.fullexp = fullexp;
     return b;
   }
 

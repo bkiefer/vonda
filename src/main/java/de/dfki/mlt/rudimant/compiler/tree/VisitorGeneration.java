@@ -76,6 +76,27 @@ public class VisitorGeneration implements RudiVisitor {
     return c;
   }
 
+  public VisitorGeneration gen(char c) { out.append(c); return this; }
+
+  public VisitorGeneration gen(CharSequence c) { out.append(c); return this; }
+
+  public VisitorGeneration gen(int i) {
+    out.append(Integer.toString(i));
+    return this;
+  }
+
+  public VisitorGeneration gen(boolean b, char c) {
+    if (b) out.append(c); return this;
+  }
+
+  public VisitorGeneration gen(boolean b, CharSequence c) {
+    if (b) out.append(c); return this;
+  }
+
+  public VisitorGeneration gen(boolean b, RudiTree c) {
+    if (b) gen(c); return this;
+  }
+
   protected void checkComments(Position firstPos) {
     Iterator<Token> it = collectedTokens.iterator();
     Token next;
@@ -86,13 +107,25 @@ public class VisitorGeneration implements RudiVisitor {
       String comment = next.getText();
       comment = removeJavaBrackets(comment);
       if (!comment.trim().isEmpty()) {
-        out.append(comment);
+        gen(comment);
         content = true;
       }
     }
-    if (content) out.append('\n');
+    if (content) gen('\n');
   }
 
+  /**
+   * Handle parentheses properly for expressions
+   * @param v
+   */
+  public VisitorGeneration gen(RudiTree rt) {
+    checkComments(rt.location.getBegin());
+    gen(rt._parens, "(");
+    rt.visit(this);
+    gen(rt._parens, ")");
+    checkComments(rt.location.getEnd());
+    return this;
+  }
 
   /** If this method is called in a generated class that is *not* the top level
    *  class, the topLevelInstanceName and a dot will be output to guarantee
@@ -103,40 +136,30 @@ public class VisitorGeneration implements RudiVisitor {
    */
   private void accessTopLevelInstance() {
     if(mem.isNotToplevelClass())
-      out.append(mem.getToplevelInstance()).append(".");
+      gen(mem.getToplevelInstance()).gen(".");
   }
 
 
   @Override
-  public void visitNode(RudiTree node) {
-    node.visitWithComments(this);
+  public void visit(RudiTree node) {
+    gen(node);
   }
 
   @Override
-  public void visitNode(ExpArithmetic node) {
+  public void visit(ExpArithmetic node) {
     if (node.right == null) {
       // unary operator
       // TODO: ENCAPSULATE THIS INTO TWO FUNCTIONS: isPrefixOperator() and
       // isPostFixOperator()
-      if ("-".equals(node.operator) || "!".equals(node.operator)) {
-        out.append(node.operator);
-      }
-      out.append('(');
-      node.left.visitWithComments(this);
+      gen(("-".equals(node.operator) || "!".equals(node.operator)), node.operator);
+      gen('(').gen(node.left);
       // something like .isEmpty(), which is a postfix operator
-      if (node.operator.endsWith(")")) {
-        out.append(node.operator);
-      }
+      gen((node.operator.endsWith(")")), node.operator);
     } else {
-      out.append('(');
-      node.left.visitWithComments(this);
-      out.append(node.operator);
-      node.right.visitWithComments(this);
-      if (node.operator.endsWith("(")) {
-        out.append(')');
-      }
+      gen('(').gen(node.left).gen(node.operator).gen(node.right);
+      gen((node.operator.endsWith("(")), ')');
     }
-    out.append(')');
+    gen(')');
   }
 
   /** If this is true, when generating a ExpFieldAccess we will not
@@ -147,7 +170,7 @@ public class VisitorGeneration implements RudiVisitor {
   boolean replaceLastWithFuncall = false;
 
   @Override
-  public void visitNode(ExpAssignment node) {
+  public void visit(ExpAssignment node) {
     ExpPropertyAccess pa = null;
     if (node.left instanceof ExpFieldAccess) {
       ExpFieldAccess acc = (ExpFieldAccess) node.left;
@@ -155,39 +178,37 @@ public class VisitorGeneration implements RudiVisitor {
       if (lastPart instanceof ExpPropertyAccess) {
         pa = (ExpPropertyAccess) lastPart;
       }
-      // don't print the last field since is will be replaced by a set...(a, b)
+      // omit the last field since is will be replaced by a setValue(a, b)?
       replaceLastWithFuncall = pa != null;
-      node.left.visitWithComments(this);
+      gen(node.left);
       if (replaceLastWithFuncall) {
+        // TODO: shouldn't this be "... = {} " ??
         if (node.right instanceof ExpSingleValue &&
             ((ExpSingleValue)node.right).content.equals("null")) {
+          gen(".clearValue(").gen(pa.getPropertyName()).gen(')');
           replaceLastWithFuncall = false;
-          out.append(".clearValue(" + pa.getPropertyName() + ")");
           return;
         }
-        // NO: out.append(functional ? ".setSingleValue(" : ".setValue(");
-        out.append(".setValue(");  // always right!
-        out.append(pa.getPropertyName());
-        out.append(", ");
+        // NOT: gen(functional ? ".setSingleValue(" : ".setValue(");
+        gen(".setValue(").gen(pa.getPropertyName()).gen(", "); //always correct!
       } else {
-        out.append(" = ");
+        gen(" = ");
       }
       replaceLastWithFuncall = false;
     } else {
-      node.left.visitWithComments(this);
-      out.append(" = ");
+      gen(node.left).gen(" = ");
     }
     if (node.type != null) {
       if (node.type.needsCast(node.right.getType())
           && !(node.right instanceof ExpNew)) {
         // then there is either sth wrong here, what would at least have resulted
         // in warnings in type testing, or it is possible to cast the right part
-        out.append("(" + node.type.toJava() + ") ");
+        gen('(').gen(node.type.toJava()).gen(") ");
       }
     }
-    node.right.visitWithComments(this);
+    gen(node.right);
     if (pa != null) {
-      out.append(")"); // close call to setValue()
+      gen(")"); // close call to setValue()
     }
   }
 
@@ -209,14 +230,11 @@ public class VisitorGeneration implements RudiVisitor {
     // collectTerms is guaranteed to be false here!
     if (node.type.isString()) {
       if (resultType.isDialogueAct()) {
-        out.append("new DialogueAct(");
-        node.visitWithComments(this);
-        out.append(")");
+        gen("new DialogueAct(").gen(node).gen(")");
         return;
       }
       if (resultType.isRdfType() && ! "==".equals(operator)) {
-        node.visitWithComments(this);
-        out.append(".getClazz()");
+        gen(node).gen(".getClazz()");
         return;
       }
     }
@@ -231,20 +249,17 @@ public class VisitorGeneration implements RudiVisitor {
         Type[] args = { new Type("String") };
         String orig = mem.getFunctionOrigin("getRdfClass", Arrays.asList(args));
         if (orig != null)
-          out.append(lowerCaseFirst(orig)).append(".");
-        out.append("getRdfClass(");
-        node.visitWithComments(this);
-        out.append(")");
+          gen(lowerCaseFirst(orig)).gen(".");
+        gen("getRdfClass(").gen(node).gen(")");
         return;
       } else {
         if (! "==".equals(operator)) {
-          node.visitWithComments(this);
-          out.append(".getClazz()");
+          gen(node).gen(".getClazz()");
           return;
         }
       }
     }
-    node.visitWithComments(this);
+    gen(node);
   }
 
   static Map<String, String> rdfOpMap = new HashMap<>();
@@ -296,28 +311,25 @@ public class VisitorGeneration implements RudiVisitor {
       if (nextToLast.type.isDialogueAct()) {
         boolean oldrep = replaceLastWithFuncall;
         replaceLastWithFuncall = true;
-        fa.visitWithComments(this);
-        out.append(".hasSlot(\"" +
-            ((RTExpLeaf)(fa.parts.get(fa.parts.size() - 1))).content + "\")");
+        gen(fa).gen(".hasSlot(\"")
+          .gen(((RTExpLeaf)(fa.parts.get(fa.parts.size() - 1))).content)
+          .gen("\")");
         replaceLastWithFuncall = oldrep;
         return;
       }
     }
     if (type.isBool()) {
-      node.visitWithComments(this);
+      gen(node);
     } else if (type.isPODType()) {
-      node.visitWithComments(this); out.append(" != 0");
+      gen(node).gen(" != 0");
     } else if (type.isCollection() || type.isString() || type.isNumber()
         || type.isDialogueAct()) {
       Type[] args = { new Type("Object") };
       String orig = mem.getFunctionOrigin("exists", Arrays.asList(args));
       orig = orig == null ? "" : lowerCaseFirst(orig) + ".";
-      out.append(orig + "exists(");
-      node.visitWithComments(this);
-      out.append(")");
+      gen(orig).gen("exists(").gen(node).gen(")");
     } else {
-      node.visitWithComments(this);
-      out.append(" != null");
+      gen(node).gen(" != null");
     }
   }
 
@@ -335,7 +347,7 @@ public class VisitorGeneration implements RudiVisitor {
     String operator = node.operator;
     if (operator.equals("!=")) {
       operator = "==";
-      out.append("! (");
+      gen("! (");
     }
     // TODO: THERE'S A SPECIAL CASE IF BOTH ARE RDF AND OPERATOR IS ==
     // THEN, IT SHOULD JUST BE a.equals(b)
@@ -351,17 +363,17 @@ public class VisitorGeneration implements RudiVisitor {
       suff = "";
     }
     this.generateAndMassageType(node.left, resultType, operator);
-    out.append(pref);
+    gen(pref);
     this.generateAndMassageType(node.right, resultType, operator);
-    out.append(suff);
-    if ("!=".equals(node.operator)) out.append(')');
+    gen(suff);
+    gen("!=".equals(node.operator), ')');
   }
 
   private boolean handleRuleLogging(RudiTree node) {
     if (node instanceof ExpAssignment) {
-        // then there must be parenthesis around this
-        out.append("(");
-        return true;
+      // then there must be parenthesis around this
+      gen("(");
+      return true;
     }
     if (activeInfo == null) return false;
     if (node instanceof ExpBoolean) {
@@ -369,9 +381,7 @@ public class VisitorGeneration implements RudiVisitor {
       if (! n.synthetic && n.operator != null && isBooleanOperator(n.operator))
         return false;
     }
-    out.append("(")
-    .append(activeInfo.resultVarName())
-    .append('[').append(Integer.toString(baseTerm++)).append("] = ");
+    gen("(").gen(activeInfo.resultVarName()).gen('[').gen(baseTerm++).gen("] = ");
     activeInfo = null;
     return true;
   }
@@ -382,8 +392,7 @@ public class VisitorGeneration implements RudiVisitor {
   private void visitExpBoolChild(RudiTree node) {
     RuleInfo info = activeInfo;
     boolean closeParen = handleRuleLogging(node);
-    node.visitWithComments(this);
-    if (closeParen) out.append(')');
+    gen(node).gen(closeParen, ')');
     activeInfo = info;
   }
 
@@ -397,7 +406,7 @@ public class VisitorGeneration implements RudiVisitor {
    *   2. set ruleIfSuspended to true before descending
    */
   @Override
-  public void visitNode(ExpBoolean node) {
+  public void visit(ExpBoolean node) {
     RuleInfo info = activeInfo;
     boolean closeParen = handleRuleLogging(node);
     if (node.right != null) { // binary expression?
@@ -406,277 +415,237 @@ public class VisitorGeneration implements RudiVisitor {
         massageComparison(node);
       } else {
         visitExpBoolChild(node.left);
-        out.append(" " + node.operator + " ");
+        gen(' ').gen(node.operator).gen(' ');
         visitExpBoolChild(node.right);
       }
     } else { // unary boolean expression
       if (null == node.operator) {
         // activeInfo is guaranteed to be null here!
-        node.left.visitWithComments(this);
+        gen(node.left);
       } else if (node.operator.equals("<>")) {
         // marker for generation, to probably wrap the right tests around?
         // activeInfo is guaranteed to be null here!
         massageTest(node.left);
       } else {
-        out.append(node.operator + '(');
+        gen(node.operator + '(');
         visitExpBoolChild(node.left);
-        out.append(')');
+        gen(')');
       }
     }
-    if (closeParen) out.append(")");
+    gen(closeParen, ")");
     // reset activeInfo to state when entering this method
     activeInfo = info;
   }
 
   @Override
-  public void visitNode(ExpCast node) {
-    out.append("((" + node.type.toJava() + ")");
-    visitNode(node.expression);
-    out.append(")");
-  }
-
-  public void visitDaToken(RTExpression exp) {
-    visitNode(exp);
+  public void visit(ExpCast node) {
+    // "(${type.toJava()})${expression})"
+    gen("((").gen(node.type.toJava()).gen(")").gen(node.expression).gen(")");
   }
 
   @Override
-  public void visitNode(ExpDialogueAct node) {
-    out.append("new DialogueAct(");
-    visitDaToken(node.daType);
-    out.append(", ");
-    visitDaToken(node.proposition);
+  public void visit(ExpDialogueAct node) {
+    // "new DialogueAct($[daType], $[proposition] ${{(e, f) : exps}, $[e], $[f]})"
+    gen("new DialogueAct(").gen(node.daType).gen(", ").gen(node.proposition);
     for (int i = 0; i < node.exps.size(); i += 2) {
-      out.append(", ");
-      visitDaToken(node.exps.get(i));
-      out.append(", ");
-      visitDaToken(node.exps.get(i + 1));
+      gen(", ").gen(node.exps.get(i)).gen(", ").gen(node.exps.get(i + 1));
     }
-    out.append(")");
+    gen(")");
   }
 
   @Override
-  public void visitNode(ExpConditional node) {
-    out.append("(");
-    node.boolexp.visitWithComments(this);
-    out.append(" ? ");
-    node.thenexp.visitWithComments(this);
-    out.append(" : ");
-    node.elseexp.visitWithComments(this);
-    out.append(')');
+  public void visit(ExpConditional node) {
+    // "($[boolexp] ? $[thenexp] : $[elseexp])"
+    gen("(").gen(node.boolexp).gen(" ? ").gen(node.thenexp).gen(" : ").gen(node.elseexp).gen(')');
   }
 
   @Override
-  public void visitNode(ExpLambda node) {
+  public void visit(ExpLambda node) {
     mem.enterEnvironment(node);
-    out.append("(" + node.parameters.get(0));
+    // "(${{p : parameters[0:-1]}${p}, }${parameters[-1]}) -> $[body]"
+    gen("(" + node.parameters.get(0));
     for(int i = 1; i < node.parameters.size(); i++){
-      out.append(", " + node.parameters.get(i));
+      gen(", " + node.parameters.get(i));
     }
-    out.append(") -> ");
-    node.body.visitWithComments(this);
+    gen(") -> ").gen(node.body);
     mem.leaveEnvironment(node);
   }
 
   @Override
-  public void visitNode(ExpNew node) {
+  public void visit(ExpNew node) {
     if (node.params != null) {
-      out.append("new ");
+      gen("new ");
       if (node.type.isArray()) {
-        out.append(node.type.getInnerType().toJava()).append('[');
+        gen(node.type.getInnerType().toJava()).gen('[');
       } else {
-        out.append(node.type.toJava()).append('(');
+        gen(node.type.toJava()).gen('(');
       }
       boolean first = true;
       for(RTExpression param : node.params) {
         if (! first) {
-          out.append(", ");
+          gen(", ");
         } else first = false;
-        param.visitWithComments(this);
+        gen(param);
       }
-      out.append(node.type.isArray() ? ']' : ')');
+      gen(node.type.isArray() ? ']' : ')');
     } else {
       RdfClass clz = node.type.getRdfClass();
       String clazz = (clz == null ? node.type.toJava() : clz.toString());
       accessTopLevelInstance();
-      out.append("_proxy.getClass(\"").append(clazz)
-         .append("\").getNewInstance(");
+      gen("_proxy.getClass(\"").gen(clazz).gen("\").getNewInstance(");
       accessTopLevelInstance();
-      out.append("DEFNS)");
+      gen("DEFNS)");
     }
   }
 
   @Override
-  public void visitNode(StatGrammarRule node) {
+  public void visit(StatGrammarRule node) {
     if (node.toplevel) {
       mem.enterEnvironment(node);
       // is a top level rule and will be converted to a method
-      out.append("public int " + node.label + "(){\n");
+      gen("public int " + node.label + "(){\n");
     } else {
       // a sub-level rule: ordinary <if>
-      out.append("// Rule ").append(node.label).append("\n");
+      gen("// Rule ").gen(node.label).gen("\n");
     }
     // generate output for rule logging. This is the "toplevel", because
     // activeInfo is non-Null, the visit call to ifNode.condition will generate
     // the appropriate assignments of baseterms to the bool array.
     activeInfo = mem.enterRule(node.ruleId);
     String varName = activeInfo.resultVarName();
-    out.append("boolean[] ").append(varName).append(" = new boolean[")
-       .append(Integer.toString(activeInfo.noBaseTerms() + 1))
-       .append("];\n");
+    gen("boolean[] ").gen(varName)
+       .gen(" = new boolean[").gen(activeInfo.noBaseTerms() + 1).gen("];\n");
     StatIf ifNode = node.ifstat;
     // first assign final result, then call log function, then execute if
-    out.append(varName).append("[0] = ");
+    gen(varName).gen("[0] = ");
 
     baseTerm = 1;
-    ifNode.condition.visitWithComments(this);
-    out.append(";\n");
+    gen(ifNode.condition).gen(";\n");
     accessTopLevelInstance();
-    out.append("logRule(").append(Integer.toString(activeInfo.getId()))
-       .append(", ").append(varName).append(");\n");
-    out.append(node.label + ":\n");
-    out.append("if (").append(varName).append("[0])");
+    gen("logRule(").gen(activeInfo.getId()).gen(", ").gen(varName).gen(");\n");
+    gen(node.label + ":\n").gen("if (").gen(varName).gen("[0])");
     activeInfo = null;  // no more rule logging code from here on
 
-    ifNode.statblockIf.visitWithComments(this);
-    out.append("\n");
+    gen(ifNode.statblockIf).gen("\n");
     if (ifNode.statblockElse != null) {
-      out.append("else ");
-      ifNode.statblockElse.visitWithComments(this);
+      gen("else ").gen(ifNode.statblockElse);
     }
     if (node.toplevel) {
-      out.append("\nreturn 0; \n}\n");
+      gen("\nreturn 0; \n}\n");
       mem.leaveEnvironment(node);
     }
     mem.leaveRule();
   }
 
   @Override
-  public void visitNode(StatAbstractBlock node) {
+  public void visit(StatAbstractBlock node) {
     if (node.braces) {
       // when entering a statement block, we need to enter the local environment
-      out.append("{\n");
+      gen("{\n");
       mem.enterEnvironment(node);
     }
     for (RudiTree stat : node.statblock) {
-      stat.visitWithComments(this);
+      gen(stat);
     }
     if (node.braces) {
-      out.append("\n}\n");
+      gen("\n}\n");
       mem.leaveEnvironment(node);
     }
   }
 
   @Override
-  public void visitNode(StatFor1 node) {
-    out.append("for ( ");
-    node.initialization.visitWithComments(this);
-    //out.append("; ");
-    node.condition.visitWithComments(this);
-    out.append(";");
+  public void visit(StatFor1 node) {
+    // for ($[initialization]$[condition];$[increment]) $[statblock]
+    gen("for ( ").gen(node.initialization).gen(node.condition).gen(";");
     if (node.increment != null) {
-      node.increment.visitWithComments(this);
+      gen(node.increment);
     }
-    out.append(")");
-    node.statblock.visitWithComments(this);
+    gen(")").gen(node.statblock);
   }
 
   @Override
-  public void visitNode(StatFor2 node) {
-    out.append("for (Object ");
-    node.var.visitWithComments(this);
-    out.append("_outer : ");
-    node.initialization.visitWithComments(this);
-    out.append(") { ").append(node.varType.toJava()).append(" ");
-    node.var.visitWithComments(this);
-    out.append(" = (").append(node.varType.toJava()).append(")");
-    node.var.visitWithComments(this);
-    out.append("_outer;\n");
-    node.statblock.visitWithComments(this);
-    out.append("\n}\n");
+  public void visit(StatFor2 node) {
+    // for (Object $[var]_outer : $[initialization]) {
+    //   ${varType.toJava()} $[var] = (${varType.toJava()})$[var]_outer;
+    //   $[statblock]
+    // }
+    gen("for (Object ").gen(node.var).gen("_outer : ").gen(node.initialization).gen(") { ");
+    gen(node.varType.toJava()).gen(" ").gen(node.var)
+      .gen(" = (").gen(node.varType.toJava()).gen(")").gen(node.var).gen("_outer;\n");
+    gen(node.statblock).gen("\n}\n");
   }
 
   @Override
-  public void visitNode(StatFor3 node) {
-    out.append("for (Object[] o : ");
-    node.initialization.visitWithComments(this);
-    out.append(") {");
+  public void visit(StatFor3 node) {
+    // for (Object[] o : $[initialization]) {
+    //   ${{s : variables} ${s} = o[${s?index}]\n};
+    //   $[statblock]
+    // }
+    gen("for (Object[] o : ").gen(node.initialization).gen(") {");
     int count = 0;
     for (String s : node.variables) {
-      out.append("\nObject " + s + " = o[" + count++ + "]");
+      gen("\nObject ").gen(s).gen(" = o[").gen(count++).gen("]");
     }
-    node.statblock.visitWithComments(this);
-    out.append("\n}");
+    gen(node.statblock).gen("\n}");
   }
 
   @Override
-  public void visitNode(StatIf node) {
-    out.append("if (");
-    node.condition.visitWithComments(this);
-    out.append(") ");
-    node.statblockIf.visitWithComments(this);
-    out.append("\n");
+  public void visit(StatIf node) {
+    // if ($[condition]) $[statblockIf]
+    // ${{statblockElse??}else $[statblockElse]}
+    gen("if (").gen(node.condition).gen(") ").gen(node.statblockIf).gen("\n");
     if (node.statblockElse != null) {
-      out.append("else ");
-      node.statblockElse.visitWithComments(this);
+      gen("else ").gen(node.statblockElse);
     }
   }
 
   @Override
-  public void visitNode(ExpListLiteral node) {
+  public void visit(ExpListLiteral node) {
     if (node.type.isArray()) {
-      out.append("{");
+      gen("{");
       boolean first = true;
       for (RTExpression e : node.objects) {
-        if (! first) out.append(", ");
+        if (! first) gen(", ");
         else first = false;
-        e.visitWithComments(this);
+        gen(e);
       }
-      out.append("}");
+      gen("}");
     } else {
-      out.append(" new ").append(node.type.toConcreteCollection()).append("()");
+      gen(" new ").gen(node.type.toConcreteCollection()).gen("()");
     }
 
     /*
-    // This functionality is now in other form in visitNode(StatVarDef node)
+    // This functionality is now in other form in visit(StatVarDef node)
     if (! node.objects.isEmpty()) {
-      out.append("{{");
+      gen("{{");
       for (RTExpression e : node.objects) {
-        out.append("add("); visitNode(e); out.append(");\n");
+        gen("add("); visit(e); gen(");\n");
       }
-      out.append("}}");
+      gen("}}");
     }*/
   }
 
   @Override
-  public void visitNode(StatMethodDeclaration node) {
+  public void visit(StatMethodDeclaration node) {
     if (node.block == null) {
       return;
     }
     mem.enterEnvironment(node);
-    out.append(node.visibility + " ");
-    out.append(node.return_type.toJava() + " ");
-    out.append(node.name + "(");
+    gen(node.visibility + " ").gen(node.return_type.toJava() + " ").gen(node.name + "(");
     for (int i = 0; i < node.parameters.size(); i++) {
-      if (i != 0) {
-        out.append(", ");
-      }
-      out.append(node.partypes.get(i).toJava() + " " + node.parameters.get(i));
+      gen((i != 0), ", ");
+      gen(node.partypes.get(i).toJava() + " " + node.parameters.get(i));
     }
-    out.append(")\n");
-    node.block.visitWithComments(this);
+    gen(")\n").gen(node.block);
     mem.leaveEnvironment(node);
   }
 
   @Override
-  public void visitNode(StatPropose node) {
+  public void visit(StatPropose node) {
     accessTopLevelInstance();
-    out.append("propose(");
-    node.arg.visitWithComments(this);
-    out.append(",");
+    gen("propose(").gen(node.arg).gen(",");
     accessTopLevelInstance();
-    out.append("new Proposal() {public void run()\n");
-    node.block.visitWithComments(this);
-    out.append("});\n");
+    gen("new Proposal() {public void run()\n").gen(node.block).gen("});\n");
   }
 
   /** newTimeout("label", time, new Proposal(public void run(){ block }))
@@ -684,44 +653,36 @@ public class VisitorGeneration implements RudiVisitor {
    *  timeout.
    */
   @Override
-  public void visitNode(StatTimeout node) {
+  public void visit(StatTimeout node) {
     accessTopLevelInstance();
     if (node.label.getType().isDialogueAct()) {
-      out.append("behaviourTimeout(");
+      gen("behaviourTimeout(");
     } else {
-      out.append("newTimeout(");
+      gen("newTimeout(");
     }
-    node.label.visitWithComments(this);
-    out.append(",");
-
-    node.time.visitWithComments(this);
-    out.append(",");
+    gen(node.label).gen(",").gen(node.time).gen(",");
     accessTopLevelInstance();
-    out.append("new Proposal() {public void run()\n");
-    node.block.visitWithComments(this);
-    out.append("});\n");
+    gen("new Proposal() {public void run()\n").gen(node.block).gen("});\n");
   }
 
   @Override
-  public void visitNode(StatReturn node) {
+  public void visit(StatReturn node) {
     switch (node.command) {
     case "break":
     case "return":
-      out.append(node.command).append(' ');
-      if (node.returnExp != null)
-        node.returnExp.visitWithComments(this);
-      if (node.ruleLabel != null)
-        out.append(node.ruleLabel);
-      out.append(";\n");
+      gen(node.command).gen(' ');
+      gen((node.returnExp != null), node.returnExp);
+      gen((node.ruleLabel != null), node.ruleLabel);
+      gen(";\n");
       break;
     case "cancel":
-      out.append("return ").append(CANCEL_LOCAL).append(";\n");
+      gen("return ").gen(CANCEL_LOCAL).gen(";\n");
       break;
     case "cancel_all":
-      out.append("return ").append(CANCEL_GLOBAL).append(";\n");
+      gen("return ").gen(CANCEL_GLOBAL).gen(";\n");
       break;
     case "continue":
-      out.append(node.command).append(";\n");
+      gen(node.command).gen(";\n");
       break;
     default: logger.error("Wrong return command: {}", node.command); break;
     }
@@ -730,30 +691,29 @@ public class VisitorGeneration implements RudiVisitor {
 
 
   @Override
-  public void visitNode(StatSetOperation node) {
-    node.left.visitWithComments(this);
+  public void visit(StatSetOperation node) {
+    gen(node.left);
     if (node.add) {
-      out.append(".add(");
+      gen(".add(");
     } else {
-      out.append(".remove(");
+      gen(".remove(");
     }
-    node.right.visitWithComments(this);
-    out.append(");");
+    gen(node.right).gen(");");
   }
 
   @Override
-  public void visitNode(StatVarDef node) {
+  public void visit(StatVarDef node) {
     if (node.isDefinition) { // Definition of var?
       if (node.varIsFinal)
-        out.append("final ");
-      out.append(node.type.toJava()).append(" ");
+        gen("final ");
+      gen(node.type.toJava()).gen(" ");
     }
     if (node.toAssign != null) {
-      node.toAssign.visitWithComments(this);
+      gen(node.toAssign);
     } else {
-      out.append(node.variable);
+      gen(node.variable);
     }
-    out.append(";");
+    gen(";");
     // TODO: IF WE CHANGE OUR MIND ABOUT THE INITIALIZATION OF COLLECTIONS,
     // THIS IS THE PLACE TO PUT IT:
     /**/
@@ -763,9 +723,9 @@ public class VisitorGeneration implements RudiVisitor {
           (ExpListLiteral)((ExpAssignment)node.toAssign).right;
       if (!listNode.type.isArray() && ! listNode.objects.isEmpty()) {
         for (RTExpression e : listNode.objects) {
-          out.append(node.variable).append(".add(");
-          visitNode(e);
-          out.append(");\n");
+          gen(node.variable).gen(".add(");
+          visit(e);
+          gen(");\n");
         }
       }
     }
@@ -773,38 +733,28 @@ public class VisitorGeneration implements RudiVisitor {
 
   /** Top-level field (variable) definition: only spit out definition! */
   @Override
-  public void visitNode(StatFieldDef node) {
-    out.append(node.visibility).append(node.varDef.varIsFinal ? " final ": " ")
-       .append(node.varDef.type.toJava()).append(" ")
-       .append(node.varDef.variable).append(";");
+  public void visit(StatFieldDef node) {
+    gen(node.visibility).gen(node.varDef.varIsFinal ? " final ": " ")
+       .gen(node.varDef.type.toJava()).gen(" ")
+       .gen(node.varDef.variable).gen(";");
   }
 
   @Override
-  public void visitNode(StatWhile node) {
+  public void visit(StatWhile node) {
     if (node.isWhileDo()) {
-      out.append("while (");
-      node.condition.visitWithComments(this);
-      out.append(")");
-      node.block.visitWithComments(this);
+      gen("while (").gen(node.condition).gen(")").gen(node.block);
     } else {
-      out.append("do");
-      node.block.visitWithComments(this);
-      out.append("while (");
-      node.condition.visitWithComments(this);
-      out.append(");");
+      gen("do").gen(node.block).gen("while (").gen(node.condition).gen(");");
     }
   }
 
   @Override
-  public void visitNode(StatSwitch node) {
-    out.append("switch (");
-    node.condition.visitWithComments(this);
-    out.append(")");
-    node.block.visitWithComments(this);
+  public void visit(StatSwitch node) {
+    gen("switch (").gen(node.condition).gen(")").gen(node.block);
   }
 
   @Override
-  public void visitNode(ExpFieldAccess node) {
+  public void visit(ExpFieldAccess node) {
     int to = node.parts.size();
     // don't print the last field if is in an assignment rather than an
     // access, which means that a set method is generated.
@@ -813,24 +763,19 @@ public class VisitorGeneration implements RudiVisitor {
     }
 
     // changed the direction of the for loop; should be enough
-    // for (int i = to - 1; i > 0; i--) {
     for (int i = to - 1; i >= 0; i--) {
       if (node.parts.get(i) instanceof ExpPropertyAccess) {
         ExpPropertyAccess pa = (ExpPropertyAccess) node.parts.get(i);
         String cast = pa.getType().toJava();
         // cast = capitalize(cast);
-        //out.append("((" + cast + ")";
-        out.append("((");
-        out.append((!pa.functional) ? "Set<Object>" : cast);
-        out.append(")");
+        //gen("((" + cast + ")";
+        gen("((").gen((!pa.functional) ? "Set<Object>" : cast).gen(")");
       }  else if (node.parts.get(i).getType().castRequired()) {
-        out.append("((");
-        out.append(node.parts.get(i).getType().toJava());
-        out.append(")");
+        gen("((").gen(node.parts.get(i).getType().toJava()).gen(")");
       }
     }
-    node.parts.get(0).visitWithComments(this);
-    if (node.parts.get(0).getType().castRequired()) out.append(")");
+    gen(node.parts.get(0));
+    if (node.parts.get(0).getType().castRequired()) gen(")");
     Type currentType = ((RTExpression) node.parts.get(0)).type;
     for (int i = 1; i < to; i++) {
       RTExpression currentPart = node.parts.get(i);
@@ -838,76 +783,73 @@ public class VisitorGeneration implements RudiVisitor {
         ExpPropertyAccess pa = (ExpPropertyAccess) currentPart;
         // then we are in the case that is actually an rdf operation
         if (currentType.isDialogueAct()) {
-          out.append(".getValue(");
+          gen(".getValue(");
         } else {
-          out.append(pa.functional ? ".getSingleValue(" : ".getValue(");
+          gen(pa.functional ? ".getSingleValue(" : ".getValue(");
         }
-        out.append(pa.getPropertyName());
-        out.append("))");
+        gen(pa.getPropertyName()).gen("))");
         currentType = pa.type;
       } else {
-        out.append(".");
-        currentPart.visitWithComments(this);
-        if (node.parts.get(i).getType().castRequired()) out.append(")");
+        gen(".").gen(currentPart);
+        if (node.parts.get(i).getType().castRequired()) gen(")");
         currentType = ((RTExpression) currentPart).type;
       }
     }
   }
 
   @Override
-  public void visitNode(ExpFuncCall node) {
+  public void visit(ExpFuncCall node) {
     if (node.realOrigin != null && node.calledUpon == null) {
-      out.append(lowerCaseFirst(node.realOrigin) + ".");
+      gen(lowerCaseFirst(node.realOrigin)).gen('.');
     }
     int start = 0;
     if (node.content.charAt(0) == '.') {
       assert(node.params.size() > 0);
-      node.params.get(0).visitWithComments(this);
+      gen(node.params.get(0));
       start = 1;
     }
     if (node.newexp){
-      out.append(node.type.toJava() + "(");
+      gen(node.type.toJava());
     } else {
-      out.append(node.content + "(");
+      gen(node.content);
     }
+    gen('(');
     for (int i = start; i < node.params.size(); i++) {
-      node.params.get(i).visitWithComments(this);
+      gen(node.params.get(i));
       if (i != node.params.size() - 1) {
-        out.append(", ");
+        gen(", ");
       }
     }
-    out.append(")");
+    gen(')');
   }
 
   @Override
-  public void visitNode(StatExpression rt) {
-    rt.expression.visitWithComments(this);
-    out.append(";\n");
+  public void visit(StatExpression rt) {
+    gen(rt.expression).gen(";\n");
   }
 
   @Override
-  public void visitNode(ExpSingleValue node) {
+  public void visit(ExpSingleValue node) {
     if (node.type.isString()) {
       if (node.content.indexOf('"') != 0)
         node.content = "\"" + node.content + "\"";
       if (escape) {
         // properly escape if needed
-        out.append("\\")
-           .append(node.content.substring(0, node.content.length() - 1))
-           .append("\\\" ");
+        gen('\\').gen(node.content.substring(0, node.content.length() - 1))
+           .gen("\\\" ");
         return;
       }
     }
-    out.append(node.content);
+    gen(node.content);
   }
 
   @Override
-  public void visitNode(ExpVariable node) {
+  public void visit(ExpVariable node) {
     String realOrigin = mem.getVariableOriginClass(node.content);
     if (realOrigin != null) {
-      out.append(lowerCaseFirst(realOrigin) + "." );
+      gen(lowerCaseFirst(realOrigin)).gen('.');
     }
-    out.append(node.content);
+    gen(node.content);
   }
 
   String stringEscape(String in) {
@@ -915,10 +857,7 @@ public class VisitorGeneration implements RudiVisitor {
   }
 
   @Override
-  public void visitNode(ExpArrayAccess node) {
-    node.array.visitWithComments(this);
-    out.append("[");
-    node.index.visit(this);
-    out.append("]");
+  public void visit(ExpArrayAccess node) {
+    gen(node.array).gen("[").gen(node.index).gen("]");
   }
 }

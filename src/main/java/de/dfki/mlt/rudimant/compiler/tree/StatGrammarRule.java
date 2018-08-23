@@ -45,7 +45,7 @@ public class StatGrammarRule extends RTStatement implements RTBlockNode {
   }
 
   public void visit(RudiVisitor v) {
-    v.visitNode(this);
+    v.visit(this);
   }
 
   public Iterable<? extends RudiTree> getDtrs() {

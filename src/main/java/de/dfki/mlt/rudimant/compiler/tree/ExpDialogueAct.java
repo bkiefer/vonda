@@ -47,7 +47,7 @@ public class ExpDialogueAct extends RTExpression {
   }
 
   public void visit(RudiVisitor v) {
-    v.visitNode(this);
+    v.visit(this);
   }
 
   public Iterable<? extends RudiTree> getDtrs() {

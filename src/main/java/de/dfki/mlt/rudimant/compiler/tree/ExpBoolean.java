@@ -64,6 +64,6 @@ public class ExpBoolean extends RTBinaryExp {
 
   @Override
   public void visit(RudiVisitor v) {
-    v.visitNode(this);
+    v.visit(this);
   }
 }

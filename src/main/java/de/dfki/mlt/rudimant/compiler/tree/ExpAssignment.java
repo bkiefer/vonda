@@ -41,7 +41,7 @@ public class ExpAssignment extends RTExpression {
 
   @Override
   public void visit(RudiVisitor v) {
-    v.visitNode(this);
+    v.visit(this);
   }
 
   public boolean leftIsVariable() {

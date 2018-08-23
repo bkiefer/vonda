@@ -34,6 +34,6 @@ public class ExpSingleValue extends RTExpLeaf {
 
   @Override
   public void visit(RudiVisitor v) {
-    v.visitNode(this);
+    v.visit(this);
   }
 }

@@ -52,7 +52,7 @@ public class ExpCast extends RTExpression {
 
   @Override
   public void visit(RudiVisitor v) {
-    v.visitNode(this);
+    v.visit(this);
   }
 
   @Override

@@ -163,10 +163,10 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
       }
       if (fd != null) {
         if (fd.varDef.toAssign != null && fd.varDef.isDefinition) {
-          gv.visitNode(fd); // save comment for assignment
+          gv.visit(fd); // save comment for assignment
         } else if (fd.varDef.isDefinition) {
           // TODO: confirm: if this is no definition, we do not want it here, right?
-          fd.visitWithComments(gv);
+          gv.gen(fd);
         }
       }
     }
@@ -185,12 +185,12 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         StatVarDef vd = (StatVarDef)r;
         if (vd.toAssign == null) continue;
         vd.isDefinition = false;
-        vd.visitWithComments(gv);
+        gv.gen(vd);
       } else if (r instanceof StatFieldDef) {
         StatVarDef vd = ((StatFieldDef)r).varDef;
         if (vd.toAssign == null) continue;
         vd.isDefinition = false;
-        vd.visitWithComments(gv);
+        gv.gen(vd);
       } else if (r instanceof StatGrammarRule || r instanceof Import) {
         // rules and imports are called as functions and may return a non-zero
         // value. If the value is 1
@@ -229,7 +229,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         }
         out.append(" return (res - 1);\n");
       } else if (r instanceof RTStatement) {
-        ((RTStatement)r).visitWithComments(gv);
+        gv.gen((RTStatement)r);
       }
     }
     out.append(PROCESS_SUFFIX);
@@ -238,7 +238,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     pourBackSavedComments(gv);
     // now, add everything that we did not want in the process method
     for(RTStatement t : later){
-      gv.visitNode(t);
+      gv.visit(t);
     }
   }
 

@@ -46,7 +46,7 @@ public class StatFieldDef extends RTStatement {
 
   @Override
   public void visit(RudiVisitor v) {
-    v.visitNode(this);
+    v.visit(this);
   }
 
   public String toString() {
