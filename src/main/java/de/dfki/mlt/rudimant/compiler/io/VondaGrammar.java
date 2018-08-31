@@ -3196,9 +3196,9 @@ private static final short yycheck_[] = yycheck_init();
 
   private List<RudiTree> _statements = new LinkedList<>();
 
-  private GrammarFile _result = new GrammarFile(_statements);
+  //private GrammarFile _result = new GrammarFile(_statements);
 
-  public GrammarFile getResult() { return _result; }
+  public List<RudiTree> getResult() { return _statements; }
 
   public <T extends RudiTree> T setPos(T rt, Location l) {
     return setPos(rt, l, l) ;

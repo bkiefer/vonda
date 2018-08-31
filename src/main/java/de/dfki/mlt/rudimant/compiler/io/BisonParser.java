@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import de.dfki.mlt.rudimant.compiler.Mem;
+import de.dfki.mlt.rudimant.compiler.TokenHandler;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
 
 public class BisonParser {
@@ -21,9 +22,7 @@ public class BisonParser {
       grammar.setDebugLevel(99); grammar.setErrorVerbose(true);
     }
     if (! grammar.parse()) return null;
-    GrammarFile result = grammar.getResult();
-    result.tokens = lexer.getTokens();
-    result.commentTokens = lexer.getCommentTokens();
-    return result;
+    return new GrammarFile(grammar.getResult(),
+        new TokenHandler(lexer.getTokens(), lexer.getCommentTokens()));
   }
 }

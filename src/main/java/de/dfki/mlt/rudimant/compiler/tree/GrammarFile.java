@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -50,13 +49,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
   public static final Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
   // imports* (comment grammar_rule | method_declaration | statement )* comment
-  List<RudiTree> rules;
-  static Writer out;
-
-
-  public LinkedList<Token> tokens;
-  public LinkedList<Token> commentTokens;
-
+  private List<RudiTree> rules;
+  private TokenHandler _th;
 
   // **********************************************************************
   // static methods
@@ -97,14 +91,15 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
   }
 
   /** Constructor, only to be used by the parser */
-  public GrammarFile(List<RudiTree> rules) {
+  public GrammarFile(List<RudiTree> rules, TokenHandler th) {
     this.rules = rules;
+    this._th = th;
   }
 
   // As expected, this works equally well.
   private void startTypeInference(RudimantCompiler rudi, boolean errorsFatal) {
     Mem mem = rudi.getMem();
-    VisitorType ttv = new VisitorType(mem, errorsFatal, tokens, commentTokens);
+    VisitorType ttv = new VisitorType(mem, errorsFatal, _th);
 
     for (RudiTree t : rules) {
       if (t instanceof Import) {
@@ -122,32 +117,12 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     }
   }
 
-  // in this list, keep all comments that belong to methods or rules that
-  // are not evaluated into the process method
-  LinkedList<Token> saveComments = new LinkedList<>();
-
-  /** Save comments that belong to a postponed part of the code onto another
-   *  list (all before pos)
-   */
-  private void saveCommentsForLater(VisitorGeneration gv, Position pos) {
-    while (!gv.collectedTokens.isEmpty()
-        && gv.collectedTokens.get(0).getStart().getCharpos() < pos.getCharpos()) {
-      saveComments.addFirst(gv.collectedTokens.get(0));
-      gv.collectedTokens.remove();
-    }
-  }
-
-  /** put the saved comments back onto the original list for processing */
-  private void pourBackSavedComments(VisitorGeneration gv) {
-    while (!saveComments.isEmpty()) {
-      gv.collectedTokens.addFirst(saveComments.getFirst());
-      saveComments.removeFirst();
-    }
-  }
 
   /** Now produce code for all rules and statements in a file */
-  private void writeRuleList(Mem mem, VisitorGeneration gv) {
-    SilentWriter out = gv.out;
+  private void writeRuleList(Mem mem, Writer out)
+      throws IOException {
+    VisitorGeneration gv = new VisitorGeneration(out, mem, _th);
+    mem.enterEnvironment(this);
     List<RTStatement> later = new ArrayList<>();
     // do all VarDefs *DEFINITIONS* on toplevel here, those are class attributes
     for(RudiTree r : rules) {
@@ -180,7 +155,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         // comments to a laterComments list
         later.add((StatMethodDeclaration)r);
         if (((StatMethodDeclaration)r).block != null)
-          saveCommentsForLater(gv, r.getLocation().getEnd());
+          _th.saveCommentsForLater(r.getLocation().getEnd());
       } else if (r instanceof StatVarDef) {
         StatVarDef vd = (StatVarDef)r;
         if (vd.toAssign == null) continue;
@@ -199,11 +174,11 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
           out.append(((StatGrammarRule)r).label).append("();");
           later.add((StatGrammarRule)r);
           // move all appropriate comments to a laterComments list
-          saveCommentsForLater(gv, r.getLocation().getEnd());
+          _th.saveCommentsForLater(r.getLocation().getEnd());
           out.append(" if (res != 0)");
         } else {
           Import imp = (Import)r;
-          gv.checkComments(r.getLocation().getBegin());
+          _th.checkComments(r.getLocation().getBegin(), out);
           out.append("res = ");
           // use fully qualified name
           String rootpkg = getPackageName(mem.getTopLevelPackageSpec());
@@ -235,11 +210,12 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     out.append(PROCESS_SUFFIX);
 
     // replace the comments list by the laterComments list
-    pourBackSavedComments(gv);
+    _th.pourBackSavedComments();
     // now, add everything that we did not want in the process method
     for(RTStatement t : later){
       gv.visit(t);
     }
+    mem.leaveEnvironment(this);
   }
 
 
@@ -285,15 +261,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     Position firstPos = rules.isEmpty()
         ? new Position(0,0,Integer.MAX_VALUE,"")
             : rules.get(0).getLocation().getBegin();
-    Iterator<Token> it = commentTokens.iterator();
-    while (it.hasNext()) {
-      Token curr = it.next();
-      if (curr.getStart().getCharpos() < firstPos.getCharpos()
-          && curr.getText().startsWith("/*@")) {
-        out.append(VisitorGeneration.removeJavaBrackets(curr.getText()));
-        it.remove();
-      } else break;
-    }
+    _th.initialComments(firstPos, out);
 
     // maybe we need to import the class that imported us to use its variables
     out.append("public class ").append(mem.getClassName());
@@ -341,16 +309,15 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     // generate the main processing method that will call all rules and imports
     // declared in this file
     // ************************************************************
-    VisitorGeneration gv =
-        new VisitorGeneration(out, mem, rudi.logRudi(), commentTokens);
-    mem.enterEnvironment(this);
-    writeRuleList(mem, gv);
-    mem.leaveEnvironment(this);
-
+    try {
+      writeRuleList(mem, out);
+    } catch (WriterException wex) {
+      throw (IOException)wex.getCause();
+    }
     // ************************************************************
     // at the very end of the file, there might still be unprinted comments
     // ************************************************************
-    gv.checkComments(new Position(0, 0, Integer.MAX_VALUE, ""));
+    _th.checkComments(new Position(0, 0, Integer.MAX_VALUE, ""), out);
     out.append("}\n");
   }
 

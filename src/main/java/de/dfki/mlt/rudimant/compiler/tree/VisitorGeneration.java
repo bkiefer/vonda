@@ -22,6 +22,7 @@ package de.dfki.mlt.rudimant.compiler.tree;
 import static de.dfki.mlt.rudimant.compiler.Constants.*;
 import static de.dfki.mlt.rudimant.compiler.Utils.*;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
 
@@ -30,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
-import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.common.RuleInfo;
 import de.dfki.mlt.rudimant.compiler.*;
 
@@ -43,12 +43,10 @@ public class VisitorGeneration implements RudiVisitor {
 
   public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
-  SilentWriter out;
+  Writer _out;
   private Mem mem;
 
-  LinkedList<Token> collectedTokens;
-
-  boolean whatToLog;
+  private TokenHandler _th;
 
   // activate bool to get double escaped String literals
   private boolean escape = false;
@@ -60,12 +58,10 @@ public class VisitorGeneration implements RudiVisitor {
   private RuleInfo activeInfo = null;
 
 
-  public VisitorGeneration(Writer o, Mem m, boolean logHow, LinkedList<Token> tokens) {
-    out = new SilentWriter(o);
+  public VisitorGeneration(Writer o, Mem m, TokenHandler th) {
+    _out = o;
     mem = m;
-    whatToLog = logHow;
-    //condV = new VisitorConditionLog(this);
-    collectedTokens = tokens;
+    _th = th;
   }
 
   public static String removeJavaBrackets(String c){
@@ -76,42 +72,43 @@ public class VisitorGeneration implements RudiVisitor {
     return c;
   }
 
-  public VisitorGeneration gen(char c) { out.append(c); return this; }
+  public VisitorGeneration gen(char c) {
+    try {
+      _out.append(c);
+    } catch (IOException ex) {
+      throw new WriterException(ex);
+    }
+    return this;
+  }
 
-  public VisitorGeneration gen(CharSequence c) { out.append(c); return this; }
+  public VisitorGeneration gen(CharSequence c) {
+    try {
+      _out.append(c);
+    } catch (IOException ex) {
+      throw new WriterException(ex);
+    }
+    return this;
+  }
 
   public VisitorGeneration gen(int i) {
-    out.append(Integer.toString(i));
+    try {
+      _out.append(Integer.toString(i));
+    } catch (IOException ex) {
+      throw new WriterException(ex);
+    }
     return this;
   }
 
   public VisitorGeneration gen(boolean b, char c) {
-    if (b) out.append(c); return this;
+    if (b) gen(c); return this;
   }
 
   public VisitorGeneration gen(boolean b, CharSequence c) {
-    if (b) out.append(c); return this;
+    if (b) gen(c); return this;
   }
 
   public VisitorGeneration gen(boolean b, RudiTree c) {
     if (b) gen(c); return this;
-  }
-
-  protected void checkComments(Position firstPos) {
-    Iterator<Token> it = collectedTokens.iterator();
-    Token next;
-    boolean content = false;
-    while (it.hasNext()
-        && (next = it.next()).getStart().getCharpos() < firstPos.getCharpos()) {
-      it.remove();
-      String comment = next.getText();
-      comment = removeJavaBrackets(comment);
-      if (!comment.trim().isEmpty()) {
-        gen(comment);
-        content = true;
-      }
-    }
-    if (content) gen('\n');
   }
 
   /**
@@ -119,11 +116,15 @@ public class VisitorGeneration implements RudiVisitor {
    * @param v
    */
   public VisitorGeneration gen(RudiTree rt) {
-    checkComments(rt.location.getBegin());
-    gen(rt._parens, "(");
-    rt.visit(this);
-    gen(rt._parens, ")");
-    checkComments(rt.location.getEnd());
+    try {
+      _th.checkComments(rt.location.getBegin(), _out);
+      gen(rt._parens, "(");
+      rt.visit(this);
+      gen(rt._parens, ")");
+      _th.checkComments(rt.location.getEnd(), _out);
+    } catch (IOException ex) {
+      throw new WriterException(ex);
+    }
     return this;
   }
 

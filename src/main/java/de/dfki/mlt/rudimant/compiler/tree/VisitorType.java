@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
-import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.common.RuleInfo;
 import de.dfki.mlt.rudimant.compiler.*;
 
@@ -48,39 +47,10 @@ public class VisitorType implements RudiVisitor {
 
   boolean typeErrorFatal;
 
-  private List<Token> commentTokens;
-  private List<Token> tokens;
+  private TokenHandler _th;
 
-  /** find the position of the token that starts at or immediately after pos */
-  public int indexOf(List<Token> tokens, Position start) {
-    for(int i = 0; i < tokens.size(); ++i) {
-      if (tokens.get(i).getStart().compareTo(start) >= 0) return i;
-    }
-    return -1;
-  }
-
-  public String getFullText(RudiTree node) {
-    Position start = node.getLocation().getBegin();
-    Position end = node.getLocation().getEnd();
-    StringBuffer sb = new StringBuffer();
-    // find the positions of the first token starting at start
-    int comm = indexOf(commentTokens, start);
-    int cont = indexOf(tokens, start);
-    while ((comm != -1 && comm < commentTokens.size()
-          && commentTokens.get(comm).getEnd().compareTo(end) <= 0) ||
-           (cont != -1 && cont < tokens.size()
-              && tokens.get(cont).getEnd().compareTo(end) <= 0)) {
-      // find which token is next, append it and increase the appropriate index
-      if (comm != -1 && comm < commentTokens.size()
-          && commentTokens.get(comm).getStart().compareTo(tokens.get(cont).getStart()) <= 0){
-        sb.append(commentTokens.get(comm).getText());
-        ++comm;
-      } else {
-        sb.append(tokens.get(cont).getText());
-        ++cont;
-      }
-    }
-    return sb.toString();
+  private String getFullText(RudiTree node) {
+    return _th.getFullText(node);
   }
 
   /** use this to report a type checking error; it will be handled according to
@@ -114,12 +84,15 @@ public class VisitorType implements RudiVisitor {
     logger.warn(newWarningMessage);
   }
 
-  public VisitorType(Mem m, boolean errorsFatal,
-      List<Token> tokz, List<Token> ctokz) {
+  public void percolateError(Type type, RudiTree node) {
+    logger.error("Why didn't this type percolate up? "
+        + getFullText(node) + " " + type);
+  }
+
+  public VisitorType(Mem m, boolean errorsFatal, TokenHandler th) {
     mem = m;
     typeErrorFatal = errorsFatal;
-    tokens = tokz;
-    commentTokens = ctokz;
+    _th = th;
   }
 
   public void visit(RudiTree node) {

@@ -42,6 +42,7 @@ public class CoverageTest {
     configs.put(CFG_OUTPUT_DIRECTORY, new File("target/generated/"));
     configs.put(CFG_ONTOLOGY_FILE,
         RESOURCE_DIR + "ontologies/inits/pal.inference.ini");
+    configs.put(CFG_VISUALISE, true);
     RudimantCompiler rc = new RudimantCompiler(new File("."), configs);
     assertFalse(CompilerMain.process(rc, "doc/AllYouCanDo.rudi"));
     assertTrue(new File("target/generated/AllYouCanDo.java").exists());
