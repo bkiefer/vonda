@@ -100,12 +100,18 @@ public class VisitorType implements RudiVisitor {
   }
 
   @SuppressWarnings("serial")
+  /** This is a code conversion function which turns the value of an expression
+   *  into a String
+   * @param ex the expression to be converted
+   * @return
+   */
   private RTExpression convertToString(RTExpression ex) {
     ExpFuncCall result;
     String funName = ex.type.getStringConversionFunction();
     result = new ExpFuncCall(funName,
         new ArrayList<RTExpression>(){{add(ex);}}, false);
     result.type = new Type("String");
+    // is this a method rather than a function call?
     if (funName.charAt(0) == '.') result.calledUpon = ex.type;
     ex.fixFields(result);
     return result;
@@ -210,23 +216,21 @@ public class VisitorType implements RudiVisitor {
         // in that case, we assume that this should be a test for existence
         mergeType = new Type("boolean");
         node.right = node.right.ensureBoolean();
+      } else if ((node.left instanceof ExpFieldAccess) &&
+          node.right instanceof ExpSingleValue &&
+          ((ExpSingleValue)node.right).content.equals("null")) {
+        // this is a "clear" operation, to be resolved later.
+        mergeType = node.left.type;
+      } else if (node.left.type.isString()
+          && node.right.type.isStringConvertible()) {
+        // cast to string if we think we now how
+        node.right = convertToString(node.right);
+        mergeType = node.left.type;
       } else {
-        if ((node.left instanceof ExpFieldAccess) &&
-            node.right instanceof ExpSingleValue &&
-            ((ExpSingleValue)node.right).content.equals("null")) {
-          // this is a "clear" operation, to be resolved later.
-          mergeType = node.left.type;
-        } else if (node.left.type.isString()
-            && node.right.type.isStringConvertible()) {
-          // cast to string if we think we now how
-          node.right = convertToString(node.right);
-          mergeType = node.left.type;
-        } else {
-          mergeType = Type.getNoType();
-          typeError("Incompatible types in assignment: "
-              + node.left.type.getRep() + " := "
-              + node.right.type.getRep(), node);
-        }
+        mergeType = Type.getNoType();
+        typeError("Incompatible types in assignment: "
+            + node.left.type.getRep() + " := "
+            + node.right.type.getRep(), node);
       }
     }
     node.type = mergeType;
@@ -239,10 +243,21 @@ public class VisitorType implements RudiVisitor {
   }
 
 
+  /** This returns true if we are currently handling a boolean expression that
+   *  is the condition of a rule. We treat this case in a special way since we
+   *  have to collect the operators and the base terms of the expression for
+   *  logging the live system
+   *
+   * @return true if we are handling the condition of a rule
+   */
   private boolean collectTerms() {
     return (activeInfo != null && ! ruleIfSuspended);
   }
 
+  /** If we are currently handling a boolean expression that is the condition
+   *  of a rule, we collect the operators and the base terms of the expression
+   *  for logging in the live system
+   */
   private void handleRuleLogging(ExpBoolean node) {
     // handle case of ExpBoolean which is possibly a base term
     if (collectTerms()) {
@@ -330,7 +345,7 @@ public class VisitorType implements RudiVisitor {
         res = convertToString(res);
       } else {
         typeError(getFullText(node) + ": DialogueAct argument "
-            + getFullText(res) + "not a string: " + res.type, node);
+            + getFullText(res) + " not a string: " + res.type, node);
       }
     }
     return res;
@@ -390,16 +405,17 @@ public class VisitorType implements RudiVisitor {
       visit(exp);
       parTypes[0] = exp.getType();
     } else {
-      visit((StatAbstractBlock)node.body);
+      StatAbstractBlock block = (StatAbstractBlock)node.body;
+      visit(block);
       // then the last statement of the block must be the return of some exp
-      RudiTree last = ((StatAbstractBlock)node.body).statblock.get(((StatAbstractBlock)node.body).statblock.size() - 1);
+      RudiTree last = block.statblock.get(block.statblock.size() - 1);
       if (last instanceof StatReturn) {
         parTypes[0] = ((StatReturn)last).returnExp.getType();
       } else {
         typeError("Block used in functional expression doesn't end with a return", node);
       }
     }
-     node.type = Type.getComplexType("Function", parTypes);
+    node.type = Type.getComplexType("Function", parTypes);
     mem.leaveEnvironment(node);
   }
 
@@ -417,7 +433,7 @@ public class VisitorType implements RudiVisitor {
       mem.enterEnvironment(node);
     }
     StatIf ifNode = node.ifstat;
-    visitExpBoolChild(ifNode.condition);//.visit(this);
+    visitExpBoolChild(ifNode.condition);
     activeInfo = null;
     ifNode.statblockIf.visit(this);
     if (ifNode.statblockElse != null) {
@@ -644,6 +660,8 @@ public class VisitorType implements RudiVisitor {
    * treat the case that an RDF is accessed with a label, which can result in a
    * lot of different things: setValue, getValue, setSingleValue,
    * getSingleValue, has
+   *
+   * TODO this is still ugly
    *
    * @param node
    * @param currentType
@@ -901,9 +919,9 @@ public class VisitorType implements RudiVisitor {
   @Override
   public void visit(StatTimeout node) {
     node.label.visit(this);
-    if (! node.label.getType().isString()
-        && ! node.label.getType().isStringConvertible()
-        && ! node.label.getType().isDialogueAct()) {
+    Type ltype = node.label.getType();
+    if (! ltype.isString() && ! ltype.isStringConvertible()
+        && ! ltype.isDialogueAct()) {
       typeError("Argument of timeout must be string or dialogueact", node);
     }
     node.time.visit(this);

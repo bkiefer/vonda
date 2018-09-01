@@ -340,11 +340,13 @@ public class Type {
     assert(isStringConvertible());
     String typeName = _name;
     if (isPODType()) {
+      // if it's sth like int, return Integer.toString
       Long code = typeCodes.get(_name);
-      if (code == null) typeName =  _name;
+      if (code == null) typeName = _name;
       typeName = code2type.get(code | 0b100);
       typeName += ".toString";
     } else {
+      // it's a Java type
       typeName = ".toString";
     }
     return typeName;
