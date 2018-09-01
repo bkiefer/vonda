@@ -310,9 +310,12 @@ public class VisitorGeneration implements RudiVisitor {
       if (nextToLast.type.isDialogueAct()) {
         boolean oldrep = replaceLastWithFuncall;
         replaceLastWithFuncall = true;
-        gen(fa).gen(".hasSlot(\"")
-          .gen(((RTExpLeaf)(fa.parts.get(fa.parts.size() - 1))).content)
-          .gen("\")");
+        String slot = ((RTExpLeaf)(fa.parts.get(fa.parts.size() - 1))).content;
+        Type t = mem.getVariableType(slot);
+        // if slot is a variable of type String, don't put "" !
+        if (!(t != null && t.isString()))
+          slot = "\"" + slot + "\"";
+        gen(fa).gen(".hasSlot(").gen(slot).gen(")");
         replaceLastWithFuncall = oldrep;
         return;
       }

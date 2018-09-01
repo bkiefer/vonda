@@ -162,4 +162,17 @@ public class DialogueActTest {
     assertTrue(RdfProxy.getValues(qr) != null && RdfProxy.getValues(qr).size() == 1);
   }
 
+  @Test
+  public void testHasSlot() throws IOException {
+    String in = "slots = { \"theme1\", \"theme2\" };" +
+                  "for (String slot: slots) {" +
+                  "  if (lastDA().slot) { }}";
+    String s = generate(in);
+    String expected = "String[] slots = {\"theme1\", \"theme2\"};"
+            + "for (Object slot_outer : slots) { "
+            + "String slot = (String)slot_outer; { "
+            + "if (exists(lastDA()) && lastDA().hasSlot(slot)) { } } }";
+    assertEquals(expected, getForMarked(s, expected));
+
+  }
 }
