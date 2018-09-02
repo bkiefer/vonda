@@ -1,5 +1,8 @@
+* Fragen aus dem Durchforsten von VisitorType
+  - ist dokumentiert, dass folgendes ein "clear" ist:
+    child.name = null
 * Queries aus .rudi abfeuern --> missing varargs!?
-
+  
 * Collections probleme: Alles polymorph?
 
 * Dialogue Acts
