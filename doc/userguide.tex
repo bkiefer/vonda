@@ -311,9 +311,12 @@ As you might have noticed whilst looking at chatcat.yml, there is another parame
 	Agent : "<cat:Agent>"
 \end{verbatim}
 
-When trying to compile without these two lines, you will find that \vonda produces the warning '' \texttt{base name Agent can be one of  <http://www.semanticweb.org/anna/ontologies/2018/3/chatcat\#Agent>, <dial:Agent>, please resolve manually.}''.
+When trying to compile without these two lines, you will find that \vonda produces the warning \begin{small}'' \texttt{base name Agent can be one of  <http://www.semanticweb.org/anna/ontologies/2018/3/chatcat\#Agent>, <dial:Agent>, please resolve manually.}''
+\end{small}.
 
-This is telling the compiler that when defining the Rdf class Agent in the database step, we actually redefined an existing class. \vonda warns us about this and urges us to resolve this ambiguity. Thus, we could either rename our class, or explicitly state which namespace should be accessed whenever the class Agent is used. \texttt{nameToURI} can be used to do the latter.
+This is the compiler telling us that when defining the Rdf class Agent in the database step, we actually redefined an existing class. \vonda warns us about this and urges us to resolve this ambiguity. Thus, we could either rename our class, or explicitly state which namespace should be accessed whenever the class Agent is used. \texttt{nameToURI} can be used to do the latter.
+
+Of course, you can also use this functionality to ''rename'' Rdf classes as you please: \vonda will always map the name on the left to the class URI provided on the right.
 
 \section{Advanced Features}
 
