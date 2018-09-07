@@ -61,7 +61,7 @@ public class Visualize extends CompilerMain {
     if (fakeReal) {
       String[] pkg = {};
       rc.getMem().enterClass("Test", pkg, null);
-      rc.readAgentSpecs("Test");
+      rc.readAgentSpecs();
     }
     return rc;
   }

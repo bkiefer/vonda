@@ -137,11 +137,11 @@ public class RudimantCompiler {
    *  the toplevel rudi file.
    * @param topLevel
    */
-  public void readAgentSpecs(String inputRealName) {
+  public void readAgentSpecs() {
     try {
       parseAndTypecheck(this,
           RudimantCompiler.class.getResourceAsStream("/" + AGENT_DEFS),
-          inputRealName);
+          AGENT_DEFS);
     } catch (IOException ex) {
       logger.error("Agent definitions file import fails: {}", ex);
     }
@@ -222,13 +222,12 @@ public class RudimantCompiler {
     String className = topLevel.getName().replace(RULE_FILE_EXTENSION, "");
 
     mem.enterClass(className, new String[0], null);
-    readAgentSpecs(className);
     String wrapperClass = mem.getWrapperClass();
     File wrapperInit = new File(inputRootDir,
         wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + RULE_FILE_EXTENSION);
     try {
       if (wrapperInit.exists()) {
-        parseAndTypecheck(this, new FileInputStream(wrapperInit), className);
+        parseAndTypecheck(this, new FileInputStream(wrapperInit), wrapperInit.getName());
       } else {
         logger.info("No method declaration file for {}", wrapperInit);
       }
