@@ -21,6 +21,9 @@ package de.dfki.mlt.rudimant.compiler;
 
 import static de.dfki.mlt.rudimant.compiler.Constants.DIALOGUE_ACT_TYPE;
 
+import java.sql.Array;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
@@ -167,6 +170,9 @@ public class Type {
   /** The RDF class of this type, if any */
   private RdfClass _class;
 
+  /** The list of all type variables in this type, also from inner types */
+  private Set<String> _typeVars;
+
   /** When true, the type appears to be Object in the Java code, but we know
    *  it's something more specific (mostly because we're treating an RDF
    *  collection of things.
@@ -191,6 +197,7 @@ public class Type {
     }
   }
 
+  /* parsing of type expresssions, obsolete
   private void splitIfy(String typeSpec) {
     int i = 0;
     if ((i = typeSpec.indexOf('<')) > 0) {
@@ -209,43 +216,97 @@ public class Type {
       _name = typeSpec;
     }
   }
+  */
 
+  // =========================================================================
+  // Factory methods
+  // =========================================================================
 
-  /** This is only to be used to create complex types for lambda expressions */
-  public static Type getComplexType(String name, Type ... parameterTypes) {
-    Type result = new Type(name);
-    result._parameterTypes = new ArrayList<>(parameterTypes.length);
-    result._parameterTypes.addAll(Arrays.asList(parameterTypes));
-    return result;
+  /** This is only to be used to create complex types for function expressions */
+  public static Type getFunctionType(Type retType,
+      Type methodOfType, List<Type> paramTypes) {
+    List<Type> parameterTypes = new LinkedList<>();
+    if (retType == null) retType = getNoType();
+    parameterTypes.add(retType);
+    if (methodOfType != null)
+      parameterTypes.add(methodOfType);
+    parameterTypes.addAll(paramTypes);
+    return new Type(methodOfType == null ? "Function" : "Method", parameterTypes);
   }
 
+  private Type renameTypeVars(int[] i, Map<String, String> map) {
+    String name = _name;
+    if (isTypeVariable()) {
+      if (map.containsKey(name)) name = map.get(name);
+      else {
+        name = "" + (char)('A' + i[0]++);
+        map.put(_name, name);
+      }
+    }
+    if (_parameterTypes == null) {
+      return new Type(name);
+    }
+    List<Type> params = new ArrayList<>();
+    for (Type t : _parameterTypes) {
+      params.add(t.renameTypeVars(i, map));
+    }
+    return new Type(name, params);
+  }
+
+  /** This is only to be used to create complex types for function expressions */
+  public static Type getFunctionTypeUniqueVars(Type retType,
+      Type methodOfType, List<Type> paramTypes) {
+    int[] i = { 0 };
+    List<Type> parameterTypes = new LinkedList<>();
+    if (retType == null) parameterTypes.add(getNoType());
+    else parameterTypes.add(retType.renameTypeVars(i, new HashMap<>()));
+    if (methodOfType != null)
+      parameterTypes.add(methodOfType.renameTypeVars(i, new HashMap<>()));
+    for(Type p : paramTypes) {
+      parameterTypes.add(p.renameTypeVars(i, new HashMap<>()));
+    }
+    return new Type(methodOfType == null ? "Function" : "Method", parameterTypes);
+  }
   /** This is only to be used to create complex types for lambda expressions */
-  public static Type getRdfComplexType(String name, Type ... parameterTypes) {
-    Type result = getComplexType(name, parameterTypes);
+  public static Type getRdfComplexType(String name, Type parameterType) {
+    List<Type> parameterTypes = new LinkedList<>();
+    parameterTypes.add(parameterType);
+    Type result = new Type(name, parameterTypes);
     for(Type p : parameterTypes) {
       p._castRequired = true;
     }
     return result;
   }
 
-  public Type(String typeSpec) {
-    if (typeSpec == null) {
-      _name = null;
-      return;
+  public Type(String name) {
+    _name = name;
+    if (_name == null) return;
+    if (isTypeVariable()) {
+      _typeVars = new HashSet<>();
+      _typeVars.add(_name);
     }
-    splitIfy(typeSpec);
     if (! JAVA_CLASSES.containsKey(_name)) {
       rdfIfy();
     }
   }
 
-  public Type(String outer, Type ... inner) {
-    _name = outer;
-    _parameterTypes = Arrays.asList(inner);
+  public Type(String outer, List<Type> inner) {
+    this(outer);
+    _parameterTypes = inner;
+    for (Type t : _parameterTypes) {
+      if (t != null && t._typeVars != null) {
+        if (_typeVars == null) _typeVars = new HashSet<>();
+        _typeVars.addAll(t._typeVars);
+      }
+    }
   }
 
   public String get_name() {
     return _name;
+  }
+
+  public Set<String> getTypeVars() {
+    return _typeVars == null ? Collections.emptySet() : _typeVars;
   }
 
   private String xsdToJavaPodWrapper() {
@@ -328,12 +389,25 @@ public class Type {
     return _name == null;
   }
 
-  public boolean isUnaryGeneric() {
-    return !isUnspecified() && _name.matches("[A-Z]");
+  public boolean isTypeVariable() {
+    return _name != null && _name.length() == 1
+        && _name.charAt(0) >= 'A' && _name.charAt(0) <= 'Z';
   }
 
   public boolean isStringConvertible() {
     return isPODType() || isRdfType() || isNumber();
+  }
+
+  public boolean isFunction() {
+    return "Function".equals(_name);
+  }
+
+  public boolean isMethod() {
+    return "Method".equals(_name);
+  }
+
+  public Type getReturnType() {
+    return _parameterTypes.get(0);
   }
 
   public String getStringConversionFunction() {
@@ -354,7 +428,7 @@ public class Type {
 
   public boolean containsGeneric() {
     if (_parameterTypes == null)
-      return isUnaryGeneric();
+      return isTypeVariable();
     for (Type p : _parameterTypes) {
       if (p.containsGeneric())
         return true;
@@ -367,7 +441,6 @@ public class Type {
   public Type getObjectRdf() {
     Type ret = new Type("Object");
     ret._class = _class;
-    //Type ret = this;
     return ret;
   }
 
@@ -381,19 +454,17 @@ public class Type {
     return _parameterTypes != null? _parameterTypes: new ArrayList<>();
   }
 
+  /** TODO: get this out of the way! Dangerous! */
   public void setInnerType(Type inner) {
     _parameterTypes = new ArrayList<>(1);
     _parameterTypes.add(inner);
   }
 
-  public void setParameterTypes(List<Type> params) {
-    _parameterTypes = params;
-  }
-
   public Type unifyTypes(Type right) {
-    if (isUnspecified() || isNull() || _name.equals("Object")) return right;
+    if (isUnspecified() || isNull() || _name.equals("Object")
+        || isTypeVariable()) return right;
     if (right == null || right.isNull() || right.isUnspecified()
-        || this.equals(right))
+        || right.isTypeVariable() || this.equals(right))
       return this;
     // TODO: this is not for types with more than one parameter type. Can it be
     // extended?
@@ -425,8 +496,8 @@ public class Type {
     // if one of those is a generic type, the real type is the more
     // specific one and they are compatible
     // (necessary because this method is also used for funccall evaluation)
-    if (this.isUnaryGeneric()) return right;
-    if (right.isUnaryGeneric()) return this;
+    if (this.isTypeVariable()) return right;
+    if (right.isTypeVariable()) return this;
 
     // check if these are (real) RDF types and are in a type relation.
     if (_class != null || right._class != null) {
@@ -581,6 +652,8 @@ public class Type {
         sb.append("Rdf");
       else if (isXsdType())
         sb.append(xsdToJavaPodWrapper());
+      else if (isTypeVariable())
+        sb.append("Object");
       else
         sb.append(_name);
       paramTypes(sb);
@@ -622,7 +695,34 @@ public class Type {
       return l.equals(r);
     }
     // TODO: check the parameter type list (recursively)
-    return _name != null && _name.equals(t._name);
+    if (_name != null) {
+      if (!_name.equals(t._name)) return false;
+    } else {
+      if (t._name != null) return false;
+    }
+    if (_parameterTypes != null) {
+      if (t._parameterTypes != null
+          && _parameterTypes.size() == t._parameterTypes.size()) {
+        for (int i = 0; i < _parameterTypes.size(); ++i) {
+          if (! _parameterTypes.get(i).equals(t._parameterTypes.get(i)))
+            return false;
+        }
+      } else {
+        return false;
+      }
+    } else if (t._parameterTypes != null) return false;
+    return true;
+  }
+
+  public int hashCode() {
+    int result = _name.hashCode();
+    if (_class != null) {
+      result = 7 * result + _class.hashCode();
+    }
+    if (_parameterTypes != null) {
+      for (Type t : _parameterTypes) result = 7 * result + t.hashCode();
+    }
+    return result;
   }
 
   /** Return true if the right type has to be casted to this type, e.g.,
@@ -643,32 +743,117 @@ public class Type {
     return toJava();
   }
 
-  public static Type findTypeForGeneric(Type concrete, Type withGeneric) {
-    if (withGeneric == null || concrete == null
-        || concrete.getParameterTypes().size() != withGeneric.getParameterTypes().size()) return null;
-    // TODO: might want to extend this to other place holders than T
-    if (withGeneric.isUnaryGeneric()) return concrete;
-    if (withGeneric.getParameterTypes() != null) {
-      Type found = null;
-      for (int i = 0; i < withGeneric.getParameterTypes().size(); i++) {
-        found = findTypeForGeneric(concrete.getParameterTypes().get(i),
-            withGeneric.getParameterTypes().get(i));
-        if (found != null) return found;
-      }
+
+  private static class Partition {
+    HashMap<Type, Type> map = new HashMap<>();
+
+    Type findRep(Type t) {
+      if (! t.isTypeVariable() || ! map.containsKey(t)) return t;
+      Type c = map.get(t);
+      if (c == t) return t;
+      return findRep(c);
     }
-    return null;
+
+    void setRep(Type t, Type r) {
+      Type child = map.get(t);
+      if (child == null || ! child.isTypeVariable() || child == t) {
+        map.put(t, r);
+        return;
+      }
+      setRep(child, r);
+    }
+
+    // t1 is always a type variable
+    void merge (Type t1, Type t2) {
+      Type r1 = findRep(t1);
+      Type r2 = findRep(t2);
+      if (r1 == r2) return;
+      Type u = r1.unifyTypes(r2);
+      if (u == null)
+        throw new TypeException("Error during type variable resolution: "
+            + t1 + " " + t2 + " " + r1 + " " + r2);
+      setRep(t1, u);
+      if (t2.isTypeVariable())
+        setRep(t2, u);
+    }
+
+    public String toString() { return map.toString(); }
   }
 
-  public static Type createTypeFromGeneric(Type concrete, Type withGeneric) {
-    if (withGeneric.isUnaryGeneric()) return concrete;
-    // TODO: assuming here that there cannot be generics like T<String>
-    String resultType = withGeneric.get_name();
-    List<Type> inner = new ArrayList<>();
-    for (int i = 0; i < withGeneric.getParameterTypes().size(); i++) {
-      inner.add(createTypeFromGeneric(concrete, withGeneric.getParameterTypes().get(i)));
+  private static void resolveTypeVarsRec(Partition p, Type t1, Type t2) {
+    if (t1.isTypeVariable())
+      p.merge(t1, t2);
+    else if (t2.isTypeVariable())
+      p.merge(t2, t1);
+
+    List<Type> inner1 = t1._parameterTypes;
+    List<Type> inner2 = t2._parameterTypes;
+    if (inner1 == null || inner2 == null) {
+      return;
     }
-    Type result = new Type(resultType);
-    result.setParameterTypes(inner);
-    return result;
+    if (inner1.size() != inner2.size()) {
+      return;
+    }
+    Iterator<Type> i1 = inner1.iterator();
+    Iterator<Type> i2 = inner2.iterator();
+    while (i1.hasNext()) {
+      resolveTypeVarsRec(p, i1.next(), i2.next());
+    }
+  }
+
+  private Type replaceVarsRec(Partition p) {
+    String name = _name;
+    if (isTypeVariable()) {
+      Type rep =p.findRep(this);
+      name = rep._name;
+      if (_parameterTypes == null)
+        _parameterTypes = rep._parameterTypes;
+    }
+    if (_parameterTypes != null) {
+      List<Type> paramTypes = new ArrayList<>();
+      for(Type t : _parameterTypes) {
+        paramTypes.add(t.replaceVarsRec(p));
+      }
+      return new Type(name, paramTypes);
+    }
+    return new Type(name);
+  }
+
+  private int replaceUnspecifiedRec(int freeVar, BitSet taken) {
+    if (_parameterTypes != null) {
+      for(int i = 0; i < _parameterTypes.size(); ++i) {
+        Type c = _parameterTypes.get(i);
+        if (c == null || c.isUnspecified()) {
+          while (taken.get(freeVar)) {
+            ++freeVar;
+          }
+          taken.set(freeVar);
+          _parameterTypes.set(i, new Type("" + (char)('A' + freeVar)));
+        } else {
+          freeVar = c.replaceUnspecifiedRec(freeVar, taken);
+        }
+      }
+    }
+    return freeVar;
+  }
+
+
+  /** Resolve as many type variables as possible to concrete types, and return
+   *  a new type with type vars resolved.
+   *
+   * @param funType the type of the calling function
+   * @param callType the type computed from the actual call parameters
+   * @return a new type with resolved type variables
+   */
+  public static Type resolveTypeVars(Type funType, Type callType) {
+    Partition p = new Partition();
+    BitSet b = new BitSet();
+    for(String var : funType.getTypeVars()) b.set(var.charAt(0) - 'A');
+    for(String var : callType.getTypeVars()) b.set(var.charAt(0) - 'A');
+    callType.replaceUnspecifiedRec(0, b);
+    resolveTypeVarsRec(p, funType, callType);
+    // Now p contains "resolved" types for all type vars, create the result for
+    // type2 with all possible vars replaced
+    return callType.replaceVarsRec(p);
   }
 }

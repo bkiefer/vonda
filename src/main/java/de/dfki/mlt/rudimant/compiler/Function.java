@@ -19,24 +19,19 @@
 
 package de.dfki.mlt.rudimant.compiler;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-class Function {
+public class Function {
 
   private String _name;
   private String _origin;
-  private Type _returnType;
-  private List<Type> _parameterTypes;
-  private Type _calledUpon;
+  private Type _type;
 
-  public Function(String name, String origin, Type returnType,
-      List<Type> parameterTypes, Type calledUpon) {
+  public Function(String name, String origin, Type funType) {
     _name = name;
     _origin = origin;
-    _returnType = returnType;
-    _parameterTypes = parameterTypes;
-    _calledUpon = calledUpon;
+    _type = funType;
   }
 
   public boolean canCallUpon(Type calledOn) {
@@ -44,87 +39,47 @@ class Function {
     // sophisticated way to do this
     // It seems what is returned by unifyTypes should be a subclass of
     // _calledUpon
-    return _calledUpon != null &&
-        _calledUpon.unifyTypes(calledOn) != null;
+    return _type.isMethod() && !calledOn.isUnspecified()
+        && getClassOfMethod().unifyTypes(calledOn) != null;
   }
 
+  // TODO: NOT USED
   public String getName() {
     return _name;
   }
 
-  public Type getCalledUpon() {
-    return _calledUpon;
-  }
-  /*
-  private Type createTypeFromGeneric(Type concrete, Type withGeneric) {
-    if (withGeneric == null) return null;
-    // TODO: might want to extend this to other place holders than T
-    String resultType = "T".equals(withGeneric.get_name())? concrete.get_name() : withGeneric.get_name();
-    if (withGeneric.getParameterTypes() != null && withGeneric.getParameterTypes().size() > 1) {
-      List<Type> inner = new ArrayList<>();
-      for (int i = 0; i < withGeneric.getParameterTypes().size(); i++) {
-        inner.add(createTypeFromGeneric(concrete.getParameterTypes().get(i),
-            withGeneric.getParameterTypes().get(i)));
-      }
-      return Type.getComplexType(resultType, (Type[]) inner.toArray());
-    } else {
-      Type result = new Type(resultType);
-      if (withGeneric.getParameterTypes() != null && withGeneric.getParameterTypes().size() == 1) {
-        result.setInnerType(createTypeFromGeneric(concrete.getParameterTypes().get(0),
-            withGeneric.getParameterTypes().get(0)));
-      }
-      return result;
-    }
-  }*/
-
-  public Type getReturnType(Type calledUpon, List<Type> partypes) {
-    // TODO: THIS SEEMS TO BE A CRUDE HOAX
-    if (_returnType.containsGeneric()){
-      Type tType = null;
-      if (calledUpon != null && canCallUpon(calledUpon)) {
-        tType = Type.findTypeForGeneric(calledUpon, _calledUpon);
-      } else {
-        for (int i = 0; i < _parameterTypes.size(); i++) {
-          if (_parameterTypes.get(i).containsGeneric()) {
-            tType = Type.findTypeForGeneric(partypes.get(i), _parameterTypes.get(i));
-            break;
-          }
-        }
-      }
-      if (tType != null) {
-        return Type.createTypeFromGeneric(tType, _returnType);
-      }
-      /* if (calledUpon != null) {
-        return calledUpon.getInnerType();
-      } */
-      // if we did not find a concrete type representation, we are left with the generic
-      // one, what basically means that we have no clue
-      return Type.getNoType();
-    }
-    return _returnType;
+  public Type getType() {
+    return _type;
   }
 
+  public Type getReturnType() {
+    return _type.getParameterTypes().get(0);
+  }
+
+  public Type getClassOfMethod() {
+    if (! _type.isMethod()) return null;
+    return _type.getParameterTypes().get(1);
+  }
 
   public String getOrigin(){
     return _origin;
   }
 
-  public boolean isName(String name) {
-    return _name.equals(name);
-  }
-
   // TODO: AGAIN: IS THIS ENOUGH? NOT SUBCLASS?
-  public boolean isReturnType(Type type) {
-    return _returnType.equals(type)
-        || _returnType.unifyTypes(type) != null;
-  }
+  //public boolean isReturnType(Type type) {
+  //  return _returnType.equals(type)
+  //      || _returnType.unifyTypes(type) != null;
+  //}
 
-  public boolean areParametertypes(List<Type> actualTypes) {
-    if (_parameterTypes.size() != actualTypes.size()) {
+  public boolean signatureMatches(Type fType) {
+    List<Type> actualParmTypes = fType.getParameterTypes();
+    List<Type> thisParmTypes = _type.getParameterTypes();
+    if (thisParmTypes.size() != actualParmTypes.size()
+        || ! fType.get_name().equals(_type.get_name()))
       return false;
-    }
-    for (int i = 0; i < _parameterTypes.size(); i++) {
-      if (! _parameterTypes.get(i).isPossibleArgumentType(actualTypes.get(i))) {
+
+    for (int i = 1; i < thisParmTypes.size(); i++) {
+      if (! thisParmTypes.get(i).isPossibleArgumentType(actualParmTypes.get(i))) {
         return false;
       }
     }
@@ -133,7 +88,7 @@ class Function {
 
   @Override
   public int hashCode() {
-    return _parameterTypes.hashCode();
+    return _type.hashCode() + _name.hashCode();
   }
 
   @Override
@@ -142,19 +97,23 @@ class Function {
       return false;
     }
     return _name.equals(((Function) fun)._name)
-        && _returnType.equals(((Function) fun)._returnType)
-        && _parameterTypes.equals(((Function) fun)._parameterTypes);
+        && _type.equals(((Function) fun)._type);
   }
 
   @Override
   public String toString() {
     StringBuffer sb = new StringBuffer();
-    sb.append(_returnType.getRep()).append(' ').append(_name).append('(');
+    Iterator<Type> it =  _type.getParameterTypes().iterator();
+    sb.append(it.next().getRep()).append(' ');
+    if (_type.isMethod()) {
+      sb.append(it.next().getRep()).append('.');
+    }
+    sb.append(_name).append('(');
     boolean notfirst = false;
-    for (Type pType : _parameterTypes) {
+    while(it.hasNext()) {
       if (notfirst) sb.append(", ");
       notfirst = true;
-      sb.append(pType.getRep());
+      sb.append(it.next().getRep());
     }
     sb.append(')');
     return sb.toString();

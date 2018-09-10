@@ -21,12 +21,8 @@ package de.dfki.mlt.rudimant.compiler;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** represents a variable/function scope, e.g., in a file / block
  *
@@ -34,13 +30,10 @@ import org.slf4j.LoggerFactory;
  */
 public class Environment {
 
-  private static Logger logger = LoggerFactory.getLogger(Environment.class);
-
   private Environment _parent;
 
   private Map<String, Type> variableToType;
   private Map<String, String> variableOrigin;
-  private Map<String, Type> genericToType;
   private HashMap<String, Set<Function>> functions;
 
   public static Environment getEnvironment(Environment parent) {
@@ -95,20 +88,19 @@ public class Environment {
    * @param partypes the parameter types of the function's parameters
    * @param origin first element class, second rule origin
    */
-  public void addFunction(String funcname, Type functype, Type calledUpon,
-          List<Type> partypes, String origin) {
+  public void addFunction(String funcname, Type functype, String origin) {
     // test whether we already have an entry for this method
     if (functions.keySet().contains(funcname)) {
       for (Function f : functions.get(funcname)) {
-        if (f.areParametertypes(partypes) &&
-        		(calledUpon != null && calledUpon.equals(f.getCalledUpon()))) {
+        if (f.signatureMatches(functype)) {
+          /* TODO: ADAPT
           // in this case we have an obvious error
           if (!f.isReturnType(functype)) {
             // TODO: add a description about where we are in the input file
             logger.warn("redeclaring function " + funcname
-                    + " with new return type - was: " + f.getReturnType(calledUpon, null)
+                    + " with new return type - was: " + f.getReturnType()
                     + " is: " + functype);
-          }
+          }*/
           return;
         }
       }
@@ -117,48 +109,22 @@ public class Environment {
       // if we did not know of this method until now, create a new entry for it
       functions.put(funcname, new HashSet<Function>());
     }
-    functions.get(funcname).add(new Function(funcname, origin, functype,
-                partypes, calledUpon));
+    functions.get(funcname).add(new Function(funcname, origin, functype));
   }
 
-  public String getFunctionOrigin(String funcname, List<Type> partypes) {
-    if (functions.keySet().contains(funcname)) {
-      for (Function f : functions.get(funcname)) {
-        if (f.areParametertypes(partypes)) {
-          return f.getOrigin();
-        }
-      }
-    }
-    return null;
-  }
-
-  /** returns null if there is no such function, the return type otherwise
-   *
-   * @param funcname the name of the function
-   * @return its return type or null
-   */
-  public Type getFunctionRetType(String funcname, Type calledUpon,
-		  List<Type> partypes) {
-    if (! functions.containsKey(funcname)) {
-      return null;
-    }
+  /** returns null if there is no such function, the function otherwise
+  *
+  * @param funcname the name of the function
+  * @return its return type or null
+  */
+  public Function getFunction(String funcname, Type actualParameterTypes) {
+    if (!functions.containsKey(funcname)) return null;
     for (Function f : functions.get(funcname)) {
-      if (f.areParametertypes(partypes)
-          && (calledUpon == null || f.canCallUpon(calledUpon))) {
-        return f.getReturnType(calledUpon, partypes);
+      if (f.signatureMatches(actualParameterTypes)) {
+        return f;
       }
     }
     return null;
-  }
-
-  public void addGeneric(String gen, Type concrete) {
-    genericToType.put(gen, concrete);
-  }
-
-  public Type getTypeForGeneric(String gen) {
-    if (genericToType.containsKey(gen))
-      return genericToType.get(gen);
-    return Type.getNoType();
   }
 
   /** Environment is a stack, return the parent of this environment */

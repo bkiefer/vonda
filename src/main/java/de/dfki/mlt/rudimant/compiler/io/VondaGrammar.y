@@ -75,7 +75,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
   private RudiTree getAssignmentStat(RTExpression assign) {
     assert(assign instanceof ExpAssignment);
     if (((ExpAssignment)assign).leftIsVariable()) {
-      return new StatVarDef(false, new Type(null), assign);
+      return new StatVarDef(false, Type.getNoType(), assign);
     }
     return new StatExpression(assign);
   }
@@ -271,7 +271,7 @@ for_statement
 
 var_decl
   : VARIABLE assgn_exp ';' {
-    $$ = setPos(new StatVarDef(true, new Type(null), $1, $2), @$);
+    $$ = setPos(new StatVarDef(true, Type.getNoType(), $1, $2), @$);
   }
   | type_spec VARIABLE assgn_exp ';' {
     $$ = setPos(new StatVarDef(false, $1, $2, $3), @$);
@@ -358,7 +358,7 @@ label_statement
 
 var_def
   : FINAL VARIABLE assgn_exp ';' {
-    $$ = setPos(new StatVarDef(true, new Type(null), $2, $3), @$);
+    $$ = setPos(new StatVarDef(true, Type.getNoType(), $2, $3), @$);
   }
   | type_spec VARIABLE assgn_exp ';' {
     $$ = setPos(new StatVarDef(false, $1, $2, $3), @$);
@@ -367,7 +367,7 @@ var_def
     $$ = setPos(new StatVarDef(true, $2, $3, $4), @$);
   }
   | FINAL VARIABLE ';' {
-    $$ = setPos(new StatVarDef(true, new Type(null), $2, null), @$);
+    $$ = setPos(new StatVarDef(true, Type.getNoType(), $2, null), @$);
   }
   | type_spec VARIABLE ';' {
     $$ = setPos(new StatVarDef(false, $1, $2, null), @$);
@@ -413,9 +413,12 @@ opt_args_list
   ;
 
 args_list
-  : VARIABLE { $$ = new LinkedList(){{ add($1); }}; }
+  : VARIABLE { $$ = new LinkedList(){{ add(Type.getNoType()); add($1); }}; }
   | type_spec VARIABLE { $$ = new LinkedList(){{ add($1); add($2); }}; }
-  | VARIABLE ',' args_list { $$ = $3; $3.addFirst($1); }
+  | VARIABLE ',' args_list {
+    $$ = $3;
+    $3.addFirst($1); $3.addFirst(Type.getNoType());
+  }
   | type_spec VARIABLE ',' args_list {
     $$ = $4; $4.addFirst($2); $4.addFirst($1);
   }
@@ -466,11 +469,12 @@ nonempty_args_list
   ;
 
 type_spec
-  : VARIABLE '[' ']' { $$ = new Type("Array", new Type($1)); }
-  | VARIABLE { $$ = new Type($1); }
-  | VARIABLE '<' type_spec_list '>' {
-    $$ = new Type($1, $3.toArray(new Type[$3.size()]));
+  : VARIABLE '[' ']' {
+    $$ = new Type("Array",
+                  new ArrayList<Type>(){{ add(new Type($1)); }});
   }
+  | VARIABLE { $$ = new Type($1); }
+  | VARIABLE '<' type_spec_list '>' { $$ = new Type($1, $3); }
   ;
 
 type_spec_list
@@ -685,19 +689,21 @@ new_exp
     $$ = setPos(new ExpNew(new Type($2), $4), @$);
   }
   | NEW VARIABLE '[' exp ']' {
-    $$ = setPos(new ExpNew(new Type("Array", new Type($2)),
+    List<Type> sub = new ArrayList<Type>() {{ add(new Type($2)); }};
+    $$ = setPos(new ExpNew(new Type("Array", sub),
                     new LinkedList<RTExpression>(){{ add($4); }}), @$);
   }
   | NEW VARIABLE '[' ']' '(' exp ')'{
-    $$ = setPos(new ExpNew(new Type("Array", new Type($2)),
+    List<Type> sub = new ArrayList<Type>() {{ add(new Type($2)); }};
+    $$ = setPos(new ExpNew(new Type("Array", sub),
                     new LinkedList<RTExpression>(){{ add($6); }}), @$);
   }
   | NEW VARIABLE '<' type_spec_list '>' '(' ')' {
-    $$ = setPos(new ExpNew(new Type($2, $4.toArray(new Type[$4.size()])),
+    $$ = setPos(new ExpNew(new Type($2, $4),
                     new LinkedList<>()), @$);
   }
   | NEW VARIABLE '<' type_spec_list '>' '(' nonempty_exp_list ')' {
-    $$ = setPos(new ExpNew(new Type($2, $4.toArray(new Type[$4.size()])),
+    $$ = setPos(new ExpNew(new Type($2, $4),
                     $7), @$);
   }
   ;

@@ -84,4 +84,6 @@ public interface RudiVisitor {
   public void visit(ExpSingleValue node);
 
   public void visit(ExpVariable node);
+
+  public void visit(ExpPropertyAccess node);
 }

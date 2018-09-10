@@ -246,9 +246,9 @@ public class VisitorGeneration implements RudiVisitor {
         && resultType.isRdfType()) {
       if (node instanceof ExpVariable
           && ((ExpVariable) node).content.startsWith("\"")) {
-        // TODO: ADD WRAPPER CLASS ACCESS
         Type[] args = { new Type("String") };
-        String orig = mem.getFunctionOrigin("getRdfClass", Arrays.asList(args));
+        String orig =
+            mem.getFunctionOrigin("getRdfClass", null, Arrays.asList(args));
         if (orig != null)
           gen(lowerCaseFirst(orig)).gen(".");
         gen("getRdfClass(").gen(node).gen(")");
@@ -325,10 +325,12 @@ public class VisitorGeneration implements RudiVisitor {
       gen(node).gen(" != 0");
     } else if (type.isCollection() || type.isString() || type.isNumber()
         || type.isDialogueAct()) {
+      /* TODO: We "know" this is an "Agent" method */
       Type[] args = { new Type("Object") };
-      String orig = mem.getFunctionOrigin("exists", Arrays.asList(args));
+      String orig = mem.getFunctionOrigin("exists", null, Arrays.asList(args));
       orig = orig == null ? "" : lowerCaseFirst(orig) + ".";
-      gen(orig).gen("exists(").gen(node).gen(")");
+      gen(orig);
+      gen("exists(").gen(node).gen(")");
     } else {
       gen(node).gen(" != null");
     }
@@ -632,10 +634,14 @@ public class VisitorGeneration implements RudiVisitor {
       return;
     }
     mem.enterEnvironment(node);
-    gen(node.visibility + " ").gen(node.return_type.toJava() + " ").gen(node.name + "(");
-    for (int i = 0; i < node.parameters.size(); i++) {
-      gen((i != 0), ", ");
-      gen(node.partypes.get(i).toJava() + " " + node.parameters.get(i));
+    List<Type> paramTypes = node.function_type.getParameterTypes();
+    // return type
+    gen(node.visibility).gen(' ').gen(paramTypes.get(0).toJava())
+    .gen(" ").gen(node.name).gen("(");
+    // must be a "vonda" method, so no class member argument!
+    for (int j = 0; j < node.parameters.size(); ++j) {
+      gen((j != 0), ", ");
+      gen(paramTypes.get(j+1).toJava() + " " + node.parameters.get(j));
     }
     gen(")\n").gen(node.block);
     mem.leaveEnvironment(node);
@@ -795,6 +801,12 @@ public class VisitorGeneration implements RudiVisitor {
         currentType = ((RTExpression) currentPart).type;
       }
     }
+  }
+
+  @Override
+  public void visit(ExpPropertyAccess node) {
+    throw new UnsupportedOperationException("Should not be visited");
+    //return;
   }
 
   @Override

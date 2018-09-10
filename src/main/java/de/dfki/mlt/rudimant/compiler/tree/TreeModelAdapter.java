@@ -31,6 +31,7 @@ import de.dfki.lt.loot.Pair;
 import de.dfki.lt.loot.gui.adapters.MapAdapterIterator;
 import de.dfki.lt.loot.gui.adapters.ModelAdapter;
 import de.dfki.lt.loot.gui.adapters.ModelAdapterFactory;
+import de.dfki.mlt.rudimant.compiler.Type;
 
 public class TreeModelAdapter extends ModelAdapter {
 
@@ -117,18 +118,13 @@ public class TreeModelAdapter extends ModelAdapter {
       result = " -> ";
     } else if (model instanceof StatMethodDeclaration) {
       StatMethodDeclaration md = (StatMethodDeclaration)model;
-      result = "meth " + ((md.return_type != null) ? md.return_type.getRep() + " ": "")
-          + md.name + '(';
-      if (! md.parameters.isEmpty()) {
-        if (md.partypes.get(0) != null) { result += md.partypes.get(0).getRep() + " "; }
-        result += md.parameters.get(0);
+      List<Type> partypes = md.function_type.getParameterTypes();
+      int i = 0;
+      result = "meth " + partypes.get(i++).getRep() + " " + md.name + '(';
+      for (int j = 0; j < md.parameters.size(); ++j) {
+        if (j != 0) result += ", ";
+        result += partypes.get(i++).getRep() + " " + md.parameters.get(j);
       }
-      for (int i = 1; i < md.parameters.size(); ++i) {
-        result += ", ";
-        if (md.partypes.get(i) != null) { result += md.partypes.get(i).getRep() + " "; }
-        result += md.parameters.get(i);
-      }
-      result += ')';
     } else if (model instanceof StatAbstractBlock) {
       if (((StatAbstractBlock)model).braces)
         result = "{ _ }";

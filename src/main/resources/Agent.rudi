@@ -86,7 +86,7 @@ void clearBehavioursAndProposals();
 void shutdown();
 
 // lambda: first class argument of Function is return type of function object
-boolean contains(Collection<T> coll, Function<Boolean, T> pred);
+boolean some(Collection<T> coll, Function<Boolean, T> pred);
 boolean all(Collection<T> coll, Function<Boolean, T> pred);
 List<T> filter(Collection<T> coll, Function<Boolean, T> pred);
 List<T> sort(Collection<T> coll, Function<Integer, T, T> c);

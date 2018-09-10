@@ -36,45 +36,24 @@ import de.dfki.mlt.rudimant.compiler.Type;
 public class StatMethodDeclaration extends RTStatement implements RTBlockNode {
 
   String visibility;
-  Type return_type;
+  Type function_type;
   String name;
   List<String> parameters;
-  List<Type> partypes;
   RTStatement block;
-  // the type this method should be called upon; null if the method
-  // is rudi-defined!
-  Type calledUpon;
 
   public StatMethodDeclaration(String vis, Type ret_type,
-      Type calledUpn, String nm, List parmsAndTypes,
+      Type calledUpn, String nm, List<?> parmsAndTypes,
       RTStatement blk) {
     visibility = vis;
-    return_type = ret_type == null ? Type.getNoType() : ret_type;
     name = nm;
-    parameters = new ArrayList<>();
-    partypes = new ArrayList<>();
-    if (parmsAndTypes != null)
-        for (int i = 0; i < parmsAndTypes.size();) {
-            partypes.add((Type)parmsAndTypes.get(i++));
-            parameters.add((String)parmsAndTypes.get(i++));
-        }
-    block = blk;
-    calledUpon = calledUpn == null ? Type.getNoType() : calledUpn;
-  }
-
-  public StatMethodDeclaration(String vis, String ret_type,
-		  String calledUpn, String nm, List<String> parms,
-		  List<String> parmTypes, RTStatement blk) {
-    visibility = vis;
-    return_type = new Type(ret_type);
-    name = nm;
-    parameters = parms;
-    partypes = new ArrayList<Type>();
-    for (String p : parmTypes){
-      partypes.add(new Type(p));
+    parameters = new ArrayList<>(parmsAndTypes.size() / 2);
+    List<Type> partypes = new ArrayList<>(parmsAndTypes.size() / 2);
+    for (int i = 0; i < parmsAndTypes.size();) {
+      partypes.add((Type)parmsAndTypes.get(i++));
+      parameters.add((String)parmsAndTypes.get(i++));
     }
+    function_type = Type.getFunctionType(ret_type, calledUpn, partypes);
     block = blk;
-    calledUpon = new Type(calledUpn);
   }
 
   public void setVisibility(String vis) {

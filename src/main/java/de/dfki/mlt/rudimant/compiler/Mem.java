@@ -21,6 +21,7 @@ package de.dfki.mlt.rudimant.compiler;
 
 import static de.dfki.mlt.rudimant.compiler.Utils.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -32,10 +33,8 @@ import org.slf4j.LoggerFactory;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudimant.common.*;
 import de.dfki.mlt.rudimant.common.ErrorInfo.ErrorType;
-import de.dfki.mlt.rudimant.compiler.tree.ExpFuncCall;
 import de.dfki.mlt.rudimant.compiler.tree.RTBlockNode;
 import de.dfki.mlt.rudimant.compiler.tree.ToplevelBlock;
-import de.dfki.mlt.rudimant.compiler.tree.VisitorType;
 
 /**
  * this is rudimants memory, used for type checking
@@ -205,29 +204,30 @@ public class Mem {
    * @param partypes the parameter types of the function's parameters
    * @param origin first element class, second rule origin
    */
-  public void addFunction(String funcname, Type functype, Type calledUpon,
-          List<Type> partypes) {
-    currentEnv.addFunction(funcname, functype, calledUpon, partypes,
-        getClassName());
+  public void addFunction(String funcname, Type functype) {
+    currentEnv.addFunction(funcname, functype, getClassName());
   }
 
-  /** Return the class where this function is defined */
-  public String getFunctionOrigin(String funcname, List<Type> partypes){
-    String origin = currentEnv.getFunctionOrigin(funcname, partypes);
-    return (getClassName().equals(origin)) ? null : origin;
+  /** Return the appropriate function if it is defined */
+  public Function getFunction(String funcname, Type actualParameterTypes) {
+    return currentEnv.getFunction(funcname, actualParameterTypes);
   }
 
-  /** return the return type of the given function or method, or null if there
-   *  is no such function
-   *
-   * @param funcname   the name of the function
-   * @param calledUpon the class to which the method belongs, or null if it
-   *        is a pure function
-   * @param partypes   the parameter type list
-   * @return its return type or null
+  /** Convenience function as a shortcut to know which class is responsible
+   *  for calling this function/method
+   * @param funcName
+   * @param paramType
+   * @return
    */
-  public Type getFunctionRetType(String funcname, Type calledUpon, List<Type> partypes) {
-    return currentEnv.getFunctionRetType(funcname, calledUpon, partypes);
+  public String getFunctionOrigin(String funcName, Type calledUpon,
+      List<Type> partypes) {
+    Type callType = Type.getFunctionType(Type.getNoType(), calledUpon, partypes);
+
+    Function f = getFunction(funcName, callType);
+    if (f == null) return null;
+    String orig = f.getOrigin();
+    if (orig == null || orig.equals(getClassName())) return null;
+    return orig;
   }
 
   /** Add a new variable declaration, providing the variable name and type
@@ -312,15 +312,5 @@ public class Mem {
       current = current.getParent();
     ImportInfo info = (ImportInfo)current;
     info.getErrors().add(new ErrorInfo(errorMessage, location, type));
-  }
-
-  public void resolveGenericTypes(ExpFuncCall func, VisitorType visitor) {
-    // idea: find those parameters that know their types and thereby resolve
-    // some of the uncertainty. Add that knowledge to genericToType.
-    // then, if this is not yet solved, let visitor visit the remaining
-    // uncertain elements. On its way, it should insert every knowledge piece
-    // from genericToType that is applicable.
-    // Do that again and again, until list of unknown generic nodes is empty
-    // or we do not find new information anymore
   }
 }
