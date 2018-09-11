@@ -179,7 +179,9 @@ public class Type {
    */
   private boolean _castRequired = false;
 
-  public boolean castRequired() { return _castRequired;};
+  public boolean castRequired() { return _castRequired; }
+
+  public void setCastRequired() { _castRequired = true; }
 
   private Type() { }
 

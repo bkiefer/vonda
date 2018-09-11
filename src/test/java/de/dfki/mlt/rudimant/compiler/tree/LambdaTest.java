@@ -70,12 +70,12 @@ public class LambdaTest {
 
   @Test
   public void test1() {
-    String in = "Quiz p; b = p.hasHistory.some((c) -> c.turnId == 1);";
+    String in = "Quiz p; b = some(p.hasHistory, (c) -> c.turnId == 1);";
     String r = generate(in);
-    String expected = "public Rdf p;/**/((Set<Object>)p.getValue(\"<dom:hasHistory>\"))"
-        + ".some((c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);";
+    String expected = "public Rdf p;public boolean b;/**/"
+        + "b = some(((Set<Object>)p.getValue(\"<dom:hasHistory>\")), (c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);";
     // TODO: REACTIVATE
-    //assertEquals(expected, getForMarked(r, expected));
+    assertEquals(expected, getForMarked(r, expected));
   }
 
   @Test
@@ -85,7 +85,7 @@ public class LambdaTest {
     String expected = "public Rdf p;public Set<Object> h;/**/h = ((Set<Object>)p.getValue(\"<dom:hasHistory>\"));"
         + "some(h, (c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);";
     // TODO: REACTIVATE
-    //assertEquals(expected, getForMarked(r, expected));
+    assertEquals(expected, getForMarked(r, expected));
   }
 
 
@@ -122,7 +122,7 @@ public class LambdaTest {
     String r = generate(in);
     String expected = "public List<List<String>> l;public List<String> h;public String x;/**/"
         + "h = filter(l, (e) -> some(e, (f) -> !f.isEmpty));x = h.get(1);";
-    // assertEquals(expected, getForMarked(r, expected));
+    assertEquals(expected, getForMarked(r, expected));
   }
 
 

@@ -17,6 +17,7 @@ boolean toBool(String s);
 [Collection<T>]. void add(Object a);
 [Collection<T>]. boolean contains(Object a);
 [Collection<T>]. int size();
+[Map<S, T>]. boolean containsKey(Object a);
 
 // all Agent methods we should know
 

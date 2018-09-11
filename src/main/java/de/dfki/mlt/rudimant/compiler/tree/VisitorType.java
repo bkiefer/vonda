@@ -880,6 +880,11 @@ public class VisitorType implements RudiVisitor {
             + " refers to a function that wasn't declared", node);
       }
       node.type = Type.getNoType();
+    } else {
+      if (node.type.isXsdType()
+          //||(node.type.isRdfType() && ! node.type.isDialogueAct())
+          )
+        node.type.setCastRequired();
     }
   }
 

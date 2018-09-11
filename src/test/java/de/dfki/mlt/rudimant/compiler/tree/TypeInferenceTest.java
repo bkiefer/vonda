@@ -229,4 +229,12 @@ public class TypeInferenceTest {
         + "if (exists(slotBlacklist) && slotBlacklist.contains(((String)lastDA().getValue(\"agent\")))) { }";
     assertEquals(expected, getForMarked(s, expected));
   }
+
+  @Test
+  public void test16() throws InterruptedException {
+    String in = "Child c; String da = random(c.surname);";
+    String s = generate(in);
+    String expected = "public Rdf c;public String da;/**/da = (String) random(((Set<Object>)c.getValue(\"<dom:surname>\")));";
+    assertEquals(expected, getForMarked(s, expected));
+  }
 }

@@ -4,41 +4,43 @@
 // Tests and Comparisons
 // **********************************************************************
 
+Child child;
+
 // test for value under path, intermediate tests are generated
-if (child.brother.firstName) return "foo";
+if (child.father.surname) logger.info("foo");
 
 // subsumption of dialogue acts, (equality is also possible)
-if (lastDA() <= #AcceptOffer(Bringing)) return "foo";
+if (lastDA() <= #AcceptOffer(Bringing)) logger.info("foo");
 
 // Two rdf objects being the same object. Mark the difference to the next
 // example! Here, the objects are compared, not the classes. Same for !=,
 // but all other comparison operators compare classes
 Child c1;
-Person c2;
-if (c1 == c2) return "foo";
+Agent c2;
+if (c1 == c2) logger.info("foo");
 
 // Is the class of c1 a subclass (a strict subclass) of the class of c2 ?
-if (c1 <= c2) return "foo";
-if (c1 < c2) return "foo";
+if (c1 <= c2) logger.info("foo");
+if (c1 < c2) logger.info("foo");
 
 // Is the class of c1 a subclass of Child?
-if (c1 <= Child) return "foo";
+if (c1 <= Child) logger.info("foo");
 
 // Is s not null and not empty?
 String s = "bar";
-if (s) return "foo";
+if (s) logger.info("foo");
 
 // Is s.compareTo(t) < 0
 s = "bar"; t = "baz";
-if (s < t) return "foo";
+if (s < t) logger.info("foo");
 
 // Is i not null and not zero? (Same for all other Number containers)
 Integer i = -1;
-if (i) return "foo";
+if (i) logger.info("foo");
 
 // Is o not null?
 Object o = new Object();
-if (o) return "foo";
+if (o) logger.info("foo");
 
 // **********************************************************************
 // Forward declaration of methods
@@ -47,7 +49,7 @@ if (o) return "foo";
 String foo(String a, String b);
 
 if (foo("a", "b")) {
-  log.info("yes!");
+  logger.info("yes!");
 }
 
 String foo (String a, String b) { return a + b; }
@@ -67,7 +69,7 @@ test_rule:
   }
 
 // return from a file (not looking at subsequent rules) with cancel
-test_rule:
+test_rule2:
   if (true) {
     second_rule:
       if (false) {
@@ -76,7 +78,7 @@ test_rule:
   }
 
 // Stop all rule execution (even at higher levels) with cancel_all
-test_rule:
+test_rule3:
   if (true) {
     second_rule:
       if (false) {
@@ -90,13 +92,13 @@ test_rule:
 
 // you can declare a variable final if you need to use it in a propose or
 // timeout block
-test_rule:
+test_rule4:
   if(true) {
     final c = "hi";
     final boolean b = false;
     propose("test") {
       if(c.equals("bye"))
-        return true;
+        logger.info("bye");
     }
   }
 
@@ -138,10 +140,10 @@ switch (str) {
 // It is possible to perform implicit casts on iterable elements in a for
 // loop; there is, however, no type safety promise from our side!
 ArrayList<Object> iterlist2;
-for (SomeClass a : iterlist2) {}
+for (Integer a : iterlist2) {}
 
 // These are some examples for lambda expressions
-newlist = {"a", "cd", "ab", "b"};
+List<String> newlist = {"a", "cd", "ab", "b"};
 allas = filter(newlist, (element) -> ((String)element).contains("a"));
 dosort = sort(newlist, (a, b) -> (int)(((String)a).length() - ((String)b).length()));
 
@@ -149,6 +151,10 @@ dosort = sort(newlist, (a, b) -> (int)(((String)a).length() - ((String)b).length
 // preceded by ^, all others will be converted to Strings
 robotname = "Robert";
 dia = #Inform(Liking, agent=username, patient={robotname});
+
+void callToSomeMethod() {
+  // a stub for an external function
+}
 
 // You can set labelled timeouts that will execute the code given to them
 // once the time (given in milliseconds) is over
@@ -172,7 +178,7 @@ s = "nameOf_" + child;
 // Also in assignments
 String number = 10;
 // And dialogue acts
-DialogueAct da = #Confirm(Correct, number={10});
+DialogueAct da1 = #Confirm(Correct, number={10});
 
 // you can call any function on the top level
 t = "10";

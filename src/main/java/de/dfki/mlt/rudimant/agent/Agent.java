@@ -791,7 +791,7 @@ public abstract class Agent implements StreamingClient {
   /** Return true if the predicate returns true for some element of the
    *  collection
    */
-  public <T> boolean contains(Collection<T> coll, Predicate<? super T> p) {
+  public <T> boolean some(Collection<T> coll, Predicate<? super T> p) {
     for(T elt : coll)
       if (p.test(elt)) return true;
     return false;

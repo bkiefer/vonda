@@ -65,7 +65,7 @@ public class CompilerMain {
   final static Object [][] defaults = {
     { CFG_TYPE_ERROR_FATAL, false, "e" },
     { CFG_VISUALISE, false , "v" },
-    { CFG_WRAPPER_CLASS, "w", "TheAgent" },
+    { CFG_WRAPPER_CLASS, "de.dfki.mlt.rudimant.agent.Agent", "w" },
   };
 
   public static Map<String, Object> defaultConfig() {
