@@ -25,7 +25,6 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.*;
 
@@ -74,7 +73,6 @@ public class LambdaTest {
     String r = generate(in);
     String expected = "public Rdf p;public boolean b;/**/"
         + "b = some(((Set<Object>)p.getValue(\"<dom:hasHistory>\")), (c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);";
-    // TODO: REACTIVATE
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -82,9 +80,8 @@ public class LambdaTest {
   public void test2() {
     String in = "Quiz p; h = p.hasHistory; b = some(h, (c) -> c.turnId == 1);";
     String r = generate(in);
-    String expected = "public Rdf p;public Set<Object> h;/**/h = ((Set<Object>)p.getValue(\"<dom:hasHistory>\"));"
-        + "some(h, (c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);";
-    // TODO: REACTIVATE
+    String expected = "public Rdf p;public Set<Object> h;public boolean b;/**/h = ((Set<Object>)p.getValue(\"<dom:hasHistory>\"));"
+        + "b = some(h, (c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -102,7 +99,8 @@ public class LambdaTest {
   public void test4() {
     String in = "Quiz p; h = filter(p.hasHistory, (c) -> c.turnId == 1); x = h.get(1);";
     String r = generate(in);
-    String expected = "public Rdf p;public List<Rdf> h;public Rdf x;/**/h = filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
+    String expected = "public Rdf p;public List<Rdf> h;public Rdf x;/**/"
+        + "h = filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
         + " (c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);x = (Rdf) ((Rdf)h.get(1));";
     assertEquals(expected, getForMarked(r, expected));
   }
@@ -111,8 +109,10 @@ public class LambdaTest {
   public void test5() {
     String in = "Quiz p; h = filter(p.hasHistory, (c) -> c.turnId == 1); x = h.get(1); y = h.get(2);";
     String r = generate(in);
-    String expected = "public Rdf p;public List<Rdf> h;public Rdf x;public Rdf y;/**/h = filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
-        + " (c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);x = (Rdf) ((Rdf)h.get(1));y = (Rdf) ((Rdf)h.get(2));";
+    String expected = "public Rdf p;public List<Rdf> h;public Rdf x;public Rdf y;/**/"
+        + "h = filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
+        + " (c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);"
+        + "x = (Rdf) ((Rdf)h.get(1));y = (Rdf) ((Rdf)h.get(2));";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -120,8 +120,8 @@ public class LambdaTest {
   public void test6() {
     String in = "List<List<String>> l; h = filter(l, (e) -> some(e, (f) -> f)); x = h.get(1);";
     String r = generate(in);
-    String expected = "public List<List<String>> l;public List<String> h;public String x;/**/"
-        + "h = filter(l, (e) -> some(e, (f) -> !f.isEmpty));x = h.get(1);";
+    String expected = "public List<List<String>> l;public List<List<String>> h;public List<String> x;/**/"
+        + "h = filter(l, (e) -> some(e, (f) -> !f.isEmpty()));x = h.get(1);";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -135,23 +135,10 @@ public class LambdaTest {
     List<Type> subs = new ArrayList<>();
     subs.add(new Type("C"));
     Type c = new Type("Set", subs);
-    assertTrue(c.containsGeneric());
     assertFalse(c.isTypeVariable());
     subs = new ArrayList<>();
     subs.add(new Type("d"));
     Type d = new Type("Set", subs);
-    assertFalse(d.containsGeneric());
+    assertFalse(d.isTypeVariable());
   }
-
-/* TODO: should this work or not?
-  @Test
-  public void test5() {
-    String in = "Quiz p; h = p.hasHistory.filter((c) -> c.turnId == 1); x = h.get(1);";
-    String r = generate(in);
-    String expected = "public Rdf p;public List<Object> h;public Rdf x;"
-        + "/*h = ((Set<Object>)p.getValue(\"<dom:hasHistory>\")).filter("
-        + " (c) -> (((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1)); x = h.get(1);";
-    assertEquals(expected, getForMarked(r, expected));
-  }
-*/
 }

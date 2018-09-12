@@ -246,9 +246,7 @@ public class VisitorGeneration implements RudiVisitor {
         && resultType.isRdfType()) {
       if (node instanceof ExpVariable
           && ((ExpVariable) node).content.startsWith("\"")) {
-        Type[] args = { new Type("String") };
-        String orig =
-            mem.getFunctionOrigin("getRdfClass", null, Arrays.asList(args));
+        String orig = mem.getFunctionOrigin("getRdfClass", null, "String");
         if (orig != null)
           gen(lowerCaseFirst(orig)).gen(".");
         gen("getRdfClass(").gen(node).gen(")");
@@ -327,7 +325,7 @@ public class VisitorGeneration implements RudiVisitor {
         || type.isDialogueAct()) {
       /* TODO: We "know" this is an "Agent" method */
       Type[] args = { new Type("Object") };
-      String orig = mem.getFunctionOrigin("exists", null, Arrays.asList(args));
+      String orig = mem.getFunctionOrigin("exists", null, "Object");
       orig = orig == null ? "" : lowerCaseFirst(orig) + ".";
       gen(orig);
       gen("exists(").gen(node).gen(")");
@@ -634,14 +632,14 @@ public class VisitorGeneration implements RudiVisitor {
       return;
     }
     mem.enterEnvironment(node);
-    List<Type> paramTypes = node.function_type.getParameterTypes();
     // return type
-    gen(node.visibility).gen(' ').gen(paramTypes.get(0).toJava())
+    gen(node.visibility).gen(' ').gen(node.function_type.getReturnType().toJava())
     .gen(" ").gen(node.name).gen("(");
     // must be a "vonda" method, so no class member argument!
+    Iterator<Type> paramTypes = node.function_type.getParameterTypes();
     for (int j = 0; j < node.parameters.size(); ++j) {
       gen((j != 0), ", ");
-      gen(paramTypes.get(j+1).toJava() + " " + node.parameters.get(j));
+      gen(paramTypes.next().toJava() + " " + node.parameters.get(j));
     }
     gen(")\n").gen(node.block);
     mem.leaveEnvironment(node);

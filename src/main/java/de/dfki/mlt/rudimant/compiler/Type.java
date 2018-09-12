@@ -21,10 +21,10 @@ package de.dfki.mlt.rudimant.compiler;
 
 import static de.dfki.mlt.rudimant.compiler.Constants.DIALOGUE_ACT_TYPE;
 
-import java.sql.Array;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
@@ -34,6 +34,9 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
  *  etc.
  */
 public class Type {
+
+  private static final Logger logger = LoggerFactory.getLogger(Type.class);
+
   private static RdfProxy PROXY;
   private static RdfClass DIALACT_CLASS;
   private static final Map<String, String> JAVA_CLASSES = new HashMap<>();
@@ -170,12 +173,12 @@ public class Type {
   /** The RDF class of this type, if any */
   private RdfClass _class;
 
-  /** The list of all type variables in this type, also from inner types */
-  private Set<String> _typeVars;
-
   /** When true, the type appears to be Object in the Java code, but we know
    *  it's something more specific (mostly because we're treating an RDF
    *  collection of things.
+   *
+   *  This makes a lot of sense, since there is no other way to signal that the
+   *  "real" type (RDF or XSD) can not be seen by the Java compiler.
    */
   private boolean _castRequired = false;
 
@@ -199,32 +202,11 @@ public class Type {
     }
   }
 
-  /* parsing of type expresssions, obsolete
-  private void splitIfy(String typeSpec) {
-    int i = 0;
-    if ((i = typeSpec.indexOf('<')) > 0) {
-      String nameSpec = typeSpec.substring(0, i).trim();
-      String[] partypes = typeSpec.substring(i+1, typeSpec.lastIndexOf('>')).split(" *, *");
-      _parameterTypes = new ArrayList<>();
-      for (String par : partypes)
-        _parameterTypes.add(new Type("_".equals(par) ? null : par));
-      _name = nameSpec;
-    } else if ((i = typeSpec.indexOf('[')) > 0) {
-      assert(typeSpec.substring(i+1).trim().equals("]"));
-      _name = "Array";
-      _parameterTypes = new ArrayList<Type>(1);
-      _parameterTypes.add(new Type(typeSpec.substring(0, i).trim()));
-    } else {
-      _name = typeSpec;
-    }
-  }
-  */
-
   // =========================================================================
   // Factory methods
   // =========================================================================
 
-  /** This is only to be used to create complex types for function expressions */
+  /** This is only to be used to create complex types for function definitions */
   public static Type getFunctionType(Type retType,
       Type methodOfType, List<Type> paramTypes) {
     List<Type> parameterTypes = new LinkedList<>();
@@ -255,8 +237,11 @@ public class Type {
     return new Type(name, params);
   }
 
-  /** This is only to be used to create complex types for function expressions */
-  public static Type getFunctionTypeUniqueVars(Type retType,
+  /** This is only to be used to create complex types for function expressions.
+   *  It makes sure the type variables of all inner types do not overlap by
+   *  renaming them if necessary.
+   */
+  public static Type getFunctionCallType(Type retType,
       Type methodOfType, List<Type> paramTypes) {
     int[] i = { 0 };
     List<Type> parameterTypes = new LinkedList<>();
@@ -269,6 +254,7 @@ public class Type {
     }
     return new Type(methodOfType == null ? "Function" : "Method", parameterTypes);
   }
+
   /** This is only to be used to create complex types for lambda expressions */
   public static Type getRdfComplexType(String name, Type parameterType) {
     List<Type> parameterTypes = new LinkedList<>();
@@ -283,10 +269,6 @@ public class Type {
   public Type(String name) {
     _name = name;
     if (_name == null) return;
-    if (isTypeVariable()) {
-      _typeVars = new HashSet<>();
-      _typeVars.add(_name);
-    }
     if (! JAVA_CLASSES.containsKey(_name)) {
       rdfIfy();
     }
@@ -295,21 +277,28 @@ public class Type {
   public Type(String outer, List<Type> inner) {
     this(outer);
     _parameterTypes = inner;
-    for (Type t : _parameterTypes) {
-      if (t != null && t._typeVars != null) {
-        if (_typeVars == null) _typeVars = new HashSet<>();
-        _typeVars.addAll(t._typeVars);
-      }
-    }
   }
 
   public String get_name() {
     return _name;
   }
 
-  public Set<String> getTypeVars() {
-    return _typeVars == null ? Collections.emptySet() : _typeVars;
+  private void getTypeVarsRec(Set<String> typeVars) {
+    if (_name == null) return;
+    if (isTypeVariable())
+      typeVars.add(_name);
+
+    if (_parameterTypes == null) return;
+    for (Type t : _parameterTypes)
+      if (t != null) { t.getTypeVarsRec(typeVars); }
   }
+
+  private Set<String> getTypeVars() {
+    Set<String> result = new HashSet<>();
+    getTypeVarsRec(result);
+    return result;
+  }
+
 
   private String xsdToJavaPodWrapper() {
     String ret = xsd2java.get(_name);
@@ -348,6 +337,7 @@ public class Type {
 
   public boolean isRdfType() { return _class != null || "Rdf".equals(_name); }
 
+  /** This returns true for all XSD and resolved RDF types */
   public boolean isXsdType() {
     return _name != null && _name.charAt(0) == '<';
   }
@@ -400,18 +390,6 @@ public class Type {
     return isPODType() || isRdfType() || isNumber();
   }
 
-  public boolean isFunction() {
-    return "Function".equals(_name);
-  }
-
-  public boolean isMethod() {
-    return "Method".equals(_name);
-  }
-
-  public Type getReturnType() {
-    return _parameterTypes.get(0);
-  }
-
   public String getStringConversionFunction() {
     assert(isStringConvertible());
     String typeName = _name;
@@ -428,15 +406,104 @@ public class Type {
     return typeName;
   }
 
-  public boolean containsGeneric() {
-    if (_parameterTypes == null)
-      return isTypeVariable();
-    for (Type p : _parameterTypes) {
-      if (p.containsGeneric())
-        return true;
-    }
-    return false;
+  // ######################################################################
+  // Function type methods
+  // ######################################################################
+
+  public boolean isFunction() {
+    return "Function".equals(_name);
   }
+
+  public boolean isMethod() {
+    return "Method".equals(_name);
+  }
+
+  public Type getReturnType() {
+    if (! (isMethod() || isFunction())) return null;
+    return _parameterTypes.get(0);
+  }
+
+  public void setReturnType(Type t) {
+    _parameterTypes.set(0, t);
+  }
+
+  public Type getClassOfMethod() {
+    if (! isMethod()) return null;
+    return _parameterTypes.get(1);
+  }
+
+  public Iterator<Type> getParameterTypes() {
+    if (! (isMethod() || isFunction())) return null;
+    Iterator<Type> result = _parameterTypes.iterator();
+    result.next(); // return type
+    if (isMethod()) result.next(); // class of method
+    return result;
+  }
+
+  /** Return true if actualType can be used as function argument when this is the
+   *  parameter type, which is the same as if this was the type of the left
+   *  hand side of an assignment and actualType on the right hand side.
+   *
+   *  - if this is null or Object, return true;
+   *  - if this an RDF type, actualType must be an RDF type that is subClassOf
+   *    this rdf type
+   *  - if this is a POD type, get the assign codes for both types, mask the
+   *    Container type bit, and perform a bitwise and. The result must be
+   *    equal to the assign code of this.
+   */
+  private boolean isPossibleArgumentType(Type actualType) {
+    if (actualType == null)
+      return false;
+    if (_name == null || actualType._name == null
+        || _name.equals("Object") || equals(actualType))
+      return true;
+
+    // check if these are (real) RDF types and are in a type relation.
+    if (_class != null || actualType._class != null) {
+      if (_class != null && actualType._class != null) {
+        String result = PROXY.fetchMostSpecific(
+            _class.toString(), actualType._class.toString());
+        // not incompatible, and actualType is more specific?
+        return result != null && result.equals(actualType._class.toString());
+      }
+      return ("Rdf".equals(_name)); // the most unspecific RDF type
+    }
+
+    String l = xsdToJavaPodWrapper();
+    String r = actualType.xsdToJavaPodWrapper();
+    // this should return the more specific of the two, or null if they are
+    // incompatible
+    Long leftCode = assignCodes.get(l);
+    if (leftCode == null) leftCode = JAVA_TYPE;
+    Long rightCode = assignCodes.get(r);
+    if (rightCode == null) rightCode = JAVA_TYPE;
+    if ((leftCode & CONTAINER_MASK) == (rightCode & CONTAINER_MASK)) return true;
+
+
+    long result = leftCode | rightCode;
+    return result == leftCode;
+  }
+
+  /** Return true if the given Function type filled with actual parameter types
+   *  matches the signature of this type.
+   */
+  public boolean signatureMatches(Type actualType) {
+    if (! actualType._name.equals(_name)) // both method OR function
+      return false;
+    List<Type> actual = actualType._parameterTypes;
+    if (_parameterTypes.size() != actual.size())
+      return false;
+    for (int i = 1; i < _parameterTypes.size(); i++) {
+      if (! _parameterTypes.get(i).isPossibleArgumentType(actual.get(i))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // ######################################################################
+  // RDF type methods
+  // ######################################################################
 
   public RdfClass getRdfClass() { return _class; }
 
@@ -452,11 +519,6 @@ public class Type {
     return null;
   }
 
-  public List<Type> getParameterTypes() {
-    return _parameterTypes != null? _parameterTypes: new ArrayList<>();
-  }
-
-  /** TODO: get this out of the way! Dangerous! */
   public void setInnerType(Type inner) {
     _parameterTypes = new ArrayList<>(1);
     _parameterTypes.add(inner);
@@ -489,7 +551,7 @@ public class Type {
   }
 
   /** Return the more specific of the two types, if it exists, null otherwise */
-  public Type unifyBasicTypes(Type right) {
+  private Type unifyBasicTypes(Type right) {
     if (isUnspecified() || isNull() || _name.equals("Object")) return right;
     if (right == null || right.isNull() || right.isUnspecified()
         || this.equals(right))
@@ -532,50 +594,6 @@ public class Type {
     }
 
     return null;
-  }
-
-  /** Return true if actualType can be used as function argument when this is the
-   *  parameter type, which is the same as if this was the type of the left
-   *  hand side of an assignment and actualType on the right hand side.
-   *
-   *  - if this is null or Object, return true;
-   *  - if this an RDF type, actualType must be an RDF type that is subClassOf
-   *    this rdf type
-   *  - if this is a POD type, get the assign codes for both types, mask the
-   *    Container type bit, and perform a bitwise and. The result must be
-   *    equal to the assign code of this.
-   */
-  public boolean isPossibleArgumentType(Type actualType) {
-    if (actualType == null)
-      return false;
-    if (_name == null || actualType._name == null
-        || _name.equals("Object") || equals(actualType))
-      return true;
-
-    // check if these are (real) RDF types and are in a type relation.
-    if (_class != null || actualType._class != null) {
-      if (_class != null && actualType._class != null) {
-        String result = PROXY.fetchMostSpecific(
-            _class.toString(), actualType._class.toString());
-        // not incompatible, and actualType is more specific?
-        return result != null && result.equals(actualType._class.toString());
-      }
-      return ("Rdf".equals(_name)); // the most unspecific RDF type
-    }
-
-    String l = xsdToJavaPodWrapper();
-    String r = actualType.xsdToJavaPodWrapper();
-    // this should return the more specific of the two, or null if they are
-    // incompatible
-    Long leftCode = assignCodes.get(l);
-    if (leftCode == null) leftCode = JAVA_TYPE;
-    Long rightCode = assignCodes.get(r);
-    if (rightCode == null) rightCode = JAVA_TYPE;
-    if ((leftCode & CONTAINER_MASK) == (rightCode & CONTAINER_MASK)) return true;
-
-
-    long result = leftCode | rightCode;
-    return result == leftCode;
   }
 
   /** returns a correct java type for use in generated code */
@@ -745,17 +763,30 @@ public class Type {
     return toJava();
   }
 
+  // ######################################################################
+  // Resolution of complex types with type variables
+  // ######################################################################
 
+  /** A union-find data structure to store equivalence sets of type variables.
+   *  It differs from the standard implementation in that a Type that is not
+   *  a type variable automatically becomes a representative.
+   */
   private static class Partition {
     HashMap<Type, Type> map = new HashMap<>();
 
+    /** Find the representative of type t */
     Type findRep(Type t) {
       if (! t.isTypeVariable() || ! map.containsKey(t)) return t;
       Type c = map.get(t);
       if (c == t) return t;
-      return findRep(c);
+      Type rep = findRep(c);
+      map.put(c, rep); // path compression
+      return rep;
     }
 
+    /** Set the representative of type t ot r, and of all children on the way
+     *  to the old representative.
+     */
     void setRep(Type t, Type r) {
       Type child = map.get(t);
       if (child == null || ! child.isTypeVariable() || child == t) {
@@ -771,9 +802,20 @@ public class Type {
       Type r2 = findRep(t2);
       if (r1 == r2) return;
       Type u = r1.unifyTypes(r2);
-      if (u == null)
-        throw new TypeException("Error during type variable resolution: "
-            + t1 + " " + t2 + " " + r1 + " " + r2);
+      if (u == null) {/*
+        if (r1.isBool()) {
+          logger.warn("Type clash during resolution resolved not in favour of boolean: "
+              + t1 + "<>" + t2 + ", " + r1 + "<>" + r2);
+          setRep(t1, r2);
+        } else if (r2.isBool()) {
+          logger.warn("Type clash during resolution resolved not in favour of boolean: "
+              + t1 + "<>" + t2 + ", " + r1 + "<>" + r2);
+          setRep(t2, r1);
+        } else {*/
+          throw new TypeException("Error during type variable resolution: "
+              + t1 + "<>" + t2 + ", " + r1 + "<>" + r2);
+      //}
+      }
       setRep(t1, u);
       if (t2.isTypeVariable())
         setRep(t2, u);
@@ -782,6 +824,9 @@ public class Type {
     public String toString() { return map.toString(); }
   }
 
+  /** Merge the two type signatures t1 and t2, such that resolved type variables
+   *  flow from one to the other.
+   */
   private static void resolveTypeVarsRec(Partition p, Type t1, Type t2) {
     if (t1.isTypeVariable())
       p.merge(t1, t2);
@@ -790,10 +835,8 @@ public class Type {
 
     List<Type> inner1 = t1._parameterTypes;
     List<Type> inner2 = t2._parameterTypes;
-    if (inner1 == null || inner2 == null) {
-      return;
-    }
-    if (inner1.size() != inner2.size()) {
+    if (inner1 == null || inner2 == null || inner1.size() != inner2.size()) {
+      // no further resolution possible, incompatible signatures
       return;
     }
     Iterator<Type> i1 = inner1.iterator();
@@ -839,6 +882,17 @@ public class Type {
     return freeVar;
   }
 
+  /** Replace all unspecified types in funType and callType with new variables
+   */
+  private void replaceUnspecifiedWithVars(Type funType, Type callType) {
+    BitSet b = new BitSet();
+    // We must make the type variables in callType disjoint from those in
+    // funType first, therefore, we rename the variables
+    for(String var : funType.getTypeVars()) b.set(var.charAt(0) - 'A');
+    for(String var : callType.getTypeVars()) b.set(var.charAt(0) - 'A');
+    callType.replaceUnspecifiedRec(0, b);
+  }
+
 
   /** Resolve as many type variables as possible to concrete types, and return
    *  a new type with type vars resolved.
@@ -849,10 +903,7 @@ public class Type {
    */
   public static Type resolveTypeVars(Type funType, Type callType) {
     Partition p = new Partition();
-    BitSet b = new BitSet();
-    for(String var : funType.getTypeVars()) b.set(var.charAt(0) - 'A');
-    for(String var : callType.getTypeVars()) b.set(var.charAt(0) - 'A');
-    callType.replaceUnspecifiedRec(0, b);
+    callType.replaceUnspecifiedWithVars(funType, callType);
     resolveTypeVarsRec(p, funType, callType);
     // Now p contains "resolved" types for all type vars, create the result for
     // type2 with all possible vars replaced

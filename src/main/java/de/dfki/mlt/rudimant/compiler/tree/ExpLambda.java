@@ -21,6 +21,7 @@ package de.dfki.mlt.rudimant.compiler.tree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import de.dfki.mlt.rudimant.compiler.Environment;
@@ -74,6 +75,21 @@ public class ExpLambda extends RTExpLeaf implements RTBlockNode {
   public void propagateType(Type t, VisitorType v) {
     type = t;
     _localBindings = null;
+  }
+
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(type.getReturnType()).append(" (");
+    Iterator<Type> partypes = type.getParameterTypes();
+    boolean notFirst = false;
+    for(String p : parameters) {
+      if (notFirst) sb.append(", ");
+      notFirst = true;
+      sb.append(partypes.next().getRep()).append(' ').append(p);
+    }
+    sb.append(") -> ");
+    sb.append(body);
+    return sb.toString();
   }
 
   // ==== IMPLEMENTATION OF RTBLOCKNODE =====================================

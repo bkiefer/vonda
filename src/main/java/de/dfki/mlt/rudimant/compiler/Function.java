@@ -20,7 +20,6 @@
 package de.dfki.mlt.rudimant.compiler;
 
 import java.util.Iterator;
-import java.util.List;
 
 public class Function {
 
@@ -40,7 +39,7 @@ public class Function {
     // It seems what is returned by unifyTypes should be a subclass of
     // _calledUpon
     return _type.isMethod() && !calledOn.isUnspecified()
-        && getClassOfMethod().unifyTypes(calledOn) != null;
+        && _type.getClassOfMethod().unifyTypes(calledOn) != null;
   }
 
   // TODO: NOT USED
@@ -50,15 +49,6 @@ public class Function {
 
   public Type getType() {
     return _type;
-  }
-
-  public Type getReturnType() {
-    return _type.getParameterTypes().get(0);
-  }
-
-  public Type getClassOfMethod() {
-    if (! _type.isMethod()) return null;
-    return _type.getParameterTypes().get(1);
   }
 
   public String getOrigin(){
@@ -72,18 +62,7 @@ public class Function {
   //}
 
   public boolean signatureMatches(Type fType) {
-    List<Type> actualParmTypes = fType.getParameterTypes();
-    List<Type> thisParmTypes = _type.getParameterTypes();
-    if (thisParmTypes.size() != actualParmTypes.size()
-        || ! fType.get_name().equals(_type.get_name()))
-      return false;
-
-    for (int i = 1; i < thisParmTypes.size(); i++) {
-      if (! thisParmTypes.get(i).isPossibleArgumentType(actualParmTypes.get(i))) {
-        return false;
-      }
-    }
-    return true;
+    return _type.signatureMatches(fType);
   }
 
   @Override
@@ -103,13 +82,13 @@ public class Function {
   @Override
   public String toString() {
     StringBuffer sb = new StringBuffer();
-    Iterator<Type> it =  _type.getParameterTypes().iterator();
-    sb.append(it.next().getRep()).append(' ');
+    sb.append(_type.getReturnType().getRep()).append(' ');
     if (_type.isMethod()) {
-      sb.append(it.next().getRep()).append('.');
+      sb.append(_type.getClassOfMethod().getRep()).append('.');
     }
     sb.append(_name).append('(');
     boolean notfirst = false;
+    Iterator<Type> it =  _type.getParameterTypes();
     while(it.hasNext()) {
       if (notfirst) sb.append(", ");
       notfirst = true;

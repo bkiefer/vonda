@@ -77,7 +77,7 @@ public class TreeModelAdapter extends ModelAdapter {
     }
     if (model instanceof RudiTree) {
       RudiTree node = (RudiTree) model;
-    /*
+      /*
       if (node.getNewType() == RudiTree.getGrammar().getConsType())
         return ModelAdapter.MAP | ModelAdapter.CONS;
       if (node.getNewType() == RudiTree.getGrammar().getNullType())
@@ -85,7 +85,7 @@ public class TreeModelAdapter extends ModelAdapter {
       if (node.getNthArg(0) != null)
         return ModelAdapter.MAP | ModelAdapter.TREE;
       return ModelAdapter.MAP;
-*/
+       */
       return ModelAdapter.SYMBOL | ModelAdapter.TREE;
     }
     if (model == null || model instanceof String) {
@@ -118,12 +118,15 @@ public class TreeModelAdapter extends ModelAdapter {
       result = " -> ";
     } else if (model instanceof StatMethodDeclaration) {
       StatMethodDeclaration md = (StatMethodDeclaration)model;
-      List<Type> partypes = md.function_type.getParameterTypes();
-      int i = 0;
-      result = "meth " + partypes.get(i++).getRep() + " " + md.name + '(';
+      Iterator<Type> partypes = md.function_type.getParameterTypes();
+      Type calledUpon = md.function_type.getClassOfMethod();
+
+      result = "meth " + md.function_type.getReturnType().getRep() + " " +
+          (calledUpon == null ? "" : calledUpon.getRep() + ". ")
+          + md.name + '(';
       for (int j = 0; j < md.parameters.size(); ++j) {
         if (j != 0) result += ", ";
-        result += partypes.get(i++).getRep() + " " + md.parameters.get(j);
+        result += partypes.next().getRep() + " " + md.parameters.get(j);
       }
     } else if (model instanceof StatAbstractBlock) {
       if (((StatAbstractBlock)model).braces)

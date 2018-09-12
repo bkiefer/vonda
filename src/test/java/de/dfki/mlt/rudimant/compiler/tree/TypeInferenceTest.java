@@ -231,10 +231,18 @@ public class TypeInferenceTest {
   }
 
   @Test
-  public void test16() throws InterruptedException {
+  public void test16() {
     String in = "Child c; String da = random(c.surname);";
     String s = generate(in);
     String expected = "public Rdf c;public String da;/**/da = (String) random(((Set<Object>)c.getValue(\"<dom:surname>\")));";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
+  @Test
+  public void test17() {
+    String in = "Child c; Rdf a = random(c.hasAchievement);";
+    String s = generate(in);
+    String expected = "public Rdf c;public Rdf a;/**/a = (Rdf) random(((Set<Object>)c.getValue(\"<edu:hasAchievement>\")));";
     assertEquals(expected, getForMarked(s, expected));
   }
 }

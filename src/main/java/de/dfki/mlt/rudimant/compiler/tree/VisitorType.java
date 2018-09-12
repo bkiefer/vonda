@@ -20,6 +20,7 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.common.ErrorInfo.ErrorType.*;
+import static de.dfki.mlt.rudimant.compiler.Type.*;
 import static de.dfki.mlt.rudimant.compiler.Utils.isBooleanOperator;
 
 import java.util.ArrayList;
@@ -228,7 +229,7 @@ public class VisitorType implements RudiVisitor {
         node.right = convertToString(node.right);
         mergeType = node.left.type;
       } else {
-        mergeType = Type.getNoType();
+        mergeType = getNoType();
         typeError("Incompatible types in assignment: "
             + node.left.type.getRep() + " := "
             + node.right.type.getRep(), node);
@@ -386,7 +387,7 @@ public class VisitorType implements RudiVisitor {
       typeError(getFullText(node) + ": type of then and else differ: "
           + node.thenexp.getType().toString() + " vs. "
           + node.elseexp.getType().toString(), node);
-      unified = Type.getNoType();
+      unified = getNoType();
     }
     node.type = unified;
   }
@@ -395,12 +396,14 @@ public class VisitorType implements RudiVisitor {
   public void visit(ExpLambda node) {
     mem.enterEnvironment(node);
     // node.type is a Function type
-    List<Type> parameterTypes = node.type.getParameterTypes();
-    Iterator<Type> parTypes = parameterTypes.iterator();
-    Type returnType = parTypes.next(); // return type;
+    Iterator<Type> parTypes = node.type.getParameterTypes();
+    Type returnType = node.type.getReturnType(); // return type;
     for(String arg : node.parameters){
-      // TODO: might be necessary to set _castRequired to true in all parTypes
-      mem.addVariableDeclaration(arg, parTypes.next());
+      // set castRequired to true in all parTypes that are XSD/RDF, since we
+      // have to pass Object for them
+      Type parType = parTypes.next();
+      if (parType.isXsdType()) parType.setCastRequired();
+      mem.addVariableDeclaration(arg, parType);
     }
     if (node.body instanceof RTExpression) {
       RTExpression exp = (RTExpression)node.body;
@@ -414,14 +417,13 @@ public class VisitorType implements RudiVisitor {
       if (last instanceof StatReturn) {
         returnType = ((StatReturn)last).returnExp.getType();
       } else {
-        returnType = Type.getNoType();
+        returnType = getNoType();
         typeError("Block used in functional expression doesn't end with a return", node);
       }
     }
-    if (! returnType.equals(parameterTypes.get(0))) {
-      parameterTypes.set(0, returnType);
+    if (! returnType.equals(node.type.getReturnType())) {
+      node.type.setReturnType(returnType);
     }
-    //node.type = Type.getFunctionType(returnType, null, parTypes);
     mem.leaveEnvironment(node);
   }
 
@@ -474,7 +476,7 @@ public class VisitorType implements RudiVisitor {
   @Override
   public void visit(StatFor2 node) {
     node.initialization.visit(this);
-    Type innerIterableType = Type.getNoType();
+    Type innerIterableType = getNoType();
     if (! node.initialization.type.isUnspecified()) {
       innerIterableType = node.initialization.getInnerType();
     }
@@ -598,17 +600,15 @@ public class VisitorType implements RudiVisitor {
   @Override
   public void visit(StatMethodDeclaration node) {
     mem.addFunction(node.name, node.function_type);
-    List<Type> parTypes = node.function_type.getParameterTypes();
+    Iterator<Type> parTypes = node.function_type.getParameterTypes();
     if (node.block != null) {
       // The following variables (function parameters) are local to the method
       // block we now step into; we don't want them to be reachable them from
       // outside
       mem.enterEnvironment(node);
-      int typePrefix = parTypes.size() - node.parameters.size();
-      for (int i = 0; i < node.parameters.size(); i++) {
-        // add parameters to environment
-        mem.addVariableDeclaration(node.parameters.get(i),
-            parTypes.get(i + typePrefix));
+      // add parameters to environment
+      for (String par: node.parameters) {
+        mem.addVariableDeclaration(par, parTypes.next());
       }
       node.block.visit(this);
       mem.leaveEnvironment(node);
@@ -701,7 +701,7 @@ public class VisitorType implements RudiVisitor {
     // warning / error if property not found
     if (predUri == null) {
       typeError("No property found for " + var.content, node);
-      return new ExpPropertyAccess(var.content, var, false, Type.getNoType(), false);
+      return new ExpPropertyAccess(var.content, var, false, getNoType(), false);
     }
 
     var.content = predUri; // replace plain name by URI
@@ -740,9 +740,7 @@ public class VisitorType implements RudiVisitor {
     // parameter types, so this must be Object
     boolean isFunctional = (predType & RdfClass.FUNCTIONAL_PROPERTY) != 0;
     if (! isFunctional) {
-      //currentType = "Set<"+currentType+">";
-      //currentType = new Type("Set<Object>");
-      currentType = Type.getRdfComplexType("Set", currentType);
+      currentType = getRdfComplexType("Set", currentType);
     }
     // the type of this is set to Object by default (not null)
     return new ExpPropertyAccess(var.content, var, false, currentType, isFunctional);
@@ -765,15 +763,6 @@ public class VisitorType implements RudiVisitor {
     partOfFieldAccess = true;
     for (int i = 1; i < node.parts.size(); ++i) {
       currentNode = node.parts.get(i);
-      /*
-      if (currentType.isCollection()
-          && currentNode instanceof ExpFuncCall
-          && ! ((ExpFuncCall)currentNode).params.isEmpty()
-          && ((ExpFuncCall)currentNode).params.get(0) instanceof ExpLambda) {
-        ((ExpLambda)((ExpFuncCall)currentNode).params.get(0)).parType =
-        		currentType.getInnerType();
-      }
-      */
       // if this is a funccall performed on anything, tell the function the type it was called on
       if(currentNode instanceof ExpFuncCall) {
         ((ExpFuncCall)currentNode).calledUpon = currentType;
@@ -790,7 +779,7 @@ public class VisitorType implements RudiVisitor {
           // could also be a method application, possibly, what else?
           currentType = ((RTExpression) currentNode).type;
         } else {
-          currentType = Type.getNoType();
+          currentType = getNoType();
         }
       } else { // unknown or Java type, let's try with the accessor type
     	  // TODO: think about this. we definitely want this in case of
@@ -801,7 +790,7 @@ public class VisitorType implements RudiVisitor {
             && !(currentNode instanceof ExpVariable)) {
           currentType = ((RTExpression) currentNode).type;
         } else {
-          currentType = Type.getNoType();
+          currentType = getNoType();
         }
       }
       ((RTExpression) currentNode).type = currentType;
@@ -820,20 +809,9 @@ public class VisitorType implements RudiVisitor {
     // test whether the given parameters are of the correct type
     List<Type> partypes = new ArrayList<Type>();
     if(node.params != null) {
-      if (node.params.size() == -2 && node.params.get(1) instanceof ExpLambda) {
-        // Trick to explicitely find filter, contains, etc with two arguments (and no calledUpon)
-        node.params.get(0).visit(this);
-        partypes.add(node.params.get(0).getType());
-        //((ExpLambda)node.params.get(1)).parType = node.params.get(0).getType().getInnerType();
-        node.params.get(1).visit(this);
-        partypes.add(node.params.get(1).getType());
-      } else {
-        for (RTExpression e : node.params) {
-          e.visit(this);
-          // TODO: type variables must be made unique for every parameter,
-          // otherwise, types can overlap in a wrong way
-          partypes.add(e.getType());
-        }
+      for (RTExpression e : node.params) {
+        e.visit(this);
+        partypes.add(e.getType());
       }
     }
     // if this was used in a new Expression, handle it accordingly
@@ -842,29 +820,33 @@ public class VisitorType implements RudiVisitor {
       return;
     }
     // a type that represents the actual parameters (the call)
-    Type callType = Type.getFunctionTypeUniqueVars(node.type, node.calledUpon, partypes);
+    // type variables must be made unique for every inner type of the function
+    // type, otherwise, type variables can overlap in a wrong way
+    Type callType = getFunctionCallType(node.type, node.calledUpon, partypes);
 
     Function f = mem.getFunction(node.content, callType);
     if (f != null) {
-      Type resolved = Type.resolveTypeVars(f.getType(), callType);
-
       String o = f.getOrigin();
       // no need to specify the function origin if it's from this class
       if (o != null && ! o.equals(mem.getClassName())) {
         node.realOrigin = o;
       }
-      // TODO: PERCOLATE ALL CHANGED PARAMETER TYPES DOWN
-      List<Type> resTypes = resolved.getParameterTypes();
-      int offset = 1;
-      if (node.calledUpon != null) {
-        if (!node.calledUpon.equals(resTypes.get(1)))
-          node.calledUpon = resTypes.get(1);
-        offset += 1;
-      }
-      for(int i = 0; i < node.params.size(); ++i) {
-        if (!partypes.get(i).equals(resTypes.get(i + offset))) {
-          RTExpression e = node.params.get(i);
-          e.propagateType(resTypes.get(i + offset), this);
+
+      // Try to deduce "real" types for the type vars by matching the
+      // function definition and actual parameter types
+      Type resolved = resolveTypeVars(f.getType(), callType);
+
+      // percolate all changed parameter types down
+      if (node.calledUpon != null &&
+          !node.calledUpon.equals(resolved.getClassOfMethod()))
+        node.calledUpon = resolved.getClassOfMethod();
+
+      Iterator<Type> restypes = resolved.getParameterTypes();
+      Iterator<Type> ptypes = partypes.iterator();
+      for(RTExpression e : node.params) {
+        Type resType = restypes.next();
+        if (!(ptypes.next().equals(resType))) {
+          e.propagateType(resType, this);
           e.visit(this);
         }
       }
@@ -879,11 +861,10 @@ public class VisitorType implements RudiVisitor {
         typeError("The function call to " + node.content
             + " refers to a function that wasn't declared", node);
       }
-      node.type = Type.getNoType();
+      node.type = getNoType();
     } else {
-      if (node.type.isXsdType()
-          //||(node.type.isRdfType() && ! node.type.isDialogueAct())
-          )
+      // if the return type is an XSD or RDF type, we only know it's Object
+      if (node.type.isXsdType())
         node.type.setCastRequired();
     }
   }
@@ -904,7 +885,7 @@ public class VisitorType implements RudiVisitor {
     if (node.type == null)
       // TODO: can this ever happen? SingleValues are things like Strings, chars
       //       ints, floats, ... recognized = given a type by our parser
-      node.type = Type.getNoType();
+      node.type = getNoType();
   }
 
   /**
@@ -927,7 +908,7 @@ public class VisitorType implements RudiVisitor {
           node.content = "\"" + node.content + "\"";
         }
       } else {
-        node.type = Type.getNoType();
+        node.type = getNoType();
       }
     }
   }

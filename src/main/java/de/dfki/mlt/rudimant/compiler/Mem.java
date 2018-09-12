@@ -220,7 +220,9 @@ public class Mem {
    * @return
    */
   public String getFunctionOrigin(String funcName, Type calledUpon,
-      List<Type> partypes) {
+      String ... typeNames) {
+    List<Type> partypes = new ArrayList<>();
+    for (String t : typeNames) partypes.add(new Type(t));
     Type callType = Type.getFunctionType(Type.getNoType(), calledUpon, partypes);
 
     Function f = getFunction(funcName, callType);
