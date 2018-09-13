@@ -313,6 +313,15 @@ public class Type {
     return (ret != null) ? ret : _name;
   }
 
+  private String getContainer() {
+    if (isPODType()) {
+      Long code = typeCodes.get(_name);
+      code = code | 0b100;
+      return code2type.get(code);
+    }
+    return _name;
+  }
+
   private Long getCode() {
     if (_name == null) return null;
     String name = xsdToJavaPodWrapper();
@@ -352,7 +361,7 @@ public class Type {
   }
 
   private int getCollectionCode() {
-    if (_name == null) return 0;
+    if (isUnspecified() || isTypeVariable()) return 0x1111b;
     if (_name.endsWith("Map")) return 0x1000b;
     else if (_name.endsWith("Array")) return 0x0100b;
     else if (_name.endsWith("Set")) return 0x010b;
@@ -362,7 +371,8 @@ public class Type {
   }
 
   public boolean isCollection() {
-    return getCollectionCode() != 0;
+    return ! (isUnspecified() || isTypeVariable())
+        && getCollectionCode() != 0;
   }
 
   public boolean isDialogueAct() {
@@ -491,8 +501,9 @@ public class Type {
   public Type unifyTypes(Type right) {
     if (isUnspecified() || isNull() || _name.equals("Object")
         || isTypeVariable()) return right;
-    if (right == null || right.isNull() || right.isUnspecified()
-        || right.isTypeVariable() || this.equals(right))
+    if (right == null || right.isNull() || this.equals(right)
+        || ((right.isUnspecified() || right.isTypeVariable())
+            && right._parameterTypes == null))
       return this;
     // TODO: this is not for types with more than one parameter type. Can it be
     // extended?
@@ -508,6 +519,9 @@ public class Type {
           this._name : right._name;
       Type result = new Type();
       result._name = outer;
+      if (! "Array".equals(outer) && inner.isPODType()) {
+        inner = new Type(inner.getContainer());
+      }
       result.setInnerType(inner);
       return result;
     }
@@ -581,10 +595,10 @@ public class Type {
     if (! isCollection()) return toJava();
     if (_name.startsWith("Rdf")) return _name;
     String collType = null;
-    if (_name.endsWith("Map")) collType = "LinkedHashMap";
-    else if (_name.startsWith("Array")) collType = "Array";
-    else if (_name.endsWith("Set")) collType = "LinkedHashSet";
-    else if (_name.endsWith("List")) collType = "ArrayList";
+    if (_name.equals("Map")) collType = "LinkedHashMap";
+    else if (_name.equals("List")) collType = "ArrayList";
+    else if (_name.equals("Array")) collType = "Array";
+    else if (_name.equals("Set")) collType = "LinkedHashSet";
     else collType = _name;
     StringBuffer out = new StringBuffer();
     out.append(collType);

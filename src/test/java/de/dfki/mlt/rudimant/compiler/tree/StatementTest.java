@@ -198,9 +198,9 @@ public class StatementTest {
 
  @Test
  public void StatementTest8(){
-   String in = " Child user; n = user.name; List<String> names = { n };";
+   String in = " Child user; n = user.forename; List<String> names = { n };";
    String r = generate(in);
-   String expected = "Rdf user;Set<Object> n = ((Set<Object>)user.getValue(\"<upper:name>\"));"
+   String expected = "Rdf user;String n = ((String)user.getSingleValue(\"<dom:forename>\"));"
        + "List<String> names = new ArrayList<>();names.add(n);";
    assertEquals(expected, getForMarked(r, expected));
  }

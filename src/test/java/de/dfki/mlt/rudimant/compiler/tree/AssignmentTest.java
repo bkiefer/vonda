@@ -120,4 +120,32 @@ public class AssignmentTest {
     assertEquals("right side type test4 should be int", "int", type_right);
   }
 
+  @Test
+  public void testArrayLiteral1() {
+    String assignmentExp = "list = { 2, 3, 4 };";
+    String out = generate(assignmentExp);
+    String exp = "int[] list = {2, 3, 4};";
+
+    assertEquals(exp, getForMarked(out, exp));
+  }
+
+  @Test
+  public void testArrayLiteral2() {
+    String assignmentExp = "list = { };";
+    String out = generate(assignmentExp);
+    String exp = "Object /* (unknown) */[] list = {};";
+
+    assertEquals(exp, getForMarked(out, exp));
+  }
+
+
+  @Test
+  public void testArrayLiteral3() {
+    String assignmentExp = "ArrayList<T> list = { 2, 3 };";
+    String out = generate(assignmentExp);
+    String exp = "ArrayList<Integer> list = new ArrayList<>();list.add(2); list.add(3);";
+
+    assertEquals(exp, getForMarked(out, exp));
+  }
+
 }

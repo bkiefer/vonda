@@ -242,11 +242,16 @@ public class VisitorType implements RudiVisitor {
             + node.right.type.getRep(), node);
       }
     }
+    if (mergeType.isUnspecified() && node.right instanceof ExpListLiteral) {
+      List<Type> inner = new ArrayList<>();
+      inner.add(mergeType.getInnerType());
+      mergeType = node.right.type = new Type("Array", inner);
+    }
     node.type = mergeType;
-    if (node.right.type.isUnspecified()) {
+    if (! node.right.type.equals(node.type)) {
       node.right.propagateType(node.type, this);
     }
-    if (node.left.type.isUnspecified()) {
+    if (! node.left.type.equals(node.type)) {
       node.left.propagateType(node.type, this);
     }
   }
@@ -604,8 +609,9 @@ public class VisitorType implements RudiVisitor {
           node.fixFields(new ExpVariable(node.variable, node.type));
       node.toAssign = node.fixFields(new ExpAssignment(var, node.toAssign));
       node.toAssign.visit(this);
-      if (node.type.isUnspecified()) {
-        node.type = node.toAssign.type;
+      Type mergeType = node.type.unifyTypes(node.toAssign.type);
+      if (!node.type.equals(mergeType)) {
+        node.type = mergeType;
       }
       if (! mem.variableExists(node.variable)) {
         mem.addVariableDeclaration(node.variable, var.type);
