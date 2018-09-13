@@ -117,15 +117,24 @@ public class LambdaTest {
   }
 
   @Test
-  public void test6() {
+  public void test6a() {
     // TODO: THINK, SOLVE, AND REACTIVATE
-    String in = "List<List<String>> l; h = filter(l, (e) -> some(e, (f) -> f)); x = h.get(1);";
-    //String r = generate(in);
+    String in = "List<String> e; h = some(e, (f) -> f); x = h.get(1);";
     String expected = "public List<List<String>> l;public List<List<String>> h;public List<String> x;/**/"
         + "h = filter(l, (e) -> some(e, (f) -> !f.isEmpty()));x = h.get(1);";
+    //String r = generate(in);
     //assertEquals(expected, getForMarked(r, expected));
   }
 
+  @Test
+  public void test6b() {
+    // TODO: THINK, SOLVE, AND REACTIVATE
+    String in = "List<List<String>> l; h = filter(l, (e) -> some(e, (f) -> f)); x = h.get(1);";
+    String expected = "public List<List<String>> l;public List<List<String>> h;public List<String> x;/**/"
+        + "h = filter(l, (e) -> some(e, (f) -> !f.isEmpty()));x = h.get(1);";
+    //String r = generate(in);
+    //assertEquals(expected, getForMarked(r, expected));
+  }
 
   @Test
   public void testSome() {
