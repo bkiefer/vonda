@@ -119,6 +119,53 @@ public class VisitorType implements RudiVisitor {
     return result;
   }
 
+
+  public Type checkArithmeticTypes(ExpArithmetic node) {
+    Type ltype = node.left.type;
+    Type type = ltype;
+    Type rtype = node.right.type;
+    if (ltype.isUnspecified()) {
+      // unknown type to the left
+      if (rtype.isUnspecified()) {
+        // unknown type on both branches
+        typeError("Expression with unknown type: " + getFullText(node), node);
+      } else {
+        typeWarning("propagating " + rtype + " to unknown left part: "
+            + getFullText(node), node);
+        // propagate type from the right branch to the left
+        node.left.propagateType(rtype, this);
+        type = rtype;
+      }
+    } else if (rtype.isUnspecified()) {
+      typeWarning("propagating " + ltype + " to unknown right part: "
+          + getFullText(node), node);
+      // propagate type from the left branch to the right
+      node.right.propagateType(ltype, this);
+      type = ltype;
+    } else {
+      // check type compatibility
+      type = ltype.unifyTypes(rtype);
+      if (type == null && "+".equals(node.operator)) {
+        // cast to string if we think we now how
+        if (ltype.isString() && rtype.isStringConvertible()) {
+          type = ltype;
+          node.right = convertToString(node.right);
+        }
+        if (rtype.isString() && ltype.isStringConvertible()) {
+          type = rtype;
+          node.left = convertToString(node.left);
+        }
+      }
+      if (type == null) {
+        typeError("Incompatible types in " + node + ": " + ltype +
+            " vs. " + rtype, node);
+        type = ltype;
+      }
+    }
+    return type;
+  }
+
+
   /**
    * If that is a binary expression, the resulting type should be the more
    * specific of both. If they are incompatible there should be a warning. Maybe
@@ -128,52 +175,12 @@ public class VisitorType implements RudiVisitor {
   @Override
   public void visit(ExpArithmetic node) {
     node.left.visit(this);
-    Type ltype = node.left.type;
-    Type type = ltype;
     if (node.right != null) {
       node.right.visit(this);
-      Type rtype = node.right.type;
-      if (ltype.isUnspecified()) {
-        // unknown type to the left
-        if (rtype.isUnspecified()) {
-          // unknown type on both branches
-          typeError("Expression with unknown type: " + getFullText(node), node);
-        } else {
-          typeWarning("propagating " + rtype + " to unknown left part: "
-              + getFullText(node), node);
-          // propagate type from the right branch to the left
-          node.left.propagateType(rtype, this);
-          type = rtype;
-        }
-      } else if (rtype.isUnspecified()) {
-        typeWarning("propagating " + ltype + " to unknown right part: "
-            + getFullText(node), node);
-        // propagate type from the left branch to the right
-        node.right.propagateType(ltype, this);
-        type = ltype;
-      } else {
-        // check type compatibility
-        type = ltype.unifyTypes(rtype);
-        if (type == null && "+".equals(node.operator)) {
-          // cast to string if we think we now how
-          if (ltype.isString() && rtype.isStringConvertible()) {
-            type = ltype;
-            node.right = convertToString(node.right);
-          }
-          if (rtype.isString() && ltype.isStringConvertible()) {
-            type = rtype;
-            node.left = convertToString(node.left);
-          }
-        }
-        if (type == null) {
-          typeError("Incompatible types in " + node + ": "
-                  + ltype + " vs. " + rtype, node);
-          type = ltype;
-        }
-      }
+      node.type = checkArithmeticTypes(node);
+    } else {
+      node.type = node.left.type;
     }
-    // may be wrong if type unification failed
-    node.type = type;
   }
 
   /**
@@ -546,6 +553,17 @@ public class VisitorType implements RudiVisitor {
     // added.
     node.left.visit(this);
     node.right.visit(this);
+    if (node.left.getType().isNumber() || node.right.getType().isNumber()) {
+      // then this is a normal addition/subtraction, and should be turned into
+      // an assignment to be treated properly
+      ExpArithmetic s = node.fixFields(
+          new ExpArithmetic(node.left, node.right, node.add? "+" : "-"));
+      s.type = checkArithmeticTypes(s);
+      node.left = node.fixFields(new ExpAssignment(node.left, s));
+      node.left.type = s.type;
+      node.right = null;
+      return;
+    }
     if (! node.left.getType().isCollection()) {
       typeError("Left side of a set operation is not a set, but "
           + node.left.getType(), node);

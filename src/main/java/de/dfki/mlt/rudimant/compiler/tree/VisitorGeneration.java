@@ -321,7 +321,7 @@ public class VisitorGeneration implements RudiVisitor {
       gen(node);
     } else if (type.isPODType()) {
       gen(node).gen(" != 0");
-    } else if (type.isCollection() || type.isString() || type.isNumber()
+    } else if (type.isCollection() || type.isString() || type.isNumberContainer()
         || type.isDialogueAct()) {
       /* TODO: We "know" this is an "Agent" method */
       Type[] args = { new Type("Object") };
@@ -698,12 +698,17 @@ public class VisitorGeneration implements RudiVisitor {
   @Override
   public void visit(StatSetOperation node) {
     gen(node.left);
-    if (node.add) {
-      gen(".add(");
+    // is this an arithmetic operation rather than a set operation?
+    if (node.right == null) {
+      gen(";");
     } else {
-      gen(".remove(");
+      if (node.add) {
+        gen(".add(");
+      } else {
+        gen(".remove(");
+      }
+      gen(node.right).gen(");");
     }
-    gen(node.right).gen(");");
   }
 
   @Override

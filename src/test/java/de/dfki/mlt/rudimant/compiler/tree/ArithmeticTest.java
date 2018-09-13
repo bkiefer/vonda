@@ -115,4 +115,21 @@ public class ArithmeticTest {
     String expected = "int i = -(((1+2)));";
     assertEquals(expected, getForMarked(r, expected));
   }
+
+  @Test
+  public void testArithmetic6() {
+    String in = "Child user; user.hasIntimacyLevel -= 0.2;";
+    String r = generate(in);
+    String expected = "Rdf user;user.setValue(\"<dom:hasIntimacyLevel>\","
+            + " (((Double)user.getSingleValue(\"<dom:hasIntimacyLevel>\"))-0.2));";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void testArithmetic7() {
+    String in = "int x; x += 3;";
+    String r = generate(in);
+    String expected = "int x;x = (x+3);";
+    assertEquals(expected, getForMarked(r, expected));
+  }
 }

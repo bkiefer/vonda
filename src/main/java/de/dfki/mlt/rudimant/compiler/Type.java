@@ -313,24 +313,33 @@ public class Type {
     return (ret != null) ? ret : _name;
   }
 
+  private Long getCode() {
+    if (_name == null) return null;
+    String name = xsdToJavaPodWrapper();
+    return typeCodes.get(name);
+  }
+
   /** Indicates if this type should be compared with == or equals */
   public boolean isPODType() {
-    if (_name == null) return false; // if we're ignorant, it is Object
     if (isNull()) return true;
-    String name = xsdToJavaPodWrapper();
-    Long code = typeCodes.get(name);
+    Long code = getCode();
     return code != null && (code & 0b11111111000l) != 0
         && (code & 0b100) == 0; // containers may be null!
   }
 
-  /** Return true if this is a Java wrapper class for some number */
+  /** Return true if this is a number class, POD or container */
   public boolean isNumber() {
-     // if we're ignorant, it is Object, and null is not a number
-    if (_name == null) return false;
-    String name = xsdToJavaPodWrapper();
-    Long code = typeCodes.get(name);
-    return code != null && (code & 0b11111111000l) != 0
-        && (code & 0b100) != 0;
+    // if we're ignorant, it is Object, and null is not a number
+    Long code = getCode();
+    return code != null && (code & 0b11111111000l) != 0; // it's a number
+  }
+
+  /** Return true if this is a Java wrapper class for some number */
+  public boolean isNumberContainer() {
+    // if we're ignorant, it is Object, and null is not a number
+    Long code = getCode();
+    return code != null && (code & 0b11111111000l) != 0 // it's a number
+        && (code & 0b100l) != 0; // It's a container type
   }
 
   public boolean isNull() { return "null".equals(_name); }
