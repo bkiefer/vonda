@@ -174,7 +174,7 @@ public class TypeInferenceTest {
     assertTrue(s.contains("double f;"));
   }
 
-  @Test(expected=TypeException.class)
+  @Test
   public void test11() throws Throwable {
     String in = " int fun(int i); long l = 1; k = fun(l);";
     getTypeError(in);

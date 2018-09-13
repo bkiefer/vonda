@@ -233,4 +233,46 @@ public class TypesTest {
     String in = " void fun(); k = fun();";
     getTypeError(in);
   }
+  
+  @Test(expected=TypeException.class)
+  public void testFunctionCall1() throws Throwable {
+    String in = " void fun(String s); fun(3);";
+    getTypeError(in);
+  }
+  
+  @Test(expected=TypeException.class)
+  public void testFunctionCall2() throws Throwable {
+    String in = " void fun(String[] s); fun(3);";
+    getTypeError(in);
+  }
+  
+  @Test(expected=TypeException.class)
+  public void testFunctionCall3() throws Throwable {
+    String in = " void fun(String[] s); fun(\"test\");";
+    getTypeError(in);
+  }
+  
+  @Test(expected=TypeException.class)
+  public void testFunctionCall4() throws Throwable {
+    String in = " void fun(Set<Integer> s); fun(\"test\");";
+    getTypeError(in);
+  }
+  
+  @Test
+  public void testFunctionCall5() throws Throwable {
+    String in = "p = myLastDA().getProposition();";
+    String s = generate(in);
+    // String p; should be found somewhere in the class, but not here (global
+    // initialization)
+    String expected = "p = myLastDA().getProposition();";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+  
+  @Test
+  public void testFunctionCall6() throws Throwable {
+    String in = "void fun() { p = myLastDA().getProposition();}";
+    String s = generate(in);
+    String expected = "public void fun() { String p = myLastDA().getProposition(); }";
+    assertEquals(expected, getForMarked(s, expected));
+  }
 }

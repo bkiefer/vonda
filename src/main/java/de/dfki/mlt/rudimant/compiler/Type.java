@@ -449,50 +449,6 @@ public class Type {
     return result;
   }
 
-  /** Return true if actualType can be used as function argument when this is the
-   *  parameter type, which is the same as if this was the type of the left
-   *  hand side of an assignment and actualType on the right hand side.
-   *
-   *  - if this is null or Object, return true;
-   *  - if this an RDF type, actualType must be an RDF type that is subClassOf
-   *    this rdf type
-   *  - if this is a POD type, get the assign codes for both types, mask the
-   *    Container type bit, and perform a bitwise and. The result must be
-   *    equal to the assign code of this.
-   */
-  private boolean isPossibleArgumentType(Type actualType) {
-    if (actualType == null)
-      return false;
-    if (_name == null || actualType._name == null
-        || _name.equals("Object") || equals(actualType))
-      return true;
-
-    // check if these are (real) RDF types and are in a type relation.
-    if (_class != null || actualType._class != null) {
-      if (_class != null && actualType._class != null) {
-        String result = PROXY.fetchMostSpecific(
-            _class.toString(), actualType._class.toString());
-        // not incompatible, and actualType is more specific?
-        return result != null && result.equals(actualType._class.toString());
-      }
-      return ("Rdf".equals(_name)); // the most unspecific RDF type
-    }
-
-    String l = xsdToJavaPodWrapper();
-    String r = actualType.xsdToJavaPodWrapper();
-    // this should return the more specific of the two, or null if they are
-    // incompatible
-    Long leftCode = assignCodes.get(l);
-    if (leftCode == null) leftCode = JAVA_TYPE;
-    Long rightCode = assignCodes.get(r);
-    if (rightCode == null) rightCode = JAVA_TYPE;
-    if ((leftCode & CONTAINER_MASK) == (rightCode & CONTAINER_MASK)) return true;
-
-
-    long result = leftCode | rightCode;
-    return result == leftCode;
-  }
-
   /** Return true if the given Function type filled with actual parameter types
    *  matches the signature of this type.
    */
@@ -503,9 +459,8 @@ public class Type {
     if (_parameterTypes.size() != actual.size())
       return false;
     for (int i = 1; i < _parameterTypes.size(); i++) {
-      if (! _parameterTypes.get(i).isPossibleArgumentType(actual.get(i))) {
+      if (_parameterTypes.get(i).unifyTypes(actual.get(i)) == null)
         return false;
-      }
     }
     return true;
   }

@@ -81,4 +81,12 @@ public class FragmentTest {
     String fin = "final boolean b = true; b = false;";
     getTypeError(fin);
   }*/
+  
+  @Test
+  public void testFunctionCall() throws Throwable {
+    String in = "p = myLastDA().getProposition();";
+    String s = generate(in);
+    String expected = "String p = myLastDA().getProposition();";
+    assertEquals(expected, getForMarked(s, expected));
+  }
 }
