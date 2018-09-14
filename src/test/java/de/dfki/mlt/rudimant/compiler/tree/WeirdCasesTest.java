@@ -47,13 +47,16 @@ public class WeirdCasesTest {
   public void testLambda() {
 
     String in = "lab: if(true) { Child c;"
-        + " known2 = filter(c.hasActivities, "
-        + "                 (p) -> \"someName\".equals(((Activity)p).name)); }";
+        + " known2 = filter(c.hasHobby, "
+        + "                 (p) -> \"someName\".equals(((Preference)p).name)); }";
     String r = generate(in);
     String expected = "public int lab(){ boolean[] __x0 = new boolean[2];"
-            + " __x0[0] = (__x0[1] = true); logRule(0, __x0); lab: " +
-              "if (__x0[0]){ Rdf c;List<Object> known2 = filter(((Set<Object>)c.getValue(\"hasActivities\")), "
-            + "(p) -> \"someName\".equals(((Set<Object>)((Rdf)p).getValue(\"<upper:name>\"))));";
+            + " __x0[0] = (__x0[1] = true); logRule(0, __x0); lab: "
+            + "if (__x0[0]){ Rdf c;"
+            //+ "List<Object> known2 = " // TODO: THIS SHOULD BE THERE
+            + "List<Rdf> known2 = "
+            + "filter(((Set<Object>)c.getValue(\"<dom:hasHobby>\")), "
+            + "(p) -> \"someName\".equals(((String)((Rdf)p).getSingleValue(\"<dom:name>\"))));";
     assertEquals(expected, getForMarked(r, expected));
   }
 

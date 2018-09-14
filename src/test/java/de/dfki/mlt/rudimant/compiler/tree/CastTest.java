@@ -42,19 +42,19 @@ public class CastTest {
 
   @Test
   public void testCast1() {
-    String in = "Session c; c.hasActivities.add(new Idle);";
+    String in = "Quiz c; c.hasHistory.add(new QuizHistory);";
     String s = generate(in);
-    String expected = "Rdf c;((Set<Object>)c.getValue(\"<dom:hasActivities>\"))"
-        + ".add(_proxy.getClass(\"<dom:Idle>\").getNewInstance(DEFNS));";
+    String expected = "Rdf c;((Set<Object>)c.getValue(\"<dom:hasHistory>\"))"
+        + ".add(_proxy.getClass(\"<dom:QuizHistory>\").getNewInstance(DEFNS));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
   @Test
   public void testCast1a() {
-    String in = "Session c; c.hasActivities += new Idle;";
+    String in = "Quiz c; c.hasHistory += new QuizHistory;";
     String s = generate(in);
-    String expected = "Rdf c;((Set<Object>)c.getValue(\"<dom:hasActivities>\"))"
-            + ".add(_proxy.getClass(\"<dom:Idle>\").getNewInstance(DEFNS));";
+    String expected = "Rdf c;((Set<Object>)c.getValue(\"<dom:hasHistory>\"))"
+            + ".add(_proxy.getClass(\"<dom:QuizHistory>\").getNewInstance(DEFNS));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -63,6 +63,8 @@ public class CastTest {
     String in = "QuizHistory turn; boolean correct = turn.correct;";
     String s = generate(in);
     String expected = "Rdf turn;boolean correct = "
+        // TODO: THIS IS CURRENTLY MISSING
+        //+ "turn != null && exists(((Set<Object>)turn.getValue() "
         + "((Boolean)turn.getSingleValue(\"<dom:correct>\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
@@ -77,11 +79,11 @@ public class CastTest {
 
   @Test
   public void testCast4() {
-    String in = "DiabetesEducation activity; String currentAsker = \"bla\"; if "
-            + "(activity.shortCode != currentAsker) {}";
+    String in = "Child activity; String currentAsker = \"bla\"; if "
+            + "(activity.forename != currentAsker) {}";
     String s = generate(in);
     String expected = "Rdf activity;String currentAsker = \"bla\";if (! "
-        + "(((String)activity.getSingleValue(\"<edu:shortCode>\"))"
+        + "(((String)activity.getSingleValue(\"<dom:forename>\"))"
         + ".equals(currentAsker))) { }";
     assertEquals(expected, getForMarked(s, expected));
   }
@@ -130,19 +132,19 @@ public class CastTest {
 
   @Test
   public void test6() {
-    String in = "Child user; b = user.isLocatedAt == toRdf(\"<dom:Home>\");";
+    String in = "Child user; b = user.hasFather == toRdf(\"<dom:Father01>\");";
     String s = generate(in);
-    String expected = "Rdf user;boolean b = ((Rdf)user.getSingleValue(\"<dom:isLocatedAt>\"))"
-        + ".equals(toRdf(\"<dom:Home>\"));";
+    String expected = "Rdf user;boolean b = ((Rdf)user.getSingleValue(\"<dom:hasFather>\"))"
+        + ".equals(toRdf(\"<dom:Father01>\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
   @Test
   public void test6a() {
-    String in = "Child user; docs = user.isTreatedBy;";
+    String in = "Child user; hobbies = user.hasHobby;";
     String s = generate(in);
-    String expected = "Rdf user;Set<Object> docs = ((Set<Object>)user"
-            + ".getValue(\"<dom:isTreatedBy>\"));";
+    String expected = "Rdf user;Set<Object> hobbies = ((Set<Object>)user"
+            + ".getValue(\"<dom:hasHobby>\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -267,9 +269,9 @@ public void testMultipleRdfAccess2() {
   @Test
   public void testSetPOD() {
     // Test set field with POD type
-    String in = "Child c; c.age = 10;";
+    String in = "QuizHistory c; c.turnId = 10;";
     String s = generate(in);
-    String expected = "Rdf c;c.setValue(\"<dom:age>\", 10)";
+    String expected = "Rdf c;c.setValue(\"<dom:turnId>\", 10)";
     assertEquals(expected, getForMarked(s, expected));
   }
 
