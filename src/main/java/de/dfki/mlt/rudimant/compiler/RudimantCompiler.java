@@ -222,6 +222,7 @@ public class RudimantCompiler {
     String className = topLevel.getName().replace(RULE_FILE_EXTENSION, "");
 
     mem.enterClass(className, new String[0], null);
+    readAgentSpecs();
     String wrapperClass = mem.getWrapperClass();
     File wrapperInit = new File(inputRootDir,
         wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + RULE_FILE_EXTENSION);
@@ -229,7 +230,7 @@ public class RudimantCompiler {
       if (wrapperInit.exists()) {
         parseAndTypecheck(this, new FileInputStream(wrapperInit), wrapperInit.getName());
       } else {
-        logger.info("No method declaration file for {}", wrapperInit);
+        logger.warn("No method declaration file for {}", wrapperInit);
       }
     } catch (IOException ex) {
       logger.error("Initializer file import: {}", ex);
