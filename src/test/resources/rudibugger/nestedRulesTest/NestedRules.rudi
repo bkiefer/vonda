@@ -14,5 +14,5 @@ if (! user)
   bli = 0;
 
 rule_three:
-if (a != "1\t\"\n" && b != '\n' && d != 7.0)
+if (a != "1\t\"\n" && b != "\n" && d != 7.0)
   cancel;

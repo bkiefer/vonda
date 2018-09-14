@@ -33,10 +33,6 @@ public class ExpVariable extends RTExpLeaf {
     type = t;
   }
 
-  public ExpVariable(String type, String representation) {
-    this(representation, new Type(type));
-  }
-
   public ExpVariable(String representation) {
     this(representation, Type.getNoType());
   }

@@ -116,6 +116,19 @@ public class LambdaTest {
     assertEquals(expected, getForMarked(r, expected));
   }
 
+
+  @Test
+  public void test5a() {
+    String in = "Quiz p; h = filter(p.hasHistory, (QuizHistory c) -> c.turnId == 1); x = h.get(1); y = h.get(2);";
+    String r = generate(in);
+    String expected = "public Rdf p;public List<Rdf> h;public Rdf x;public Rdf y;/**/"
+        + "h = filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
+        + " (c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);"
+        + "x = (Rdf) ((Rdf)h.get(1));y = (Rdf) ((Rdf)h.get(2));";
+    // TODO: FIX AND REACTIVATE: the cast is lost
+    //assertEquals(expected, getForMarked(r, expected));
+  }
+
   @Test
   public void test6a() {
     // TODO: THINK, SOLVE, AND REACTIVATE

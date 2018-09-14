@@ -1,155 +1,71 @@
 <?xml version="1.0"?>
-<rdf:RDF
-    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
-    xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
-    xmlns:task="http://www.dfki.de/lt/onto/pal/task.owl#"
-    xmlns:owl="http://www.w3.org/2002/07/owl#"
-    xmlns:pal="http://www.dfki.de/lt/onto/pal/pal.owl#"
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
-    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
-    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-    xmlns:upper="http://www.dfki.de/lt/onto/common/upper.owl#"
-  xml:base="http://www.dfki.de/lt/onto/pal/pal.owl">
-  <owl:Ontology rdf:about="">
-    <owl:imports rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl"/>
-    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >author(s): Hans-Ulrich Krieger</rdfs:comment>
-    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >v0.9.5</owl:versionInfo>
-    <owl:imports rdf:resource="http://www.dfki.de/lt/onto/pal/dmedu.owl"/>
-    <owl:imports rdf:resource="http://www.dfki.de/lt/onto/common/dialogue.owl"/>
-    <owl:imports rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl"/>
-    <owl:imports rdf:resource="http://www.dfki.de/lt/onto/common/time.owl"/>
-    <owl:imports rdf:resource="http://www.dfki.de/lt/onto/common/logic.owl"/>
-    <owl:imports rdf:resource="http://www.dfki.de/lt/onto/pal/task.owl"/>
-    <owl:imports rdf:resource="http://www.dfki.de/lt/onto/pal/semantics.owl"/>
-    <owl:imports rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl"/>
-  </owl:Ontology>
-  <rdfs:Class rdf:about="http://www.dfki.de/lt/onto/pal/task.owl#Agent">
-    <owl:equivalentClass>
-      <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Actor">
-        <owl:equivalentClass>
-          <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/semantics.owl#Actor">
-            <owl:equivalentClass rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Actor"/>
-          </rdf:Description>
-        </owl:equivalentClass>
-        <owl:equivalentClass rdf:resource="http://www.dfki.de/lt/onto/pal/task.owl#Agent"/>
-        <owl:equivalentClass>
-          <rdf:Description rdf:about="http://www.dfki.de/lt/onto/common/upper.owl#Agent">
-            <owl:equivalentClass rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Actor"/>
-            <owl:equivalentClass rdf:resource="http://www.dfki.de/lt/onto/pal/task.owl#Agent"/>
-          </rdf:Description>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-          <rdf:Description rdf:about="http://www.dfki.de/lt/onto/common/dialogue.owl#Agent">
-            <owl:equivalentClass rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Actor"/>
-          </rdf:Description>
-        </owl:equivalentClass>
-      </rdf:Description>
-    </owl:equivalentClass>
-    <owl:equivalentClass rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Agent"/>
-  </rdfs:Class>
-  <rdfs:Class rdf:about="http://www.dfki.de/lt/onto/pal/task.owl#Goal"/>
-  <rdfs:Class rdf:about="http://www.dfki.de/lt/onto/pal/task.owl#Task"/>
-  <owl:ObjectProperty rdf:ID="hasA">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-    <rdfs:range>
-      <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Activity">
-        <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Happening"/>
-      </rdf:Description>
-    </rdfs:range>
-    <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/pal/task.owl#Task"/>
-  </owl:ObjectProperty>
-  <owl:ObjectProperty rdf:ID="hasAccessTo">
-    <rdfs:range rdf:resource="http://www.dfki.de/lt/onto/pal/dmedu.owl#LearningContent"/>
-    <rdfs:domain>
-      <owl:Class>
-        <owl:unionOf rdf:parseType="Collection">
-          <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Mother"/>
-          <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Father"/>
-          <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Child">
-            <owl:equivalentClass>
-              <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/dmedu.owl#Child">
-                <owl:equivalentClass rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Child"/>
-              </rdf:Description>
-            </owl:equivalentClass>
-          </rdf:Description>
-        </owl:unionOf>
-      </owl:Class>
-    </rdfs:domain>
-  </owl:ObjectProperty>
+<rdf:RDF xmlns="http://www.dfki.de/lt/onto/pal/pal.owl#"
+     xml:base="http://www.dfki.de/lt/onto/pal/pal.owl"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:pal="http://www.dfki.de/lt/onto/pal/pal.owl#">
+    <owl:Ontology rdf:about="http://www.dfki.de/lt/onto/pal/pal.owl">
+        <owl:imports rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl"/>
+        <owl:imports rdf:resource="http://www.dfki.de/lt/onto/pal/semantics.owl"/>
+        <owl:imports rdf:resource="http://www.dfki.de/lt/onto/common/dialogue.owl"/>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">author(s): Hans-Ulrich Krieger</rdfs:comment>
+        <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">v0.9.5</owl:versionInfo>
+    </owl:Ontology>
 
-  <owl:ObjectProperty rdf:about="http://www.dfki.de/lt/onto/pal/pal.owl#hasTimelineEvent">
-    <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/pal/dmedu.owl#Child"/>
-    <rdfs:range rdf:resource="http://www.dfki.de/lt/onto/pal/timeline.owl#Event"/>
-  </owl:ObjectProperty>
 
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Treatment">
-    <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Happening"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Color">
-    <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Abstract"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Disease">
-    <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Happening"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#LabValue">
-    <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Abstract"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#PhysicalState">
-    <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Abstract"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Sentiment">
-    <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Abstract"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Output">
-    <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Abstract"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Issue">
-    <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Happening"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Mood">
-    <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Abstract"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Food">
-    <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Object"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Hobby">
-    <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Abstract"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#EmotionalState">
-    <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Abstract"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Goal">
-    <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Abstract"/>
-    <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/pal/task.owl#Goal"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Symptoms">
-    <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Abstract"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Device">
-    <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/upper.owl#Object"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/common/upper.owl#name">
-    <owl:equivalentProperty rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#name"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/common/dialogue.owl#frame">
-    <rdfs:range rdf:resource="http://www.dfki.de/lt/onto/pal/semantics.owl#Frame"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/domain.owl#Location">
-    <owl:equivalentClass>
-      <rdf:Description rdf:about="http://www.dfki.de/lt/onto/pal/semantics.owl#Location">
-        <owl:equivalentClass rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Location"/>
-      </rdf:Description>
-    </owl:equivalentClass>
-    <owl:equivalentClass>
-      <rdf:Description rdf:about="http://www.dfki.de/lt/onto/common/upper.owl#Place">
-        <owl:equivalentClass rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Location"/>
-      </rdf:Description>
-    </owl:equivalentClass>
-  </rdf:Description>
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    <!-- http://www.dfki.de/lt/onto/common/upper.owl#Agent -->
+
+    <rdf:Description rdf:about="http://www.dfki.de/lt/onto/common/dialogue.owl#Agent">
+        <owl:equivalentClass rdf:resource="http://www.dfki.de/lt/onto/pal/domain.owl#Agent"/>
+    </rdf:Description>
+
+
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
 </rdf:RDF>
 
-<!-- Created with Protege (with OWL Plugin 3.5, Build 663)  http://protege.stanford.edu -->
+
+
+<!-- Generated by the OWL API (version 4.2.8.20170104-2310) https://github.com/owlcs/owlapi -->

@@ -558,7 +558,7 @@ public class VisitorType implements RudiVisitor {
     // added.
     node.left.visit(this);
     node.right.visit(this);
-    if (node.left.getType().isNumber() || node.right.getType().isNumber()) {
+    if (node.left.getType().isNumber() && node.right.getType().isNumber()) {
       // then this is a normal addition/subtraction, and should be turned into
       // an assignment to be treated properly
       ExpArithmetic s = node.fixFields(
@@ -575,10 +575,12 @@ public class VisitorType implements RudiVisitor {
       return;
     }
     Type inner = node.left.getInnerType();
-    Type res = inner.unifyTypes(node.right.type);
-    if (res == null) {
-      typeError("Incompatible types in set operation: "
-          + node.left.getType() + " <> " + node.right.type, node);
+    if (inner != null) {
+      Type res = inner.unifyTypes(node.right.type);
+      if (res == null) {
+        typeError("Incompatible types in set operation: "
+            + node.left.getType() + " <> " + node.right.type, node);
+      }
     }
   }
 
@@ -906,10 +908,6 @@ public class VisitorType implements RudiVisitor {
   @Override
   public void visit(ExpSingleValue node) {
     // nothing to test here
-    if (node.type == null)
-      // TODO: can this ever happen? SingleValues are things like Strings, chars
-      //       ints, floats, ... recognized = given a type by our parser
-      node.type = getNoType();
   }
 
   /**

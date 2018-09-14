@@ -199,13 +199,11 @@ public class VisitorGeneration implements RudiVisitor {
     } else {
       gen(node.left).gen(" = ");
     }
-    if (node.type != null) {
-      if (node.type.needsCast(node.right.getType())
-          && !(node.right instanceof ExpNew)) {
-        // then there is either sth wrong here, what would at least have resulted
-        // in warnings in type testing, or it is possible to cast the right part
-        gen('(').gen(node.type.toJava()).gen(") ");
-      }
+    if (node.type.needsCast(node.right.getType())
+        && !(node.right instanceof ExpNew)) {
+      // then there is either sth wrong here, what would at least have resulted
+      // in warnings in type testing, or it is possible to cast the right part
+      gen('(').gen(node.type.toJava()).gen(") ");
     }
     gen(node.right);
     if (pa != null) {
@@ -326,8 +324,7 @@ public class VisitorGeneration implements RudiVisitor {
       gen(node).gen(" != 0");
     } else if (type.isCollection() || type.isString() || type.isNumberContainer()
         || type.isDialogueAct()) {
-      /* TODO: We "know" this is an "Agent" method */
-      Type[] args = { new Type("Object") };
+      // We "know" this is an "Agent" method
       String orig = mem.getFunctionOrigin("exists", null, "Object");
       orig = orig == null ? "" : lowerCaseFirst(orig) + ".";
       gen(orig);

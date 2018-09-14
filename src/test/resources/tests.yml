@@ -1,9 +1,10 @@
 outputDirectory:    ../../../target/generated
 wrapperClass:       de.dfki.dialogue.NaoAgent
-ontologyFile:       pal.test.ini
+ontologyFile:       ontologies/inits/pal.inference.ini
 failOnError:        false
 targetConstructor:
 rootPackage:        de.dfki.dialogue
 nameToURI:
   Activity : "<dom:Activity>"
   Child : "<dom:Child>"
+  String : java.util.String

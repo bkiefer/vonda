@@ -135,9 +135,9 @@ public class DialogueActTest {
 
   @Test
   public void testToRdf2() {
-    Rdf sender = _proxy.getClass("<dom:Child>").getNewInstance("rifca:");
+    Rdf sender = _proxy.getClass("<dom:Child>").getNewInstance("dial:");
     DialogueAct da = new DialogueAct("@raw:ReturnGreeting(Meeting"
-        + " ^ <Time>afternoon ^ <addressee>\"<rifca:Child_8>\""
+        + " ^ <Time>afternoon ^ <addressee>\"<dial:Child_8>\""
         + " ^ <sender>\"" + sender.getURI() + "\")");
     Rdf rep = DialogueAct.toRdf(da, _proxy);
     QueryResult res =
@@ -149,7 +149,7 @@ public class DialogueActTest {
   public void testToRdf1() {
     // use information about entry time to make sure we do not only find an old entry
     long now = System.currentTimeMillis();
-    Rdf sender = _proxy.getClass("<dom:Child>").getNewInstance("rifca:");
+    Rdf sender = _proxy.getClass("<dom:Child>").getNewInstance("dial:");
     _proxy.getClass("<dial:Confirm>").getNewInstance("dial:");
     DialogueAct da =
         new DialogueAct("Inform", "Answer", "what", "solution", "sender", sender.toString() );

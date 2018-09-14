@@ -1,8 +1,0 @@
-dial http://www.dfki.de/lt/onto/common/dialogue.owl#
-dom http://www.dfki.de/lt/onto/pal/domain.owl#
-goal http://www.dfki.de/lt/onto/pal/dmgoals.owl#
-logic http://www.dfki.de/lt/onto/common/logic.owl#
-pal http://www.dfki.de/lt/onto/pal/pal.owl#
-sem http://www.dfki.de/lt/onto/pal/semantics.owl#
-time http://www.dfki.de/lt/onto/common/time.owl#
-upp http://www.dfki.de/lt/onto/common/upper.owl#

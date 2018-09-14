@@ -512,7 +512,16 @@ public class Type {
     if ((leftCollCode | rightCollCode) != 0) {
       // collection vs. simple type?
       if (leftCollCode == 0 || rightCollCode == 0) return null;
-      Type inner = getInnerType().unifyBasicTypes(right.getInnerType());
+      Type innerLeft = getInnerType();
+      Type innerRight = right.getInnerType();
+      Type inner = null;
+      if (innerLeft == null) {
+        inner =  innerRight;
+      } else if (innerRight == null) {
+        inner = innerLeft;
+      } else {
+        inner = innerLeft.unifyBasicTypes(innerRight);
+      }
       if (inner == null || ((leftCollCode & rightCollCode) == 0))
         return null;
       String outer = (leftCollCode & rightCollCode) == leftCollCode ?
@@ -617,7 +626,9 @@ public class Type {
         if (pType == null)  // for visualization
           sb.append("null");
         else if (pType.isRdfType())
-          sb.append("Object[").append(pType._class.toString()).append("]");
+          sb.append("Object[").append(
+              pType._class == null ? "Rdf" : pType._class.toString())
+          .append("]");
         else
           pType.toDebugString(sb);
         first = false;

@@ -107,7 +107,7 @@ public class RudibuggerTest {
     assertEquals(expectedRootImport, actualRootImport);
     RuleInfo r = (RuleInfo)actualRootImport.getChildren().get(2);
     assertEquals("a != \"1\\t\\\"\\n\"", r.getBaseTerm(0));
-    assertEquals("b != '\\n'", r.getBaseTerm(1));
+    assertEquals("b != \"\\n\"", r.getBaseTerm(1));
     assertEquals("d != 7.0", r.getBaseTerm(2));
   }
 
@@ -231,7 +231,6 @@ public class RudibuggerTest {
     //options.setAllowReadOnlyProperties(true);
     Yaml y = new Yaml(options);
     //y.setBeanAccess(BeanAccess.FIELD);
-    System.out.println(new File(".").getAbsolutePath());
     FileWriter w = new FileWriter(new File("target/test.yaml"));
     y.dump(i, w);
 

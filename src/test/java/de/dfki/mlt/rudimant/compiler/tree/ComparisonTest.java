@@ -124,10 +124,10 @@ public class ComparisonTest {
   @Test
   public void testGenerationRdfExists() {
     // other operators than == don't make sense here.
-    String in = "Child a; if (a.hasTreatment) return true;";
+    String in = "Child a; if (a.hasFather) return true;";
     String r = generate(in);
     String expected = "Rdf a;if (a != null &&"
-        + " ((Rdf)a.getSingleValue(\"<dom:hasTreatment>\")) != null) return true;";
+        + " ((Rdf)a.getSingleValue(\"<dom:hasFather>\")) != null) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -146,7 +146,7 @@ public class ComparisonTest {
     // other operators than == don't make sense here.
     String in = "Child a; if (a.birthdate) return true;";
     String r = generate(in);
-    String expected = "Rdf a;if (a != null && ((XsdDate)a.getSingleValue(\"<dom:birthdate>\")) != null) return true;";
+    String expected = "Rdf a;if (a != null && ((Date)a.getSingleValue(\"<dom:birthdate>\")) != null) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 

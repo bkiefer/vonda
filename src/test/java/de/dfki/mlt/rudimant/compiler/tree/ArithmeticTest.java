@@ -118,10 +118,10 @@ public class ArithmeticTest {
 
   @Test
   public void testArithmetic6() {
-    String in = "Child user; user.hasIntimacyLevel -= 0.2;";
+    String in = "Child user; user.weight -= 0.2;";
     String r = generate(in);
-    String expected = "Rdf user;user.setValue(\"<dom:hasIntimacyLevel>\","
-            + " (((Double)user.getSingleValue(\"<dom:hasIntimacyLevel>\"))-0.2));";
+    String expected = "Rdf user;user.setValue(\"<dom:weight>\","
+            + " (((Double)user.getSingleValue(\"<dom:weight>\"))-0.2));";
     assertEquals(expected, getForMarked(r, expected));
   }
 

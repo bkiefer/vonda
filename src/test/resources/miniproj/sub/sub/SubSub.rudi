@@ -1,0 +1,9 @@
+// call function defined on a previous level, with var on a prev level
+s2 = foo(s, "yeah");
+
+rule:
+if (s2 == "goodthingyeah") {
+  propose("good2") {
+    logger.info("go2");
+  }
+}

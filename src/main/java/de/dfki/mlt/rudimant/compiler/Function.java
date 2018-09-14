@@ -33,15 +33,6 @@ public class Function {
     _type = funType;
   }
 
-  public boolean canCallUpon(Type calledOn) {
-    // TODO: this is probably not accurate enough; find a more
-    // sophisticated way to do this
-    // It seems what is returned by unifyTypes should be a subclass of
-    // _calledUpon
-    return _type.isMethod() && !calledOn.isUnspecified()
-        && _type.getClassOfMethod().unifyTypes(calledOn) != null;
-  }
-
   // TODO: NOT USED
   public String getName() {
     return _name;

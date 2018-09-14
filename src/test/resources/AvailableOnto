@@ -1,0 +1,25 @@
+// all in dom:
+
+Child <= Person <= Agent (== dial:Agent)
+
+Child.hasFather (functional) -> Person
+Child.hasHobby (relational) -> Preference
+
+Preference.name (functional) -> string
+
+Person.forename (functional) -> xsd:string
+Person.surname (relational) -> xsd:string
+
+Person.weight (functional) -> xsd:double
+Person.birthdate (functional) -> xsd:date
+
+Activity <= Quiz
+QuizHistory
+Quiz.hasHistory (relational) -> QuizHistory
+Activity.status (functional) -> xsd:stringEducationObjective
+
+QuizHistory.hasQuestion (functional) -> Question
+QuizHistory.turnId (functional) -> xsd:int
+QuizHistory.correct (functional) -> xsd:boolean
+
+QuizHistory->hasChildId (functional) -> Child

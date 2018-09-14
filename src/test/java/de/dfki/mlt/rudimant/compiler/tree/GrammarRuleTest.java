@@ -118,9 +118,9 @@ public class GrammarRuleTest {
 
   @Test
   public void testGenerateAssigns5() {
-    String in = "Child c; r: if (c <= Actor && c.forename) { int i = 7; }";
+    String in = "Child c; r: if (c <= Person && c.forename) { int i = 7; }";
     String s = generate(in);
-    assertTrue(s.contains("__x0[1] = c.getClazz().isSubclassOf(getRdfClass(\"Actor\"))"));
+    assertTrue(s.contains("__x0[1] = c.getClazz().isSubclassOf(getRdfClass(\"Person\"))"));
     assertTrue(s.contains("__x0[2] = c != null && exists(((String)c.getSingleValue(\"<dom:forename>\")))"));
   }
 

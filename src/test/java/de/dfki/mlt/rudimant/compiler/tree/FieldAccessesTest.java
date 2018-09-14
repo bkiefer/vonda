@@ -59,13 +59,23 @@ public class FieldAccessesTest {
 
 	  @Test
 	  public void testFieldAccess3() {
-	    String in = "Child c; yesterday = \"Lukas\"; if(c.name.equals(yesterday)){}";
+	    String in = "Child c; yesterday = \"Lukas\"; if(c.surname.equals(yesterday)){}";
 	    String s = generate(in);
 	    String expected = "Rdf c;String yesterday = \"Lukas\";if (c != null &&"
-	        + " exists(((Set<Object>)c.getValue(\"<upper:name>\"))) &&"
-	    		+ " ((Set<Object>)c.getValue(\"<upper:name>\")).equals(yesterday))";
+	        + " exists(((Set<Object>)c.getValue(\"<dom:surname>\"))) &&"
+	    		+ " ((Set<Object>)c.getValue(\"<dom:surname>\")).equals(yesterday))";
 	    assertEquals(expected, getForMarked(s, expected));
 	  }
+
+    @Test
+    public void testFieldAccess3a() {
+      String in = "Child c; yesterday = \"Lukas\"; if(c.forename.equals(yesterday)){}";
+      String s = generate(in);
+      String expected = "Rdf c;String yesterday = \"Lukas\";if (c != null &&"
+          + " exists(((String)c.getSingleValue(\"<dom:forename>\"))) &&"
+          + " ((String)c.getSingleValue(\"<dom:forename>\")).equals(yesterday))";
+      assertEquals(expected, getForMarked(s, expected));
+    }
 
     @Test
     public void testFieldAccess4() {
@@ -96,26 +106,26 @@ public class FieldAccessesTest {
     @Test
     public void testFieldAccess7() {
       // clear the value of this property
-      String in = "Child c; c.name = null;";
+      String in = "Child c; c.forename = null;";
       String s = generate(in);
-      String expected = "Rdf c;c.clearValue(\"<upper:name>\");";
+      String expected = "Rdf c;c.clearValue(\"<dom:forename>\");";
       assertEquals(expected, getForMarked(s, expected));
     }
 
     @Test
     public void testFieldAccess8() {
-      String in = "Child c; a: if(c.name){}";
+      String in = "Child c; a: if(c.forename){}";
       String s = generate(in);
       String expected = "Rdf c;// Rule a boolean[] __x1 = new boolean[2];"
-          + " __x1[0] = (__x1[1] = c != null && exists(((Set<Object>)c.getValue(\"<upper:name>\"))));";
+          + " __x1[0] = (__x1[1] = c != null && exists(((String)c.getSingleValue(\"<dom:forename>\"))));";
       assertEquals(expected, getForMarked(s, expected));
     }
 
     @Test
     public void testFieldAccess9() {
-      String in = "Child c; s=\"<upper:name>\"; a: if(c.s){}";
+      String in = "Child c; s=\"<dom:forename>\"; a: if(c.s){}";
       String s = generate(in);
-      String expected = "Rdf c;String s = \"<upper:name>\";// Rule a boolean[] __x1 = new boolean[2];"
+      String expected = "Rdf c;String s = \"<dom:forename>\";// Rule a boolean[] __x1 = new boolean[2];"
           + " __x1[0] = (__x1[1] = c != null && exists(((Set<Object>)c.getValue(s))));";
 
       assertEquals(expected, getForMarked(s, expected));

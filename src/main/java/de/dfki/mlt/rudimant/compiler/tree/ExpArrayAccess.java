@@ -19,6 +19,8 @@
 
 package de.dfki.mlt.rudimant.compiler.tree;
 
+import java.util.Arrays;
+
 import de.dfki.mlt.rudimant.compiler.Type;
 
 public class ExpArrayAccess extends RTExpLeaf {
@@ -52,4 +54,7 @@ public class ExpArrayAccess extends RTExpLeaf {
     }
   }
 
+  public Iterable<? extends RudiTree> getDtrs() {
+    return Arrays.asList(new RudiTree[]{ array, index });
+  }
 }

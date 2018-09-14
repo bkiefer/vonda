@@ -36,10 +36,6 @@ public class ExpCast extends RTExpression {
    * @param t set to the type that the exp is casted to
    * @param exp set to the expression that is casted
    */
-  public ExpCast(String t, RTExpression exp){
-    this(new Type(t), exp);
-  }
-
   public ExpCast(Type t, RTExpression exp){
     type = t;
     expression = exp;

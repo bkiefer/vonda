@@ -106,9 +106,9 @@ public class TypesTest {
 
   @Test
   public void testReturnSetType() {
-    String in = "Child c;  docs = c.isTreatedBy;";
+    String in = "Child c;  docs = c.hasHobby;";
     String r = generate(in);
-    String expected = "public Rdf c;public Set<Object> docs;/**/docs = ((Set<Object>)c.getValue(\"<dom:isTreatedBy>\"));";
+    String expected = "public Rdf c;public Set<Object> docs;/**/docs = ((Set<Object>)c.getValue(\"<dom:hasHobby>\"));";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("Set<Object> docs;"));
     assertTrue(r.contains("Rdf c;"));
@@ -143,21 +143,21 @@ public class TypesTest {
 
   @Test
   public void testBooleanRdfExists() {
-    String in = "Child c; if (!c.hasMother) int i = 0;";
+    String in = "Child c; if (!c.hasFather) int i = 0;";
     String r = generate(in);
     String expected =
-        "public Rdf c;/**/if (!(c != null && ((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null)) int i = 0;";
+        "public Rdf c;/**/if (!(c != null && ((Rdf)c.getSingleValue(\"<dom:hasFather>\")) != null)) int i = 0;";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("Rdf c;"));
   }
 
   @Test
   public void testBooleanRdfExists2() {
-    String in = "Child c; void a() { if (!c.hasMother) int i = 0; }";
+    String in = "Child c; void a() { if (!c.hasFather) int i = 0; }";
     String r = generate(in);
     String expected =
         "public Rdf c;/**/public void a() { if (!(c != null && "
-        + "((Rdf)c.getSingleValue(\"<dom:hasMother>\")) != null)) int i = 0; } }";
+        + "((Rdf)c.getSingleValue(\"<dom:hasFather>\")) != null)) int i = 0; } }";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("Rdf c;"));
   }
@@ -203,11 +203,11 @@ public class TypesTest {
 
   @Test
   public void testCast8() {
-    String methdecl = "Collection<LearningGoalType> foo(Child m) {"
-        + " map(m.hasLearningGoal, (f) -> (((LearningGoal)f).goalType)); }";
+    String methdecl = "Collection<Child> foo(Quiz m) {"
+        + " map(m.hasHistory, (f) -> (((QuizHistory)f).hasChildId)); }";
     String s = generate(methdecl);
     String expected = "public Collection<Rdf> foo(Rdf m)"
-        + " { map(((Set<Object>)m.getValue(\"<edu:hasLearningGoal>\")), (f) -> (((Rdf)((Rdf)f).getSingleValue(\"<edu:goalType>\")))); } }";
+        + " { map(((Set<Object>)m.getValue(\"<dom:hasHistory>\")), (f) -> (((Rdf)((Rdf)f).getSingleValue(\"<dom:hasChildId>\")))); } }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -233,31 +233,31 @@ public class TypesTest {
     String in = " void fun(); k = fun();";
     getTypeError(in);
   }
-  
+
   @Test(expected=TypeException.class)
   public void testFunctionCall1() throws Throwable {
     String in = " void fun(String s); fun(3);";
     getTypeError(in);
   }
-  
+
   @Test(expected=TypeException.class)
   public void testFunctionCall2() throws Throwable {
     String in = " void fun(String[] s); fun(3);";
     getTypeError(in);
   }
-  
+
   @Test(expected=TypeException.class)
   public void testFunctionCall3() throws Throwable {
     String in = " void fun(String[] s); fun(\"test\");";
     getTypeError(in);
   }
-  
+
   @Test(expected=TypeException.class)
   public void testFunctionCall4() throws Throwable {
     String in = " void fun(Set<Integer> s); fun(\"test\");";
     getTypeError(in);
   }
-  
+
   @Test
   public void testFunctionCall5() throws Throwable {
     String in = "p = myLastDA().getProposition();";
@@ -267,7 +267,7 @@ public class TypesTest {
     String expected = "p = myLastDA().getProposition();";
     assertEquals(expected, getForMarked(s, expected));
   }
-  
+
   @Test
   public void testFunctionCall6() throws Throwable {
     String in = "void fun() { p = myLastDA().getProposition();}";

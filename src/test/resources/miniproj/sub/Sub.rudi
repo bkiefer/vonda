@@ -1,0 +1,11 @@
+// call function defined on a previous level
+s = foo("good", "thing");
+
+rule:
+if (s == "goodthing") {
+  propose("good") {
+    logger.info("go");
+  }
+}
+
+import sub.SubSub;
