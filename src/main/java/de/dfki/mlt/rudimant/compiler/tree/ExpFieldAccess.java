@@ -42,6 +42,7 @@ public class ExpFieldAccess extends RTExpLeaf {
 
   public Iterable<? extends RudiTree> getDtrs() { return parts; }
 
+  /** Create non-null tests for all elements of a field access */
   public RTExpression ensureBooleanUFA() {
     int s = parts.size() - 1;
     if (s == 0) {
@@ -52,5 +53,29 @@ public class ExpFieldAccess extends RTExpLeaf {
     first.type = parts.get(s - 1).type;
     RTExpression right = this.ensureBooleanBasic();
     return fixFields(new ExpBoolean(first.ensureBooleanUFA(), right, "&&", true));
+  }
+
+  private RTExpression ensureBooleanUFARec(int origSize) {
+    int s = parts.size() - 1;
+    if (s == 0) {
+      return parts.get(s).ensureBooleanBasic();
+    }
+
+    ExpFieldAccess first = fixFields(new ExpFieldAccess(parts.subList(0, s)));
+    // when this type is an RDF type, we want to do something
+    first.type = parts.get(s - 1).type;
+    RTExpression sub = first.ensureBooleanUFARec(origSize);
+    if (first.type.isRdfType() || parts.size() == origSize) {
+      RTExpression right = this.ensureBooleanBasic();
+      return fixFields(new ExpBoolean(sub, right, "&&", true));
+    }
+    return sub;
+  }
+
+  // This is a more restricive variant, which only creates tests when the
+  // field access is an RDF access, currently unused
+  public RTExpression ensureBooleanUFARdfOnly() {
+    RTExpression sub = ensureBooleanUFARec(parts.size());
+    return sub;
   }
 }

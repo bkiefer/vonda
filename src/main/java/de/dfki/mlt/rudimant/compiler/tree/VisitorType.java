@@ -294,6 +294,27 @@ public class VisitorType implements RudiVisitor {
     ruleIfSuspended = oldSuspendState;
   }
 
+  /** TODO: the following gives us #12 in full beauty.
+   *  we don't do this, it seems conceptually wrong and generates weird code.
+   */
+  private void ensureBooleanGeneral(ExpBoolean node) {
+    RTExpression check = null;
+    if (node.right instanceof ExpFieldAccess)
+      check = node.right.ensureBoolean();
+    if (node.left instanceof ExpFieldAccess) {
+      if (check != null)
+        check = node.fixFields(new ExpBoolean(node.left.ensureBoolean(), check, "&&", true));
+      else
+        check = node.left.ensureBoolean();
+    }
+    if (check != null) {
+      ExpBoolean newRight = node.fixFields(new ExpBoolean(node.left, node.right, node.operator, true));
+      node.left = check;
+      node.right = newRight;
+      node.operator = "&&";
+    }
+  }
+
   /*
    * In principle the same as ExpArithmetic, with boolean only. The one
    * difference is that there are unary expressions which serve as boolean
@@ -323,7 +344,7 @@ public class VisitorType implements RudiVisitor {
       if (isBooleanOperator(node.operator)) {
         node.right = node.right.ensureBoolean();
         node.left = node.left.ensureBoolean();
-      }
+      } // else ensureBooleanGeneral(node);
     } else {
       // we do this always, because if the boolean expression has only one
       // side it may have no operator

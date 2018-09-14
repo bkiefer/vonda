@@ -130,4 +130,18 @@ public class FieldAccessesTest {
 
       assertEquals(expected, getForMarked(s, expected));
     }
+
+
+    @Test
+    public void testFieldAccess10() {
+      // TODO: Make it clear in the doc that we only support *direct*
+      // existence support for RDF access chains, so that is all we offer, for
+      // arbitrary long chains:
+      String in = "Child c; if(c.forename && c.forename == \"foo\"){}";
+      String s = generate(in);
+      //System.out.println(s);
+      String expected = "Rdf c;if (c != null && exists(((String)c.getSingleValue(\"<dom:forename>\"))) && ((String)c.getSingleValue(\"<dom:forename>\")).equals(\"foo\")) { }";
+      assertEquals(expected, getForMarked(s, expected));
+    }
+
 }
