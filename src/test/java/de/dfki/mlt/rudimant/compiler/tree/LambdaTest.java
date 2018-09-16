@@ -90,7 +90,7 @@ public class LambdaTest {
   public void test3() {
     String in = "Quiz p; h = filter(p.hasHistory, (c) -> c.turnId == 1);";
     String r = generate(in);
-    String expected = "public Rdf p;public List<Rdf> h;/**/h = filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
+    String expected = "public Rdf p;public List<Object> h;/**/h = filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
         + " (c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);";
     assertEquals(expected, getForMarked(r, expected));
   }
@@ -99,7 +99,7 @@ public class LambdaTest {
   public void test4() {
     String in = "Quiz p; h = filter(p.hasHistory, (c) -> c.turnId == 1); x = h.get(1);";
     String r = generate(in);
-    String expected = "public Rdf p;public List<Rdf> h;public Rdf x;/**/"
+    String expected = "public Rdf p;public List<Object> h;public Rdf x;/**/"
         + "h = filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
         + " (c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);x = (Rdf) ((Rdf)h.get(1));";
     assertEquals(expected, getForMarked(r, expected));
@@ -109,7 +109,7 @@ public class LambdaTest {
   public void test5() {
     String in = "Quiz p; h = filter(p.hasHistory, (c) -> c.turnId == 1); x = h.get(1); y = h.get(2);";
     String r = generate(in);
-    String expected = "public Rdf p;public List<Rdf> h;public Rdf x;public Rdf y;/**/"
+    String expected = "public Rdf p;public List<Object> h;public Rdf x;public Rdf y;/**/"
         + "h = filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
         + " (c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);"
         + "x = (Rdf) ((Rdf)h.get(1));y = (Rdf) ((Rdf)h.get(2));";

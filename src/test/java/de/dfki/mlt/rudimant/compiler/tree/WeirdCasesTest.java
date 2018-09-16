@@ -54,7 +54,7 @@ public class WeirdCasesTest {
             + " __x0[0] = (__x0[1] = true); logRule(0, __x0); lab: "
             + "if (__x0[0]){ Rdf c;"
             //+ "List<Object> known2 = " // TODO: THIS SHOULD BE THERE
-            + "List<Rdf> known2 = "
+            + "List<Object> known2 = "
             + "filter(((Set<Object>)c.getValue(\"<dom:hasHobby>\")), "
             + "(p) -> \"someName\".equals(((String)((Rdf)p).getSingleValue(\"<dom:name>\"))));";
     assertEquals(expected, getForMarked(r, expected));

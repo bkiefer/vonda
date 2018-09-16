@@ -894,6 +894,7 @@ public class VisitorType implements RudiVisitor {
       Iterator<Type> ptypes = partypes.iterator();
       for(RTExpression e : node.params) {
         Type resType = restypes.next();
+        resType.setCastRequiredInner();
         if (!(ptypes.next().equals(resType))) {
           e.propagateType(resType, this);
           e.visit(this);
@@ -901,6 +902,7 @@ public class VisitorType implements RudiVisitor {
       }
       if (node.type == null || node.type.isUnspecified()) {
         node.type = resolved.getReturnType();
+        node.type.setCastRequiredInner();
       }
     }
     if (node.type == null) {

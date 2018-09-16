@@ -184,7 +184,16 @@ public class Type {
 
   public boolean castRequired() { return _castRequired; }
 
-  public void setCastRequired() { _castRequired = true; }
+  public void setCastRequired() {
+    if (isStrictRdfType() || isXsdType())_castRequired = true;
+    setCastRequiredInner();
+  }
+
+  public void setCastRequiredInner() {
+    if (_parameterTypes != null) {
+      for (Type p : _parameterTypes) if (p !=null) p.setCastRequired();
+    }
+  }
 
   private Type() { }
 
@@ -536,7 +545,10 @@ public class Type {
       result.setInnerType(inner);
       return result;
     }
-    return unifyBasicTypes(right);
+    Type result = unifyBasicTypes(right);
+    if (result == null) return result;
+    result._castRequired = _castRequired || right._castRequired;
+    return result;
   }
 
   /** Return the more specific of the two types, if it exists, null otherwise */
