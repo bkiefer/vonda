@@ -38,8 +38,9 @@ public class ExpVariable extends RTExpLeaf {
   }
 
   @Override
+  /** Only for debugging! */
   public String toString() {
-    return this.content;
+    return this.content + "[" + this.getType().getRep() + "]";
   }
 
   @Override

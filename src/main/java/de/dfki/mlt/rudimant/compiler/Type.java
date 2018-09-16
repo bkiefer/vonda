@@ -355,6 +355,8 @@ public class Type {
 
   public boolean isRdfType() { return _class != null || "Rdf".equals(_name); }
 
+  public boolean isStrictRdfType() { return !isDialogueAct() && isRdfType(); }
+
   /** This returns true for all XSD and resolved RDF types */
   public boolean isXsdType() {
     return _name != null && _name.charAt(0) == '<';
@@ -639,7 +641,7 @@ public class Type {
 
   private String toDebugString(StringBuffer sb) {
     if (_class != null) sb.append(_class.toString() + "[" + toJava() + "]");
-    else if (isRdfType())
+    else if (isStrictRdfType())
       sb.append(_name + "[" + toJava() + "]");
     else if (isDialogueAct())
       sb.append("DialogueAct");
@@ -657,7 +659,7 @@ public class Type {
     } else {
       if (isDialogueAct())
         sb.append("DialogueAct");
-      else if (isRdfType())
+      else if (isStrictRdfType())
         sb.append("Rdf");
       else if (isXsdType())
         sb.append(xsdToJavaPodWrapper());
@@ -681,7 +683,7 @@ public class Type {
         // through casting, we need to put Object here
         else if (pType._castRequired)
           sb.append("Object");
-        else if (pType.isRdfType())
+        else if (pType.isStrictRdfType())
           sb.append(pType.toJava());
         else
           pType.toString(sb);

@@ -209,7 +209,7 @@ public class VisitorType implements RudiVisitor {
     node.left.visit(this);
 
     if (node.right instanceof ExpVariable
-        && ! mem.variableExists(node.right.toString())) {
+        && ! mem.variableExists(((ExpVariable)node.right).content)) {
       typeError("assigning the value of a non-existing variable "
           + node.right + "to " + node.left, node);
     }
@@ -369,7 +369,9 @@ public class VisitorType implements RudiVisitor {
     if (expr instanceof ExpVariable) {
       ExpVariable variable = (ExpVariable) expr;
       if (!mem.variableExists(variable.content)) {
-        res = new ExpSingleValue(variable.toString(), "String");
+        res = new ExpSingleValue(variable.content,
+            //variable.toString(),
+            "String");
         variable.fixFields(res);
       }
     }
@@ -535,7 +537,7 @@ public class VisitorType implements RudiVisitor {
         }
       }
     }
-    mem.addVariableDeclaration(node.var.toString(), node.varType);
+    mem.addVariableDeclaration(node.var.content, node.varType);
     node.statblock.visit(this);
   }
 
