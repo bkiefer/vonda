@@ -238,7 +238,7 @@ public class VisitorGeneration implements RudiVisitor {
     }
     // TODO: MAYBE THIS MUST BE GENERALIZED TO OTHER JAVA TYPES THAN STRING
     // THAT CAN BE CONVERTED AUTOMATICALLY FROM XSD TYPES
-    if (node.type.isStrictRdfType() && resultType.isRdfType()) {
+    if (node.type.isStrictRdfType()) {
       if (node instanceof ExpVariable
           && ((ExpVariable) node).content.startsWith("\"")) {
         String orig = mem.getFunctionOrigin("getRdfClass", null, "String");

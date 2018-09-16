@@ -945,18 +945,20 @@ public class VisitorType implements RudiVisitor {
     // get the type of the variable, if defined
     // TODO: is there a way to find out if we try to retrieve the value of an
     // undefined variable?
-    node.type = mem.getVariableType(node.content);
-    if (node.type == null) {
-      // we could have sth like Introduction, that is an undeclared rdf class
-      RdfClass cl = mem.getProxy().fetchClass(node.content);
-      if (cl != null) {
-        node.type = new Type(cl.toString());
-        if (!mem.variableExists(node.content)) {
-          node.content = "\"" + node.content + "\"";
+    Type t = mem.getVariableType(node.content);
+    if (t == null) {
+      if (node.type.isUnspecified()) {
+        // we could have sth like Introduction, that is an undeclared rdf class
+        RdfClass cl = mem.getProxy().fetchClass(node.content);
+        if (cl != null) {
+          node.type = new Type(cl.toString());
+          if (!mem.variableExists(node.content)) {
+            node.content = "\"" + node.content + "\"";
+          }
         }
-      } else {
-        node.type = getNoType();
       }
+    } else {
+      node.type = t;
     }
   }
 
