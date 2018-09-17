@@ -144,4 +144,14 @@ public class FieldAccessesTest {
       assertEquals(expected, getForMarked(s, expected));
     }
 
+    @Test
+    public void testFieldAccess11() {
+      String in = "Map<String, String> m;" +
+          "if (m.containsKey(\"foo\")) {s = m.get(\"foo\");}";
+      String s = generate(in);
+      //System.out.println(s);
+      String expected = "Map<String, String> m;if (exists(m) && m.containsKey(\"foo\")) { String s = m.get(\"foo\"); } }";
+      assertEquals(expected, getForMarked(s, expected));
+    }
+
 }

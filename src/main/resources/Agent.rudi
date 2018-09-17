@@ -20,6 +20,7 @@ boolean toBool(String s);
 [Collection<T>]. int size();
 [Collection<T>]. boolean isEmpty();
 [Map<S, T>]. boolean containsKey(S a);
+[Map<S, T>]. T get(S a);
 
 // all Agent methods we should know
 

@@ -532,28 +532,31 @@ public class Type {
     int rightCollCode = right.getCollectionCode();
     if ((leftCollCode | rightCollCode) != 0) {
       // collection vs. simple type?
-      if (leftCollCode == 0 || rightCollCode == 0) return null;
-      Type innerLeft = getInnerType();
-      Type innerRight = right.getInnerType();
-      Type inner = null;
-      if (innerLeft == null) {
-        inner =  innerRight;
-      } else if (innerRight == null) {
-        inner = innerLeft;
-      } else {
-        inner = innerLeft.unifyBasicTypes(innerRight);
-      }
-      if (inner == null || ((leftCollCode & rightCollCode) == 0))
+      if (leftCollCode == 0 || rightCollCode == 0
+          || _parameterTypes.size() != right._parameterTypes.size())
         return null;
+      List<Type> resParamTypes = new ArrayList<Type>();
+      for (int i = 0; i < _parameterTypes.size(); ++i) {
+        Type innerLeft = _parameterTypes.get(i);
+        Type innerRight = right._parameterTypes.get(i);
+        Type inner = null;
+        if (innerLeft == null) {
+          inner =  innerRight;
+        } else if (innerRight == null) {
+          inner = innerLeft;
+        } else {
+          inner = innerLeft.unifyTypes(innerRight);
+        }
+        if (inner == null)
+          return null;
+        resParamTypes.add(inner);
+      }
       String outer = (leftCollCode & rightCollCode) == leftCollCode ?
           this._name : right._name;
-      Type result = new Type();
-      result._name = outer;
-      if (! "Array".equals(outer) && inner.isPODType()) {
-        inner = new Type(inner.getContainer());
+      if (! "Array".equals(outer) && resParamTypes.get(0).isPODType()) {
+        resParamTypes.set(0, new Type(resParamTypes.get(0).getContainer()));
       }
-      result.setInnerType(inner);
-      return result;
+      return new Type(outer, resParamTypes);
     }
     Type result = unifyBasicTypes(right);
     if (result == null) return result;
