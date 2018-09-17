@@ -42,11 +42,6 @@ public class ExpCast extends RTExpression {
   }
 
   @Override
-  public void propagateType(Type upperType, VisitorType v) {
-    // TODO: does this make sense here????
-  }
-
-  @Override
   public void visit(RudiVisitor v) {
     v.visit(this);
   }
@@ -56,6 +51,4 @@ public class ExpCast extends RTExpression {
     RudiTree[] dtrs = { expression };
     return Arrays.asList(dtrs);
   }
-
-
 }

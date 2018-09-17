@@ -66,6 +66,6 @@ public abstract class RTExpression extends RudiTree {
     return ensureBooleanBasic();
   }
 
-  public abstract void propagateType(Type upperType, VisitorType v);
+  public void propagateType(Type upperType, VisitorType v) {};
 
 }

@@ -42,7 +42,6 @@ public abstract class RTExpLeaf extends RTExpression {
 
   public void propagateType(Type upperType, VisitorType v) {
     if (type != null && ! type.isUnspecified()) {
-      v.percolateError(type, this);
       return;
     }
     type = upperType;

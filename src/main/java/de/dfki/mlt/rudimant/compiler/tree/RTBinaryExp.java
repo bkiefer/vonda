@@ -21,8 +21,6 @@ package de.dfki.mlt.rudimant.compiler.tree;
 
 import java.util.Arrays;
 
-import de.dfki.mlt.rudimant.compiler.Type;
-
 /**
  * a special kind of the RudiTree is an expression; expressions can have types
  *
@@ -40,15 +38,5 @@ public abstract class RTBinaryExp extends RTExpression {
         (right != null)
         ? new RudiTree[]{ left, right }
         : new RudiTree[]{ left });
-  }
-
-  public void propagateType(Type upperType, VisitorType v) {
-    if (type != null && ! type.isUnspecified()) {
-      v.percolateError(type, this);
-      return;
-    }
-    type = upperType;
-    right.propagateType(upperType, v);
-    left.propagateType(upperType, v);
   }
 }

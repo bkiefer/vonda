@@ -21,8 +21,6 @@ package de.dfki.mlt.rudimant.compiler.tree;
 
 import java.util.Arrays;
 
-import de.dfki.mlt.rudimant.compiler.Type;
-
 /**
  * this is either a variable declaration, or an assignment of a variable to a
  * new value. Most of the type checking rudimant currently does happens here.
@@ -51,15 +49,6 @@ public class ExpAssignment extends RTExpression {
   public Iterable<? extends RudiTree> getDtrs() {
     RudiTree[] dtrs = { left, right };
     return Arrays.asList(dtrs);
-  }
-
-  public void propagateType(Type upperType, VisitorType v) {
-    if (type != null && ! type.isUnspecified()) {
-      v.percolateError(type, this);
-      return;
-    }
-    type = upperType;
-    right.propagateType(upperType, v);
   }
 
   public String toString() { return left + " = " + right; }

@@ -51,14 +51,4 @@ public class ExpConditional extends RTExpression {
     RudiTree[] dtrs = { boolexp, thenexp, elseexp };
     return Arrays.asList(dtrs);
   }
-
-  public void propagateType(Type upperType, VisitorType v) {
-    if (type != null && ! type.isUnspecified()) {
-      v.percolateError(type, this);
-      return;
-    }
-    thenexp.propagateType(upperType, v);
-    elseexp.propagateType(upperType, v);
-  }
-
 }

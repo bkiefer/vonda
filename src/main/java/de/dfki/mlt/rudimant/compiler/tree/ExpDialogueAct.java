@@ -57,8 +57,4 @@ public class ExpDialogueAct extends RTExpression {
     dtrs.addAll(exps);
     return dtrs;
   }
-
-  public void propagateType(Type upperType, VisitorType v) {
-    v.percolateError(type, this);
-  }
 }

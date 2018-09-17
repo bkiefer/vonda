@@ -21,8 +21,6 @@ package de.dfki.mlt.rudimant.compiler.tree;
 
 import java.util.Arrays;
 
-import de.dfki.mlt.rudimant.compiler.Type;
-
 public class ExpArrayAccess extends RTExpLeaf {
 
   RTExpression index;
@@ -41,17 +39,6 @@ public class ExpArrayAccess extends RTExpLeaf {
   @Override
   public void visit(RudiVisitor v) {
     v.visit(this);
-  }
-
-  public void propagateType(Type upperType, VisitorType v) {
-    if (type != null && ! type.isUnspecified()) {
-      v.percolateError(type, this);
-      return;
-    }
-    type = upperType;
-    if (array.type.isArray()) {
-      array.getType().setInnerType(type);
-    }
   }
 
   public Iterable<? extends RudiTree> getDtrs() {
