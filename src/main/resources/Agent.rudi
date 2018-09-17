@@ -5,6 +5,7 @@
 [String]. boolean endsWith(String s);
 [String]. String substring(int begin);
 [String]. String substring(int begin, int end);
+[String]. boolean isEmpty();
 //[String]. int length;
 String getUriName(String uri);
 
@@ -17,6 +18,7 @@ boolean toBool(String s);
 [Collection<T>]. void add(Object a);
 [Collection<T>]. boolean contains(Object a);
 [Collection<T>]. int size();
+[Collection<T>]. boolean isEmpty();
 [Map<S, T>]. boolean containsKey(Object a);
 
 // all Agent methods we should know
