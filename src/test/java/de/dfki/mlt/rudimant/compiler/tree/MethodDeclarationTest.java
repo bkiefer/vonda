@@ -72,6 +72,15 @@ public class MethodDeclarationTest {
     assertEquals(expected, getForMarked(s, expected));
   }
 
+
+  @Test
+  public void testLocalParameters(){
+    String methdecl = "int s; void foo(String s) { s = \"a\"; }";
+    String s = generate(methdecl);
+    String expected = "public int s;/**/public void foo(String s) { s = \"a\"; }";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
   @Test
   public void testCallUpon1(){
     String methdecl = " [List<T>]. T get(int a); List<String> l;"

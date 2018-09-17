@@ -184,8 +184,6 @@ public class LambdaTest {
   }
 
   @Test
-  // Still: wrong, since the cast ((Rdf)h).getClazz is missing if not given
-  // explicitely
   public void test7b() {
     String in = "Quiz p; List<Object> z = filter(p.hasHistory, (h) -> h <= QuizHistory);";
     String r = generate(in);
@@ -196,12 +194,20 @@ public class LambdaTest {
   }
 
   @Test
-  // Still: wrong, since the cast ((Rdf)h).getClazz is missing if not given
-  // explicitely
   public void test7c() {
     String in = "Quiz p; z = filter(p.hasHistory, (h) -> h <= QuizHistory);";
     String r = generate(in);
     String expected = "public Rdf p;public List<Object> z;/**/z ="
+      + " filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
+      + " (h) -> ((Rdf)h).getClazz().isSubclassOf(getRdfClass(\"QuizHistory\")));";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void test7d() {
+    String in = "Integer h; Quiz p; z = filter(p.hasHistory, (h) -> h <= QuizHistory);";
+    String r = generate(in);
+    String expected = "public Integer h;public Rdf p;public List<Object> z;/**/z ="
       + " filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
       + " (h) -> ((Rdf)h).getClazz().isSubclassOf(getRdfClass(\"QuizHistory\")));";
     assertEquals(expected, getForMarked(r, expected));

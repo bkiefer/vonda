@@ -37,6 +37,7 @@ public class StatVarDef extends RTStatement {
   RTExpression toAssign;
   boolean varIsFinal;
   boolean isDefinition;
+  boolean forceDeclaration = false; // for, e.g., Koenig binding in for loops
 
   public StatVarDef(boolean isFinal, Type type, String variable,
       RTExpression assign) {

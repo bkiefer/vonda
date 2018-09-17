@@ -242,10 +242,21 @@ public class Mem {
     if (currentEnv.isVarDefined(variable)) {
       return false;
     }
+    putVariableDeclaration(variable, type);
+    return true;
+  }
+
+  /** Add a new variable declaration, providing the variable name and type, even
+   *  when the variable already exists (e.g., for local lambda environments).
+   *
+   * @param variable
+   * @param type
+   * @return true if the variable is not already defined, false otherwise
+   */
+  public void putVariableDeclaration(String variable, Type type) {
     String origin = getClassName();
     currentEnv.put(variable, type, origin);
     logger.trace("Add var {}:{} [{}]", blockNesting, variable, type);
-    return true;
   }
 
   public boolean variableExists(String variable) {

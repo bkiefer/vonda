@@ -21,13 +21,15 @@ package de.dfki.mlt.rudimant.compiler.tree;
 
 import java.util.Arrays;
 
+import de.dfki.mlt.rudimant.compiler.Environment;
+
 /**
  * FOR LPAR assignment SEMICOLON exp SEMICOLON exp? RPAR loop_statement_block =
  * a 'normal' for statement containing three ;
  *
  * @author Anna Welker
  */
-public class StatFor1 extends RTStatement {
+public class StatFor1 extends RTStatement implements RTBlockNode {
 
   StatVarDef initialization;
   RTExpression condition;
@@ -37,6 +39,7 @@ public class StatFor1 extends RTStatement {
   public StatFor1(StatVarDef assignment, RTExpression condition,
           RTExpression arithmetic, RTStatement statblock) {
     this.initialization = assignment;
+    assignment.forceDeclaration = true; // Koenig binding
     this.condition = condition;
     this.increment = arithmetic;
     this.statblock = statblock;
@@ -50,5 +53,16 @@ public class StatFor1 extends RTStatement {
   public Iterable<? extends RudiTree> getDtrs() {
     RudiTree[] dtrs = { initialization, condition, increment, statblock };
     return Arrays.asList(dtrs);
+  }
+
+  // ==== IMPLEMENTATION OF RTBLOCKNODE =====================================
+
+  private Environment _localBindings;
+
+  public Environment getParentBindings() { return _localBindings.getParent(); }
+
+  public Environment enterEnvironment(Environment parent) {
+    return _localBindings != null ? _localBindings
+        : (_localBindings = Environment.getEnvironment(parent));
   }
 }

@@ -21,6 +21,7 @@ package de.dfki.mlt.rudimant.compiler.tree;
 
 import java.util.Arrays;
 
+import de.dfki.mlt.rudimant.compiler.Environment;
 import de.dfki.mlt.rudimant.compiler.Type;
 
 /**
@@ -29,7 +30,7 @@ import de.dfki.mlt.rudimant.compiler.Type;
  *
  * @author Anna Welker
  */
-public class StatFor2 extends RTStatement {
+public class StatFor2 extends RTStatement implements RTBlockNode {
 
   Type varType;
   ExpVariable var;
@@ -63,5 +64,16 @@ public class StatFor2 extends RTStatement {
   public Iterable<? extends RudiTree> getDtrs() {
     RudiTree[] dtrs = { var, initialization, statblock };
     return Arrays.asList(dtrs);
+  }
+
+  // ==== IMPLEMENTATION OF RTBLOCKNODE =====================================
+
+  private Environment _localBindings;
+
+  public Environment getParentBindings() { return _localBindings.getParent(); }
+
+  public Environment enterEnvironment(Environment parent) {
+    return _localBindings != null ? _localBindings
+        : (_localBindings = Environment.getEnvironment(parent));
   }
 }

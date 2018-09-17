@@ -79,10 +79,28 @@ public class ForStatementsTest {
   }
 
   @Test
+  public void test4a() {
+    // test that Koenig binding works
+    String stat = "String i; for (int i = 0; i < 10; ++i){}";
+    String s = generate(stat);
+    String expected = "public String i;/**/for ( int i = 0;i < 10;i = (i+1)){ }";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
+  @Test
   public void test5() {
     String stat = "List<Object> l; for (QuizHistory q : l){}";
     String s = generate(stat);
     String expected = "public List<Object> l;/**/for (Object q_outer : l) { Rdf q = (Rdf)q_outer; { } }";
+    assertEquals(expected, getForMarked(s, expected));
+    assertTrue(s.contains("List<Object> l;"));
+  }
+
+  @Test
+  public void test5a() {
+    String stat = "int q; List<Object> l; for (QuizHistory q : l){ z = q.turnId; }";
+    String s = generate(stat);
+    String expected = "public int q;public List<Object> l;/**/for (Object q_outer : l) { Rdf q = (Rdf)q_outer; { Integer z = ((Integer)q.getSingleValue(\"<dom:turnId>\")); } }";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("List<Object> l;"));
   }

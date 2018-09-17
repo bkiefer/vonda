@@ -215,10 +215,31 @@ da.setProposition("Acquiring");
 List<String> li = new ArrayList(2);
 
 // import a set of rules, can be put in a subdirectory
-import sub.Sub;
+//import sub.Sub;
 
 Quiz p;
 h = filter(p.hasHistory, (c) -> c.turnId == 1);
 if (h) {
   x = h.get(0);
+}
+
+Map<String, String> m;
+if (m.containsKey("foo")) {
+  s = m.get("foo");
+}
+
+if (! m.containsKey("bar")) {
+  s = m.put("bar", "foo");
+}
+
+// Check redefinition of local variables in lambda and for
+z = filter(p.hasHistory, (h) -> h <= QuizHistory);
+z1 = filter(p.hasHistory, (h) -> ((QuizHistory)h) <= QuizHistory);
+z2 = filter(p.hasHistory, (QuizHistory h) -> h <= QuizHistory);
+z3 = filter(p.hasHistory, (h) -> h <= QuizHistory);
+
+for (int h = 0; h < 3; ++h) { logger.info(h); }
+
+int func(String h) {
+  h = "foo";
 }

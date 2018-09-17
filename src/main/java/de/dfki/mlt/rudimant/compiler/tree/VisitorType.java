@@ -439,7 +439,8 @@ public class VisitorType implements RudiVisitor {
       Type parType = parTypes.next();
       if (parType.isXsdType() || parType.isStrictRdfType())
         parType.setCastRequired();
-      mem.addVariableDeclaration(arg, parType);
+      // an arg always overwrites any defined var
+      mem.putVariableDeclaration(arg, parType);
     }
     if (node.body instanceof RTExpression) {
       RTExpression exp = (RTExpression)node.body;
@@ -511,6 +512,7 @@ public class VisitorType implements RudiVisitor {
    */
   @Override
   public void visit(StatFor2 node) {
+    mem.enterEnvironment(node);
     node.initialization.visit(this);
     Type innerIterableType = getNoType();
     if (! node.initialization.type.isUnspecified()) {
@@ -538,8 +540,9 @@ public class VisitorType implements RudiVisitor {
         }
       }
     }
-    mem.addVariableDeclaration(node.var.content, node.varType);
+    mem.putVariableDeclaration(node.var.content, node.varType);
     node.statblock.visit(this);
+    mem.leaveEnvironment(node);
   }
 
   /**
@@ -615,21 +618,21 @@ public class VisitorType implements RudiVisitor {
   /** An explicit variable declaration, without assignment, just definition */
   @Override
   public void visit(StatVarDef node) {
-    if (node.isDefinition && mem.variableExists(node.variable)) {
-      typeError("Re-defined variable " + node.variable
-          + " from " + mem.getVariableType(node.variable).toString()
-          + " to " + node.type.toString() +
-          ", keeping the old type", node);
-    }
-    if (mem.variableExists(node.variable)) {
-      if (node.type.isUnspecified())
-        node.type = mem.getVariableType(node.variable);
+    if (node.forceDeclaration) {
+      mem.putVariableDeclaration(node.variable, node.type);
     } else {
-      if (! node.type.isUnspecified())
-        mem.addVariableDeclaration(node.variable, node.type);
-      // mark as declaration
-      node.isDefinition = true;
+      if (node.isDefinition && mem.variableExists(node.variable)) {
+        typeError("Re-defined variable " + node.variable
+            + " from " + mem.getVariableType(node.variable).toString()
+            + " to " + node.type.toString() +
+            ", keeping the old type", node);
+      }
+      if (mem.variableExists(node.variable)) {
+        if (node.type.isUnspecified())
+          node.type = mem.getVariableType(node.variable);
+      }
     }
+
     if (node.toAssign != null) {
       ExpVariable var =
           node.fixFields(new ExpVariable(node.variable, node.type));
@@ -639,11 +642,12 @@ public class VisitorType implements RudiVisitor {
       if (!node.type.equals(mergeType)) {
         node.type = mergeType;
       }
-      if (! mem.variableExists(node.variable)) {
-        mem.addVariableDeclaration(node.variable, var.type);
-        // mark as declaration
-        node.isDefinition = true;
-      }
+    }
+
+    if (node.forceDeclaration || ! mem.variableExists(node.variable)) {
+      mem.putVariableDeclaration(node.variable, node.type);
+      // mark as declaration
+      node.isDefinition = true;
     }
   }
 
@@ -658,7 +662,7 @@ public class VisitorType implements RudiVisitor {
       mem.enterEnvironment(node);
       // add parameters to environment
       for (String par: node.parameters) {
-        mem.addVariableDeclaration(par, parTypes.next());
+        mem.putVariableDeclaration(par, parTypes.next());
       }
       node.block.visit(this);
       mem.leaveEnvironment(node);
@@ -704,11 +708,13 @@ public class VisitorType implements RudiVisitor {
    */
   @Override
   public void visit(StatFor1 node) {
+    mem.enterEnvironment(node);
     node.initialization.visit(this);
     node.condition.visit(this);
     node.increment.visit(this);
     node.statblock.visit(this);
     node.condition = node.condition.ensureBoolean();
+    mem.leaveEnvironment(node);
   }
 
   // set this variable to tell error handling that we are in a function invoked
