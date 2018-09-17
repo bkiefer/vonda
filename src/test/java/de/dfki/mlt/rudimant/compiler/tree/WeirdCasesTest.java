@@ -68,7 +68,15 @@ public class WeirdCasesTest {
     assertEquals(expected, getForMarked(r, expected));
   }
 
-  /* "repaired" by adding def for containsKey ? */
+  @Test
+  public void testDefinedRdfList() {
+    String in = "List<Quiz> q(int i); { m = q(i); }";
+    String r = generate(in);
+    String expected = "{ List<Rdf> m = q(i); }";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  /* "repaired" by adding def for containsKey  */
 //  @Test
 //  public void testStrangeMethCall() {
 //    String in = "Map<String, Integer> e; boolean b = !e.containsKey(\"Glycemia\"); ";

@@ -236,14 +236,18 @@ public class Type {
         map.put(_name, name);
       }
     }
+    Type result;
     if (_parameterTypes == null) {
-      return new Type(name);
+      result = new Type(name);
+    } else {
+      List<Type> params = new ArrayList<>();
+      for (Type t : _parameterTypes) {
+        params.add(t.renameTypeVars(i, map));
+      }
+      result = new Type(name, params);
     }
-    List<Type> params = new ArrayList<>();
-    for (Type t : _parameterTypes) {
-      params.add(t.renameTypeVars(i, map));
-    }
-    return new Type(name, params);
+    if (_castRequired) result.setCastRequired();
+    return result;
   }
 
   /** This is only to be used to create complex types for function expressions.
@@ -656,7 +660,7 @@ public class Type {
         else if (pType.isRdfType())
           sb.append("Object[").append(
               pType._class == null ? "Rdf" : pType._class.toString())
-          .append("]");
+          .append(pType._castRequired ? "]*" : "]");
         else
           pType.toDebugString(sb);
         first = false;
@@ -666,9 +670,10 @@ public class Type {
   }
 
   private String toDebugString(StringBuffer sb) {
-    if (_class != null) sb.append(_class.toString() + "[" + toJava() + "]");
+    if (_class != null)
+      sb.append(_class.toString() + "[" + toJava() + (_castRequired ? "]*" : "]"));
     else if (isStrictRdfType())
-      sb.append(_name + "[" + toJava() + "]");
+      sb.append(_name + "[" + toJava() + (_castRequired ? "]*" : "]"));
     else if (isDialogueAct())
       sb.append("DialogueAct");
     else if (isXsdType())
@@ -859,20 +864,26 @@ public class Type {
 
   private Type replaceVarsRec(Partition p) {
     String name = _name;
+    boolean castRequired = _castRequired;
     if (isTypeVariable()) {
       Type rep =p.findRep(this);
       name = rep._name;
       if (_parameterTypes == null)
         _parameterTypes = rep._parameterTypes;
+      castRequired = rep._castRequired;
     }
+    Type result;
     if (_parameterTypes != null) {
       List<Type> paramTypes = new ArrayList<>();
       for(Type t : _parameterTypes) {
         paramTypes.add(t.replaceVarsRec(p));
       }
-      return new Type(name, paramTypes);
+      result = new Type(name, paramTypes);
+    } else {
+      result = new Type(name);
     }
-    return new Type(name);
+    if (castRequired) result.setCastRequired();
+    return result;
   }
 
   private int replaceUnspecifiedRec(int freeVar, BitSet taken) {

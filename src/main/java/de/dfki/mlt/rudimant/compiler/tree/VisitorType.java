@@ -744,8 +744,9 @@ public class VisitorType implements RudiVisitor {
       // the access
       List<Type> subs = new ArrayList<>();
       subs.add(new Type("T"));
+      Type paType = new Type("Set", subs); paType.setCastRequired();
       return new ExpPropertyAccess(var.content, var, true,
-          new Type("Set", subs), false);
+          paType, false);
     }
     if (currentType.isDialogueAct()) {
       // the return type will be string, this is a call to getSlot
@@ -799,6 +800,7 @@ public class VisitorType implements RudiVisitor {
     boolean isFunctional = (predType & RdfClass.FUNCTIONAL_PROPERTY) != 0;
     if (! isFunctional) {
       currentType = getRdfComplexType("Set", currentType);
+      currentType.setCastRequired();
     }
     // the type of this is set to Object by default (not null)
     return new ExpPropertyAccess(var.content, var, false, currentType, isFunctional);
@@ -916,7 +918,6 @@ public class VisitorType implements RudiVisitor {
       }
       if (node.type == null || node.type.isUnspecified()) {
         node.type = resolved.getReturnType();
-        node.type.setCastRequiredInner();
       }
     }
     if (node.type == null) {
