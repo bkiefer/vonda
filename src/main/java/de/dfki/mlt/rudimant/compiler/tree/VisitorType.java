@@ -252,7 +252,7 @@ public class VisitorType implements RudiVisitor {
       node.right.propagateType(node.type, this);
     }
     if (! node.left.type.equals(node.type)) {
-      node.left.propagateType(node.type, this);
+      node.left.propagateType(node.type.copyNoCast(), this);
     }
   }
 
@@ -437,7 +437,8 @@ public class VisitorType implements RudiVisitor {
       // set castRequired to true in all parTypes that are XSD/RDF, since we
       // have to pass Object for them
       Type parType = parTypes.next();
-      if (parType.isXsdType()) parType.setCastRequired();
+      if (parType.isXsdType() || parType.isStrictRdfType())
+        parType.setCastRequired();
       mem.addVariableDeclaration(arg, parType);
     }
     if (node.body instanceof RTExpression) {
@@ -894,8 +895,8 @@ public class VisitorType implements RudiVisitor {
       Iterator<Type> ptypes = partypes.iterator();
       for(RTExpression e : node.params) {
         Type resType = restypes.next();
-        resType.setCastRequiredInner();
         if (!(ptypes.next().equals(resType))) {
+          resType.setCastRequiredInner();
           e.propagateType(resType, this);
           e.visit(this);
         }

@@ -288,6 +288,16 @@ public class Type {
     _parameterTypes = inner;
   }
 
+  /** Create a duplicate (shallow copy), where castRequired is false */
+  public Type copyNoCast() {
+    Type result = new Type();
+    result._castRequired = false;
+    result._class = _class;
+    result._name = _name;
+    result._parameterTypes = _parameterTypes;
+    return result;
+  }
+
   public String get_name() {
     return _name;
   }
@@ -547,7 +557,8 @@ public class Type {
     }
     Type result = unifyBasicTypes(right);
     if (result == null) return result;
-    result._castRequired = _castRequired || right._castRequired;
+    result._castRequired = (isStrictRdfType() || isXsdType())
+        && (_castRequired || right._castRequired);
     return result;
   }
 

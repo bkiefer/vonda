@@ -85,15 +85,21 @@ public class ComparisonTest {
     assertEquals(expected, getForMarked(r, expected));
   }
 
-  /** Hmm, not sure if this is possible
   @Test
   public void testGenerationComparisonRdfClassRdfClass() {
     String in = "if (Child >= Object) return true;";
     String r = generate(in);
-    String expected = "if ((getRdfClass(\"Child\").isSubclassOf(getRdfClass(\"Object\")))) return true;";
+    String expected = "if (getRdfClass(\"Child\").isSuperclassOf(getRdfClass(\"Object\"))) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
-  */
+
+  @Test
+  public void testGenerationComparisonRdfClassRdfClassSub() {
+    String in = "if (Child <= Object) return true;";
+    String r = generate(in);
+    String expected = "if (getRdfClass(\"Child\").isSubclassOf(getRdfClass(\"Object\"))) return true;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
 
   @Test
   public void testGenerationComparisonRdfRdf() {

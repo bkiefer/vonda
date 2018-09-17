@@ -773,15 +773,10 @@ public class VisitorGeneration implements RudiVisitor {
       if (node.parts.get(i) instanceof ExpPropertyAccess) {
         ExpPropertyAccess pa = (ExpPropertyAccess) node.parts.get(i);
         String cast = pa.getType().toJava();
-        // cast = capitalize(cast);
-        //gen("((" + cast + ")";
-        gen("((").gen((!pa.functional) ? "Set<Object>" : cast).gen(")");
-      }  else if (node.parts.get(i).getType().castRequired()) {
-        gen("((").gen(node.parts.get(i).getType().toJava()).gen(")");
+        gen("((").gen(cast).gen(")");
       }
     }
     gen(node.parts.get(0));
-    if (node.parts.get(0).getType().castRequired()) gen(")");
     Type currentType = ((RTExpression) node.parts.get(0)).type;
     for (int i = 1; i < to; i++) {
       RTExpression currentPart = node.parts.get(i);
@@ -797,7 +792,6 @@ public class VisitorGeneration implements RudiVisitor {
         currentType = pa.type;
       } else {
         gen(".").gen(currentPart);
-        if (node.parts.get(i).getType().castRequired()) gen(")");
         currentType = ((RTExpression) currentPart).type;
       }
     }
@@ -857,11 +851,15 @@ public class VisitorGeneration implements RudiVisitor {
 
   @Override
   public void visit(ExpVariable node) {
+    if (node.type.castRequired()) {
+      gen("((").gen(node.type.toJava()).gen(')');
+    }
     String realOrigin = mem.getVariableOriginClass(node.content);
     if (realOrigin != null) {
       gen(lowerCaseFirst(realOrigin)).gen('.');
     }
     gen(node.content);
+    gen(node.type.castRequired(), ')');
   }
 
   String stringEscape(String in) {

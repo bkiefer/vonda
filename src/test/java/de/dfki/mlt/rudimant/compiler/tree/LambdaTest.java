@@ -101,7 +101,8 @@ public class LambdaTest {
     String r = generate(in);
     String expected = "public Rdf p;public List<Object> h;public Rdf x;/**/"
         + "h = filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
-        + " (c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);x = (Rdf) ((Rdf)h.get(1));";
+        + " (c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);"
+        + "x = (Rdf) h.get(1);";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -112,7 +113,7 @@ public class LambdaTest {
     String expected = "public Rdf p;public List<Object> h;public Rdf x;public Rdf y;/**/"
         + "h = filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
         + " (c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);"
-        + "x = (Rdf) ((Rdf)h.get(1));y = (Rdf) ((Rdf)h.get(2));";
+        + "x = (Rdf) h.get(1);y = (Rdf) h.get(2);";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -121,12 +122,12 @@ public class LambdaTest {
   public void test5a() {
     String in = "Quiz p; h = filter(p.hasHistory, (QuizHistory c) -> c.turnId == 1); x = h.get(1); y = h.get(2);";
     String r = generate(in);
-    String expected = "public Rdf p;public List<Rdf> h;public Rdf x;public Rdf y;/**/"
+    String expected = "public Rdf p;public List<Object> h;public Rdf x;public Rdf y;/**/"
         + "h = filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
         + " (c) -> ((Integer)((Rdf)c).getSingleValue(\"<dom:turnId>\")) == 1);"
-        + "x = (Rdf) ((Rdf)h.get(1));y = (Rdf) ((Rdf)h.get(2));";
+        + "x = (Rdf) h.get(1);y = (Rdf) h.get(2);";
     // TODO: FIX AND REACTIVATE: the cast is lost
-    //assertEquals(expected, getForMarked(r, expected));
+    assertEquals(expected, getForMarked(r, expected));
   }
 
   @Test
@@ -135,8 +136,8 @@ public class LambdaTest {
     String in = "List<String> e; h = some(e, (f) -> f); x = h.get(1);";
     String expected = "public List<List<String>> l;public List<List<String>> h;public List<String> x;/**/"
         + "h = filter(l, (e) -> some(e, (f) -> !f.isEmpty()));x = h.get(1);";
-    //String r = generate(in);
-    //assertEquals(expected, getForMarked(r, expected));
+    String r = generate(in);
+    assertEquals(expected, getForMarked(r, expected));
   }
 
   @Test
@@ -145,8 +146,65 @@ public class LambdaTest {
     String in = "List<List<String>> l; h = filter(l, (e) -> some(e, (f) -> f)); x = h.get(1);";
     String expected = "public List<List<String>> l;public List<List<String>> h;public List<String> x;/**/"
         + "h = filter(l, (e) -> some(e, (f) -> !f.isEmpty()));x = h.get(1);";
-    //String r = generate(in);
-    //assertEquals(expected, getForMarked(r, expected));
+    String r = generate(in);
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void test6d() {
+    String in = "List<List<String>> l; h = filter(l, (e) -> some(e, (f) -> !f.isEmpty())); x = h.get(1);";
+    String r = generate(in);
+    String expected = "public List<List<String>> l;public List<List<String>> h;public List<String> x;/**/"
+        + "h = filter(l, (e) -> some(e, (f) -> !(exists(f) && f.isEmpty()));x = h.get(1);aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  // Still: wrong, since the cast ((Rdf)h).getClazz is missing if not given
+  // explicitely
+  public void test7() {
+    String in = "Quiz p; List<Object> z = filter(p.hasHistory, (h) -> ((Rdf)h) <= QuizHistory);";
+    String r = generate(in);
+    String expected = "public Rdf p;public List<Object> z;/**/z ="
+      + " filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
+      + " (h) -> ((Rdf)h).getClazz().isSubclassOf(getRdfClass(\"QuizHistory\")));}";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  // Still: wrong, since the cast ((Rdf)h).getClazz is missing if not given
+  // explicitely
+  public void test7a() {
+    String in = "Quiz p; List<Object> z = filter(p.hasHistory, (h) -> ((Rdf)h) <= QuizHistory);";
+    String r = generate(in);
+    String expected = "public Rdf p;public List<Object> z;/**/z ="
+      + " filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
+      + " (h) -> ((Rdf)h).getClazz().isSubclassOf(getRdfClass(\"QuizHistory\")));}";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  // Still: wrong, since the cast ((Rdf)h).getClazz is missing if not given
+  // explicitely
+  public void test7b() {
+    String in = "Quiz p; List<Object> z = filter(p.hasHistory, (h) -> h <= QuizHistory);";
+    String r = generate(in);
+    String expected = "public Rdf p;public List<Object> z;/**/z ="
+      + " filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
+      + " (h) -> ((Rdf)h).getClazz().isSubclassOf(getRdfClass(\"QuizHistory\")));";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  // Still: wrong, since the cast ((Rdf)h).getClazz is missing if not given
+  // explicitely
+  public void test7c() {
+    String in = "Quiz p; z = filter(p.hasHistory, (h) -> h <= QuizHistory);";
+    String r = generate(in);
+    String expected = "public Rdf p;public List<Object> z;/**/z ="
+      + " filter(((Set<Object>)p.getValue(\"<dom:hasHistory>\")),"
+      + " (h) -> ((Rdf)h).getClazz().isSubclassOf(getRdfClass(\"QuizHistory\")));";
+    assertEquals(expected, getForMarked(r, expected));
   }
 
   @Test
