@@ -78,4 +78,10 @@ public class ExpFieldAccess extends RTExpLeaf {
     RTExpression sub = ensureBooleanUFARec(parts.size());
     return sub;
   }
+
+  public String toString() {
+    StringBuffer sb = new StringBuffer();
+    for (RTExpression p : parts) sb.append(p);
+    return sb.toString();
+  }
 }

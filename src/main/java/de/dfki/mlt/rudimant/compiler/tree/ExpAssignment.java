@@ -61,4 +61,6 @@ public class ExpAssignment extends RTExpression {
     type = upperType;
     right.propagateType(upperType, v);
   }
+
+  public String toString() { return left + " = " + right; }
 }
