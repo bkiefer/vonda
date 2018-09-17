@@ -348,7 +348,9 @@ public class VisitorType implements RudiVisitor {
     } else {
       // we do this always, because if the boolean expression has only one
       // side it may have no operator
-      node.left = node.left.ensureBoolean();
+      if (! node.synthetic) {
+        node.left = node.left.ensureBoolean();
+      }
     }
     ruleIfSuspended = oldSuspendState;
   }
@@ -890,7 +892,12 @@ public class VisitorType implements RudiVisitor {
 
       // Try to deduce "real" types for the type vars by matching the
       // function definition and actual parameter types
-      Type resolved = resolveTypeVars(f.getType(), callType);
+      Type resolved = null;
+      List<String> clashes = new ArrayList<>();
+      resolved = resolveTypeVars(f.getType(), callType, clashes);
+      if (! clashes.isEmpty()) {
+        for (String s : clashes) typeError(s, node);
+      }
 
       // percolate all changed parameter types down
       if (node.calledUpon != null &&

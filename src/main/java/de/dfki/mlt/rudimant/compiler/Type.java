@@ -791,6 +791,8 @@ public class Type {
   private static class Partition {
     HashMap<Type, Type> map = new HashMap<>();
 
+    List<String> msgs;
+
     /** Find the representative of type t */
     Type findRep(Type t) {
       if (! t.isTypeVariable() || ! map.containsKey(t)) return t;
@@ -814,28 +816,20 @@ public class Type {
     }
 
     // t1 is always a type variable
-    void merge (Type t1, Type t2) {
+    boolean merge (Type t1, Type t2) {
       Type r1 = findRep(t1);
       Type r2 = findRep(t2);
-      if (r1 == r2) return;
+      if (r1 == r2) return true;
       Type u = r1.unifyTypes(r2);
-      if (u == null) {/*
-        if (r1.isBool()) {
-          logger.warn("Type clash during resolution resolved not in favour of boolean: "
-              + t1 + "<>" + t2 + ", " + r1 + "<>" + r2);
-          setRep(t1, r2);
-        } else if (r2.isBool()) {
-          logger.warn("Type clash during resolution resolved not in favour of boolean: "
-              + t1 + "<>" + t2 + ", " + r1 + "<>" + r2);
-          setRep(t2, r1);
-        } else {*/
-          throw new TypeException("Error during type variable resolution: "
-              + t1 + "<>" + t2 + ", " + r1 + "<>" + r2);
-      //}
+      if (u == null) {
+        msgs.add("Type clash during resolution: ["
+            + t1 + "]" + r1 + " <> [" + t2 + "]" + r2);
+        return false;
       }
       setRep(t1, u);
       if (t2.isTypeVariable())
         setRep(t2, u);
+      return true;
     }
 
     public String toString() { return map.toString(); }
@@ -918,8 +912,9 @@ public class Type {
    * @param callType the type computed from the actual call parameters
    * @return a new type with resolved type variables
    */
-  public static Type resolveTypeVars(Type funType, Type callType) {
+  public static Type resolveTypeVars(Type funType, Type callType, List<String> clashes) {
     Partition p = new Partition();
+    p.msgs = clashes;
     callType.replaceUnspecifiedWithVars(funType, callType);
     resolveTypeVarsRec(p, funType, callType);
     // Now p contains "resolved" types for all type vars, create the result for

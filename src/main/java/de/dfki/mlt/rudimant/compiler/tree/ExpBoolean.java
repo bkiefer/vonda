@@ -66,4 +66,11 @@ public class ExpBoolean extends RTBinaryExp {
   public void visit(RudiVisitor v) {
     v.visit(this);
   }
+
+  public String toString() {
+    if (right != null) {
+      return left + " " + operator + " " + right;
+    }
+    return operator + " " + left;
+  }
 }
