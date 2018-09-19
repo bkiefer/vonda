@@ -19,6 +19,7 @@
 
 package de.dfki.mlt.rudimant.compiler.tree;
 
+import java.util.Iterator;
 import java.util.List;
 
 import de.dfki.mlt.rudimant.compiler.Type;
@@ -50,5 +51,18 @@ public class ExpListLiteral extends RTExpression {
   @Override
   public void propagateType(Type upperType, VisitorType v) {
     type = upperType;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("[").append(type).append("]{");
+    Iterator<RTExpression> it = objects.iterator();
+    if (! objects.isEmpty()) sb.append(it.next());
+    while (it.hasNext()) {
+      sb.append(", ").append(it.next());
+    }
+    sb.append("}");
+    return sb.toString();
   }
 }
