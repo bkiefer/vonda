@@ -22,34 +22,18 @@ package de.dfki.mlt.rudimant.compiler.tree;
 import de.dfki.mlt.rudimant.compiler.Type;
 
 /**
- * representation of a variable
- *
+ * class representing a simple value like a String, an int or null
  * @author Anna Welker
  */
-public class ExpVariable extends RTExpLeaf {
+public class ExpLiteral extends RTExpLeaf {
 
-  public ExpVariable(String representation, Type t) {
-    content = representation;
-    type = t;
-  }
-
-  public ExpVariable(String representation) {
-    this(representation, Type.getNoType());
-  }
-
-  @Override
-  /** Only for debugging! */
-  public String toString() {
-    return this.content + "[" + this.getType().getRep() + "]";
+  public ExpLiteral(String representation, String type){
+    this.content = representation;
+    this.type = new Type(type);
   }
 
   @Override
   public void visit(RudiVisitor v) {
     v.visit(this);
-  }
-
-  public void propagateType(Type upperType, VisitorType v) {
-    // it's not an error if the type is null
-    type = upperType;
   }
 }

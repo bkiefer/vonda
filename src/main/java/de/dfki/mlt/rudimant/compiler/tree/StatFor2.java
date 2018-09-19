@@ -33,18 +33,18 @@ import de.dfki.mlt.rudimant.compiler.Type;
 public class StatFor2 extends RTStatement implements RTBlockNode {
 
   Type varType;
-  ExpVariable var;
+  ExpIdentifier var;
   RTExpression initialization;
   RTStatement statblock;
 
-  public StatFor2(ExpVariable v, RTExpression e, RTStatement stat) {
+  public StatFor2(ExpIdentifier v, RTExpression e, RTStatement stat) {
     var = v;
     initialization = e;
     statblock = stat;
     varType = Type.getNoType();
   }
 
-  public StatFor2(Type vType, ExpVariable v, RTExpression exp,
+  public StatFor2(Type vType, ExpIdentifier v, RTExpression exp,
       RTStatement stat) {
     var = v;
     initialization = exp;

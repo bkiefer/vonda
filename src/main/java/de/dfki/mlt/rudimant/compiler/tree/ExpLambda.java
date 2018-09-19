@@ -65,7 +65,7 @@ public class ExpLambda extends RTExpLeaf implements RTBlockNode {
       sb.append(',').append(parameters.get(i));
     sb.append(")");
     String typeString = type.getRep();
-    RudiTree[] dtrs = { new ExpSingleValue(sb.toString(), typeString), body };
+    RudiTree[] dtrs = { new ExpLiteral(sb.toString(), typeString), body };
     return Arrays.asList(dtrs);
   }
 

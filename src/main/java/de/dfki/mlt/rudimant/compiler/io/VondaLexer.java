@@ -30,7 +30,7 @@ import de.dfki.mlt.rudimant.common.Location;
 import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.compiler.Mem;
 import de.dfki.mlt.rudimant.compiler.Token;
-import de.dfki.mlt.rudimant.compiler.tree.ExpSingleValue;
+import de.dfki.mlt.rudimant.compiler.tree.ExpLiteral;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -765,23 +765,23 @@ public class VondaLexer implements VondaGrammar.Lexer {
   private LinkedList<Token> tokens = new LinkedList<>();
 
   private int charLiteral(String charval) {
-    yylval = new ExpSingleValue(charval, "char");
+    yylval = new ExpLiteral(charval, "char");
     tokens.add(new Token('\'' + charval, sstart, getEndPos()));
     return VondaGrammar.Lexer.OTHER_LITERAL;
   }
 
   private int intLiteral(String intval) {
-    yylval = new ExpSingleValue(intval, "int");
+    yylval = new ExpLiteral(intval, "int");
     return token(VondaGrammar.Lexer.INT);
   }
 
   private int floatLiteral(String floatval) {
-    yylval = new ExpSingleValue(floatval, "float");
+    yylval = new ExpLiteral(floatval, "float");
     return token(VondaGrammar.Lexer.OTHER_LITERAL);
   }
 
   private int booleanLiteral(String boolval) {
-    yylval = new ExpSingleValue(boolval, "boolean");
+    yylval = new ExpLiteral(boolval, "boolean");
     return token(VondaGrammar.Lexer.BOOL_LITERAL);
   }
 
@@ -1292,7 +1292,7 @@ public class VondaLexer implements VondaGrammar.Lexer {
           case 10: 
             { yybegin(YYINITIAL);
   String s = string.toString();
-  yylval = new ExpSingleValue(s, "String");
+  yylval = new ExpLiteral(s, "String");
   tokens.add(new Token('"' + s + '"', sstart, getEndPos()));
   return VondaGrammar.Lexer.STRING;
             }

@@ -208,8 +208,8 @@ public class VisitorType implements RudiVisitor {
       typeError("Void can not be assigned", node);
     node.left.visit(this);
 
-    if (node.right instanceof ExpVariable
-        && ! mem.variableExists(((ExpVariable)node.right).content)) {
+    if (node.right instanceof ExpIdentifier
+        && ! mem.variableExists(((ExpIdentifier)node.right).content)) {
       typeError("assigning the value of a non-existing variable "
           + node.right + "to " + node.left, node);
     }
@@ -226,8 +226,8 @@ public class VisitorType implements RudiVisitor {
         mergeType = new Type("boolean");
         node.right = node.right.ensureBoolean();
       } else if ((node.left instanceof ExpFieldAccess) &&
-          node.right instanceof ExpSingleValue &&
-          ((ExpSingleValue)node.right).content.equals("null")) {
+          node.right instanceof ExpLiteral &&
+          ((ExpLiteral)node.right).content.equals("null")) {
         // this is a "clear" operation, to be resolved later.
         mergeType = node.left.type;
       } else if (node.left.type.isString()
@@ -368,10 +368,10 @@ public class VisitorType implements RudiVisitor {
 
   public RTExpression degradeToString(RTExpression expr, ExpDialogueAct node){
     RTExpression res = expr;
-    if (expr instanceof ExpVariable) {
-      ExpVariable variable = (ExpVariable) expr;
+    if (expr instanceof ExpIdentifier) {
+      ExpIdentifier variable = (ExpIdentifier) expr;
       if (!mem.variableExists(variable.content)) {
-        res = new ExpSingleValue(variable.content,
+        res = new ExpLiteral(variable.content,
             //variable.toString(),
             "String");
         variable.fixFields(res);
@@ -636,8 +636,8 @@ public class VisitorType implements RudiVisitor {
     }
 
     if (node.toAssign != null) {
-      ExpVariable var =
-          node.fixFields(new ExpVariable(node.variable, node.type));
+      ExpIdentifier var =
+          node.fixFields(new ExpIdentifier(node.variable, node.type));
       node.toAssign = node.fixFields(new ExpAssignment(var, node.toAssign));
       node.toAssign.visit(this);
       Type mergeType = node.type.unifyTypes(node.toAssign.type);
@@ -735,7 +735,7 @@ public class VisitorType implements RudiVisitor {
    * @param var
    */
   ExpPropertyAccess treatRdfPropertyAccess(ExpFieldAccess node, Type currentType,
-          ExpVariable var) {
+          ExpIdentifier var) {
     // only a literal: check if it is a property of clz, and update the
     // current type
     if (mem.getVariableType(var.content) != null &&
@@ -829,10 +829,10 @@ public class VisitorType implements RudiVisitor {
       }
       currentNode.visit(this);
       if (currentType.isRdfType()) {
-        if (currentNode instanceof ExpVariable) {
+        if (currentNode instanceof ExpIdentifier) {
           // only a literal, delegate this because it's complicated
           ExpPropertyAccess acc = treatRdfPropertyAccess(node, currentType,
-              (ExpVariable) currentNode);
+              (ExpIdentifier) currentNode);
           node.parts.set(i, acc);
           currentType = acc.getType();
         } else if (currentNode instanceof RTExpression) {
@@ -847,7 +847,7 @@ public class VisitorType implements RudiVisitor {
         //    either nothing or - worse - the type of some unrelated local variable;
     	  //		which other expressions need to be handled cautiously?
         if (currentNode instanceof RTExpression
-            && !(currentNode instanceof ExpVariable)) {
+            && !(currentNode instanceof ExpIdentifier)) {
           currentType = ((RTExpression) currentNode).type;
         } else {
           currentType = getNoType();
@@ -946,7 +946,7 @@ public class VisitorType implements RudiVisitor {
    * give the node a proper type; how to do that?
    */
   @Override
-  public void visit(ExpSingleValue node) {
+  public void visit(ExpLiteral node) {
     // nothing to test here
   }
 
@@ -956,7 +956,7 @@ public class VisitorType implements RudiVisitor {
    * information is already stored with it. b)
    */
   @Override
-  public void visit(ExpVariable node) {
+  public void visit(ExpIdentifier node) {
     // get the type of the variable, if defined
     // TODO: is there a way to find out if we try to retrieve the value of an
     // undefined variable?

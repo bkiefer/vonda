@@ -31,13 +31,13 @@ import de.dfki.mlt.rudimant.compiler.Type;
  */
 public class ExpPropertyAccess extends RTExpLeaf {
 
-  ExpVariable label;
+  ExpIdentifier label;
   boolean propertyVariable = false;
   Type rangeType;
   boolean functional;
 
 
-  public ExpPropertyAccess(String fullexp, ExpVariable l, boolean var, Type rt,
+  public ExpPropertyAccess(String fullexp, ExpIdentifier l, boolean var, Type rt,
       boolean func) {
     // an access will always return sth of type Object, so to not get null
     // I'll set the type of this to Object by default

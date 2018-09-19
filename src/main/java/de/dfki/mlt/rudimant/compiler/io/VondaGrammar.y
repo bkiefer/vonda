@@ -41,7 +41,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %type <StatGrammarRule> grammar_rule
 %type <Type> type_spec
 %type <LinkedList<Type>> type_spec_list
-%type <ExpSingleValue> Literal
+%type <ExpLiteral> Literal
 %type <LinkedList> args_list opt_args_list
 
 
@@ -83,7 +83,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
   // generic method
   private ExpAssignment createPlusMinus(RTExpression variable, String plusOrMinus,
                                          Location loc) {
-    ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), loc);
+    ExpLiteral es = setPos(new ExpLiteral("1", "int"), loc);
     ExpArithmetic ar = setPos(new ExpArithmetic(variable, es, plusOrMinus), loc);
     ExpAssignment ass = setPos(new ExpAssignment(variable, ar), loc);
     return ass;
@@ -127,12 +127,12 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %token PLUSPLUS
 
 // real tokens
-%token < ExpSingleValue > STRING
+%token < ExpLiteral > STRING
 %token < String > WILDCARD
-%token < ExpSingleValue > INT
-%token < ExpSingleValue > BOOL_LITERAL
+%token < ExpLiteral > INT
+%token < ExpLiteral > BOOL_LITERAL
 %token < String > VARIABLE
-%token < ExpSingleValue > OTHER_LITERAL
+%token < ExpLiteral > OTHER_LITERAL
 
 %%
 
@@ -258,11 +258,11 @@ for_statement
   | FOR '('     ';' exp ';' exp ')' statement {
     $$ = setPos(new StatFor1(null, $4, $6, $8), @$); }
   | FOR '(' VARIABLE ':' exp ')' statement {
-    ExpVariable var = setPos(new ExpVariable($3), @3);
+    ExpIdentifier var = setPos(new ExpIdentifier($3), @3);
     $$ = setPos(new StatFor2(var, $5, $7), @$);
   }
   | FOR '(' type_spec VARIABLE ':' exp ')' statement {
-    ExpVariable var = setPos(new ExpVariable($4), @4);
+    ExpIdentifier var = setPos(new ExpIdentifier($4), @4);
     $$ = setPos(new StatFor2($3, var, $6, $8), @$);
   }
   // for loop with destructuring into a tuple
@@ -321,35 +321,35 @@ switch_labels
 
 label_statement
   : CASE STRING ':'   {
-    ExpSingleValue val =
-      new ExpSingleValue("case \"" + $2.toString() + "\":", "label");
+    ExpLiteral val =
+      new ExpLiteral("case \"" + $2.toString() + "\":", "label");
     RTStatement lbl = val.ensureStatement();
     setPos(val, @$); setPos(lbl, @$);
     $$ = lbl;
   }
   | CASE INT ':'      {
-    ExpSingleValue val =
-      new ExpSingleValue("case " + $2.toString() + ":", "label");
+    ExpLiteral val =
+      new ExpLiteral("case " + $2.toString() + ":", "label");
     RTStatement lbl = val.ensureStatement();
     setPos(val, @$); setPos(lbl, @$);
     $$ = lbl;
   }
   | CASE BOOL_LITERAL ':'      {
-    ExpSingleValue val =
-      new ExpSingleValue("case " + $2.toString() + ":", "label");
+    ExpLiteral val =
+      new ExpLiteral("case " + $2.toString() + ":", "label");
     RTStatement lbl = val.ensureStatement();
     setPos(val, @$); setPos(lbl, @$);
     $$ = lbl;
   }
   | CASE VARIABLE ':' {
-    ExpSingleValue val =
-      new ExpSingleValue("case " + $2 + ":", "label");
+    ExpLiteral val =
+      new ExpLiteral("case " + $2 + ":", "label");
     RTStatement lbl = val.ensureStatement();
     setPos(val, @$); setPos(lbl, @$);
     $$ = lbl;
   }
   | DEFAULT ':'       {
-    ExpSingleValue val = new ExpSingleValue("default:", "label");
+    ExpLiteral val = new ExpLiteral("default:", "label");
     RTStatement lbl = val.ensureStatement();
     setPos(val, @$); setPos(lbl, @$);
     $$ = lbl;
@@ -428,11 +428,11 @@ args_list
 // add sth to a collection
 set_operation
   : VARIABLE PLUSEQ exp ';' {
-    ExpVariable var = setPos(new ExpVariable($1), @1);
+    ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
     $$ = setPos(new StatSetOperation(var, true, $3), @$);
   }
   | VARIABLE MINUSEQ exp ';' {
-    ExpVariable var = setPos(new ExpVariable($1), @1);
+    ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
     $$ = setPos(new StatSetOperation(var, false, $3), @$);
   }
   | ArrayAccess PLUSEQ exp ';' {
@@ -601,13 +601,13 @@ PostfixExpression
   ;
 
 PrimaryExpression
-  : NULL { $$ = setPos(new ExpSingleValue("null", "null"), @$); }
+  : NULL { $$ = setPos(new ExpLiteral("null", "null"), @$); }
   | NotJustName { $$ = $1; }
   | ComplexPrimary { $$ = $1; }
   ;
 
 NotJustName
-  : VARIABLE { $$ = setPos(new ExpVariable($1), @$); }
+  : VARIABLE { $$ = setPos(new ExpIdentifier($1), @$); }
   | '(' '(' type_spec ')' UnaryExpression ')' { $$ = setPos(new ExpCast($3, $5), @$); }
   ;
 
@@ -633,7 +633,7 @@ Literal
 
 ArrayAccess
   : VARIABLE '[' exp ']' {
-    ExpVariable var = setPos(new ExpVariable($1), @1);
+    ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
     $$ = setPos(new ExpArrayAccess(var, $3), @$);
   }
   | ComplexPrimary '[' exp ']' { $$ = setPos(new ExpArrayAccess($1, $3), @$); }
@@ -648,7 +648,7 @@ ConditionalExpression
 // a variable, an array element, an rdf slot (did i forget sth?)
 assignment
   : VARIABLE assgn_exp {
-    ExpVariable var = setPos(new ExpVariable($1), @1);
+    ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
     $$ = setPos(new ExpAssignment(var, $2), @$);
   }
   | field_access assgn_exp { $$ = setPos(new ExpAssignment($1, $2), @$); }
@@ -675,7 +675,7 @@ field_access_rest
   ;
 
 simple_nofa_exp
-  : VARIABLE { $$ = setPos(new ExpVariable($1), @$); }
+  : VARIABLE { $$ = setPos(new ExpIdentifier($1), @$); }
   | function_call { $$ = $1; }
   | '(' exp ')' { $$ = $2; }
   ;
@@ -726,9 +726,9 @@ dialogueact_exp
 
 da_token
   : '{' exp '}' { $$ = $2; }
-  | VARIABLE { $$ = setPos(new ExpVariable($1), @$); }
+  | VARIABLE { $$ = setPos(new ExpIdentifier($1), @$); }
   | STRING { $$ = setPos($1, @$); }
-  | WILDCARD { $$ = setPos(new ExpSingleValue($1, "String"), @$); }
+  | WILDCARD { $$ = setPos(new ExpLiteral($1, "String"), @$); }
   ;
 
 da_args

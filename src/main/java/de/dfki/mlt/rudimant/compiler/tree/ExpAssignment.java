@@ -43,7 +43,7 @@ public class ExpAssignment extends RTExpression {
   }
 
   public boolean leftIsVariable() {
-    return left instanceof ExpVariable;
+    return left instanceof ExpIdentifier;
   }
 
   public Iterable<? extends RudiTree> getDtrs() {

@@ -184,8 +184,8 @@ public class VisitorGeneration implements RudiVisitor {
       gen(node.left);
       if (replaceLastWithFuncall) {
         // TODO: shouldn't this be "... = {} " ??
-        if (node.right instanceof ExpSingleValue &&
-            ((ExpSingleValue)node.right).content.equals("null")) {
+        if (node.right instanceof ExpLiteral &&
+            ((ExpLiteral)node.right).content.equals("null")) {
           gen(".clearValue(").gen(pa.getPropertyName()).gen(')');
           replaceLastWithFuncall = false;
           return;
@@ -239,8 +239,8 @@ public class VisitorGeneration implements RudiVisitor {
     // TODO: MAYBE THIS MUST BE GENERALIZED TO OTHER JAVA TYPES THAN STRING
     // THAT CAN BE CONVERTED AUTOMATICALLY FROM XSD TYPES
     if (node.type.isStrictRdfType()) {
-      if (node instanceof ExpVariable
-          && ((ExpVariable) node).content.startsWith("\"")) {
+      if (node instanceof ExpIdentifier
+          && ((ExpIdentifier) node).content.startsWith("\"")) {
         String orig = mem.getFunctionOrigin("getRdfClass", null, "String");
         if (orig != null)
           gen(lowerCaseFirst(orig)).gen(".");
@@ -835,7 +835,7 @@ public class VisitorGeneration implements RudiVisitor {
   }
 
   @Override
-  public void visit(ExpSingleValue node) {
+  public void visit(ExpLiteral node) {
     if (node.type.isString()) {
       if (node.content.indexOf('"') != 0)
         node.content = "\"" + node.content + "\"";
@@ -850,7 +850,7 @@ public class VisitorGeneration implements RudiVisitor {
   }
 
   @Override
-  public void visit(ExpVariable node) {
+  public void visit(ExpIdentifier node) {
     if (node.type.castRequired()) {
       gen("((").gen(node.type.toJava()).gen(')');
     }

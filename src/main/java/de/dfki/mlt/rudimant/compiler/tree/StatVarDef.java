@@ -53,7 +53,7 @@ public class StatVarDef extends RTStatement {
     this.isDefinition = isFinal || !type.isUnspecified();
     this.type = type;
     assert(assign instanceof ExpAssignment);
-    this.variable = ((ExpVariable)((ExpAssignment)assign).left).content;
+    this.variable = ((ExpIdentifier)((ExpAssignment)assign).left).content;
     this.toAssign = ((ExpAssignment)assign).right;
   }
 

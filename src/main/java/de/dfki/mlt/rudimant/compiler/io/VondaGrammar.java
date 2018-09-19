@@ -909,7 +909,7 @@ public class VondaGrammar
   if (yyn == 56)
     /* "VondaGrammar.y":260  */ /* lalr1.java:489  */
     {
-    ExpVariable var = setPos(new ExpVariable((( String )(yystack.valueAt (7-(3))))), yystack.locationAt (7-(3)));
+    ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (7-(3))))), yystack.locationAt (7-(3)));
     yyval = setPos(new StatFor2(var, ((RTExpression)(yystack.valueAt (7-(5)))), ((RTStatement)(yystack.valueAt (7-(7))))), (yyloc));
   };
   break;
@@ -919,7 +919,7 @@ public class VondaGrammar
   if (yyn == 57)
     /* "VondaGrammar.y":264  */ /* lalr1.java:489  */
     {
-    ExpVariable var = setPos(new ExpVariable((( String )(yystack.valueAt (8-(4))))), yystack.locationAt (8-(4)));
+    ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (8-(4))))), yystack.locationAt (8-(4)));
     yyval = setPos(new StatFor2(((Type)(yystack.valueAt (8-(3)))), var, ((RTExpression)(yystack.valueAt (8-(6)))), ((RTStatement)(yystack.valueAt (8-(8))))), (yyloc));
   };
   break;
@@ -983,8 +983,8 @@ public class VondaGrammar
   if (yyn == 64)
     /* "VondaGrammar.y":323  */ /* lalr1.java:489  */
     {
-    ExpSingleValue val =
-      new ExpSingleValue("case \"" + (( ExpSingleValue )(yystack.valueAt (3-(2)))).toString() + "\":", "label");
+    ExpLiteral val =
+      new ExpLiteral("case \"" + (( ExpLiteral )(yystack.valueAt (3-(2)))).toString() + "\":", "label");
     RTStatement lbl = val.ensureStatement();
     setPos(val, (yyloc)); setPos(lbl, (yyloc));
     yyval = lbl;
@@ -996,8 +996,8 @@ public class VondaGrammar
   if (yyn == 65)
     /* "VondaGrammar.y":330  */ /* lalr1.java:489  */
     {
-    ExpSingleValue val =
-      new ExpSingleValue("case " + (( ExpSingleValue )(yystack.valueAt (3-(2)))).toString() + ":", "label");
+    ExpLiteral val =
+      new ExpLiteral("case " + (( ExpLiteral )(yystack.valueAt (3-(2)))).toString() + ":", "label");
     RTStatement lbl = val.ensureStatement();
     setPos(val, (yyloc)); setPos(lbl, (yyloc));
     yyval = lbl;
@@ -1009,8 +1009,8 @@ public class VondaGrammar
   if (yyn == 66)
     /* "VondaGrammar.y":337  */ /* lalr1.java:489  */
     {
-    ExpSingleValue val =
-      new ExpSingleValue("case " + (( ExpSingleValue )(yystack.valueAt (3-(2)))).toString() + ":", "label");
+    ExpLiteral val =
+      new ExpLiteral("case " + (( ExpLiteral )(yystack.valueAt (3-(2)))).toString() + ":", "label");
     RTStatement lbl = val.ensureStatement();
     setPos(val, (yyloc)); setPos(lbl, (yyloc));
     yyval = lbl;
@@ -1022,8 +1022,8 @@ public class VondaGrammar
   if (yyn == 67)
     /* "VondaGrammar.y":344  */ /* lalr1.java:489  */
     {
-    ExpSingleValue val =
-      new ExpSingleValue("case " + (( String )(yystack.valueAt (3-(2)))) + ":", "label");
+    ExpLiteral val =
+      new ExpLiteral("case " + (( String )(yystack.valueAt (3-(2)))) + ":", "label");
     RTStatement lbl = val.ensureStatement();
     setPos(val, (yyloc)); setPos(lbl, (yyloc));
     yyval = lbl;
@@ -1035,7 +1035,7 @@ public class VondaGrammar
   if (yyn == 68)
     /* "VondaGrammar.y":351  */ /* lalr1.java:489  */
     {
-    ExpSingleValue val = new ExpSingleValue("default:", "label");
+    ExpLiteral val = new ExpLiteral("default:", "label");
     RTStatement lbl = val.ensureStatement();
     setPos(val, (yyloc)); setPos(lbl, (yyloc));
     yyval = lbl;
@@ -1219,7 +1219,7 @@ public class VondaGrammar
   if (yyn == 90)
     /* "VondaGrammar.y":430  */ /* lalr1.java:489  */
     {
-    ExpVariable var = setPos(new ExpVariable((( String )(yystack.valueAt (4-(1))))), yystack.locationAt (4-(1)));
+    ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (4-(1))))), yystack.locationAt (4-(1)));
     yyval = setPos(new StatSetOperation(var, true, ((RTExpression)(yystack.valueAt (4-(3))))), (yyloc));
   };
   break;
@@ -1229,7 +1229,7 @@ public class VondaGrammar
   if (yyn == 91)
     /* "VondaGrammar.y":434  */ /* lalr1.java:489  */
     {
-    ExpVariable var = setPos(new ExpVariable((( String )(yystack.valueAt (4-(1))))), yystack.locationAt (4-(1)));
+    ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (4-(1))))), yystack.locationAt (4-(1)));
     yyval = setPos(new StatSetOperation(var, false, ((RTExpression)(yystack.valueAt (4-(3))))), (yyloc));
   };
   break;
@@ -1664,7 +1664,7 @@ public class VondaGrammar
   case 145:
   if (yyn == 145)
     /* "VondaGrammar.y":604  */ /* lalr1.java:489  */
-    { yyval = setPos(new ExpSingleValue("null", "null"), (yyloc)); };
+    { yyval = setPos(new ExpLiteral("null", "null"), (yyloc)); };
   break;
     
 
@@ -1685,7 +1685,7 @@ public class VondaGrammar
   case 148:
   if (yyn == 148)
     /* "VondaGrammar.y":610  */ /* lalr1.java:489  */
-    { yyval = setPos(new ExpVariable((( String )(yystack.valueAt (1-(1))))), (yyloc)); };
+    { yyval = setPos(new ExpIdentifier((( String )(yystack.valueAt (1-(1))))), (yyloc)); };
   break;
     
 
@@ -1713,7 +1713,7 @@ public class VondaGrammar
   case 152:
   if (yyn == 152)
     /* "VondaGrammar.y":620  */ /* lalr1.java:489  */
-    { yyval = ((ExpSingleValue)(yystack.valueAt (1-(1)))); };
+    { yyval = ((ExpLiteral)(yystack.valueAt (1-(1)))); };
   break;
     
 
@@ -1748,28 +1748,28 @@ public class VondaGrammar
   case 157:
   if (yyn == 157)
     /* "VondaGrammar.y":628  */ /* lalr1.java:489  */
-    { yyval = setPos((( ExpSingleValue )(yystack.valueAt (1-(1)))), (yyloc)); };
+    { yyval = setPos((( ExpLiteral )(yystack.valueAt (1-(1)))), (yyloc)); };
   break;
     
 
   case 158:
   if (yyn == 158)
     /* "VondaGrammar.y":629  */ /* lalr1.java:489  */
-    { yyval = setPos((( ExpSingleValue )(yystack.valueAt (1-(1)))), (yyloc)); };
+    { yyval = setPos((( ExpLiteral )(yystack.valueAt (1-(1)))), (yyloc)); };
   break;
     
 
   case 159:
   if (yyn == 159)
     /* "VondaGrammar.y":630  */ /* lalr1.java:489  */
-    { yyval = setPos((( ExpSingleValue )(yystack.valueAt (1-(1)))), (yyloc)); };
+    { yyval = setPos((( ExpLiteral )(yystack.valueAt (1-(1)))), (yyloc)); };
   break;
     
 
   case 160:
   if (yyn == 160)
     /* "VondaGrammar.y":631  */ /* lalr1.java:489  */
-    { yyval = setPos((( ExpSingleValue )(yystack.valueAt (1-(1)))), (yyloc)); };
+    { yyval = setPos((( ExpLiteral )(yystack.valueAt (1-(1)))), (yyloc)); };
   break;
     
 
@@ -1777,7 +1777,7 @@ public class VondaGrammar
   if (yyn == 161)
     /* "VondaGrammar.y":635  */ /* lalr1.java:489  */
     {
-    ExpVariable var = setPos(new ExpVariable((( String )(yystack.valueAt (4-(1))))), yystack.locationAt (4-(1)));
+    ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (4-(1))))), yystack.locationAt (4-(1)));
     yyval = setPos(new ExpArrayAccess(var, ((RTExpression)(yystack.valueAt (4-(3))))), (yyloc));
   };
   break;
@@ -1808,7 +1808,7 @@ public class VondaGrammar
   if (yyn == 165)
     /* "VondaGrammar.y":650  */ /* lalr1.java:489  */
     {
-    ExpVariable var = setPos(new ExpVariable((( String )(yystack.valueAt (2-(1))))), yystack.locationAt (2-(1)));
+    ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (2-(1))))), yystack.locationAt (2-(1)));
     yyval = setPos(new ExpAssignment(var, ((RTExpression)(yystack.valueAt (2-(2))))), (yyloc));
   };
   break;
@@ -1844,7 +1844,7 @@ public class VondaGrammar
   if (yyn == 169)
     /* "VondaGrammar.y":665  */ /* lalr1.java:489  */
     {
-    yyval = setPos(new ExpFieldAccess(((LinkedList<RTExpression>)(yystack.valueAt (2-(2))))), (yyloc)); ((LinkedList<RTExpression>)(yystack.valueAt (2-(2)))).addFirst(setPos((( ExpSingleValue )(yystack.valueAt (2-(1)))), (yyloc)));
+    yyval = setPos(new ExpFieldAccess(((LinkedList<RTExpression>)(yystack.valueAt (2-(2))))), (yyloc)); ((LinkedList<RTExpression>)(yystack.valueAt (2-(2)))).addFirst(setPos((( ExpLiteral )(yystack.valueAt (2-(1)))), (yyloc)));
   };
   break;
     
@@ -1873,7 +1873,7 @@ public class VondaGrammar
   case 173:
   if (yyn == 173)
     /* "VondaGrammar.y":678  */ /* lalr1.java:489  */
-    { yyval = setPos(new ExpVariable((( String )(yystack.valueAt (1-(1))))), (yyloc)); };
+    { yyval = setPos(new ExpIdentifier((( String )(yystack.valueAt (1-(1))))), (yyloc)); };
   break;
     
 
@@ -1995,21 +1995,21 @@ public class VondaGrammar
   case 187:
   if (yyn == 187)
     /* "VondaGrammar.y":729  */ /* lalr1.java:489  */
-    { yyval = setPos(new ExpVariable((( String )(yystack.valueAt (1-(1))))), (yyloc)); };
+    { yyval = setPos(new ExpIdentifier((( String )(yystack.valueAt (1-(1))))), (yyloc)); };
   break;
     
 
   case 188:
   if (yyn == 188)
     /* "VondaGrammar.y":730  */ /* lalr1.java:489  */
-    { yyval = setPos((( ExpSingleValue )(yystack.valueAt (1-(1)))), (yyloc)); };
+    { yyval = setPos((( ExpLiteral )(yystack.valueAt (1-(1)))), (yyloc)); };
   break;
     
 
   case 189:
   if (yyn == 189)
     /* "VondaGrammar.y":731  */ /* lalr1.java:489  */
-    { yyval = setPos(new ExpSingleValue((( String )(yystack.valueAt (1-(1)))), "String"), (yyloc)); };
+    { yyval = setPos(new ExpLiteral((( String )(yystack.valueAt (1-(1)))), "String"), (yyloc)); };
   break;
     
 
@@ -3227,7 +3227,7 @@ private static final short yycheck_[] = yycheck_init();
   // generic method
   private ExpAssignment createPlusMinus(RTExpression variable, String plusOrMinus,
                                          Location loc) {
-    ExpSingleValue es = setPos(new ExpSingleValue("1", "int"), loc);
+    ExpLiteral es = setPos(new ExpLiteral("1", "int"), loc);
     ExpArithmetic ar = setPos(new ExpArithmetic(variable, es, plusOrMinus), loc);
     ExpAssignment ass = setPos(new ExpAssignment(variable, ar), loc);
     return ass;

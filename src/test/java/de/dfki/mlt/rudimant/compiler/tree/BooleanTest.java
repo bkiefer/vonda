@@ -90,7 +90,7 @@ GREATER: '>';
     dtr = ((StatVarDef)dtr).toAssign;
     assertTrue(dtr instanceof ExpAssignment);
     dtr = ((ExpAssignment)dtr).right;
-    assertTrue(dtr instanceof ExpSingleValue);
+    assertTrue(dtr instanceof ExpLiteral);
     assertEquals("false should be of type Boolean", "boolean",
         (((RTExpression) dtr).getType().toJava()));
   }
