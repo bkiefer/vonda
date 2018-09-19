@@ -46,10 +46,10 @@ public class CompilerMain {
   public static Map<String, Object> configs;
   public static File confDir;
 
-  public static boolean process(RudimantCompiler rc, String file)
+  public static boolean process(RudimantCompiler rc, File file)
       throws IOException {
     try {
-      rc.processToplevel(new File(file));
+      rc.processToplevel(file);
     } catch (UnsupportedOperationException ex) {
       if (ex.getMessage().startsWith("Parsing")) return true;
       throw(ex);
@@ -180,7 +180,7 @@ public class CompilerMain {
       }
       main.setConfig(configs);
       rc = new RudimantCompiler(confDir, configs);
-      if (process(rc, (String)files.get(0))) {
+      if (process(rc, new File((String)files.get(0)))) {
         System.out.println("Parsing failed");
         System.exit(1);
       }

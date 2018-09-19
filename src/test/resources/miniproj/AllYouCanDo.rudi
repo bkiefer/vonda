@@ -238,7 +238,7 @@ z1 = filter(p.hasHistory, (h) -> ((QuizHistory)h) <= QuizHistory);
 z2 = filter(p.hasHistory, (QuizHistory h) -> h <= QuizHistory);
 z3 = filter(p.hasHistory, (h) -> h <= QuizHistory);
 
-for (int h = 0; h < 3; ++h) { logger.info(h); }
+for (int h = 0; h < 3; ++h) { logger.info(Integer.toString(h)); }
 
 int func(String h) {
   h = "foo";

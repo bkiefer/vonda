@@ -22,10 +22,15 @@ import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.RESOURCE_DIR;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.mlt.rudimant.compiler.CompilerMain;
 import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
@@ -34,17 +39,24 @@ import static de.dfki.mlt.rudimant.compiler.Constants.*;
 
 
 public class CoverageTest {
+  public int startCompiler(File dir) throws IOException, InterruptedException {
+    // java -jar ../../tecs_server/tecs-server-2.0.0.jar -c -p PORT
+    Process mvn = Runtime.getRuntime().exec(
+        new String[]{"mvn", "clean", "test"}, new String[]{}, dir );
+    return mvn.waitFor();
+  }
 
   @Test
-  public void Test() throws Exception {
-    // enter here the file whose compilation you'd like to debug
-    Map<String, Object> configs = CompilerMain.defaultConfig();
-    configs.put(CFG_OUTPUT_DIRECTORY, new File("target/generated/"));
-    configs.put(CFG_ONTOLOGY_FILE,
-        RESOURCE_DIR + "ontologies/inits/pal.inference.ini");
+  public void testCoverageAndJava() throws Exception {
+    Path confFile = Paths.get(RESOURCE_DIR, "miniproj", "config.yml");
+    File confDir = confFile.toFile().getParentFile();
+    Yaml yaml = new Yaml();
+    @SuppressWarnings("unchecked")
+    Map<String, Object> configs =
+        (Map<String, Object>) yaml.load(new FileReader(confFile.toFile()));
     configs.put(CFG_VISUALISE, true);
-    RudimantCompiler rc = new RudimantCompiler(new File("."), configs);
-    assertFalse(CompilerMain.process(rc, "doc/AllYouCanDo.rudi"));
-    assertTrue(new File("target/generated/AllYouCanDo.java").exists());
+    RudimantCompiler rc = new RudimantCompiler(confDir, configs);
+    assertFalse(CompilerMain.process(rc, new File(confDir, "AllYouCanDo.rudi")));
+    //assertEquals(0, startCompiler(confDir));
   }
 }
