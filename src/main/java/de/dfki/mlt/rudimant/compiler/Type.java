@@ -523,13 +523,24 @@ public class Type {
     _parameterTypes.add(inner);
   }
 
+  @SuppressWarnings("serial")
+  private Type checkDefaultCollection() {
+    if (! isUnspecified() || getInnerType() == null) return this;
+    Type i = getInnerType();
+    return new Type("Array",
+        new ArrayList<Type>(){{ add(i);
+        // TODO: MAYBE WE WANT THIS?
+          //add(i.isPODType() ? new Type(i.getContainer()) : i);
+        }});
+  }
+
   public Type unifyTypes(Type right) {
     if (isUnspecified() || isNull() || _name.equals("Object")
-        || isTypeVariable()) return right;
+        || isTypeVariable()) return right.checkDefaultCollection();
     if (right == null || right.isNull() || this.equals(right)
         || ((right.isUnspecified() || right.isTypeVariable())
             && right._parameterTypes == null))
-      return this;
+      return this.checkDefaultCollection();
     // TODO: this is not for types with more than one parameter type. Can it be
     // extended?
     int leftCollCode = getCollectionCode();
@@ -537,31 +548,44 @@ public class Type {
     if ((leftCollCode | rightCollCode) != 0) {
       // collection vs. simple type?
       if (leftCollCode == 0 || rightCollCode == 0
-          || _parameterTypes.size() != right._parameterTypes.size())
+          || (_parameterTypes != null && right._parameterTypes != null
+              && _parameterTypes.size() != right._parameterTypes.size()))
         return null;
-      List<Type> resParamTypes = new ArrayList<Type>();
-      for (int i = 0; i < _parameterTypes.size(); ++i) {
-        Type innerLeft = _parameterTypes.get(i);
-        Type innerRight = right._parameterTypes.get(i);
-        Type inner = null;
-        if (innerLeft == null) {
-          inner =  innerRight;
-        } else if (innerRight == null) {
-          inner = innerLeft;
-        } else {
-          inner = innerLeft.unifyTypes(innerRight);
-        }
-        if (inner == null)
-          return null;
-        resParamTypes.add(inner);
-      }
       String outer = (leftCollCode & rightCollCode) == leftCollCode ?
           this._name : right._name;
+      List<Type> resParamTypes = new ArrayList<Type>();
+      if (_parameterTypes == null && right._parameterTypes == null) {
+        return new Type(outer);
+      } else if (_parameterTypes == null) {
+        resParamTypes.addAll(right._parameterTypes);
+      } else if (right._parameterTypes == null) {
+        resParamTypes.addAll(_parameterTypes);
+      } else {
+        for (int i = 0; i < _parameterTypes.size(); ++i) {
+          Type innerLeft = _parameterTypes.get(i);
+          Type innerRight = right._parameterTypes.get(i);
+          Type inner = null;
+          if (innerLeft == null) {
+            inner =  innerRight;
+          } else if (innerRight == null) {
+            inner = innerLeft;
+          } else {
+            inner = innerLeft.unifyTypes(innerRight);
+          }
+          if (inner == null)
+            return null;
+          resParamTypes.add(inner);
+        }
+      }
+      if (resParamTypes.size() == 1 && outer == null) {
+        outer = "Array";
+      }
       if (! "Array".equals(outer) && resParamTypes.get(0).isPODType()) {
         resParamTypes.set(0, new Type(resParamTypes.get(0).getContainer()));
       }
       return new Type(outer, resParamTypes);
     }
+    // non-collection type
     Type result = unifyBasicTypes(right);
     if (result == null) return result;
     result._castRequired = (isStrictRdfType() || isXsdType())

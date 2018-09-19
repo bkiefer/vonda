@@ -244,8 +244,8 @@ public class VisitorType implements RudiVisitor {
     }
     if (mergeType.isUnspecified() && node.right instanceof ExpListLiteral) {
       List<Type> inner = new ArrayList<>();
-      inner.add(mergeType.getInnerType());
-      mergeType = node.right.type = new Type("Array", inner);
+      Type mergeInner = mergeType.getInnerType();
+      inner.add(mergeInner != null ? mergeInner : getNoType());
     }
     node.type = mergeType;
     if (! node.right.type.equals(node.type)) {
