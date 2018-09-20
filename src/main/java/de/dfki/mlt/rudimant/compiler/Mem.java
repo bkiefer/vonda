@@ -196,6 +196,10 @@ public class Mem {
     return currentInfo instanceof RuleInfo ? (RuleInfo)currentInfo : null;
   }
 
+  public boolean functionDefined(String funcname, Type functype) {
+    return currentEnv.functionDefined(funcname, functype);
+  }
+
   /** Add a function/method declaration, optionally with return and parameter
    *  types. If the types are not known, it's assumed they are null.
    *
@@ -239,7 +243,7 @@ public class Mem {
    * @return true if the variable is not already defined, false otherwise
    */
   public boolean addVariableDeclaration(String variable, Type type) {
-    if (currentEnv.isVarDefined(variable)) {
+    if (currentEnv.isVarLocallyDefined(variable)) {
       return false;
     }
     putVariableDeclaration(variable, type);
@@ -253,7 +257,7 @@ public class Mem {
    * @param type
    * @return true if the variable is not already defined, false otherwise
    */
-  public void putVariableDeclaration(String variable, Type type) {
+  private void putVariableDeclaration(String variable, Type type) {
     String origin = getClassName();
     currentEnv.put(variable, type, origin);
     logger.trace("Add var {}:{} [{}]", blockNesting, variable, type);
@@ -261,6 +265,10 @@ public class Mem {
 
   public boolean variableExists(String variable) {
     return currentEnv.isVarDefined(variable);
+  }
+
+  public boolean variableExistsLocally(String variable) {
+    return currentEnv.isVarLocallyDefined(variable);
   }
 
   /** get the class where the given variable was defined

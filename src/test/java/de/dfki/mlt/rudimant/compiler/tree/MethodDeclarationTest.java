@@ -26,6 +26,8 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 
+import de.dfki.mlt.rudimant.compiler.TypeException;
+
 public class MethodDeclarationTest {
 
   @BeforeClass
@@ -83,12 +85,18 @@ public class MethodDeclarationTest {
 
   @Test
   public void testCallUpon1(){
-    String methdecl = " [List<T>]. T get(int a); List<String> l;"
-    		+ "x = l.get(0);";
+    String methdecl = " [List<T>]. T gett(int a); List<String> l;"
+    		+ "x = l.gett(0);";
     String s = generate(methdecl);
-    String expected = "public List<String> l;public String x;/**/x = l.get(0);";
+    String expected = "public List<String> l;public String x;/**/x = l.gett(0);";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("String x;"));
     assertTrue(s.contains("List<String> l;"));
+  }
+
+  @Test(expected=TypeException.class)
+  public void testFunctionRedeclaration() throws Throwable {
+    String methdecl = "[String]. long length();";
+    String s = getTypeError(methdecl);
   }
 }

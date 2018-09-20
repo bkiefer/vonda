@@ -76,6 +76,14 @@ public class WeirdCasesTest {
     assertEquals(expected, getForMarked(r, expected));
   }
 
+  @Test
+  public void testVarRedefBlock() {
+    String in = "List<String> h; { int h = 0; }";
+    String r = generate(in);
+    String expected = "public List<String> h;/**/{ int h = 0; } }";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
   /* "repaired" by adding def for containsKey  */
 //  @Test
 //  public void testStrangeMethCall() {

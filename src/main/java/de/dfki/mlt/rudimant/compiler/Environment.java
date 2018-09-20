@@ -39,7 +39,17 @@ public class Environment {
   public static Environment getEnvironment(Environment parent) {
     // by copying the existing environment, we avoid searching through all
     // lower environments at the cost of bigger space consumption
-    return parent == null ? new Environment() : parent.deepCopy();
+    // Unfortunately, this is wrong since we can not distinguish between
+    // locally redefining a variable (error) and creating a new binding in an
+    // embedded environment (ok)
+    //return parent == null ? new Environment() : parent.deepCopy();
+    // the current solution might be improved by keeping a separate
+    // Environment where the definitions of all parents are kept, separate from
+    // the local definitions, and local defs are copied there when a new Env
+    // is created (could reuse deepCopy)
+    Environment result = new Environment();
+    result._parent = parent;
+    return result;
   }
 
   private Environment() {
@@ -48,6 +58,7 @@ public class Environment {
     functions = new HashMap<>();
   }
 
+  /*
   private Environment deepCopy() {
     Environment newEnv = new Environment();
     newEnv.variableOrigin.putAll(variableOrigin);
@@ -56,6 +67,7 @@ public class Environment {
     newEnv._parent = this;
     return newEnv;
   }
+  */
 
   /** Set the type t and origin o (from which file) for variable v */
   public void put(String var, Type type, String origin) {
@@ -63,12 +75,32 @@ public class Environment {
     variableOrigin.put(var, origin);
   }
 
-  public boolean isVarDefined(String k) {
+  private Environment getDefiningVarEnv(String k) {
+    Environment env = this;
+    while (env != null && ! env.isVarLocallyDefined(k)) {
+      env = env._parent;
+    }
+    return env;
+  }
+
+  /** Return true if a variable with this name was defined in this local scope */
+  public boolean isVarLocallyDefined(String k) {
     return variableToType.containsKey(k);
   }
 
+  /** Return true if a variable with this name was defined in some accessible
+   *  scope
+   */
+  public boolean isVarDefined(String k) {
+    return getDefiningVarEnv(k) != null;
+  }
+
+  /** Return the type of the variable with name k, if defined in some accessible
+   *  scope, null otherwise.
+   */
   public Type getType(String k) {
-    return variableToType.get(k);
+    Environment env = getDefiningVarEnv(k);
+    return env == null ? null : env.variableToType.get(k);
   }
 
   /**
@@ -76,7 +108,15 @@ public class Environment {
    * top level, in which case the origin is not of our concern
    */
   public String getOrigin(String k) {
-    return variableOrigin.get(k);
+    Environment env = getDefiningVarEnv(k);
+    return env == null ? null : env.variableOrigin.get(k);
+  }
+
+  /** Return true if there is already a function defined with this name and type */
+  public boolean functionDefined(String funcname, Type functype) {
+    Function f = getFunction(funcname, functype);
+    return f != null
+        && !f.getType().getReturnType().equals(functype.getReturnType());
   }
 
   /**
@@ -89,40 +129,29 @@ public class Environment {
    * @param origin first element class, second rule origin
    */
   public void addFunction(String funcname, Type functype, String origin) {
-    // test whether we already have an entry for this method
-    if (functions.keySet().contains(funcname)) {
-      for (Function f : functions.get(funcname)) {
-        if (f.signatureMatches(functype)) {
-          /* TODO: ADAPT
-          // in this case we have an obvious error
-          if (!f.isReturnType(functype)) {
-            // TODO: add a description about where we are in the input file
-            logger.warn("redeclaring function " + funcname
-                    + " with new return type - was: " + f.getReturnType()
-                    + " is: " + functype);
-          }*/
-          return;
-        }
-      }
-      // else: just add the method
-    } else {
-      // if we did not know of this method until now, create a new entry for it
+    if (! functions.containsKey(funcname)) {
       functions.put(funcname, new HashSet<Function>());
     }
     functions.get(funcname).add(new Function(funcname, origin, functype));
   }
 
-  /** returns null if there is no such function, the function otherwise
-  *
-  * @param funcname the name of the function
-  * @return its return type or null
-  */
+  /** if defined in an accessible scope return the function with this name and
+   *  compatible type (excluding return type), null otherwise.
+   *
+   * @param funcname the name of the function
+   * @return the Function or null
+   */
   public Function getFunction(String funcname, Type actualParameterTypes) {
-    if (!functions.containsKey(funcname)) return null;
-    for (Function f : functions.get(funcname)) {
-      if (f.signatureMatches(actualParameterTypes)) {
-        return f;
+    Environment env = this;
+    while (env != null) {
+      if (env.functions.containsKey(funcname)) {
+        for (Function f : env.functions.get(funcname)) {
+          if (f.signatureMatches(actualParameterTypes)) {
+            return f;
+          }
+        }
       }
+      env = env._parent;
     }
     return null;
   }

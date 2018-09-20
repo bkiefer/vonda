@@ -442,7 +442,7 @@ public class VisitorType implements RudiVisitor {
       if (parType.isXsdType() || parType.isStrictRdfType())
         parType.setCastRequired();
       // an arg always overwrites any defined var
-      mem.putVariableDeclaration(arg, parType);
+      mem.addVariableDeclaration(arg, parType);
     }
     if (node.body instanceof RTExpression) {
       RTExpression exp = (RTExpression)node.body;
@@ -542,7 +542,7 @@ public class VisitorType implements RudiVisitor {
         }
       }
     }
-    mem.putVariableDeclaration(node.var.content, node.varType);
+    mem.addVariableDeclaration(node.var.content, node.varType);
     node.statblock.visit(this);
     mem.leaveEnvironment(node);
   }
@@ -621,13 +621,17 @@ public class VisitorType implements RudiVisitor {
   @Override
   public void visit(StatVarDef node) {
     if (node.forceDeclaration) {
-      mem.putVariableDeclaration(node.variable, node.type);
+      mem.addVariableDeclaration(node.variable, node.type);
     } else {
-      if (node.isDefinition && mem.variableExists(node.variable)) {
-        typeError("Re-defined variable " + node.variable
-            + " from " + mem.getVariableType(node.variable).toString()
-            + " to " + node.type.toString() +
-            ", keeping the old type", node);
+      if (node.isDefinition) {
+        if (mem.variableExistsLocally(node.variable)) {
+          typeError("Re-defined variable " + node.variable
+              + " from " + mem.getVariableType(node.variable).toString()
+              + " to " + node.type.toString() +
+              ", keeping the old type", node);
+        } else {
+          mem.addVariableDeclaration(node.variable, node.type);
+        }
       }
       if (mem.variableExists(node.variable)) {
         if (node.type.isUnspecified())
@@ -647,7 +651,7 @@ public class VisitorType implements RudiVisitor {
     }
 
     if (node.forceDeclaration || ! mem.variableExists(node.variable)) {
-      mem.putVariableDeclaration(node.variable, node.type);
+      mem.addVariableDeclaration(node.variable, node.type);
       // mark as declaration
       node.isDefinition = true;
     }
@@ -655,7 +659,14 @@ public class VisitorType implements RudiVisitor {
 
   @Override
   public void visit(StatMethodDeclaration node) {
-    mem.addFunction(node.name, node.function_type);
+    if (mem.functionDefined(node.name, node.function_type)) {
+      typeError("redeclaring function " + node.name
+          + " with new return type " + node.function_type.getReturnType()
+          + ", was: " + mem.getFunction(node.name,
+              node.function_type).getType().getReturnType(), node);
+    } else {
+      mem.addFunction(node.name, node.function_type);
+    }
     Iterator<Type> parTypes = node.function_type.getParameterTypes();
     if (node.block != null) {
       // The following variables (function parameters) are local to the method
@@ -664,7 +675,7 @@ public class VisitorType implements RudiVisitor {
       mem.enterEnvironment(node);
       // add parameters to environment
       for (String par: node.parameters) {
-        mem.putVariableDeclaration(par, parTypes.next());
+        mem.addVariableDeclaration(par, parTypes.next());
       }
       node.block.visit(this);
       mem.leaveEnvironment(node);

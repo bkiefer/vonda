@@ -781,12 +781,13 @@ public class Type {
   }
 
   public int hashCode() {
-    int result = _name.hashCode();
+    int result = (_name == null) ? 777 : _name.hashCode();
     if (_class != null) {
       result = 7 * result + _class.hashCode();
     }
     if (_parameterTypes != null) {
-      for (Type t : _parameterTypes) result = 7 * result + t.hashCode();
+      for (Type t : _parameterTypes)
+        if (t != null) result = 7 * result + t.hashCode();
     }
     return result;
   }
