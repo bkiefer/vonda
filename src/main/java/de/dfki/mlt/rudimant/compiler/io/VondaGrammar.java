@@ -929,7 +929,7 @@ public class VondaGrammar
   if (yyn == 58)
     /* "VondaGrammar.y":273  */ /* lalr1.java:489  */
     {
-    yyval = setPos(new StatVarDef(true, Type.getNoType(), (( String )(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(2))))), (yyloc));
+    yyval = setPos(new StatVarDef(false, Type.getNoType(), (( String )(yystack.valueAt (3-(1)))), ((RTExpression)(yystack.valueAt (3-(2))))), (yyloc));
   };
   break;
     

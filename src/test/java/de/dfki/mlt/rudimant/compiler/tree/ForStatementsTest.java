@@ -124,6 +124,14 @@ public class ForStatementsTest {
     assertEquals(exp, getForMarked(s, exp));
   }
 
+  @Test
+  public void test6() {
+    String stat = "for (abc = 1; abc < 10; abc++) { ++abc;}";
+    String s = generate(stat);
+    String expected = "for ( int abc = 1;abc < 10;abc = (abc+1)){ abc = (abc+1); }";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
   // TODO: COMPLETE FOR ALL FOR LOOPS, WHILE, AND DO ... WHILE
 
 }

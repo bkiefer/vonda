@@ -271,7 +271,7 @@ for_statement
 
 var_decl
   : VARIABLE assgn_exp ';' {
-    $$ = setPos(new StatVarDef(true, Type.getNoType(), $1, $2), @$);
+    $$ = setPos(new StatVarDef(false, Type.getNoType(), $1, $2), @$);
   }
   | type_spec VARIABLE assgn_exp ';' {
     $$ = setPos(new StatVarDef(false, $1, $2, $3), @$);
