@@ -620,23 +620,19 @@ public class VisitorType implements RudiVisitor {
   /** An explicit variable declaration, without assignment, just definition */
   @Override
   public void visit(StatVarDef node) {
-    if (node.forceDeclaration) {
-      mem.addVariableDeclaration(node.variable, node.type);
-    } else {
-      if (node.isDefinition) {
-        if (mem.variableExistsLocally(node.variable)) {
-          typeError("Re-defined variable " + node.variable
-              + " from " + mem.getVariableType(node.variable).toString()
-              + " to " + node.type.toString() +
-              ", keeping the old type", node);
-        } else {
-          mem.addVariableDeclaration(node.variable, node.type);
-        }
+    if (node.isDefinition) {
+      if (mem.variableExistsLocally(node.variable)) {
+        typeError("Re-defined variable " + node.variable
+            + " from " + mem.getVariableType(node.variable).toString()
+            + " to " + node.type.toString() +
+            ", keeping the old type", node);
+      } else {
+        mem.addVariableDeclaration(node.variable, node.type);
       }
-      if (mem.variableExists(node.variable)) {
-        if (node.type.isUnspecified())
-          node.type = mem.getVariableType(node.variable);
-      }
+    }
+    if (mem.variableExists(node.variable)) {
+      if (node.type.isUnspecified())
+        node.type = mem.getVariableType(node.variable);
     }
 
     if (node.toAssign != null) {
@@ -650,7 +646,7 @@ public class VisitorType implements RudiVisitor {
       }
     }
 
-    if (node.forceDeclaration || ! mem.variableExists(node.variable)) {
+    if (! mem.variableExists(node.variable)) {
       mem.addVariableDeclaration(node.variable, node.type);
       // mark as declaration
       node.isDefinition = true;
@@ -722,9 +718,15 @@ public class VisitorType implements RudiVisitor {
   @Override
   public void visit(StatFor1 node) {
     mem.enterEnvironment(node);
-    node.initialization.visit(this);
-    node.condition.visit(this);
-    node.increment.visit(this);
+    if (node.initialization != null) {
+      // Koenig binding
+      node.initialization.isDefinition = true;
+      node.initialization.visit(this);
+    }
+    if (node.condition != null)
+      node.condition.visit(this);
+    if (node.increment != null)
+      node.increment.visit(this);
     node.statblock.visit(this);
     node.condition = node.condition.ensureBoolean();
     mem.leaveEnvironment(node);

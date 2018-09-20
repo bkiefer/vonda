@@ -39,7 +39,6 @@ public class StatFor1 extends RTStatement implements RTBlockNode {
   public StatFor1(StatVarDef assignment, RTExpression condition,
           RTExpression arithmetic, RTStatement statblock) {
     this.initialization = assignment;
-    assignment.forceDeclaration = true; // Koenig binding
     this.condition = condition;
     this.increment = arithmetic;
     this.statblock = statblock;
