@@ -35,6 +35,7 @@ public class Environment {
   private Map<String, Type> variableToType;
   private Map<String, String> variableOrigin;
   private HashMap<String, Set<Function>> functions;
+  private HashMap<String, Set<Type>> fields;
 
   public static Environment getEnvironment(Environment parent) {
     // by copying the existing environment, we avoid searching through all
@@ -56,6 +57,7 @@ public class Environment {
     variableToType = new HashMap<>();
     variableOrigin = new HashMap<>();
     functions = new HashMap<>();
+    fields = new HashMap<>();
   }
 
   /*
@@ -154,6 +156,24 @@ public class Environment {
       env = env._parent;
     }
     return null;
+  }
+  
+  public Type getFieldType(String fieldname, Type calledUpon) {
+    if (fields.containsKey(fieldname)) {
+      for (Type t : fields.get(fieldname)) {
+        if (t.isCalledUpon(calledUpon)) {
+          return t.getFieldType();
+        }
+      }
+    }
+    return null;
+  }
+  
+  public void addField(String fieldname, Type type) {
+    if (! fields.containsKey(fieldname)) {
+      fields.put(fieldname, new HashSet<Type>());
+    }
+    fields.get(fieldname).add(type);
   }
 
   /** Environment is a stack, return the parent of this environment */

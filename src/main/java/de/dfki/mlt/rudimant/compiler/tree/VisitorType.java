@@ -681,6 +681,8 @@ public class VisitorType implements RudiVisitor {
   /** Top-level field (variable) definition */
   @Override
   public void visit(StatFieldDef node) {
+    if (node.calledUpon != null)
+      node.varDef.type = getFieldType(node.calledUpon, node.varDef.type);
     node.varDef.visit(this);
   }
 
@@ -830,7 +832,7 @@ public class VisitorType implements RudiVisitor {
     RTExpression currentNode = node.parts.get(0); // can not be empty
     currentNode.visit(this);
     // The type to which the next field access item is applied
-    Type currentType = ((RTExpression) currentNode).type;
+    Type currentType = currentNode.type;
     // this is dangerous, and only works if this condition can not be
     // "interrupted"
     partOfFieldAccess = true;
@@ -850,7 +852,7 @@ public class VisitorType implements RudiVisitor {
           currentType = acc.getType();
         } else if (currentNode instanceof RTExpression) {
           // could also be a method application, possibly, what else?
-          currentType = ((RTExpression) currentNode).type;
+          currentType = currentNode.type;
         } else {
           currentType = getNoType();
         }
@@ -859,14 +861,24 @@ public class VisitorType implements RudiVisitor {
         //    currentNode being a function call, but if it is a variable we get
         //    either nothing or - worse - the type of some unrelated local variable;
     	  //		which other expressions need to be handled cautiously?
-        if (currentNode instanceof RTExpression
-            && !(currentNode instanceof ExpIdentifier)) {
-          currentType = ((RTExpression) currentNode).type;
+        if (currentNode instanceof ExpIdentifier) {
+          currentNode.type = mem.getFieldType(
+                  ((ExpIdentifier) currentNode).content, currentType);
+          if (currentNode.type == null) {
+            currentNode.type = getNoType();
+            typeError("No field of name "
+                    + ((ExpIdentifier) currentNode).content
+                    + " known for class " + currentType, node);
+          }
+        } /*else if (currentNode instanceof RTExpression) {
+           && !(currentNode instanceof ExpIdentifier)
+          currentType = currentNode.type;
         } else {
           currentType = getNoType();
-        }
+        }*/
+        currentType = currentNode.type;
       }
-      ((RTExpression) currentNode).type = currentType;
+      currentNode.type = currentType;
     }
     node.type = currentType; // the final result type
     partOfFieldAccess = false;

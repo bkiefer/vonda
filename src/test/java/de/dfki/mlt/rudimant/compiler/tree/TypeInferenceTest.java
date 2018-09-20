@@ -245,4 +245,11 @@ public class TypeInferenceTest {
     String expected = "public Rdf c;public Rdf a;/**/a = (Rdf) random(((Set<Object>)c.getValue(\"<dom:hasHobby>\")));";
     assertEquals(expected, getForMarked(s, expected));
   }
+  @Test
+  public void test18() {
+    String in = "SomeClass c; [SomeClass]. int somevar; s = c.somevar;";
+    String s = generate(in);
+    String expected = "public SomeClass c;public int s;/**/s = c.somevar;";
+    assertEquals(expected, getForMarked(s, expected));
+  }
 }

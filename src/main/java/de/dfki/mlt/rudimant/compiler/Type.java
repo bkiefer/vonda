@@ -223,8 +223,24 @@ public class Type {
     parameterTypes.add(retType);
     if (methodOfType != null)
       parameterTypes.add(methodOfType);
-    parameterTypes.addAll(paramTypes);
+    if (paramTypes != null)
+      parameterTypes.addAll(paramTypes);
     return new Type(methodOfType == null ? "Function" : "Method", parameterTypes);
+  }
+  
+  public static Type getFieldType(Type calledUpon, Type type) {
+    Type t = getFunctionType(type, calledUpon, null);
+    t._name = "Field";
+    return t;
+  }
+  
+  public boolean isCalledUpon(Type type) {
+    return "Field".equals(_name) &&
+            this._parameterTypes.get(1).equals(type);
+  }
+  
+  public Type getFieldType() {
+    return "Field".equals(_name) ? this._parameterTypes.get(0) : null;
   }
 
   private Type renameTypeVars(int[] i, Map<String, String> map) {
@@ -432,6 +448,10 @@ public class Type {
 
   public boolean isStringConvertible() {
     return isPODType() || isRdfType() || isNumber();
+  }
+  
+  public boolean isField() {
+    return "Field".equals(_name);
   }
 
   public String getStringConversionFunction() {

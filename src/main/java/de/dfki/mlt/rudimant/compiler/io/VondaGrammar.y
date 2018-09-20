@@ -28,6 +28,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %type <RTExpression> ComplexPrimaryNoParenthesis field_access ArrayAccess
 %type <RTExpression> function_call simple_nofa_exp da_token
 %type <StatVarDef> var_def var_decl
+%type <StatFieldDef> field_def
 %type <RTStatement> statement_no_def statement blk_statement set_operation
 %type <RTStatement> return_statement propose_statement timeout_statement
 %type <RTStatement> while_statement for_statement
@@ -151,6 +152,9 @@ grammar_file
   }
   | var_def grammar_file  {
     $$ = $2; $2.addFirst(setPos(new StatFieldDef(null, $1), @1));
+  }
+  | field_def grammar_file {
+    $$ = $2; $2.addFirst($1);
   }
   | %empty { $$ = _statements;}
   ;
@@ -374,6 +378,13 @@ var_def
   }
   | FINAL type_spec VARIABLE ';' {
     $$ = setPos(new StatVarDef(true, $2, $3, null), @$);
+  }
+  ;
+
+field_def
+  : '[' type_spec ']' '.' type_spec VARIABLE ';' {
+    $$ = setPos(new StatFieldDef(null,
+                      setPos(new StatVarDef(false, $5, $6, null), @$), $2), @$);
   }
   ;
 

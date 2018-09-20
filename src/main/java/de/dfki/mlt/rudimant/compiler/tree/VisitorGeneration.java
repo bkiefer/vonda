@@ -740,6 +740,10 @@ public class VisitorGeneration implements RudiVisitor {
   /** Top-level field (variable) definition: only spit out definition! */
   @Override
   public void visit(StatFieldDef node) {
+    // Don't print if this is only info about a field of some other class
+    // TODO: Normally we shouldn't need this because all this info should go
+    //       into wrapper class rudi...
+    if (node.calledUpon != null) return;
     gen(node.visibility).gen(node.varDef.varIsFinal ? " final ": " ")
        .gen(node.varDef.type.toJava()).gen(" ")
        .gen(node.varDef.variable).gen(";");

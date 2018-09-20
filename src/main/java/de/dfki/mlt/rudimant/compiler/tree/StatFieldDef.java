@@ -34,6 +34,7 @@ public class StatFieldDef extends RTStatement {
 
   String visibility;
   StatVarDef varDef;
+  Type calledUpon;
 
   public StatFieldDef(String visibility, StatVarDef varDef) {
     if (visibility != null)
@@ -44,13 +45,21 @@ public class StatFieldDef extends RTStatement {
     this.varDef = varDef;
   }
 
+  public StatFieldDef(String visibility, StatVarDef varDef, Type calledUpon) {
+    // Actually, visibility shouldn't matter as this is only for Mem-info
+    this.visibility = visibility != null? visibility : "public";
+    this.varDef = varDef;
+    this.calledUpon = calledUpon;
+  }
+
   @Override
   public void visit(RudiVisitor v) {
     v.visit(this);
   }
 
   public String toString() {
-    return (visibility != null ? visibility + " " : "") + varDef;
+    return (visibility != null ? visibility + " " : "") +
+            (calledUpon != null ? calledUpon + " " : "") + varDef;
   }
 
   @SuppressWarnings("serial")
