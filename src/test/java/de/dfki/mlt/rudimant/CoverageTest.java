@@ -57,6 +57,6 @@ public class CoverageTest {
     configs.put(CFG_VISUALISE, true);
     RudimantCompiler rc = new RudimantCompiler(confDir, configs);
     assertFalse(CompilerMain.process(rc, new File(confDir, "AllYouCanDo.rudi")));
-    //assertEquals(0, startCompiler(confDir));
+    assertEquals(0, startCompiler(confDir));
   }
 }

@@ -3,7 +3,7 @@
 // **********************************************************************
 
 // declare a Java method
-[String]. int length();
+[Object]. boolean equals(Object);
 
 // Define a variable of an RDF type
 Child child;
@@ -242,4 +242,9 @@ for (int h = 0; h < 3; ++h) { logger.info(Integer.toString(h)); }
 
 int func(String h) {
   h = "foo";
+}
+
+{
+  int h = 1;
+  ++h;
 }
