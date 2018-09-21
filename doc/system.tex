@@ -73,7 +73,11 @@ of the agent. A \texttt{Yaml} project file contains all necessary information
 for compilation: the ontology, the wrapper class, the top-level rule file and
 other parameters, like custom compile commands.
 
-The \vonda compiler translates rule files with the extension \texttt{.rudi} to Java files. During this process, the ontology storing the RDF classes and properties is used to automatically infer types, resolve whether field accesses are actually accesses to the database, etc (see section \ref{sec:typeinference}).
+The \vonda compiler translates rule files with the extension \texttt{.rudi} to
+Java files. During this process, the ontology storing the RDF classes and
+properties is used to automatically infer types, resolve whether field accesses
+are actually accesses to the database, etc (see section
+\ref{sec:typeinference}).
 
 Every rule file can define variables and functions in \vonda syntax which are
 then available to all imported files.
@@ -82,7 +86,11 @@ The current structure assumes that most of the Java functionality that is used
 inside the rule files will be provided by \texttt{Agent} superclass. There are,
 however, alternative ways to use other Java classes directly.
 
-The methods and fields from the custom wrapper class can be made available to all rule files by declaring them in the interface connecting the \texttt{.rudi} code to the Java framework. This interface must have the same name as the wrapper class but end with \texttt{.rudi} (in the example of figure ~\ref{fig:architecture}, this would be \texttt{MyAgent.rudi}).
+The methods and fields from the custom wrapper class can be made available to
+all rule files by declaring them in the interface connecting the \texttt{.rudi}
+code to the Java framework. This interface must have the same name as the
+wrapper class but end with \texttt{.rudi} (in the example of figure
+~\ref{fig:architecture}, this would be \texttt{MyAgent.rudi}).
 
 %Damit der Compiler diese Funktionen kennt, müssen sie in der Datei
 %\texttt{MyAgent.rudi} deklariert werden. Sie beschreibt sozusagen das
@@ -151,13 +159,33 @@ the type inference and inheritance that comes with type hierarchies.
 %Abbruchbedingungen einzubauen, unter denen die Ausführung der ganzen Datei -
 %und möglicher importierter Dateien - sofort beendet werden soll.
 %
-\vonda does not demand to group statements in some kind of high-level structure like e.g. a class construct. In fact, it is currently not possible to define classes in \texttt{.rudi} files at all. Rules and method declarations can just be put into the plain file. The same holds true for every kind of valid (Java-) statement, like assignments, for loops etc. From this basis, the compiler will create a Java class where the methods and rules that are transformed to methods are represented as the methods of this specific class. All other statements will be put into the \texttt{process()} method that \vonda creates to build a rule evaluation cycle. In doing so, the order of all statements (including the rules) is preserved.
+\vonda does not demand to group statements in some kind of high-level structure
+like e.g. a class construct. In fact, it is currently not possible to define
+classes in \texttt{.rudi} files at all. Rules and method declarations can just
+be put into the plain file. The same holds true for every kind of valid (Java-)
+statement, like assignments, for loops etc. From this basis, the compiler will
+create a Java class where the methods and rules that are transformed to methods
+are represented as the methods of this specific class. All other statements
+will be put into the \texttt{process()} method that \vonda creates to build a
+rule evaluation cycle. In doing so, the order of all statements (including the
+rules) is preserved.
 
-This functionality offers possibilities to e.g. define and process high-level variables that you might want to have access to in all rules or to insert termination conditions that are not contained in rules.
+This functionality offers possibilities to e.g. define and process high-level
+variables that you might want to have access to in all rules or to insert
+termination conditions that are not contained in rules.
 
 %Datei-global deklarierte Variablen werden als Klassenvariablen angelegt.
 
-\textbf{Warning:} It is important to know here that variables declared globally in a file will be transformed to fields of the Java class. We found that in very rare occasions, this can lead to unexpected behaviour when using them in a propose or timeout block as well as changing them in a global statement. As proposes and timeouts will not immediately be executed, they need every variable used inside them to be effectively final. \vonda leaves the evaluation of validness of variables for such blocks to Java. We found that Java might mistakenly accept variables that are not effectively final, what might lead to completely unexpected behaviour when proposes and timeouts with changed variable values are executed.
+\textbf{Warning:} It is important to know here that variables declared globally
+in a file will be transformed to fields of the Java class. We found that in
+very rare occasions, this can lead to unexpected behaviour when using them in a
+propose or timeout block as well as changing them in a global statement. As
+proposes and timeouts will not immediately be executed, they need every
+variable used inside them to be effectively final. \vonda leaves the evaluation
+of validness of variables for such blocks to Java. We found that Java might
+mistakenly accept variables that are not effectively final, what might lead to
+completely unexpected behaviour when proposes and timeouts with changed
+variable values are executed.
 
 \subsubsection{RDF accesses and functional vs. relational properties}
 \label{sec:rdfaccesses}
@@ -247,7 +275,15 @@ c.remove("<upper:middleNames", "James");
 %ihres Inhalts möglich und lässt sich, sofern dies in der verwendeten Ontologie
 %korrekt möglich ist, beliebig oft hintereinander ausführen.
 %
-Due to the connection of \vonda to HFC during compile time, it has full access to the database. Thereby, it cannot only recognize the correct RDF class to create a new instance from when encountering \texttt{new}, but it can also resolve property accessses to such instances. Field accesses as shown in line 2 and 3 of table \ref{tab:property-access} will be analyzed and transformed into database accessses. \vonda will also draw type information from the database. If the name property of the RDF class \texttt{Child} is of type String, exchanging line 2 by the line \texttt{int name = c.name} will result in a warning of the compiler.
+Due to the connection of \vonda to HFC during compile time, it has full access
+to the database. Thereby, it cannot only recognize the correct RDF class to
+create a new instance from when encountering \texttt{new}, but it can also
+resolve property accessses to such instances. Field accesses as shown in line 2
+and 3 of table \ref{tab:property-access} will be analyzed and transformed into
+database accessses. \vonda will also draw type information from the
+database. If the name property of the RDF class \texttt{Child} is of type
+String, exchanging line 2 by the line \texttt{int name = c.name} will result in
+a warning of the compiler.
 
 In this process, the compiler will automatically recognize the equivalences of the following RDF and Java types:
 
@@ -278,7 +314,9 @@ In this process, the compiler will automatically recognize the equivalences of t
 %Ergebnisses des Rdf-Zugriffes anpassen. Versucht man allerdings, den Wert eines
 %relationalen
 %
-Moreover, \vonda can see whether an access is done by functional or relational predicates and will handle it accordingly, deriving a collection type if necessary.
+Moreover, \vonda can see whether an access is done by functional or relational
+predicates and will handle it accordingly, deriving a collection type if
+necessary.
 
 %Die beiden Operatoren \texttt{+=} und \texttt{-=} sind in rudimant
 %überladen. Sie können sowohl wie in Java zum Rechnen mit Integer, float und
@@ -286,7 +324,10 @@ Moreover, \vonda can see whether an access is done by functional or relational p
 %Listen. \texttt{a += b} wird hierbei in \texttt{a.add(b)} umgewandelt,
 %\texttt{a -= b} resultiert in \texttt{a.remove(b)}.
 
-In the rule language, the operators \texttt{+=} and \texttt{-=} are overloaded. They can be used with sets and lists as shortcuts for adding and deleting objects. \texttt{a += b} will be compiled to \texttt{a.add(b)} and \texttt{a -= b} results in \texttt{a.remove(b)}.
+In the rule language, the operators \texttt{+=} and \texttt{-=} are
+overloaded. They can be used with sets and lists as shortcuts for adding and
+deleting objects. \texttt{a += b} will be compiled to \texttt{a.add(b)} and
+\texttt{a -= b} results in \texttt{a.remove(b)}.
 
 \subsubsection{Rules and labels}
 
@@ -312,9 +353,15 @@ introduction:
 %drückt die Bedingung aus, unter der die Regel ausgeführt werden soll, im Body
 %steht der auszuführende Code.
 %
-The core of \vonda dialogue management are the dialogue rules, which will be evaluated in the run-time system on every environment trigger.
+The core of \vonda dialogue management are the dialogue rules, which will be
+evaluated in the run-time system on every environment trigger.
 
-A rule starts with its name, from now on called label, followed by a colon. Pertaining to this label is an if-statement, possibly with else case. The clause of the if-statement expresses the condition under which the rule, or rather, the if block is to be executed; in the else block you can define what should happen if the rule cannot be executed, like stopping the evaluation of (a sub-tree of) the rules if necessary information is missing.
+A rule starts with its name, from now on called label, followed by a
+colon. Pertaining to this label is an if-statement, possibly with else
+case. The clause of the if-statement expresses the condition under which the
+rule, or rather, the if block is to be executed; in the else block you can
+define what should happen if the rule cannot be executed, like stopping the
+evaluation of (a sub-tree of) the rules if necessary information is missing.
 
 %Auch eingeschachtelte \texttt{if}-Abfragen können mit Labels versehen werden.
 %Die Labels dienen einerseits zum debuggen des Codes, da im generierten Code
@@ -322,7 +369,11 @@ A rule starts with its name, from now on called label, followed by a colon. Pert
 %kann man zur Zeit zwei API-Funktionen von \texttt{Agent} benutzen, nämlich
 %\texttt{logRule(String rulename)} und \texttt{logAllRules()}
 %
-Rules can be nested to arbitrary depth, so if-statements inside a rule body can also be labelled. The labels are a valuable tool for debugging the life system, as they can be logged live with the debugger gui (cfg. chapter \ref{sec:debugger}). The debugger can show you which rules were executed when and what the individual results of each part of the conditions were.
+Rules can be nested to arbitrary depth, so if-statements inside a rule body can
+also be labelled. The labels are a valuable tool for debugging the life system,
+as they can be logged live with the debugger gui (cfg. chapter
+\ref{sec:debugger}). The debugger can show you which rules were executed when
+and what the individual results of each part of the conditions were.
 
 %Der Output des Loggers wird dann das Label jeder Regel, die evaluiert wird,
 %zusammen mit der Auswertung der Bedingung und den Werten aller booleschen
@@ -338,20 +389,34 @@ Rules can be nested to arbitrary depth, so if-statements inside a rule body can 
 %\verb|break label_name;| aussteigen. Alle danach folgenden Regeln werden dann
 %weiter verarbeitet.
 %
-There are multiple ways to stop the rule evaluation locally (i.e. skipping the evaluation of the current subtree) or globally (i.e. stopping the whole evaluation cycle).
+There are multiple ways to stop the rule evaluation locally (i.e. skipping the
+evaluation of the current subtree) or globally (i.e. stopping the whole
+evaluation cycle).
 
-You can skip the evaluation of a specific rule you are currently in with the statement\verb|break label_name;|. This will only stop the rule with the respective label (no matter how deep the break statement is nested in it), such that the next following rule is evaluated next.
+You can skip the evaluation of a specific rule you are currently in with the
+statement\verb|break label_name;|. This will only stop the rule with the
+respective label (no matter how deep the break statement is nested in it), such
+that the next following rule is evaluated next.
 
 %Bricht man die Verarbeitung mit \texttt{cancel} ab, wird keine der in
 %der Datei folgenden Regeln mehr angewandt, bei \texttt{cancel\_all} wird
 %keine nachfolgende Regel, weder lokal, noch auf höheren Ebenen, angewandt.
 %
-If the evaluation is cancelled with the keyword \texttt{cancel;}, all of the following rules in the current file will be skipped (including any imported rules). If the keyword \texttt{cancel\_all} is used, none of the following rules, neither local nor higher in the rule tree, will be evaluated. This is the \vonda way of deciding not to evaluate whatever triggered the current evaluation cycle and should only be used as an 'emergency exit', as the dialogue rules should be rejecting any sound, non-matching trigger by themselves.
+If the evaluation is cancelled with the keyword \texttt{cancel;}, all of the
+following rules in the current file will be skipped (including any imported
+rules). If the keyword \texttt{cancel\_all} is used, none of the following
+rules, neither local nor higher in the rule tree, will be evaluated. This is
+the \vonda way of deciding not to evaluate whatever triggered the current
+evaluation cycle and should only be used as an 'emergency exit', as the
+dialogue rules should be rejecting any sound, non-matching trigger by
+themselves.
 
 %Um \texttt{propose} oder \texttt{timeout} Blöcke zu verlassen, muss
 %\texttt{return} benutzt werden, da dies normale Funktionsblöcke sind.
 
-To leave \texttt{propose} and \texttt{timeout} blocks, you need to use an empty \texttt{return}, as they are only reduced representations of normal function bodies.
+To leave \texttt{propose} and \texttt{timeout} blocks, you need to use an empty
+\texttt{return}, as they are only reduced representations of normal function
+bodies.
 
 \subsubsection{\texttt{propose} and \texttt{timeout}}
 \begin{figure}[htbp]
@@ -463,7 +528,9 @@ inside the curly brackets.
 %Zuweisung bekannt oder inferierbar, so ist es nicht notwendig, den Typ der
 %Variablen explizit anzugeben.
 
-If, for example, the type of the expression on the right-hand side of declaration assignment is known or inferrable, it is not necessary to explicitely state it.
+If, for example, the type of the expression on the right-hand side of
+declaration assignment is known or inferrable, it is not necessary to
+explicitely state it.
 
 You can also declare variables final.
 
@@ -498,7 +565,31 @@ You can also declare variables final.
 %jeden Teilzugriff, dass das erhaltene Objekt nicht null ist, um einer
 %NullPointerException zur Laufzeit des generierten Codes vorzubeugen.
 
-A time-saving (and code-readability-improving) feature of \vonda is the automatic completion of boolean expressions in the clauses of if, while and for statements. As it is obvious in these cases that the result of the expression must be of type boolean, \vonda automatically fills in a test for existence if it is not boolean. When encountering field accesses, it makes sure that every partial access is tested for existence (i.e., not \texttt{null}) to avoid a NullPointerException in the runtime execution of the generated code.
+A time-saving (and code-readability-improving) feature of \vonda is the
+automatic completion of boolean expressions in the clauses of if, while and for
+statements. As it is obvious in these cases that the result of the expression
+must be of type boolean, \vonda automatically fills in a test for existence if
+it is not boolean. When encountering field accesses, it makes sure that every
+partial access is tested for existence (i.e., not \texttt{null}) to avoid a
+\texttt{NullPointerException} in the runtime execution of the generated code.
+
+Be aware that the expansion in the figure only occurs if the multiple field
+access is used as boolean test. In the example of
+\ref{tab:multi-predaccess-wrong}, if the first clause in the boolean expression
+is omitted, a \texttt{NullPointerException} could still occur.
+
+\begin{table}[htbp]
+  \centering
+  \begin{small}
+    \begin{lstlisting}
+      if (activity.status && activity.status == ``foo''){ ... }
+    \end{lstlisting}
+  \end{small}
+
+\caption{Transformation of complex boolean expressions}
+\label{tab:multi-predaccess-wrong}
+\end{table}
+\vspace*{10pt}
 
 %Die Vergleichsoperatoren in rudimant sind überladen. Neben den aus Java bekannten Anwendungen als Vergleichsoperatoren können sie auch auf Dialogakte angewendet werden. In diesen Fällen werden sie zu Subsumptionsoperatoren.
 

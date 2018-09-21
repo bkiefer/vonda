@@ -48,7 +48,10 @@ uniform representation, and facilitates interoperability with external data
 sources.
 
 %\todo[inline]{Mention HFC and ref to appropriate section}
-The RDF store and reasoner of choice used in \vonda is HFC \citep{krieger2013efficient}. For further details about the general funcitonalities of HFC see chapter \ref{sec:hfc}; for an example of HFC as a database in a \vonda project please refer to section \ref{sec:example-hfc}.
+The RDF store and reasoner of choice used in \vonda is HFC
+\citep{krieger2013efficient}. For further details about the general
+funcitonalities of HFC see chapter \ref{sec:hfc}; for an example of HFC as a
+database in a \vonda project please refer to section \ref{sec:example-hfc}.
 
 \vonda consists of three parts: A programming language tailored towards the
 specification of reactive rules and transparent RDF data store usage, a
@@ -110,25 +113,42 @@ resp. its virtual replacement, the avatar. Generation is based on incoming
 stimuli, like speech or text input, or high-level action requests coming from
 some strategic planning component, or any other sensor input, if available.
 
-In this tutorial, we will create a very simple example system that has a database representation of itself and the user it will interact with. It can greet the user, ask for their name and say goodbye.
+In this tutorial, we will create a very simple example system that has a
+database representation of itself and the user it will interact with. It can
+greet the user, ask for their name and say goodbye.
 
-To see the example system that is constructed in this chapter, switch to the folder named examples. It contains the play-ground dialogue system ChatCat. More complex examples are planned to be published soon.
+To see the example system that is constructed in this chapter, switch to the
+folder named examples. It contains the play-ground dialogue system
+ChatCat. More complex examples are planned to be published soon.
 
 \section{Setting up the RDF Store of your Project} \label{sec:example-hfc}
 
-A dialogue system aiming for social interaction does need some kind of memory representation. Therefore, the first step of building your dialogue manager should be to set up the ontology. It can of course be extended on-the-fly, while your system is becoming more and more elaborate, but you should still create a base from which to start from.
+A dialogue system aiming for social interaction does need some kind of memory
+representation. Therefore, the first step of building your dialogue manager
+should be to set up the ontology. It can of course be extended on-the-fly,
+while your system is becoming more and more elaborate, but you should still
+create a base from which to start from.
 
-At the very least, you are strongly recommended to use the dialogue hierarchy (provided in \texttt{examples/chatcat/src/main/resources/ontology/dialogue.nt}) as well as two default information files pertaining to the dialogue acts used in the \vonda framework.
+At the very least, you are strongly recommended to use the dialogue hierarchy
+(provided in \texttt{examples/chatcat/src/main/resources/ontology/dialogue.nt})
+as well as two default information files pertaining to the dialogue acts used
+in the \vonda framework.
 
 \subsection{Creating n-Tuple Files}
 
 %use Protege or another tool of your choice to create OWL/RDF file;
 %example here: with Protege
-HFC loads data from n-Tuple files. You can however create files in the more common OWL format and then automatically transfer it with a simple shell script, using the Raptor \citep{raptor} (e.g. \texttt{examples/chatcat/ntcreate.sh}). This tutorial uses Protégé \citep{Protege}.
+HFC loads data from n-Tuple files. You can however create files in the more
+common OWL format and then automatically transfer it with a simple shell
+script, using the Raptor \citep{raptor}
+(e.g. \texttt{examples/chatcat/ntcreate.sh}). This tutorial uses Protégé
+\citep{Protege}.
 
-Open your favourite IDE and create a new file that includes an RDF class Agent, and two subclasses of this class, Robot and Human.
+Open your favourite IDE and create a new file that includes an RDF class Agent,
+and two subclasses of this class, Robot and Human.
 
-After that, create a predicate \texttt{name} for the class Agent that has its range in \texttt{xsd:string}.
+After that, create a predicate \texttt{name} for the class Agent that has its
+range in \texttt{xsd:string}.
 
 \begin{figure}
 	\center
@@ -144,17 +164,27 @@ After that, create a predicate \texttt{name} for the class Agent that has its ra
 	\end{minipage}
 \end{figure}
 
-As we do not know the user a priori, we will make the system create an instance for them at run-time. However, we know our robot, so we will create an instance of the class Robot and name it \textit{Robert}.
+As we do not know the user a priori, we will make the system create an instance
+for them at run-time. However, we know our robot, so we will create an instance
+of the class Robot and name it \textit{Robert}.
 
-Now save your new ontology. Then you can use Raptor (i.e., the \texttt{ntcreate.sh} script) to transform it into n-tuple format. Afterward, create your \texttt{.ini}-file as described in the next section and add your tuple file to it.
+Now save your new ontology. Then you can use Raptor (i.e., the
+\texttt{ntcreate.sh} script) to transform it into n-tuple format. Afterward,
+create your \texttt{.ini}-file as described in the next section and add your
+tuple file to it.
 
-\textbf{Important:} If you are using Prot\'eg\'e, you should save the file in RDF/XML Syntax; the script will not work otherwise.
+\textbf{Important:} If you are using Prot\'eg\'e, you should save the file in
+RDF/XML Syntax; the script will not work otherwise.
 
 
 \subsection{Combining multiple ontology files - How to Use the .ini}
 
 %Explain how multiple ontologies can be put together here; explain PersistencyFile, mention what [Namespaces] is about
-An HFC ontology is held together - and addressed to - via the ini file. This is a plain text file with the ending \texttt{.ini} that contains various settings and information. To create your own \texttt{.ini}, best copy the example below and add your ontology information to it as described in the following paragraphs.
+An HFC ontology is held together - and addressed to - via the ini file. This is
+a plain text file with the ending \texttt{.ini} that contains various settings
+and information. To create your own \texttt{.ini}, best copy the example below
+and add your ontology information to it as described in the following
+paragraphs.
 
 \begin{figure} [htbp]
 \begin{verbatim}
@@ -192,46 +222,84 @@ default.eqred.quads.rdl
 
 \paragraph{[Settings]}
 
-For most applications concerning dialogue management, it will be important to specify a \texttt{PersistencyFile}. You can put it anywhere you like (i.e., it will be created automatically in the place you specify), but if your application relies on inter-session memory, you probably don't want it to reside in some temporary directory. All new information that your dialogue system enters into the database will be collected here. So, if you want to find out which specific tuples have just been entered, you can refer to this file. At the same time, if you want to wipe the memory of your system, delete this file.
+For most applications concerning dialogue management, it will be important to
+specify a \texttt{PersistencyFile}. You can put it anywhere you like (i.e., it
+will be created automatically in the place you specify), but if your
+application relies on inter-session memory, you probably don't want it to
+reside in some temporary directory. All new information that your dialogue
+system enters into the database will be collected here. So, if you want to find
+out which specific tuples have just been entered, you can refer to this
+file. At the same time, if you want to wipe the memory of your system, delete
+this file.
 
 \paragraph{[Namespaces]}
 
-In this section, you can specify abbreviations for your ontology namespaces. With the definition of the variable \texttt{dial} in figure \ref{fig:ini}, it is made possible to refer to classes, predicates and instances of this namespace with e.g. \texttt{<dial:Accept>} instead of\\ \texttt{<http://www.dfki.de/lt/onto/common/dialogue.owl\#Accept>} in your queries to the database.
+In this section, you can specify abbreviations for your ontology
+namespaces. With the definition of the variable \texttt{dial} in figure
+\ref{fig:ini}, it is made possible to refer to classes, predicates and
+instances of this namespace with e.g. \texttt{<dial:Accept>} instead of\\
+\texttt{<http://www.dfki.de/lt/onto/common/dialogue.owl\#Accept>} in your
+queries to the database.
 
 As you can see, we included a shortcut for our chatcat ontology here.
 
 \paragraph{[Tuples]}
 
-Here you can put all the ontology files that you created. You should also put the file \texttt{dialogue.nt} which, as previously mentioned, contains the specifications of the dialogue acts used by the \vonda framework.
+Here you can put all the ontology files that you created. You should also put
+the file \texttt{dialogue.nt} which, as previously mentioned, contains the
+specifications of the dialogue acts used by the \vonda framework.
 
 \paragraph{[Rules]}
 
-This specifies the set of rules that HFC uses to build the ontology. It is recommended to simply use the file \texttt{default.eqred.quads.rdl} here. For further information, please refer to the documentation of HFC.
+This specifies the set of rules that HFC uses to build the ontology. It is
+recommended to simply use the file \texttt{default.eqred.quads.rdl} here. For
+further information, please refer to the documentation of HFC.
 
 
 \section{The Framework: Setting up the Base of your Dialogue System}
 
-You need to implement your own abstract (Java) agent as a subclass of \texttt{de.dfki.mlt.rudimant.agent.Agent}. Furthermore, you will need an implementation of \texttt{de.dfki.mlt.rudimant.agent.CommunicationHub}. To see an example of how this should be done, take a look in the source folder of ChatCat.
+You need to implement your own abstract (Java) agent as a subclass of
+\texttt{de.dfki.mlt.rudimant.agent.Agent}. Furthermore, you will need an
+implementation of \texttt{de.dfki.mlt.rudimant.agent.CommunicationHub}. To see
+an example of how this should be done, take a look in the source folder of
+ChatCat.
 
-The two most important things here are that you make sure that the database is initialized (as an instance of RdfProxy) and that you do use an instance of your \vonda Agent implementation in your client. Of course this code will not compile until you build your first rule file, i.e., your \vonda Agent.
+The two most important things here are that you make sure that the database is
+initialized (as an instance of RdfProxy) and that you do use an instance of
+your \vonda Agent implementation in your client. Of course this code will not
+compile until you build your first rule file, i.e., your \vonda Agent.
 
-After this, the next thing you need is to create some main method where an instance of your client is built and set running using the \texttt{startListening()} method.
+After this, the next thing you need is to create some main method where an
+instance of your client is built and set running using the
+\texttt{startListening()} method.
 
-As a start, we recommend you to use the ChatCat system as a base for your own system and extend it. This will also provide you with a GUI where you can test your first dialogue steps.
+As a start, we recommend you to use the ChatCat system as a base for your own
+system and extend it. This will also provide you with a GUI where you can test
+your first dialogue steps.
 
 \section{Connecting NLU and Generation Components}
 
 %examplary here: srgs for NLU and cplan for generation
-Basically, you can connect any NLU and NLG components to your project that are able to create or, respectively, process dialogue acts of the format that \vonda provides (cfg. \ref{sec:caret}).
+Basically, you can connect any NLU and NLG components to your project that are
+able to create or, respectively, process dialogue acts of the format that
+\vonda provides (cfg. \ref{sec:caret}).
 
-For the sake of simplicity, this example uses SRGS to build a primitive NLU and cplan to create natural language out of the dialogue acts the agent outputs.
+For the sake of simplicity, this example uses SRGS to build a primitive NLU and
+cplan to create natural language out of the dialogue acts the agent outputs.
 
 \section{Writing some First Rules}
 
-%how to react on an incoming greeting; ask for the user's name; create a new instance for the user if name is unknown or retrieve the correct instance from the database; also set a timeout for doing something afterwards
-Now that everything else has been arranged, we are set up for writing our first dialogue management rules.
+% how to react on an incoming greeting; ask for the user's name; create a new
+% instance for the user if name is unknown or retrieve the correct instance
+% from the database; also set a timeout for doing something afterwards
+Now that everything else has been arranged, we are set up for writing our first
+dialogue management rules.
 
-So, let's react to the user greeting the system, what we expect to be happening on startup. In the SRGS file (src/main/resources/grammars/srgs/chatcat.xml), we defined that an utterance of the user like ''Hello'' will be parsed as the dialogue act Salutation, with the proposition Greet. We now can define a rule reacting to this utterance:
+So, let's react to the user greeting the system, what we expect to be happening
+on startup. In the SRGS file (src/main/resources/grammars/srgs/chatcat.xml), we
+defined that an utterance of the user like ''Hello'' will be parsed as the
+dialogue act Salutation, with the proposition Greet. We now can define a rule
+reacting to this utterance:
 
 \begin{lstlisting}[language=Java]
 greet_back:
@@ -244,9 +312,12 @@ greet_back:
   }
 \end{lstlisting}
 
-This will create a new instance of Human, which is stored in a global variable \verb|user| that in our case has been defined in the ChatAgent and will be present during the whole conversation.
+This will create a new instance of Human, which is stored in a global variable
+\verb|user| that in our case has been defined in the ChatAgent and will be
+present during the whole conversation.
 
-After greeting, we want to find out the user's name. We thus define a rule as follows:
+After greeting, we want to find out the user's name. We thus define a rule as
+follows:
 
 \begin{lstlisting}[language=Java]
 ask_for_name:
@@ -268,7 +339,8 @@ remember_name:
   }
 \end{lstlisting}
 
-These are enough rules to start a conversation, so let's compile and try out the new dialogue system.
+These are enough rules to start a conversation, so let's compile and try out
+the new dialogue system.
 
 \section{Specifying how to Compile and Run your Project}
 
@@ -284,9 +356,14 @@ The compile.yml should contain the following parameters:\\
 	\verb|failOnError:| &Set to true to exit compilation on any encountered type errors,\\& otherwise set to false (*)\\
 \end{tabular}\newline
 
-(*) Note that although \vonda type checking is becoming more and more reliable, it is not complete. In some cases, setting this switch to true might make your project uncompilable although when compiling it when ignoring type errors would result in a perfectly sound Java project.
+(*) Note that although \vonda type checking is becoming more and more reliable,
+it is not complete. In some cases, setting this switch to true might make your
+project uncompilable although when compiling it when ignoring type errors would
+result in a perfectly sound Java project.
 
-To provide the possibility to easily change the Ontology, NLU and NLG components of your project, it is recommended to create a second yml file containing the following specifications (This is an example from ChatCat):
+To provide the possibility to easily change the Ontology, NLU and NLG
+components of your project, it is recommended to create a second yml file
+containing the following specifications (This is an example from ChatCat):
 
 \begin{verbatim}
 ontologyFile:       src/main/resources/ontology/chatcat.ini
@@ -300,23 +377,34 @@ class: de.dfki.chatcat.SrgsParser
 grammar: src/main/resources/grammars/srgs/chatcat.xml
 \end{verbatim}
 
-This configuration can then be easily read in when starting your project, and be passed to the init method of Agent, which requires such information.
+This configuration can then be easily read in when starting your project, and
+be passed to the init method of Agent, which requires such information.
 
 \subsection{Resolving Namespace Ambiguities}
 
-As you might have noticed whilst looking at chatcat.yml, there is another parameter used in the compile configuration of our example project:
+As you might have noticed whilst looking at chatcat.yml, there is another
+parameter used in the compile configuration of our example project:
 
 \begin{verbatim}
 	nameToURI:
 	Agent : "<cat:Agent>"
 \end{verbatim}
 
-When trying to compile without these two lines, you will find that \vonda produces the warning \begin{small}'' \texttt{base name Agent can be one of  <http://www.semanticweb.org/anna/ontologies/2018/3/chatcat\#Agent>, <dial:Agent>, please resolve manually.}''
+When trying to compile without these two lines, you will find that \vonda
+produces the warning \begin{small}'' \texttt{base name Agent can be one of
+    <http://www.semanticweb.org/anna/ontologies/2018/3/chatcat\#Agent>,
+    <dial:Agent>, please resolve manually.}''
 \end{small}.
 
-This is the compiler telling us that when defining the Rdf class Agent in the database step, we actually redefined an existing class. \vonda warns us about this and urges us to resolve this ambiguity. Thus, we could either rename our class, or explicitly state which namespace should be accessed whenever the class Agent is used. \texttt{nameToURI} can be used to do the latter.
+This is the compiler telling us that when defining the Rdf class Agent in the
+database step, we actually redefined an existing class. \vonda warns us about
+this and urges us to resolve this ambiguity. Thus, we could either rename our
+class, or explicitly state which namespace should be accessed whenever the
+class Agent is used. \texttt{nameToURI} can be used to do the latter.
 
-Of course, you can also use this functionality to ''rename'' Rdf classes as you please: \vonda will always map the name on the left to the class URI provided on the right.
+Of course, you can also use this functionality to ''rename'' Rdf classes as you
+please: \vonda will always map the name on the left to the class URI provided
+on the right.
 
 \section{Advanced Features}
 
