@@ -79,7 +79,7 @@ public class ExpLambda extends RTExpLeaf implements RTBlockNode {
 
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append(type.getReturnType()).append(" (");
+    sb.append(type.getReturnedType()).append(" (");
     Iterator<Type> partypes = type.getParameterTypes();
     boolean notFirst = false;
     for(String p : parameters) {

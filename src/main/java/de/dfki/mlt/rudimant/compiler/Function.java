@@ -73,9 +73,9 @@ public class Function {
   @Override
   public String toString() {
     StringBuffer sb = new StringBuffer();
-    sb.append(_type.getReturnType().getRep()).append(' ');
+    sb.append(_type.getReturnedType().getRep()).append(' ');
     if (_type.isMethod()) {
-      sb.append(_type.getClassOfMethod().getRep()).append('.');
+      sb.append(_type.getClassOf().getRep()).append('.');
     }
     sb.append(_name).append('(');
     boolean notfirst = false;

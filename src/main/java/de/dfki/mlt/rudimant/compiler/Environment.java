@@ -35,7 +35,7 @@ public class Environment {
   private Map<String, Type> variableToType;
   private Map<String, String> variableOrigin;
   private HashMap<String, Set<Function>> functions;
-  private HashMap<String, Set<Type>> fields;
+  private HashMap<String, Map<Type, Type>> fields;
 
   public static Environment getEnvironment(Environment parent) {
     // by copying the existing environment, we avoid searching through all
@@ -118,7 +118,7 @@ public class Environment {
   public boolean functionDefined(String funcname, Type functype) {
     Function f = getFunction(funcname, functype);
     return f != null
-        && !f.getType().getReturnType().equals(functype.getReturnType());
+        && !f.getType().getReturnedType().equals(functype.getReturnedType());
   }
 
   /**
@@ -157,23 +157,25 @@ public class Environment {
     }
     return null;
   }
-  
+
   public Type getFieldType(String fieldname, Type calledUpon) {
-    if (fields.containsKey(fieldname)) {
-      for (Type t : fields.get(fieldname)) {
-        if (t.isCalledUpon(calledUpon)) {
-          return t.getFieldType();
-        }
-      }
-    }
-    return null;
+    Map<Type, Type> classToField = fields.get(fieldname);
+    return (classToField == null) ? null : classToField.get(calledUpon);
   }
-  
-  public void addField(String fieldname, Type type) {
+
+  public boolean addField(String fieldname, Type type) {
     if (! fields.containsKey(fieldname)) {
-      fields.put(fieldname, new HashSet<Type>());
+      fields.put(fieldname, new HashMap<>());
     }
-    fields.get(fieldname).add(type);
+    Type retType = fields.get(fieldname).get(type.getClassOf());
+    if (retType != null) {
+      if (! retType.equals(type.getReturnedType()))
+        // Illegal field redefinition
+        return false;
+    } else {
+      fields.get(fieldname).put(type.getClassOf(), type.getReturnedType());
+    }
+    return true;
   }
 
   /** Environment is a stack, return the parent of this environment */

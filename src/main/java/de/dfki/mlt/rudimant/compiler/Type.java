@@ -23,9 +23,6 @@ import static de.dfki.mlt.rudimant.compiler.Constants.DIALOGUE_ACT_TYPE;
 
 import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 
@@ -34,9 +31,6 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
  *  etc.
  */
 public class Type {
-
-  private static final Logger logger = LoggerFactory.getLogger(Type.class);
-
   private static RdfProxy PROXY;
   private static RdfClass DIALACT_CLASS;
   private static final Map<String, String> JAVA_CLASSES = new HashMap<>();
@@ -115,7 +109,7 @@ public class Type {
     }
   }
 
-  private static final long CONTAINER_MASK = ~ 0b100l;
+  // private static final long CONTAINER_MASK = ~ 0b100l;
 
   // This represents a correct hierarchy for type unification for expressions.
   // the type unification will return the result type of the expression.
@@ -227,20 +221,11 @@ public class Type {
       parameterTypes.addAll(paramTypes);
     return new Type(methodOfType == null ? "Function" : "Method", parameterTypes);
   }
-  
+
   public static Type getFieldType(Type calledUpon, Type type) {
     Type t = getFunctionType(type, calledUpon, null);
     t._name = "Field";
     return t;
-  }
-  
-  public boolean isCalledUpon(Type type) {
-    return "Field".equals(_name) &&
-            this._parameterTypes.get(1).equals(type);
-  }
-  
-  public Type getFieldType() {
-    return "Field".equals(_name) ? this._parameterTypes.get(0) : null;
   }
 
   private Type renameTypeVars(int[] i, Map<String, String> map) {
@@ -449,7 +434,7 @@ public class Type {
   public boolean isStringConvertible() {
     return isPODType() || isRdfType() || isNumber();
   }
-  
+
   public boolean isField() {
     return "Field".equals(_name);
   }
@@ -482,8 +467,8 @@ public class Type {
     return "Method".equals(_name);
   }
 
-  public Type getReturnType() {
-    if (! (isMethod() || isFunction())) return null;
+  public Type getReturnedType() {
+    if (! (isMethod() || isFunction() || isField())) return null;
     return _parameterTypes.get(0);
   }
 
@@ -491,8 +476,8 @@ public class Type {
     _parameterTypes.set(0, t);
   }
 
-  public Type getClassOfMethod() {
-    if (! isMethod()) return null;
+  public Type getClassOf() {
+    if (! (isMethod() || isField())) return null;
     return _parameterTypes.get(1);
   }
 

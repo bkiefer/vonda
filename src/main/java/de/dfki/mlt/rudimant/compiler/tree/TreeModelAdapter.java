@@ -119,9 +119,9 @@ public class TreeModelAdapter extends ModelAdapter {
     } else if (model instanceof StatMethodDeclaration) {
       StatMethodDeclaration md = (StatMethodDeclaration)model;
       Iterator<Type> partypes = md.function_type.getParameterTypes();
-      Type calledUpon = md.function_type.getClassOfMethod();
+      Type calledUpon = md.function_type.getClassOf();
 
-      result = "meth " + md.function_type.getReturnType().getRep() + " " +
+      result = "meth " + md.function_type.getReturnedType().getRep() + " " +
           (calledUpon == null ? "" : calledUpon.getRep() + ". ")
           + md.name + '(';
       for (int j = 0; j < md.parameters.size(); ++j) {

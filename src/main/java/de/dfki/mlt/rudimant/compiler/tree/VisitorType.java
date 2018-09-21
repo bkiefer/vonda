@@ -434,7 +434,7 @@ public class VisitorType implements RudiVisitor {
     mem.enterEnvironment(node);
     // node.type is a Function type
     Iterator<Type> parTypes = node.type.getParameterTypes();
-    Type returnType = node.type.getReturnType(); // return type;
+    Type returnType = node.type.getReturnedType(); // return type;
     for(String arg : node.parameters){
       // set castRequired to true in all parTypes that are XSD/RDF, since we
       // have to pass Object for them
@@ -460,7 +460,7 @@ public class VisitorType implements RudiVisitor {
         typeError("Block used in functional expression doesn't end with a return", node);
       }
     }
-    if (! returnType.equals(node.type.getReturnType())) {
+    if (! returnType.equals(node.type.getReturnedType())) {
       node.type.setReturnType(returnType);
     }
     mem.leaveEnvironment(node);
@@ -620,36 +620,43 @@ public class VisitorType implements RudiVisitor {
   /** An explicit variable declaration, without assignment, just definition */
   @Override
   public void visit(StatVarDef node) {
-    if (node.isDefinition) {
-      if (mem.variableExistsLocally(node.variable)) {
-        typeError("Re-defined variable " + node.variable
-            + " from " + mem.getVariableType(node.variable).toString()
-            + " to " + node.type.toString() +
-            ", keeping the old type", node);
-      } else {
+    if (node.type.isField()) {
+      if (! mem.addField(node.variable, node.type)) {
+        typeError("Re-defined field " + node.variable + " with new type "
+            + node.type.getReturnedType(), node);
+      }
+    } else {
+      if (node.isDefinition) {
+        if (mem.variableExistsLocally(node.variable)) {
+          typeError("Re-defined variable " + node.variable
+              + " from " + mem.getVariableType(node.variable).toString()
+              + " to " + node.type.toString() +
+              ", keeping the old type", node);
+        } else {
+          mem.addVariableDeclaration(node.variable, node.type);
+        }
+      }
+      if (mem.variableExists(node.variable)) {
+        if (node.type.isUnspecified())
+          node.type = mem.getVariableType(node.variable);
+      }
+
+      if (node.toAssign != null) {
+        ExpIdentifier var =
+            node.fixFields(new ExpIdentifier(node.variable, node.type));
+        node.toAssign = node.fixFields(new ExpAssignment(var, node.toAssign));
+        node.toAssign.visit(this);
+        Type mergeType = node.type.unifyTypes(node.toAssign.type);
+        if (!node.type.equals(mergeType)) {
+          node.type = mergeType;
+        }
+      }
+
+      if (! mem.variableExists(node.variable)) {
         mem.addVariableDeclaration(node.variable, node.type);
+        // mark as declaration
+        node.isDefinition = true;
       }
-    }
-    if (mem.variableExists(node.variable)) {
-      if (node.type.isUnspecified())
-        node.type = mem.getVariableType(node.variable);
-    }
-
-    if (node.toAssign != null) {
-      ExpIdentifier var =
-          node.fixFields(new ExpIdentifier(node.variable, node.type));
-      node.toAssign = node.fixFields(new ExpAssignment(var, node.toAssign));
-      node.toAssign.visit(this);
-      Type mergeType = node.type.unifyTypes(node.toAssign.type);
-      if (!node.type.equals(mergeType)) {
-        node.type = mergeType;
-      }
-    }
-
-    if (! mem.variableExists(node.variable)) {
-      mem.addVariableDeclaration(node.variable, node.type);
-      // mark as declaration
-      node.isDefinition = true;
     }
   }
 
@@ -657,9 +664,9 @@ public class VisitorType implements RudiVisitor {
   public void visit(StatMethodDeclaration node) {
     if (mem.functionDefined(node.name, node.function_type)) {
       typeError("redeclaring function " + node.name
-          + " with new return type " + node.function_type.getReturnType()
+          + " with new return type " + node.function_type.getReturnedType()
           + ", was: " + mem.getFunction(node.name,
-              node.function_type).getType().getReturnType(), node);
+              node.function_type).getType().getReturnedType(), node);
     } else {
       mem.addFunction(node.name, node.function_type);
     }
@@ -681,8 +688,6 @@ public class VisitorType implements RudiVisitor {
   /** Top-level field (variable) definition */
   @Override
   public void visit(StatFieldDef node) {
-    if (node.calledUpon != null)
-      node.varDef.type = getFieldType(node.calledUpon, node.varDef.type);
     node.varDef.visit(this);
   }
 
@@ -858,17 +863,16 @@ public class VisitorType implements RudiVisitor {
         }
       } else { // unknown or Java type, let's try with the accessor type
     	  // TODO: think about this. we definitely want this in case of
-        //    currentNode being a function call, but if it is a variable we get
-        //    either nothing or - worse - the type of some unrelated local variable;
-    	  //		which other expressions need to be handled cautiously?
+        // currentNode being a function call, but if it is a variable we get
+        // either nothing or - worse - the type of some unrelated local variable;
+        // which other expressions need to be handled cautiously?
         if (currentNode instanceof ExpIdentifier) {
           currentNode.type = mem.getFieldType(
-                  ((ExpIdentifier) currentNode).content, currentType);
+              ((ExpIdentifier) currentNode).content, currentType);
           if (currentNode.type == null) {
             currentNode.type = getNoType();
-            typeError("No field of name "
-                    + ((ExpIdentifier) currentNode).content
-                    + " known for class " + currentType, node);
+            typeError("No field " + ((ExpIdentifier) currentNode).content
+                + " known for class " + currentType, node);
           }
         } /*else if (currentNode instanceof RTExpression) {
            && !(currentNode instanceof ExpIdentifier)
@@ -928,8 +932,8 @@ public class VisitorType implements RudiVisitor {
 
       // percolate all changed parameter types down
       if (node.calledUpon != null &&
-          !node.calledUpon.equals(resolved.getClassOfMethod()))
-        node.calledUpon = resolved.getClassOfMethod();
+          !node.calledUpon.equals(resolved.getClassOf()))
+        node.calledUpon = resolved.getClassOf();
 
       Iterator<Type> restypes = resolved.getParameterTypes();
       Iterator<Type> ptypes = partypes.iterator();
@@ -942,7 +946,7 @@ public class VisitorType implements RudiVisitor {
         }
       }
       if (node.type == null || node.type.isUnspecified()) {
-        node.type = resolved.getReturnType();
+        node.type = resolved.getReturnedType();
       }
     }
     if (node.type == null) {

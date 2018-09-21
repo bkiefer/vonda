@@ -243,14 +243,10 @@ public class Mem {
    * @return true if the variable is not already defined, false otherwise
    */
   public boolean addVariableDeclaration(String variable, Type type) {
-    if (type.isField()) {
-      currentEnv.addField(variable, type);
-    } else {
-      if (currentEnv.isVarLocallyDefined(variable)) {
-        return false;
-      }
-      putVariableDeclaration(variable, type);
+    if (currentEnv.isVarLocallyDefined(variable)) {
+      return false;
     }
+    putVariableDeclaration(variable, type);
     return true;
   }
 
@@ -296,7 +292,12 @@ public class Mem {
   public Type getVariableType(String variable) {
     return currentEnv.getType(variable);
   }
-  
+
+  /** Returns false if field is wrongly redefined */
+  public boolean addField(String name, Type type) {
+    return currentEnv.addField(name, type);
+  }
+
   public Type getFieldType(String fieldname, Type calledUpon) {
     return currentEnv.getFieldType(fieldname, calledUpon);
   }

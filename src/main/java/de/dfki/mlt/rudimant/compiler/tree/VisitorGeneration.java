@@ -630,7 +630,7 @@ public class VisitorGeneration implements RudiVisitor {
     }
     mem.enterEnvironment(node);
     // return type
-    gen(node.visibility).gen(' ').gen(node.function_type.getReturnType().toJava())
+    gen(node.visibility).gen(' ').gen(node.function_type.getReturnedType().toJava())
     .gen(" ").gen(node.name).gen("(");
     // must be a "vonda" method, so no class member argument!
     Iterator<Type> paramTypes = node.function_type.getParameterTypes();
@@ -743,7 +743,7 @@ public class VisitorGeneration implements RudiVisitor {
     // Don't print if this is only info about a field of some other class
     // TODO: Normally we shouldn't need this because all this info should go
     //       into wrapper class rudi...
-    if (node.calledUpon != null) return;
+    if (node.varDef.type.isField()) return;
     gen(node.visibility).gen(node.varDef.varIsFinal ? " final ": " ")
        .gen(node.varDef.type.toJava()).gen(" ")
        .gen(node.varDef.variable).gen(";");
