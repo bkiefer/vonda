@@ -48,7 +48,7 @@ public abstract class Agent implements StreamingClient {
 
   public static final Logger logger = LoggerFactory.getLogger(Agent.class);
 
-  public static boolean startDebuggerGui = true;
+  public int startDebuggerGui = -1;
 
   private static DialogueAct IMPOSSIBLE_DIALOGUEACT;
 
@@ -608,9 +608,9 @@ public abstract class Agent implements StreamingClient {
       System.exit(1);
     }
     ruleLogger = new RuleLogger(new ColorLogger());
-    if (startDebuggerGui) {
+    if (startDebuggerGui > 0) {
       try {
-        connectToDebugger("localhost", SimpleServer.DEFAULT_PORT);
+        connectToDebugger("localhost", startDebuggerGui);
       } catch (IOException ex) {
         logger.error("Can not connect to debugger: {}", ex);
       }
@@ -756,6 +756,7 @@ public abstract class Agent implements StreamingClient {
   }
 
   public void processRules() {
+    ruleLogger.clearRecentResults();
     synchronized (this) {
       // execute code injected from timeouts or external triggers
       while (!proposalsToExecute.isEmpty()) {

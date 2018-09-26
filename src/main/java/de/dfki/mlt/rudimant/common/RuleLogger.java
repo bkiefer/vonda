@@ -21,9 +21,7 @@ package de.dfki.mlt.rudimant.common;
 
 import static de.dfki.mlt.rudimant.common.Constants.*;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.List;
+import java.util.*;
 
 import org.yaml.snakeyaml.Yaml;
 
@@ -45,6 +43,8 @@ public class RuleLogger {
   /** The next two variable determine which rudi rules are logged */
   public BitSet rulesToLogTrue = new BitSet();
   public BitSet rulesToLogFalse = new BitSet();
+
+  private final Map<Integer, boolean[]> _justLogged;
 
   public boolean logAllRules = false;
 
@@ -73,6 +73,7 @@ public class RuleLogger {
   public RuleLogger() {
     printers = new ArrayList<>();
     ruleInfos = null;
+    _justLogged = new HashMap<>();
   }
 
   public RuleLogger(LogPrinter p){
@@ -121,14 +122,26 @@ public class RuleLogger {
             || (result && rulesToLogTrue.get(ruleId));
   }
 
+  public void clearRecentResults() {
+    _justLogged.clear();
+  }
+
+  private boolean justLogged(int ruleId, boolean[] result) {
+    boolean[] lastResult = _justLogged.get(ruleId);
+    return lastResult != null && Arrays.equals(lastResult, result);
+  }
+
   /**
    * function that prints logs of (rule) conditions
    * @param id the id of the rule whose evaluation this is
    * @param values the parts of the condition, mapped to true or false
    */
   public void logRule(int ruleId, boolean[] result) {
-    if (ruleInfos != null && shouldLog(ruleId, result[0]))
+    if (ruleInfos != null && shouldLog(ruleId, result[0])
+        && ! justLogged(ruleId, result)) {
+      _justLogged.put(ruleId, result);
       for (LogPrinter printer : printers)
         printer.printLog(ruleInfos.get(ruleId), result);
+    }
   }
 }
