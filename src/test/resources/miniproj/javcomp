@@ -1,0 +1,18 @@
+#!/bin/bash
+#set -x
+
+scriptdir=`dirname $0`
+cd "$scriptdir"
+here=`pwd`
+cd "$scriptdir/../../../.."
+vondadir=`pwd`
+cd "$here"
+# Done from java, only for test purposes
+#$vondadir/compile -c config.yml AllYouCanDo.rudi
+rm -rf target
+mkdir -p target/classes
+export CLASSPATH="${vondadir}/target/classes:`find "$vondadir"/repo/de/dfki/lt/hfc -name hfc\*.jar -printf '%h/%f:'`target/classes"
+#echo $CLASSPATH
+javac -d target/classes \
+      src/main/java/mini/WrapperClass.java \
+      src/main/generated/mini/AllYouCanDo.java

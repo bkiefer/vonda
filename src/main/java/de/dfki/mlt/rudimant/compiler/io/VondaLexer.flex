@@ -28,7 +28,7 @@ import de.dfki.mlt.rudimant.common.Location;
 import de.dfki.mlt.rudimant.common.Position;
 import de.dfki.mlt.rudimant.compiler.Mem;
 import de.dfki.mlt.rudimant.compiler.Token;
-import de.dfki.mlt.rudimant.compiler.tree.ExpSingleValue;
+import de.dfki.mlt.rudimant.compiler.tree.ExpLiteral;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,23 +64,33 @@ import org.slf4j.LoggerFactory;
   private LinkedList<Token> tokens = new LinkedList<>();
 
   private int charLiteral(String charval) {
-    yylval = new ExpSingleValue(charval, "char");
+    yylval = new ExpLiteral(charval, "char");
     tokens.add(new Token('\'' + charval, sstart, getEndPos()));
     return VondaGrammar.Lexer.OTHER_LITERAL;
   }
 
   private int intLiteral(String intval) {
-    yylval = new ExpSingleValue(intval, "int");
+    yylval = new ExpLiteral(intval, "int");
     return token(VondaGrammar.Lexer.INT);
   }
 
+  private int longLiteral(String longval) {
+    yylval = new ExpLiteral(longval, "long");
+    return token(VondaGrammar.Lexer.OTHER_LITERAL);
+  }
+
   private int floatLiteral(String floatval) {
-    yylval = new ExpSingleValue(floatval, "float");
+    yylval = new ExpLiteral(floatval, "float");
+    return token(VondaGrammar.Lexer.OTHER_LITERAL);
+  }
+
+  private int doubleLiteral(String doubleval) {
+    yylval = new ExpLiteral(doubleval, "double");
     return token(VondaGrammar.Lexer.OTHER_LITERAL);
   }
 
   private int booleanLiteral(String boolval) {
-    yylval = new ExpSingleValue(boolval, "boolean");
+    yylval = new ExpLiteral(boolval, "boolean");
     return token(VondaGrammar.Lexer.BOOL_LITERAL);
   }
 
@@ -313,17 +323,17 @@ SingleCharacter = [^\r\n\'\\]
   "-2147483648"                  { return intLiteral(yytext()); }
 
   {DecIntegerLiteral}            { return intLiteral(yytext()); }
-  {DecLongLiteral}               { return intLiteral(yytext()); }
+  {DecLongLiteral}               { return longLiteral(yytext()); }
 
   {HexIntegerLiteral}            { return intLiteral(yytext()); }
-  {HexLongLiteral}               { return intLiteral(yytext()); }
+  {HexLongLiteral}               { return longLiteral(yytext()); }
 
   {OctIntegerLiteral}            { return intLiteral(yytext()); }
-  {OctLongLiteral}               { return intLiteral(yytext()); }
+  {OctLongLiteral}               { return longLiteral(yytext()); }
 
   {FloatLiteral}                 { return floatLiteral(yytext()); }
-  {DoubleLiteral}                { return floatLiteral(yytext()); }
-  {DoubleLiteral}[dD]            { return floatLiteral(yytext()); }
+  {DoubleLiteral}                { return doubleLiteral(yytext()); }
+  {DoubleLiteral}[dD]            { return doubleLiteral(yytext()); }
 
   /* comments */
   {Comment}                      { addComment(yytext()); }
@@ -342,7 +352,7 @@ SingleCharacter = [^\r\n\'\\]
   \"                             {
   yybegin(YYINITIAL);
   String s = string.toString();
-  yylval = new ExpSingleValue(s, "String");
+  yylval = new ExpLiteral(s, "String");
   tokens.add(new Token('"' + s + '"', sstart, getEndPos()));
   return VondaGrammar.Lexer.STRING;
                                  }

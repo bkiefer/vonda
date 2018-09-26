@@ -9,40 +9,40 @@
 Child child;
 
 // test for value under path, intermediate tests are generated
-if (child.hasFather.surname) logger.info("foo");
+if (child.hasFather.surname) System.out.println("foo");
 
 // subsumption of dialogue acts, (equality is also possible)
-if (lastDA() <= #AcceptOffer(Bringing)) logger.info("foo");
+if (lastDA() <= #AcceptOffer(Bringing)) System.out.println("foo");
 
 // Two rdf objects being the same object. Mark the difference to the next
 // example! Here, the objects are compared, not the classes. Same for !=,
 // but all other comparison operators compare classes
 Child c1;
 Agent c2;
-if (c1 == c2) logger.info("foo");
+if (c1 == c2) System.out.println("foo");
 
 // Is the class of c1 a subclass (a strict subclass) of the class of c2 ?
-if (c1 <= c2) logger.info("foo");
-if (c1 < c2) logger.info("foo");
+if (c1 <= c2) System.out.println("foo");
+if (c1 < c2) System.out.println("foo");
 
 // Is the class of c1 a subclass of Child?
-if (c1 <= Child) logger.info("foo");
+if (c1 <= Child) System.out.println("foo");
 
 // Is s not null and not empty?
 String s = "bar";
-if (s) logger.info("foo");
+if (s) System.out.println("foo");
 
 // Is s.compareTo(t) < 0
 s = "bar"; t = "baz";
-if (s < t) logger.info("foo");
+if (s < t) System.out.println("foo");
 
 // Is i not null and not zero? (Same for all other Number containers)
 Integer i = -1;
-if (i) logger.info("foo");
+if (i) System.out.println("foo");
 
 // Is o not null?
 Object o = new Object();
-if (o) logger.info("foo");
+if (o) System.out.println("foo");
 
 // **********************************************************************
 // Forward declaration of methods
@@ -51,7 +51,7 @@ if (o) logger.info("foo");
 String foo(String a, String b);
 
 if (foo("a", "b")) {
-  logger.info("yes!");
+  System.out.println("yes!");
 }
 
 String foo (String a, String b) { return a + b; }
@@ -87,7 +87,7 @@ test_rule3:
         cancel_all;
       }
   } else {
-    logger.info("what?");
+    System.out.println("what?");
   }
 
 
@@ -103,7 +103,7 @@ test_rule4:
     final boolean b = false;
     propose("test") {
       if(c.equals("bye"))
-        logger.info("bye");
+        System.out.println("bye");
     }
   }
 
@@ -127,7 +127,7 @@ Integer anotherint = (Integer) i;
 anotherint = anotherint < 3? anotherint : 3;
 
 // There are also while and for loops and switch-case blocks available
-while (true) { continue; }
+while (anotherint > 7000) { continue; }
 for (abc = 1; abc < 10; abc++) { ++abc;}
 
 ArrayList<String> iterlist;
@@ -238,10 +238,11 @@ z1 = filter(p.hasHistory, (h) -> ((QuizHistory)h) <= QuizHistory);
 z2 = filter(p.hasHistory, (QuizHistory h) -> h <= QuizHistory);
 z3 = filter(p.hasHistory, (h) -> h <= QuizHistory);
 
-for (int h = 0; h < 3; ++h) { logger.info(Integer.toString(h)); }
+for (int h = 0; h < 3; ++h) { System.out.println(Integer.toString(h)); }
 
 int func(String h) {
   h = "foo";
+  return h.length();
 }
 
 {

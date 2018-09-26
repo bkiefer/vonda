@@ -315,7 +315,7 @@ public void testMultipleRdfAccess2() {
     // Test set field with POD type
     String in = "String c = \"foo\"; c = 10.0 + c;";
     String s = generate(in);
-    String expected = "String c = \"foo\";c = (Float.toString(10.0)+c);";
+    String expected = "String c = \"foo\";c = (Double.toString(10.0)+c);";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -324,7 +324,25 @@ public void testMultipleRdfAccess2() {
     // Test set string var with POD type
     String in = "String c = 10.0;";
     String s = generate(in);
-    String expected = "String c = Float.toString(10.0);";
+    String expected = "String c = Double.toString(10.0);";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
+  @Test
+  public void testToStringAssignFloat() {
+    // Test set string var with POD type
+    String in = "String c = 10.0f;";
+    String s = generate(in);
+    String expected = "String c = Float.toString(10.0f);";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
+  @Test
+  public void testToStringAssignLong() {
+    // Test set string var with POD type
+    String in = "String c = 10l;";
+    String s = generate(in);
+    String expected = "String c = Long.toString(10l);";
     assertEquals(expected, getForMarked(s, expected));
   }
 

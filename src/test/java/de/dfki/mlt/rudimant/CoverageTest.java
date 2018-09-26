@@ -41,9 +41,10 @@ import static de.dfki.mlt.rudimant.compiler.Constants.*;
 public class CoverageTest {
   public int startCompiler(File dir) throws IOException, InterruptedException {
     // java -jar ../../tecs_server/tecs-server-2.0.0.jar -c -p PORT
-    Process mvn = Runtime.getRuntime().exec(
-        new String[]{"mvn", "clean", "test"}, new String[]{}, dir );
-    return mvn.waitFor();
+    Process compile = Runtime.getRuntime().exec(
+        new String[]{"sh", "-c", "./javcomp"},
+        new String[]{}, dir );
+    return compile.waitFor();
   }
 
   @Test
