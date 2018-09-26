@@ -866,15 +866,17 @@ public class VisitorType implements RudiVisitor {
         // currentNode being a function call, but if it is a variable we get
         // either nothing or - worse - the type of some unrelated local variable;
         // which other expressions need to be handled cautiously?
-        if (currentNode instanceof ExpIdentifier) {
-          currentNode.type = mem.getFieldType(
-              ((ExpIdentifier) currentNode).content, currentType);
-          if (currentNode.type == null) {
-            currentNode.type = getNoType();
-            typeError("No field " + ((ExpIdentifier) currentNode).content
-                + " known for class " + currentType, node);
+        if (! (currentType.isTypeVariable() || currentType.isUnspecified())) {
+          if (currentNode instanceof ExpIdentifier) {
+            currentNode.type = mem.getFieldType(
+                ((ExpIdentifier) currentNode).content, currentType);
+            if (currentNode.type == null) {
+              currentNode.type = getNoType();
+              typeError("No field " + ((ExpIdentifier) currentNode).content
+                  + " known for class " + currentType, node);
+            }
           }
-        } /*else if (currentNode instanceof RTExpression) {
+        }/*else if (currentNode instanceof RTExpression) {
            && !(currentNode instanceof ExpIdentifier)
           currentType = currentNode.type;
         } else {
