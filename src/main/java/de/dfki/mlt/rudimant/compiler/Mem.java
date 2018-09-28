@@ -243,7 +243,7 @@ public class Mem {
    * @return true if the variable is not already defined, false otherwise
    */
   public boolean addVariableDeclaration(String variable, Type type) {
-    if (variableExistsLocally(variable)) {
+    if (currentEnv.isVarLocallyDefined(variable)) {
       return false;
     }
     putVariableDeclaration(variable, type);
@@ -264,11 +264,7 @@ public class Mem {
   }
 
   public boolean variableExists(String variable) {
-    return currentEnv.isVarDefined(variable);
-  }
-
-  public boolean variableExistsLocally(String variable) {
-    return currentEnv.isVarLocallyDefined(variable);
+    return currentEnv.getType(variable) != null;
   }
 
   /** get the class where the given variable was defined

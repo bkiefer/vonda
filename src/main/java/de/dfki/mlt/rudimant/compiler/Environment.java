@@ -71,18 +71,20 @@ public class Environment {
   }
   */
 
+  private <T> T seekEnvironments(java.util.function.Function<Environment, T> f) {
+    Environment env = this;
+    T res;
+    while (env != null) {
+      if ((res = f.apply(env)) != null) return res;
+      env = env._parent;
+    }
+    return null;
+  }
+
   /** Set the type t and origin o (from which file) for variable v */
   public void put(String var, Type type, String origin) {
     variableToType.put(var, type);
     variableOrigin.put(var, origin);
-  }
-
-  private Environment getDefiningVarEnv(String k) {
-    Environment env = this;
-    while (env != null && ! env.isVarLocallyDefined(k)) {
-      env = env._parent;
-    }
-    return env;
   }
 
   /** Return true if a variable with this name was defined in this local scope */
@@ -90,19 +92,11 @@ public class Environment {
     return variableToType.containsKey(k);
   }
 
-  /** Return true if a variable with this name was defined in some accessible
-   *  scope
-   */
-  public boolean isVarDefined(String k) {
-    return getDefiningVarEnv(k) != null;
-  }
-
   /** Return the type of the variable with name k, if defined in some accessible
    *  scope, null otherwise.
    */
   public Type getType(String k) {
-    Environment env = getDefiningVarEnv(k);
-    return env == null ? null : env.variableToType.get(k);
+    return seekEnvironments((e) -> e.variableToType.get(k));
   }
 
   /**
@@ -110,7 +104,8 @@ public class Environment {
    * top level, in which case the origin is not of our concern
    */
   public String getOrigin(String k) {
-    Environment env = getDefiningVarEnv(k);
+    Environment env = seekEnvironments(
+        (e) -> e.variableToType.containsKey(k) ? e : null);
     return env == null ? null : env.variableOrigin.get(k);
   }
 
@@ -154,27 +149,6 @@ public class Environment {
     return null;
   }
 
-  private Type getFieldTypeLocally(String fieldname, Type calledUpon) {
-    Map<Type, Type> classToField = fields.get(fieldname);
-    if (classToField != null) {
-      for (Map.Entry<Type, Type> entry : classToField.entrySet()) {
-        if (entry.getKey().signatureMatches(calledUpon))
-          return entry.getValue();
-      }
-    }
-    return null;
-  }
-
-  private <T> T seekEnvironments(java.util.function.Function<Environment, T> f) {
-    Environment env = this;
-    T res;
-    while (env != null) {
-      if ((res = f.apply(env)) != null) return res;
-      env = env._parent;
-    }
-    return null;
-  }
-
   /** if defined in an accessible scope return the function with this name and
    *  compatible type (excluding return type), null otherwise.
    *
@@ -186,16 +160,9 @@ public class Environment {
         (env) -> env.getFunctionLocally(funcname, actualParameterTypes));
   }
 
-  /** Find the type of this field, if defined in an accessible scope
-   *
-   * @param fieldname the name of the field
-   * @return the Type or null
+  /** Add a field declaration. The type given must be a field type, containing
+   *  the class the type is defined and the content ("return") type.
    */
-  public Type getFieldType(String fieldname, Type calledUpon) {
-    return seekEnvironments(
-        (env) -> env.getFieldTypeLocally(fieldname, calledUpon));
-  }
-
   public boolean addField(String fieldname, Type type) {
     if (! fields.containsKey(fieldname)) {
       fields.put(fieldname, new HashMap<>());
@@ -209,6 +176,27 @@ public class Environment {
       fields.get(fieldname).put(type.getClassOf(), type.getReturnedType());
     }
     return true;
+  }
+
+  private Type getFieldTypeLocally(String fieldname, Type calledUpon) {
+    Map<Type, Type> classToField = fields.get(fieldname);
+    if (classToField != null) {
+      for (Map.Entry<Type, Type> entry : classToField.entrySet()) {
+        if (entry.getKey().signatureMatches(calledUpon))
+          return entry.getValue();
+      }
+    }
+    return null;
+  }
+
+  /** Find the type of this field, if defined in an accessible scope
+   *
+   * @param fieldname the name of the field
+   * @return the Type or null
+   */
+  public Type getFieldType(String fieldname, Type calledUpon) {
+    return seekEnvironments(
+        (env) -> env.getFieldTypeLocally(fieldname, calledUpon));
   }
 
   /** Environment is a stack, return the parent of this environment */
