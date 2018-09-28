@@ -223,8 +223,9 @@ public class Type {
   }
 
   public static Type getFieldType(Type calledUpon, Type type) {
-    Type t = getFunctionType(type, calledUpon, null);
-    t._name = "Field";
+    @SuppressWarnings("serial")
+    List<Type> parTypes = new ArrayList<Type>(2){{ add(type); add(calledUpon); }};
+    Type t = new Type("Field", parTypes);
     return t;
   }
 
@@ -496,8 +497,12 @@ public class Type {
     if (! actualType._name.equals(_name)) // both method OR function
       return false;
     List<Type> actual = actualType._parameterTypes;
-    if (_parameterTypes.size() != actual.size())
-      return false;
+    if (_parameterTypes == null || actualType._parameterTypes == null) {
+      return _parameterTypes == actualType._parameterTypes;
+    } else {
+      if (_parameterTypes.size() != actual.size())
+        return false;
+    }
     for (int i = 1; i < _parameterTypes.size(); i++) {
       if (_parameterTypes.get(i).unifyTypes(actual.get(i)) == null)
         return false;
