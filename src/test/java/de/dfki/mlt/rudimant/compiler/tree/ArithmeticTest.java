@@ -112,7 +112,7 @@ public class ArithmeticTest {
   public void testArithmetic5() {
     String in = "int i = -(1 + 2);";
     String r = generate(in);
-    String expected = "int i = -(((1+2)));";
+    String expected = "int i = -(1+2);";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -121,7 +121,7 @@ public class ArithmeticTest {
     String in = "Child user; user.weight -= 0.2;";
     String r = generate(in);
     String expected = "Rdf user;user.setValue(\"<dom:weight>\","
-            + " (((Double)user.getSingleValue(\"<dom:weight>\"))-0.2));";
+            + " ((Double)user.getSingleValue(\"<dom:weight>\"))-0.2);";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -129,7 +129,76 @@ public class ArithmeticTest {
   public void testArithmetic7() {
     String in = "int x; x += 3;";
     String r = generate(in);
-    String expected = "int x;x = (x+3);";
+    String expected = "int x;x = x+3;";
     assertEquals(expected, getForMarked(r, expected));
   }
+
+  @Test
+  public void testPostIncrement1() {
+    String in = "int x; int a = x++;x++;";
+    String r = generate(in);
+    String expected = "int x;int a = x++;x++;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void testPostIncrement2() {
+    String in = "Child user; int a = user.weight++; user.weight++;";
+    String r = generate(in);
+    String expected = "Child user; int a = ((Double)user.pincrSingleValue(\"<dom:weight>\"));((Double)user.pincrSingleValue(\"<dom:weight>\"))++; }";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+
+  @Test
+  public void testPreIncrement1() {
+    String in = "int x; int a = ++x; ++x;";
+    String r = generate(in);
+    String expected = "int x;int a = ++x;++x;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+
+  @Test
+  public void testPreIncrement2() {
+    String in = "Child user; int a = ++user.weight; ++user.weight;";
+    String r = generate(in);
+    String expected = "Child user; int a = ++user.weight; ++user.weight;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void testPostDecrement1() {
+    String in = "int x; int a = x--; x--;";
+    String r = generate(in);
+    String expected = "int x;int a = x--;x--;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void testPostDecrement2() {
+    String in = "Child user; int a = user.weight--; user.weight--;";
+    String r = generate(in);
+    String expected = "Child user; int a = user.weight--; user.weight--;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+
+  @Test
+  public void testPreDecrement1() {
+    String in = "int x; int a = --x; --x;";
+    String r = generate(in);
+    String expected = "int x;int a = --x;--x;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+
+  @Test
+  public void testPreDecrement2() {
+    String in = "Child user; int a = --user.weight; --user.weight;";
+    String r = generate(in);
+    String expected = "Child user; int a = --user.weight; --user.weight;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
 }

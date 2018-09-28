@@ -91,7 +91,7 @@ public class AssignmentTest {
   public void testAssignment3b() throws IOException {
     String assignmentExp = "boolean test = 4+5;";
     String out = generate(assignmentExp);
-    String exp = "boolean test = (4+5) != 0";
+    String exp = "boolean test = 4+5 != 0";
 
     assertEquals(exp, getForMarked(out, exp));
   }

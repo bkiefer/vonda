@@ -74,7 +74,7 @@ public class ForStatementsTest {
   public void test4() {
     String stat = "for (int i = 0; i < 10; ++i){}";
     String s = generate(stat);
-    String expected = "for ( int i = 0;i < 10;i = (i+1)){ }";
+    String expected = "for ( int i = 0;i < 10;++i){ }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -83,7 +83,7 @@ public class ForStatementsTest {
     // test that Koenig binding works
     String stat = "String i; for (int i = 0; i < 10; ++i){}";
     String s = generate(stat);
-    String expected = "public String i;/**/for ( int i = 0;i < 10;i = (i+1)){ }";
+    String expected = "public String i;/**/for ( int i = 0;i < 10;++i){ }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -109,7 +109,7 @@ public class ForStatementsTest {
   public void testWhile() {
     String stat = "{ int n = 0; while ((n = random(7)) == correct) { ++n; } }";
     String s = generate(stat);
-    String expected = "{ int n = 0;while (((n = random(7))) == correct){ n = (n+1); }";
+    String expected = "{ int n = 0;while (((n = random(7))) == correct){ ++n; }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -128,7 +128,7 @@ public class ForStatementsTest {
   public void test6() {
     String stat = "for (abc = 1; abc < 10; abc++) { ++abc;}";
     String s = generate(stat);
-    String expected = "for ( int abc = 1;abc < 10;abc = (abc+1)){ abc = (abc+1); }";
+    String expected = "for ( int abc = 1;abc < 10;abc++){ ++abc; }";
     assertEquals(expected, getForMarked(s, expected));
   }
 

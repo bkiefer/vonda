@@ -140,6 +140,21 @@ public class VisitorGeneration implements RudiVisitor {
       gen(mem.getToplevelInstance()).gen(".");
   }
 
+  private static final String[] PREFIXOPS = { "-", "!", "--", "++" };
+  static { Arrays.sort(PREFIXOPS); }
+
+  private boolean isPrefixOperator(String op) {
+    return op.endsWith("(") || Arrays.binarySearch(PREFIXOPS, op) >= 0;
+  }
+
+  private boolean isPostfixOperator(String op) {
+    return "---".equals(op) || "+++".equals(op) || op.endsWith(")");
+  }
+
+  private String getPostfixOperator(String op) {
+    char c = op.charAt(0);
+    return c == '+' || c == '-' ? op.substring(0, 2) : op;
+  }
 
   @Override
   public void visit(RudiTree node) {
@@ -150,17 +165,16 @@ public class VisitorGeneration implements RudiVisitor {
   public void visit(ExpArithmetic node) {
     if (node.right == null) {
       // unary operator
-      // TODO: ENCAPSULATE THIS INTO TWO FUNCTIONS: isPrefixOperator() and
-      // isPostFixOperator()
-      gen(("-".equals(node.operator) || "!".equals(node.operator)), node.operator);
-      gen('(').gen(node.left);
-      // something like .isEmpty(), which is a postfix operator
-      gen((node.operator.endsWith(")")), node.operator);
+      gen(isPrefixOperator(node.operator), node.operator);
+      gen(node.left);
+      // something like .isEmpty(), a++, which is a postfix operator
+      if (isPostfixOperator(node.operator)) {
+        gen(getPostfixOperator(node.operator));
+      }
     } else {
-      gen('(').gen(node.left).gen(node.operator).gen(node.right);
+      gen(node.left).gen(node.operator).gen(node.right);
       gen((node.operator.endsWith("(")), ')');
     }
-    gen(')');
   }
 
   /** If this is true, when generating a ExpFieldAccess we will not

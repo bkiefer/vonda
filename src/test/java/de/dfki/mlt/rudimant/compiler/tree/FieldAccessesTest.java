@@ -81,7 +81,7 @@ public class FieldAccessesTest {
     public void testFieldAccess4() {
       String in = "Child c; timeout(\"bla\" + c.hasFather.toString(), 1000) {}";
       String s = generate(in);
-      String expected = "Rdf c;newTimeout((\"bla\"+((Rdf)c.getSingleValue(\"<dom:hasFather>\")).toString()),"
+      String expected = "Rdf c;newTimeout(\"bla\"+((Rdf)c.getSingleValue(\"<dom:hasFather>\")).toString(),"
           + "1000,new Proposal() {public void run() { } });";
       assertEquals(expected, getForMarked(s, expected));
     }
@@ -90,7 +90,7 @@ public class FieldAccessesTest {
     public void testFieldAccess5() {
       String in = "Child c; propose(\"bla\" + c.hasFather.toString()) {}";
       String s = generate(in);
-      String expected = "Rdf c;propose((\"bla\"+((Rdf)c.getSingleValue(\"<dom:hasFather>\")).toString()),"
+      String expected = "Rdf c;propose(\"bla\"+((Rdf)c.getSingleValue(\"<dom:hasFather>\")).toString(),"
           + "new Proposal() {public void run() { } });";
       assertEquals(expected, getForMarked(s, expected));
     }
@@ -131,7 +131,6 @@ public class FieldAccessesTest {
       assertEquals(expected, getForMarked(s, expected));
     }
 
-
     @Test
     public void testFieldAccess10() {
       // TODO: Make it clear in the doc that we only support *direct*
@@ -151,6 +150,15 @@ public class FieldAccessesTest {
       String s = generate(in);
       //System.out.println(s);
       String expected = "Map<String, String> m;if (exists(m) && m.containsKey(\"foo\")) { String s = m.get(\"foo\"); } }";
+      assertEquals(expected, getForMarked(s, expected));
+    }
+
+    @Test
+    public void testArrayFieldAccess() {
+      String in = "String[] m; l = m.length;";
+      String s = generate(in);
+      //System.out.println(s);
+      String expected = "String[] m;int l = m.length;";
       assertEquals(expected, getForMarked(s, expected));
     }
 

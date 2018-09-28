@@ -125,7 +125,7 @@ public class StatementTest {
     String in = "Object foo;  "
             + "for (int i = 1; i <= 2; i = i+1){foo.slot = 1;}";
    String r = generate(in);
-   String expected = "Object foo;for ( int i = 1;i <= 2;i = (i+1)){ foo.slot = 1; }";
+   String expected = "Object foo;for ( int i = 1;i <= 2;i = i+1){ foo.slot = 1; }";
    assertEquals(expected, getForMarked(r, expected));
  }
 
@@ -184,7 +184,7 @@ public class StatementTest {
  public void SwitchTest(){
    String in = "switch(5 % 3) { case 0: return true; case 1: return false;}";
    String r = generate(in);
-   String expected = "switch ((5%3)){ case 0:; return true; case 1:; return false;";
+   String expected = "switch (5%3){ case 0:; return true; case 1:; return false;";
    assertEquals(expected, getForMarked(r, expected));
  }
 

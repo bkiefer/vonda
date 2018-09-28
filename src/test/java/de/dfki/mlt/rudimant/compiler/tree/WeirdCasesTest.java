@@ -62,9 +62,10 @@ public class WeirdCasesTest {
 
   @Test
   public void testPlusPlus() {
+    // TODO: POSSIBLY REMOVE, SEE ARITHMETICTEST
     String in = "int f(int i) {++i; return i++;}";
     String r = generate(in);
-    String expected = "public int f(int i) { i = (i+1); return i = (i+1);";
+    String expected = "public int f(int i) { ++i; return i++;";
     assertEquals(expected, getForMarked(r, expected));
   }
 

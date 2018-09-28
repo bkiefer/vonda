@@ -170,7 +170,7 @@ public class TypesTest {
     String r = generate(in);
     String expected =
         "public List<Rdf> out() { List<Rdf> raw = new ArrayList<>();"
-        + "for ( int i = 1;i < 5 && raw.size() < 3;i = (i+1)){"
+        + "for ( int i = 1;i < 5 && raw.size() < 3;i++){"
         + " Rdf w = getChild(i);if (w != null) raw.add(w); } return raw;";
     assertEquals(expected, getForMarked(r, expected));
   }

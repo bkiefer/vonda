@@ -203,7 +203,7 @@ public class TypeInferenceTest {
         "sum1 = 3 + somevar;sum2 = somevar + 3;";
     String s = generate(in);
     String expected = "somevar = getSomething();" +
-        "sum1 = (3+somevar);sum2 = (somevar+3);";
+        "sum1 = 3+somevar;sum2 = somevar+3;";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("public int sum1;"));
     assertTrue(s.contains("public int sum2;"));

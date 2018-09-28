@@ -289,7 +289,7 @@ public void testMultipleRdfAccess2() {
     // Test set field with POD type
     String in = "String c = \"foo\"; c = c + 10;";
     String s = generate(in);
-    String expected = "String c = \"foo\";c = (c+Integer.toString(10));";
+    String expected = "String c = \"foo\";c = c+Integer.toString(10);";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -298,7 +298,7 @@ public void testMultipleRdfAccess2() {
     // Test set field with POD type
     String in = "String c = \"foo\"; c = 10 + c;";
     String s = generate(in);
-    String expected = "String c = \"foo\";c = (Integer.toString(10)+c);";
+    String expected = "String c = \"foo\";c = Integer.toString(10)+c;";
     assertEquals(expected, getForMarked(s, expected));
   }
   @Test
@@ -306,7 +306,7 @@ public void testMultipleRdfAccess2() {
     // Test set field with Rdf type
     String in = "Child c; String s = \"foo\" + c;";
     String s = generate(in);
-    String expected = "Rdf c;String s = (\"foo\"+c.toString());";
+    String expected = "Rdf c;String s = \"foo\"+c.toString();";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -315,7 +315,7 @@ public void testMultipleRdfAccess2() {
     // Test set field with POD type
     String in = "String c = \"foo\"; c = 10.0 + c;";
     String s = generate(in);
-    String expected = "String c = \"foo\";c = (Double.toString(10.0)+c);";
+    String expected = "String c = \"foo\";c = Double.toString(10.0)+c;";
     assertEquals(expected, getForMarked(s, expected));
   }
 

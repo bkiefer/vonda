@@ -37,7 +37,7 @@ public class VarDeclarationTest {
   public void testPOD() {
     String decl = " int i; if (true) { i = i + 1; }";
     String s = generate(decl);
-    String expected = "int i;if (true) { i = (i+1); }";
+    String expected = "int i;if (true) { i = i+1; }";
     assertEquals(expected, getForMarked(s, expected));
   }
 

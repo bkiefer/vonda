@@ -82,11 +82,16 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
   }
 
   // generic method
-  private ExpAssignment createPlusMinus(RTExpression variable, String plusOrMinus,
-                                         Location loc) {
+  private ExpArithmetic createPlusMinus(RTExpression variable,
+                                        String plusOrMinus,
+                                        Location loc) {
+    /*
     ExpLiteral es = setPos(new ExpLiteral("1", "int"), loc);
     ExpArithmetic ar = setPos(new ExpArithmetic(variable, es, plusOrMinus), loc);
     ExpAssignment ass = setPos(new ExpAssignment(variable, ar), loc);
+    */
+    ExpArithmetic ass =
+      setPos(new ExpArithmetic(variable, null, plusOrMinus), loc);
     return ass;
   }
 }
@@ -182,11 +187,33 @@ statement_no_def
   : block { $$ = $1; }
   | assignment ';' { $$ = setPos(getAssignmentStat($1), @$); }
   | field_access ';' { $$ = setPos(new StatExpression($1), @$); }
-  | PLUSPLUS UnaryExpression ';' {
-    $$ = setPos(new StatExpression(createPlusMinus($2, "+", @$)), @$);
+  | PLUSPLUS VARIABLE ';' {
+    ExpIdentifier var = setPos(new ExpIdentifier($2), @2);
+    $$ = setPos(new StatExpression(createPlusMinus(var, "++", @$)), @$);
   }
-  | MINUSMINUS UnaryExpression ';' {
-    $$ = setPos(new StatExpression(createPlusMinus($2, "+", @$)), @$);
+  | MINUSMINUS VARIABLE ';' {
+    ExpIdentifier var = setPos(new ExpIdentifier($2), @2);
+    $$ = setPos(new StatExpression(createPlusMinus(var, "--", @$)), @$);
+  }
+  | VARIABLE PLUSPLUS ';' {
+    ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
+    $$ = setPos(new StatExpression(createPlusMinus(var, "+++", @$)), @$);
+  }
+  | VARIABLE MINUSMINUS ';' {
+    ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
+    $$ = setPos(new StatExpression(createPlusMinus(var, "---", @$)), @$);
+  }
+  | PLUSPLUS field_access ';' {
+    $$ = setPos(new StatExpression(createPlusMinus($2, "++", @$)), @$);
+  }
+  | MINUSMINUS field_access ';' {
+    $$ = setPos(new StatExpression(createPlusMinus($2, "--", @$)), @$);
+  }
+  | field_access PLUSPLUS ';' {
+    $$ = setPos(new StatExpression(createPlusMinus($1, "+++", @$)), @$);
+  }
+  | field_access MINUSMINUS ';' {
+    $$ = setPos(new StatExpression(createPlusMinus($1, "---", @$)), @$);
   }
   | function_call ';' { $$ = setPos(new StatExpression($1), @$); }
   | grammar_rule { $$ = $1; }
@@ -579,10 +606,10 @@ MultiplicativeExpression
 
 UnaryExpression
   : PLUSPLUS UnaryExpression {
-    $$ = createPlusMinus($2, "+", @$);
+    $$ = createPlusMinus($2, "++", @$);
   }
   | MINUSMINUS UnaryExpression {
-    $$ = createPlusMinus($2, "-", @$);
+    $$ = createPlusMinus($2, "--", @$);
   }
   | '+' CastExpression { $$ = setPos(new ExpArithmetic($2, null, "+"), @$); }
   | '-' CastExpression { $$ = setPos(new ExpArithmetic($2, null, "-"), @$); }
@@ -604,10 +631,10 @@ LogicalUnaryExpression
 PostfixExpression
   : PrimaryExpression { $$ = $1; }
   | PostfixExpression PLUSPLUS {
-    $$ = createPlusMinus($1, "+", @$);
+    $$ = createPlusMinus($1, "+++", @$);
   }
   | PostfixExpression MINUSMINUS {
-    $$ = createPlusMinus($1, "-", @$);
+    $$ = createPlusMinus($1, "---", @$);
   }
   ;
 
