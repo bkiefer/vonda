@@ -626,15 +626,12 @@ public class VisitorType implements RudiVisitor {
             + node.type.getReturnedType(), node);
       }
     } else {
-      if (node.isDefinition) {
-        if (mem.variableExistsLocally(node.variable)) {
-          typeError("Re-defined variable " + node.variable
-              + " from " + mem.getVariableType(node.variable).toString()
-              + " to " + node.type.toString() +
-              ", keeping the old type", node);
-        } else {
-          mem.addVariableDeclaration(node.variable, node.type);
-        }
+      if (node.isDefinition
+          && ! mem.addVariableDeclaration(node.variable, node.type)) {
+        typeError("Re-defined variable " + node.variable
+            + " from " + mem.getVariableType(node.variable).toString()
+            + " to " + node.type.toString() +
+            ", keeping the old type", node);
       }
       if (mem.variableExists(node.variable)) {
         if (node.type.isUnspecified())
@@ -647,7 +644,7 @@ public class VisitorType implements RudiVisitor {
         node.toAssign = node.fixFields(new ExpAssignment(var, node.toAssign));
         node.toAssign.visit(this);
         Type mergeType = node.type.unifyTypes(node.toAssign.type);
-        if (!node.type.equals(mergeType)) {
+        if (mergeType != null && !node.type.equals(mergeType)) {
           node.type = mergeType;
         }
       }
@@ -739,9 +736,6 @@ public class VisitorType implements RudiVisitor {
     mem.leaveEnvironment(node);
   }
 
-  // set this variable to tell error handling that we are in a function invoked
-  // on a java object, so we probably do not wanna throw an error here
-  boolean partOfFieldAccess = false;
 
   /**
    * treat the case that an RDF is accessed with a label, which can result in a
@@ -840,7 +834,6 @@ public class VisitorType implements RudiVisitor {
     Type currentType = currentNode.type;
     // this is dangerous, and only works if this condition can not be
     // "interrupted"
-    partOfFieldAccess = true;
     for (int i = 1; i < node.parts.size(); ++i) {
       currentNode = node.parts.get(i);
       // if this is a funccall performed on anything, tell the function the type it was called on
@@ -851,16 +844,18 @@ public class VisitorType implements RudiVisitor {
       if (currentType.isRdfType()) {
         if (currentNode instanceof ExpIdentifier) {
           // only a literal, delegate this because it's complicated
-          ExpPropertyAccess acc = treatRdfPropertyAccess(node, currentType,
+          currentNode = treatRdfPropertyAccess(node, currentType,
               (ExpIdentifier) currentNode);
-          node.parts.set(i, acc);
-          currentType = acc.getType();
+          node.parts.set(i, currentNode);
+        }
+        currentType = currentNode.getType();
+        /*
         } else if (currentNode instanceof RTExpression) {
           // could also be a method application, possibly, what else?
           currentType = currentNode.type;
         } else {
           currentType = getNoType();
-        }
+        }*/
       } else { // unknown or Java type, let's try with the accessor type
     	  // TODO: think about this. we definitely want this in case of
         // currentNode being a function call, but if it is a variable we get
@@ -876,18 +871,12 @@ public class VisitorType implements RudiVisitor {
                   + " known for class " + currentType, node);
             }
           }
-        }/*else if (currentNode instanceof RTExpression) {
-           && !(currentNode instanceof ExpIdentifier)
-          currentType = currentNode.type;
-        } else {
-          currentType = getNoType();
-        }*/
+        }
         currentType = currentNode.type;
       }
       currentNode.type = currentType;
     }
     node.type = currentType; // the final result type
-    partOfFieldAccess = false;
   }
 
   /**
