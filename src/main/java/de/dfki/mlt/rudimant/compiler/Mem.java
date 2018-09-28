@@ -243,7 +243,7 @@ public class Mem {
    * @return true if the variable is not already defined, false otherwise
    */
   public boolean addVariableDeclaration(String variable, Type type) {
-    if (currentEnv.isVarLocallyDefined(variable)) {
+    if (variableExistsLocally(variable)) {
       return false;
     }
     putVariableDeclaration(variable, type);

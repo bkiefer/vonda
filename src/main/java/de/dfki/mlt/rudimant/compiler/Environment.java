@@ -137,6 +137,44 @@ public class Environment {
     functions.get(funcname).add(new Function(funcname, origin, functype));
   }
 
+  /** if defined in this environment, return the function with this name and
+   *  compatible type (excluding return type), null otherwise.
+   *
+   * @param funcname the name of the function
+   * @return the Function or null
+   */
+  private Function getFunctionLocally(String funcname, Type actualParameterTypes) {
+    if (functions.containsKey(funcname)) {
+      for (Function f : functions.get(funcname)) {
+        if (f.signatureMatches(actualParameterTypes)) {
+          return f;
+        }
+      }
+    }
+    return null;
+  }
+
+  private Type getFieldTypeLocally(String fieldname, Type calledUpon) {
+    Map<Type, Type> classToField = fields.get(fieldname);
+    if (classToField != null) {
+      for (Map.Entry<Type, Type> entry : classToField.entrySet()) {
+        if (entry.getKey().signatureMatches(calledUpon))
+          return entry.getValue();
+      }
+    }
+    return null;
+  }
+
+  private <T> T seekEnvironments(java.util.function.Function<Environment, T> f) {
+    Environment env = this;
+    T res;
+    while (env != null) {
+      if ((res = f.apply(env)) != null) return res;
+      env = env._parent;
+    }
+    return null;
+  }
+
   /** if defined in an accessible scope return the function with this name and
    *  compatible type (excluding return type), null otherwise.
    *
@@ -144,23 +182,18 @@ public class Environment {
    * @return the Function or null
    */
   public Function getFunction(String funcname, Type actualParameterTypes) {
-    Environment env = this;
-    while (env != null) {
-      if (env.functions.containsKey(funcname)) {
-        for (Function f : env.functions.get(funcname)) {
-          if (f.signatureMatches(actualParameterTypes)) {
-            return f;
-          }
-        }
-      }
-      env = env._parent;
-    }
-    return null;
+    return seekEnvironments(
+        (env) -> env.getFunctionLocally(funcname, actualParameterTypes));
   }
 
+  /** Find the type of this field, if defined in an accessible scope
+   *
+   * @param fieldname the name of the field
+   * @return the Type or null
+   */
   public Type getFieldType(String fieldname, Type calledUpon) {
-    Map<Type, Type> classToField = fields.get(fieldname);
-    return (classToField == null) ? null : classToField.get(calledUpon);
+    return seekEnvironments(
+        (env) -> env.getFieldTypeLocally(fieldname, calledUpon));
   }
 
   public boolean addField(String fieldname, Type type) {
