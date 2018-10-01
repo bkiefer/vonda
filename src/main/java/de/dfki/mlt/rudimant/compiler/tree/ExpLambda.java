@@ -33,7 +33,7 @@ import de.dfki.mlt.rudimant.compiler.Type;
  *
  * @author Anna Welker, Bernd Kiefer
  */
-public class ExpLambda extends RTExpLeaf implements RTBlockNode {
+public class ExpLambda extends RTExpression implements RTBlockNode {
 
   List<String> parameters;
   RudiTree body;

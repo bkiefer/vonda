@@ -21,7 +21,7 @@ package de.dfki.mlt.rudimant.compiler.tree;
 
 import java.util.Arrays;
 
-public class ExpArrayAccess extends RTExpLeaf {
+public class ExpArrayAccess extends RTExpression {
 
   RTExpression index;
   RTExpression array;
@@ -33,7 +33,7 @@ public class ExpArrayAccess extends RTExpLeaf {
 
   @Override
   public String toString() {
-    return this.content;
+    return array.toString() + '[' + index + ']';
   }
 
   @Override

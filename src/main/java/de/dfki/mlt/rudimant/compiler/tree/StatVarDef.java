@@ -38,22 +38,20 @@ public class StatVarDef extends RTStatement {
   boolean varIsFinal;
   boolean isDefinition;
 
-  public StatVarDef(boolean isFinal, Type type, String variable,
-      RTExpression assign) {
+  public StatVarDef(boolean isFinal, Type type, String var) {
     this.varIsFinal = isFinal;
     this.isDefinition = isFinal || !type.isUnspecified();
     this.type = type;
-    this.variable = variable;
-    this.toAssign = assign;
+    this.variable = var;
+    this.toAssign = null;
   }
 
-  public StatVarDef(boolean isFinal, Type type, RudiTree assign) {
+  public StatVarDef(boolean isFinal, Type type, ExpAssignment assign) {
     this.varIsFinal = isFinal;
     this.isDefinition = isFinal || !type.isUnspecified();
     this.type = type;
-    assert(assign instanceof ExpAssignment);
-    this.variable = ((ExpIdentifier)((ExpAssignment)assign).left).content;
-    this.toAssign = ((ExpAssignment)assign).right;
+    this.variable = ((ExpIdentifier)assign.left).content;
+    this.toAssign = assign;
   }
 
   @Override

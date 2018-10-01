@@ -76,7 +76,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
   private RudiTree getAssignmentStat(RTExpression assign) {
     assert(assign instanceof ExpAssignment);
     if (((ExpAssignment)assign).leftIsVariable()) {
-      return new StatVarDef(false, Type.getNoType(), assign);
+      return new StatVarDef(false, Type.getNoType(), (ExpAssignment)assign);
     }
     return new StatExpression(assign);
   }
@@ -85,14 +85,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
   private ExpArithmetic createPlusMinus(RTExpression variable,
                                         String plusOrMinus,
                                         Location loc) {
-    /*
-    ExpLiteral es = setPos(new ExpLiteral("1", "int"), loc);
-    ExpArithmetic ar = setPos(new ExpArithmetic(variable, es, plusOrMinus), loc);
-    ExpAssignment ass = setPos(new ExpAssignment(variable, ar), loc);
-    */
-    ExpArithmetic ass =
-      setPos(new ExpArithmetic(variable, null, plusOrMinus), loc);
-    return ass;
+    return setPos(new ExpArithmetic(variable, null, plusOrMinus), loc);
   }
 }
 
@@ -302,10 +295,24 @@ for_statement
 
 var_decl
   : VARIABLE assgn_exp ';' {
-    $$ = setPos(new StatVarDef(false, Type.getNoType(), $1, $2), @$);
+    ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
+    ExpAssignment ass = setPos(new ExpAssignment(var, $2), @1, @2);
+    $$ = setPos(new StatVarDef(false, Type.getNoType(), ass), @$);
   }
   | type_spec VARIABLE assgn_exp ';' {
-    $$ = setPos(new StatVarDef(false, $1, $2, $3), @$);
+    ExpIdentifier var = setPos(new ExpIdentifier($2), @2);
+    ExpAssignment ass = setPos(new ExpAssignment(var, $3), @2, @3);
+    $$ = setPos(new StatVarDef(false, $1, ass), @$);
+  }
+  | FINAL VARIABLE assgn_exp ';' {
+    ExpIdentifier var = setPos(new ExpIdentifier($2), @2);
+    ExpAssignment ass = setPos(new ExpAssignment(var, $3), @2, @3);
+    $$ = setPos(new StatVarDef(true, Type.getNoType(), ass), @$);
+  }
+  | FINAL type_spec VARIABLE assgn_exp ';' {
+    ExpIdentifier var = setPos(new ExpIdentifier($3), @3);
+    ExpAssignment ass = setPos(new ExpAssignment(var, $4), @3, @4);
+    $$ = setPos(new StatVarDef(true, $2, ass), @$);
   }
   ;
 
@@ -330,25 +337,6 @@ switch_statement
   }
   ;
 
-/*
-switch_block
-  : switch_labels switch_cont {
-    List<RTStatement> elts = $1;
-    elts.addAll($2);
-    $$ = setPos(new StatAbstractBlock(elts, false), @$);
-  }
-  ;
-
-switch_cont
-  : statements switch_labels { }
-  | %empty { $$ = new ArrayList<RTExpression>(); }
-  ;
-
-switch_labels
-  : switch_label switch_labels { $$ = $2; $2.addFirst($1); }
-  | switch_label { $$ = new LinkedList<RTStatement>(){{ add($1); }}; }
-  ;
-*/
 
 label_statement
   : CASE STRING ':'   {
@@ -389,29 +377,35 @@ label_statement
 
 var_def
   : FINAL VARIABLE assgn_exp ';' {
-    $$ = setPos(new StatVarDef(true, Type.getNoType(), $2, $3), @$);
+    ExpIdentifier var = setPos(new ExpIdentifier($2), @2);
+    ExpAssignment ass = setPos(new ExpAssignment(var, $3), @2, @3);
+    $$ = setPos(new StatVarDef(true, Type.getNoType(), ass), @$);
   }
   | type_spec VARIABLE assgn_exp ';' {
-    $$ = setPos(new StatVarDef(false, $1, $2, $3), @$);
+    ExpIdentifier var = setPos(new ExpIdentifier($2), @2);
+    ExpAssignment ass = setPos(new ExpAssignment(var, $3), @2, @3);
+    $$ = setPos(new StatVarDef(false, $1, ass), @$);
   }
   | FINAL type_spec VARIABLE assgn_exp ';' {
-    $$ = setPos(new StatVarDef(true, $2, $3, $4), @$);
-  }
+    ExpIdentifier var = setPos(new ExpIdentifier($3), @3);
+    ExpAssignment ass = setPos(new ExpAssignment(var, $4), @3, @4);
+    $$ = setPos(new StatVarDef(true, $2, ass), @$);
+    }
   | FINAL VARIABLE ';' {
-    $$ = setPos(new StatVarDef(true, Type.getNoType(), $2, null), @$);
+    $$ = setPos(new StatVarDef(true, Type.getNoType(), $2), @$);
   }
   | type_spec VARIABLE ';' {
-    $$ = setPos(new StatVarDef(false, $1, $2, null), @$);
+    $$ = setPos(new StatVarDef(false, $1, $2), @$);
   }
   | FINAL type_spec VARIABLE ';' {
-    $$ = setPos(new StatVarDef(true, $2, $3, null), @$);
+    $$ = setPos(new StatVarDef(true, $2, $3), @$);
   }
   ;
 
 field_def
   : '[' type_spec ']' '.' type_spec VARIABLE ';' {
     $$ = setPos(new StatFieldDef(null,
-                      setPos(new StatVarDef(false, $5, $6, null), @$), $2), @$);
+           setPos(new StatVarDef(false, $5, $6), @$), $2), @$);
   }
   ;
 
@@ -620,7 +614,6 @@ CastExpression
   : UnaryExpression { $$ = $1; }
   | '(' type_spec ')' CastExpression { $$ = setPos(new ExpCast($2, $4), @$); }
   ;
-//  | '(' exp ')' LogicalUnaryExpression { $$ = setPos(new ExpCast($2, $4)); }
 
 LogicalUnaryExpression
   : PostfixExpression { $$ = $1; }
@@ -685,26 +678,23 @@ ConditionalExpression
 // TODO: is that all 'what you can assign to' (an lvalue), which can be:
 // a variable, an array element, an rdf slot (did i forget sth?)
 assignment
-  : VARIABLE assgn_exp {
-    ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
-    $$ = setPos(new ExpAssignment(var, $2), @$);
-  }
-  | field_access assgn_exp { $$ = setPos(new ExpAssignment($1, $2), @$); }
+  : field_access assgn_exp { $$ = setPos(new ExpAssignment($1, $2), @$); }
   | ArrayAccess assgn_exp { $$ = setPos(new ExpAssignment($1, $2), @$); }
+  | VARIABLE assgn_exp {
+    ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
+    ExpAssignment ass = setPos(new ExpAssignment(var, $2), @$);
+    $$ = ass;
+  }
   ;
 
 field_access
   : NotJustName field_access_rest {
-    //List<String> repr = new ArrayList<>($2.size());
-    //for (int i = 0; i < $2.size(); ++i) repr.add("");
-    //$$ = setPos(new ExpFieldAccess($2, repr), @$); $2.addFirst($1);
     $$ = setPos(new ExpFieldAccess($2), @$); $2.addFirst($1);
   }
   | STRING field_access_rest {
     $$ = setPos(new ExpFieldAccess($2), @$); $2.addFirst(setPos($1, @$));
   }
   | function_call field_access_rest { $$ = setPos(new ExpFieldAccess($2), @$); $2.addFirst($1); }
-//  | CastExpression field_access_rest { $$ = setPos(new ExpFieldAccess($2), @$); $2.addFirst($1); }
   ;
 
 field_access_rest

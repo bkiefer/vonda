@@ -126,6 +126,14 @@ public class ArithmeticTest {
   }
 
   @Test
+  public void testArithmetic6a() {
+    String in = "Child user; d -= user.weight ;";
+    String r = generate(in);
+    String expected = "Rdf user;d = d-user.getDouble(\"<dom:weight>\");";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
   public void testArithmetic7() {
     String in = "int x; x += 3;";
     String r = generate(in);

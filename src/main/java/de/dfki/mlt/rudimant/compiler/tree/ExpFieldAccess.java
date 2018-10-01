@@ -27,7 +27,7 @@ import java.util.List;
  *
  * @author Anna Welker
  */
-public class ExpFieldAccess extends RTExpLeaf {
+public class ExpFieldAccess extends RTExpression {
 
   List<RTExpression> parts;
 

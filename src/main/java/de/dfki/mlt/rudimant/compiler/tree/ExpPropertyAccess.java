@@ -48,7 +48,7 @@ public class ExpPropertyAccess extends RTExpLeaf {
   /** If the function has a second argument (set...), it's here */
   RTExpression secondArg;
 
-  public ExpPropertyAccess(String fullexp, boolean var, Type rt,
+  public ExpPropertyAccess(String fieldName, boolean var, Type rt,
       boolean func) {
     // an access will always return sth of type Object, so to not get null
     // I'll set the type of this to Object by default
@@ -56,7 +56,7 @@ public class ExpPropertyAccess extends RTExpLeaf {
     propertyVariable = var;
     //rangeType = rt;
     functional = func;
-    content = fullexp;
+    content = fieldName;
     acc = Access.get;
   }
 
@@ -95,7 +95,7 @@ public class ExpPropertyAccess extends RTExpLeaf {
   String getPropertyName() {
     String ret = "";
     if(!propertyVariable) ret += ('"');
-    ret += (content);
+    ret += content;
     if(!propertyVariable) ret += ('"');
     return ret;
   }

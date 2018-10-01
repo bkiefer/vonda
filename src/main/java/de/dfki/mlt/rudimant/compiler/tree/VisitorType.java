@@ -375,9 +375,7 @@ public class VisitorType implements RudiVisitor {
     if (expr instanceof ExpIdentifier) {
       ExpIdentifier variable = (ExpIdentifier) expr;
       if (!mem.variableExists(variable.content)) {
-        res = new ExpLiteral(variable.content,
-            //variable.toString(),
-            "String");
+        res = new ExpLiteral(variable.content, "String");
         variable.fixFields(res);
       }
     }
@@ -607,9 +605,17 @@ public class VisitorType implements RudiVisitor {
     // added.
     node.left.visit(this);
     node.right.visit(this);
+    if (node.left.type.isUnspecified()) {
+      node.left.propagateType(node.right.type, this);
+    }
+    if (node.right.type.isUnspecified()) {
+      node.right.propagateType(node.left.type, this);
+    }
     if (node.left.getType().isNumber() && node.right.getType().isNumber()) {
       // then this is a normal addition/subtraction, and should be turned into
       // an assignment to be treated properly
+      // TODO: we could restrict this to the case where the left side is a
+      // fieldaccess, and generate += and -= otherwise
       ExpArithmetic s = node.fixFields(
           new ExpArithmetic(node.left, node.right, node.add? "+" : "-"));
       s.type = checkArithmeticTypes(s);
@@ -655,15 +661,11 @@ public class VisitorType implements RudiVisitor {
             + " to " + node.type.toString() +
             ", keeping the old type", node);
       }
-      if (mem.variableExists(node.variable)) {
-        if (node.type.isUnspecified())
-          node.type = mem.getVariableType(node.variable);
+      if (mem.variableExists(node.variable) && node.type.isUnspecified()) {
+        node.type = mem.getVariableType(node.variable);
       }
 
       if (node.toAssign != null) {
-        ExpIdentifier var =
-            node.fixFields(new ExpIdentifier(node.variable, node.type));
-        node.toAssign = node.fixFields(new ExpAssignment(var, node.toAssign));
         node.toAssign.visit(this);
         Type mergeType = node.type.unifyTypes(node.toAssign.type);
         if (mergeType != null && !node.type.equals(mergeType)) {
