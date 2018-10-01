@@ -64,14 +64,6 @@ public class VisitorGeneration implements RudiVisitor {
     _th = th;
   }
 
-  public static String removeJavaBrackets(String c){
-    // Deal with java code
-    if (c.startsWith("/*@")) {
-      c = c.substring(3, c.length() - 3);
-    }
-    return c;
-  }
-
   public VisitorGeneration gen(char c) {
     try {
       _out.append(c);
@@ -193,13 +185,6 @@ public class VisitorGeneration implements RudiVisitor {
     }
   }
 
-  /** If this is true, when generating a ExpFieldAccess we will not
-   *  generate an RDF access for the last part, which will be realized
-   *  by a method call.  This is highly, EXTREMELY, dangerous and error
-   *  prone, but currently we don't have a better idea.
-   */
-  boolean replaceLastWithFuncall = false;
-
   @Override
   public void visit(ExpAssignment node) {
     ExpPropertyAccess pa = null;
@@ -220,23 +205,7 @@ public class VisitorGeneration implements RudiVisitor {
         return;
       }
     }
-      /*
-      // omit the last field since is will be replaced by a setValue(a, b)?
-      replaceLastWithFuncall = pa != null;
-      gen(node.left);
-      replaceLastWithFuncall = false;
-      if (pa != null) {
-        // TODO: shouldn't this be "... = {} " ??
-        if (node.right instanceof ExpLiteral &&
-            ((ExpLiteral)node.right).content.equals("null")) {
-          gen(".clearValue(").gen(pa.getPropertyName()).gen(')');
-          return;
-        }
-        // NOT: gen(functional ? ".setSingleValue(" : ".setValue(");
-        gen(".setValue(").gen(pa.getPropertyName()).gen(", "); //always correct!
-      } else {
-        gen(" = ");
-      } */
+
     gen(node.left).gen(" = ");
     if (node.type.needsCast(node.right.getType())
         && !(node.right instanceof ExpNew)) {
@@ -245,11 +214,6 @@ public class VisitorGeneration implements RudiVisitor {
       gen('(').gen(node.type.toJava()).gen(") ");
     }
     gen(node.right);
-    /*
-    if (pa != null) {
-      gen(")"); // close call to setValue()
-    }
-    */
   }
 
 
@@ -344,16 +308,15 @@ public class VisitorGeneration implements RudiVisitor {
       ExpFieldAccess fa = (ExpFieldAccess)node;
       RTExpression nextToLast = fa.parts.get(fa.parts.size() - 2);
       if (nextToLast.type.isDialogueAct()) {
-        boolean oldrep = replaceLastWithFuncall;
-        replaceLastWithFuncall = true;
-        String slot = ((RTExpLeaf)(fa.parts.get(fa.parts.size() - 1))).content;
-        Type t = mem.getVariableType(slot);
-        // if slot is a variable of type String, don't put "" !
-        if (!(t != null && t.isString()))
-          slot = "\"" + slot + "\"";
-        gen(fa).gen(".hasSlot(").gen(slot).gen(")");
-        replaceLastWithFuncall = oldrep;
-        return;
+        RTExpression last = fa.parts.get(fa.parts.size() - 1);
+        if (last instanceof ExpPropertyAccess) {
+          ExpPropertyAccess acc = ((ExpPropertyAccess)last);
+          ExpPropertyAccess.Access orig = acc.acc;
+          acc.acc = ExpPropertyAccess.Access.hasSlot;
+          gen(fa);
+          acc.acc = orig;
+          return;
+        }
       }
     }
     if (type.isBool()) {
@@ -806,40 +769,20 @@ public class VisitorGeneration implements RudiVisitor {
 
   @Override
   public void visit(ExpFieldAccess node) {
-    int to = node.parts.size();
-    // don't print the last field if is in an assignment rather than an
-    // access, which means that a set method is generated.
-    if (replaceLastWithFuncall) {
-      --to;
-    }
-
-    // changed the direction of the for loop; should be enough
-    /*
-    for (int i = to - 1; i >= 0; i--) {
-      if (node.parts.get(i) instanceof ExpPropertyAccess) {
-        ExpPropertyAccess pa = (ExpPropertyAccess) node.parts.get(i);
-        String cast = pa.getType().toJava();
-        gen("((").gen(cast).gen(")");
-      }
-    }
-    */
-    gen(node.parts.get(0));
-    Type currentType = ((RTExpression) node.parts.get(0)).type;
-    for (int i = 1; i < to; i++) {
-      RTExpression currentPart = node.parts.get(i);
+    RTExpression currentPart = (RTExpression) node.parts.get(0);
+    gen(currentPart);
+    Type currentType = currentPart.type;
+    for (int i = 1; i < node.parts.size(); i++) {
+      currentPart = node.parts.get(i);
       if (currentPart instanceof ExpPropertyAccess) {
         ExpPropertyAccess pa = (ExpPropertyAccess) currentPart;
-        // then we are in the case that is actually an rdf operation
+        // then we are in the case that is actually an RDF operation
         if (currentType.isDialogueAct()) pa.functional = false;
         gen('.').gen(pa.getFunctionName()).gen('(');
-        //} else {
-        //  gen(pa.functional ? ".getSingleValue(" : ".getValue(");
-        //}
         gen(pa.getPropertyName());
         if (pa.secondArg != null) {
           gen(", ").gen(pa.secondArg);
         }
-        //gen("))");
         gen(')');
         currentType = pa.type;
       } else {
@@ -852,7 +795,6 @@ public class VisitorGeneration implements RudiVisitor {
   @Override
   public void visit(ExpPropertyAccess node) {
     throw new UnsupportedOperationException("Should not be visited");
-    //return;
   }
 
   @Override

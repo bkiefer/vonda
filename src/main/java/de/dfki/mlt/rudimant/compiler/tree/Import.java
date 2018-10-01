@@ -45,7 +45,7 @@ public class Import extends RudiTree {
     throw new UnsupportedOperationException("visit is special");
   };
 
-  public String toString() { return "import " + path; }
+  public String toString() { return "import " + path.toString(); }
 
   public Iterable<? extends RudiTree> getDtrs() {
     return Collections.emptyList();

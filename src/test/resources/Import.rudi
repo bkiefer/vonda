@@ -1,7 +1,0 @@
-name:
-if (q.correct == true) { logger.info("It's correct"); return; }
-
-List<Child> cl;
-Child c = cl.get(0);
-
-import Import2;

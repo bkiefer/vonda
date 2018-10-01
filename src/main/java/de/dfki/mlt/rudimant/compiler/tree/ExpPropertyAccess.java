@@ -34,13 +34,11 @@ public class ExpPropertyAccess extends RTExpLeaf {
   /** The identifier or URI for the access is in the content field*/
 
   enum Access {
-      get, incr, pincr, decr, pdecr, setValue, clearValue
+      get, incr, pincr, decr, pdecr, setValue, clearValue, hasSlot
   };
 
   /** Is content a variable/identifier or an URI */
   boolean propertyVariable = false;
-  /** The "return type" of the access */
-  //Type rangeType;
   /** Is the property represented by content a functional property */
   boolean functional;
   /** Function to apply: clear, get, set, incr or pincr */
@@ -54,7 +52,6 @@ public class ExpPropertyAccess extends RTExpLeaf {
     // I'll set the type of this to Object by default
     type = rt;
     propertyVariable = var;
-    //rangeType = rt;
     functional = func;
     content = fieldName;
     acc = Access.get;
@@ -77,7 +74,8 @@ public class ExpPropertyAccess extends RTExpLeaf {
   }
 
   String getFunctionName() {
-    if (acc == Access.setValue || acc == Access.clearValue )
+    if (acc == Access.setValue || acc == Access.clearValue
+        || acc ==Access.hasSlot)
       return acc.toString();
     if (!functional)
       return acc + "Value"; // set with Object inner type

@@ -1,5 +1,0 @@
-QuizHistory q;
-
-import Import;
-import sub.ImportSub;
-import After;
