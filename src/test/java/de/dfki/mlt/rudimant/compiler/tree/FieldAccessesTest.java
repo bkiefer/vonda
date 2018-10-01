@@ -62,8 +62,8 @@ public class FieldAccessesTest {
 	    String in = "Child c; yesterday = \"Lukas\"; if(c.surname.equals(yesterday)){}";
 	    String s = generate(in);
 	    String expected = "Rdf c;String yesterday = \"Lukas\";if (c != null &&"
-	        + " exists(((Set<Object>)c.getValue(\"<dom:surname>\"))) &&"
-	    		+ " ((Set<Object>)c.getValue(\"<dom:surname>\")).equals(yesterday))";
+	        + " exists(c.getValue(\"<dom:surname>\")) &&"
+	    		+ " c.getValue(\"<dom:surname>\").equals(yesterday))";
 	    assertEquals(expected, getForMarked(s, expected));
 	  }
 
@@ -72,8 +72,8 @@ public class FieldAccessesTest {
       String in = "Child c; yesterday = \"Lukas\"; if(c.forename.equals(yesterday)){}";
       String s = generate(in);
       String expected = "Rdf c;String yesterday = \"Lukas\";if (c != null &&"
-          + " exists(((String)c.getSingleValue(\"<dom:forename>\"))) &&"
-          + " ((String)c.getSingleValue(\"<dom:forename>\")).equals(yesterday))";
+          + " exists(c.getString(\"<dom:forename>\")) &&"
+          + " c.getString(\"<dom:forename>\").equals(yesterday))";
       assertEquals(expected, getForMarked(s, expected));
     }
 
@@ -81,7 +81,7 @@ public class FieldAccessesTest {
     public void testFieldAccess4() {
       String in = "Child c; timeout(\"bla\" + c.hasFather.toString(), 1000) {}";
       String s = generate(in);
-      String expected = "Rdf c;newTimeout(\"bla\"+((Rdf)c.getSingleValue(\"<dom:hasFather>\")).toString(),"
+      String expected = "Rdf c;newTimeout(\"bla\"+c.getRdf(\"<dom:hasFather>\").toString(),"
           + "1000,new Proposal() {public void run() { } });";
       assertEquals(expected, getForMarked(s, expected));
     }
@@ -90,7 +90,7 @@ public class FieldAccessesTest {
     public void testFieldAccess5() {
       String in = "Child c; propose(\"bla\" + c.hasFather.toString()) {}";
       String s = generate(in);
-      String expected = "Rdf c;propose(\"bla\"+((Rdf)c.getSingleValue(\"<dom:hasFather>\")).toString(),"
+      String expected = "Rdf c;propose(\"bla\"+c.getRdf(\"<dom:hasFather>\").toString(),"
           + "new Proposal() {public void run() { } });";
       assertEquals(expected, getForMarked(s, expected));
     }
@@ -99,7 +99,7 @@ public class FieldAccessesTest {
     public void testFieldAccess6() {
       String in = "Child c; property = \"name\"; l = c.property;";
       String s = generate(in);
-      String expected = "Rdf c;String property = \"name\";Set<Object> l = ((Set<Object>)c.getValue(property)); }";
+      String expected = "Rdf c;String property = \"name\";Set<Object> l = c.getValue(property); }";
       assertEquals(expected, getForMarked(s, expected));
     }
 
@@ -117,7 +117,7 @@ public class FieldAccessesTest {
       String in = "Child c; a: if(c.forename){}";
       String s = generate(in);
       String expected = "Rdf c;// Rule a boolean[] __x1 = new boolean[2];"
-          + " __x1[0] = (__x1[1] = c != null && exists(((String)c.getSingleValue(\"<dom:forename>\"))));";
+          + " __x1[0] = (__x1[1] = c != null && exists(c.getString(\"<dom:forename>\")));";
       assertEquals(expected, getForMarked(s, expected));
     }
 
@@ -126,7 +126,7 @@ public class FieldAccessesTest {
       String in = "Child c; s=\"<dom:forename>\"; a: if(c.s){}";
       String s = generate(in);
       String expected = "Rdf c;String s = \"<dom:forename>\";// Rule a boolean[] __x1 = new boolean[2];"
-          + " __x1[0] = (__x1[1] = c != null && exists(((Set<Object>)c.getValue(s))));";
+          + " __x1[0] = (__x1[1] = c != null && exists(c.getValue(s)));";
 
       assertEquals(expected, getForMarked(s, expected));
     }
@@ -139,7 +139,8 @@ public class FieldAccessesTest {
       String in = "Child c; if(c.forename && c.forename == \"foo\"){}";
       String s = generate(in);
       //System.out.println(s);
-      String expected = "Rdf c;if (c != null && exists(((String)c.getSingleValue(\"<dom:forename>\"))) && ((String)c.getSingleValue(\"<dom:forename>\")).equals(\"foo\")) { }";
+      String expected = "Rdf c;if (c != null && exists(c.getString(\"<dom:forename>\"))"
+          + " && c.getString(\"<dom:forename>\").equals(\"foo\")) { }";
       assertEquals(expected, getForMarked(s, expected));
     }
 
@@ -150,6 +151,18 @@ public class FieldAccessesTest {
       String s = generate(in);
       //System.out.println(s);
       String expected = "Map<String, String> m;if (exists(m) && m.containsKey(\"foo\")) { String s = m.get(\"foo\"); } }";
+      assertEquals(expected, getForMarked(s, expected));
+    }
+
+    @Test
+    public void testFieldAccess12() {
+      // TODO: Make it clear in the doc that we only support *direct*
+      // existence support for RDF access chains, so that is all we offer, for
+      // arbitrary long chains:
+      String in = "Child c; s = c.hasFather.forename;";
+      String s = generate(in);
+      //System.out.println(s);
+      String expected = "Rdf c;String s = c.getRdf(\"<dom:hasFather>\").getString(\"<dom:forename>\");";
       assertEquals(expected, getForMarked(s, expected));
     }
 

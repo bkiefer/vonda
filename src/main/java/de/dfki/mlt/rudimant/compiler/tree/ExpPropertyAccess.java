@@ -19,7 +19,7 @@
 
 package de.dfki.mlt.rudimant.compiler.tree;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import de.dfki.mlt.rudimant.compiler.Type;
 
@@ -31,22 +31,40 @@ import de.dfki.mlt.rudimant.compiler.Type;
  */
 public class ExpPropertyAccess extends RTExpLeaf {
 
-  ExpIdentifier label;
+  /** The identifier or URI for the access is in the content field*/
+
+  enum Access {
+      get, incr, pincr, decr, pdecr, setValue, clearValue
+  };
+
+  /** Is content a variable/identifier or an URI */
   boolean propertyVariable = false;
-  Type rangeType;
+  /** The "return type" of the access */
+  //Type rangeType;
+  /** Is the property represented by content a functional property */
   boolean functional;
+  /** Function to apply: clear, get, set, incr or pincr */
+  Access acc;
+  /** If the function has a second argument (set...), it's here */
+  RTExpression secondArg;
 
-
-  public ExpPropertyAccess(String fullexp, ExpIdentifier l, boolean var, Type rt,
+  public ExpPropertyAccess(String fullexp, boolean var, Type rt,
       boolean func) {
     // an access will always return sth of type Object, so to not get null
     // I'll set the type of this to Object by default
     type = rt;
-    label = l;
     propertyVariable = var;
-    rangeType = rt;
+    //rangeType = rt;
     functional = func;
-    content= fullexp;
+    content = fullexp;
+    acc = Access.get;
+  }
+
+  public ExpPropertyAccess copy() {
+    ExpPropertyAccess epa =
+        new ExpPropertyAccess(content, propertyVariable, type, functional);
+    epa.acc = acc;
+    return epa;
   }
 
   @Override
@@ -55,21 +73,36 @@ public class ExpPropertyAccess extends RTExpLeaf {
   }
 
   public Iterable<? extends RudiTree> getDtrs() {
-    RudiTree[] dtrs = { label };
-    return Arrays.asList(dtrs);
+    return Collections.emptyList();
+  }
+
+  String getFunctionName() {
+    if (acc == Access.setValue || acc == Access.clearValue )
+      return acc.toString();
+    if (!functional)
+      return acc + "Value"; // set with Object inner type
+
+    Type t = type;
+    // incr and pincr are only applicable to POD or NumberContainer
+    if (t.isPODType()) t = t.getContainer();
+    if (t.isJavaConvertible()) {
+      return acc + t.toJava();
+    }
+    // so only get remains, with an unknown type
+    return "getSingleValue";
   }
 
   String getPropertyName() {
     String ret = "";
     if(!propertyVariable) ret += ('"');
-    ret += (label.content);
+    ret += (content);
     if(!propertyVariable) ret += ('"');
     return ret;
   }
 
   public String toString() {
-    return (propertyVariable ? ".getV(" + label.content + ")"
-        : "." + label.content) +
+    return (propertyVariable ? "." + acc + "(" + content + ")"
+        : "." + content) +
         (type != null ? "[" + type + "]" : "");
   }
 }

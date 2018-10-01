@@ -249,3 +249,10 @@ int func(String h) {
   int h = 1;
   ++h;
 }
+
+// pre- and post-increment and decrement work for all functional properties
+// with numerical range;
+++child.weight;
+d = child.weight++;
+d = --child.weight;
+child.weight--;

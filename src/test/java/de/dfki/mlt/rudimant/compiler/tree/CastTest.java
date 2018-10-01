@@ -44,7 +44,7 @@ public class CastTest {
   public void testCast1() {
     String in = "Quiz c; c.hasHistory.add(new QuizHistory);";
     String s = generate(in);
-    String expected = "Rdf c;((Set<Object>)c.getValue(\"<dom:hasHistory>\"))"
+    String expected = "Rdf c;c.getValue(\"<dom:hasHistory>\")"
         + ".add(_proxy.getClass(\"<dom:QuizHistory>\").getNewInstance(DEFNS));";
     assertEquals(expected, getForMarked(s, expected));
   }
@@ -53,7 +53,7 @@ public class CastTest {
   public void testCast1a() {
     String in = "Quiz c; c.hasHistory += new QuizHistory;";
     String s = generate(in);
-    String expected = "Rdf c;((Set<Object>)c.getValue(\"<dom:hasHistory>\"))"
+    String expected = "Rdf c;c.getValue(\"<dom:hasHistory>\")"
             + ".add(_proxy.getClass(\"<dom:QuizHistory>\").getNewInstance(DEFNS));";
     assertEquals(expected, getForMarked(s, expected));
   }
@@ -65,7 +65,7 @@ public class CastTest {
     String expected = "Rdf turn;boolean correct = "
         // TODO: THIS IS CURRENTLY MISSING
         //+ "turn != null && exists(((Set<Object>)turn.getValue() "
-        + "((Boolean)turn.getSingleValue(\"<dom:correct>\"));";
+        + "turn.getBoolean(\"<dom:correct>\");";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -73,7 +73,7 @@ public class CastTest {
   public void testCast3() {
     String in = "String th = myLastDA().theme;";
     String s = generate(in);
-    String expected = "String th = ((String)myLastDA().getValue(\"theme\"));";
+    String expected = "String th = myLastDA().getValue(\"theme\");";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -83,8 +83,7 @@ public class CastTest {
             + "(activity.forename != currentAsker) {}";
     String s = generate(in);
     String expected = "Rdf activity;String currentAsker = \"bla\";if (! "
-        + "(((String)activity.getSingleValue(\"<dom:forename>\"))"
-        + ".equals(currentAsker))) { }";
+        + "(activity.getString(\"<dom:forename>\").equals(currentAsker))) { }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -117,8 +116,8 @@ public class CastTest {
   public void test4() {
      String in = "Activity activity; bool = (activity.status == \"gameProposed\");";
     String s = generate(in);
-    String expected = "Rdf activity;boolean bool = (((String)activity"
-            + ".getSingleValue(\"<dom:status>\")).equals(\"gameProposed\"));";
+    String expected = "Rdf activity;boolean bool = (activity"
+            + ".getString(\"<dom:status>\").equals(\"gameProposed\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -134,7 +133,7 @@ public class CastTest {
   public void test6() {
     String in = "Child user; b = user.hasFather == toRdf(\"<dom:Father01>\");";
     String s = generate(in);
-    String expected = "Rdf user;boolean b = ((Rdf)user.getSingleValue(\"<dom:hasFather>\"))"
+    String expected = "Rdf user;boolean b = user.getRdf(\"<dom:hasFather>\")"
         + ".equals(toRdf(\"<dom:Father01>\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
@@ -143,8 +142,8 @@ public class CastTest {
   public void test6a() {
     String in = "Child user; hobbies = user.hasHobby;";
     String s = generate(in);
-    String expected = "Rdf user;Set<Object> hobbies = ((Set<Object>)user"
-            + ".getValue(\"<dom:hasHobby>\"));";
+    String expected = "Rdf user;Set<Object> hobbies = user"
+            + ".getValue(\"<dom:hasHobby>\");";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -152,8 +151,8 @@ public class CastTest {
   public void test7() {
     String in = "Child user; b = (user.forename == \"John\");";
     String s = generate(in);
-    String expected = "Rdf user;boolean b = (((String)user"
-            + ".getSingleValue(\"<dom:forename>\")).equals(\"John\"));";
+    String expected = "Rdf user;boolean b = (user"
+            + ".getString(\"<dom:forename>\").equals(\"John\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -223,7 +222,7 @@ public class CastTest {
   public void test15() {
     String in = "Agent c; String s = ((Child)c).forename;";
     String s = generate(in);
-    String expected = "Rdf c;String s = ((String)((Rdf)c).getSingleValue(\"<dom:forename>\"));";
+    String expected = "Rdf c;String s = ((Rdf)c).getString(\"<dom:forename>\");";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -232,10 +231,10 @@ public class CastTest {
   public void testMultipleRdfAccess() {
     String in = "QuizHistory c ; b = c.hasChildId.hasFather.forename;";
     String s = generate(in);
-    String expected = "Rdf c;String b = ((String)((Rdf)((Rdf)c"
-            + ".getSingleValue(\"<dom:hasChildId>\"))"
-            + ".getSingleValue(\"<dom:hasFather>\"))"
-            + ".getSingleValue(\"<dom:forename>\"));";
+    String expected = "Rdf c;String b = c"
+            + ".getRdf(\"<dom:hasChildId>\")"
+            + ".getRdf(\"<dom:hasFather>\")"
+            + ".getString(\"<dom:forename>\");";
     assertEquals(expected, getForMarked(s, expected));
   }
 

@@ -138,7 +138,7 @@ public class TypeInferenceTest {
     String in = " QuizHistory q; if(q.correct) i = 7; ";
     String s = generate(in);
     String expected = "public Rdf q;/**/if (q != null && "
-        + "((Boolean)q.getSingleValue(\"<dom:correct>\"))) int i = 7;";
+        + "q.getBoolean(\"<dom:correct>\")) int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("Rdf q;"));
   }
@@ -148,7 +148,7 @@ public class TypeInferenceTest {
     String in = "Quiz q;if(q.status) i = 7; ";
     String s = generate(in);
     String expected = "public Rdf q;/**/if (q != null && "
-        + "exists(((String)q.getSingleValue(\"<dom:status>\"))))"
+        + "exists(q.getString(\"<dom:status>\")))"
         + " int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("Rdf q;"));
@@ -226,7 +226,7 @@ public class TypeInferenceTest {
     String in = "Set<String> slotBlacklist; if (slotBlacklist.contains(lastDA().agent)) {}";
     String s = generate(in);
     String expected = "public Set<String> slotBlacklist;/**/"
-        + "if (exists(slotBlacklist) && slotBlacklist.contains(((String)lastDA().getValue(\"agent\")))) { }";
+        + "if (exists(slotBlacklist) && slotBlacklist.contains(lastDA().getValue(\"agent\"))) { }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -234,7 +234,7 @@ public class TypeInferenceTest {
   public void test16() {
     String in = "Child c; String da = random(c.surname);";
     String s = generate(in);
-    String expected = "public Rdf c;public String da;/**/da = (String) random(((Set<Object>)c.getValue(\"<dom:surname>\")));";
+    String expected = "public Rdf c;public String da;/**/da = (String) random(c.getValue(\"<dom:surname>\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -242,7 +242,7 @@ public class TypeInferenceTest {
   public void test17() {
     String in = "Child c; Rdf a = random(c.hasHobby);";
     String s = generate(in);
-    String expected = "public Rdf c;public Rdf a;/**/a = (Rdf) random(((Set<Object>)c.getValue(\"<dom:hasHobby>\")));";
+    String expected = "public Rdf c;public Rdf a;/**/a = (Rdf) random(c.getValue(\"<dom:hasHobby>\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
   @Test

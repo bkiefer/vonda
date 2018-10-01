@@ -100,7 +100,7 @@ public class ForStatementsTest {
   public void test5a() {
     String stat = "int q; List<Object> l; for (QuizHistory q : l){ z = q.turnId; }";
     String s = generate(stat);
-    String expected = "public int q;public List<Object> l;/**/for (Object q_outer : l) { Rdf q = (Rdf)q_outer; { Integer z = ((Integer)q.getSingleValue(\"<dom:turnId>\")); } }";
+    String expected = "public int q;public List<Object> l;/**/for (Object q_outer : l) { Rdf q = (Rdf)q_outer; { Integer z = q.getInteger(\"<dom:turnId>\"); } }";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("List<Object> l;"));
   }

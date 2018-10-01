@@ -121,7 +121,7 @@ public class ArithmeticTest {
     String in = "Child user; user.weight -= 0.2;";
     String r = generate(in);
     String expected = "Rdf user;user.setValue(\"<dom:weight>\","
-            + " ((Double)user.getSingleValue(\"<dom:weight>\"))-0.2);";
+            + " user.getDouble(\"<dom:weight>\")-0.2);";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -145,7 +145,7 @@ public class ArithmeticTest {
   public void testPostIncrement2() {
     String in = "Child user; int a = user.weight++; user.weight++;";
     String r = generate(in);
-    String expected = "Child user; int a = ((Double)user.pincrSingleValue(\"<dom:weight>\"));((Double)user.pincrSingleValue(\"<dom:weight>\"))++; }";
+    String expected = "Rdf user;Double a = user.pincrDouble(\"<dom:weight>\");user.pincrDouble(\"<dom:weight>\"); }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -161,9 +161,9 @@ public class ArithmeticTest {
 
   @Test
   public void testPreIncrement2() {
-    String in = "Child user; int a = ++user.weight; ++user.weight;";
+    String in = "Child user; a = ++user.weight; ++user.weight;";
     String r = generate(in);
-    String expected = "Child user; int a = ++user.weight; ++user.weight;";
+    String expected = "Rdf user;Double a = user.incrDouble(\"<dom:weight>\");user.incrDouble(\"<dom:weight>\");";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -177,9 +177,9 @@ public class ArithmeticTest {
 
   @Test
   public void testPostDecrement2() {
-    String in = "Child user; int a = user.weight--; user.weight--;";
+    String in = "Child user; double a = user.weight--; user.weight--;";
     String r = generate(in);
-    String expected = "Child user; int a = user.weight--; user.weight--;";
+    String expected = "Rdf user;double a = user.pdecrDouble(\"<dom:weight>\");user.pdecrDouble(\"<dom:weight>\");";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -195,9 +195,9 @@ public class ArithmeticTest {
 
   @Test
   public void testPreDecrement2() {
-    String in = "Child user; int a = --user.weight; --user.weight;";
+    String in = "Child user; a = --user.weight; --user.weight;";
     String r = generate(in);
-    String expected = "Child user; int a = --user.weight; --user.weight;";
+    String expected = "Rdf user;Double a = user.decrDouble(\"<dom:weight>\");user.decrDouble(\"<dom:weight>\");";
     assertEquals(expected, getForMarked(r, expected));
   }
 

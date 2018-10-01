@@ -200,7 +200,7 @@ public class StatementTest {
  public void StatementTest8(){
    String in = " Child user; n = user.forename; List<String> names = { n };";
    String r = generate(in);
-   String expected = "Rdf user;String n = ((String)user.getSingleValue(\"<dom:forename>\"));"
+   String expected = "Rdf user;String n = user.getString(\"<dom:forename>\");"
        + "List<String> names = new ArrayList<>();names.add(n);";
    assertEquals(expected, getForMarked(r, expected));
  }

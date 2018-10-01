@@ -137,7 +137,7 @@ public class DialogueAct {
   }
 
   /** Set the argument for key slot */
-  public void setValue(String slot, String value) {
+  public String setValue(String slot, String value) {
     DagEdge edge = _dag.getEdge(DagNode.getFeatureId(slot));
     DagNode newVal = new DagNode(DagNode.PROP_FEAT_ID, new DagNode(value));
     if (edge == null) {
@@ -145,6 +145,7 @@ public class DialogueAct {
     } else {
       edge.setValue(newVal);
     }
+    return value;
   }
 
   /** Return the dialogue act */

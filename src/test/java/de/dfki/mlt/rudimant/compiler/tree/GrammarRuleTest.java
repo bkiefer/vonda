@@ -121,7 +121,7 @@ public class GrammarRuleTest {
     String in = "Child c; r: if (c <= Person && c.forename) { int i = 7; }";
     String s = generate(in);
     assertTrue(s.contains("__x0[1] = c.getClazz().isSubclassOf(getRdfClass(\"Person\"))"));
-    assertTrue(s.contains("__x0[2] = c != null && exists(((String)c.getSingleValue(\"<dom:forename>\")))"));
+    assertTrue(s.contains("__x0[2] = c != null && exists(c.getString(\"<dom:forename>\"))"));
   }
 
   @Test

@@ -181,7 +181,11 @@ public class VisitorType implements RudiVisitor {
     } else {
       node.type = node.left.type;
     }
-  }
+    if (! node.type.isUnspecified() && ! node.type.isNumber()
+        && ! node.type.isString()) {
+      typeError("Arithmetic expression on strange type: " + node.type, node);
+    }
+ }
 
   /**
    * This has various aspects.
@@ -580,6 +584,22 @@ public class VisitorType implements RudiVisitor {
     }
   }
 
+  /** This creates a shallow copy in case it is an ExpFieldAccess, since we
+   *  need independent versions for lvalue and rvalue
+   * @param node
+   * @return
+   */
+  @SuppressWarnings("serial")
+  private RTExpression toLValue(RTExpression node) {
+    RTExpression result = node;
+    if (node instanceof ExpFieldAccess) {
+      ExpFieldAccess efa = (ExpFieldAccess)node;
+      result = efa.fixFields(new ExpFieldAccess(
+          new ArrayList<RTExpression>() {{addAll(efa.parts);}}));
+    }
+    return result;
+  }
+
   @Override
   public void visit(StatSetOperation node) {
     // First call type checks for components, then perform the possible local
@@ -593,7 +613,9 @@ public class VisitorType implements RudiVisitor {
       ExpArithmetic s = node.fixFields(
           new ExpArithmetic(node.left, node.right, node.add? "+" : "-"));
       s.type = checkArithmeticTypes(s);
-      node.left = node.fixFields(new ExpAssignment(node.left, s));
+      // this needs to be copied if left is a field access, since we then
+      // need the distinction between lvalue and rvalue
+      node.left = node.fixFields(new ExpAssignment(toLValue(node.left), s));
       node.left.type = s.type;
       node.right = null;
       return;
@@ -752,32 +774,33 @@ public class VisitorType implements RudiVisitor {
           ExpIdentifier var) {
     // only a literal: check if it is a property of clz, and update the
     // current type
-    if (mem.getVariableType(var.content) != null &&
-        mem.getVariableType(var.content).isString()) {
+    String label = var.content;
+    if (mem.getVariableType(label) != null &&
+        mem.getVariableType(label).isString()) {
       // the literal represents a variable, so we can't determine the type of
       // the access
       List<Type> subs = new ArrayList<>();
       subs.add(new Type("T"));
       Type paType = new Type("Set", subs); paType.setCastRequired();
-      return new ExpPropertyAccess(var.content, var, true,
-          paType, false);
+      return new ExpPropertyAccess(label, true, paType, false);
     }
     if (currentType.isDialogueAct()) {
       // the return type will be string, this is a call to getSlot
-      return new ExpPropertyAccess(var.content, var, false, new Type("String"), true);
+      return new ExpPropertyAccess(label, false, new Type("String"),
+          true);
     }
     RdfClass clz = currentType.getRdfClass();
     String predUri = null;
     if (clz != null) {
-      predUri = clz.fetchProperty(var.content);
+      predUri = clz.fetchProperty(label);
     }
     // warning / error if property not found
     if (predUri == null) {
-      typeError("No property found for " + var.content, node);
-      return new ExpPropertyAccess(var.content, var, false, getNoType(), false);
+      typeError("No property found for " + label, node);
+      return new ExpPropertyAccess(label, false, getNoType(), false);
     }
 
-    var.content = predUri; // replace plain name by URI
+    label = predUri; // replace plain name by URI
     int predType = clz.getPropertyType(predUri);
     // TODO: CONVERT XSD TYPES TO JAVA, WHERE POSSIBLE
     String typeName = null;
@@ -805,7 +828,7 @@ public class VisitorType implements RudiVisitor {
     /*
     if (var.getType() != null && !var.getType().equals(currentType)) {
       typeError("Overwriting type " + var.type
-              + "  of partial field access for " + var.content + " to "
+              + "  of partial field access for " + label + " to "
               + currentType, node);
     }*/
 
@@ -817,7 +840,8 @@ public class VisitorType implements RudiVisitor {
       currentType.setCastRequired();
     }
     // the type of this is set to Object by default (not null)
-    return new ExpPropertyAccess(var.content, var, false, currentType, isFunctional);
+    return new ExpPropertyAccess(label, false, currentType,
+        isFunctional);
   }
 
   /**
@@ -832,8 +856,6 @@ public class VisitorType implements RudiVisitor {
     currentNode.visit(this);
     // The type to which the next field access item is applied
     Type currentType = currentNode.type;
-    // this is dangerous, and only works if this condition can not be
-    // "interrupted"
     for (int i = 1; i < node.parts.size(); ++i) {
       currentNode = node.parts.get(i);
       // if this is a funccall performed on anything, tell the function the type it was called on

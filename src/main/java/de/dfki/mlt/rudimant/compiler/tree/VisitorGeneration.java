@@ -164,12 +164,28 @@ public class VisitorGeneration implements RudiVisitor {
   @Override
   public void visit(ExpArithmetic node) {
     if (node.right == null) {
-      // unary operator
-      gen(isPrefixOperator(node.operator), node.operator);
-      gen(node.left);
-      // something like .isEmpty(), a++, which is a postfix operator
-      if (isPostfixOperator(node.operator)) {
-        gen(getPostfixOperator(node.operator));
+      if ((node.operator.startsWith("++") || node.operator.startsWith("--"))
+          && node.left instanceof ExpFieldAccess) {
+        ExpFieldAccess acc = (ExpFieldAccess)node.left;
+        RudiTree lastPart = acc.parts.get(acc.parts.size() - 1);
+        if (lastPart instanceof ExpPropertyAccess) {
+          ExpPropertyAccess pa = (ExpPropertyAccess) lastPart;
+          switch (node.operator) {
+          case "++": pa.acc= ExpPropertyAccess.Access.incr; break;
+          case "+++": pa.acc= ExpPropertyAccess.Access.pincr; break;
+          case "--": pa.acc= ExpPropertyAccess.Access.decr; break;
+          case "---": pa.acc= ExpPropertyAccess.Access.pdecr; break;
+          }
+        }
+        gen(node.left);
+      } else {
+        // unary operator
+        gen(isPrefixOperator(node.operator), node.operator);
+        gen(node.left);
+        // something like .isEmpty(), a++, which is a postfix operator
+        if (isPostfixOperator(node.operator)) {
+          gen(getPostfixOperator(node.operator));
+        }
       }
     } else {
       gen(node.left).gen(node.operator).gen(node.right);
@@ -191,28 +207,37 @@ public class VisitorGeneration implements RudiVisitor {
       ExpFieldAccess acc = (ExpFieldAccess) node.left;
       RudiTree lastPart = acc.parts.get(acc.parts.size() - 1);
       if (lastPart instanceof ExpPropertyAccess) {
-        pa = (ExpPropertyAccess) lastPart;
+        pa = ((ExpPropertyAccess) lastPart).copy();
+        if (node.right instanceof ExpLiteral &&
+            ((ExpLiteral)node.right).content.equals("null")) {
+          pa.acc = ExpPropertyAccess.Access.clearValue;
+        } else {
+          pa.acc = ExpPropertyAccess.Access.setValue;
+          pa.secondArg = node.right;
+        }
+        acc.parts.set(acc.parts.size() - 1, pa);
+        gen(node.left);
+        return;
       }
+    }
+      /*
       // omit the last field since is will be replaced by a setValue(a, b)?
       replaceLastWithFuncall = pa != null;
       gen(node.left);
-      if (replaceLastWithFuncall) {
+      replaceLastWithFuncall = false;
+      if (pa != null) {
         // TODO: shouldn't this be "... = {} " ??
         if (node.right instanceof ExpLiteral &&
             ((ExpLiteral)node.right).content.equals("null")) {
           gen(".clearValue(").gen(pa.getPropertyName()).gen(')');
-          replaceLastWithFuncall = false;
           return;
         }
         // NOT: gen(functional ? ".setSingleValue(" : ".setValue(");
         gen(".setValue(").gen(pa.getPropertyName()).gen(", "); //always correct!
       } else {
         gen(" = ");
-      }
-      replaceLastWithFuncall = false;
-    } else {
-      gen(node.left).gen(" = ");
-    }
+      } */
+    gen(node.left).gen(" = ");
     if (node.type.needsCast(node.right.getType())
         && !(node.right instanceof ExpNew)) {
       // then there is either sth wrong here, what would at least have resulted
@@ -220,9 +245,11 @@ public class VisitorGeneration implements RudiVisitor {
       gen('(').gen(node.type.toJava()).gen(") ");
     }
     gen(node.right);
+    /*
     if (pa != null) {
       gen(")"); // close call to setValue()
     }
+    */
   }
 
 
@@ -787,6 +814,7 @@ public class VisitorGeneration implements RudiVisitor {
     }
 
     // changed the direction of the for loop; should be enough
+    /*
     for (int i = to - 1; i >= 0; i--) {
       if (node.parts.get(i) instanceof ExpPropertyAccess) {
         ExpPropertyAccess pa = (ExpPropertyAccess) node.parts.get(i);
@@ -794,6 +822,7 @@ public class VisitorGeneration implements RudiVisitor {
         gen("((").gen(cast).gen(")");
       }
     }
+    */
     gen(node.parts.get(0));
     Type currentType = ((RTExpression) node.parts.get(0)).type;
     for (int i = 1; i < to; i++) {
@@ -801,12 +830,17 @@ public class VisitorGeneration implements RudiVisitor {
       if (currentPart instanceof ExpPropertyAccess) {
         ExpPropertyAccess pa = (ExpPropertyAccess) currentPart;
         // then we are in the case that is actually an rdf operation
-        if (currentType.isDialogueAct()) {
-          gen(".getValue(");
-        } else {
-          gen(pa.functional ? ".getSingleValue(" : ".getValue(");
+        if (currentType.isDialogueAct()) pa.functional = false;
+        gen('.').gen(pa.getFunctionName()).gen('(');
+        //} else {
+        //  gen(pa.functional ? ".getSingleValue(" : ".getValue(");
+        //}
+        gen(pa.getPropertyName());
+        if (pa.secondArg != null) {
+          gen(", ").gen(pa.secondArg);
         }
-        gen(pa.getPropertyName()).gen("))");
+        //gen("))");
+        gen(')');
         currentType = pa.type;
       } else {
         gen(".").gen(currentPart);

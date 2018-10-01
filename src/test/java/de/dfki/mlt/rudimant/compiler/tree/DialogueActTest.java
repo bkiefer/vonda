@@ -175,4 +175,22 @@ public class DialogueActTest {
     assertEquals(expected, getForMarked(s, expected));
 
   }
+
+  @Test
+  public void testSetSlot() throws IOException {
+    String in = "da = #Inform(Matter); da.theme = \"foo\";";
+    String s = generate(in);
+    String expected = "DialogueAct da = new DialogueAct(\"Inform\", \"Matter\");"
+        + "da.setValue(\"theme\", \"foo\"); }";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
+  @Test
+  public void testGetSlot() throws IOException {
+    String in = "da = #Inform(Matter, theme=foo);s = da.theme;";
+    String s = generate(in);
+    String expected = "DialogueAct da = new DialogueAct(\"Inform\", \"Matter\", \"theme\", \"foo\");"
+        + "String s = da.getValue(\"theme\");";
+    assertEquals(expected, getForMarked(s, expected));
+  }
 }

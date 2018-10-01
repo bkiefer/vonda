@@ -108,7 +108,7 @@ public class TypesTest {
   public void testReturnSetType() {
     String in = "Child c;  docs = c.hasHobby;";
     String r = generate(in);
-    String expected = "public Rdf c;public Set<Object> docs;/**/docs = ((Set<Object>)c.getValue(\"<dom:hasHobby>\"));";
+    String expected = "public Rdf c;public Set<Object> docs;/**/docs = c.getValue(\"<dom:hasHobby>\");";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("Set<Object> docs;"));
     assertTrue(r.contains("Rdf c;"));
@@ -146,7 +146,7 @@ public class TypesTest {
     String in = "Child c; if (!c.hasFather) int i = 0;";
     String r = generate(in);
     String expected =
-        "public Rdf c;/**/if (!(c != null && ((Rdf)c.getSingleValue(\"<dom:hasFather>\")) != null)) int i = 0;";
+        "public Rdf c;/**/if (!(c != null && c.getRdf(\"<dom:hasFather>\") != null)) int i = 0;";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("Rdf c;"));
   }
@@ -157,7 +157,7 @@ public class TypesTest {
     String r = generate(in);
     String expected =
         "public Rdf c;/**/public void a() { if (!(c != null && "
-        + "((Rdf)c.getSingleValue(\"<dom:hasFather>\")) != null)) int i = 0; } }";
+        + "c.getRdf(\"<dom:hasFather>\") != null)) int i = 0; } }";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("Rdf c;"));
   }
@@ -197,7 +197,7 @@ public class TypesTest {
     String methdecl = " void foo(List<Child> cs) { s = cs.get(0).forename; }";
     String s = generate(methdecl);
     String expected = "public void foo(List<Rdf> cs)"
-        + " { String s = ((String)cs.get(0).getSingleValue(\"<dom:forename>\")); }";
+        + " { String s = cs.get(0).getString(\"<dom:forename>\"); }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -207,7 +207,7 @@ public class TypesTest {
         + " map(m.hasHistory, (f) -> (((QuizHistory)f).hasChildId)); }";
     String s = generate(methdecl);
     String expected = "public Collection<Rdf> foo(Rdf m)"
-        + " { map(((Set<Object>)m.getValue(\"<dom:hasHistory>\")), (f) -> (((Rdf)((Rdf)f).getSingleValue(\"<dom:hasChildId>\")))); } }";
+        + " { map(m.getValue(\"<dom:hasHistory>\"), (f) -> (((Rdf)f).getRdf(\"<dom:hasChildId>\"))); } }";
     assertEquals(expected, getForMarked(s, expected));
   }
 

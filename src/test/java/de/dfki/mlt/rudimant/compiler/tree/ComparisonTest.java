@@ -133,7 +133,7 @@ public class ComparisonTest {
     String in = "Child a; if (a.hasFather) return true;";
     String r = generate(in);
     String expected = "Rdf a;if (a != null &&"
-        + " ((Rdf)a.getSingleValue(\"<dom:hasFather>\")) != null) return true;";
+        + " a.getRdf(\"<dom:hasFather>\") != null) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -143,7 +143,7 @@ public class ComparisonTest {
     String in = "final Child a; if (a.age) return true;";
     String r = generate(in);
     String expected = "final Rdf a;if (a != null && "
-        + "exists(((Integer)a.getSingleValue(\"<dom:age>\")))) return true;";
+        + "exists(a.getInteger(\"<dom:age>\"))) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -152,7 +152,7 @@ public class ComparisonTest {
     // other operators than == don't make sense here.
     String in = "Child a; if (a.birthdate) return true;";
     String r = generate(in);
-    String expected = "Rdf a;if (a != null && ((Date)a.getSingleValue(\"<dom:birthdate>\")) != null) return true;";
+    String expected = "Rdf a;if (a != null && a.getDate(\"<dom:birthdate>\") != null) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -161,7 +161,7 @@ public class ComparisonTest {
     // other operators than == don't make sense here.
     String in = "final Activity a; if (a.status) return true;";
     String r = generate(in);
-    String expected = "final Rdf a;if (a != null && exists(((String)a.getSingleValue(\"<dom:status>\")))) return true;";
+    String expected = "final Rdf a;if (a != null && exists(a.getString(\"<dom:status>\"))) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -170,7 +170,7 @@ public class ComparisonTest {
     // other operators than == don't make sense here.
     String in = "Activity a; if (a.status != \"foo\") return true;";
     String r = generate(in);
-    String expected = "Rdf a;if (! (((String)a.getSingleValue(\"<dom:status>\")).equals(\"foo\"))) return true;";
+    String expected = "Rdf a;if (! (a.getString(\"<dom:status>\").equals(\"foo\"))) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -179,6 +179,6 @@ public class ComparisonTest {
     // other operators than == don't make sense here.
     String in = "final Child c; if (c.hasBrother != null) return true;";
     String r = generate(in);
-    String expected = "final Rdf c;if (((Set<Object>)c.getValue(\"<dom:hasBrother>\")) != null) return true;";
+    String expected = "final Rdf c;if (c.getValue(\"<dom:hasBrother>\") != null) return true;";
     assertEquals(expected, getForMarked(r, expected));
   }}

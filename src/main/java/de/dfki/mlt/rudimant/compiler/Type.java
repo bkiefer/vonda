@@ -338,7 +338,7 @@ public class Type {
     return (ret != null) ? ret : _name;
   }
 
-  private String getContainer() {
+  private String getContainerName() {
     if (isPODType()) {
       Long code = typeCodes.get(_name);
       code = code | 0b100;
@@ -368,12 +368,18 @@ public class Type {
     return code != null && (code & 0b11111111000l) != 0; // it's a number
   }
 
+  /** Return true if this is a Java wrapper class */
+  public boolean isContainer() {
+    // if we're ignorant, it is Object, and null is not a number
+    Long code = getCode();
+    return code != null && (code & 0b100l) != 0; // It's a container type
+  }
+
   /** Return true if this is a Java wrapper class for some number */
   public boolean isNumberContainer() {
     // if we're ignorant, it is Object, and null is not a number
     Long code = getCode();
-    return code != null && (code & 0b11111111000l) != 0 // it's a number
-        && (code & 0b100l) != 0; // It's a container type
+    return isContainer() && (code & 0b11111111000l) != 0; // it's a number
   }
 
   public boolean isNull() { return "null".equals(_name); }
@@ -381,6 +387,11 @@ public class Type {
   public boolean isRdfType() { return _class != null || "Rdf".equals(_name); }
 
   public boolean isStrictRdfType() { return !isDialogueAct() && isRdfType(); }
+
+  public boolean isJavaConvertible() {
+    return isContainer() || isStrictRdfType() || isString() ||
+        "Date".equals(toJava());
+  }
 
   /** This returns true for all XSD and resolved RDF types */
   public boolean isXsdType() {
@@ -438,6 +449,11 @@ public class Type {
 
   public boolean isField() {
     return "Field".equals(_name);
+  }
+
+  public Type getContainer() {
+    String name = getContainerName();
+    return (name != null) ? new Type(name) : null;
   }
 
   public String getStringConversionFunction() {
@@ -591,7 +607,7 @@ public class Type {
         outer = "Array";
       }
       if (! "Array".equals(outer) && resParamTypes.get(0).isPODType()) {
-        resParamTypes.set(0, new Type(resParamTypes.get(0).getContainer()));
+        resParamTypes.set(0, new Type(resParamTypes.get(0).getContainerName()));
       }
       return new Type(outer, resParamTypes);
     }
