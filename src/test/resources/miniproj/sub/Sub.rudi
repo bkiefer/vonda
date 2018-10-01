@@ -4,8 +4,9 @@ s = foo("good", "thing");
 rule:
 if (s == "goodthing") {
   propose("good") {
-    logger.info("go");
+    System.out.println("go");
   }
 }
 
 import sub.SubSub;
+import SameLevel;

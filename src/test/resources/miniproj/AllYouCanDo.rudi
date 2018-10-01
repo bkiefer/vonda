@@ -1,3 +1,4 @@
+/*@import java.nio.file.*;@*/
 // **********************************************************************
 // Tests and Comparisons
 // **********************************************************************
@@ -48,12 +49,18 @@ if (o) System.out.println("foo");
 // Forward declaration of methods
 // **********************************************************************
 
+// This is the forward declaration
 String foo(String a, String b);
 
+// A rule using foo
+a_rule:
 if (foo("a", "b")) {
+  // this java code should be in the body of the rule
+  /*@ String[] lbls = { "a", "b" }; @*/
   System.out.println("yes!");
 }
 
+// Function foo defined here
 String foo (String a, String b) { return a + b; }
 
 // **********************************************************************
@@ -206,6 +213,20 @@ if (! da.theme) {
   // set the value of any argument
   da.theme = "Ball";
 }
+// does the DialogueAct has any arguments?
+if (da.getValues()) {
+  s = da.getValues().get(0);
+}
+
+dont_like_foot:
+if (da.theme == "Football") {
+  da.theme = "Basketball";
+  final dialogueAct = "Inform";
+  propose("new_liking"){
+    emitDA(#{dialogueAct}(Liking, theme={da.theme}));
+  }
+}
+
 System.out.println(da.theme);
 da.setDialogueActType("Confirm");
 da.setProposition("Acquiring");
@@ -215,7 +236,7 @@ da.setProposition("Acquiring");
 List<String> li = new ArrayList(2);
 
 // import a set of rules, can be put in a subdirectory
-//import sub.Sub;
+import sub.Sub;
 
 Quiz p;
 h = filter(p.hasHistory, (c) -> c.turnId == 1);
@@ -256,3 +277,5 @@ int func(String h) {
 d = child.weight++;
 d = --child.weight;
 child.weight--;
+
+// and this is it!

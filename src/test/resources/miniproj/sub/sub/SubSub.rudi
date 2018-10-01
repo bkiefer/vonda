@@ -4,6 +4,6 @@ s2 = foo(s, "yeah");
 rule:
 if (s2 == "goodthingyeah") {
   propose("good2") {
-    logger.info("go2");
+    System.out.println("go2");
   }
 }

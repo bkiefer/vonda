@@ -317,12 +317,12 @@ public class Mem {
    * @return A set of all needed external classes (because of variable or
    * function definitions from this class).
    */
-  public Set<String> getNeededClasses() {
+  public Set<ClassEnv> getNeededClasses() {
     // return all classes above me (import chain), and this class
-    Set<String> result = new HashSet<>();
+    Set<ClassEnv> result = new HashSet<>();
     ToplevelBlock tb = currentBlock;
     while(tb != null) {
-      result.add(tb.getClassEnv().getName());
+      result.add(tb.getClassEnv());
       tb = tb.getParentClass();
     }
     return result;

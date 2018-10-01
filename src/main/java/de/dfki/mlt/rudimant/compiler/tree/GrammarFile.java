@@ -187,10 +187,11 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
           if (! rootpkg.isEmpty()) out.append(rootpkg).append('.');
           if (! pkg.isEmpty()) out.append(pkg).append('.');
           out.append(getQualifiedName(imp.path, imp.name)).append("(");
-          Set<String> ncs = mem.getNeededClasses();
+          Set<ClassEnv> ncs = mem.getNeededClasses();
           if (ncs != null) {
             boolean notfirst = false;
-            for (String c : ncs) {
+            for (ClassEnv clz : ncs) {
+              String c = clz.getName();
               if (c.equals(mem.getClassName())) {
                 c = "this";
               }
@@ -236,12 +237,15 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     // Let's import our supersuper class, if we're the top-level class
     if (! mem.isNotToplevelClass()) {
       out.append("import ").append(mem.getWrapperClass()).append(";\n");
-    } else {
+    }
+    /* done by neededclasses
+     * else {
       // import the top level class
       out.append("import ");
       if (! rootpkg.isEmpty()) out.append(rootpkg).append('.');
       out.append(mem.getTopLevelClass()).append(";\n");
     }
+    */
     // import the included classes
     for(RudiTree r : rules) {
       // TODO: MAYBE NOT NECESSARY WHEN USING QUALIFIED NAMES IN PROCESS ??
@@ -256,6 +260,17 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
       }
     }
 
+    String thisClassName = mem.getClassName();
+    Set<ClassEnv> neededClasses = mem.getNeededClasses();
+    for (ClassEnv clz : neededClasses) {
+      String className = clz.getName();
+      if(className.equals(thisClassName)) continue;
+      out.append("import ")
+         .append(rootpkg).append('.')
+         .append(getQualifiedName(clz.packageSpec(), clz.getName()))
+         .append(";\n");
+    }
+
     // Now, print all initial comments (preceding the first element) before the
     // class starts, for, e.g., imports
     Position firstPos = rules.isEmpty()
@@ -264,24 +279,24 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     _th.initialComments(firstPos, out);
 
     // maybe we need to import the class that imported us to use its variables
-    out.append("public class ").append(mem.getClassName());
+    out.append("\n\npublic class ").append(mem.getClassName());
     // check if this should extend the wrapper class
     if (! mem.isNotToplevelClass()) {
       out.append(" extends ").append(mem.getWrapperClass());
     }
     out.append("{\n");
 
-    String thisClassName = mem.getClassName();
     List<String> fields = new ArrayList<>();
     // ************************************************************
     // create fields for all classes we need instances of
     // ************************************************************
-    for (String neededClass : mem.getNeededClasses()) {
-      if(neededClass.equals(thisClassName)) continue;
-      String name = lowerCaseFirst(neededClass);
+    for (ClassEnv clz : neededClasses) {
+      String className = clz.getName();
+      if(className.equals(thisClassName)) continue;
+      String name = lowerCaseFirst(className);
       fields.add(name);
       out.append("private final ");
-      out.append(neededClass).append(' ').append(name).append(";\n");
+      out.append(className).append(' ').append(name).append(";\n");
     }
 
     // ************************************************************
@@ -292,11 +307,12 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     boolean notfirst = false;
     out.append("\n\npublic ").append(thisClassName).append('(');
     Iterator<String> names = fields.iterator();
-    for (String needed : mem.getNeededClasses()) {
-      if(needed.equals(thisClassName)) continue;
+    for (ClassEnv clz : neededClasses) {
+      String className = clz.getName();
+      if(className.equals(thisClassName)) continue;
       if (notfirst)
         out.append(", ");
-      out.append(needed).append(' ').append(names.next());
+      out.append(clz.getName()).append(' ').append(names.next());
       notfirst = true;
     }
     out.append(") {\n super();\n");

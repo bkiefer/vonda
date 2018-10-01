@@ -1,0 +1,6 @@
+if (! child) cancel;
+
+a_child:
+if (child <= Child) {
+  System.out.println(child);
+}
