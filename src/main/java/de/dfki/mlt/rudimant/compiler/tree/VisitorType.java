@@ -300,7 +300,7 @@ public class VisitorType implements RudiVisitor {
 
   /** TODO: the following gives us #12 in full beauty.
    *  we don't do this, it seems conceptually wrong and generates weird code.
-   */
+   *
   private void ensureBooleanGeneral(ExpBoolean node) {
     RTExpression check = null;
     if (node.right instanceof ExpFieldAccess)
@@ -318,6 +318,7 @@ public class VisitorType implements RudiVisitor {
       node.operator = "&&";
     }
   }
+  */
 
   /*
    * In principle the same as ExpArithmetic, with boolean only. The one
