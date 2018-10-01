@@ -654,7 +654,7 @@ public class VisitorType implements RudiVisitor {
             + node.type.getReturnedType(), node);
       }
     } else {
-      if (node.isDefinition
+      if (node.isDefinition && ! node.type.isUnspecified()
           && ! mem.addVariableDeclaration(node.variable, node.type)) {
         typeError("Re-defined variable " + node.variable
             + " from " + mem.getVariableType(node.variable).toString()
