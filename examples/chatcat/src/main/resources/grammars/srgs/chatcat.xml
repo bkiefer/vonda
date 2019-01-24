@@ -12,8 +12,9 @@
         <tag> out.da="InitialGreeting" ; out.prop="Greet" </tag>
       </item>
       <item>
-        My name is Sam
-        <tag> out.da="Inform" ; out.prop="Name" ; out.what="Sam" </tag>
+        <item> My name is </item> 
+        <item>$$.*</item>
+        <tag>out.da="Inform" ; out.prop="Name" ; out.what="$$1" </tag>
       </item>
     </one-of>
   </rule>

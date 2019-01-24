@@ -41,7 +41,7 @@
       <dependency>
         <groupId>de.dfki.mlt</groupId>
         <artifactId>srgs-parser</artifactId>
-        <version>0.9</version>
+        <version>0.95</version>
       </dependency>
     </dependencies>
 

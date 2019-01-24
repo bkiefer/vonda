@@ -20,4 +20,10 @@ remember_name:
 if (lastDA() >= #Inform(Name)) {
   user.name = lastDA().what;
   lastDAprocessed();
+  propose("remember"){
+    emitDA(#ReturnGreeting(Greet, name={user.name}));
+  }
+  propose("firsttime"){
+    emitDA(#ReturnGreeting(Greet));
+  }
 }

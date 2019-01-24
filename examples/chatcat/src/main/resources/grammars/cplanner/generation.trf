@@ -2,8 +2,15 @@
 // should greet back:
 
 raw:ReturnGreeting ^ Greet
+{
+^ ! <name>
 ->
 # =  :canned ^ <string>"* Hey, nice to see you *".
+
+^ <name>#n
+->
+# = :canned ^ <string>concatenate("Good to see you again, ", #n).
+}
 
 raw:SecondReturnGreeting ^ Greet
 ->
