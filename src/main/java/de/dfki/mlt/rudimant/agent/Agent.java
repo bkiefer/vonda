@@ -485,6 +485,15 @@ public abstract class Agent implements StreamingClient {
     return "true".equals(s.toLowerCase());
   }
 
+  /** Return the string representing the POD */
+  public String toStr(Number n) {
+    return n.toString();
+  }
+
+  public String toStr(Boolean b) {
+    return b.toString();
+  }
+
   public DialogueAct analyse(String input) {
     return asr.interpret(input);
   }

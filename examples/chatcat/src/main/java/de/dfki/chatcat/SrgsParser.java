@@ -47,7 +47,7 @@ public class SrgsParser extends Interpreter {
       ChartNode validRule = checker.parse(ruleGrammar, tokens);
       if (validRule != null) {
         JSInterpreter walker = new JSInterpreter(checker);
-        validRule.preorder(walker);
+        validRule.evaluate(walker);
         walker.finish(false);
         JSONObject object = walker.execute();
         String da = object.getString(DA_SLOT);

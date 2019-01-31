@@ -13,6 +13,13 @@ int toInt(String s);
 float toFloat(String s);
 double toDouble(String s);
 boolean toBool(String s);
+String toStr(int i);
+String toStr(short i);
+String toStr(byte i);
+String toStr(float i);
+String toStr(double i);
+String toStr(boolean i);
+
 
 [List<T>]. T get(int a);
 [Collection<T>]. void add(Object a);
