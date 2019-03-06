@@ -36,6 +36,7 @@ String toStr(boolean i);
 Rdf toRdf(String uri);
 [Rdf]. String getURI();
 [Rdf]. boolean has(String predicate);
+[Rdf]. long getLastChange(boolean asSubject, boolean asObject);
 
 RdfClass getRdfClass(String s);
 boolean exists(Object o);
@@ -53,6 +54,7 @@ DialogueAct emitDA(DialogueAct da);
 [DialogueAct]. String getProposition();
 [DialogueAct]. boolean hasSlot(String val);
 [DialogueAct]. String getValue(String val);
+[DialogueAct]. long getTimeStamp();
 
 
 // my last outgoing resp. the last incoming dialogue act
