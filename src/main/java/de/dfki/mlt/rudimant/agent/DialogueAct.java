@@ -148,6 +148,11 @@ public class DialogueAct {
     return value;
   }
 
+  /** Get the timestamp of when this DA has been created */
+  public long getTimeStamp() {
+    return timeStamp;
+  }
+
   /** Return the dialogue act */
   public String getDialogueActType() {
     DagNode d = _dag.getValue(DagNode.TYPE_FEAT_ID);
