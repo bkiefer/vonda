@@ -603,8 +603,9 @@ public class VisitorGeneration implements RudiVisitor {
 
   @Override
   public void visit(ExpListLiteral node) {
+    gen(" new ");
     if (node.type.isArray()) {
-      gen("{");
+      gen(node.type.getInnerType().toJava()).gen("[]{");
       boolean first = true;
       for (RTExpression e : node.objects) {
         if (! first) gen(", ");
@@ -613,7 +614,7 @@ public class VisitorGeneration implements RudiVisitor {
       }
       gen("}");
     } else {
-      gen(" new ").gen(node.type.toConcreteCollection()).gen("()");
+      gen(node.type.toConcreteCollection()).gen("()");
     }
 
     /*

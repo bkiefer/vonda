@@ -124,7 +124,7 @@ public class AssignmentTest {
   public void testArrayLiteral1() {
     String assignmentExp = "list = { 2, 3, 4 };";
     String out = generate(assignmentExp);
-    String exp = "int[] list = {2, 3, 4};";
+    String exp = "int[] list = new int[]{2, 3, 4};";
 
     assertEquals(exp, getForMarked(out, exp));
   }
@@ -133,7 +133,7 @@ public class AssignmentTest {
   public void testArrayLiteral2() {
     String assignmentExp = "list = { };";
     String out = generate(assignmentExp);
-    String exp = "Object /* (unknown) */[] list = {};";
+    String exp = "Object /* (unknown) */[] list = new Object /* (unknown) */[]{};";
 
     assertEquals(exp, getForMarked(out, exp));
   }

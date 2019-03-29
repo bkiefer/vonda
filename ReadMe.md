@@ -18,9 +18,9 @@ and reasoning component HFC that is designed to handle time-varying data.
 The following installation instructions should work on Ubuntu 16.04
 
 Prerequisites for installing VOnDA are:
-- OpenJDK 8, maven build tool, and git
+- OpenJDK 8, maven build tool, git, jflex and uncrustify (optional)
   ```
-  sudo apt install openjdk-8-jdk maven git
+  sudo apt install openjdk-8-jdk maven git jflex uncrustify
   ```
 
 - thrift 0.9.3 communication library
@@ -45,6 +45,14 @@ Prerequisites for installing VOnDA are:
   ./install_locallibs.sh
   mvn install
   ```
+
+Caveat: on headless machines, the tests for VOnDA will fail, since they try to
+open Swing windows. There is also an obscure problem with the tests of the
+cplan library, which on some machines fail. If that happens, please compile
+these with
+
+```mvn install -DskipTests```
+
 
 There is also a visual debugger/GUI for VOnDA: https://github.com/yoshegg/rudibugger
 

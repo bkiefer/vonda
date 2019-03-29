@@ -121,4 +121,12 @@ public class AdditionalTest {
     assertEquals(exp, getForMarked(s, exp));
   }
 
+  @Test
+  public void testNewArrayOnToplevel() {
+    String in = "v = { 1, 2, 3 };";
+    String exp = "v = new int[]{1, 2, 3};";
+
+    String s = generate(in);
+    assertEquals(exp, getForMarked(s, exp));
+  }
 }

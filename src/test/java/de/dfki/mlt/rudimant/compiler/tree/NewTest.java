@@ -79,7 +79,7 @@ public class NewTest {
     String src = "int[] x = { 1, 2 };";
 
     String s = generate(src);
-    String expected = "int[] x = {1, 2};";
+    String expected = "int[] x = new int[]{1, 2};";
     assertEquals(expected, getForMarked(s, expected));
   }
 }
