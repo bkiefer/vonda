@@ -18,27 +18,43 @@
  */
 
 package de.dfki.mlt.rudimant;
+import static de.dfki.mlt.rudimant.compiler.Constants.CFG_VISUALISE;
 import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.RESOURCE_DIR;
 import static org.junit.Assert.*;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.nio.file.Path;
-import java.util.HashMap;
+import java.nio.file.Paths;
 import java.util.Map;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.mlt.rudimant.compiler.CompilerMain;
 import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
 
-import static de.dfki.mlt.rudimant.compiler.Constants.*;
-
 
 public class CoverageTest {
+
+  static boolean headless = false;
+
+  @BeforeClass
+  public static void testHeadless() {
+    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    try {
+      @SuppressWarnings("unused")
+      GraphicsDevice de = ge.getDefaultScreenDevice();
+    } catch (HeadlessException hex) {
+      headless = true;
+    }
+  }
+
   public int startCompiler(File dir) throws IOException, InterruptedException {
     // java -jar ../../tecs_server/tecs-server-2.0.0.jar -c -p PORT
     Process compile = Runtime.getRuntime().exec(
@@ -54,8 +70,8 @@ public class CoverageTest {
     Yaml yaml = new Yaml();
     @SuppressWarnings("unchecked")
     Map<String, Object> configs =
-        (Map<String, Object>) yaml.load(new FileReader(confFile.toFile()));
-    configs.put(CFG_VISUALISE, true);
+    (Map<String, Object>) yaml.load(new FileReader(confFile.toFile()));
+    configs.put(CFG_VISUALISE, !headless);
     RudimantCompiler rc = new RudimantCompiler(confDir, configs);
     assertFalse(CompilerMain.process(rc, new File(confDir, "AllYouCanDo.rudi")));
     assertEquals(0, startCompiler(confDir));
