@@ -1,8 +1,17 @@
 * Fragen aus dem Durchforsten von VisitorType
   - ist dokumentiert, dass folgendes ein "clear" ist:
     child.name = null
+* Implementation Patterns and Caveats
+  - lastDAProcessed() before in propose: lastDA().theme :(
+  - lastDAProcessed() after emitDA :(
+  - in general: emitDA suspends the thread of commands!!!
+  - if a question was asked: use waitingForResponse()
+  - Magic Variable expansion in DialogueActs:
+    slotnames *and* arguments with the same name as existing variables are
+    replaced by the value of the variable, just as with {...}
+    --> create an issue to *REMOVE* this
 * Queries aus .rudi abfeuern --> missing varargs!?
-  
+
 * Collections probleme: Alles polymorph?
 
 * Dialogue Acts
