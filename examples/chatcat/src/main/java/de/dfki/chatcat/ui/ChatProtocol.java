@@ -51,15 +51,16 @@ public class ChatProtocol extends JPanel {
 
     String homepath = System.getProperty("user.home");
     File file = new File(homepath + "/.chat-history.yml");
-    if (file.exists()) {
-      try {
-        ArrayList<String> temp = (ArrayList<String>)
-            yaml.load(new FileInputStream(file));
+    try {
+      ArrayList<String> temp = (ArrayList<String>)
+          yaml.load(new FileInputStream(file));
+      if (temp != null) {
         messages = new LinkedList<>(temp);
-      } catch (FileNotFoundException e) {
-        // impossible to occur.
       }
-    } else {
+    } catch (FileNotFoundException e) {
+      // fixed by the next if
+    }
+    if (messages == null) {
       statusbar.setText("No chat history found, creating a new one.");
       messages = new LinkedList<>();
     }

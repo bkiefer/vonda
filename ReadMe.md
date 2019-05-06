@@ -46,13 +46,6 @@ Prerequisites for installing VOnDA are:
   mvn install
   ```
 
-Caveat: on headless machines, the tests for VOnDA will fail, since they try to
-open Swing windows. There is also an obscure problem with the tests of the
-cplan library, which on some machines fail. If that happens, please compile
-these with
-
-```mvn install -DskipTests```
-
 
 There is also a visual debugger/GUI for VOnDA: https://github.com/yoshegg/rudibugger
 
