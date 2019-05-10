@@ -193,4 +193,36 @@ public class DialogueActTest {
         + "String s = da.getValue(\"theme\");";
     assertEquals(expected, getForMarked(s, expected));
   }
+
+  @Test
+  public void testSlotVariables1() throws IOException {
+    String in = "int foo = 0; da = #Inform(Matter, theme=foo);";
+    String s = generate(in);
+    String expected = "int foo = 0;DialogueAct da = new DialogueAct(\"Inform\", \"Matter\", \"theme\", \"foo\");";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
+  @Test
+  public void testSlotVariables2() throws IOException {
+    String in = "int foo = 0; da = #Inform(Matter, theme={foo});";
+    String s = generate(in);
+    String expected = "int foo = 0;DialogueAct da = new DialogueAct(\"Inform\", \"Matter\", \"theme\", Integer.toString(foo));";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
+  @Test
+  public void testSlotVariables3() throws IOException {
+    String in = "int foo = 0; da = #Inform(Matter, foo=bar);";
+    String s = generate(in);
+    String expected = "int foo = 0;DialogueAct da = new DialogueAct(\"Inform\", \"Matter\", \"foo\", \"bar\");";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
+  @Test
+  public void testSlotVariables4() throws IOException {
+    String in = "int foo = 0; da = #Inform(Matter, {foo}=bar);";
+    String s = generate(in);
+    String expected = "int foo = 0;DialogueAct da = new DialogueAct(\"Inform\", \"Matter\", Integer.toString(foo), \"bar\");";
+    assertEquals(expected, getForMarked(s, expected));
+  }
 }

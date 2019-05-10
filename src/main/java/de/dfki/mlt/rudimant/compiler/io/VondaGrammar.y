@@ -754,7 +754,9 @@ dialogueact_exp
 
 da_token
   : '{' exp '}' { $$ = $2; }
-  | VARIABLE { $$ = setPos(new ExpIdentifier($1), @$); }
+  // Note: if not explicitly marked, variables are not treated as variabls in DAs
+  //  | VARIABLE { $$ = setPos(new ExpIdentifier($1), @$); }
+  | VARIABLE { $$ = setPos(new ExpLiteral($1, "String"), @$); }
   | STRING { $$ = setPos($1, @$); }
   | WILDCARD { $$ = setPos(new ExpLiteral($1, "String"), @$); }
   ;
