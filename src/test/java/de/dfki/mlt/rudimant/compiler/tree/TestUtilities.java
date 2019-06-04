@@ -52,7 +52,7 @@ public class TestUtilities {
     if (r instanceof StatExpression) return ((StatExpression)r).expression;
     return r;
   }
-  
+
   public static RdfProxy startClient(File configDir, Map<String, Object> configs)
       throws IOException, WrongFormatException {
     String ontoFileName = (String) configs.get("ontologyFile");
@@ -104,6 +104,7 @@ public class TestUtilities {
 
   public static String getForMarked(String s, String exp) {
     s = s.replace(PROCESS_PREFIX, "/**/").replace(PROCESS_SUFFIX, "");
+    s = s.replaceAll("// Line [0-9][0-9]* in rudi\\n", "");
     s = normalizeSpaces(s).trim();
     exp = normalizeSpaces(exp).trim();
     int start = s.indexOf("// hello test") + 13;
