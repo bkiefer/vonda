@@ -7,4 +7,5 @@ rootPackage:        de.dfki.dialogue
 nameToURI:
   Activity : "<dom:Activity>"
   Child : "<dom:Child>"
+nameToClass:
   String : java.util.String

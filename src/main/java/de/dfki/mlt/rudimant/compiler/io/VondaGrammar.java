@@ -2101,28 +2101,28 @@ public class VondaGrammar
 
   case 197:
   if (yyn == 197)
-    /* "VondaGrammar.y":757  */ /* lalr1.java:489  */
-    { yyval = setPos(new ExpIdentifier((( String )(yystack.valueAt (1-(1))))), (yyloc)); };
+    /* "VondaGrammar.y":759  */ /* lalr1.java:489  */
+    { yyval = setPos(new ExpLiteral((( String )(yystack.valueAt (1-(1)))), "String"), (yyloc)); };
   break;
     
 
   case 198:
   if (yyn == 198)
-    /* "VondaGrammar.y":758  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":760  */ /* lalr1.java:489  */
     { yyval = setPos((( ExpLiteral )(yystack.valueAt (1-(1)))), (yyloc)); };
   break;
     
 
   case 199:
   if (yyn == 199)
-    /* "VondaGrammar.y":759  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":761  */ /* lalr1.java:489  */
     { yyval = setPos(new ExpLiteral((( String )(yystack.valueAt (1-(1)))), "String"), (yyloc)); };
   break;
     
 
   case 200:
   if (yyn == 200)
-    /* "VondaGrammar.y":763  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":765  */ /* lalr1.java:489  */
     {
     yyval = ((LinkedList<RTExpression>)(yystack.valueAt (5-(5)))); ((LinkedList<RTExpression>)(yystack.valueAt (5-(5)))).addFirst(((RTExpression)(yystack.valueAt (5-(4))))); ((LinkedList<RTExpression>)(yystack.valueAt (5-(5)))).addFirst(((RTExpression)(yystack.valueAt (5-(2)))));
   };
@@ -2131,28 +2131,28 @@ public class VondaGrammar
 
   case 201:
   if (yyn == 201)
-    /* "VondaGrammar.y":766  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":768  */ /* lalr1.java:489  */
     { yyval = new LinkedList<RTExpression>(); };
   break;
     
 
   case 202:
   if (yyn == 202)
-    /* "VondaGrammar.y":770  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":772  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 203:
   if (yyn == 203)
-    /* "VondaGrammar.y":771  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":773  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
 
   case 204:
   if (yyn == 204)
-    /* "VondaGrammar.y":772  */ /* lalr1.java:489  */
+    /* "VondaGrammar.y":774  */ /* lalr1.java:489  */
     { yyval = ((RTExpression)(yystack.valueAt (1-(1)))); };
   break;
     
@@ -3251,8 +3251,8 @@ private static final short yycheck_[] = yycheck_init();
      646,   647,   651,   652,   653,   654,   655,   659,   660,   661,
      662,   666,   670,   674,   675,   681,   682,   683,   691,   694,
      697,   701,   702,   706,   707,   708,   712,   713,   716,   719,
-     724,   729,   733,   740,   743,   750,   756,   757,   758,   759,
-     763,   766,   770,   771,   772
+     724,   729,   733,   740,   743,   750,   756,   759,   760,   761,
+     765,   768,   772,   773,   774
     };
   }
 

@@ -147,6 +147,10 @@ public class VisitorGeneration implements RudiVisitor {
     char c = op.charAt(0);
     return c == '+' || c == '-' ? op.substring(0, 2) : op;
   }
+  
+  public void genLocation(RudiTree node) {
+    gen("// Line " + node.location.getBegin().getLine() + " in rudi\n");
+  }
 
   @Override
   public void visit(RudiTree node) {
@@ -510,6 +514,7 @@ public class VisitorGeneration implements RudiVisitor {
       // a sub-level rule: ordinary <if>
       gen("// Rule ").gen(node.label).gen("\n");
     }
+    genLocation(node);
     // generate output for rule logging. This is the "toplevel", because
     // activeInfo is non-Null, the visit call to ifNode.condition will generate
     // the appropriate assignments of baseterms to the bool array.
@@ -546,6 +551,7 @@ public class VisitorGeneration implements RudiVisitor {
       gen("{\n");
       mem.enterEnvironment(node);
     }
+    genLocation(node);
     for (RudiTree stat : node.statblock) {
       gen(stat);
     }
@@ -558,6 +564,7 @@ public class VisitorGeneration implements RudiVisitor {
   @Override
   public void visit(StatFor1 node) {
     // for ($[initialization]$[condition];$[increment]) $[statblock]
+    genLocation(node);
     gen("for ( ").gen(node.initialization).gen(node.condition).gen(";");
     if (node.increment != null) {
       gen(node.increment);
@@ -571,6 +578,7 @@ public class VisitorGeneration implements RudiVisitor {
     //   ${varType.toJava()} $[var] = (${varType.toJava()})$[var]_outer;
     //   $[statblock]
     // }
+    genLocation(node);
     gen("for (Object ").gen(node.var).gen("_outer : ").gen(node.initialization).gen(") { ");
     gen(node.varType.toJava()).gen(" ").gen(node.var)
       .gen(" = (").gen(node.varType.toJava()).gen(")").gen(node.var).gen("_outer;\n");
@@ -583,6 +591,7 @@ public class VisitorGeneration implements RudiVisitor {
     //   ${{s : variables} ${s} = o[${s?index}]\n};
     //   $[statblock]
     // }
+    genLocation(node);
     gen("for (Object[] o : ").gen(node.initialization).gen(") {");
     int count = 0;
     for (String s : node.variables) {
@@ -595,6 +604,7 @@ public class VisitorGeneration implements RudiVisitor {
   public void visit(StatIf node) {
     // if ($[condition]) $[statblockIf]
     // ${{statblockElse??}else $[statblockElse]}
+    genLocation(node);
     gen("if (").gen(node.condition).gen(") ").gen(node.statblockIf).gen("\n");
     if (node.statblockElse != null) {
       gen("else ").gen(node.statblockElse);
@@ -633,6 +643,7 @@ public class VisitorGeneration implements RudiVisitor {
     if (node.block == null) {
       return;
     }
+    genLocation(node);
     mem.enterEnvironment(node);
     // return type
     gen(node.visibility).gen(' ').gen(node.function_type.getReturnedType().toJava())
@@ -649,6 +660,7 @@ public class VisitorGeneration implements RudiVisitor {
 
   @Override
   public void visit(StatPropose node) {
+    genLocation(node);
     accessTopLevelInstance();
     gen("propose(").gen(node.arg).gen(",");
     accessTopLevelInstance();
@@ -661,6 +673,7 @@ public class VisitorGeneration implements RudiVisitor {
    */
   @Override
   public void visit(StatTimeout node) {
+    genLocation(node);
     accessTopLevelInstance();
     if (node.label.getType().isDialogueAct()) {
       gen("behaviourTimeout(");
@@ -756,6 +769,7 @@ public class VisitorGeneration implements RudiVisitor {
 
   @Override
   public void visit(StatWhile node) {
+    genLocation(node);
     if (node.isWhileDo()) {
       gen("while (").gen(node.condition).gen(")").gen(node.block);
     } else {
@@ -765,6 +779,7 @@ public class VisitorGeneration implements RudiVisitor {
 
   @Override
   public void visit(StatSwitch node) {
+    genLocation(node);
     gen("switch (").gen(node.condition).gen(")").gen(node.block);
   }
 

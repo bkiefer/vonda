@@ -95,4 +95,29 @@ public class WeirdCasesTest {
 //    assertEquals(expected, getForMarked(r, expected));
 //  }
 
+  @Test
+  public void testNormalComment() {
+    String in = "int x;\n //This is a comment referring to the assignment \n"
+            + " x = 5;";
+    String r = generate(in);
+    String expected = "public int x;/**///This is a comment referring to the assignment"
+            + " x = 5;}";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+
+  @Test
+  public void testJavaComment() {
+    // problem: how to differentiate between vardefs, which we'd like do be
+    // fielddefs, and 'normal' java code that is actually intended to end up in
+    // process?
+    String in = "int x;\n /*@ String javaVar = \"class variable\";@*/ \n"
+            + " x = 5;";
+    String r = generate(in);
+    String expected = "public int x;/**/ String javaVar = \"class variable\";"
+            + " x = 5;}";
+    System.out.println(r);
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
 }
