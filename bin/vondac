@@ -1,0 +1,15 @@
+#!/bin/sh
+
+JARIMAGE=vonda-compiler-1.1-SNAPSHOT.jar
+here=`pwd`
+
+if test -z "$jardir"; then
+    script_dir=`readlink -f "$0"`
+    script_dir=`dirname "$script_dir"`
+    cd $script_dir
+    cd ../target
+    jardir=`pwd`
+    cd $here
+fi
+
+java -jar "$jardir/$JARIMAGE" "$@"
