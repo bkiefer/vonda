@@ -387,7 +387,7 @@ SingleCharacter = [^\r\n\'\\]
   "\\\""\'                       |
   "\\'"\'                        |
   "\\\\"\'                       |
-  \\[0-3]?{OctDigit}?{OctDigit}\' { yybegin(YYINITIAL); return charLiteral(yytext()); }
+  \\[0-3]?{OctDigit}?{OctDigit}\' { yybegin(YYINITIAL); return charLiteral('\'' + yytext()); }
 
   /* error cases */
   \\.                            { throw new RuntimeException("Illegal escape sequence \""+yytext()+"\""); }

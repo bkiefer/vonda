@@ -129,4 +129,13 @@ public class AdditionalTest {
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));
   }
+
+  @Test
+  public void testCharacterLiteral() {
+    String in = "v = '2';";
+    String exp = "v = '2';";
+
+    String s = generate(in);
+    assertEquals(exp, getForMarked(s, exp));
+  }
 }
