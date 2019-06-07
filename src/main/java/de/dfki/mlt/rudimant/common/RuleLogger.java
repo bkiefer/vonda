@@ -45,6 +45,7 @@ public class RuleLogger {
   public BitSet rulesToLogFalse = new BitSet();
 
   private final Map<Integer, boolean[]> _justLogged;
+  private final Map<Integer, boolean[]> _lastLogged;
 
   public boolean logAllRules = false;
 
@@ -74,6 +75,7 @@ public class RuleLogger {
     printers = new ArrayList<>();
     ruleInfos = null;
     _justLogged = new HashMap<>();
+    _lastLogged = new HashMap<>();
   }
 
   public RuleLogger(LogPrinter p){
@@ -123,11 +125,23 @@ public class RuleLogger {
   }
 
   public void clearRecentResults() {
+    // TODO: completely clear _lastLogged after a certain time
+    //       -> maybe add option to change that value
+    if (_justLogged.size() > 0) {
+      //_lastLogged.clear();
+      _lastLogged.putAll(_justLogged);
+      System.out.println("Size of last logged: " + _lastLogged.size());
+    }
     _justLogged.clear();
   }
 
   private boolean justLogged(int ruleId, boolean[] result) {
     boolean[] lastResult = _justLogged.get(ruleId);
+    return lastResult != null && Arrays.equals(lastResult, result);
+  }
+
+  private boolean lastLogged(int ruleId, boolean[] result) {
+    boolean[] lastResult = _lastLogged.get(ruleId);
     return lastResult != null && Arrays.equals(lastResult, result);
   }
 
@@ -138,7 +152,8 @@ public class RuleLogger {
    */
   public void logRule(int ruleId, boolean[] result) {
     if (ruleInfos != null && shouldLog(ruleId, result[0])
-        && ! justLogged(ruleId, result)) {
+        && ! justLogged(ruleId, result)
+        && ! lastLogged(ruleId, result)) {
       _justLogged.put(ruleId, result);
       for (LogPrinter printer : printers)
         printer.printLog(ruleInfos.get(ruleId), result);
