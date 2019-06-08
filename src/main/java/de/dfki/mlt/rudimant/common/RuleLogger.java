@@ -23,9 +23,13 @@ import static de.dfki.mlt.rudimant.common.Constants.*;
 
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 public class RuleLogger {
+
+  private static final Logger logger = LoggerFactory.getLogger(RuleLogger.class);
 
   /** The stored information from the compiler that will be used for logging
    *  the rules
@@ -44,10 +48,27 @@ public class RuleLogger {
   public BitSet rulesToLogTrue = new BitSet();
   public BitSet rulesToLogFalse = new BitSet();
 
-  private final Map<Integer, boolean[]> _justLogged;
   private final Map<Integer, boolean[]> _lastLogged;
+  private boolean _lastLoggedChanged = false;
 
   public boolean logAllRules = false;
+
+  /** The value of this variable determines the "verbosity" of rule logging.
+   *  The logger keeps an internal memory of the logged rules, and if the
+   *  current situation for a rule did not change from last time, the rule will
+   *  not be logged. After a while, however, we maybe want to be reminded of
+   *  the current state of affairs.
+   *
+   *  Setting this variable to zero will result in the original behaviour, while
+   *  setting it to a high value will silence logging heavily
+   */
+  public int clearLogMemoryThreshold = 10;
+
+  /** This counts the calls to processRules since the last clear of the logger
+   *  memory. Setting it to a value equal or above clearLogMemoryThreshold
+   *  will clear the logger memory on the next call to processRules
+   */
+  private int callsToProcessRules = 0;
 
   private void collectRuleInfos(BasicInfo info) {
     if (info instanceof RuleInfo) {
@@ -74,7 +95,6 @@ public class RuleLogger {
   public RuleLogger() {
     printers = new ArrayList<>();
     ruleInfos = null;
-    _justLogged = new HashMap<>();
     _lastLogged = new HashMap<>();
   }
 
@@ -108,6 +128,7 @@ public class RuleLogger {
     logAllRules = false;
     rulesToLogFalse.clear();
     rulesToLogTrue.clear();
+    clearLogMemory();
   }
 
   /** Start logging a specific rule */
@@ -124,25 +145,38 @@ public class RuleLogger {
             || (result && rulesToLogTrue.get(ruleId));
   }
 
-  public void clearRecentResults() {
-    // TODO: completely clear _lastLogged after a certain time
-    //       -> maybe add option to change that value
-    if (_justLogged.size() > 0) {
-      //_lastLogged.clear();
-      _lastLogged.putAll(_justLogged);
-      System.out.println("Size of last logged: " + _lastLogged.size());
-    }
-    _justLogged.clear();
+  /** On the next call to processRules all rules will be logged */
+  public void clearLogMemory() {
+    _lastLogged.clear();
+    _lastLoggedChanged = false;
+    callsToProcessRules = 0;
   }
 
-  private boolean justLogged(int ruleId, boolean[] result) {
-    boolean[] lastResult = _justLogged.get(ruleId);
-    return lastResult != null && Arrays.equals(lastResult, result);
+  /** This method will be called on every call to processRules, which means
+   *  that it is called once for every rule fix point computation.
+   */
+  public void clearRecentResults() {
+    // completely clear log memory after a certain number of rule process runs
+    if (_lastLoggedChanged) {
+      _lastLoggedChanged = false;
+      ++callsToProcessRules;
+      if (callsToProcessRules >= clearLogMemoryThreshold) {
+        logger.info("Clearing log cache after {} turns.", callsToProcessRules);
+        clearLogMemory();
+      } else {
+        logger.info("Log cache size: {}", _lastLogged.size());
+      }
+    }
   }
 
   private boolean lastLogged(int ruleId, boolean[] result) {
     boolean[] lastResult = _lastLogged.get(ruleId);
-    return lastResult != null && Arrays.equals(lastResult, result);
+    boolean res = lastResult != null && Arrays.equals(lastResult, result);
+    if (! res) {
+      _lastLogged.put(ruleId, result);
+      _lastLoggedChanged = true;
+    }
+    return res;
   }
 
   /**
@@ -152,9 +186,7 @@ public class RuleLogger {
    */
   public void logRule(int ruleId, boolean[] result) {
     if (ruleInfos != null && shouldLog(ruleId, result[0])
-        && ! justLogged(ruleId, result)
         && ! lastLogged(ruleId, result)) {
-      _justLogged.put(ruleId, result);
       for (LogPrinter printer : printers)
         printer.printLog(ruleInfos.get(ruleId), result);
     }
