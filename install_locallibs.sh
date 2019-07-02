@@ -1,5 +1,5 @@
 #!/bin/sh
-prereq="mvn bison jflex"
+prereq="mvn"
 for cmd in $prereq; do
     if test -z "`type -all $cmd 2>/dev/null`" ; then
         toinstall="$toinstall $cmd"

@@ -1,10 +1,35 @@
 #!/bin/sh
-
+#set -x
 JARIMAGE=vonda-compiler-1.1-SNAPSHOT.jar
 here=`pwd`
 
+if realpath . > /dev/null  ; then
+    :
+else
+    # does not exist on Mac OSX
+    realpath() {
+        target=$1
+
+        cd `dirname $target`
+        target=`basename $target`
+
+        # Iterate down a (possible) chain of symlinks
+        while [ -L "$target" ]
+        do
+            target=`readlink $target`
+            cd `dirname $target`
+            target=`basename $target`
+        done
+
+        # Compute the canonicalized name by finding the physical path
+        # for the directory we're in and appending the target file.
+        phys_dir=`pwd -P`
+        echo "$phys_dir/$target"
+    }
+fi
+
 if test -z "$jardir"; then
-    script_dir=`readlink -f "$0"`
+    script_dir=`realpath "$0"`
     script_dir=`dirname "$script_dir"`
     cd $script_dir
     cd ../target

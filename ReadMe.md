@@ -18,9 +18,9 @@ and reasoning component HFC that is designed to handle time-varying data.
 The following installation instructions should work on Ubuntu 16.04
 
 Prerequisites for installing VOnDA are:
-- OpenJDK 8, maven build tool, git, jflex and uncrustify (optional)
+- OpenJDK 8, maven build tool, git, and uncrustify (optional)
   ```
-  sudo apt install openjdk-8-jdk maven git jflex uncrustify
+  sudo apt install openjdk-8-jdk maven git uncrustify
   ```
 
 - thrift 0.9.3 communication library
