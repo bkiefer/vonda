@@ -409,14 +409,19 @@ on the right.
 \section{Advanced Features}
 
 \subsection{Connecting to a second HFC Server}
-% e.g., like for Smoto, if loading (a passive part of) the database takes too much time to perform it for every test
+% e.g., like for PAL, if loading (a passive part of) the database takes too much time to perform it for every test
+In the standard setup, your \vonda project uses one HFC server that on starting your system loads all the information from your ontology and that receives your new database entries and modifications.
+
+However, there might be cases where this approach is not what you want. If your project uses a big database with static information, that you use but do not need to write to, you might prefer to not start the server anew each time you start your system, as this might consume time (e.g., loading ???? WordNet\footnote{https://wordnet.princeton.edu/} triples takes ???\todo{numbers on PAL computer} minutes on a reasonably fast machine).
 
 
+In this case, there is another solution: you can start your HFC server remotely and then connect to it in your \vonda agent.
 
+\todo{hfc server start script}
 
+\todo{code example adding new client and proxy for use in java}
 
-
-
+This additional server does of course not have the same status as the innate HFC proxy, as you only connect to it at run-, not at compile-time. You can query it for information as described in \ref{hfc_usage}, but classes from this database will not be recognized in the rudi code and you cannot write to it \todo{or can you? Try?!}. 
 
 
 \if0
@@ -497,6 +502,14 @@ goals to support the system requirements described before:
 \input{debugger}
 \newpage
 \input{hfc}
+
+% implementation patterns and caveats
+\chapter{Building VOnDA Agents}
+\input{patterns}
+\newpage
+\input{caveats}
+\newpage
+% and maybe tips and tricks?
 
 \bibliography{vonda}
 \bibliographystyle{apa}

@@ -1,0 +1,11 @@
+\section{Implementation Patterns}
+
+\subsection{Proper Usage of \texttt{lastDAprocessed} and \texttt{emitDA}}
+
+\todo{Actually, shouldn't we already explain lastDAprocessed somewhere else?}
+\texttt{lastDAprocessed} is a built-in method that helps you clean up after a dialogue act has been dealt with. You usually want to call it in your \texttt{propose} block, because when the block is executed that means that the dialogue act has been processed. The method's effect is to set an internal timestamp of the moment it has been called, which affects the return value of \texttt{lastDA}: \texttt{lastDA} will only return a dialogue act if it has been sent after the the time of \texttt{lastDAprocessed} timestamp.
+
+Be aware this also means that if the statement you execute in your \texttt{propose} block is \texttt{lastDAprocessed();}, all following calls to \texttt{lastDA()} will evaluate to an empty dialogue act. Thus, using expressions like \texttt{theme=lastDA().theme} in an \texttt{emitDA} are strongly discouraged, because they will fail if the \texttt{emitDA} is used after calling the cleanup method. There is, however, good reason to not move the \texttt{lastDAprocessed} to the very end of your proposal, as proposals are executed in a separate thread and your 
+\vonda rules are executed in parallel. This might, in rare cases where your proposal code takes more time to process (for one possible reason, see \ref{emitDA}), lead to your system generating and executing new proposals based on the ''old'' dialogue act, thus responding more than once to one input.
+
+\subsection{What to Keep in Mind when Using \texttt{emitDA}} \label{emitDA}
