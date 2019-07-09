@@ -21,6 +21,9 @@ if (lastDA() <= #AcceptOffer(Bringing)) System.out.println("foo");
 Child c1;
 Agent c2;
 if (c1 == c2) System.out.println("foo");
+// Set the child's name, then clear it again
+c1.name = "new name";
+c1.name = null;
 
 // Is the class of c1 a subclass (a strict subclass) of the class of c2 ?
 if (c1 <= c2) System.out.println("foo");
