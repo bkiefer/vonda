@@ -1,4 +1,4 @@
-\section{Implementation Patterns}
+\section{Implementation Patterns and Caveats}
 
 \subsection{Proper Usage of \texttt{lastDAprocessed} and \texttt{emitDA}}
 
@@ -8,4 +8,4 @@
 Be aware this also means that if the statement you execute in your \texttt{propose} block is \texttt{lastDAprocessed();}, all following calls to \texttt{lastDA()} will evaluate to an empty dialogue act. Thus, using expressions like \texttt{theme=lastDA().theme} in an \texttt{emitDA} are strongly discouraged, because they will fail if the \texttt{emitDA} is used after calling the cleanup method. There is, however, good reason to not move the \texttt{lastDAprocessed} to the very end of your proposal, as proposals are executed in a separate thread and your 
 \vonda rules are executed in parallel. This might, in rare cases where your proposal code takes more time to process (for one possible reason, see \ref{emitDA}), lead to your system generating and executing new proposals based on the ''old'' dialogue act, thus responding more than once to one input.
 
-\subsection{What to Keep in Mind when Using \texttt{emitDA}} \label{emitDA}
+\subsection{A Few Words About \texttt{emitDA} and \texttt{createBehaviour}} \label{emitDA}

@@ -128,4 +128,15 @@ and property specifications for the data objects of the application, and other
 assertional knowledge, such as specifications for ``forgetting'', which could
 be modeled in an orthogonal class hierarchy, and supported by custom deletion
 rules in the reasoner.
-\todo{Add example of how to query proxy in Java code, and mention that we want to add functionality for easy querying in rudi code}
+
+For queries which are too complex to be handled the \vonda way, or if you want to do reasoning which for efficiency reasons should be handled by HFC rather than Java (e.g., if you are filtering for specific property values in a pool of many instances of the same class), there also is a direct communication port to HFC.
+
+\begin{lstlisting} [language=Java]
+List<String> uris = new ArrayList<>();
+// the ancestor is that hyponym which has the shortest path to syn
+String ancestors = "select ?s  where ?s <wn20schema:hyponym> {} ?_ ";
+QueryResult qr = proxy.selectQuery(ancestors, syn);
+uris = RdfProxy.getValues(qr);
+\end{lstlisting}
+
+The above code, for example, retrieves all hyponyms of a given synset.

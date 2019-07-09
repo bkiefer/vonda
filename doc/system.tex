@@ -837,11 +837,21 @@ The following methods are declared in \texttt{src/main/resources/Agent.rudi} and
 [String]. boolean startsWith(String s);
 [String]. boolean endsWith(String s);
 [String]. String substring(int i);
+[String]. String substring(int begin, int end);
+[String]. boolean isEmpty();
+[String]. int length();
 
 [List<T>]. T get(int a);
 [Collection<T>]. void add(Object a);
 [Collection<T>]. boolean contains(Object a);
 [Collection<T>]. int size();
+[Collection<T>]. boolean isEmpty();
+[Map<S, T>]. boolean containsKey(S a);
+[Map<S, T>]. T get(S a);
+[Array<T>]. int length;
+
+int random(int limit);
+float random();
 \end{lstlisting}
 
 \item Short-hand conversion methods from Agent
@@ -850,6 +860,7 @@ int toInt(String s);
 float toFloat(String s);
 double toDouble(String s);
 boolean toBool(String s);
+String toStr(type i);  // type in (int, short, byte, float, double, boolean)
 \end{lstlisting}
 
 \item Other Agent methods
@@ -893,7 +904,7 @@ DialogueAct emitDA(DialogueAct da);
 DialogueAct myLastDA();
 DialogueAct lastDA();
 
-// did i say something like ta in this session (subsumption)? If so, how many
+// Did I say something like ta in this session (subsumption)? If so, how many
 // utterances back was it? (otherwise, -1 is returned)
 int saidInSession(DialogueAct da);
 // like saidInSession, only for incoming dialogue acts
@@ -907,12 +918,22 @@ DialogueAct addLastDA(DialogueAct newDA);
 
 \item Methods using lambda expressions
 \begin{lstlisting}
-// lambda: first class argument of Function is return type of function object
-boolean contains(Collection<T> coll, Function<Boolean, T> pred);
+boolean some(Collection<T> coll, Function<Boolean, T> pred);
 boolean all(Collection<T> coll, Function<Boolean, T> pred);
 List<T> filter(Collection<T> coll, Function<Boolean, T> pred);
 List<T> sort(Collection<T> coll, Function<Integer, T, T> c);
 Collection<T> map(Collection<S> coll, Function<T, S> f);
+int count(Collection<T> coll, Function<Boolean, T> pred);
+T first(Collection<T> coll, Function<Boolean, T> pred);
+T random(Collection<T> coll);
+\end{lstlisting}
+
+\item Methods callable on Rdf objects
+\begin{lstlisting}
+Rdf toRdf(String uri);
+[Rdf]. String getURI();
+[Rdf]. boolean has(String predicate);
+[Rdf]. long getLastChange(boolean asSubject, boolean asObject);
 \end{lstlisting}
 
 \end{itemize}
