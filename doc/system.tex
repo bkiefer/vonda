@@ -239,8 +239,6 @@ New RDF objects can be created with \texttt{new}, similar to Java objects; they
 are immediately reflected in the database, as are all changes to already
 existing objects.
 
-
-
 \begin{table}[htbp]
   \centering
 \begin{minipage}[t]{0.355\textwidth}
@@ -251,6 +249,7 @@ c.name = "new name";
 Set middle = c.middleNames;
 c.middleNames += "John";
 c.middleNames -= "James";
+c.name = null;
 \end{lstlisting}
 \end{minipage}\\{\Large$\Downarrow$}\\
 \begin{minipage}[t]{0.8\textwidth}
@@ -260,6 +259,7 @@ c.setValue("<upper:name>", "new name");
 Set middle = (Set<Object>)c.getValue("<upper:middleNames");
 c.add("<upper:middleNames", "John");
 c.remove("<upper:middleNames", "James");
+c.clearValue("<dom:name>");
 \end{lstlisting}
 \end{minipage}
   \caption{Examples for an RDF property access}
