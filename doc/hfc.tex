@@ -9,9 +9,10 @@ attach temporal information to every data chunk \cite{Krieger:FOIS2012,
   objects}, using either \emph{transaction time} or \emph{valid time}
 attachments, and as a side effect obtain a complete history of all changes.
 HFC is very efficient in terms of processing speed and memory footprint, and
-has recently be extended with stream reasoning facilities. \vonda can use HFC
+has recently been extended with stream reasoning facilities. \vonda can use HFC
+\todo{AW: Just asking: How long can we still talk of ''recently extended''?}
 either directly as a library, or as a remote server, also allowing for more
-than one instance, if needed.
+than one instance, if needed (for this feature see section \ref{sec:2ndHfc}).
 
 The following is the syntax of HFC queries (EBNF):
 \begin{table}[htbp]
@@ -54,7 +55,7 @@ The reserved symbols \texttt{ASK}, \texttt{SELECT}, \texttt{SELECTALL},
 do \emph{not} need to be written in uppercase.
 
 Neither \texttt{filter} predicates nor \texttt{aggregate} functions should be named like reserved symbols.
-
+\todo{AW: The writing style of this part of the text could be improved}
 \emph{don't-care} variables should be marked \emph{explicitely} by using
 \verb|?_|, particularly if \texttt{SELECT} is used with \verb|*| as in:
 \begin{verbatim}
@@ -65,6 +66,7 @@ To change the object position without projecting it you can use \emph{don't-care
 \begin{verbatim}
      SELECT ?s WHERE ?s <rdf:type> ?o ?_ ?_ FILTER ?o != <foo-class>
 \end{verbatim}
+\todo{AW: Is the second ?\_ here a typo?}
 
 Aggregates in HFC take whole tables or parts of them and calculate a result based on their entities. As the type of aggregates and filter functions cannot be overloaded, there are multiple similar functions for different types, e.g. F for \texttt{float}, L for \texttt{long}, D for \texttt{double}, I
 for \texttt{int}, and S for \texttt{String}.

@@ -13,12 +13,14 @@
 \usepackage{listings}
 \lstset{% general command to set parameter(s)
   language=Java,
-  basicstyle=\scriptsize,  % print whole listing small
   %keywordstyle=\color{black}\bfseries\underbar, % underlined bold black keywords
   %identifierstyle=,  % nothing happens
   %commentstyle=\color{white}, % white comments
+  %numbers=left,
+  %numberstyle=\tiny, % the style that is used for the line-numbers
   columns=fixed,
-  basicstyle=\ttfamily,  % typewriter type for strings
+  fontadjust=true,
+  basicstyle=\ttfamily,  % typewriter type for strings, add size here if you want
   showstringspaces=false} % no special string spaces
 
 \usepackage{xspace}
@@ -50,7 +52,7 @@ sources.
 %\todo[inline]{Mention HFC and ref to appropriate section}
 The RDF store and reasoner of choice used in \vonda is HFC
 \citep{krieger2013efficient}. For further details about the general
-funcitonalities of HFC see chapter \ref{sec:hfc}; for an example of HFC as a
+functisonalities of HFC see chapter \ref{sec:hfc}; for an example of HFC as a
 database in a \vonda project please refer to section \ref{sec:example-hfc}.
 
 \vonda consists of three parts: A programming language tailored towards the
@@ -59,8 +61,9 @@ compiler that turns source code in this language into Java code, and a run-time
 core, that supports implementing dialogue management modules using the compiled
 rules.
 
-The framework is domain-independent, it was originally designed to for
+The framework is domain-independent. It was originally designed to for
 multi-modal human-robot interaction, but there is currently no \emph{special}
+\todo{AW: This sounds a little bit like vonda just not supports these functions, even though ''special'' is emphasized}
 functionality in the core to either support the multi-modality nor the
 human-robot interaction. The architecture of the framework is open and powerful
 enough to add these things easily.
@@ -76,8 +79,8 @@ Figure \ref{fig:arch} shows the main components of a \vonda agent.
 \caption{\label{fig:arch}Schematic \vonda agent}
 \end{figure}
 
-At the base there is an RDF store, which takes incoming sensor and interaction
-data, and stores it as RDF data, based on a data specification in the form of
+At the base there is an RDF store which takes incoming sensor and interaction
+data and stores it as RDF data, based on a data specification in the form of
 an ontology developed as part of the dialogue manager, making the data (via the
 specification) available to all other components.
 
@@ -89,14 +92,13 @@ planning.
 
 The second major component is the rule processor for the dialogue management
 rules. The rules can not only use new data, but also the interaction history
-stored in the RDF database to take their decisions.  When new data is added, a
+stored in the RDF database to make their decisions.  When new data is added, a
 set of declaratively specified reactive rules will propose dialogue moves or
-other actions and send these proposals to the action selection mechanism. The
-selection mechanism selects the ``best'' of the proposed actions and sends it
+other actions and send these proposals to the action selection mechanism. This mechanism selects the ``best'' of the proposed actions and sends it
 back. If the proposed action results in dialogue acts, these are turned into
-verbal output and gestures with the help of a multimodal generation component,
+verbal output and gestures with the help of a multimodal generation component, \todo{AW: So there is a multimodal component, doesn't this contradict the statement above which I marked?}
 which retrieves parameters from the RDF database to adapt the generation to the
-user's likings, and can also take into account sensory data such as her or his
+user's likings, and can also take into account sensor data such as her or his
 estimated mood.
 
 The last two parts are a language interpretation module (not
@@ -127,7 +129,7 @@ A dialogue system aiming for social interaction does need some kind of memory
 representation. Therefore, the first step of building your dialogue manager
 should be to set up the ontology. It can of course be extended on-the-fly,
 while your system is becoming more and more elaborate, but you should still
-create a base from which to start from.
+create a base from which to start.
 
 At the very least, you are strongly recommended to use the dialogue hierarchy
 (provided in \texttt{examples/chatcat/src/main/resources/ontology/dialogue.nt})
@@ -140,14 +142,14 @@ in the \vonda framework.
 %example here: with Protege
 HFC loads data from n-Tuple files. You can however create files in the more
 common OWL format and then automatically transfer it with a simple shell
-script, using the Raptor \citep{raptor}
+script, using Raptor \citep{raptor}
 (e.g. \texttt{examples/chatcat/ntcreate.sh}). This tutorial uses Protégé
 \citep{Protege}.
 
-Open your favourite IDE and create a new file that includes an RDF class Agent,
-and two subclasses of this class, Robot and Human.
+Open your favourite IDE and create a new file that includes an RDF class \texttt{Agent},
+and two subclasses of this class, \texttt{Robot} and \texttt{Human}.
 
-After that, create a predicate \texttt{name} for the class Agent that has its
+After that, create a predicate \texttt{name} for the class \texttt{Agent} that has its
 range in \texttt{xsd:string}.
 
 \begin{figure}
@@ -254,13 +256,14 @@ specifications of the dialogue acts used by the \vonda framework.
 This specifies the set of rules that HFC uses to build the ontology. It is
 recommended to simply use the file \texttt{default.eqred.quads.rdl} here. For
 further information, please refer to the documentation of HFC.
+\todo{AW: Maybe mention triples vs quadruples?}
 
 
 \section{The Framework: Setting up the Base of your Dialogue System}
 
-You need to implement your own abstract (Java) agent as a subclass of
+You need to implement your own abstract (Java) agent as a subclass of\\
 \texttt{de.dfki.mlt.rudimant.agent.Agent}. Furthermore, you will need an
-implementation of \texttt{de.dfki.mlt.rudimant.agent.CommunicationHub}. To see
+implementation of\\ \texttt{de.dfki.mlt.rudimant.agent.CommunicationHub}. To see
 an example of how this should be done, take a look in the source folder of
 ChatCat.
 
@@ -286,6 +289,7 @@ able to create or, respectively, process dialogue acts of the format that
 
 For the sake of simplicity, this example uses SRGS to build a primitive NLU and
 cplan to create natural language out of the dialogue acts the agent outputs.
+\todo{AW: Link to cplan}
 
 \section{Writing some First Rules}
 
@@ -304,7 +308,7 @@ reacting to this utterance:
 \begin{lstlisting}[language=Java]
 greet_back:
   if (lastDA() <= #InitialGreeting(Greet)) {
-  	user = new Human;
+    user = new Human;
     propose("greet_back") {
       emitDA(#ReturnGreeting(Greet));
     }
@@ -347,6 +351,7 @@ the new dialogue system.
 You can compile your \vonda rule files by executing the command\\ \verb|<yourVondaDirectory>/compile -c <yourCompileYml> <YourToplevelRudiFile>|.
 
 The compile.yml should contain the following parameters:\\
+\todo{AW: Make sure this is up-to-date}
 
 \begin{tabular}{ll}
 	\verb|outputDirectory:| & Relative to the current location, where should the compiled classes go?\\
@@ -369,18 +374,20 @@ containing the following specifications (This is an example from ChatCat):
 ontologyFile:       src/main/resources/ontology/chatcat.ini
 NLG:
 eng:
-mapperProject: src/main/resources/grammars/cplanner/allrules-mapper
-generationProject: src/main/resources/grammars/cplanner/allrules
+mapperProject:      src/main/resources/grammars/cplanner/allrules-mapper
+generationProject:  src/main/resources/grammars/cplanner/allrules
 NLU:
 eng:
-class: de.dfki.chatcat.SrgsParser
-grammar: src/main/resources/grammars/srgs/chatcat.xml
+class:              de.dfki.chatcat.SrgsParser
+grammar:            src/main/resources/grammars/srgs/chatcat.xml
 \end{verbatim}
 
 This configuration can then be easily read in when starting your project, and
 be passed to the init method of Agent, which requires such information.
+\todo{AW: Give just a bit more information about what this is good for}
 
 \subsection{Resolving Namespace Ambiguities}
+\todo{AW: Does this really belong here? It's rather an advanced feature, might go to Chapter 4?}
 
 As you might have noticed whilst looking at chatcat.yml, there is another
 parameter used in the compile configuration of our example project:

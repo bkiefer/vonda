@@ -4,23 +4,25 @@
 \label{lastDAprocessed}
 
 \todo{Actually, shouldn't we already explain lastDAprocessed somewhere else?}
-\texttt{lastDAprocessed()} is a built-in method that helps you clean up after a dialogue act has been dealt with. You usually want to call it in your \texttt{propose} block, because when the block is executed that means that the dialogue act has been processed. The method's effect is to set an internal timestamp at the moment it has been called, which affects the return value of \texttt{lastDA()}: \texttt{lastDA()} will only return a dialogue act if it has been sent after the the time specified by the \texttt{lastDAprocessed} timestamp.
+\texttt{lastDAprocessed()} is a built-in method that helps you clean up after a dialogue act has been dealt with. You usually want to call it in your \texttt{propose} block, because when the block is executed that means that the dialogue act has been processed. The method's effect is to set an internal timestamp at the moment it has been called, which affects the return value of \texttt{lastDA()}: \texttt{lastDA()} will only return a dialogue act if it has been sent after the the point in time specified by the \texttt{lastDAprocessed} timestamp.
 
-Be aware this also means that if the statement you execute in your \texttt{propose} block is \texttt{lastDAprocessed();}, all following calls to \texttt{lastDA()} will evaluate to an empty dialogue act. Thus, using expressions like \texttt{theme=lastDA().theme} in an \texttt{emitDA} are strongly discouraged, because they will fail if the \texttt{emitDA} is used after calling the cleanup method. There is, however, good reason to not move the \texttt{lastDAprocessed()} to the very end of your proposal, as proposals are executed in a separate thread and your 
-\vonda rules are executed in parallel. This might, in rare cases where your proposal code takes more time to process (for one possible reason, see \ref{emitDA}), lead to your system generating and executing new proposals based on the ''old'' dialogue act, thus responding more than once to one input.
+Be aware this also means that if the statement you execute in your \texttt{propose} block is\\ \texttt{lastDAprocessed();}, all following calls to \texttt{lastDA()} will evaluate to an empty dialogue act. Thus, using expressions like \texttt{theme=lastDA().theme} in an \texttt{emitDA} are strongly discouraged, because they will fail if the \texttt{emitDA} is used after calling the cleanup method. There is, however, good reason to not move the \texttt{lastDAprocessed()} to the very end of your proposal, as proposals are executed in a separate thread and your 
+\vonda rules are (re-)evaluated in parallel. This might, in rare cases where your proposal code takes more time to process (for one possible reason, see \ref{emitDA}), lead to your system generating and executing new proposals based on the ''old'' dialogue act, thus responding more than once to one input.
 
 \subsection{A Few Words About \texttt{emitDA} and \texttt{createBehaviour}} \label{emitDA}
 
 There is a feature to the \texttt{emitDA} method which has not been mentioned in section \ref{sec:caret}, but might become important in your specific application.
 
-\texttt{emitDA} actually only is a wrapper method which uses the given dialogue act to create a behaviour, which is the actual thing being sent to the communication hub. \texttt{createBehaviour} wants to be passed a delay parameter, which specifies the amount of time the ???communication thread??? should be paused after emitting the given behaviour. This might be important to your application if you use for example TTS and want to delay the next utterance until playing the current one has been finished.
-Normal \texttt{emitDA} sets the delay to \texttt{Behaviour.DEFAULT\_DELAY}, which by default is zero, but you can also call \texttt{emitDA(delay, dialogueAct)} to directly specify a delay, or even override \texttt{createBehaviour} to perform a more complex computation of the delay time, e.g. to adopt to the speed of your TTS voice.
+\texttt{emitDA} actually only is a wrapper method which uses the given dialogue act to create a behaviour, which is the actual thing being sent to the communication hub. \texttt{createBehaviour} wants to be passed a delay parameter, which specifies the amount of time the ???communication thread??? 
+\todo{AW: Is it the communication thread, or how can we call it?}
+should be paused after emitting the given behaviour. This might be important to your application if you use for example TTS and want to delay the next utterance until playing the current one has been finished.
+Normal \texttt{emitDA} sets the delay to \texttt{Behaviour.DEFAULT\_DELAY}, which by default is zero, but you can also call \texttt{emitDA(delay, dialogueAct)} to directly specify a delay, or even override \texttt{createBehaviour} to perform a more complex computation of the delay time, e.g. to adopt to text lenght * speed of your TTS voice.
 
 Attention! Once you are doing this, make sure that you use \texttt{lastDAprocessed()} early in your \texttt{propose} block as suggested in \ref{lastDAprocessed}. If you don't and the thread the proposal is executed in is delayed long enough, new proposals will be generated based on the old dialogue act and your agent might end up saying things twice.
 
 \section{Advanced Features}
 
-\subsection{Connecting to a second HFC Server}
+\subsection{Connecting to a second HFC Server} \label{sec:2ndHfc}
 % e.g., like for PAL, if loading (a passive part of) the database takes too much time to perform it for every test
 In the standard setup, your \vonda project uses one HFC server that on starting your system loads all the information from your ontology and that receives your new database entries and modifications.
 

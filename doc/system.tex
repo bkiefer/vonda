@@ -12,7 +12,7 @@ type checking and inference, and code generation.
 The \vonda compiler's internal knowledge about the program structure and the
 RDF hierarchy takes care of transforming the RDF field accesses to reads from and
 writes to the database. Beyond that, the type system, resolving the exact
-Java, RDF or RDF collection type of arbitrary long field accesses automatically
+Java, RDF or RDF collection type of arbitrary long field accesses, automatically
 performs the necessary casts for the ontology accesses.
 
 %Der Rudimant-Kompiler übersetzt Regeldateien mit Extension \texttt{.rudi} in
@@ -83,8 +83,8 @@ Every rule file can define variables and functions in \vonda syntax which are
 then available to all imported files.
 
 The current structure assumes that most of the Java functionality that is used
-inside the rule files will be provided by \texttt{Agent} superclass. There are,
-however, alternative ways to use other Java classes directly.
+inside the rule files will be provided by the \texttt{Agent} superclass. There are,
+however, alternative ways to use other Java classes directly (see section \ref{sec:javatypes} for further info).
 
 The methods and fields from the custom wrapper class can be made available to
 all rule files by declaring them in the interface connecting the \texttt{.rudi}
@@ -186,6 +186,7 @@ of validness of variables for such blocks to Java. We found that Java might
 mistakenly accept variables that are not effectively final, what might lead to
 completely unexpected behaviour when proposes and timeouts with changed
 variable values are executed.
+\todo{AW: It makes sense to mention this here, but it is kind of hidden here while warnings like this should be visible ''loud and clear'' in one location where a user might look when they're trying to find out what is going on with their system}
 
 \subsubsection{RDF accesses and functional vs. relational properties}
 \label{sec:rdfaccesses}
@@ -285,9 +286,9 @@ database. If the name property of the RDF class \texttt{Child} is of type
 String, exchanging line 2 by the line \texttt{int name = c.name} will result in
 a warning of the compiler.
 
-In this process, the compiler will automatically recognize the equivalences of the following RDF and Java types:
+In this process, the compiler will automatically recognize the equivalences of the RDF and Java types shown in figure \ref{fig:RdfToJava}.
 
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:RdfToJava}
 \small
 \begin{lstlisting}
       {"<xsd:int>", "Integer"},
@@ -303,7 +304,7 @@ In this process, the compiler will automatically recognize the equivalences of t
       {"<xsd:date>", "XsdDate"},
       {"<xsd:dateTimeStamp>", "Long"}
 \end{lstlisting}
-%\caption{Standard RDF types and the Java types as which they will be recognized}
+\caption{Standard RDF types and the Java types as which they will be recognized}
 \end{figure}
 
 %Sowohl die Verwendung von relationalen als auch die von funktionalen Prädikaten
@@ -359,7 +360,7 @@ evaluated in the run-time system on every environment trigger.
 A rule starts with its name, from now on called label, followed by a
 colon. Pertaining to this label is an if-statement, possibly with else
 case. The clause of the if-statement expresses the condition under which the
-rule, or rather, the if block is to be executed; in the else block you can
+rule, or rather the if block, is to be executed; in the else block you can
 define what should happen if the rule cannot be executed, like stopping the
 evaluation of (a sub-tree of) the rules if necessary information is missing.
 
@@ -394,7 +395,7 @@ evaluation of the current subtree) or globally (i.e. stopping the whole
 evaluation cycle).
 
 You can skip the evaluation of a specific rule you are currently in with the
-statement\verb|break label_name;|. This will only stop the rule with the
+statement \texttt{break label\_name;}. This will only stop the rule with the
 respective label (no matter how deep the break statement is nested in it), such
 that the next following rule is evaluated next.
 
@@ -406,7 +407,7 @@ If the evaluation is cancelled with the keyword \texttt{cancel;}, all of the
 following rules in the current file will be skipped (including any imported
 rules). If the keyword \texttt{cancel\_all} is used, none of the following
 rules, neither local nor higher in the rule tree, will be evaluated. This is
-the \vonda way of deciding not to evaluate whatever triggered the current
+the \vonda way of deciding to not further evaluate whatever triggered the current
 evaluation cycle and should only be used as an 'emergency exit', as the
 dialogue rules should be rejecting any sound, non-matching trigger by
 themselves.
@@ -448,19 +449,21 @@ There are two statements with a special syntax and semantics: \texttt{propose}
 and \texttt{timeout}. \texttt{propose} is \vonda's current way of implementing
 probabilistic selection. All (unique) propose blocks that are in active rule
 actions are collected, frozen in the execution state in which they were
+\todo{AW: Propose blocks are only frozen if the variables used are really final, thus maybe hint to that problem here}
 encountered, like closures known from functional programming languages. When
 all possible proposals have been selected, a statistical component decides
-which one will be taken and the closure is executed.
+which one will be chosen and the closure is executed.
 
 \texttt{timeout}s also generate closures, but with a different purpose. They
 can be used to trigger proactive behaviour, or to check the state of the system
 after some time period, or in regular intervals. A timeout will only be created
 if there is no active timeout with that name.
 
-There are two variants of \texttt{timeout}: \emph{labeled} timeouts, like the
+There are two variants of \texttt{timeout}: \emph{labeled timeouts}, like the
 one in the previous example, run out after the specified time (unless they are
 cancelled before that using the \texttt{cancelTimeout(\emph{label})} function)
 and then execute their body, and \emph{behaviour timeouts}, where the first
+\todo{AW: Just a mention that to my knowledge we never used behaviour timeouts in PAL, has it been tested?}
 argument is a dialogue act (see next section) instead of a label. These are
 executed either when the specified time is up or the behaviour that was
 triggered by the dialogue act is finished, whatever comes first.
@@ -513,7 +516,7 @@ emitDA(#Inform(Answer, what={solution}));
 The dialogue act passed to \texttt{emitDA} should look as shown in figure \ref{fig:DA}. \texttt{Inform}\verb|(...)| will be recognized by \vonda as dialogue act because it has been marked with \verb|#|. It will then create a new instance of the class DialogueAct that contains the respective modifications. As a default, arguments of a DialogueAct creation (i.e., character strings on the left and right of $=$) are seen as and transformed to constant (string) literals, because most of the time that is what is needed.
 %The special ``hat'' syntax with \caret allows to mark when the following string is a real variable or an expression and should be evaluated.
 Surrounding a character sequence with curly brackets (\{\}) marks it as an
-expression that should be evaluated, in fact, arbitrary expressions are allowed
+expression that should be evaluated. In fact, arbitrary expressions are allowed
 inside the curly brackets.
 
 \subsubsection{Type inference and overloaded operators}
@@ -569,14 +572,14 @@ A time-saving (and code-readability-improving) feature of \vonda is the
 automatic completion of boolean expressions in the clauses of if, while and for
 statements. As it is obvious in these cases that the result of the expression
 must be of type boolean, \vonda automatically fills in a test for existence if
-it is not boolean. When encountering field accesses, it makes sure that every
+it is not. When encountering field accesses, it makes sure that every
 partial access is tested for existence (i.e., not \texttt{null}) to avoid a
 \texttt{NullPointerException} in the runtime execution of the generated code.
 
 Be aware that the expansion in the figure only occurs if the multiple field
 access is used as boolean test. In the example of
 \ref{tab:multi-predaccess-wrong}, if the first clause in the boolean expression
-is omitted, a \texttt{NullPointerException} could still occur.
+is omitted, a \texttt{NullPointerException} could still occur because the second clause does not trigger an automatic test for existence of \texttt{activity}.
 
 \begin{table}[htbp]
   \centering
@@ -625,7 +628,7 @@ if (sa.isSubsumedBy(new DialogueAct("Question")) {
 \subsubsection{External methods and fields}
 \label{sec:javatypes}
 
-As mentioned before, you can use every method or field that you declare in your custom Agent implementation in your \vonda code. Their declaration in the Java-rudi interface should look like a normal Java field or method definition (cfg. figure \ref{tab:javadef}). It is possible to use generics in these definitions, although they are, for complexity reasons, restricted to be one single uppercase letter.
+As mentioned before, you can use every method or field you declare in your custom Agent implementation in your \vonda code. Their declaration in the Java-rudi interface should look like a normal Java field or method definition (cfg. figure \ref{tab:javadef}). It is possible to use generics in these definitions, although they are, for complexity reasons, restricted to be one single uppercase letter.
 
 \begin{table}[htbp]
   %\centering
@@ -648,7 +651,7 @@ As mentioned before, you can use every method or field that you declare in your 
   \label{tab:javadef}
 \end{table}
 
-There is a variety of standard Java methods called on Java classes that \vonda automatically recognizes, like e.g. the substring method for Strings. If you find that you need \vonda to know the return type of a new method that can or should only be called upon instances of a specific class, you can provide \vonda with knowledge about them by adding their definition to the interface as follows:
+There is a variety of standard Java methods called on Java classes that \vonda automatically recognizes, like e.g. the \texttt{substring} method for Strings. If you find that you need \vonda to know the return type of a new method that can or should only be called upon instances of a specific class, you can provide \vonda with knowledge about them by adding their definition to the interface as follows:
 
 
 \begin{table}[htbp]
@@ -693,7 +696,7 @@ Of course you can also use generics in these definitions. For example, the get m
 %Stelle, für gewöhnlich jedoch in der Datei MyAgent.rudi (siehe
 %\ref{rudimant-global}) deklariert werden können:
 
-It is important to realize that whatever declarations are in the interface are only compile information for \vonda and will not be transferred to the compiled code, whereas such declarations in the rule code itself will also appear in the compiled code.
+It is important to realize that all declarations in the interface are only compile information for \vonda and will not be transferred to the compiled code, whereas such declarations in the rule code itself will also appear in the compiled code.
 
 %Wichtig ist: Diese Deklarationen werden nur für die Berechnung der Typen durch
 %rudimant angegeben und werden nicht in den kompilierten Code
@@ -714,7 +717,7 @@ It is important to realize that whatever declarations are in the interface are o
 %Funktionen. Diese Funktionen sind in \texttt{Agent} vordefiniert. Ein
 %einfaches Beispiel zum Filtern von Objekten mit einer Subtyprelation wäre:
 
-\vonda allows for using lambda constructions. At the moment, their usage is limited to the implementation of \texttt{Predicate} or \texttt{Comparator} in the following functions that are pre-defined in the Agent framework.
+\vonda allows for using lambda constructions. At the moment, their usage is limited to the implementation of \texttt{Predicate} or \texttt{Comparator} in the functions listed in table \ref{tab:lambda-functions} that are pre-defined in the Agent framework.
 
 \begin{table}[htbp]
   \centering
@@ -730,6 +733,7 @@ List<Object> sort(Collection coll, Comparator c);
   \caption{Functions that take lambda expressions as an argument}
   \label{tab:lambda-functions}
 \end{table}
+\todo{AW: TODO: Update lambda list and resp sentence - should I cling to Predicate and Comparator as they are used here or use Function as the current Agent.rudi?}
 
 For example, if you want to filter a set of RDF objects by a subtype relation, you can write:
 
@@ -748,9 +752,9 @@ des = filter(agent.desires, (d) -> ((Desire)d) <= UrgentDesire);
 %entsprechenden Stelle im Java-Code mithilfe ihrer process-Methode aufgerufen
 %und durchgearbeitet.
 %
-\texttt{import} is a keyword in the \vonda language. A global line like ''\texttt{import File;}'', to be placed at an arbitrary positions between the rules, results in the inclusion of the file \texttt{File.rudi} at exactly this position.
+\texttt{import} is a keyword in the \vonda language. A global line like ''\texttt{import File;}'', to be placed at an arbitrary position between the rules, results in the inclusion of the file \texttt{File.rudi} at exactly this position.
 
-This inclusion has two important effects. On one side, it triggers the compilation of the included file at exact this point, such that any fields and methods known at this time will be available in the important file and it does not need to be compiled seperately. On the other side, it has the effect that all the rules contained in the important file will be inserted in the rule cycle at the specific point of the \texttt{import}, where in the resulting code the \texttt{process()} method of the imported file will be executed.
+This inclusion has two important effects. On one side, it triggers the compilation of the included file at exactly this point, such that any fields and methods known at this time will be available in the important file and it does not need to be compiled seperately. On the other side, it has the effect that all the rules contained in the imported file will be inserted in the rule cycle at the specific position of the \texttt{import}, where in the resulting code the \texttt{process()} method of the imported file will be executed.
 
 %\texttt{import} ermöglicht es also, das Regelinventar für ein Projekt auf
 %mehrere Dateien bzw. mehrere Module aufzuteilen und diese zusammenzustecken,
@@ -760,7 +764,7 @@ This inclusion has two important effects. On one side, it triggers the compilati
 %Modularität, da verschiedene 'Unterbäume' der \texttt{import}-Hierarchie leicht
 %ausgeklinkt oder aus anderen Projekten wiederverwendet werden können.
 
-So the \texttt{import} functionality make sit possible to distribute the rules of a project into multiple files, respectively modules, and pin them together in such a way that they are handled as one unit when compiling or executing the compilied code. This is not only useful for clarity and structuring of project, but also supports modularity, as different subtrees of the \texttt{import} hierarchy can easily be added, moved, taken away or re-used in different projects.
+So the \texttt{import} functionality makes it possible to distribute the rules of a project into multiple files, respectively modules, and pin them together in such a way that they are handled as one unit when compiling or executing the compilied code. This is not only useful for clarity and structuring of a project, but also supports modularity, as different subtrees of the \texttt{import} hierarchy can easily be added, moved, taken away or re-used in different projects.
 
 \subsubsection{Java-Code verbatim in rule files} \label{sec:rudi-verbatim}
 
@@ -769,7 +773,7 @@ So the \texttt{import} functionality make sit possible to distribute the rules o
 %nicht umzusetzen ist, sollte in Funktionen in die übergeordnete Java-Klasse
 %wandern (vgl. \ref{rudimant-global}).
 %
-To maintain simplicitely, \vonda intentionally only provides limited Java functionalities. Whatever is not feasible in \texttt{.rudi} code should be done in methods in the wrapper class (cfg. \ref{rudimant-global}).
+To maintain simplicity, \vonda intentionally only provides limited Java functionalities. Whatever is not feasible in \texttt{.rudi} code should be done in methods in the wrapper class.% (cfg. \ref{rudimant-global}).
 
 %Für Fälle, in denen dies nicht genügt und vor Ort eine Funktionalität benötigt
 %wird, die rudimant nicht parsen oder nicht richtig darstelllen kann, ist eine
@@ -778,7 +782,8 @@ To maintain simplicitely, \vonda intentionally only provides limited Java functi
 %also in genau diesem Aussehen in den resultierenden Code übertragen. Dabei
 %werden die klammernden Zeichenfolgen ausgelassen.
 %
-In cases where this is not enough and you urgently need a functionality in a \texttt{.rudi} file that \vonda cannot parse or represent correctly, you can use its verbatim funciton. Everything between \verb|/*@| and \verb|@*/| will be treated like a multi-line Java comment, meaning the content is not parsed or evaluated further. It will be transferred to the compiled code at exactly this position between statements, but without the comment symbols.
+In cases where this is not enough and you urgently need a functionality %in a \texttt{.rudi} file 
+that \vonda cannot parse or represent correctly, you can use the verbatim function. Everything between \verb|/*@| and \verb|@*/| will be treated like a multi-line Java comment, meaning the content is not parsed or evaluated further. It will be transferred to the compiled code at exactly this position between statements, but without the comment symbols.
 
 %Diese Funktionalität kann insbesondere dazu benutzt werden, am Anfang einer
 %\texttt{rudi} Datei Java-Klassen zu importieren, die im kompilierten Code
@@ -792,7 +797,7 @@ In particular, this functionality can be used to import Java classes at the begi
 The run-time library contains the basic functionality for handling the rule
 processing, including the proposals and timeouts, and for the on-line
 inspection of the rule evaluation. There is, however, no blueprint for the main
-event loop, since that depends heavily on the host application. It also
+event loop, since that depends heavily on the host application. The run-time library also
 contains methods for the creation and modification of shallow semantic
 structures, and especially for searching the interaction history for specific
 utterances. Most of this functionality is available through the abstract
@@ -817,6 +822,7 @@ values during processing for dynamic logging. A rule can have direct effects,
 like changes in the IS, or system calls. Furthermore, it can generate so-called
 \emph{proposals}, which are (labeled) blocks of code in a frozen state that
 will not be immediately executed, similar to closures.
+\todo{AW: This all sounds good, but repeats part of what has been said before; while that might not be a bad thing, it is simply obvious that this text has been copy-pasted here from somewhere else (the paper) ...}
 
 All rules are repeatedly applied until a fix point is reached: No new proposals
 are generated and there is no IS change in the last iteration. Then, the set of
@@ -832,6 +838,7 @@ The following methods are declared in \texttt{src/main/resources/Agent.rudi} and
 
 \begin{itemize}
 \item Pre-added Java methods
+\begin{small}
 \begin{lstlisting}
 [Object]. boolean equals(Object e);
 [String]. boolean startsWith(String s);
@@ -853,8 +860,10 @@ The following methods are declared in \texttt{src/main/resources/Agent.rudi} and
 int random(int limit);
 float random();
 \end{lstlisting}
+\end{small}
 
 \item Short-hand conversion methods from Agent
+\begin{small}
 \begin{lstlisting}
 int toInt(String s);
 float toFloat(String s);
@@ -862,8 +871,10 @@ double toDouble(String s);
 boolean toBool(String s);
 String toStr(type i);  // type in (int, short, byte, float, double, boolean)
 \end{lstlisting}
+\end{small}
 
 \item Other Agent methods
+\begin{small}
 \begin{lstlisting}
 // Telling the Agent that something changed
 void newData();
@@ -881,8 +892,10 @@ Logger logger;
 void clearBehavioursAndProposals();
 void shutdown();
 \end{lstlisting}
+\end{small}
 
 \item Timeouts
+\begin{small}
 \begin{lstlisting}
 void newTimeout(String name, int millis);
 boolean isTimedOut(String name);
@@ -891,8 +904,10 @@ boolean hasActiveTimeout(String name);
 // cancel and remove an active timeout, will not be executed
 void cancelTimeout(String name);
 \end{lstlisting}
+\end{small}
 
 \item Methods handling with dialogue acts
+\begin{small}
 \begin{lstlisting}
 // sending of dialogue acts
 DialogueAct createEmitDA(DialogueAct da);
@@ -915,8 +930,10 @@ void lastDAprocessed();
 DialogueAct addLastDA(DialogueAct newDA);
 [DialogueAct]. void setProposition(String prop);
 \end{lstlisting}
+\end{small}
 
 \item Methods using lambda expressions
+\begin{small}
 \begin{lstlisting}
 boolean some(Collection<T> coll, Function<Boolean, T> pred);
 boolean all(Collection<T> coll, Function<Boolean, T> pred);
@@ -927,14 +944,17 @@ int count(Collection<T> coll, Function<Boolean, T> pred);
 T first(Collection<T> coll, Function<Boolean, T> pred);
 T random(Collection<T> coll);
 \end{lstlisting}
+\end{small}
 
 \item Methods callable on Rdf objects
+\begin{small}
 \begin{lstlisting}
 Rdf toRdf(String uri);
 [Rdf]. String getURI();
 [Rdf]. boolean has(String predicate);
 [Rdf]. long getLastChange(boolean asSubject, boolean asObject);
 \end{lstlisting}
+\end{small}
 
 \end{itemize}
 
