@@ -20,6 +20,10 @@ Normal \texttt{emitDA} sets the delay to \texttt{Behaviour.DEFAULT\_DELAY}, whic
 
 Attention! Once you are doing this, make sure that you use \texttt{lastDAprocessed()} early in your \texttt{propose} block as suggested in \ref{lastDAprocessed}. If you don't and the thread the proposal is executed in is delayed long enough, new proposals will be generated based on the old dialogue act and your agent might end up saying things twice.
 
+\subsection{Waiting for a User's Answer in a Conversation}
+
+\todo[inline]{waitingForResponse}
+
 \section{Advanced Features}
 
 \subsection{Connecting to a second HFC Server} \label{sec:2ndHfc}
