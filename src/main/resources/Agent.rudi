@@ -103,7 +103,7 @@ void shutdown();
 boolean some(Collection<T> coll, Function<Boolean, T> pred);
 boolean all(Collection<T> coll, Function<Boolean, T> pred);
 List<T> filter(Collection<T> coll, Function<Boolean, T> pred);
-List<T> sort(Collection<T> coll, Function<Integer, T, T> c);
+List<T> sort(Collection<T> coll, Function<Integer, T, T> comp);
 Collection<T> map(Collection<S> coll, Function<T, S> f);
 int count(Collection<T> coll, Function<Boolean, T> pred);
 T first(Collection<T> coll, Function<Boolean, T> pred);
