@@ -52,18 +52,17 @@ sources.
 %\todo[inline]{Mention HFC and ref to appropriate section}
 The RDF store and reasoner of choice used in \vonda is HFC
 \citep{krieger2013efficient}. For further details about the general
-functisonalities of HFC see chapter \ref{sec:hfc}; for an example of HFC as a
+functionalities of HFC see chapter \ref{sec:hfc}; for an example of HFC as a
 database in a \vonda project please refer to section \ref{sec:example-hfc}.
 
 \vonda consists of three parts: A programming language tailored towards the
 specification of reactive rules and transparent RDF data store usage, a
 compiler that turns source code in this language into Java code, and a run-time
-core, that supports implementing dialogue management modules using the compiled
+core which supports implementing dialogue management modules using the compiled
 rules.
 
 The framework is domain-independent. It was originally designed to for
 multi-modal human-robot interaction, but there is currently no \emph{special}
-\todo{AW: This sounds a little bit like vonda just not supports these functions, even though ''special'' is emphasized}
 functionality in the core to either support the multi-modality nor the
 human-robot interaction. The architecture of the framework is open and powerful
 enough to add these things easily.
@@ -96,7 +95,7 @@ stored in the RDF database to make their decisions.  When new data is added, a
 set of declaratively specified reactive rules will propose dialogue moves or
 other actions and send these proposals to the action selection mechanism. This mechanism selects the ``best'' of the proposed actions and sends it
 back. If the proposed action results in dialogue acts, these are turned into
-verbal output and gestures with the help of a multimodal generation component, \todo{AW: So there is a multimodal component, doesn't this contradict the statement above which I marked?}
+verbal output and gestures with the help of a multimodal generation component,
 which retrieves parameters from the RDF database to adapt the generation to the
 user's likings, and can also take into account sensor data such as her or his
 estimated mood.
@@ -133,15 +132,14 @@ create a base from which to start.
 
 At the very least, you are strongly recommended to use the dialogue hierarchy
 (provided in \texttt{examples/chatcat/src/main/resources/ontology/dialogue.nt})
-as well as two default information files pertaining to the dialogue acts used
-in the \vonda framework.
+as well as two default information files.
 
 \subsection{Creating n-Tuple Files}
 
 %use Protege or another tool of your choice to create OWL/RDF file;
 %example here: with Protege
 HFC loads data from n-Tuple files. You can however create files in the more
-common OWL format and then automatically transfer it with a simple shell
+common OWL format and then automatically translate them with a simple shell
 script, using Raptor \citep{raptor}
 (e.g. \texttt{examples/chatcat/ntcreate.sh}). This tutorial uses Protégé
 \citep{Protege}.
@@ -254,9 +252,8 @@ specifications of the dialogue acts used by the \vonda framework.
 \paragraph{[Rules]}
 
 This specifies the set of rules that HFC uses to build the ontology. It is
-recommended to simply use the file \texttt{default.eqred.quads.rdl} here. For
+recommended to simply use the file \texttt{default.eqred.quads.rdl} here. This initiates a quadruple version of HFC, where every entry is labeled with the timestamp of when it was entered. For
 further information, please refer to the documentation of HFC.
-\todo{AW: Maybe mention triples vs quadruples?}
 
 
 \section{The Framework: Setting up the Base of your Dialogue System}
@@ -288,8 +285,7 @@ able to create or, respectively, process dialogue acts of the format that
 \vonda provides (cfg. \ref{sec:caret}).
 
 For the sake of simplicity, this example uses SRGS to build a primitive NLU and
-cplan to create natural language out of the dialogue acts the agent outputs.
-\todo{AW: Link to cplan}
+cplan\footnote{https://github.com/bkiefer/cplan} to create natural language out of the dialogue acts the agent outputs.
 
 \section{Writing some First Rules}
 
@@ -302,7 +298,7 @@ dialogue management rules.
 So, let's react to the user greeting the system, what we expect to be happening
 on startup. In the SRGS file (src/main/resources/grammars/srgs/chatcat.xml), we
 defined that an utterance of the user like ''Hello'' will be parsed as the
-dialogue act Salutation, with the proposition Greet. We now can define a rule
+dialogue act \texttt{InitialGreeting}, with the proposition \texttt{Greet}. We now can define a rule
 reacting to this utterance:
 
 \begin{lstlisting}[language=Java]
@@ -316,7 +312,7 @@ greet_back:
   }
 \end{lstlisting}
 
-This will create a new instance of Human, which is stored in a global variable
+This will create a new instance of the Rdf class Human we defined when setting up the ontology, storing it in a global variable
 \verb|user| that in our case has been defined in the ChatAgent and will be
 present during the whole conversation.
 
@@ -325,7 +321,7 @@ follows:
 
 \begin{lstlisting}[language=Java]
 ask_for_name:
-  if (!user.name && !()myLastDA() <= #WHQuestion(Name))) {
+  if (!user.name && !(myLastDA() <= #WHQuestion(Name))) {
     propose("ask_name") {
       emitDA(#WHQuestion(Name));
     }
@@ -351,7 +347,6 @@ the new dialogue system.
 You can compile your \vonda rule files by executing the command\\ \verb|<yourVondaDirectory>/compile -c <yourCompileYml> <YourToplevelRudiFile>|.
 
 The compile.yml should contain the following parameters:\\
-\todo{AW: Make sure this is up-to-date}
 
 \begin{tabular}{ll}
 	\verb|outputDirectory:| & Relative to the current location, where should the compiled classes go?\\
@@ -383,8 +378,7 @@ grammar:            src/main/resources/grammars/srgs/chatcat.xml
 \end{verbatim}
 
 This configuration can then be easily read in when starting your project, and
-be passed to the init method of Agent, which requires such information.
-\todo{AW: Give just a bit more information about what this is good for}
+be passed to the init method of Agent, allowing for smoother changes of these three modules than if the information would be set in the Agent code itself. For example, this is useful when building an agent which can be used with NLU and NLG in different languages: just keep one yml file for each language and start the system with that which is currently relevant.
 
 \subsection{Resolving Namespace Ambiguities}
 \todo{AW: Does this really belong here? It's rather an advanced feature, might go to Chapter 4?}
@@ -485,7 +479,7 @@ goals to support the system requirements described before:
 
 %\input{design}
 
-\chapter{Installing and Getting Started}
+\chapter{Getting Started}
 
 \input{system}
 \newpage

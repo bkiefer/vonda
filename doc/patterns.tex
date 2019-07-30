@@ -1,15 +1,14 @@
 \section{Implementation Patterns and Caveats}
 
 \subsection{Proper Usage of \texttt{lastDAprocessed} and \texttt{emitDA}}
-\label{lastDAprocessed}
+\label{sec:lastDAprocessed}
 
-\todo{Actually, shouldn't we already explain lastDAprocessed somewhere else?}
 \texttt{lastDAprocessed()} is a built-in method that helps you clean up after a dialogue act has been dealt with. You usually want to call it in your \texttt{propose} block, because when the block is executed that means that the dialogue act has been processed. The method's effect is to set an internal timestamp at the moment it has been called, which affects the return value of \texttt{lastDA()}: \texttt{lastDA()} will only return a dialogue act if it has been sent after the the point in time specified by the \texttt{lastDAprocessed} timestamp.
 
 Be aware this also means that if the statement you execute in your \texttt{propose} block is\\ \texttt{lastDAprocessed();}, all following calls to \texttt{lastDA()} will evaluate to an empty dialogue act. Thus, using expressions like \texttt{theme=lastDA().theme} in an \texttt{emitDA} are strongly discouraged, because they will fail if the \texttt{emitDA} is used after calling the cleanup method. There is, however, good reason to not move the \texttt{lastDAprocessed()} to the very end of your proposal, as proposals are executed in a separate thread and your 
-\vonda rules are (re-)evaluated in parallel. This might, in rare cases where your proposal code takes more time to process (for one possible reason, see \ref{emitDA}), lead to your system generating and executing new proposals based on the ''old'' dialogue act, thus responding more than once to one input.
+\vonda rules are (re-)evaluated in parallel. This might, in rare cases where your proposal code takes more time to process (for one possible reason, see \ref{sec:emitDA}), lead to your system generating and executing new proposals based on the ''old'' dialogue act, thus responding more than once to one input.
 
-\subsection{A Few Words About \texttt{emitDA} and \texttt{createBehaviour}} \label{emitDA}
+\subsection{A Few Words About \texttt{emitDA} and \texttt{createBehaviour}} \label{sec:emitDA}
 
 There is a feature to the \texttt{emitDA} method which has not been mentioned in section \ref{sec:caret}, but might become important in your specific application.
 
@@ -18,7 +17,7 @@ There is a feature to the \texttt{emitDA} method which has not been mentioned in
 should be paused after emitting the given behaviour. This might be important to your application if you use for example TTS and want to delay the next utterance until playing the current one has been finished.
 Normal \texttt{emitDA} sets the delay to \texttt{Behaviour.DEFAULT\_DELAY}, which by default is zero, but you can also call \texttt{emitDA(delay, dialogueAct)} to directly specify a delay, or even override \texttt{createBehaviour} to perform a more complex computation of the delay time, e.g. to adopt to text lenght * speed of your TTS voice.
 
-Attention! Once you are doing this, make sure that you use \texttt{lastDAprocessed()} early in your \texttt{propose} block as suggested in \ref{lastDAprocessed}. If you don't and the thread the proposal is executed in is delayed long enough, new proposals will be generated based on the old dialogue act and your agent might end up saying things twice.
+Attention! Once you are doing this, make sure that you use \texttt{lastDAprocessed()} early in your \texttt{propose} block as suggested in \ref{sec:lastDAprocessed}. If you don't and the thread the proposal is executed in is delayed long enough, new proposals will be generated based on the old dialogue act and your agent might end up saying things twice.
 
 \subsection{Waiting for a User's Answer in a Conversation}
 
@@ -30,13 +29,13 @@ Attention! Once you are doing this, make sure that you use \texttt{lastDAprocess
 % e.g., like for PAL, if loading (a passive part of) the database takes too much time to perform it for every test
 In the standard setup, your \vonda project uses one HFC server that on starting your system loads all the information from your ontology and that receives your new database entries and modifications.
 
-However, there might be cases where this approach is not what you want. If your project uses a big database with static information, that you use but do not need to write to, you might prefer to not start the server anew each time you start your system, as this might consume time (e.g., loading ???? WordNet\footnote{https://wordnet.princeton.edu/} triples takes ???\todo{numbers on PAL computer} minutes on a reasonably fast machine).
+However, there might be cases where this approach is not what you want. If your project uses a big database with static information, that you use but do not need to write to, you might prefer to not start the server anew each time you start your system, as this might consume time.
 
 
 In this case, there is another solution: you can start your HFC server remotely and then connect to it in your \vonda agent.
 
 On a linux machine, you can run a server by executing the following lines:
-\todo{hfc server start script}
+\todo{TODO: add hfc server start script}
 
 To connect your \vonda agent to a local server you just need to add the following code, where \texttt{port} is the port you started it on and \texttt{myProxy} is the RdfProxy instance you can post your queries to.
 
@@ -48,4 +47,23 @@ To connect your \vonda agent to a local server you just need to add the followin
 	\end{lstlisting}
 \end{center}
 
-This additional server does of course not have the same status as the innate HFC proxy, as you only connect to it at run-, not at compile-time. You can query it for information as described in \ref{hfc_usage}, but classes from this database will not be recognized in the rudi code and you cannot write to it \todo{or can you? Try?!}. 
+This additional server does of course not have the same status as the innate HFC proxy, as you only connect to it at run-, not at compile-time. You can query it for information as described in \ref{sec:hfc_usage}, but classes from this database will not be recognized in the rudi code and you cannot write to it \todo{or can you? Try?!}. 
+
+\section{Troubleshooting: Typical Problems}
+
+\begin{itemize}
+	
+	\item \textbf{The execution of my \texttt{propose} or \texttt{timeout} block does not have the effect I expected}\\
+	Are you using any variables inside that block whose contents are changed by other parts of your code after the block has been issued?
+	
+	\item \textbf{The fields of the dialogue act sent by \texttt{emitDA} in my Proposal do not contain the values they should according to my conditions}\\
+	Check whether you have ''buffered'' those values in final variables before issuing the Proposal and are referring to those. Using \texttt{lastDA} directly in the \texttt{propose} block is dangerous because it might already contain the next dialogue act (or none at all).
+	
+	\item \textbf{I get a NullPointerException in my Proposal}\\
+	Please check whether all the variables you're using in the \texttt{propose} block are final and can't be changed by someone else between the time the Proposal is registered and the time it is executed. Also make sure you're not trying to read the fields of \texttt{lastDA()} after you called \texttt{lastDAprocessed}.
+	
+	\item \textbf{My system seems to execute the same Proposal multiple times}\\
+	Make sure that in your \texttt{propose} block, you are calling \texttt{lastDAprocessed} as described in \ref{sec:lastDAprocessed} and also ''resetting'' everything else that triggers the rule to be executed.
+	
+	
+\end{itemize}

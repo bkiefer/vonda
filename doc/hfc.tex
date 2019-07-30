@@ -11,8 +11,8 @@ attachments, and as a side effect obtain a complete history of all changes.
 HFC is very efficient in terms of processing speed and memory footprint, and
 has recently been extended with stream reasoning facilities. \vonda can use HFC
 \todo{AW: Just asking: How long can we still talk of ''recently extended''?}
-either directly as a library, or as a remote server, also allowing for more
-than one instance, if needed (for this feature see section \ref{sec:2ndHfc}).
+either directly as a library or as a remote server, also allowing for more
+than one instance if needed (for this feature see section \ref{sec:2ndHfc}).
 
 The following is the syntax of HFC queries (EBNF):
 \begin{table}[htbp]
@@ -64,9 +64,8 @@ Neither \texttt{filter} predicates nor \texttt{aggregate} functions should be na
 \end{verbatim}
 To change the object position without projecting it you can use \emph{don't-care} variables:
 \begin{verbatim}
-     SELECT ?s WHERE ?s <rdf:type> ?o ?_ ?_ FILTER ?o != <foo-class>
+     SELECT ?s WHERE ?s <rdf:type> ?o ?_ FILTER ?o != <foo-class>
 \end{verbatim}
-\todo{AW: Is the second ?\_ here a typo?}
 
 Aggregates in HFC take whole tables or parts of them and calculate a result based on their entities. As the type of aggregates and filter functions cannot be overloaded, there are multiple similar functions for different types, e.g. F for \texttt{float}, L for \texttt{long}, D for \texttt{double}, I
 for \texttt{int}, and S for \texttt{String}.
@@ -116,7 +115,7 @@ FMin &                       INotEqual &               LMin2 \\
   \label{tab:hfcfunctions}
 \end{table}
 
-\subsection{Usage of HFC in \vonda} \label{hfc_usage}
+\subsection{Usage of HFC in \vonda} \label{sec:hfc_usage}
 
 The RDF store contains the dynamic and the terminological knowledge:
 specifications for the data objects and their properties, as well as a
@@ -141,6 +140,6 @@ QueryResult qr = proxy.selectQuery(ancestors, syn);
 uris = RdfProxy.getValues(qr);
 \end{lstlisting}
 
-The above code, for example, retrieves all hyponyms of a given synset.
+The above code, for example, retrieves all hyponyms of a given synset \texttt{syn}.
 
 Currently, it is recommended to place such code in Java methods that you can then use in your \vonda code to indirectly perform the queries. In the future, functionality will be added to support facilitated query construction directly in \vonda code.

@@ -71,7 +71,7 @@ statements. The blue core in Figure~\ref{fig:architecture} is the run-time syste
 is part of \vonda, while all green elements are the application specific parts
 of the agent. A \texttt{Yaml} project file contains all necessary information
 for compilation: the ontology, the wrapper class, the top-level rule file and
-other parameters, like custom compile commands.
+other parameters, like custom compile commands for \vonda's debugger.
 
 The \vonda compiler translates rule files with the extension \texttt{.rudi} to
 Java files. During this process, the ontology storing the RDF classes and
@@ -165,7 +165,7 @@ classes in \texttt{.rudi} files at all. Rules and method declarations can just
 be put into the plain file. The same holds true for every kind of valid (Java-)
 statement, like assignments, for loops etc. From this basis, the compiler will
 create a Java class where the methods and rules that are transformed to methods
-are represented as the methods of this specific class. All other statements
+are represented as the methods of this specific class. All other statements as well as auto-generated calls to the methods representing the rules
 will be put into the \texttt{process()} method that \vonda creates to build a
 rule evaluation cycle. In doing so, the order of all statements (including the
 rules) is preserved.
@@ -186,7 +186,6 @@ of validness of variables for such blocks to Java. We found that Java might
 mistakenly accept variables that are not effectively final, what might lead to
 completely unexpected behaviour when proposes and timeouts with changed
 variable values are executed.
-\todo{AW: It makes sense to mention this here, but it is kind of hidden here while warnings like this should be visible ''loud and clear'' in one location where a user might look when they're trying to find out what is going on with their system}
 
 \subsubsection{RDF accesses and functional vs. relational properties}
 \label{sec:rdfaccesses}
@@ -225,12 +224,12 @@ if (user.age <= 0) {
 \end{figure}
 
 Figure \ref{fig:rdfobjects} shows an example of \vonda code, and how it relates
-to RDF type and property specifications, schematically shown on the right.  The
-domain and range definitions of properties are picked up by the compiler and
+to RDF type and property specifications, schematically presented on the right.  The
+domain and range definitions of properties are picked up by the compiler and then
 used in various places, e.g., to infer types, do automatic code or data
 conversions, or create ``intelligent'' boolean tests, like in line 4, which
 will expand into two tests, one testing for the existence of the property for
-the object, and in case that succeeeds, a test if the value is greater than
+the object, and in case that succeeeds, a test if the value is smaller or equal than
 zero. If there is a chain of more than one field/property access, every part is
 tested for existence in the target code, keeping the source code as concise as
 possible. Also for reasons of brevity, the type of a new variable needs not be
@@ -239,6 +238,8 @@ given if it can be inferred from the value assigned to it.
 New RDF objects can be created with \texttt{new}, similar to Java objects; they
 are immediately reflected in the database, as are all changes to already
 existing objects.
+
+\todo[inline]{AW: test: does Child c; really create the instance? If not, rather put c = new Child; to not suggest this is possible}
 
 \begin{table}[htbp]
   \centering
@@ -315,7 +316,7 @@ In this process, the compiler will automatically recognize the equivalences of t
 %Ergebnisses des Rdf-Zugriffes anpassen. Versucht man allerdings, den Wert eines
 %relationalen
 %
-Moreover, \vonda can see whether an access is done by functional or relational
+Moreover, \vonda can see whether an access is made using functional or relational
 predicates and will handle it accordingly, deriving a collection type if
 necessary.
 
@@ -403,7 +404,7 @@ that the next following rule is evaluated next.
 %der Datei folgenden Regeln mehr angewandt, bei \texttt{cancel\_all} wird
 %keine nachfolgende Regel, weder lokal, noch auf höheren Ebenen, angewandt.
 %
-If the evaluation is cancelled with the keyword \texttt{cancel;}, all of the
+If the evaluation is cancelled with the keyword \texttt{cancel}, all of the
 following rules in the current file will be skipped (including any imported
 rules). If the keyword \texttt{cancel\_all} is used, none of the following
 rules, neither local nor higher in the rule tree, will be evaluated. This is
@@ -449,7 +450,6 @@ There are two statements with a special syntax and semantics: \texttt{propose}
 and \texttt{timeout}. \texttt{propose} is \vonda's current way of implementing
 probabilistic selection. All (unique) propose blocks that are in active rule
 actions are collected, frozen in the execution state in which they were
-\todo{AW: Propose blocks are only frozen if the variables used are really final, thus maybe hint to that problem here}
 encountered, like closures known from functional programming languages. When
 all possible proposals have been selected, a statistical component decides
 which one will be chosen and the closure is executed.
@@ -457,7 +457,7 @@ which one will be chosen and the closure is executed.
 \texttt{timeout}s also generate closures, but with a different purpose. They
 can be used to trigger proactive behaviour, or to check the state of the system
 after some time period, or in regular intervals. A timeout will only be created
-if there is no active timeout with that name.
+if there is no active timeout with the same name.
 
 There are two variants of \texttt{timeout}: \emph{labeled timeouts}, like the
 one in the previous example, run out after the specified time (unless they are
@@ -531,7 +531,7 @@ inside the curly brackets.
 %Zuweisung bekannt oder inferierbar, so ist es nicht notwendig, den Typ der
 %Variablen explizit anzugeben.
 
-If, for example, the type of the expression on the right-hand side of
+If, for example, the type of the expression on the right-hand side of a
 declaration assignment is known or inferrable, it is not necessary to
 explicitely state it.
 
@@ -717,23 +717,26 @@ It is important to realize that all declarations in the interface are only compi
 %Funktionen. Diese Funktionen sind in \texttt{Agent} vordefiniert. Ein
 %einfaches Beispiel zum Filtern von Objekten mit einer Subtyprelation wäre:
 
-\vonda allows for using lambda constructions. At the moment, their usage is limited to the implementation of \texttt{Predicate} or \texttt{Comparator} in the functions listed in table \ref{tab:lambda-functions} that are pre-defined in the Agent framework.
+\vonda allows for using lambda constructions. At the moment, their usage is limited to the implementation of \texttt{Predicate} or \texttt{Comparator} in the functions
+\todo{AW: it's just a general function now, so is it not limited anymore?} listed in table \ref{tab:lambda-functions} that are pre-defined in the Agent framework.
 
 \begin{table}[htbp]
   \centering
   \begin{small}
-\begin{lstlisting}
-boolean contains(Collection coll, Predicate pred);
-boolean all(Collection coll, Predicate pred);
-List<Object> filter(Collection coll, Predicate pred);
-List<Object> sort(Collection coll, Comparator c);
-\end{lstlisting}
+	\begin{lstlisting}
+	boolean some(Collection<T> coll, Function<Boolean, T> pred);
+	boolean all(Collection<T> coll, Function<Boolean, T> pred);
+	List<T> filter(Collection<T> coll, Function<Boolean, T> pred);
+	List<T> sort(Collection<T> coll, Function<Integer, T, T> comp);
+	Collection<T> map(Collection<S> coll, Function<T, S> f);
+	int count(Collection<T> coll, Function<Boolean, T> pred);
+	T first(Collection<T> coll, Function<Boolean, T> pred);
+	\end{lstlisting}
   \end{small}
 
   \caption{Functions that take lambda expressions as an argument}
   \label{tab:lambda-functions}
 \end{table}
-\todo{AW: TODO: Update lambda list and resp sentence - should I cling to Predicate and Comparator as they are used here or use Function as the current Agent.rudi?}
 
 For example, if you want to filter a set of RDF objects by a subtype relation, you can write:
 
@@ -754,7 +757,7 @@ des = filter(agent.desires, (d) -> ((Desire)d) <= UrgentDesire);
 %
 \texttt{import} is a keyword in the \vonda language. A global line like ''\texttt{import File;}'', to be placed at an arbitrary position between the rules, results in the inclusion of the file \texttt{File.rudi} at exactly this position.
 
-This inclusion has two important effects. On one side, it triggers the compilation of the included file at exactly this point, such that any fields and methods known at this time will be available in the important file and it does not need to be compiled seperately. On the other side, it has the effect that all the rules contained in the imported file will be inserted in the rule cycle at the specific position of the \texttt{import}, where in the resulting code the \texttt{process()} method of the imported file will be executed.
+This inclusion has two important effects. On the one hand, it triggers the compilation of the included file at exactly this point, such that any fields and methods known at this time will be available in the important file and it does not need to be compiled seperately. On the other hand, it has the effect that all the rules contained in the imported file will be inserted in the rule cycle at the specific position of the \texttt{import}, where in the resulting code the \texttt{process()} method of the imported file will be executed.
 
 %\texttt{import} ermöglicht es also, das Regelinventar für ein Projekt auf
 %mehrere Dateien bzw. mehrere Module aufzuteilen und diese zusammenzustecken,
@@ -764,7 +767,7 @@ This inclusion has two important effects. On one side, it triggers the compilati
 %Modularität, da verschiedene 'Unterbäume' der \texttt{import}-Hierarchie leicht
 %ausgeklinkt oder aus anderen Projekten wiederverwendet werden können.
 
-So the \texttt{import} functionality makes it possible to distribute the rules of a project into multiple files, respectively modules, and pin them together in such a way that they are handled as one unit when compiling or executing the compilied code. This is not only useful for clarity and structuring of a project, but also supports modularity, as different subtrees of the \texttt{import} hierarchy can easily be added, moved, taken away or re-used in different projects.
+So the \texttt{import} functionality makes it possible to distribute the rules of a project into multiple files, respectively modules, and pin them together in such a way that they are handled as one unit when compiling or executing the compiled code. This is not only useful for clarity and structuring of a project, but also supports modularity, as different subtrees of the \texttt{import} hierarchy can easily be added, moved, taken away or re-used in different projects.
 
 \subsubsection{Java-Code verbatim in rule files} \label{sec:rudi-verbatim}
 
@@ -789,7 +792,7 @@ that \vonda cannot parse or represent correctly, you can use the verbatim functi
 %\texttt{rudi} Datei Java-Klassen zu importieren, die im kompilierten Code
 %gebraucht werden.
 
-In particular, this functionality can be used to import Java classes at the beginning of a rule file. You should however be aware that \vonda will not know these classes nor their methods and fields. It will however accept creations of instances of unknown classes, as well as your casting of results of unknown methods. If, be it for commodity or for other reasons, you want \vonda to have type information about methods called on instances on one of these classes, you can put this information into the type interface of the wrapper class (cfg. chapter \ref{sec:javatypes}).
+In particular, this functionality can be used to import Java classes (i.e., with Java import statements) at the beginning of a rule file. You should however be aware that \vonda will not know these classes nor their methods and fields. It will however accept creations of instances of unknown classes, as well as your casting of results of unknown methods. If, be it for commodity or for other reasons, you want \vonda to have type information about methods called on instances on one of these classes, you can put this information into the type interface of the wrapper class (cfg. chapter \ref{sec:javatypes}).
 
 \section{The Run-Time System}
 %\subsection{Run-Time Library}
@@ -803,6 +806,7 @@ structures, and especially for searching the interaction history for specific
 utterances. Most of this functionality is available through the abstract
 \texttt{Agent} class, which has to be extended to a concrete class for each
 application.
+\todo{AW: TODO: go over this, delete what has been mentioned in other chapters, reformulate}
 
 There is functionality to talk directly to the HFC database using queries, in
 case the object view is not sufficient or to awkward. The natural language
@@ -822,7 +826,6 @@ values during processing for dynamic logging. A rule can have direct effects,
 like changes in the IS, or system calls. Furthermore, it can generate so-called
 \emph{proposals}, which are (labeled) blocks of code in a frozen state that
 will not be immediately executed, similar to closures.
-\todo{AW: This all sounds good, but repeats part of what has been said before; while that might not be a bad thing, it is simply obvious that this text has been copy-pasted here from somewhere else (the paper) ...}
 
 All rules are repeatedly applied until a fix point is reached: No new proposals
 are generated and there is no IS change in the last iteration. Then, the set of
@@ -834,7 +837,7 @@ as necessary, taking into account arbitrary features from the data storage.
 %Alles was in \texttt{Agent} bereitgestellt wird. Die aktuelle Liste der
 %bereitgestellten Funktionen finden sich in \texttt{rudimant} unter
 %\texttt{src/main/resources/Agent.rudi}.
-The following methods are declared in \texttt{src/main/resources/Agent.rudi} and implemented in the \vonda framework.
+The following methods are declared in \texttt{src/main/resources/Agent.rudi}; their implementation is provided by Java itself or the \vonda framework.
 
 \begin{itemize}
 \item Pre-added Java methods
