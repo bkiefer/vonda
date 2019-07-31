@@ -21,7 +21,14 @@ Attention! Once you are doing this, make sure that you use \texttt{lastDAprocess
 
 \subsection{Waiting for a User's Answer in a Conversation}
 
-\todo[inline]{waitingForResponse}
+It's not very polite to be talking all the time without letting the interlocutor say something themselves. Particularly, you'll want to make sure that once the system asked a question, it will at least wait for some time before going on, to give the user a chance to answer. To this end, you can use the pre-built \texttt{waitingForResponse} method, which returns true if the system was the last one to speak and the dialogue act it uttered was a question or a request.
+
+\subsection{Volatile variables in rule files and how to keep information between evaluation cycles} \label{sec:volatile}
+
+\todo[inline]{AW: Might want to reformulate this a bit}
+An interesting property of \vonda's architecture that is important to be informed about is that when starting a new rule evaluation cycle, new class instances for all imported rule files will be created. This means that whenever the \vonda rules are executed in a new cycle, they are executed in a ''clean state'' where all variables you previously set in the rule file itself have been reset. The only exception from this are variables which are either located in the abstract (Java) Agent class or in your top-level rule file.
+
+Thus: Always keep in mind that only variables defined in the Java Agent instance or in the top-level rule file or imported via it are persistent, everything else is volatile!
 
 \section{Advanced Features}
 
@@ -65,5 +72,10 @@ This additional server does of course not have the same status as the innate HFC
 	\item \textbf{My system seems to execute the same Proposal multiple times}\\
 	Make sure that in your \texttt{propose} block, you are calling \texttt{lastDAprocessed} as described in \ref{sec:lastDAprocessed} and also ''resetting'' everything else that triggers the rule to be executed.
 	
+	\item \textbf{The variable that I use in my rules for storing information does not have the contents it is supposed to}\\
+	Be aware that variables not defined in the top-level rule file are not persistent between rule evaluation cycles, thus you should not store information there which you want to keep (see section \ref{sec:volatile}).
+	
+	\item \textbf{When compiling, I get the warning \texttt{''base name x can be one of y, z, please resolve manually''}}\\
+	It seems your ontology is redefining an existing class. Refer to section \ref{sec:nsAmbigue} to see how to resolve the problem.
 	
 \end{itemize}

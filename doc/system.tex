@@ -239,13 +239,11 @@ New RDF objects can be created with \texttt{new}, similar to Java objects; they
 are immediately reflected in the database, as are all changes to already
 existing objects.
 
-\todo[inline]{AW: test: does Child c; really create the instance? If not, rather put c = new Child; to not suggest this is possible}
-
 \begin{table}[htbp]
   \centering
 \begin{minipage}[t]{0.355\textwidth}
 \begin{lstlisting}
-Child c;
+c = new Child;
 String name = c.name;
 c.name = "new name";
 Set middle = c.middleNames;
@@ -796,6 +794,7 @@ In particular, this functionality can be used to import Java classes (i.e., with
 
 \section{The Run-Time System}
 %\subsection{Run-Time Library}
+\todo{AW: This is just a different language than the rest of the documentation... reformulate?}
 
 The run-time library contains the basic functionality for handling the rule
 processing, including the proposals and timeouts, and for the on-line
@@ -806,23 +805,24 @@ structures, and especially for searching the interaction history for specific
 utterances. Most of this functionality is available through the abstract
 \texttt{Agent} class, which has to be extended to a concrete class for each
 application.
-\todo{AW: TODO: go over this, delete what has been mentioned in other chapters, reformulate}
 
-There is functionality to talk directly to the HFC database using queries, in
-case the object view is not sufficient or to awkward. The natural language
-understanding and generation components can be exchanged by implementing existing
-interfaces, and the statistical component is connected by a message exchange
-protocol. A simple generation engine based on a graph rewriting module is
-already integrated, and is used in our current system as a template based
-generator. The example application also contains a VoiceXML based
-interpretation module.
+There is functionality to talk directly to the HFC database using queries (compare section \ref{sec:hfc_usage}), in
+case the object view is not sufficient or to awkward.
+% The natural language
+%understanding and generation components can be exchanged by implementing existing
+%interfaces, and the statistical component is connected by a message exchange
+%protocol. A simple generation engine based on a graph rewriting module is
+%already integrated, and is used in our current system as a template based
+%generator. The example application also contains a VoiceXML based
+%interpretation module.
 
-A set of reactive rules is executed whenever there is a change in the
+The set of your reactive \vonda rules is executed whenever there is a change in the
 information state (IS). These changes are caused by incoming sensor or
 application data, intents from the speech recognition, or expired timers.
-Rules are labeled if-then-else statements, with complex conditions and shortcut
-logic, as in Java or C. The compiler analyses the base terms and stores their
-values during processing for dynamic logging. A rule can have direct effects,
+%Rules are labeled if-then-else statements, with complex conditions and shortcut
+%logic, as in Java or C. The compiler analyses the base terms and stores their
+%values during processing for dynamic logging.
+A rule can have direct effects,
 like changes in the IS, or system calls. Furthermore, it can generate so-called
 \emph{proposals}, which are (labeled) blocks of code in a frozen state that
 will not be immediately executed, similar to closures.

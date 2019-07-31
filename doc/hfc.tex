@@ -48,21 +48,20 @@ The following is the syntax of HFC queries (EBNF):
   \label{tab:hfcquerybnf}
 \end{table}
 
-\paragraph{Notes}
+%\paragraph{Notes}
 
 The reserved symbols \texttt{ASK}, \texttt{SELECT}, \texttt{SELECTALL},
 \texttt{DISTINCT}, \texttt{WHERE}, \texttt{FILTER} and \texttt{AGGREGATE}
-do \emph{not} need to be written in uppercase.
+do \emph{not} need to be written in uppercase, but neither \texttt{filter} predicates nor \texttt{aggregate} functions should be named like reserved symbols.
 
-Neither \texttt{filter} predicates nor \texttt{aggregate} functions should be named like reserved symbols.
-\todo{AW: The writing style of this part of the text could be improved}
 \emph{don't-care} variables should be marked \emph{explicitely} by using
 \verb|?_|, particularly if \texttt{SELECT} is used with \verb|*| as in:
 \begin{verbatim}
      SELECT DISTINCT * WHERE ?s <rdf:type> ?_
-     SELECT * WHERE ?s <rdf:type> ?o ?_ ?_
+     SELECT * WHERE ?s <rdf:type> ?o ?_
 \end{verbatim}
 To change the object position without projecting it you can use \emph{don't-care} variables:
+\todo{AW: I do have an idea of how to write hfc queries of the simplicity that is sufficient for most DM stuff, and I have no understanding of what this means... Explain?}
 \begin{verbatim}
      SELECT ?s WHERE ?s <rdf:type> ?o ?_ FILTER ?o != <foo-class>
 \end{verbatim}
@@ -84,7 +83,7 @@ for \texttt{int}, and S for \texttt{String}.
   \label{tab:hfcaggregates}
 \end{table}
 
-Apart from \verb|==| and \verb|!=|, funcitonal operators can be used in \texttt{filter} expressions as well. As for aggregates, there are multiple versions of the same function for different datatypes.
+Apart from \verb|==| and \verb|!=|, functional operators can be used in \texttt{filter} expressions as well. As for aggregates, there are multiple versions of the same function for different data types.
 
 \begin{table}[htbp]
   \centering\small

@@ -380,8 +380,7 @@ grammar:            src/main/resources/grammars/srgs/chatcat.xml
 This configuration can then be easily read in when starting your project, and
 be passed to the init method of Agent, allowing for smoother changes of these three modules than if the information would be set in the Agent code itself. For example, this is useful when building an agent which can be used with NLU and NLG in different languages: just keep one yml file for each language and start the system with that which is currently relevant.
 
-\subsection{Resolving Namespace Ambiguities}
-\todo{AW: Does this really belong here? It's rather an advanced feature, might go to Chapter 4?}
+\subsection{Resolving Namespace Ambiguities} \label{sec:nsAmbigue}
 
 As you might have noticed whilst looking at chatcat.yml, there is another
 parameter used in the compile configuration of our example project:
