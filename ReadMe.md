@@ -2,16 +2,20 @@
 
 ## Introduction
 
-VOnDA is a framework for the implementation of dialogue management
+VOnDA is a framework for the implementation of reactive dialogue management
 functionality in dialogue systems for virtual agents. Although
 domain-independent, VOnDA is tailored towards dialogue systems with a focus on
 social communication, which implies the need of a long-term memory and high
 user adaptivity.
 
-VOnDA's theoretical underpinning is the Information State-Update approach,
+VOnDA's heavily draws inspiration from the Information State-Update approach,
 which bears great similarity to the Belief-Desire-Intent approach to artificial
 agents. The Information State is realized using the special RDF data storage
 and reasoning component HFC that is designed to handle time-varying data.
+
+Rather than being a complete dialogue framework, VOnDA is a hybrid
+rule-based/statistical implementation layer that can implement / simulate
+various approaches, from state-based to probabilistic reasoning.
 
 ## Installation
 
