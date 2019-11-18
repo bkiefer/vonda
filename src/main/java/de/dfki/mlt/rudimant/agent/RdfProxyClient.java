@@ -27,9 +27,9 @@ import de.dfki.lt.hfc.db.QueryException;
 import de.dfki.lt.hfc.db.QueryResult;
 import de.dfki.lt.hfc.db.TupleException;
 import de.dfki.lt.hfc.db.rdfProxy.DbClient;
+import de.dfki.lt.hfc.db.rpc.RPCFactory;
 import de.dfki.lt.hfc.db.server.StreamingClient;
 import de.dfki.lt.hfc.db.HfcDbService;
-import de.dfki.tecs.rpc.RPCFactory;
 
 public class RdfProxyClient implements DbClient {
 

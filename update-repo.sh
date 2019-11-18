@@ -26,12 +26,6 @@ what="$*"
 
 mkdir $LOCAL_REPO 2>/dev/null
 
-mvi de.dfki.mlt graff 0.4-SNAPSHOT
-
 mvi de.dfki.lt.hfc hfc 1.2.5-SNAPSHOT
 
-mvi de.dfki.lt.hfc hfc-db 1.3-SNAPSHOT
-
-mvi pal palTECS-utils 2.0-SNAPSHOT
-
-mvi de.dfki.tecs libtecs 2.0.6
+mvi de.dfki.lt.hfc hfc-thrift 0.1-SNAPSHOT

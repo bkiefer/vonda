@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.hfc.db.server.HfcDbApiHandler;
-import de.dfki.lt.hfc.db.server.HfcDbHandler;
 
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -49,7 +48,7 @@ public class RudimantCompiler {
 
   static String INFO_DIR = "src/main/resources/generated";
 
-  private HfcDbHandler handler;
+  private HfcDbApiHandler handler;
 
   private boolean typeCheck = false;
   private boolean visualise = false;

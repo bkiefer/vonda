@@ -11,7 +11,7 @@ if test -n "$toinstall"; then
 fi
 mkdir locallibs
 cd locallibs
-for d in openccg dataviz j2emacs cplan srgs2xml; do
+for d in graff openccg dataviz j2emacs cplan srgs2xml; do
   git clone https://github.com/bkiefer/$d.git
   cd $d
   mvn install
