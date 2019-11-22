@@ -28,6 +28,8 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -171,18 +173,60 @@ public class RudimantCompiler {
   private static final File tmpCfg = new File("/tmp/uncrustify.cfg");
   private static boolean cfgWritten = false;
 
+  private static final Pattern vers_no =
+      Pattern.compile("[^0-9]*([0-9]+)\\.([0-9]+).*");
+  private static String cfgName = UNCRUST_CFG_OLD;
+
   private static void uncrustify(File outputFile) {
+    if (cfgName == null) return;
     if (!cfgWritten && ! tmpCfg.exists()) {
+      try {
+        String[] cmdArray = { "uncrustify",  "--version" };
+        Process proc = Runtime.getRuntime().exec(cmdArray);
+        InputStream stdout = proc.getInputStream();
+        InputStreamReader isr = new InputStreamReader(stdout);
+        BufferedReader br = new BufferedReader(isr);
+        StringBuffer sb = new StringBuffer();
+        String line = null;
+        while ((line = br.readLine()) != null)
+          sb.append(line);
+        line = sb.toString();
+        @SuppressWarnings("unused")
+        boolean killed = proc.waitFor(5, TimeUnit.SECONDS);
+        int exitCode = proc.exitValue();
+        if (exitCode != 0) {
+          logger.warn("Uncrustify finished with error code {}", exitCode);
+          cfgName = null;
+        } else {
+          Matcher m = vers_no.matcher(line);
+          if (! m.matches()) {
+            logger.warn("Uncrustify version problem: {}", line);
+          } else {
+            if (Integer.parseInt(m.group(1)) > 0 ||
+                Integer.parseInt(m.group(2)) > 65) {
+              cfgName = UNCRUST_CFG_NEW;
+            }
+          }
+        }
+      } catch (IOException ex){
+        logger.error("Failed to run uncrustify");
+        cfgName = null;
+      } catch (InterruptedException e) {
+        logger.warn("uncrustify was interrupted");
+        cfgName = null;
+      }
+      if (cfgName == null) return;
       InputStream in = null;
       OutputStream out = null;
       try {
         cfgWritten = true;
-        in = RudimantCompiler.class.getResourceAsStream("/uncrustify.cfg");
+        in = RudimantCompiler.class.getResourceAsStream(cfgName);
         out = new FileOutputStream(tmpCfg);
         int b;
         while ((b = in.read()) >= 0) { out.write(b); }
       } catch (IOException ex){
         logger.error("Failed to write uncrustify config");
+        cfgName = null;
       }
       finally {
         try {
@@ -190,12 +234,15 @@ public class RudimantCompiler {
         }
         catch (IOException ex){
           logger.error("Failed to write uncrustify config");
+          cfgName = null;
         }
       }
+      if (cfgName == null) return;
     }
     try {
       String[] cmdArray = {
-          "uncrustify",  "--no-backup", "-c", tmpCfg.getAbsolutePath(),
+          "uncrustify",  "--replace", "--no-backup",
+          "-c", tmpCfg.getAbsolutePath(),
           outputFile.getAbsolutePath()
       };
       Process proc = Runtime.getRuntime().exec(cmdArray);

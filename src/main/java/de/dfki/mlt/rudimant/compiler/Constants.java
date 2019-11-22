@@ -43,5 +43,8 @@ public interface Constants {
 
   public static final String CFG_RULE_LOCATION_FILE = "ruleLocationFile";
   public static final String CFG_RULE_LOCATION_SUFFIX = "RuleLocation.yml";
+
+  public static final String UNCRUST_CFG_OLD = "/uncrustify.cfg";
+  public static final String UNCRUST_CFG_NEW = "/uncrust0.66.cfg";
 }
 
