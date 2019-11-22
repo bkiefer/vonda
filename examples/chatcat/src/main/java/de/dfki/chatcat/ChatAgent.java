@@ -7,7 +7,8 @@ import java.util.Map;
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.lt.hfc.db.server.HfcDbApiHandler;
+import de.dfki.lt.hfc.db.server.HandlerFactory;
+import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import de.dfki.lt.hfc.db.server.HfcDbServer;
 import de.dfki.mlt.rudimant.agent.Agent;
 import de.dfki.mlt.rudimant.agent.Behaviour;
@@ -19,7 +20,7 @@ public abstract class ChatAgent extends Agent implements Constants {
   Rdf robot;
   String DEFNS = "cat";
 
-  private HfcDbApiHandler handler;
+  private HfcDbHandler handler;
   private HfcDbServer server;
 
   private RdfProxy startClient(File configDir, Map<String, Object> configs)
@@ -34,7 +35,7 @@ public abstract class ChatAgent extends Agent implements Constants {
       server.runServer((int) configs.get(CFG_SERVER_PORT));
       handler = server.getHandler();
     } else {
-      handler = new HfcDbApiHandler();
+      handler = HandlerFactory.getHandler();
       handler.readConfig(new File(configDir, ontoFileName));
     }
     RdfProxy proxy = new RdfProxy(handler);

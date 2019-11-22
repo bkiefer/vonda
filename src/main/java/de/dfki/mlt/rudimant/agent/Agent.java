@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.lt.hfc.db.server.HfcDbApiHandler;
+import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import de.dfki.lt.hfc.db.server.StreamingClient;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.mlt.rudimant.agent.nlg.Pair;
@@ -182,7 +182,7 @@ public abstract class Agent implements StreamingClient {
   // StreamingClient init() & compute() function to register changes in DB
   // **********************************************************************
   @Override
-  public void init(HfcDbApiHandler handler) {
+  public void init(HfcDbHandler handler) {
     // nothing to do
   }
 

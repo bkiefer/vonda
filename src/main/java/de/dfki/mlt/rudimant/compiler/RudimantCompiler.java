@@ -21,23 +21,23 @@ package de.dfki.mlt.rudimant.compiler;
 
 import static de.dfki.mlt.rudimant.common.Constants.*;
 import static de.dfki.mlt.rudimant.compiler.Constants.*;
-import static de.dfki.mlt.rudimant.compiler.tree.GrammarFile.*;
+import static de.dfki.mlt.rudimant.compiler.tree.GrammarFile.parseAndTypecheck;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.dfki.lt.hfc.WrongFormatException;
-import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.lt.hfc.db.server.HfcDbApiHandler;
-
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
+import de.dfki.lt.hfc.WrongFormatException;
+import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import de.dfki.lt.hfc.db.server.HandlerFactory;
+import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import de.dfki.mlt.rudimant.common.Location;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
 
@@ -48,7 +48,7 @@ public class RudimantCompiler {
 
   static String INFO_DIR = "src/main/resources/generated";
 
-  private HfcDbApiHandler handler;
+  private HfcDbHandler handler;
 
   private boolean typeCheck = false;
   private boolean visualise = false;
@@ -78,7 +78,7 @@ public class RudimantCompiler {
 
   private void startClient(File configDir, Map<String, Object> configs)
       throws IOException, WrongFormatException {
-    handler = new HfcDbApiHandler();
+    handler = HandlerFactory.getHandler();
     String ontoFileName = (String) configs.get(CFG_ONTOLOGY_FILE);
     if (ontoFileName == null) {
       throw new IOException("Ontology file is missing.");
