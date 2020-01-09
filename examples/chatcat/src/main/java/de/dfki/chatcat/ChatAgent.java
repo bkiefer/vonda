@@ -49,6 +49,11 @@ public abstract class ChatAgent extends Agent implements Constants {
     RdfProxy proxy = startClient(configDir, configs);
     super.init(configDir, language, proxy, configs);
     robot = proxy.getRdf("<chatcat:robot1>");
+
+    // start first round of rule evaluations
+    newData();
+    // log all rules to stdout
+    this.logAllRules();
   }
 
   public void shutdown() {

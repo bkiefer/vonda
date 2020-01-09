@@ -1,0 +1,29 @@
+ontologyFile:       src/main/resources/ontology/chatcat.ini
+
+# compile configuration settings
+inputFile:          src/main/rudi/ChatCat.rudi
+outputDirectory:    src/main/gen-java
+wrapperClass:       de.dfki.chatcat.ChatAgent
+failOnError:        false
+rootPackage:        de.dfki.chatcat
+nameToURI:
+  Agent : <cat:Agent>
+nameToClass:
+  Date: de.dfki.chatcat.util.Date
+
+# run configuration settings
+NLG:
+  eng:
+    mapperProject: src/main/resources/grammars/cplanner/allrules-mapper
+    generationProject: src/main/resources/grammars/cplanner/allrules
+NLU:
+  eng:
+    class: de.dfki.chatcat.SrgsParser
+    grammar: src/main/resources/grammars/srgs/chatcat.xml
+debugPort: 9777
+
+# for the debugger/GUI
+customCompileCommands:
+  mvncompile: mvn install
+  mvncleancmp: mvn clean install
+defaultCompileCommand: Compile

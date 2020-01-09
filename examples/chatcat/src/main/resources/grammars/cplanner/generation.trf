@@ -19,3 +19,14 @@ raw:SecondReturnGreeting ^ Greet
 raw:WHQuestion ^ Name
 ->
 # =  :canned ^ <string>"What's your name?".
+
+raw:InitialGreeting ^ Greet
+{
+^ <when>"midday" | ! <when>
+->
+# =  :canned ^ <string>"Hello, how are you?".
+
+^ <when>(("morning"|"afternoon"|"evening") ^ #tod)
+->
+# =  :canned ^ <string>concatenate("Good ", #tod, " .").
+}

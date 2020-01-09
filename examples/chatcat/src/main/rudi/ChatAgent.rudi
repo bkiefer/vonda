@@ -1,3 +1,5 @@
 
 Agent user;
 Robot robot;
+
+[Date]. String timeOfDay();

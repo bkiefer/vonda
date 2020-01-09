@@ -278,12 +278,11 @@ the new dialogue system.
 
 Now that we have implemented our first rules, we need to compile them. In the
 \texttt{bin} directory of you \vonda installation is a script \texttt{vondac}
-that will use you compilation config file to compile your project. The most
-convenient way to use it is either to establish a softlink in a directory that
-is already in your \texttt{PATH} or to add \vonda's \texttt{bin} directory to
-it.
+that will use a configuration file to compile your project. The most convenient
+way to use this script is either to establish a softlink in a directory that is
+already in your \texttt{PATH} or to add \vonda's \texttt{bin} directory to it.
 
-The compile.yml should contain the following parameters:\\
+Your \texttt{config.yml} should contain the following parameters for compilation:\\
 
 \begin{tabular}{ll}
   \texttt{inputFile} & Relative to the current location, where is the
@@ -304,32 +303,32 @@ The compile.yml should contain the following parameters:\\
 \end{tabular}\\
 
 Since the compile and the runtime phase of \vonda need different information,
-e.g., the run-time phase needs NLU and NLG components, there is a second
-\texttt{yaml} file for the run-time phase containing the following
-specifications (This is the example from ChatCat):
+e.g., the run-time phase needs NLU and NLG components, there are additional
+options for the run-time phase (This is the example from ChatCat):
 
 \begin{verbatim}
 ontologyFile:       src/main/resources/ontology/chatcat.ini
 NLG:
-eng:
-mapperProject:      src/main/resources/grammars/cplanner/allrules-mapper
-generationProject:  src/main/resources/grammars/cplanner/allrules
+  eng:
+    mapperProject:      src/main/resources/grammars/cplanner/allrules-mapper
+    generationProject:  src/main/resources/grammars/cplanner/allrules
 NLU:
-eng:
-class:              de.dfki.chatcat.SrgsParser
-grammar:            src/main/resources/grammars/srgs/chatcat.xml
+  eng:
+    class:              de.dfki.chatcat.SrgsParser
+    grammar:            src/main/resources/grammars/srgs/chatcat.xml
+debugPort: 9777
 \end{verbatim}
 
 This configuration can be used to start your compiled system by passing it to
 the init method of \texttt{Agent}, allowing for easier configuration of these
-modules, also in multi-language settings. You can as well put all information
-into one \texttt{yaml} file, using it for run time and compile time, since the
-irrelevant configuration keys will be ignored.
+modules, also in multi-language settings. You can put all information into one
+\texttt{yaml} file, using it for run time and compile time, since irrelevant
+configuration keys will be ignored.
 
 \subsection{Resolving Name Ambiguities} \label{sec:nsAmbigue}
 
-As you might have noticed whilst looking at chatcat.yml, there is another
-parameter used in the compile configuration of our example project:
+As you may have noticed looking at chatcat's \texttt{config.yml}, there are
+further parameters used in the compile configuration of our example project:
 
 \begin{verbatim}
 nameToURI:

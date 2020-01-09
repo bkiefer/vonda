@@ -1,9 +1,0 @@
-ontologyFile:       src/main/resources/ontology/chatcat.ini
-NLG:
-  eng:
-    mapperProject: src/main/resources/grammars/cplanner/allrules-mapper
-    generationProject: src/main/resources/grammars/cplanner/allrules
-NLU:
-  eng:
-    class: de.dfki.chatcat.SrgsParser
-    grammar: src/main/resources/grammars/srgs/chatcat.xml

@@ -87,7 +87,7 @@ public class Main {
 
     //List files = null;
     confDir = new File(".");
-    String confName = "catrun.yml";
+    String confName = "config.yml";
 
     try {
       options = parser.parse(args);
