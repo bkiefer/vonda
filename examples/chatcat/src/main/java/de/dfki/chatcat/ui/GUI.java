@@ -44,6 +44,8 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
+import de.dfki.mlt.rudimant.agent.Agent;
+
 /*
 import de.dfki.lt.audiomanager.ASRServiceFactory;
 import de.dfki.lt.audiomanager.Constants;
@@ -196,11 +198,12 @@ public class GUI extends JFrame {
                 = //newFileDialog();
                 new File("emptytest.flac");
         if (outputFile != null) {
-          try {
-            OutputStream outstream = new FileOutputStream(outputFile, false);
+          try (OutputStream outstream = new FileOutputStream(outputFile, false)) {
             start();
           } catch (FileNotFoundException ex) {
             errorDialog("No such file: " + outputFile);
+          } catch (IOException ex) {
+            Agent.logger.error("file error: {}", ex.getMessage());
           }
         }
       }

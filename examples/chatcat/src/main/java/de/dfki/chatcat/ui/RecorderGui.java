@@ -138,8 +138,7 @@ public class RecorderGui extends JFrame {
         File outputFile = //newFileDialog();
             new File("emptytest.flac");
         if (outputFile != null) {
-          try {
-            OutputStream outstream = new FileOutputStream(outputFile, false);
+          try (OutputStream outstream = new FileOutputStream(outputFile, false)) {
             //start();
           } catch (IOException ex) {
             errorDialog("Exception: " + outputFile + " " + ex);
