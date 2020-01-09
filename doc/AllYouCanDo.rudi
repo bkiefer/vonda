@@ -1,4 +1,9 @@
-
+//\small\begin{lstlisting}
+/*@
+// A "Java" comment, everything in this comment will be transferred literally
+// to the compiled file, without the comment brackets.
+public static int MAX_INT = 100;
+@*/
 
 // **********************************************************************
 // Tests and Comparisons
@@ -12,18 +17,18 @@ if (child.father.surname) logger.info("foo");
 // subsumption of dialogue acts, (equality is also possible)
 if (lastDA() <= #AcceptOffer(Bringing)) logger.info("foo");
 
-// Two rdf objects being the same object. Mark the difference to the next
-// example! Here, the objects are compared, not the classes. Same for !=,
-// but all other comparison operators compare classes
+// Test if two RDF objects are the same object.
+// Mark the difference to the next example! Here, the objects are compared,
+// as in the case of !=, but all other comparison operators compare the classes
 Child c1;
 Agent c2;
 if (c1 == c2) logger.info("foo");
 
-// Is the class of c1 a subclass (a strict subclass) of the class of c2 ?
+// Is the class of c1 a subclass, resp. a strict subclass of the class of c2 ?
 if (c1 <= c2) logger.info("foo");
 if (c1 < c2) logger.info("foo");
 
-// Is the class of c1 a subclass of Child?
+// Is the class of c1 a subclass of the class 'Child'?
 if (c1 <= Child) logger.info("foo");
 
 // Is s not null and not empty?
@@ -106,27 +111,28 @@ test_rule4:
 // Coverage - To be revised and sorted properly
 // **********************************************************************
 
-if (true && !false) { /* do something */} else { /* do something else */}
+// there can always be an 'else' case
+if (true && !false) { /* do something */ } else { /* do something else */ }
 
 // TODO: sum1 and sum2 should, but do not become a proper declaration here
-// An unknown function is used. The system tries to inferr the type of
-// operations that contain it from their other parts
+// An unknown function is used. The system tries to infer the type of
+// operator arguments as best as possible
 somevar = getSomething();
 sum1 = 3 + somevar;
 sum2 = somevar + 3;
 anothervar = getSomething();
-someint = 1 < 3? anothervar : 3;
+someint = 1 < 3 ? anothervar : 3;
 
 // You can use casts and conditional expressions just like in Java
 Integer anotherint = (Integer) i;
-anotherint = anotherint < 3? anotherint : 3;
+anotherint = anotherint < 3 ? anotherint : 3;
 
 // There are also while and for loops and switch-case blocks available
 while (true) { continue; }
-for (abc = 1; abc < 10; abc++) { ++abc;}
+for (abc = 1; abc < 10; abc++) { ++abc; }
 
 ArrayList<String> iterlist;
-// The following two lines are equivalent
+// The following two lines are equivalent, the type of a is inferred
 for (String a : iterlist) {}
 for (a : iterlist) {}
 
@@ -138,7 +144,7 @@ switch (str) {
 }
 
 // It is possible to perform implicit casts on iterable elements in a for
-// loop; there is, however, no type safety promise from our side!
+// loop; there is, however, no type safety promise!
 ArrayList<Object> iterlist2;
 for (Integer a : iterlist2) {}
 
@@ -148,7 +154,7 @@ allas = filter(newlist, (element) -> ((String)element).contains("a"));
 dosort = sort(newlist, (a, b) -> (int)(((String)a).length() - ((String)b).length()));
 
 // Creation of dialogue acts. Elements that are Variables need to be
-// preceded by ^, all others will be converted to Strings
+// enclosed in {}, all others will be converted to Strings (symbols are default)
 robotname = "Robert";
 dia = #Inform(Liking, agent=username, patient={robotname});
 
@@ -195,3 +201,4 @@ System.out.println(da.theme);
 da.setDialogueActType("Confirm");
 da.setProposition("Acquiring");
 //System.out.println(da);
+//\end{lstlisting}

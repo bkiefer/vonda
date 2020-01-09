@@ -1,0 +1,58 @@
+\centering
+\scriptsize%
+\begin{tikzpicture}[font=\sffamily,
+  ampersand replacement=\&,
+  box/.style={minimum width=2.8cm, minimum height=.5cm, thin, draw},
+  gbox/.style={box, fill=lightgray},
+  tbox/.style={box, fill=darkblue, text=ivory},
+  ybox/.style={box, fill=lightgray},
+  arr/.style={thick, -{Latex}},
+  rbox/.style={box, fill=darkblue, text=ivory},
+  ]
+
+\path (5.7,3.8) node[gbox, minimum height=1.1cm](rr){\cmp{3cm}{Reactive Rules for\\Dialogue Management}};
+\path (0,3.8) node[rbox, minimum width=1.6cm, minimum height=.8cm](as){\cmp{1.5cm}{Action\\Selection}};
+
+\path (8.9,2.7) node[tbox](sr){Speech Recognition};
+\path (8.9,2.1) node[tbox](ad){Application Data};
+\path (8.9,1.4) node[tbox](per){\cmp{2.2cm}{Perceptions\\(Sensor Data)}};
+
+\path (0,2.7) node[ybox](aa){Application Actions};
+\path (0,1.9) node[ybox](nlg){NL Generation};
+\path (0,1) node[ybox](tts){Text To Speech};
+
+\path (4.2,0.1) node[box, fill=midgray, minimum width=4.7cm, minimum height=2.3cm](rdf){};
+\path (4.2,0.19) node{\small\bf\sffamily RDF Store};
+\path (4.2,1) node{General Reasoning Rules};
+\path (4.2,0.6) node{Extended Reasoning Service};
+\path (2.6,-.53) node{\cmp{.9cm}{Speech\\Acts}};
+\path (4.2,-.53) node{\cmp{1.8cm}{Entities\\Individuals\\User Model}};
+\path (5.8,-.53) node{\cmp{1.2cm}{Frames\\(Actions)}};
+
+\path (rdf.east) ++(0,-.12) [draw, thin] coordinate(l1) -- (l1 -| rdf.west);
+\path (rdf.east) ++(0,.3) [draw, thin] coordinate(l1) -- (l1 -| rdf.west);
+
+
+\draw[arr] (rr) -- node[above,xshift=4mm,yshift=-4.5mm]{\cmp{2cm}{\scriptsize Speech Acts \& Actions\\[1ex]
+    (Alternatives)}} (rr -| as.east);
+\path (as.east) ++(0,-.2) [draw, arr] -- ++(1,0) coordinate(here) -|
+(here |- aa) coordinate (there) |- (aa);
+\path (nlg.east) ++ (0,.15) coordinate (nlg1);
+\path (nlg.east) ++ (0,-.15) coordinate (nlg2);
+\draw[arr] (there) |- (nlg1);
+\path[arr, dashed] (rr.south) ++(-.8,0) coordinate(s1) [draw] -- node[rotate=-90,anchor=south]{\scriptsize Updates} (s1 |- rdf.north);
+\path[arr, dashed] (rdf.north) ++(.5,0) coordinate(s2) [draw] -- node[rotate=90,anchor=south]{\scriptsize Changes} (s2 |- rr.south);
+\path[arr] (rdf.north) ++(-.3,0) [draw] |- node[below, xshift=-1cm,yshift=4mm]{\cmp{2cm}{\scriptsize Generation\\[.8ex]Parameters}} (nlg2);
+
+\draw[arr] (per.west) ++(0,0.2) -- ++(-1.4,0) coordinate(per1) -- (per1 |- rdf.north);
+\draw[arr] (ad.west) -- ++(-1.7,0) coordinate(ad1) -- (ad1 |- rdf.north);
+\draw[arr] (sr.west) -- node[above, yshift=-4.4mm]{\cmp{2cm}{\scriptsize Speech
+    Acts\\[1ex](underspecified)}} ++(-2,0) coordinate(sr1) -- (sr1 |- rdf.north);
+
+\draw[arr] (nlg) -- (tts);
+
+\end{tikzpicture}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "vonda"
+%%% End:

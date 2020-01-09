@@ -1,3 +1,12 @@
+* Erleuchtung bzgl. Wrapperklasse: Agent vs. NaoAgent vs. PalAgent
+  1. NaoAgent scheint eigentlich eine klasse wie TimelineUtils zu sein (oder
+     könnte so sein)
+  2. Sollten PalAgent und NaoAgent nicht die Plätze tauschen, also:
+     NaoAgent extends PalAgent, und nicht umgekehrt.
+  3. PalAgent wird nur einmal erzeugt, und alle Variablen und Methoden stehen
+     also zur Verfügung, auch die nicht-statischen! Damit kann man aus
+     Java-Klassen .rudi Methoden benutzen!
+     Ausprobieren mit endQuiz (im Moment in NaoAgent)
 * Fragen aus dem Durchforsten von VisitorType
   - ist dokumentiert, dass folgendes ein "clear" ist: //done
     child.name = null

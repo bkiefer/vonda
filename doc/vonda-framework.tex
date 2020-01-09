@@ -1,0 +1,101 @@
+\tiny%
+\begin{tikzpicture}[font=\bf\sffamily,
+  box/.style={minimum width=4.5cm, minimum height=.35cm, draw=gray, text=black},
+  gbox/.style={box, fill=lightgray},
+  arr/.style={thick, -{Stealth}},
+  larr/.style={thick, {Stealth}-},
+  oarr/.style={thick, -{Stealth}},
+  bbox/.style={box, fill=meddarkblue, text=ivory, draw},
+  rbox/.style={node distance=0.3cm, font=\ttfamily},
+  fbox/.style={node distance=4.2cm, font=\ttfamily},
+  rlabel/.style={right, xshift=1mm, font=\sl},
+  llabel/.style={left, xshift=-1mm, font=\sl}
+]
+\node[gbox](rmn) at (0,0.2) { Rule Module Class N };
+\node[rbox, right= of rmn](rmnj){RuleModuleN.java};
+\draw[larr] (rmnj) --  ++(1.5,0);
+\node[fbox, right= of rmn](rmnr){RuleModuleN.rudi};
+\draw[oarr] (rmnr) --  ++(-1.5,0);
+
+\node[minimum width=4.5cm](ddd) at (0,-.2) { \normalsize ... };
+\node[rbox, right= of ddd]{\small ...};
+\node[fbox, right= of ddd]{\small ...};
+
+\path (rmn) ++(0,-.75) node[gbox](rm1) { Rule Module Class 1 };
+\node[rbox, right= of rm1](rm1j){RuleModule1.java};
+\draw[larr] (rm1j) --  ++(1.5,0);
+\node[fbox, right= of rm1](rm1r){RuleModule1.rudi};
+\draw[oarr] (rm1r) --  ++(-1.5,0);
+
+\path (rm1) ++(0,-.75) node[gbox](tlrc) { Top Level Rule Class };
+\node[rbox, right= of tlrc](maj){MyAgent.java};
+\draw[larr] (maj.east) ++(.35,0) --  ++(.72,0);
+\node[fbox, right= of tlrc](mar){MyAgent.rudi};
+\draw[oarr] (mar.west) -- ++(-.7,0);
+\draw[arr] (tlrc.north) ++ (1,0) coordinate (tn) -- node[rlabel]{calls} (rm1.south -| tn);
+\draw[arr] (rm1.south) ++ (-1,0) coordinate (rs) -- node[llabel]{imports} (tlrc.north -| rs);
+
+\path (tlrc) ++(0,-.75) node[box, fill=ivory](caai) {Concrete Agent API Implementation};
+\node[rbox, right= of caai]{MyAgentBase.java};
+\draw[arr] (caai) -- node[rlabel]{extends} (tlrc);
+
+\path (caai) ++(0,-.75) node[box, fill=darkblue, text=ivory](caid) {Common Agent API Interface Description}
+ ++ (0,-.35) node[bbox](caii) {Common Agent API Implementation}
+% ++ (0,-.35) node[bbox] {VOnDA Runtime}
+ ++ (0,-.45) node[bbox, minimum height=.6cm](cb) {
+\begin{minipage}{2cm}\centering Main event\\processing loop\end{minipage}
+\begin{minipage}{2cm}\centering RDF Object Access\end{minipage}
+}
+ ++ (0, -.4) node[bbox] {Dialogue Act Creaton / Comparison}
+ ++ (0,-0.35) node[bbox](nlp){
+\begin{minipage}{2cm}\centering NLG\end{minipage}
+\begin{minipage}{2cm}\centering NLU\end{minipage}
+};
+\node[rotate=90,yshift=2mm] at (cb.west){\scriptsize VOnDA Runtime};
+
+\node[rbox, right= of caii]{Agent.java};
+\node[rbox, right= of caid]{Agent.rudi};
+\draw[arr] (caid) -- node[rlabel]{extends} (caai);
+\draw (cb) ++(0,.3) -- +(0,-.51);
+\draw (nlp) ++(0,.18) -- +(0,-.36);
+
+\path (nlp) ++(0,-.75)
++(-1.125,0) node[fill=lightgray, minimum width=2.25cm, minimum height=.35cm]{}
++(1.125,0) node[fill=darkblue, text=ivory, minimum width=2.25cm, minimum height=.35cm]{}
++(0,0) node[box](ci) {\hspace{2.7ex}Client\color{ivory}\ \ Interface };
+\node[rbox, right= of ci]{StubClient.java / MyClient.java};
+
+\draw[arr] (ci.north) ++ (1,0) coordinate (ci1) -- (nlp.south -| ci1);
+\draw[arr] (nlp.south) ++ (-1,0) coordinate (nl1) -- (ci.north -| nl1);
+
+\node[minimum width=2cm, minimum height=.7cm, %draw,
+      fill=meddarkblue, text=ivory, rotate=90](vc) at (5.3,-.6) {\bf\sffamily VOnDA Compiler};
+
+\node[minimum width=1.3cm, minimum height=.8cm, %draw,
+      fill=meddarkblue, text=ivory](dbg) at (7.3,-4.9)
+      {\begin{minipage}{1.3cm}\centering\bf\sffamily VOnDA\\Debugger\end{minipage}};
+
+% SUPER TEMPLATE FÜR DIE "TONNE"
+\path [fill=midgray, text=black, draw=black] (5.3, -4)
+   node[minimum height=1.24cm,minimum width=1.5cm] (db) {\cmp{1.3cm}{RDF\\Database}}
+   ++(-.75,0.5)
+   -- ++(0,-.9)
+   arc [start angle=180, delta angle=180, x radius=.75cm, y radius=1.2mm]
+   -- ++(0,.9)
+   arc[start angle=0, delta angle=360, x radius=.75cm, y radius=1.2mm];
+
+\draw[arr] (vc) --
+  node[above, rotate=90, xshift=1.1mm]{Class \& Predicate}
+  node[below, rotate=90, xshift=1.1mm]{Definitions} (db);
+\draw[arr, {Stealth}-{Stealth}] (db.west)
+       -- node[above]{Belief State Data} (db.west -| cb.east);
+
+\draw[arr](dbg) -- (nlp);
+\draw[arr](dbg) -- (db);
+\draw[arr](dbg) -- (vc.south west);
+\end{tikzpicture}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "vonda"
+%%% End:

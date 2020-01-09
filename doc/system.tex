@@ -2,73 +2,36 @@
 
 \section{The \vonda Compiler}
 
-The compiler turns the \vonda source code into Java source code using the information
-in the ontology. Every source file becomes a Java class. The generated code
-will not serve as an example of good programming practice, but a lot of care
-has been taken in making it still readable and debuggable. The
-compile process is separated into three stages: parsing and abstract syntax tree building,
-type checking and inference, and code generation.
+The compiler turns the \vonda source code into Java source code using the
+information in the ontology. Every source file becomes a Java class. The
+generated code will not serve as an example of good programming practice, but a
+lot of care has been taken in making it still readable and debuggable. The
+compile process is separated into three stages: parsing and abstract syntax
+tree building, type checking and inference, and code generation.
 
 The \vonda compiler's internal knowledge about the program structure and the
-RDF hierarchy takes care of transforming the RDF field accesses to reads from and
-writes to the database. Beyond that, the type system, resolving the exact
-Java, RDF or RDF collection type of arbitrary long field accesses, automatically
-performs the necessary casts for the ontology accesses.
-
-%Der Rudimant-Kompiler übersetzt Regeldateien mit Extension \texttt{.rudi} in
-%Java-Dateien. Dazu braucht er eine Ontologie, in der die RDF Klassen und
-%Properties, die im \texttt{.rudi}-Code verwandt werden, spezifiziert sind.
-%
-%Im Fall des POC liegen die Quelldateien in \texttt{src/main/rudi} und die
-%dazugehörende Ontologie in \texttt{src/main/resources/ontology}. Damit HFC
-%die Ontologie benutzen kann, muss sie im ntriples-Format vorliegen. Die
-%derzeitige Ontologie wird mit Protégé erstellt und aus dem OWL-XML Format
-%mit Hilfe des \texttt{rapper}-Tools in eine \texttt{.nt} ntriples Datei
-%übersetzt. \texttt{rapper} ist Teil des Ubuntu-Package \texttt{raptor2-utils},
-%das Script \texttt{ntcreate} im \texttt{poc} Verzeichnis updated alle nicht
-%aktuellen \texttt{.nt} Files aus den \texttt{.owl} Versionen.
-%
-%Weitere settings, die für die Kompilation wichtig sind, finden sich in der
-%Datei \texttt{herbea.yml}, die von \texttt{compile} Skript benutzt wird. Auch
-%hier sind alle relativen Pfade relativ zum Verzeichnis, in dem die
-%\texttt{.yml} Datei liegt.
-%
-%Für standalone Mockup-Tests kann der POC auch isoliert mit dem \texttt{run.sh}
-%script gestartet werden, die ``Sensordaten'' werden dann nach und nach in
-%der main-Methode eingespielt.
-%
-%Der folgende Text ist leider unvollständig und muss noch ergänzt werden. Für
-%die meisten Konstrukte gibt es einige Beispiele in den \texttt{rudi}
-%Quelldateien.
+RDF hierarchy takes care of transforming the RDF field accesses to reads from
+and writes to the database. Beyond that, the type system, resolving the exact
+Java, RDF or RDF collection type of arbitrary long field accesses,
+automatically performs the necessary casts for the ontology accesses.
 
 \subsection{\vonda's Architecture}
 
 Figure~\ref{fig:architecture} shows the architecture of a runnable \vonda project.
 
-% Link to google version: https://docs.google.com/drawings/d/1ZgbunHMlfmh9CR9PpGm7Gw8z9Dwz5-crgBEh-fYVBbg/edit
-
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.8\textwidth]{VOnDAStructureRot2.png}
-  \caption{Gesamtarchitektur von Rudimant}
+  \input{vonda-framework}
+  \caption{Schematic of a \vonda interaction manager implementation}
   \label{fig:architecture}
 \end{figure}
-
-%Rudimant besteht aus einem Compiler und einem Laufzeitsystem. Daraus wird eine
-%konkrete Applikation, indem zunächst eine spezielle Java-Klasse, die sogenannte
-%\emph{Wrapper-Klasse}, von der Klasse \texttt{Agent} abgeleitet wird. Diese
-%kann Implementierungen von \texttt{Agent} erweitern oder
-%überschreiben. Außerdem können eigene Java-Methoden für die Benutzung in den
-%Regelfiles zur Verfügung stellen, die sich nicht ohne weiteres in \texttt{rudi}
-%Dateien implementieren lassen (komplexe Queries an die Datenbank, etc.). Im
-%Bild ist dies \texttt{MyAgent.java}.
 
 A \vonda project consists of an ontology, a custom extension of the abstract
 \texttt{Agent} class (the so-called \emph{wrapper class}), a client interface
 to connect the communication channels of the application to the agent, and a
 set of rule files that are arranged in a tree, using \texttt{import}
 statements. The blue core in Figure~\ref{fig:architecture} is the run-time system that
-is part of \vonda, while all green elements are the application specific parts
+is part of \vonda, while all light grey elements are the application specific parts
 of the agent. A \texttt{Yaml} project file contains all necessary information
 for compilation: the ontology, the wrapper class, the top-level rule file and
 other parameters, like custom compile commands for \vonda's debugger.
@@ -78,54 +41,20 @@ Java files. During this process, the ontology storing the RDF classes and
 properties is used to automatically infer types, resolve whether field accesses
 are actually accesses to the database, etc (see section
 \ref{sec:typeinference}).
-
 Every rule file can define variables and functions in \vonda syntax which are
 then available to all imported files.
 
 The current structure assumes that most of the Java functionality that is used
 inside the rule files will be provided by the \texttt{Agent} superclass. There are,
 however, alternative ways to use other Java classes directly (see section \ref{sec:javatypes} for further info).
-
 The methods and fields from the custom wrapper class can be made available to
 all rule files by declaring them in the interface connecting the \texttt{.rudi}
 code to the Java framework. This interface must have the same name as the
 wrapper class but end with \texttt{.rudi} (in the example of figure
 ~\ref{fig:architecture}, this would be \texttt{MyAgent.rudi}).
 
-%Damit der Compiler diese Funktionen kennt, müssen sie in der Datei
-%\texttt{MyAgent.rudi} deklariert werden. Sie beschreibt sozusagen das
-%Interface, auf das der \texttt{rudi} Quellcode zugreifen kann.
-
-%\todo{Das kann man doch in allen .rudi files}
-%Hier können auch statt der generischen Klasse \texttt{Rdf} die Klassen aus der
-%Ontologie spezifiziert werden, wenn diese genauer angegeben werden können. Das
-%hilft dem Kompiler bei der Typinferenz und dem richtigen Zugriff mit
-%RDF-Prädikaten.
-
-%Eine weitere wichtige Klasse ist \texttt{MyClient.java}, der die Kommunikation
-%mit der Außenwelt herstellt und das Laufzeitsystem von konkreten
-%Kommunikationsinterfaces abschirmt.
-
-
 \subsection{The \vonda Rule Language}
-
-%{\Huge TODO: testen, ob alle Beispiele so funktionieren, wie sie sollen !!!!!!}
 \label{sec:language}
-
-\if0
-+ labeled rules
-+ propose
-  In the compiled code, the proposals are implemented as anonymous classes.
-+ timeouts: for proactivity or monitoring on the side of the virtual agent
-+ type inference
-+ automatic transformation
-+ intelligent boolean expressions
-+ overloaded operators
-+ functions
-+ DA syntax
-
-RDF store: HFC, probabilistic extensions (planned) ...
-\fi
 
 \vonda's rule language looks very similar to Java/C++. There are a number of
 specific features which make it much more convenient for the specification of
@@ -134,49 +63,25 @@ the RDF store can be used throughout the code: RDF objects and classes can be
 treated similarly to those of object oriented programming languages, including
 the type inference and inheritance that comes with type hierarchies.
 
-%Die Klasse \texttt{MyAgent} inklusive Packagenamen muss in der config.yml Datei
-%eines Projektes unter dem Eintrag \texttt{wrapperClass} spezifiziert werden, um
-%im Compile-Schritt einen Effekt zu zeigen. Rudimant nutzt die Klasse
-%\texttt{MyAgent} dann als Superklasse der im Compile-Schritt angegebenen Datei
-%im rudi-Format und verlinkt Funktionsaufrufe und Variablennutzungen in allen
-%untergeordneten rudi-Dateien auf diese, sodass korrekte Aufrufe im
-%resultierenden Java-Code gewährleistet sind.
+\subsubsection{The Structure of a \vonda File}
 
-
-\subsubsection{The structure of a \vonda file}
-
-%Anders als Java stellt rudimant nicht den Anspruch, dass die Einträge in einer
-%Datei in irgendeine Form von übergeordneter Struktur gefasst werden. Die Regeln
-%können ebenso wie Funktionsdeklarationen direkt in die Datei geschrieben
-%werden. Dasselbe gilt für jede Art valider (Java-) Statements, wie etwa
-%Zuweisungen, for-Schleifen usw.. Rudimant wird bei der Kompilation eine
-%Java-Klasse erstellen, in die es die Funktionen sowie die Regeln, zu Funktionen
-%transformiert, einträgt. Alle weiteren Statements werden in der korrekten
-%Reihenfolge in die erzeugte Methode process() verschoben, wobei generierte
-%Aufrufe an die Regelfunktionen zwischen ihnen gewährleisten, dass die Regeln
-%und Statements in der Reihenfolge ausgeführt werden, die im rudi-Code
-%spezifiziert war. Dies ermöglicht also, nicht in Regeln gefasste
-%Abbruchbedingungen einzubauen, unter denen die Ausführung der ganzen Datei -
-%und möglicher importierter Dateien - sofort beendet werden soll.
-%
-\vonda does not demand to group statements in some kind of high-level structure
-like e.g. a class construct. In fact, it is currently not possible to define
-classes in \texttt{.rudi} files at all. Rules and method declarations can just
-be put into the plain file. The same holds true for every kind of valid (Java-)
-statement, like assignments, for loops etc. From this basis, the compiler will
-create a Java class where the methods and rules that are transformed to methods
-are represented as the methods of this specific class. All other statements as well as auto-generated calls to the methods representing the rules
-will be put into the \texttt{process()} method that \vonda creates to build a
-rule evaluation cycle. In doing so, the order of all statements (including the
-rules) is preserved.
+\vonda does not require to group statements in some kind of high-level
+structure like e.g. a class. It is, in fact, not possible to define classes in
+\texttt{.rudi} files at all, rules and method declarations have to be put
+directly into the rule file. The same holds for every kind of valid
+(Java-) statement, like assignments, \texttt{for} loops etc. From this, the
+compiler will create a Java class where the methods and rules that are
+transformed are represented as methods of this specific (generated)
+class. All other statements as well as auto-generated calls to the methods
+representing the rules will be put into the \texttt{process()} method that
+\vonda creates to build a rule evaluation cycle. In doing so, the execution
+order of all statements, including the rules, is preserved.
 
 This functionality offers possibilities to e.g. define and process high-level
-variables that you might want to have access to in all rules or to insert
-termination conditions that are not contained in rules.
+variables that you might want to have access to in subsequent rules or to insert
+termination conditions that prevent some rule executions.
 
-%Datei-global deklarierte Variablen werden als Klassenvariablen angelegt.
-
-\textbf{Warning:} It is important to know here that variables declared globally
+\textbf{Warning:} It is important to know that variables declared globally
 in a file will be transformed to fields of the Java class. We found that in
 very rare occasions, this can lead to unexpected behaviour when using them in a
 propose or timeout block as well as changing them in a global statement. As
@@ -186,6 +91,11 @@ of validness of variables for such blocks to Java. We found that Java might
 mistakenly accept variables that are not effectively final, what might lead to
 completely unexpected behaviour when proposes and timeouts with changed
 variable values are executed.
+
+The only important exeption, where globally defined variables persist throughout
+the whole runtime of the system are variables defined in the top-level rule
+file. This is on purpose, and can be used to define persistent
+variables also usable in lower-level rule files.
 
 \subsubsection{RDF accesses and functional vs. relational properties}
 \label{sec:rdfaccesses}
@@ -240,7 +150,7 @@ are immediately reflected in the database, as are all changes to already
 existing objects.
 
 \begin{table}[htbp]
-  \centering
+  \centering\small
 \begin{minipage}[t]{0.355\textwidth}
 \begin{lstlisting}
 c = new Child;
@@ -265,78 +175,61 @@ c.clearValue("<dom:name>");
   \caption{Examples for an RDF property access}
   \label{tab:property-access}
 \end{table}
-%\todo[inline]{missing creation of child in right row, plus "Set middle" is no proper code}
+\todo[inline]{missing creation of child in lower part, plus "Set middle" is no
+  proper code, line numbers used in text, but not present in figure}
 
-%Durch die Verbindung zu \texttt{hfc} während des Compile-Vorganges hat rudimant
-%vollen Zugriff auf die Datenbank und kann nicht nur Rdf-Objekte anhand ihrer
-%Typen erkennen, sondern auch erkennen, wann ein Feldzugriff auf ein Rdf-Objekt
-%erfolgt und ihn in solchen Fällen in einen Zugriff auf die Datenbank
-%umwandeln. Dies ist sowohl für Zugriffe auf Properties als auch für Änderungen
-%ihres Inhalts möglich und lässt sich, sofern dies in der verwendeten Ontologie
-%korrekt möglich ist, beliebig oft hintereinander ausführen.
-%
-Due to the connection of \vonda to HFC during compile time, it has full access
-to the database. Thereby, it cannot only recognize the correct RDF class to
-create a new instance from when encountering \texttt{new}, but it can also
-resolve property accessses to such instances. Field accesses as shown in line 2
-and 3 of table \ref{tab:property-access} will be analyzed and transformed into
-database accessses. \vonda will also draw type information from the
-database. If the name property of the RDF class \texttt{Child} is of type
-String, exchanging line 2 by the line \texttt{int name = c.name} will result in
-a warning of the compiler.
+The connection of \vonda to the ontology loaded into HFC during compile time
+enables the compiler to recognize the correct RDF class to create a new
+instance when encountering \texttt{new}, and to resolve field/property
+accessses to all RDF instances. Field accesses as shown in line 2 and 3 of
+table \ref{tab:property-access} will be analyzed and transformed into database
+accessses. \vonda will also draw type information from the database. If the
+name property of the RDF class \texttt{Child} is of type \texttt{String},
+exchanging line 2 by the line \texttt{int name = c.name} will result in a
+warning of the compiler. During this process, the compiler will automatically
+also use the correspondence of XSD and Java types shown in table
+\ref{fig:RdfToJava}.
 
-In this process, the compiler will automatically recognize the equivalences of the RDF and Java types shown in figure \ref{fig:RdfToJava}.
+\begin{table}[htb]
+{\small\ttfamily\begin{center}
+\begin{tabular}{ll@{\hspace{8em}}ll}
+<xsd:int> & Integer & <xsd:integer> & Long\\
+<xsd:string> & String & <xsd:byte> & Byte\\
+<xsd:boolean> & Boolean & <xsd:short> & Short\\
+<xsd:double> & Double & <xsd:dateTime> & Date\\
+<xsd:float> & Float & <xsd:date> & XsdDate\\
+<xsd:long> & Long & <xsd:dateTimeStamp> & Long
+\end{tabular}\end{center}}\vspace{-2ex}
+\caption{\label{fig:RdfToJava}Standard RDF types and the Java types as which they will be recognized}
+\end{table}
 
-\begin{figure}[h] \label{fig:RdfToJava}
-\small
-\begin{lstlisting}
-      {"<xsd:int>", "Integer"},
-      {"<xsd:string>", "String"},
-      {"<xsd:boolean>", "Boolean"},
-      {"<xsd:double>", "Double"},
-      {"<xsd:float>", "Float"},
-      {"<xsd:long>", "Long"},
-      {"<xsd:integer>", "Long"},
-      {"<xsd:byte>", "Byte"},
-      {"<xsd:short>", "Short"},
-      {"<xsd:dateTime>", "Date"},
-      {"<xsd:date>", "XsdDate"},
-      {"<xsd:dateTimeStamp>", "Long"}
-\end{lstlisting}
-\caption{Standard RDF types and the Java types as which they will be recognized}
-\end{figure}
+Moreover, \vonda determines whether an access is made using functional or
+relational predicates and will handle it accordingly, assuming a collection
+type if necessary. In the rule language, the operators \texttt{+=} and
+\texttt{-=} are overloaded. They can be used with sets and lists as shortcuts
+for adding and deleting objects. \texttt{a += b} will be compiled to
+\texttt{a.add(b)} and \texttt{a -= b} results in \texttt{a.remove(b)}, as shown
+in table~\ref{tab:property-access}.
 
-%Sowohl die Verwendung von relationalen als auch die von funktionalen Prädikaten
-%ist erlaubt. Diese ändern die Aufrufe im rudi-Code jedoch grundsätzlich nicht,
-%da rudimant selbst inferiert, ob ein Zugriff auf die Datenbank ein einfaches
-%Objekt oder ein Set von Objekten zurückgibt. Lediglich die weitere Nutzung
-%dessen, was abgerufen wurde, muss sich (selbstverständlich) an die Art des
-%Ergebnisses des Rdf-Zugriffes anpassen. Versucht man allerdings, den Wert eines
-%relationalen
-%
-Moreover, \vonda can see whether an access is made using functional or relational
-predicates and will handle it accordingly, deriving a collection type if
-necessary.
+\subsubsection{Rules and rule labels}
 
-%Die beiden Operatoren \texttt{+=} und \texttt{-=} sind in rudimant
-%überladen. Sie können sowohl wie in Java zum Rechnen mit Integer, float und
-%double verwendet werden, als auch im Zusammenspiel mit Sets und
-%Listen. \texttt{a += b} wird hierbei in \texttt{a.add(b)} umgewandelt,
-%\texttt{a -= b} resultiert in \texttt{a.remove(b)}.
+The core of \vonda dialogue management are the dialogue rules, which will be
+evaluated at run-time system on every trigger generated from the environment or
+the internal processing.
+A rule (optionally) starts with a name that is given as a Java-like label: an
+identifier followed by a colon. Following this label is an
+\texttt{if}-statement, with optional \texttt{else} case. The clause of the
+\texttt{if}-statement expresses the condition under which the rule, or rather
+the \texttt{if} block, is to be executed; in the \texttt{else} block you can
+define what should happen if the condition is \texttt{false}, like stopping the
+evaluation of (a sub-tree of) the rules if necessary information is missing.
 
-In the rule language, the operators \texttt{+=} and \texttt{-=} are
-overloaded. They can be used with sets and lists as shortcuts for adding and
-deleting objects. \texttt{a += b} will be compiled to \texttt{a.add(b)} and
-\texttt{a -= b} results in \texttt{a.remove(b)}.
-
-\subsubsection{Rules and labels}
-
-\begin{figure}
+\begin{figure}[htb]
 \begin{small}
 \begin{lstlisting}
 introduction:
-  if (introduction){
-    if (user.unknown){
+  if (introduction) {
+    if (user.unknown) {
       ask_for_name:
         if (talkative) askForName();
     } else
@@ -347,79 +240,24 @@ introduction:
 \caption{A simple rule}
 \end{figure}
 
-%Das Kernstück von rudimant sind die Dialogregeln. Eine Regel beginnt mit ihrem
-%Namen, einem möglichst aussagekräftigen Label, gefolgt von einem
-%Doppelpunkt. Anschließend folgt ein if-statement. Die Clause des Statements
-%drückt die Bedingung aus, unter der die Regel ausgeführt werden soll, im Body
-%steht der auszuführende Code.
-%
-The core of \vonda dialogue management are the dialogue rules, which will be
-evaluated in the run-time system on every environment trigger.
+Rules can be nested to arbitrary depth, so \texttt{if}-statements inside a rule
+body can also be labelled. The labels are a valuable tool for debugging the
+system at run-time, as they can be logged live with the debugger GUI
+(cf. chapter \ref{sec:debugger}). The debugger can show you which rules were
+executed when and what the individual results of each base clause of the
+conditions were.
 
-A rule starts with its name, from now on called label, followed by a
-colon. Pertaining to this label is an if-statement, possibly with else
-case. The clause of the if-statement expresses the condition under which the
-rule, or rather the if block, is to be executed; in the else block you can
-define what should happen if the rule cannot be executed, like stopping the
-evaluation of (a sub-tree of) the rules if necessary information is missing.
+\subsubsection{The \texttt{propose} and \texttt{timeout} constructs}
 
-%Auch eingeschachtelte \texttt{if}-Abfragen können mit Labels versehen werden.
-%Die Labels dienen einerseits zum debuggen des Codes, da im generierten Code
-%Funktionalität enthalten ist, um den Agenten zur Laufzeit zu debuggen. Dazu
-%kann man zur Zeit zwei API-Funktionen von \texttt{Agent} benutzen, nämlich
-%\texttt{logRule(String rulename)} und \texttt{logAllRules()}
-%
-Rules can be nested to arbitrary depth, so if-statements inside a rule body can
-also be labelled. The labels are a valuable tool for debugging the life system,
-as they can be logged live with the debugger gui (cfg. chapter
-\ref{sec:debugger}). The debugger can show you which rules were executed when
-and what the individual results of each part of the conditions were.
+There are two statements with a special syntax and semantics: \texttt{propose}
+and \texttt{timeout}. \texttt{propose} is \vonda's current way of implementing
+probabilistic selection. All (unique) propose blocks that are in active rule
+actions are collected, frozen in the execution state in which they were
+encountered, like closures known from functional programming languages. When
+all possible proposals have been selected, a statistical component decides
+on the ``best'', whose closure is then executed.
 
-%Der Output des Loggers wird dann das Label jeder Regel, die evaluiert wird,
-%zusammen mit der Auswertung der Bedingung und den Werten aller booleschen
-%Basisterme, die in der Bedingung vorhanden sind, angeben.
-
-%For information on rule logging, see chapter \ref{sec:debugger}.
-%\todo[inline]{Bsp debugging-output}
-
-\subsubsection{Interrupting the rule evaluation cycle}
-
-%Es gibt mehrere Möglichkeiten, die Regelverarbeitung lokal oder ganz
-%abzubrechen. Aus einer gelabelten Regel kann man z.B. mit
-%\verb|break label_name;| aussteigen. Alle danach folgenden Regeln werden dann
-%weiter verarbeitet.
-%
-There are multiple ways to stop the rule evaluation locally (i.e. skipping the
-evaluation of the current subtree) or globally (i.e. stopping the whole
-evaluation cycle).
-
-You can skip the evaluation of a specific rule you are currently in with the
-statement \texttt{break label\_name;}. This will only stop the rule with the
-respective label (no matter how deep the break statement is nested in it), such
-that the next following rule is evaluated next.
-
-%Bricht man die Verarbeitung mit \texttt{cancel} ab, wird keine der in
-%der Datei folgenden Regeln mehr angewandt, bei \texttt{cancel\_all} wird
-%keine nachfolgende Regel, weder lokal, noch auf höheren Ebenen, angewandt.
-%
-If the evaluation is cancelled with the keyword \texttt{cancel}, all of the
-following rules in the current file will be skipped (including any imported
-rules). If the keyword \texttt{cancel\_all} is used, none of the following
-rules, neither local nor higher in the rule tree, will be evaluated. This is
-the \vonda way of deciding to not further evaluate whatever triggered the current
-evaluation cycle and should only be used as an 'emergency exit', as the
-dialogue rules should be rejecting any sound, non-matching trigger by
-themselves.
-
-%Um \texttt{propose} oder \texttt{timeout} Blöcke zu verlassen, muss
-%\texttt{return} benutzt werden, da dies normale Funktionsblöcke sind.
-
-To leave \texttt{propose} and \texttt{timeout} blocks, you need to use an empty
-\texttt{return}, as they are only reduced representations of normal function
-bodies.
-
-\subsubsection{\texttt{propose} and \texttt{timeout}}
-\begin{figure}[htbp]
+\begin{figure}[h]
   \centering\small%
 \begin{lstlisting}
 if (!saidInSession(#Greeting(Meeting)) {
@@ -440,97 +278,96 @@ if (!saidInSession(#Greeting(Meeting)) {
   }
 }
 \end{lstlisting}\vspace*{-3ex}
-  \caption{\vonda code example}
+  \caption{\texttt{propose} and \texttt{timeout} code example}
   \label{fig:propose}
 \end{figure}
 
-There are two statements with a special syntax and semantics: \texttt{propose}
-and \texttt{timeout}. \texttt{propose} is \vonda's current way of implementing
-probabilistic selection. All (unique) propose blocks that are in active rule
-actions are collected, frozen in the execution state in which they were
-encountered, like closures known from functional programming languages. When
-all possible proposals have been selected, a statistical component decides
-which one will be chosen and the closure is executed.
-
-\texttt{timeout}s also generate closures, but with a different purpose. They
-can be used to trigger proactive behaviour, or to check the state of the system
-after some time period, or in regular intervals. A timeout will only be created
-if there is no active timeout with the same name.
+\texttt{timeout}s generate the same kind of closures, but with a different
+purpose. They can for example be used to trigger proactive behaviour, or to
+check the state of the system after some time period, or in regular
+intervals. A timeout will only be created if there is no active timeout with
+the same name.
 
 There are two variants of \texttt{timeout}: \emph{labeled timeouts}, like the
 one in the previous example, run out after the specified time (unless they are
 cancelled before that using the \texttt{cancelTimeout(\emph{label})} function)
 and then execute their body, and \emph{behaviour timeouts}, where the first
-\todo{AW: Just a mention that to my knowledge we never used behaviour timeouts in PAL, has it been tested?}
+\todo[inline]{AW: Just a mention that to my knowledge we never used behaviour
+  timeouts in PAL, has it been tested? BK: Yes, but it must be described in more
+  detail.}
 argument is a dialogue act (see next section) instead of a label. These are
 executed either when the specified time is up or the behaviour that was
 triggered by the dialogue act is finished, whatever comes first.
 
-\subsubsection{Dialogue acts}
-%\subsubsection{Dialogue acts, their evaluation and "real" variables}
+\subsubsection{Interrupting the rule evaluation cycle}
+
+There are multiple ways to stop rule evaluation locally (i.e. skipping the
+evaluation of the current subtree) or globally (i.e. stopping the whole
+evaluation cycle).
+You can skip the evaluation of a specific rule you are currently in with the
+statement \texttt{break label\_name;}. This will only stop the rule with the
+respective label (no matter how deep the break statement is nested in it), such
+that the next following rule is evaluated next.
+
+If the evaluation is cancelled with the keyword \texttt{cancel}, all of the
+following rules in the current file will be skipped (including any imported
+rules). If the keyword \texttt{cancel\_all} is used, none of the following
+rules, neither local nor higher in the rule tree, will be evaluated. This is
+the \vonda way of deciding to not further evaluate whatever triggered the
+current evaluation cycle and will mostly be used as an 'emergency exit', as the
+dialogue rules should be rejecting any non-matching trigger by themselves.
+
+To leave \texttt{propose} and \texttt{timeout} blocks, you need to use an empty
+\texttt{return}, as they are only reduced representations of normal function
+bodies.
+
+\todo[inline]{There should be a complete description of the rule evaluation
+  cycle, with details such as the initialization of rule class objects, etc.}
+
+\subsubsection{Dialogue Acts}
 \label{sec:caret}
 
-%Eine wichtige Aufgabe eines Dialogsystems ist zweifellos die Ausgabe von
-%Dialogakten, die von der Generierungskomponente zu Kommunikation mit dem Nutzer
-%verarbeitet werden können. In rudimant ist die Funktion \texttt{emitDA} hierfür
-%zuständig.
+A central functionality of a dialogue system is receiving and emitting dialogue
+acts that result from a user utterance resp. can be transformed to natural
+language by a generation component to communicate with the user. In \vonda,
+the function for sending dialogue acts is called \texttt{emitDA}.
 
-Without doubt, an important task of a dialogue system is emitting dialogue acts that can be transformed to natural language by the generation component to communicate with the user. In \vonda, the function responsible for this is \texttt{emitDA}.
-
-The dialogue act representation is an internal feature of \vonda. We are currently using the DIT++ dialogue act hierarchy \citep{bunt2012iso} and shallow frame semantics along the lines of FrameNet \citep{ruppenhofer2016framenet} to represent dialogue acts. The natural language understanding and generation units connected to \vonda should therefore be able to generate or, respectively, process this representation.
-%interface with the natural language understanding and generation units.
-% While shallow semantics is enough for most applications, we already experience its shortcomings when trying to handle, for example, social talk.
+The dialogue act representation is an internal feature of \vonda. We are
+currently using the DIT++ dialogue act hierarchy \citep{bunt2012iso} and
+shallow frame semantics along the lines of FrameNet
+\citep{ruppenhofer2016framenet} to represent dialogue acts. The natural
+language understanding and generation units connected to \vonda should
+therefore be able to generate or, respectively, process this representation.
 
 \begin{figure}[htb]
-  \centering\small%
-\begin{lstlisting}
-emitDA(#Inform(Answer, what={solution}));
-\end{lstlisting}\vspace*{-3ex}
-  \caption{\vonda code example}
-  \label{fig:DA}
+  \centering\small\texttt{emitDA(\#Inform(Answer, what=\{solution\}));}
+  \vspace*{-1ex}\caption{\label{fig:DA}Dialogue Act Example}
 \end{figure}
 
-%Figure~\ref{fig:DA} contains an example of the short-hand notation
-%for shallow semantic structures (starting with \textbf{\texttt{\#}}).  Since
-%they predominantly contain constant (string) literals, this is the default when
-%specifying such structures. The special ``hat'' syntax in
-%\texttt{user=\^{}user.name} allows to insert the value of expressions into the
-%literal, similar to an \emph{eval}.
+Figure \ref{fig:DA} shows the dialogue act representation in \vonda, as passed
+to, e.g., the \texttt{emitDA} function. \texttt{Inform}\verb|(...)| will be
+recognized by \vonda as dialogue act because it has been marked with
+\verb|#|. It will then create a new instance of the class DialogueAct that
+contains the respective modifications. As a default, arguments of a DialogueAct
+creation (i.e., character strings on the left and right of the equal sign) are
+seen as and transformed to constant (string) literals, because most of the time
+that is what is needed.  Surrounding a character sequence with curly brackets
+(\texttt{\{\}}) marks it as an expression that should be evaluated. In fact,
+arbitrary expressions are allowed inside the curly brackets.
+\todo[inline]{What about automatic conversion to string?}
 
-%Argument von \texttt{emitDA} ist ein Dialogakt in der oben gezeigten Form. Dass
-%es sich bei \texttt{Inform}\verb|(...)| nicht um einen Funktionsaufruf, sondern
-%um einen Dialogakt handelt, wird hier und an allen anderen Stellen, an denen
-%man einen Dialogakt benutzen möchte, durch das \verb|#|
-%gekennzeichnet. Rudimant wird so erkennen, dass im Java-Code eine neue Instanz
-%der Klasse DialogueAct mit den entsprechenden Modifikationen erstellt werden
-%muss. Hierbei kommt dem Marker \caret{} eine besondere Bedeutung zu: Per
-%default werden alle in den Klammern angegebenen Argumente, egal, ob sie rechts
-%oder links eines $=$ stehen, als Strings an den neuen DialogueAct
-%übergeben. Möchte man explizit den Inhalt einer Variablen oder eines Ausdrucks
-%übergeben, so ist die Benutzung von \caret{} vor der entsprechenden rechten
-%Seite einer Zuweisung notwendig, die dafür sorgt, dass der Ausdruck evaluiert
-%wird, und nicht als atomares Symbol interpretiert.
+While this kind of shallow semantics is enough for many applications, we
+already experience its shortcomings when trying to handle, for example, social
+talk. One of the next improvements will be the extension of Dialogue Acts to
+allow for embedded structures.
 
-The dialogue act passed to \texttt{emitDA} should look as shown in figure \ref{fig:DA}. \texttt{Inform}\verb|(...)| will be recognized by \vonda as dialogue act because it has been marked with \verb|#|. It will then create a new instance of the class DialogueAct that contains the respective modifications. As a default, arguments of a DialogueAct creation (i.e., character strings on the left and right of $=$) are seen as and transformed to constant (string) literals, because most of the time that is what is needed.
-%The special ``hat'' syntax with \caret allows to mark when the following string is a real variable or an expression and should be evaluated.
-Surrounding a character sequence with curly brackets (\{\}) marks it as an
-expression that should be evaluated. In fact, arbitrary expressions are allowed
-inside the curly brackets.
 
 \subsubsection{Type inference and overloaded operators}
 \label{sec:typeinference}
 
-%Rudimant erlaubt statische Typzuweisungen sowie Casting, beides ist jedoch
-%nicht zwingend notwendig.
-%
-\vonda allows static type assignments and casting, but neither of them is always necessary.
-
-%Ist beispielsweise der Typ der rechten Seite einer Variablendeklaration mit
-%Zuweisung bekannt oder inferierbar, so ist es nicht notwendig, den Typ der
-%Variablen explizit anzugeben.
-
-If, for example, the type of the expression on the right-hand side of a
-declaration assignment is known or inferrable, it is not necessary to
+\vonda allows static type assignments and casting, but in many cases these can
+be avoided. If, for example, the type of the expression on the right-hand side
+of a declaration assignment is known or inferrable, it is not necessary to
 explicitely state it.
 
 You can also declare variables final.
@@ -783,7 +620,7 @@ To maintain simplicity, \vonda intentionally only provides limited Java function
 %also in genau diesem Aussehen in den resultierenden Code übertragen. Dabei
 %werden die klammernden Zeichenfolgen ausgelassen.
 %
-In cases where this is not enough and you urgently need a functionality %in a \texttt{.rudi} file 
+In cases where this is not enough and you urgently need a functionality %in a \texttt{.rudi} file
 that \vonda cannot parse or represent correctly, you can use the verbatim function. Everything between \verb|/*@| and \verb|@*/| will be treated like a multi-line Java comment, meaning the content is not parsed or evaluated further. It will be transferred to the compiled code at exactly this position between statements, but without the comment symbols.
 
 %Diese Funktionalität kann insbesondere dazu benutzt werden, am Anfang einer
