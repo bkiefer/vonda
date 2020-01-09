@@ -46,17 +46,6 @@ public class CompilerMain {
   public static Map<String, Object> configs;
   public static File confDir;
 
-  public static boolean process(RudimantCompiler rc, File file)
-      throws IOException {
-    try {
-      rc.processToplevel(file);
-    } catch (UnsupportedOperationException ex) {
-      if (ex.getMessage().startsWith("Parsing")) return true;
-      throw(ex);
-    }
-    return false;
-  }
-
   /** For unit tests */
   public void setConfig(Map<String, Object> conf) {
     configs = conf;
@@ -134,26 +123,18 @@ public class CompilerMain {
 
     CompilerMain main = new CompilerMain();
     File outputDirectory = null;
-    List files = null;
     confDir = new File(".");
     RudimantCompiler rc = null;
 
     try {
       options = parser.parse(args);
-      files = options.nonOptionArguments();
-
-      if (files.isEmpty()) {
-        usage("Input file is missing");
-        System.exit(1);
-      }
-
-      outputDirectory = new File((String)files.get(0)).getParentFile();
+      List argfiles = options.nonOptionArguments();
 
       if (options.has("c")) {
         String confName = (String)options.valueOf("c");
         readConfig(confName);
       } else {
-        configs = main.defaultConfig();
+        configs = CompilerMain.defaultConfig();
       }
 
       for (Object[] val : defaults) {
@@ -177,10 +158,27 @@ public class CompilerMain {
       if (options.has("o")) {
         outputDirectory = new File((String)options.valueOf("o"));
         configs.put(CFG_OUTPUT_DIRECTORY, outputDirectory);
+      } else {
+        if (! configs.containsKey(CFG_OUTPUT_DIRECTORY)) {
+          if (argfiles.isEmpty()) {
+            usage("No output file specified");
+            System.exit(1);
+          } else {
+            outputDirectory = new File((String)argfiles.get(0)).getParentFile();
+          }
+        }
       }
+
+      if (!configs.containsKey(CFG_INPUT_FILE)) {
+        if (argfiles.isEmpty()) {
+          usage("Input file is missing");
+          System.exit(1);
+        }
+        configs.put(CFG_INPUT_FILE, (String)argfiles.get(0));
+      }
+
       main.setConfig(configs);
-      rc = new RudimantCompiler(confDir, configs);
-      if (process(rc, new File((String)files.get(0)))) {
+      if (RudimantCompiler.process(confDir, configs)) {
         System.out.println("Parsing failed");
         System.exit(1);
       }
@@ -199,8 +197,8 @@ public class CompilerMain {
         + "   -v<isualize parses> -e<rror stops>\n"
         + "   -r ontos.ini -w WrapperClass -o outputDir\n"
         + "   -c config.yaml\n"
-        + "   TopLevel.rudi\n\n"
-        + "Values for -e, -r, -w and -o can also be set in the config file.");
+        + "   [TopLevel.rudi]\n\n"
+        + "Values for all flags and the TopLevel file can also be set in the config file.");
   }
 
 }

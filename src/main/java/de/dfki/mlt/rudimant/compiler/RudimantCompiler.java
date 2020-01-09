@@ -181,6 +181,7 @@ public class RudimantCompiler {
     if (cfgName == null) return;
     if (!cfgWritten && ! tmpCfg.exists()) {
       try {
+        // determine the current version of uncrustify to get the right config
         String[] cmdArray = { "uncrustify",  "--version" };
         Process proc = Runtime.getRuntime().exec(cmdArray);
         InputStream stdout = proc.getInputStream();
@@ -353,5 +354,21 @@ public class RudimantCompiler {
       mem.leaveClass();
     }
   }
+
+  public static boolean process(File confDir, Map<String, Object> configs)
+      throws IOException, WrongFormatException {
+    RudimantCompiler rc = null;
+    try {
+      rc = new RudimantCompiler(confDir, configs);
+      rc.processToplevel(new File((String) configs.get(CFG_INPUT_FILE)));
+    } catch (UnsupportedOperationException ex) {
+      if (ex.getMessage().startsWith("Parsing")) return true;
+      throw(ex);
+    } finally {
+      if (rc != null) rc.shutdown();
+    }
+    return false;
+  }
+
 
 }

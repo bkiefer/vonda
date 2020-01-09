@@ -26,6 +26,7 @@ public interface Constants {
   // Definitions for methods and variables in Agent.java
   public static final String AGENT_DEFS = "Agent" + RULE_FILE_EXTENSION;
 
+  public static final String CFG_INPUT_FILE = "inputFile";
   public static final String CFG_OUTPUT_DIRECTORY = "outputDirectory";
   public static final String CFG_WRAPPER_CLASS = "wrapperClass";
   public static final String CFG_ONTOLOGY_FILE = "ontologyFile";

@@ -18,7 +18,7 @@
  */
 
 package de.dfki.mlt.rudimant;
-import static de.dfki.mlt.rudimant.compiler.Constants.CFG_VISUALISE;
+import static de.dfki.mlt.rudimant.compiler.Constants.*;
 import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.RESOURCE_DIR;
 import static org.junit.Assert.*;
 
@@ -36,7 +36,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.yaml.snakeyaml.Yaml;
 
-import de.dfki.mlt.rudimant.compiler.CompilerMain;
 import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
 
 
@@ -72,8 +71,9 @@ public class CoverageTest {
     Map<String, Object> configs =
     (Map<String, Object>) yaml.load(new FileReader(confFile.toFile()));
     configs.put(CFG_VISUALISE, !headless);
-    RudimantCompiler rc = new RudimantCompiler(confDir, configs);
-    assertFalse(CompilerMain.process(rc, new File(confDir, "AllYouCanDo.rudi")));
+    configs.put(CFG_INPUT_FILE,
+        new File(confDir, "AllYouCanDo.rudi").getAbsolutePath());
+    assertFalse(RudimantCompiler.process(confDir, configs));
     assertEquals(0, startCompiler(confDir));
   }
 }
