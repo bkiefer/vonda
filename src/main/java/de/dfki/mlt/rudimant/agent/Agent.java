@@ -617,6 +617,9 @@ public abstract class Agent implements StreamingClient {
       System.exit(1);
     }
     ruleLogger = new RuleLogger(new ColorLogger());
+    if (configs.containsKey(CFG_DEBUG_PORT) && (startDebuggerGui <= 0)) {
+      startDebuggerGui = (int) configs.get(CFG_DEBUG_PORT);
+    }
     if (startDebuggerGui > 0) {
       try {
         connectToDebugger("localhost", startDebuggerGui);

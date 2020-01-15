@@ -19,6 +19,7 @@
 
 package de.dfki.mlt.rudimant.compiler;
 
+import static de.dfki.mlt.rudimant.common.Constants.*;
 import static de.dfki.mlt.rudimant.compiler.Constants.*;
 
 import java.io.File;

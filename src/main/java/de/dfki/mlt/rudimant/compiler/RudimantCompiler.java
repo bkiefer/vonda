@@ -48,6 +48,7 @@ public class RudimantCompiler {
   public static final Logger logger =
       LoggerFactory.getLogger(RudimantCompiler.class);
 
+  /** Where to put the info file about rules and their source code locations */
   static String INFO_DIR = "src/main/resources/generated";
 
   private HfcDbHandler handler;

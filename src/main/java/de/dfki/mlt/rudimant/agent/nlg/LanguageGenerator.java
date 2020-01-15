@@ -33,7 +33,7 @@ import de.dfki.lt.tr.dialogue.cplan.LoggingTracer;
 import de.dfki.lt.tr.dialogue.cplan.RuleTracer;
 import de.dfki.lt.tr.dialogue.cplan.UtterancePlanner;
 import de.dfki.lt.tr.dialogue.cplan.functions.FunctionFactory;
-import static de.dfki.mlt.rudimant.agent.nlg.ConfConstants.*;
+import static de.dfki.mlt.rudimant.common.Constants.*;
 import java.io.FileReader;
 import org.yaml.snakeyaml.Yaml;
 
@@ -120,7 +120,7 @@ public class LanguageGenerator {
       // so that all random calls to generation can be recorded, too
       // don't know if this is strictly necessary
       // FunctionFactory.register(new RecordableRandomFunction(), _ruleMapper);
-      File mapperProj = new File(configDir, (String) configs.get(MAPPER_PROJECT));
+      File mapperProj = new File(configDir, (String) configs.get(CFG_MAPPER_PROJECT));
       _ruleMapper.readProjectFile(mapperProj);
     } catch (FileNotFoundException e) {
       logger.error("mapper rules not found: " + e);
@@ -143,10 +143,10 @@ public class LanguageGenerator {
    * @throws IOException
    */
   private void setLanguage(File configDir, String lang) throws IOException {
-    Boolean translateNumbers = (Boolean) configs.get(TRANSLATE_NUMBERS);
+    Boolean translateNumbers = (Boolean) configs.get(CFG_TRANSLATE_NUMBERS);
     if (translateNumbers == null) translateNumbers = false;
     cplanner = new CPlannerNlg(
-        new File(configDir, (String) configs.get(GENERATION_PROJECT)),
+        new File(configDir, (String) configs.get(CFG_GENERATION_PROJECT)),
         lang, translateNumbers);
   }
 

@@ -19,7 +19,7 @@
 
 package de.dfki.mlt.rudimant.agent;
 
-import static de.dfki.mlt.rudimant.agent.nlg.ConfConstants.*;
+import static de.dfki.mlt.rudimant.common.Constants.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,8 +50,8 @@ public class AsrTts {
   public void loadGrammar(File configDir, String language, Agent agent, Map configs)
       throws IOException {
 
-    Map nlgConfig = (Map)configs.get(NLG_KEY);
-    Map nluConfig = (Map)configs.get(NLU_KEY);
+    Map nlgConfig = (Map)configs.get(CFG_NLG_KEY);
+    Map nluConfig = (Map)configs.get(CFG_NLU_KEY);
 
     if (nlgConfig  != null && nlgConfig.containsKey(language)) {
       //language = "english";

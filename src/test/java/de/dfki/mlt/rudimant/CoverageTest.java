@@ -18,7 +18,7 @@
  */
 
 package de.dfki.mlt.rudimant;
-import static de.dfki.mlt.rudimant.compiler.Constants.*;
+import static de.dfki.mlt.rudimant.common.Constants.*;
 import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.RESOURCE_DIR;
 import static org.junit.Assert.*;
 
