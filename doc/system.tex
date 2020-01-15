@@ -30,11 +30,12 @@ A \vonda project consists of an ontology, a custom extension of the abstract
 \texttt{Agent} class (the so-called \emph{wrapper class}), a client interface
 to connect the communication channels of the application to the agent, and a
 set of rule files that are arranged in a tree, using \texttt{import}
-statements. The blue core in Figure~\ref{fig:architecture} is the run-time system that
-is part of \vonda, while all light grey elements are the application specific parts
-of the agent. A \texttt{Yaml} project file contains all necessary information
-for compilation: the ontology, the wrapper class, the top-level rule file and
-other parameters, like custom compile commands for \vonda's debugger.
+statements. The blue core in Figure~\ref{fig:architecture} is the run-time
+system that is part of \vonda, while all light grey elements are the
+application specific parts of the agent. A \texttt{Yaml} project file contains
+all necessary information for compilation: the ontology, the wrapper class, the
+top-level rule file and other parameters, like custom compile commands for
+\vonda's debugger.
 
 The \vonda compiler translates rule files with the extension \texttt{.rudi} to
 Java files. During this process, the ontology storing the RDF classes and
@@ -45,13 +46,14 @@ Every rule file can define variables and functions in \vonda syntax which are
 then available to all imported files.
 
 The current structure assumes that most of the Java functionality that is used
-inside the rule files will be provided by the \texttt{Agent} superclass. There are,
-however, alternative ways to use other Java classes directly (see section \ref{sec:javatypes} for further info).
-The methods and fields from the custom wrapper class can be made available to
-all rule files by declaring them in the interface connecting the \texttt{.rudi}
-code to the Java framework. This interface must have the same name as the
-wrapper class but end with \texttt{.rudi} (in the example of figure
-~\ref{fig:architecture}, this would be \texttt{MyAgent.rudi}).
+inside the rule files will be provided by the \texttt{Agent} superclass. There
+are, however, alternative ways to use other Java classes directly (see section
+\ref{sec:javatypes} for further info).  The methods and fields from the custom
+wrapper class can be made available to all rule files by declaring them in the
+interface connecting the \texttt{.rudi} code to the Java framework. This
+interface must have the same name as the wrapper class but end with
+\texttt{.rudi} (in the example of figure ~\ref{fig:architecture}, this would be
+\texttt{MyAgent.rudi}).
 
 \subsection{The \vonda Rule Language}
 \label{sec:language}
@@ -260,7 +262,7 @@ on the ``best'', whose closure is then executed.
 \begin{figure}[h]
   \centering\small%
 \begin{lstlisting}
-if (!saidInSession(#Greeting(Meeting)) {
+if (!saidInSession(#Salutation(Meeting)) {
   // Wait 7 secs before taking initiative
   timeout("wait_for_greeting", 7000) {
     if (! receivedInSession(#Greeting(Meeting))
@@ -271,7 +273,7 @@ if (!saidInSession(#Greeting(Meeting)) {
       }
   }
 
-  if (receivedInSession(#Greeting(Meeting))
+  if (receivedInSession(#Salutation(Meeting))
     propose("greet_back") { // We assume we know the name by now
       emitDA(#ReturnGreeting(Meeting, name={user.name});
     }
@@ -284,20 +286,61 @@ if (!saidInSession(#Greeting(Meeting)) {
 
 \texttt{timeout}s generate the same kind of closures, but with a different
 purpose. They can for example be used to trigger proactive behaviour, or to
-check the state of the system after some time period, or in regular
+check the state of the system after some amount of time, or in regular
 intervals. A timeout will only be created if there is no active timeout with
-the same name.
+the same name, otherwise, if the time delay is different than that of the last
+\texttt{timeout} call, the delay will be set to the new value. For special
+needs, the functions in table~\ref{tbl:timeoutfns} are useful to achieve
+specific behaviours based on \texttt{timeout}s.
+
+\begin{table}[htb]
+\begin{tabular}{lp{.65\textwidth}}
+\texttt{isTimedOut(\emph{label})}& returns \texttt{true} if a timeout with that
+  label fired. This can be reset only by calling
+  \texttt{removeTimeout(\emph{label})}, and is especially convenient to
+  implement timeouts that should only be triggered once in a session. \\
+\texttt{removeTimeout(\emph{label})}& see \texttt{isTimedOut(\emph{label})}\\
+\texttt{cancelTimeout(\emph{label})}& cancels an \emph{active} timeout if there
+                                      is one, has no effect otherwise \\
+\texttt{hasActiveTimeout(\emph{label})}& returns true if there is an
+  active timeout with that label \\
+\end{tabular}
+\caption{\label{tbl:timeoutfns}Functions for fine tuning \texttt{timeout} behaviour}
+\end{table}
 
 There are two variants of \texttt{timeout}: \emph{labeled timeouts}, like the
-one in the previous example, run out after the specified time (unless they are
-cancelled before that using the \texttt{cancelTimeout(\emph{label})} function)
-and then execute their body, and \emph{behaviour timeouts}, where the first
-\todo[inline]{AW: Just a mention that to my knowledge we never used behaviour
-  timeouts in PAL, has it been tested? BK: Yes, but it must be described in more
-  detail.}
-argument is a dialogue act (see next section) instead of a label. These are
-executed either when the specified time is up or the behaviour that was
-triggered by the dialogue act is finished, whatever comes first.
+one in the previous example which run out after the specified time (unless they
+are cancelled before running out) and then execute their body, and
+\emph{behaviour timeouts}, where the first argument is a dialogue act (see next
+section) instead of a label. These are executed either when the specified time
+is up or the behaviour that was triggered by the dialogue act is finished
+(e.g. the audio generated by a text-to-speech engine ended, or a specified
+motion came to an end), whatever comes first.
+\newpage
+The following code patterns may help to use the different possibilities that
+timeouts offer:
+
+{\small%
+\begin{lstlisting}
+// timeout triggered exactly once per session
+if (! hasActiveTimeout("robot_starts") && ! isTimedOut("robot_starts"))
+  timeout("robot_starts", 4000) { ... }
+
+// timeout reoccurring every 1000 milliseconds
+if (! hasActiveTimeout("reptimeout"))
+  timeout("reptimeout", 1000) { ... }
+
+// ensure that something happens even if the expected condition does not
+// become
+true after 10 seconds
+if (! condition && ! hasActiveTimeout("ensure_cond")) {
+  timeout("ensure_cond", 10000) {
+    if (! condition) {
+      // clean up
+    }
+  }
+}
+\end{lstlisting}}
 
 \subsubsection{Interrupting the rule evaluation cycle}
 
