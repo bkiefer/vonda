@@ -376,11 +376,16 @@ public abstract class Agent implements StreamingClient {
     }
   };
 
-  /** Create a new timeout */
+  /** Create a new timeout with an empty proposal */
   public void newTimeout(String name, int millis) {
     timeouts.newTimeout(name, millis, emptyProposal);
   }
 
+  /** Add a new timeout if there ain't an active one with the given name,
+   *  otherwise change the time to fire to the given milliseconds.
+   *
+   *  A fired timeout with that name will not prevent adding a new one.
+   */
   public void newTimeout(String name, int millis, final Proposal p) {
     timeouts.newTimeout(name, millis,
         new Proposal(){ public void run(){
@@ -388,23 +393,28 @@ public abstract class Agent implements StreamingClient {
         }});
   }
 
-  /** Tell me if the timer if the given name ran out */
+  /** Tell me if a timer if the given name ran out, and that fact was not
+   *  actively cleared using removeTimeout.
+   */
   public boolean isTimedOut(String name) {
     boolean result = timeouts.isTimedout(name);
-    if (result) removeTimeout(name);
+    // Do that explicitely, if wanted!
+    // Otherwise it's harder to code "once only" timeouts
+    //if (result) removeTimeout(name);
     return result;
   }
 
-  /** Remove the timer with the given name */
+  /** Remove the fact that a timer with the given name has fired. */
   public void removeTimeout(String name) {
     timeouts.remove(name);
   }
 
-  /** Is there and active timeout with the given name */
+  /** Is there any active timeout with the given name? */
   public boolean hasActiveTimeout(String name) {
     return timeouts.hasActiveTimeout(name);
   }
 
+  /** Cancel this active timeout, if there is one */
   public void cancelTimeout(String name) {
     timeouts.cancelTimeout(name);
   }

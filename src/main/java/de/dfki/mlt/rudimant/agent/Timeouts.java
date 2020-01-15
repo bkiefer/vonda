@@ -44,18 +44,23 @@ public class Timeouts {
     long started;
   }
 
+  /** Add a new timeout with the given id and proposal. A timeout will only be
+   *  added if there is no pending (active) timeout with the same id, otherwise,
+   *  the timeout waiting time will be set to the new waiting time, taking into
+   *  account the time that already passed since first adding it.
+   */
   public synchronized void newTimeout(final String id, int millis, Proposal p) {
     MyTimer t = pendingTimeouts.get(id);
     int timeToFire = millis;
     if (t == null) {
       t = new MyTimer();
       pendingTimeouts.put(id, t);
-      logger.info("timeout added: " + id + " " + millis);
+      logger.debug("timeout added: " + id + " " + millis);
     } else {
       timeToFire = (int) (t.timer.getInitialDelay() + t.started
               - System.currentTimeMillis());
       t.timer.stop();
-      logger.info("timeout updated: " + id + " " + timeToFire);
+      logger.debug("timeout updated: " + id + " " + timeToFire);
     }
     t.timer = new Timer(timeToFire, new ActionListener() {
       @Override
@@ -65,9 +70,7 @@ public class Timeouts {
           pendingTimeouts.get(id).timer.stop();
           pendingTimeouts.remove(id);
           occuredTimeouts.add(id);
-          logger.info("timeout fired: " + id);
-          // TODO clean this up. This is certainly not doing the exact same
-          // thing as go, but run may be not enough.
+          logger.debug("timeout fired: " + id);
           p.run();
           timeoutOccured = true;
         }
@@ -77,14 +80,22 @@ public class Timeouts {
     t.timer.start();
   }
 
+  /** Did a timeout with this name fire? If so, this will return true until the
+   *  occurrence is explicitely removed with the remove method. Thus, timeouts
+   *  that are supposed to be used exactly once are easy to implement.
+   */
   public boolean isTimedout(String id) {
     return occuredTimeouts.contains(id);
   }
 
+  /** Is there a pending timeout with the given id? */
   public boolean hasActiveTimeout(String id) {
     return pendingTimeouts.containsKey(id);
   }
 
+  /** If there is a pending (active) timeout with the given id, cancel it
+   *  without executing its proposal.
+   */
   public synchronized boolean cancelTimeout(String id) {
     MyTimer t = pendingTimeouts.get(id);
     if (t == null) return false;
@@ -93,17 +104,19 @@ public class Timeouts {
     return true;
   }
 
+  /** Remove the given id from the set of timeouts that have fired */
   public synchronized void remove(String id) {
     occuredTimeouts.remove(id);
   }
 
+  /** Did some timeout fire in the meantime? */
   public boolean timeoutOccured() {
     boolean result = timeoutOccured;
     timeoutOccured = false;
     return result;
   }
 
-  // Cancel all running timers and clear all data structures
+  /** Cancel all running timers and clear all data structures */
   public synchronized void clear() {
     occuredTimeouts.clear();
     timeoutOccured = false;
