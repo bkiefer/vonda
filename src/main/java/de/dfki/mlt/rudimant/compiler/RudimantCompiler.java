@@ -361,7 +361,7 @@ public class RudimantCompiler {
     RudimantCompiler rc = null;
     try {
       rc = new RudimantCompiler(confDir, configs);
-      rc.processToplevel(new File((String) configs.get(CFG_INPUT_FILE)));
+      rc.processToplevel(new File(confDir, (String) configs.get(CFG_INPUT_FILE)));
     } catch (UnsupportedOperationException ex) {
       if (ex.getMessage().startsWith("Parsing")) return true;
       throw(ex);

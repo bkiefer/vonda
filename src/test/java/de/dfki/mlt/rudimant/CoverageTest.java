@@ -71,8 +71,7 @@ public class CoverageTest {
     Map<String, Object> configs =
     (Map<String, Object>) yaml.load(new FileReader(confFile.toFile()));
     configs.put(CFG_VISUALISE, !headless);
-    configs.put(CFG_INPUT_FILE,
-        new File(confDir, "AllYouCanDo.rudi").getAbsolutePath());
+    configs.put(CFG_INPUT_FILE, "AllYouCanDo.rudi");
     assertFalse(RudimantCompiler.process(confDir, configs));
     assertEquals(0, startCompiler(confDir));
   }
