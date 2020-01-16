@@ -1,5 +1,4 @@
-// all standard Java methods that we should remember
-
+// standard Java methods that we provide
 [Object]. boolean equals(Object e);
 [String]. boolean startsWith(String s);
 [String]. boolean endsWith(String s);
@@ -7,8 +6,8 @@
 [String]. String substring(int begin, int end);
 [String]. boolean isEmpty();
 [String]. int length();
-String getUriName(String uri);
 
+// Some handy conversions from and to String
 int toInt(String s);
 float toFloat(String s);
 double toDouble(String s);
@@ -19,7 +18,6 @@ String toStr(byte i);
 String toStr(float i);
 String toStr(double i);
 String toStr(boolean i);
-
 
 [List<T>]. T get(int a);
 [Collection<T>]. void add(Object a);
@@ -40,20 +38,24 @@ Rdf toRdf(String uri);
 
 RdfClass getRdfClass(String s);
 boolean exists(Object o);
+// return only the name part of an URI (no namespace or angle brackets)
+String getUriName(String uri);
+
 // fire off general queries
 //List<List<Object>> queryTable(String query, String ... args);
 //List<Object> query(String query, String ... args);
-
 
 // DialogueAct methods
 DialogueAct createEmitDA(DialogueAct da);
 DialogueAct emitDA(int delay, DialogueAct da);
 DialogueAct emitDA(DialogueAct da);
 [DialogueAct]. String getDialogueActType();
-[DialogueAct]. void setDialogueActType(String val);
+[DialogueAct]. void setDialogueActType(String dat);
 [DialogueAct]. String getProposition();
-[DialogueAct]. boolean hasSlot(String val);
-[DialogueAct]. String getValue(String val);
+[DialogueAct]. void setProposition(String prop);
+[DialogueAct]. boolean hasSlot(String key);
+[DialogueAct]. String getValue(String key);
+[DialogueAct]. void setValue(String key, String val);
 [DialogueAct]. long getTimeStamp();
 
 
@@ -65,6 +67,7 @@ DialogueAct myLastDA(int back); // myLastDA() == myLastDA(0);
 // utterances back was it? (otherwise, -1 is returned)
 int saidInSession(DialogueAct da);
 
+// Check if we asked a question that is still pending
 boolean waitingForResponse();
 
 DialogueAct lastDA();
@@ -73,31 +76,32 @@ void lastDAprocessed();
 // like saidInSession, only for incoming dialogue acts
 int receivedInSession(DialogueAct da);
 
-void newData();
-
-// Timeout methods
-void newTimeout(String name, int millis);
-boolean isTimedOut(String name);
-void removeTimeout(String name);
-boolean hasActiveTimeout(String name);
-// cancel and remove an active timeout, will not be executed
-void cancelTimeout(String name);
+void newData();  // explicitely tell the system to execute the rules
 
 String getLanguage();
 
-// Math methods
-int random(int limit);
-float random();
+// Random methods
+int random(int limit); // return and int between zero and limit (excluded)
+float random();        // return a random float between zero and one (excluded)
+T random(Collection<T> coll); // select a random element from the collection
 
-// return the current epoch milliseconds
+// return the current time since the epoch in milliseconds
 long now();
-
-// logging methods
-Logger logger;
 
 // discarding actions and shutdown
 void clearBehavioursAndProposals();
 void shutdown();
+
+// Timeout methods
+void newTimeout(String name, int millis);
+// has a timeout with that name fired and was not "removed"
+boolean isTimedOut(String name);
+// remove the timeout that has fired
+void removeTimeout(String name);
+// is there an active timeout with that name
+boolean hasActiveTimeout(String name);
+// cancel and remove an active timeout, will not be executed
+void cancelTimeout(String name);
 
 // lambda: first class argument of Function is return type of function object
 boolean some(Collection<T> coll, Function<Boolean, T> pred);
@@ -107,10 +111,10 @@ List<T> sort(Collection<T> coll, Function<Integer, T, T> comp);
 Collection<T> map(Collection<S> coll, Function<T, S> f);
 int count(Collection<T> coll, Function<Boolean, T> pred);
 T first(Collection<T> coll, Function<Boolean, T> pred);
-T random(Collection<T> coll);
 
 // all Agent variables we should know
 
 //RdfProxy _proxy;
 CommunicationHub _hub;
 AsrTts asr;
+Logger logger;   // Global logger
