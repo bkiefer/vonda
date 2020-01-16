@@ -286,7 +286,7 @@
         <version>2.22.2</version>
         <configuration>
           <systemPropertyVariables>
-            <log4j.configuration>file:${project.build.testSourceDirectory}/../resources/log4j.properties</log4j.configuration>
+            <log4j.configurationFile>${project.build.testSourceDirectory}/../resources/log4j2.xml</log4j.configurationFile>
           </systemPropertyVariables>
         </configuration>
       </plugin>
