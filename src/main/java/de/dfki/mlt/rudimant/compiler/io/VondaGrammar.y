@@ -50,9 +50,9 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 
 %define package "de.dfki.mlt.rudimant.compiler.io"
 
-%define public
+%define api.parser.public
 
-%define parser_class_name {VondaGrammar}
+%define api.parser.class {VondaGrammar}
 
 %define parse.error verbose
 
@@ -130,7 +130,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %token < String > WILDCARD
 %token < ExpLiteral > INT
 %token < ExpLiteral > BOOL_LITERAL
-%token < String > VARIABLE
+%token < String > IDENTIFIER
 %token < ExpLiteral > OTHER_LITERAL
 
 %%
@@ -172,27 +172,27 @@ imports
   ;
 
 path
-  : VARIABLE { $$ = new ArrayList<String>(){{ add($1); }}; }
-  | path '.' VARIABLE { $$ = $1; $1.add($3); }
+  : IDENTIFIER { $$ = new ArrayList<String>(){{ add($1); }}; }
+  | path '.' IDENTIFIER { $$ = $1; $1.add($3); }
   ;
 
 statement_no_def
   : block { $$ = $1; }
   | assignment ';' { $$ = setPos(getAssignmentStat($1), @$); }
   | field_access ';' { $$ = setPos(new StatExpression($1), @$); }
-  | PLUSPLUS VARIABLE ';' {
+  | PLUSPLUS IDENTIFIER ';' {
     ExpIdentifier var = setPos(new ExpIdentifier($2), @2);
     $$ = setPos(new StatExpression(createPlusMinus(var, "++", @$)), @$);
   }
-  | MINUSMINUS VARIABLE ';' {
+  | MINUSMINUS IDENTIFIER ';' {
     ExpIdentifier var = setPos(new ExpIdentifier($2), @2);
     $$ = setPos(new StatExpression(createPlusMinus(var, "--", @$)), @$);
   }
-  | VARIABLE PLUSPLUS ';' {
+  | IDENTIFIER PLUSPLUS ';' {
     ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
     $$ = setPos(new StatExpression(createPlusMinus(var, "+++", @$)), @$);
   }
-  | VARIABLE MINUSMINUS ';' {
+  | IDENTIFIER MINUSMINUS ';' {
     ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
     $$ = setPos(new StatExpression(createPlusMinus(var, "---", @$)), @$);
   }
@@ -243,14 +243,14 @@ statements: blk_statement { $$ = new LinkedList<RTStatement>(){{ add($1); }}; }
   ;
 
 grammar_rule
-  : VARIABLE ':' if_statement { $$ = setPos(new StatGrammarRule($1, $3), @$); }
+  : IDENTIFIER ':' if_statement { $$ = setPos(new StatGrammarRule($1, $3), @$); }
   ;
 
 return_statement
   : RETURN ';' { $$ = setPos(new StatReturn("return"), @$); }
   | RETURN exp ';' { $$ = setPos(new StatReturn($2), @$); }
   | BREAK ';' { $$ = setPos(new StatReturn("break"), @$); }
-  | BREAK VARIABLE ';' { $$ = setPos(new StatReturn("break", $2), @$); }
+  | BREAK IDENTIFIER ';' { $$ = setPos(new StatReturn("break", $2), @$); }
   | CANCEL ';' { $$ = setPos(new StatReturn("cancel"), @$); }
   | CANCEL_ALL ';' { $$ = setPos(new StatReturn("cancel_all"), @$); }
   | CONTINUE ';' { $$ = setPos(new StatReturn("continue"), @$); }
@@ -281,35 +281,35 @@ for_statement
     $$ = setPos(new StatFor1($3, null, null, $6), @$); }
   | FOR '('     ';' exp ';' exp ')' statement {
     $$ = setPos(new StatFor1(null, $4, $6, $8), @$); }
-  | FOR '(' VARIABLE ':' exp ')' statement {
+  | FOR '(' IDENTIFIER ':' exp ')' statement {
     ExpIdentifier var = setPos(new ExpIdentifier($3), @3);
     $$ = setPos(new StatFor2(var, $5, $7), @$);
   }
-  | FOR '(' type_spec VARIABLE ':' exp ')' statement {
+  | FOR '(' type_spec IDENTIFIER ':' exp ')' statement {
     ExpIdentifier var = setPos(new ExpIdentifier($4), @4);
     $$ = setPos(new StatFor2($3, var, $6, $8), @$);
   }
   // for loop with destructuring into a tuple
-  //| FOR '(' '(' VARIABLE ( ',' VARIABLE )+ ')' ':' exp ')' statement {}
+  //| FOR '(' '(' IDENTIFIER ( ',' IDENTIFIER )+ ')' ':' exp ')' statement {}
   ;
 
 var_decl
-  : VARIABLE assgn_exp ';' {
+  : IDENTIFIER assgn_exp ';' {
     ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
     ExpAssignment ass = setPos(new ExpAssignment(var, $2), @1, @2);
     $$ = setPos(new StatVarDef(false, Type.getNoType(), ass), @$);
   }
-  | type_spec VARIABLE assgn_exp ';' {
+  | type_spec IDENTIFIER assgn_exp ';' {
     ExpIdentifier var = setPos(new ExpIdentifier($2), @2);
     ExpAssignment ass = setPos(new ExpAssignment(var, $3), @2, @3);
     $$ = setPos(new StatVarDef(false, $1, ass), @$);
   }
-  | FINAL VARIABLE assgn_exp ';' {
+  | FINAL IDENTIFIER assgn_exp ';' {
     ExpIdentifier var = setPos(new ExpIdentifier($2), @2);
     ExpAssignment ass = setPos(new ExpAssignment(var, $3), @2, @3);
     $$ = setPos(new StatVarDef(true, Type.getNoType(), ass), @$);
   }
-  | FINAL type_spec VARIABLE assgn_exp ';' {
+  | FINAL type_spec IDENTIFIER assgn_exp ';' {
     ExpIdentifier var = setPos(new ExpIdentifier($3), @3);
     ExpAssignment ass = setPos(new ExpAssignment(var, $4), @3, @4);
     $$ = setPos(new StatVarDef(true, $2, ass), @$);
@@ -322,11 +322,6 @@ propose_statement
 
 timeout_statement
   : TIMEOUT '(' exp ',' exp ')' block {
-    // labeled timeout
-    $$ = setPos(new StatTimeout($3, $5, $7), @$);
-  }
-  | TIMEOUT '(' dialogueact_exp ',' exp ')' block {
-    // behaviour timeout
     $$ = setPos(new StatTimeout($3, $5, $7), @$);
   }
   ;
@@ -360,7 +355,7 @@ label_statement
     setPos(val, @$); setPos(lbl, @$);
     $$ = lbl;
   }
-  | CASE VARIABLE ':' {
+  | CASE IDENTIFIER ':' {
     ExpLiteral val =
       new ExpLiteral("case " + $2 + ":", "label");
     RTStatement lbl = val.ensureStatement();
@@ -376,34 +371,34 @@ label_statement
   ;
 
 var_def
-  : FINAL VARIABLE assgn_exp ';' {
+  : FINAL IDENTIFIER assgn_exp ';' {
     ExpIdentifier var = setPos(new ExpIdentifier($2), @2);
     ExpAssignment ass = setPos(new ExpAssignment(var, $3), @2, @3);
     $$ = setPos(new StatVarDef(true, Type.getNoType(), ass), @$);
   }
-  | type_spec VARIABLE assgn_exp ';' {
+  | type_spec IDENTIFIER assgn_exp ';' {
     ExpIdentifier var = setPos(new ExpIdentifier($2), @2);
     ExpAssignment ass = setPos(new ExpAssignment(var, $3), @2, @3);
     $$ = setPos(new StatVarDef(false, $1, ass), @$);
   }
-  | FINAL type_spec VARIABLE assgn_exp ';' {
+  | FINAL type_spec IDENTIFIER assgn_exp ';' {
     ExpIdentifier var = setPos(new ExpIdentifier($3), @3);
     ExpAssignment ass = setPos(new ExpAssignment(var, $4), @3, @4);
     $$ = setPos(new StatVarDef(true, $2, ass), @$);
     }
-  | FINAL VARIABLE ';' {
+  | FINAL IDENTIFIER ';' {
     $$ = setPos(new StatVarDef(true, Type.getNoType(), $2), @$);
   }
-  | type_spec VARIABLE ';' {
+  | type_spec IDENTIFIER ';' {
     $$ = setPos(new StatVarDef(false, $1, $2), @$);
   }
-  | FINAL type_spec VARIABLE ';' {
+  | FINAL type_spec IDENTIFIER ';' {
     $$ = setPos(new StatVarDef(true, $2, $3), @$);
   }
   ;
 
 field_def
-  : '[' type_spec ']' '.' type_spec VARIABLE ';' {
+  : '[' type_spec ']' '.' type_spec IDENTIFIER ';' {
     $$ = setPos(new StatFieldDef(null,
            setPos(new StatVarDef(false, $5, $6), @$), $2), @$);
   }
@@ -426,10 +421,10 @@ nonempty_exp_list
 
 /* For method declarations, the return type spec is OBLIGATORY */
 method_declaration
-  : '[' type_spec ']' '.' type_spec VARIABLE '(' opt_args_list ')' opt_block {
+  : '[' type_spec ']' '.' type_spec IDENTIFIER '(' opt_args_list ')' opt_block {
     $$ = setPos(new StatMethodDeclaration("public", $5, $2, $6, $8, $10), @$);
   }
-  | type_spec VARIABLE '(' opt_args_list ')' opt_block {
+  | type_spec IDENTIFIER '(' opt_args_list ')' opt_block {
     $$ = setPos(new StatMethodDeclaration("public", $1, null, $2, $4, $6), @$);
   }
   ;
@@ -445,13 +440,13 @@ opt_args_list
   ;
 
 args_list
-  : VARIABLE { $$ = new LinkedList(){{ add(Type.getNoType()); add($1); }}; }
-  | type_spec VARIABLE { $$ = new LinkedList(){{ add($1); add($2); }}; }
-  | VARIABLE ',' args_list {
+  : IDENTIFIER { $$ = new LinkedList(){{ add(Type.getNoType()); add($1); }}; }
+  | type_spec IDENTIFIER { $$ = new LinkedList(){{ add($1); add($2); }}; }
+  | IDENTIFIER ',' args_list {
     $$ = $3;
     $3.addFirst($1); $3.addFirst(Type.getNoType());
   }
-  | type_spec VARIABLE ',' args_list {
+  | type_spec IDENTIFIER ',' args_list {
     $$ = $4; $4.addFirst($2); $4.addFirst($1);
   }
   ;
@@ -459,11 +454,11 @@ args_list
 
 // add sth to a collection
 set_operation
-  : VARIABLE PLUSEQ exp ';' {
+  : IDENTIFIER PLUSEQ exp ';' {
     ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
     $$ = setPos(new StatSetOperation(var, true, $3), @$);
   }
-  | VARIABLE MINUSEQ exp ';' {
+  | IDENTIFIER MINUSEQ exp ';' {
     ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
     $$ = setPos(new StatSetOperation(var, false, $3), @$);
   }
@@ -485,10 +480,10 @@ set_operation
 ////////////////// EXPRESSIONS ////////////////////////////////
 
 function_call
-  : VARIABLE '(' ')' {
+  : IDENTIFIER '(' ')' {
     $$ = setPos(new ExpFuncCall($1, new LinkedList<RTExpression>(), false), @$);
   }
-  | VARIABLE '(' nonempty_args_list ')'  {
+  | IDENTIFIER '(' nonempty_args_list ')'  {
     $$ = setPos(new ExpFuncCall($1, $3, false), @$);
   }
   ;
@@ -501,12 +496,12 @@ nonempty_args_list
   ;
 
 type_spec
-  : VARIABLE '[' ']' {
+  : IDENTIFIER '[' ']' {
     $$ = new Type("Array",
                   new ArrayList<Type>(){{ add(new Type($1)); }});
   }
-  | VARIABLE { $$ = new Type($1); }
-  | VARIABLE '<' type_spec_list '>' { $$ = new Type($1, $3); }
+  | IDENTIFIER { $$ = new Type($1); }
+  | IDENTIFIER '<' type_spec_list '>' { $$ = new Type($1, $3); }
   ;
 
 type_spec_list
@@ -598,6 +593,11 @@ MultiplicativeExpression
   }
   ;
 
+CastExpression
+  : UnaryExpression { $$ = $1; }
+  | '(' type_spec ')' CastExpression { $$ = setPos(new ExpCast($2, $4), @$); }
+  ;
+
 UnaryExpression
   : PLUSPLUS UnaryExpression {
     $$ = createPlusMinus($2, "++", @$);
@@ -609,11 +609,6 @@ UnaryExpression
   | '-' CastExpression { $$ = setPos(new ExpArithmetic($2, null, "-"), @$); }
   | LogicalUnaryExpression { $$ = $1; }
 ;
-
-CastExpression
-  : UnaryExpression { $$ = $1; }
-  | '(' type_spec ')' CastExpression { $$ = setPos(new ExpCast($2, $4), @$); }
-  ;
 
 LogicalUnaryExpression
   : PostfixExpression { $$ = $1; }
@@ -638,7 +633,7 @@ PrimaryExpression
   ;
 
 NotJustName
-  : VARIABLE { $$ = setPos(new ExpIdentifier($1), @$); }
+  : IDENTIFIER { $$ = setPos(new ExpIdentifier($1), @$); }
   | '(' '(' type_spec ')' UnaryExpression ')' { $$ = setPos(new ExpCast($3, $5), @$); }
   ;
 
@@ -663,7 +658,7 @@ Literal
   ;
 
 ArrayAccess
-  : VARIABLE '[' exp ']' {
+  : IDENTIFIER '[' exp ']' {
     ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
     $$ = setPos(new ExpArrayAccess(var, $3), @$);
   }
@@ -680,7 +675,7 @@ ConditionalExpression
 assignment
   : field_access assgn_exp { $$ = setPos(new ExpAssignment($1, $2), @$); }
   | ArrayAccess assgn_exp { $$ = setPos(new ExpAssignment($1, $2), @$); }
-  | VARIABLE assgn_exp {
+  | IDENTIFIER assgn_exp {
     ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
     ExpAssignment ass = setPos(new ExpAssignment(var, $2), @$);
     $$ = ass;
@@ -703,34 +698,34 @@ field_access_rest
   ;
 
 simple_nofa_exp
-  : VARIABLE { $$ = setPos(new ExpIdentifier($1), @$); }
+  : IDENTIFIER { $$ = setPos(new ExpIdentifier($1), @$); }
   | function_call { $$ = $1; }
   | '(' exp ')' { $$ = $2; }
   ;
 
 new_exp
-  : NEW VARIABLE { $$ = setPos(new ExpNew(new Type($2)), @$); }
-  | NEW VARIABLE '(' ')' {
+  : NEW IDENTIFIER { $$ = setPos(new ExpNew(new Type($2)), @$); }
+  | NEW IDENTIFIER '(' ')' {
     $$ = setPos(new ExpNew(new Type($2), new LinkedList<>()), @$);
   }
-  | NEW VARIABLE '(' nonempty_exp_list ')' {
+  | NEW IDENTIFIER '(' nonempty_exp_list ')' {
     $$ = setPos(new ExpNew(new Type($2), $4), @$);
   }
-  | NEW VARIABLE '[' exp ']' {
+  | NEW IDENTIFIER '[' exp ']' {
     List<Type> sub = new ArrayList<Type>() {{ add(new Type($2)); }};
     $$ = setPos(new ExpNew(new Type("Array", sub),
                     new LinkedList<RTExpression>(){{ add($4); }}), @$);
   }
-  | NEW VARIABLE '[' ']' '(' exp ')'{
+  | NEW IDENTIFIER '[' ']' '(' exp ')'{
     List<Type> sub = new ArrayList<Type>() {{ add(new Type($2)); }};
     $$ = setPos(new ExpNew(new Type("Array", sub),
                     new LinkedList<RTExpression>(){{ add($6); }}), @$);
   }
-  | NEW VARIABLE '<' type_spec_list '>' '(' ')' {
+  | NEW IDENTIFIER '<' type_spec_list '>' '(' ')' {
     $$ = setPos(new ExpNew(new Type($2, $4),
                     new LinkedList<>()), @$);
   }
-  | NEW VARIABLE '<' type_spec_list '>' '(' nonempty_exp_list ')' {
+  | NEW IDENTIFIER '<' type_spec_list '>' '(' nonempty_exp_list ')' {
     $$ = setPos(new ExpNew(new Type($2, $4),
                     $7), @$);
   }
@@ -755,8 +750,8 @@ dialogueact_exp
 da_token
   : '{' exp '}' { $$ = $2; }
   // Note: if not explicitly marked, variables are not treated as variabls in DAs
-  //  | VARIABLE { $$ = setPos(new ExpIdentifier($1), @$); }
-  | VARIABLE { $$ = setPos(new ExpLiteral($1, "String"), @$); }
+  //  | IDENTIFIER { $$ = setPos(new ExpIdentifier($1), @$); }
+  | IDENTIFIER { $$ = setPos(new ExpLiteral($1, "String"), @$); }
   | STRING { $$ = setPos($1, @$); }
   | WILDCARD { $$ = setPos(new ExpLiteral($1, "String"), @$); }
   ;
@@ -830,7 +825,7 @@ NLWS: [\n\r]+ -> channel(HIDDEN);
 
 // LETTER: ('A'..'Z'|'a'..'z');
 /// identifiers (starting with "java letter"):
-VARIABLE: ('A'..'Z'|'a'..'z'|'_')('0'..'9'|'A'..'Z'|'a'..'z'|'_'|'$')*;
+IDENTIFIER: ('A'..'Z'|'a'..'z'|'_')('0'..'9'|'A'..'Z'|'a'..'z'|'_'|'$')*;
 
 /// numeric literal (starting with - or number):
 INT: ('-')?('1'..'9')?('0'..'9')+;

@@ -344,7 +344,7 @@ SingleCharacter = [^\r\n\'\\]
   /* identifiers */
   {Identifier}                   {
   yylval = yytext();
-  return token(VondaGrammar.Lexer.VARIABLE);
+  return token(VondaGrammar.Lexer.IDENTIFIER);
                                  }
 }
 
