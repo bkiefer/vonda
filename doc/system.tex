@@ -103,9 +103,9 @@ variables also usable in lower-level rule files.
 \label{sec:rdfaccesses}
 
 \begin{figure}[htb]
-\begin{minipage}{0.5\columnwidth}
+\rule{7mm}{0pt}\begin{minipage}{0.45\columnwidth}
 \small%
-\begin{lstlisting}
+\begin{lstlisting}[numbers=left,numberstyle=\scriptsize]
 user = new Animate;
 user.name = "Joe";
 set_age:
@@ -113,7 +113,7 @@ if (user.age <= 0) {
   user.age = 15;
 }
 \end{lstlisting}
-\end{minipage}\ \vrule\hspace{1ex}
+\end{minipage}\vrule\hspace{1ex}
 \begin{minipage}{0.44\columnwidth}
     \small\begin{tikzpicture}[
   blob/.style={circle, fill=yellow!50!white, minimum width=2mm},
@@ -136,49 +136,74 @@ if (user.age <= 0) {
 \end{figure}
 
 Figure \ref{fig:rdfobjects} shows an example of \vonda code, and how it relates
-to RDF type and property specifications, schematically presented on the right.  The
-domain and range definitions of properties are picked up by the compiler and then
-used in various places, e.g., to infer types, do automatic code or data
-conversions, or create ``intelligent'' boolean tests, like in line 4, which
-will expand into two tests, one testing for the existence of the property for
-the object, and in case that succeeeds, a test if the value is smaller or equal than
-zero. If there is a chain of more than one field/property access, every part is
-tested for existence in the target code, keeping the source code as concise as
-possible. Also for reasons of brevity, the type of a new variable needs not be
-given if it can be inferred from the value assigned to it.
+to RDF type and property specifications, schematically presented on the right.
+The domain and range definitions of properties are picked up by the compiler
+and then used in various places, e.g., to infer types, do automatic code or
+data conversions, or create ``intelligent'' boolean tests, like in line 4,
+which will expand into two tests, one testing for the existence of the property
+for the object, and in case that succeeeds, a test if the value is smaller or
+equal than zero. If there is a chain of more than one field/property access,
+every part is tested for existence in the target code, keeping the source code
+as concise as possible (see also table~\ref{table:multi-predaccess}). Also for
+reasons of brevity, the type of a new variable needs not be given if it can be
+inferred from the value assigned to it.
 
 New RDF objects can be created with \texttt{new}, similar to Java objects; they
 are immediately reflected in the database, as are all changes to already
 existing objects.
 
 \begin{table}[htbp]
-  \centering\small
-\begin{minipage}[t]{0.355\textwidth}
+\small\begin{minipage}{0.5\textwidth}
 \begin{lstlisting}
 c = new Child;
-String name = c.name;
+nm = c.name;
 c.name = "new name";
 Set middle = c.middleNames;
 c.middleNames += "John";
 c.middleNames -= "James";
-c.name = null;
+c.middleNames = null;
 \end{lstlisting}
-\end{minipage}\\{\Large$\Downarrow$}\\
-\begin{minipage}[t]{0.8\textwidth}
+\end{minipage}{\LARGE$\Rightarrow$}\rule{6.4cm}{0pt}\\
+\begin{minipage}{0.99\textwidth}
 \begin{lstlisting}
-String name = (String)c.getValue("<upper:name>");
+c = palAgent._proxy.getClass("<dom:Child>").getNewInstance(palAgent.DEFNS);
+nm = c.getString("<upper:name>");
 c.setValue("<upper:name>", "new name");
-Set middle = (Set<Object>)c.getValue("<upper:middleNames");
-c.add("<upper:middleNames", "John");
-c.remove("<upper:middleNames", "James");
-c.clearValue("<dom:name>");
+middle = c.getValue("<upper:middleNames");
+c.getValue("<upper:middleNames>").add("John");
+c.getValue("<upper:middleNames>").remove("James");
+c.clearValue("<upper:middleNames>");
 \end{lstlisting}
 \end{minipage}
   \caption{Examples for an RDF property access}
   \label{tab:property-access}
 \end{table}
-\todo[inline]{missing creation of child in lower part, plus "Set middle" is no
-  proper code, line numbers used in text, but not present in figure}
+
+To be able to \emph{parametrize} the field access to RDF objects, \vonda has a
+special mechanism which can lead to subtle and hard-to-find programming errors,
+if used wrongly. If, for example, a string variable with the name
+\texttt{middleNames} would be available in the scope of the above \vonda source
+code, the resulting code would have looked like in table~\ref{tbl:varpropacc}
+instead, using the \emph{value} of the variable to determine the field
+name. For the given code, this does not make sense, but it can be useful in
+situations where, e.g., the property to use is determined by the input
+utterance.
+
+\begin{table}[htbp]
+\small\begin{minipage}{0.99\textwidth}
+\begin{lstlisting}
+// somewhere before in the scope ...
+String middleNames = "<upper:middleNames>";
+...
+middle = c.getValue(middleNames);
+c.getValue(middleNames).add("John");
+c.getValue(middleNames).remove("James");
+c.clearValue(middleNames);
+\end{lstlisting}
+\end{minipage}
+\caption{RDF property access using the value of a variable as property name}
+  \label{tab:varpropacc}
+\end{table}
 
 The connection of \vonda to the ontology loaded into HFC during compile time
 enables the compiler to recognize the correct RDF class to create a new
@@ -238,7 +263,7 @@ introduction:
       greetUser();
   }
 \end{lstlisting}
-\end{small}
+\end{small}\vspace{-2ex}
 \caption{A simple rule}
 \end{figure}
 
@@ -316,7 +341,7 @@ section) instead of a label. These are executed either when the specified time
 is up or the behaviour that was triggered by the dialogue act is finished
 (e.g. the audio generated by a text-to-speech engine ended, or a specified
 motion came to an end), whatever comes first.
-\newpage
+
 The following code patterns may help to use the different possibilities that
 timeouts offer:
 
@@ -331,8 +356,7 @@ if (! hasActiveTimeout("reptimeout"))
   timeout("reptimeout", 1000) { ... }
 
 // ensure that something happens even if the expected condition does not
-// become
-true after 10 seconds
+// become true after 10 seconds
 if (! condition && ! hasActiveTimeout("ensure_cond")) {
   timeout("ensure_cond", 10000) {
     if (! condition) {
@@ -396,8 +420,8 @@ creation (i.e., character strings on the left and right of the equal sign) are
 seen as and transformed to constant (string) literals, because most of the time
 that is what is needed.  Surrounding a character sequence with curly brackets
 (\texttt{\{\}}) marks it as an expression that should be evaluated. In fact,
-arbitrary expressions are allowed inside the curly brackets.
-\todo[inline]{What about automatic conversion to string?}
+arbitrary expressions are allowed inside the curly brackets, and converted
+automatically to a string, if necessary and possible.
 
 While this kind of shallow semantics is enough for many applications, we
 already experience its shortcomings when trying to handle, for example, social
@@ -416,261 +440,180 @@ explicitely state it.
 You can also declare variables final.
 
 \begin{table}[htbp]
-  \centering
   \begin{small}
-    \begin{lstlisting}
-      if (! c.user.personality.nonchalance){ ... }
-    \end{lstlisting}
-
-    {\Large$\Downarrow$}\\
-
-    \begin{lstlisting}
-      if (!((((c != null) && (c.user != null))
-             && (c.user.personality != null))
-            && (c.user.personality.nonchalance != null))) {
-         ...
-      }
+\begin{minipage}{.55\textwidth}
+\begin{lstlisting}
+if (! c.user.personality.nonchalance){ ... }
 \end{lstlisting}
-\end{small}
-
+\end{minipage}\rule{2cm}{0pt}{\LARGE$\Rightarrow$}\hfill\\
+\begin{lstlisting}
+if (!((((c != null) && (c.user != null)) && (c.user.personality != null))
+      && (c.user.personality.nonchalance != null))) {
+  ...
+}
+\end{lstlisting}\end{small}\vspace*{-2ex}
 \caption{Transformation of complex boolean expressions}
 \label{tab:multi-predaccess}
 \end{table}
 \vspace*{10pt}
 
-%Als zeitsparendes Feature bietet rudimant insbesondere das automatische
-%Vervollständingen von bool'schen Ausdrücken in den Clauses von if, while und
-%for an. Da in diesem Fall bekannt ist, dass das Ergebnis boolean sein muss,
-%ergänzt rudimant automatisch den Test auf die Existenz eines Objektes in der
-%Clause, sollte dieses nicht Typ boolean sein. Bei Feldzugriffen testet es für
-%jeden Teilzugriff, dass das erhaltene Objekt nicht null ist, um einer
-%NullPointerException zur Laufzeit des generierten Codes vorzubeugen.
-
-A time-saving (and code-readability-improving) feature of \vonda is the
-automatic completion of boolean expressions in the clauses of if, while and for
-statements. As it is obvious in these cases that the result of the expression
-must be of type boolean, \vonda automatically fills in a test for existence if
-it is not. When encountering field accesses, it makes sure that every
-partial access is tested for existence (i.e., not \texttt{null}) to avoid a
-\texttt{NullPointerException} in the runtime execution of the generated code.
+A time-saving feature of \vonda which also improves readability is the
+automatic completion of boolean expressions in the clauses of \texttt{if},
+\texttt{while} and \texttt{for} statements. As it is obvious in these cases
+that the result of the expression must be of type boolean. \vonda automatically
+fills in a test for existence if it is not. When encountering field accesses,
+it makes sure that every partial access is tested for existence (i.e., not
+\texttt{null}) to avoid a \texttt{NullPointerException} in the runtime
+execution of the generated code.
 
 Be aware that the expansion in the figure only occurs if the multiple field
-access is used as boolean test. In the example of
-\ref{tab:multi-predaccess-wrong}, if the first clause in the boolean expression
-is omitted, a \texttt{NullPointerException} could still occur because the second clause does not trigger an automatic test for existence of \texttt{activity}.
+access is used as boolean test. In the following example, the first clause in
+the boolean expression should not be omitted, since a
+\texttt{NullPointerException} could still occur because the second clause does
+not trigger an automatic test for existence of the \texttt{status} of
+\texttt{activity}:
 
-\begin{table}[htbp]
-  \centering
-  \begin{small}
-    \begin{lstlisting}
-      if (activity.status && activity.status == ``foo''){ ... }
-    \end{lstlisting}
-  \end{small}
-
-\caption{Transformation of complex boolean expressions}
-\label{tab:multi-predaccess-wrong}
-\end{table}
-\vspace*{10pt}
-
-%Die Vergleichsoperatoren in rudimant sind überladen. Neben den aus Java bekannten Anwendungen als Vergleichsoperatoren können sie auch auf Dialogakte angewendet werden. In diesen Fällen werden sie zu Subsumptionsoperatoren.
+\begin{lstlisting}
+if (activity.status && activity.status == "foo"){ ... }
+\end{lstlisting}
 
 Many operators are overloaded, especially boolean operators such as
-\textbf{\texttt{<=}}, which compares numeric values, but can also be used to test if an
-object is of a specific class, for subclass tests between two classes, and for
-subsumption of dialogue acts.
+\textbf{\texttt{<=}}, which compares numeric values, but can also be used to
+test if an object is of a specific class, for subclass tests between two
+classes, and for subsumption of dialogue acts.
 
 \begin{table}[htbp]
-  \centering
-  \begin{footnotesize}
-    \begin{minipage}{0.28\textwidth}
+\centering
+{\footnotesize%
+\begin{minipage}{0.28\textwidth}
 \begin{lstlisting}
 if (sa <= #Question){
   ...
 }
 \end{lstlisting}
-    \end{minipage}\vline\hspace{1em}
-    \begin{minipage}{0.5\textwidth}
+\end{minipage}\vline\hspace{1em}
+\begin{minipage}{0.6\textwidth}
 \begin{lstlisting}
 if (sa.isSubsumedBy(new DialogueAct("Question")) {
   ...
 }
 \end{lstlisting}
-    \end{minipage}
-  \end{footnotesize}
-
-  \caption{Overloaded comparison operators}
-  \label{tab:overloaded-comparison}
+\end{minipage}}\vspace*{-2ex}
+\caption{\label{tab:overloaded-comparison}Overloaded comparison operators}
 \end{table}
 
-%\paragraph{Rudimant Typinformationen zur Verfügung stellen}
 \subsubsection{External methods and fields}
 \label{sec:javatypes}
 
-As mentioned before, you can use every method or field you declare in your custom Agent implementation in your \vonda code. Their declaration in the Java-rudi interface should look like a normal Java field or method definition (cfg. figure \ref{tab:javadef}). It is possible to use generics in these definitions, although they are, for complexity reasons, restricted to be one single uppercase letter.
+As mentioned before, you can use every method or field you declare in your
+custom Agent implementation in your \vonda code. Their declaration in the
+Java-rudi interface should look like a normal Java field or method definition
+(cfg. table~\ref{tab:javadef}). It is possible to use generics in these
+definitions, although they are, for complexity reasons, restricted to be one
+single uppercase letter.
 
 \begin{table}[htbp]
-  %\centering
-  \small
-  \begin{tabular}{lp{.45\textwidth}}
-    \begin{lstlisting}
-    myType someVariable;
-    \end{lstlisting}
-    &  there is a variable of type \texttt{myType} \\
-
-    \begin{lstlisting}
-    myType someFunction(typeA a, typeB b);
-    \end{lstlisting}
-    &  the method someFunction takes arguments of types \texttt{typeA} and
-      \texttt{typeB} and returns an object of type \texttt{myType} (void =
-      void)
-  \end{tabular}
-
-  \caption{Defintions of existing Java fields and methods for \vonda}
-  \label{tab:javadef}
+\small
+\begin{lstlisting}
+MyType someVariable;          // field of class MyType
+MyType someFun(ClA a, ClB b); // method someFun with signature
+                              // (ClA, ClB) --> MyType
+                              // return type can be void for a procedural method
+\end{lstlisting}\vspace*{-2ex}
+\caption{\label{tab:javadef}Defintions of existing Java fields and methods for
+  \vonda}
 \end{table}
 
-There is a variety of standard Java methods called on Java classes that \vonda automatically recognizes, like e.g. the \texttt{substring} method for Strings. If you find that you need \vonda to know the return type of a new method that can or should only be called upon instances of a specific class, you can provide \vonda with knowledge about them by adding their definition to the interface as follows:
-
+There is a variety of standard Java methods called on Java classes that \vonda
+automatically recognizes, like e.g. the \texttt{substring} method for
+Strings. If you find that you need \vonda to know the signature of a new method
+or a field that is defined in a specific class, you can provide \vonda with
+knowledge about them by adding their definition to the interface as follows:
 
 \begin{table}[htbp]
-  \centering
-  \small
-  \begin{tabular}{lp{.45\textwidth}}
-
-    \begin{lstlisting}
-     [type]. myType Function(typeA a);
-    \end{lstlisting}
-    & declaration of a function that has to be called on an instance of class \texttt{type}.
-  \end{tabular}
-
-  \caption{Definition of a non-static method of Java objects}
-  \label{tab:methoddef}
-\end{table}
-
-Fields of Java classes that you want to access over the instances of such a class can be defined analogously: \texttt{[type]. myType someVar}
-
-Of course you can also use generics in these definitions. For example, the get method on lists is defined as follows in the \vonda framework:
-
-\begin{figure}[htbp]
 \centering
 \small
 \begin{lstlisting}
- [List<T>]. T get(int a);
-\end{lstlisting}
-\end{figure}
-%Für Funktionen, die nicht oder nur umständlich in rudi-Code implementiert
-%werden können, sollte der Nutzer eine Javaklasse \texttt{MyAgent} von der
-%abstrakten Klasse \texttt{Agent} ableiten. Diese Klasse wird als
-%\emph{Wrapper-Klasse} bezeichnet. Funktionen und Variablen, die in
-%dieser Klasse deklariert wurden und später im rudi-Code benutzt werden sollen,
-%müssen mit vollständiger Typangabe in einer Datei \texttt{MyAgent.rudi}
-%deklariert werden, sodass die Typinferenz von rudimant sie korrekt
-%berücksichtigen kann (zur Syntax siehe \ref{sec:rudimant-Typinferenz}).
-%
+[SomeClass]. myType Function(typeA a); // declaration of SomeClass method
+[SomeClass]. myType someVar;           // declaration of SomeClass field
+[List<T>]. T get(int a);               // use of Generics is possible and
+                                       // used in type inference
+\end{lstlisting}\vspace*{-2ex}
+\caption{\label{tab:methoddef}Definition of a non-static method of Java objects}
+\end{table}
 
-%In manchen Fällen, wie etwa der Benutzung von außerhalb der rudi-Dateien
-%deklarierten Funktionen und Variablen, ist es notwendig, rudimant Informationen
-%über Typen zu geben. Dabei gilt folgendes Schema, nach dem Typen an beliebiger
-%Stelle, für gewöhnlich jedoch in der Datei MyAgent.rudi (siehe
-%\ref{rudimant-global}) deklariert werden können:
-
-It is important to realize that all declarations in the interface are only compile information for \vonda and will not be transferred to the compiled code, whereas such declarations in the rule code itself will also appear in the compiled code.
-
-%Wichtig ist: Diese Deklarationen werden nur für die Berechnung der Typen durch
-%rudimant angegeben und werden nicht in den kompilierten Code
-%übernommen. Insbesondere Zeilen wie \texttt{int i;} oder \texttt{void
-%  someFunction();} entsprechen damit nicht einer gleich aussehenden Deklaration
-%im Java-Code. Falls es einen Grund geben sollte, dass die Zeilen als im
-%Compile-Ergebnis als dringend erforderlich betrachtet werden, hilft die in
-%Kapitel \ref{rudi-verbatim} beschriebene Methode.
-
-%\subsubsection{Überladene Vergleichsoperatoren und Tests}
-%Dies überschneidet sich in großen Teilen mit dem Doku-Teil zur Typinferenz; wurde dort untergebracht
+It is important to realize that all declarations in the interface are only
+compile time information for \vonda and will not be transferred to the compiled
+code, whereas declarations in the rule code itself will also appear in the
+compiled code.
 
 \subsubsection{Functional constructs}
 
-%Rudimant erlaubt die Verwendung von lambda-Konstrukten. Im moment können sie
-%aber nur für die Implementierung von \texttt{Predicate}
-%resp. \texttt{Comparator} in den im folgenden angegebenen vier
-%Funktionen. Diese Funktionen sind in \texttt{Agent} vordefiniert. Ein
-%einfaches Beispiel zum Filtern von Objekten mit einer Subtyprelation wäre:
-
-\vonda allows for using lambda constructions. At the moment, their usage is limited to the implementation of \texttt{Predicate} or \texttt{Comparator} in the functions
-\todo{AW: it's just a general function now, so is it not limited anymore?} listed in table \ref{tab:lambda-functions} that are pre-defined in the Agent framework.
+\vonda allows to specify \texttt{Function} arguments, where lambda
+constructions can then be used in the code. Currently, the functions listed in
+table \ref{tab:lambda-functions} are pre-defined in the \texttt{Agent} class.
+If you for example want to filter a set of RDF objects by a subtype relation,
+you can write:
+{\small\begin{lstlisting}
+des = filter(agent.desires, (d) -> (d <= UrgentDesire));
+\end{lstlisting}}
 
 \begin{table}[htbp]
-  \centering
-  \begin{small}
-	\begin{lstlisting}
-	boolean some(Collection<T> coll, Function<Boolean, T> pred);
-	boolean all(Collection<T> coll, Function<Boolean, T> pred);
-	List<T> filter(Collection<T> coll, Function<Boolean, T> pred);
-	List<T> sort(Collection<T> coll, Function<Integer, T, T> comp);
-	Collection<T> map(Collection<S> coll, Function<T, S> f);
-	int count(Collection<T> coll, Function<Boolean, T> pred);
-	T first(Collection<T> coll, Function<Boolean, T> pred);
-	\end{lstlisting}
-  \end{small}
-
-  \caption{Functions that take lambda expressions as an argument}
-  \label{tab:lambda-functions}
+\small%
+\begin{lstlisting}
+boolean some(Collection<T> coll, Function<Boolean, T> pred);
+boolean all(Collection<T> coll, Function<Boolean, T> pred);
+List<T> filter(Collection<T> coll, Function<Boolean, T> pred);
+List<T> sort(Collection<T> coll, Function<Integer, T, T> comp);
+Collection<T> map(Collection<S> coll, Function<T, S> f);
+int count(Collection<T> coll, Function<Boolean, T> pred);
+T first(Collection<T> coll, Function<Boolean, T> pred);
+\end{lstlisting}\vspace*{-2ex}
+\caption{\label{tab:lambda-functions}Functions that take lambda expressions as an argument}
 \end{table}
 
-For example, if you want to filter a set of RDF objects by a subtype relation, you can write:
-
-\begin{lstlisting}
-des = filter(agent.desires, (d) -> ((Desire)d) <= UrgentDesire);
-\end{lstlisting}
 
 \subsubsection{\texttt{import}}
 
-%\texttt{import} ist ein Schlüsselwort in rudimant. Eine Zeile ''\texttt{import
-%  File;}'' auf globaler Ebene, an einer beliebigen Stelle zwischenn den Regeln,
-%bedeutet die Inklusion der Datei File.rudi an exakt dieser Stelle. Hiermit wird
-%zum einen erreicht, dass rudimant auch diese Datei zu ausführbarem Java-Code
-%kompiliert, sodass nicht alle Dateien eines Projektes separat kompiliert werden
-%müssen. Zum anderen wird das vollständige Regelinventar der Datei an der
-%entsprechenden Stelle im Java-Code mithilfe ihrer process-Methode aufgerufen
-%und durchgearbeitet.
-%
-\texttt{import} is a keyword in the \vonda language. A global line like ''\texttt{import File;}'', to be placed at an arbitrary position between the rules, results in the inclusion of the file \texttt{File.rudi} at exactly this position.
+With the \texttt{import} statement, e.g. \texttt{import File;}, which needs to
+appear at the root level of rule files, the rules and definitions in
+\texttt{File.rudi} and its imported files are included at the position of the
+\texttt{import}.
 
-This inclusion has two important effects. On the one hand, it triggers the compilation of the included file at exactly this point, such that any fields and methods known at this time will be available in the important file and it does not need to be compiled seperately. On the other hand, it has the effect that all the rules contained in the imported file will be inserted in the rule cycle at the specific position of the \texttt{import}, where in the resulting code the \texttt{process()} method of the imported file will be executed.
+This inclusion has two important effects. On the one hand, it triggers the
+compilation of the included file at exactly this point, such that any fields
+and methods known at this time will be available in the imported file. On the
+other hand, all the rules contained in the imported file will be inserted in
+the rule cycle at the specific position of the \texttt{import}, that is, in the
+resulting code the \texttt{process()} method of the imported file will be
+executed.
 
-%\texttt{import} ermöglicht es also, das Regelinventar für ein Projekt auf
-%mehrere Dateien bzw. mehrere Module aufzuteilen und diese zusammenzustecken,
-%sodass ein einziger Aufruf ausreicht, um sie zu kompilieren und später auch, um
-%die Auswertung der Regeln anzustoßen. Dies ist nicht nur nützlich zur
-%Übersichtlichkeit und Strukturierung des Projektes, sondern fördert auch die
-%Modularität, da verschiedene 'Unterbäume' der \texttt{import}-Hierarchie leicht
-%ausgeklinkt oder aus anderen Projekten wiederverwendet werden können.
-
-So the \texttt{import} functionality makes it possible to distribute the rules of a project into multiple files, respectively modules, and pin them together in such a way that they are handled as one unit when compiling or executing the compiled code. This is not only useful for clarity and structuring of a project, but also supports modularity, as different subtrees of the \texttt{import} hierarchy can easily be added, moved, taken away or re-used in different projects.
+\texttt{import} makes it possible to organize the rules and local declarations
+of a project into meaningful sub-units. This supports modularity, as different
+subtrees of the \texttt{import} hierarchy can easily be added, moved, taken
+away or re-used in different projects.
 
 \subsubsection{Java-Code verbatim in rule files} \label{sec:rudi-verbatim}
 
-%Rudimant verarbeitet eine Regelsprache, die mit voller Absicht nur
-%eingeschränkte Java-Funktionalitäten zur Verfügung stellt. Was in rudi-Code
-%nicht umzusetzen ist, sollte in Funktionen in die übergeordnete Java-Klasse
-%wandern (vgl. \ref{rudimant-global}).
-%
-To maintain simplicity, \vonda intentionally only provides limited Java functionalities. Whatever is not feasible in \texttt{.rudi} code should be done in methods in the wrapper class.% (cfg. \ref{rudimant-global}).
+To maintain simplicity, \vonda intentionally only provides limited Java
+functionalities. Whatever is not feasible in \vonda source code should be done
+in methods in the wrapper class or other helper classes.
 
-%Für Fälle, in denen dies nicht genügt und vor Ort eine Funktionalität benötigt
-%wird, die rudimant nicht parsen oder nicht richtig darstelllen kann, ist eine
-%verbatim-Umgebung vorgesehen. Alles, was innerhalb der Zeichenfolgen \verb|/*@|
-%und \verb|@*/| steht, wird behandelt wie ein mehrzeiliges Java-Kommentar, wird
-%also in genau diesem Aussehen in den resultierenden Code übertragen. Dabei
-%werden die klammernden Zeichenfolgen ausgelassen.
-%
-In cases where this is not enough and you urgently need a functionality %in a \texttt{.rudi} file
-that \vonda cannot parse or represent correctly, you can use the verbatim function. Everything between \verb|/*@| and \verb|@*/| will be treated like a multi-line Java comment, meaning the content is not parsed or evaluated further. It will be transferred to the compiled code at exactly this position between statements, but without the comment symbols.
+In cases where this is not possible and you urgently need a functionality of
+Java that \vonda cannot parse or represent correctly, you can use the verbatim
+inclusion feature. Everything between \verb|/*@| and \verb|@*/| will be treated
+like a multi-line Java comment, meaning the content is not parsed or evaluated
+further. It will be transferred to the compiled code as is into the intended
+position.
 
-%Diese Funktionalität kann insbesondere dazu benutzt werden, am Anfang einer
-%\texttt{rudi} Datei Java-Klassen zu importieren, die im kompilierten Code
-%gebraucht werden.
-
-In particular, this functionality can be used to import Java classes (i.e., with Java import statements) at the beginning of a rule file. You should however be aware that \vonda will not know these classes nor their methods and fields. It will however accept creations of instances of unknown classes, as well as your casting of results of unknown methods. If, be it for commodity or for other reasons, you want \vonda to have type information about methods called on instances on one of these classes, you can put this information into the type interface of the wrapper class (cfg. chapter \ref{sec:javatypes}).
+In particular, this functionality can be used to import Java classes (i.e.,
+with Java import statements) at the beginning of a rule file. You should
+however be aware that \vonda will not know that these classes have been
+imported, nor their methods and fields. It will however accept creations of
+instances of unknown classes, as well as your casting of results of unknown
+methods. If you want \vonda to have type information about methods called on
+instances on one of these classes, you can put this information into the type
+interface of the wrapper class (cfg. chapter \ref{sec:javatypes}).
 
 \section{The Run-Time System}
 %\subsection{Run-Time Library}
@@ -719,8 +662,11 @@ as necessary, taking into account arbitrary features from the data storage.
 %\texttt{src/main/resources/Agent.rudi}.
 The following methods are declared in \texttt{src/main/resources/Agent.rudi}; their implementation is provided by Java itself or the \vonda framework.
 
-\begin{itemize}
-\item Pre-added Java methods
+\vspace*{2ex}
+
+\newcommand{\pgr}[1]{\newline\noindent\textbf{#1}}
+
+\pgr{Pre-added Java methods}
 \begin{small}
 \begin{lstlisting}
 [Object]. boolean equals(Object e);
@@ -739,24 +685,21 @@ The following methods are declared in \texttt{src/main/resources/Agent.rudi}; th
 [Map<S, T>]. boolean containsKey(S a);
 [Map<S, T>]. T get(S a);
 [Array<T>]. int length;
-
-int random(int limit);
-float random();
 \end{lstlisting}
 \end{small}
 
-\item Short-hand conversion methods from Agent
+\pgr{Short-hand conversion methods from Agent}
 \begin{small}
 \begin{lstlisting}
 int toInt(String s);
 float toFloat(String s);
 double toDouble(String s);
 boolean toBool(String s);
-String toStr(type i);  // type in (int, short, byte, float, double, boolean)
+String toStr(T i);  // T in (int, short, byte, float, double, boolean)
 \end{lstlisting}
 \end{small}
 
-\item Other Agent methods
+\pgr{Other Agent methods}
 \begin{small}
 \begin{lstlisting}
 // Telling the Agent that something changed
@@ -764,12 +707,14 @@ void newData();
 
 String getLanguage();
 
-// Math methods
-int random(int limit);
-float random();
+// Random methods
+int random(int limit); // return and int between zero and limit (excluded)
+float random();        // return a random float between zero and one (excluded)
+T random(Collection<T> coll); // select a random element from the collection
 
-// logging methods
-Logger logger;
+long now();     // return the current time since the epoch in milliseconds
+
+Logger logger;  // Global logger instance
 
 // discarding actions and shutdown
 void clearBehavioursAndProposals();
@@ -777,7 +722,7 @@ void shutdown();
 \end{lstlisting}
 \end{small}
 
-\item Timeouts
+\pgr{Timeouts}
 \begin{small}
 \begin{lstlisting}
 void newTimeout(String name, int millis);
@@ -789,13 +734,21 @@ void cancelTimeout(String name);
 \end{lstlisting}
 \end{small}
 
-\item Methods handling with dialogue acts
+\pgr{Methods dealing with dialogue acts}
 \begin{small}
 \begin{lstlisting}
 // sending of dialogue acts
 DialogueAct createEmitDA(DialogueAct da);
 DialogueAct emitDA(int delay, DialogueAct da);
 DialogueAct emitDA(DialogueAct da);
+[DialogueAct]. String getDialogueActType();
+[DialogueAct]. void setDialogueActType(String dat);
+[DialogueAct]. String getProposition();
+[DialogueAct]. void setProposition(String prop);
+[DialogueAct]. boolean hasSlot(String key);
+[DialogueAct]. String getValue(String key);
+[DialogueAct]. void setValue(String key, String val);
+[DialogueAct]. long getTimeStamp();
 
 // Access to dialogue acts of the current session
 // my last outgoing resp. the last incoming dialogue act
@@ -808,14 +761,17 @@ int saidInSession(DialogueAct da);
 // like saidInSession, only for incoming dialogue acts
 int receivedInSession(DialogueAct da);
 
+// Check if we asked a question that is still pending
 boolean waitingForResponse();
+// Mark last incoming DA as treated and not pending anymore (stop rules firing)
 void lastDAprocessed();
+
 DialogueAct addLastDA(DialogueAct newDA);
 [DialogueAct]. void setProposition(String prop);
 \end{lstlisting}
 \end{small}
 
-\item Methods using lambda expressions
+\pgr{Functions allowing lambda expressions (functional arguments)}
 \begin{small}
 \begin{lstlisting}
 boolean some(Collection<T> coll, Function<Boolean, T> pred);
@@ -825,21 +781,25 @@ List<T> sort(Collection<T> coll, Function<Integer, T, T> c);
 Collection<T> map(Collection<S> coll, Function<T, S> f);
 int count(Collection<T> coll, Function<Boolean, T> pred);
 T first(Collection<T> coll, Function<Boolean, T> pred);
-T random(Collection<T> coll);
 \end{lstlisting}
 \end{small}
 
-\item Methods callable on Rdf objects
+\pgr{Methods on \texttt{Rdf} and \texttt{RdfClass} objects}
 \begin{small}
 \begin{lstlisting}
 Rdf toRdf(String uri);
 [Rdf]. String getURI();
 [Rdf]. boolean has(String predicate);
 [Rdf]. long getLastChange(boolean asSubject, boolean asObject);
+
+RdfClass getRdfClass(String s);
+boolean exists(Object o);
+
+// return only the name part of an URI (no namespace or angle brackets)
+String getUriName(String uri);
 \end{lstlisting}
 \end{small}
 
-\end{itemize}
 
 %%% Local Variables:
 %%% mode: latex
