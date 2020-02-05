@@ -11,10 +11,14 @@ if test -n "$toinstall"; then
 fi
 mkdir locallibs
 cd locallibs
+# Clone the given modules into the locallibs directory and put them into your
+# local .m2/repository
 for d in graff openccg dataviz j2emacs cplan srgs2xml; do
   git clone https://github.com/bkiefer/$d.git
   cd $d
   mvn install
   cd ..
 done
+# Install the modules in the repo/ directory into your local .m2/repository
+./update-repo.sh -u
 cd ..
