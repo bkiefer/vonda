@@ -114,13 +114,6 @@
     </dependency>
 
     <dependency>
-      <groupId>de.dfki.mlt</groupId>
-      <artifactId>graff</artifactId>
-      <version>0.5-SNAPSHOT</version>
-      <type>jar</type>
-    </dependency>
-
-    <dependency>
       <groupId>net.sf.trove4j</groupId>
       <artifactId>trove4j</artifactId>
       <version>3.0.3</version>

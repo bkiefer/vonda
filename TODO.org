@@ -10,6 +10,7 @@
 * Fragen aus dem Durchforsten von VisitorType
   - ist dokumentiert, dass folgendes ein "clear" ist: //done
     child.name = null
+  - done in 3.1.2, needs more detail! What turns into what.
 * Implementation Patterns and Caveats
   - lastDAProcessed() before in propose: lastDA().theme :( //done
   - lastDAProcessed() after emitDA :( //done

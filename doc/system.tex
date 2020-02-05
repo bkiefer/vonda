@@ -15,7 +15,7 @@ and writes to the database. Beyond that, the type system, resolving the exact
 Java, RDF or RDF collection type of arbitrary long field accesses,
 automatically performs the necessary casts for the ontology accesses.
 
-\subsection{\vonda's Architecture}
+\section{\vonda's Architecture}
 
 Figure~\ref{fig:architecture} shows the architecture of a runnable \vonda project.
 
@@ -55,7 +55,7 @@ interface must have the same name as the wrapper class but end with
 \texttt{.rudi} (in the example of figure ~\ref{fig:architecture}, this would be
 \texttt{MyAgent.rudi}).
 
-\subsection{The \vonda Rule Language}
+\section{The \vonda Rule Language}
 \label{sec:language}
 
 \vonda's rule language looks very similar to Java/C++. There are a number of
@@ -65,7 +65,7 @@ the RDF store can be used throughout the code: RDF objects and classes can be
 treated similarly to those of object oriented programming languages, including
 the type inference and inheritance that comes with type hierarchies.
 
-\subsubsection{The Structure of a \vonda File}
+\subsection{The Structure of a \vonda File}
 
 \vonda does not require to group statements in some kind of high-level
 structure like e.g. a class. It is, in fact, not possible to define classes in
@@ -99,7 +99,7 @@ the whole runtime of the system are variables defined in the top-level rule
 file. This is on purpose, and can be used to define persistent
 variables also usable in lower-level rule files.
 
-\subsubsection{RDF accesses and functional vs. relational properties}
+\subsection{RDF access and functional vs. relational properties}
 \label{sec:rdfaccesses}
 
 \begin{figure}[htb]
@@ -154,7 +154,7 @@ existing objects.
 
 \begin{table}[htbp]
 \small\begin{minipage}{0.5\textwidth}
-\begin{lstlisting}
+\begin{lstlisting}[numbers=left,numberstyle=\scriptsize]
 c = new Child;
 nm = c.name;
 c.name = "new name";
@@ -165,7 +165,7 @@ c.middleNames = null;
 \end{lstlisting}
 \end{minipage}{\LARGE$\Rightarrow$}\rule{6.4cm}{0pt}\\
 \begin{minipage}{0.99\textwidth}
-\begin{lstlisting}
+\begin{lstlisting}[numbers=left,numberstyle=\scriptsize]
 c = palAgent._proxy.getClass("<dom:Child>").getNewInstance(palAgent.DEFNS);
 nm = c.getString("<upper:name>");
 c.setValue("<upper:name>", "new name");
