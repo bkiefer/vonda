@@ -19,6 +19,6 @@ for d in graff openccg dataviz j2emacs cplan srgs2xml; do
   mvn install
   cd ..
 done
+cd ..
 # Install the modules in the repo/ directory into your local .m2/repository
 ./update-repo.sh -u
-cd ..
