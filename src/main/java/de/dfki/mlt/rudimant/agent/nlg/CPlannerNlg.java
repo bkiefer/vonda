@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.ibm.icu.text.RuleBasedNumberFormat;
 import com.ibm.icu.util.ULocale;
@@ -39,7 +40,7 @@ public class CPlannerNlg {
 
   CcgUtterancePlanner _planner;
 
-  private static final Logger logger = Logger.getLogger(CPlannerNlg.class);
+  private static final Logger logger = LoggerFactory.getLogger(CPlannerNlg.class);
 
   private RuleBasedNumberFormat numberFormatter = null;
 
