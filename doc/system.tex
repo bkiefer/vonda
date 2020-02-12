@@ -60,12 +60,16 @@ interface must have the same name as the wrapper class but end with
 
 \vonda's rule language looks very similar to Java/C++. There are a number of
 specific features which make it much more convenient for the specification of
-dialogue strageties. One of the most important features is the way objects in
+dialogue strategies. One of the most important features is the way objects in
 the RDF store can be used throughout the code: RDF objects and classes can be
 treated similarly to those of object oriented programming languages, including
 the type inference and inheritance that comes with type hierarchies.
 
 \subsection{The Structure of a \vonda File}
+
+A \vonda file usually consists of a list of (possibly nested) rule statements,
+often complemented by variable and function definitions. In this section, we
+will describe the elements of the syntax in more detail.
 
 \vonda does not require to group statements in some kind of high-level
 structure like e.g. a class. It is, in fact, not possible to define classes in
@@ -94,10 +98,164 @@ mistakenly accept variables that are not effectively final, what might lead to
 completely unexpected behaviour when proposes and timeouts with changed
 variable values are executed.
 
-The only important exeption, where globally defined variables persist throughout
-the whole runtime of the system are variables defined in the top-level rule
-file. This is on purpose, and can be used to define persistent
+The only important exception, where globally defined variables persist
+throughout the whole runtime of the system are variables defined in the
+top-level rule file. This is on purpose, and can be used to define persistent
 variables also usable in lower-level rule files.
+
+\subsection{Rules and rule labels}
+
+The core of \vonda dialogue management are the dialogue rules, which will be
+evaluated at run-time system on every trigger generated from the environment or
+the internal processing.
+A rule (optionally) starts with a name that is given as a Java-like label: an
+identifier followed by a colon. Following this label is an
+\texttt{if}-statement, with optional \texttt{else} case. The clause of the
+\texttt{if}-statement expresses the condition under which the rule, or rather
+the \texttt{if} block, is to be executed; in the \texttt{else} block you can
+define what should happen if the condition is \texttt{false}, like stopping the
+evaluation of (a sub-tree of) the rules if necessary information is missing.
+
+\begin{figure}[htb]
+\begin{small}
+\begin{lstlisting}
+intro:
+  if (introduction) {
+    is_user_known:
+      if (user.unknown) {
+        ask_for_name: if (talkative) askForName();
+      } else {
+        greetUser();
+      }
+  }
+\end{lstlisting}
+\end{small}\vspace{-2ex}
+\caption{A simple rule}
+\end{figure}
+
+Rules can be nested to arbitrary depth, so \texttt{if}-statements inside a rule
+body can also be labelled. The labels are a valuable tool for debugging the
+system at run-time, as they can be logged live with the debugger GUI
+(cf. chapter \ref{sec:debugger}). The debugger can show you which rules were
+executed when and what the individual results of each base clause of the
+conditions were.
+
+\subsection{The \texttt{propose} and \texttt{timeout} constructs}
+
+There are two statements with a special syntax and semantics: \texttt{propose}
+and \texttt{timeout}. \texttt{propose} is \vonda's current way of implementing
+probabilistic selection. All (unique) propose blocks that are in active rule
+actions are collected, frozen in the execution state in which they were
+encountered, like closures known from functional programming languages. When
+all possible proposals have been selected, a statistical component decides
+on the ``best'', whose closure is then executed.
+
+\begin{figure}[h]
+  \centering\small%
+\begin{lstlisting}
+if (!saidInSession(#Salutation(Meeting)) {
+  // Wait 7 secs before taking initiative
+  timeout("wait_for_greeting", 7000) {
+    if (! receivedInSession(#Greeting(Meeting))
+      propose("greet") {
+        da = #InitialGreeting(Meeting);
+        if (user.name) da.name = user.name;
+        emitDA(da);
+      }
+  }
+
+  if (receivedInSession(#Salutation(Meeting))
+    propose("greet_back") { // We assume we know the name by now
+      emitDA(#ReturnGreeting(Meeting, name={user.name});
+    }
+  }
+}
+\end{lstlisting}\vspace*{-3ex}
+  \caption{\label{fig:propose}\texttt{propose} and \texttt{timeout} code example}
+\end{figure}
+
+\texttt{timeout}s generate the same kind of closures, but with a different
+purpose. They can for example be used to trigger proactive behaviour, or to
+check the state of the system after some amount of time, or in regular
+intervals. A timeout will only be created if there is no active timeout with
+the same name, otherwise, if the time delay is different than that of the last
+\texttt{timeout} call, the delay will be set to the new value. For special
+needs, the functions in figure~\ref{tbl:timeoutfns} are useful to achieve
+specific behaviours based on \texttt{timeout}s.
+
+\begin{figure}[htb]
+\begin{tabular}{lp{.65\textwidth}}
+\texttt{isTimedOut(\emph{label})}& returns \texttt{true} if a timeout with that
+  label fired. This can be reset only by calling
+  \texttt{removeTimeout(\emph{label})}, and is especially convenient to
+  implement timeouts that should only be triggered once in a session. \\
+\texttt{removeTimeout(\emph{label})}& see \texttt{isTimedOut(\emph{label})}\\
+\texttt{cancelTimeout(\emph{label})}& cancels an \emph{active} timeout if there
+                                      is one, has no effect otherwise \\
+\texttt{hasActiveTimeout(\emph{label})}& returns true if there is an
+  active timeout with that label \\
+\end{tabular}
+\caption{\label{tbl:timeoutfns}Functions for fine tuning \texttt{timeout} behaviour}
+\end{figure}
+
+There are two variants of \texttt{timeout}: \emph{labeled timeouts}, like the
+one in the previous example which run out after the specified time (unless they
+are cancelled before running out) and then execute their body, and
+\emph{behaviour timeouts}, where the first argument is a dialogue act (see next
+section) instead of a label. These are executed either when the specified time
+is up or the behaviour that was triggered by the dialogue act is finished
+(e.g. the audio generated by a text-to-speech engine ended, or a specified
+motion came to an end), whatever comes first.
+
+The following code patterns may help to use the different possibilities that
+timeouts offer:
+
+{\small%
+\begin{lstlisting}
+// timeout triggered exactly once per session
+if (! hasActiveTimeout("robot_starts") && ! isTimedOut("robot_starts"))
+  timeout("robot_starts", 4000) { ... }
+
+// timeout reoccurring every 1000 milliseconds
+if (! hasActiveTimeout("reptimeout"))
+  timeout("reptimeout", 1000) { ... }
+
+// ensure that something happens even if the expected condition does not
+// become true after 10 seconds
+if (! condition && ! hasActiveTimeout("ensure_cond")) {
+  timeout("ensure_cond", 10000) {
+    if (! condition) {
+      // clean up
+    }
+  }
+}
+\end{lstlisting}}
+
+\subsection{Stopping Rule Evaluation}
+\label{sec:cancelrules}
+There are multiple ways to stop rule evaluation locally (i.e. skipping the
+evaluation of the current subtree) or globally (i.e. stopping the whole
+evaluation cycle).
+You can skip the evaluation of a specific rule you are currently in with the
+statement \texttt{break label\_name;}. This will only stop the rule with the
+respective label (no matter how deep the break statement is nested in it), such
+that the next following rule is evaluated next.
+
+If the evaluation is cancelled with the keyword \texttt{cancel}, all of the
+following rules in the current file will be skipped (including any imported
+rule files). If the keyword \texttt{cancel\_all} is used, none of the following
+rules, neither local nor higher in the rule tree, will be evaluated. This is
+the \vonda way of deciding to not further evaluate whatever triggered the
+current evaluation cycle and will mostly be used as an 'emergency exit', as the
+dialogue rules should be rejecting any non-matching trigger by themselves.
+
+To leave \texttt{propose} and \texttt{timeout} blocks, you need to use a
+\texttt{return} statement without return value, as they are only reduced
+representations of normal function bodies.
+
+A detailed description of how the rules of a \vonda project are evaluated will
+follow in section~\ref{sec:ruleevaluation}.
+
 
 \subsection{RDF access and functional vs. relational properties}
 \label{sec:rdfaccesses}
@@ -141,18 +299,20 @@ The domain and range definitions of properties are picked up by the compiler
 and then used in various places, e.g., to infer types, do automatic code or
 data conversions, or create ``intelligent'' boolean tests, like in line 4,
 which will expand into two tests, one testing for the existence of the property
-for the object, and in case that succeeeds, a test if the value is smaller or
-equal than zero. If there is a chain of more than one field/property access,
-every part is tested for existence in the target code, keeping the source code
-as concise as possible (see also table~\ref{table:multi-predaccess}). Also for
-reasons of brevity, the type of a new variable needs not be given if it can be
-inferred from the value assigned to it.
+for the object, and in case that succeeds, a test if the value is smaller or
+equal than zero.
 
-New RDF objects can be created with \texttt{new}, similar to Java objects; they
-are immediately reflected in the database, as are all changes to already
-existing objects.
+The connection of \vonda to the ontology loaded into HFC during compile time
+enables the compiler to recognise the correct RDF class to create a new
+instance when creating a new RDF object with \texttt{new}, similar to a Java
+object, and to resolve field/property accesses to all RDF instances. Field
+accesses as shown in line 2 and 3 of figure \ref{tab:property-access} will be
+analysed and transformed into database accesses. Object creation or
+assignments, i.e. changes to existing objects, will be immediately reflected in
+the database.
 
-\begin{table}[htbp]
+
+\begin{figure}[htbp]
 \small\begin{minipage}{0.5\textwidth}
 \begin{lstlisting}[numbers=left,numberstyle=\scriptsize]
 c = new Child;
@@ -177,19 +337,45 @@ c.clearValue("<upper:middleNames>");
 \end{minipage}
   \caption{Examples for an RDF property access}
   \label{tab:property-access}
-\end{table}
+\end{figure}
 
-To be able to \emph{parametrize} the field access to RDF objects, \vonda has a
+\vonda will also draw type information from the database. If the name property
+of the RDF class \texttt{Child} is of type \texttt{String}, exchanging line 2
+by the line \texttt{int name = c.name} will result in a warning of the
+compiler. During this process, the compiler will automatically also use the
+correspondence of XSD and Java types shown in figure \ref{fig:RdfToJava}.
+
+\begin{figure}[htb]
+{\small\ttfamily\begin{center}
+\begin{tabular}{ll@{\hspace{8em}}ll}
+<xsd:int> & Integer & <xsd:integer> & Long\\
+<xsd:string> & String & <xsd:byte> & Byte\\
+<xsd:boolean> & Boolean & <xsd:short> & Short\\
+<xsd:double> & Double & <xsd:dateTime> & Date\\
+<xsd:float> & Float & <xsd:date> & XsdDate\\
+<xsd:long> & Long & <xsd:dateTimeStamp> & Long
+\end{tabular}\end{center}}\vspace{-2ex}
+\caption{\label{fig:RdfToJava}Standard RDF types and the Java types as which they will be recognized}
+\end{figure}
+
+If there is a chain of more than one field/property access, every part is
+tested for existence in the target code, keeping the source code as concise as
+possible (see also figure~\ref{tab:multi-predaccess} in
+section~\ref{sec:typeinference}). Also for reasons of brevity, the type of a
+new variable needs not be given if it can be inferred from the value assigned
+to it.
+
+To be able to \emph{parameterise} the field access to RDF objects, \vonda has a
 special mechanism which can lead to subtle and hard-to-find programming errors,
 if used wrongly. If, for example, a string variable with the name
 \texttt{middleNames} would be available in the scope of the above \vonda source
-code, the resulting code would have looked like in table~\ref{tbl:varpropacc}
+code, the resulting code would have looked like in figure~\ref{tbl:varpropacc}
 instead, using the \emph{value} of the variable to determine the field
 name. For the given code, this does not make sense, but it can be useful in
 situations where, e.g., the property to use is determined by the input
 utterance.
 
-\begin{table}[htbp]
+\begin{figure}[htbp]
 \small\begin{minipage}{0.99\textwidth}
 \begin{lstlisting}
 // somewhere before in the scope ...
@@ -201,34 +387,9 @@ c.getValue(middleNames).remove("James");
 c.clearValue(middleNames);
 \end{lstlisting}
 \end{minipage}
-\caption{RDF property access using the value of a variable as property name}
-  \label{tab:varpropacc}
-\end{table}
+\caption{\label{tbl:varpropacc}RDF property access using the value of a variable as property name}
+\end{figure}
 
-The connection of \vonda to the ontology loaded into HFC during compile time
-enables the compiler to recognize the correct RDF class to create a new
-instance when encountering \texttt{new}, and to resolve field/property
-accessses to all RDF instances. Field accesses as shown in line 2 and 3 of
-table \ref{tab:property-access} will be analyzed and transformed into database
-accessses. \vonda will also draw type information from the database. If the
-name property of the RDF class \texttt{Child} is of type \texttt{String},
-exchanging line 2 by the line \texttt{int name = c.name} will result in a
-warning of the compiler. During this process, the compiler will automatically
-also use the correspondence of XSD and Java types shown in table
-\ref{fig:RdfToJava}.
-
-\begin{table}[htb]
-{\small\ttfamily\begin{center}
-\begin{tabular}{ll@{\hspace{8em}}ll}
-<xsd:int> & Integer & <xsd:integer> & Long\\
-<xsd:string> & String & <xsd:byte> & Byte\\
-<xsd:boolean> & Boolean & <xsd:short> & Short\\
-<xsd:double> & Double & <xsd:dateTime> & Date\\
-<xsd:float> & Float & <xsd:date> & XsdDate\\
-<xsd:long> & Long & <xsd:dateTimeStamp> & Long
-\end{tabular}\end{center}}\vspace{-2ex}
-\caption{\label{fig:RdfToJava}Standard RDF types and the Java types as which they will be recognized}
-\end{table}
 
 Moreover, \vonda determines whether an access is made using functional or
 relational predicates and will handle it accordingly, assuming a collection
@@ -236,162 +397,82 @@ type if necessary. In the rule language, the operators \texttt{+=} and
 \texttt{-=} are overloaded. They can be used with sets and lists as shortcuts
 for adding and deleting objects. \texttt{a += b} will be compiled to
 \texttt{a.add(b)} and \texttt{a -= b} results in \texttt{a.remove(b)}, as shown
-in table~\ref{tab:property-access}.
+in figure~\ref{tab:property-access}.
 
-\subsubsection{Rules and rule labels}
+\subsection{Type inference and overloaded operators}
+\label{sec:typeinference}
 
-The core of \vonda dialogue management are the dialogue rules, which will be
-evaluated at run-time system on every trigger generated from the environment or
-the internal processing.
-A rule (optionally) starts with a name that is given as a Java-like label: an
-identifier followed by a colon. Following this label is an
-\texttt{if}-statement, with optional \texttt{else} case. The clause of the
-\texttt{if}-statement expresses the condition under which the rule, or rather
-the \texttt{if} block, is to be executed; in the \texttt{else} block you can
-define what should happen if the condition is \texttt{false}, like stopping the
-evaluation of (a sub-tree of) the rules if necessary information is missing.
+\vonda allows static type assignments and casting, but in many cases these can
+be avoided. If, for example, the type of the expression on the right-hand side
+of a declaration assignment is known or inferrable, it is not necessary to
+explicitely state it.
 
-\begin{figure}[htb]
-\begin{small}
+You can also declare variables final.
+
+\begin{figure}[htbp]
+  \begin{small}
+\begin{minipage}{.55\textwidth}
 \begin{lstlisting}
-introduction:
-  if (introduction) {
-    if (user.unknown) {
-      ask_for_name:
-        if (talkative) askForName();
-    } else
-      greetUser();
-  }
+if (! c.user.personality.nonchalance){ ... }
 \end{lstlisting}
-\end{small}\vspace{-2ex}
-\caption{A simple rule}
+\end{minipage}\rule{2cm}{0pt}{\LARGE$\Rightarrow$}\hfill\\
+\begin{lstlisting}
+if (!((((c != null) && (c.user != null)) && (c.user.personality != null))
+      && (c.user.personality.nonchalance != null))) {
+  ...
+}
+\end{lstlisting}\end{small}\vspace*{-2ex}
+\caption{\label{tab:multi-predaccess}Transformation of complex boolean expressions}
+
+\end{figure}
+\vspace*{10pt}
+
+A time-saving feature of \vonda which also improves readability is the
+automatic completion of boolean expressions in the clauses of \texttt{if},
+\texttt{while} and \texttt{for} statements. As it is obvious in these cases
+that the result of the expression must be of type boolean. \vonda automatically
+fills in a test for existence if it is not. When encountering field accesses,
+it makes sure that every partial access is tested for existence (i.e., not
+\texttt{null}) to avoid a \texttt{NullPointerException} in the runtime
+execution of the generated code.
+
+Be aware that the expansion in the figure only occurs if the multiple field
+access is used as boolean test. In the following example, the first clause in
+the boolean expression should not be omitted, since a
+\texttt{NullPointerException} could still occur because the second clause does
+not trigger an automatic test for existence of the \texttt{status} of
+\texttt{activity}:
+
+\begin{lstlisting}
+if (activity.status && activity.status == "foo"){ ... }
+\end{lstlisting}
+
+Many operators are overloaded, especially boolean operators such as
+\textbf{\texttt{<=}}, which compares numeric values, but can also be used to
+test if an object is of a specific class, for subclass tests between two
+classes, and for subsumption of dialogue acts.
+
+\begin{figure}[htbp]
+\centering
+{\footnotesize%
+\begin{minipage}{0.28\textwidth}
+\begin{lstlisting}
+if (sa <= #Question){
+  ...
+}
+\end{lstlisting}
+\end{minipage}\vline\hspace{1em}
+\begin{minipage}{0.6\textwidth}
+\begin{lstlisting}
+if (sa.isSubsumedBy(new DialogueAct("Question")) {
+  ...
+}
+\end{lstlisting}
+\end{minipage}}\vspace*{-2ex}
+\caption{\label{tab:overloaded-comparison}Overloaded comparison operators}
 \end{figure}
 
-Rules can be nested to arbitrary depth, so \texttt{if}-statements inside a rule
-body can also be labelled. The labels are a valuable tool for debugging the
-system at run-time, as they can be logged live with the debugger GUI
-(cf. chapter \ref{sec:debugger}). The debugger can show you which rules were
-executed when and what the individual results of each base clause of the
-conditions were.
-
-\subsubsection{The \texttt{propose} and \texttt{timeout} constructs}
-
-There are two statements with a special syntax and semantics: \texttt{propose}
-and \texttt{timeout}. \texttt{propose} is \vonda's current way of implementing
-probabilistic selection. All (unique) propose blocks that are in active rule
-actions are collected, frozen in the execution state in which they were
-encountered, like closures known from functional programming languages. When
-all possible proposals have been selected, a statistical component decides
-on the ``best'', whose closure is then executed.
-
-\begin{figure}[h]
-  \centering\small%
-\begin{lstlisting}
-if (!saidInSession(#Salutation(Meeting)) {
-  // Wait 7 secs before taking initiative
-  timeout("wait_for_greeting", 7000) {
-    if (! receivedInSession(#Greeting(Meeting))
-      propose("greet") {
-        da = #InitialGreeting(Meeting);
-        if (user.name) da.name = user.name;
-        emitDA(da);
-      }
-  }
-
-  if (receivedInSession(#Salutation(Meeting))
-    propose("greet_back") { // We assume we know the name by now
-      emitDA(#ReturnGreeting(Meeting, name={user.name});
-    }
-  }
-}
-\end{lstlisting}\vspace*{-3ex}
-  \caption{\texttt{propose} and \texttt{timeout} code example}
-  \label{fig:propose}
-\end{figure}
-
-\texttt{timeout}s generate the same kind of closures, but with a different
-purpose. They can for example be used to trigger proactive behaviour, or to
-check the state of the system after some amount of time, or in regular
-intervals. A timeout will only be created if there is no active timeout with
-the same name, otherwise, if the time delay is different than that of the last
-\texttt{timeout} call, the delay will be set to the new value. For special
-needs, the functions in table~\ref{tbl:timeoutfns} are useful to achieve
-specific behaviours based on \texttt{timeout}s.
-
-\begin{table}[htb]
-\begin{tabular}{lp{.65\textwidth}}
-\texttt{isTimedOut(\emph{label})}& returns \texttt{true} if a timeout with that
-  label fired. This can be reset only by calling
-  \texttt{removeTimeout(\emph{label})}, and is especially convenient to
-  implement timeouts that should only be triggered once in a session. \\
-\texttt{removeTimeout(\emph{label})}& see \texttt{isTimedOut(\emph{label})}\\
-\texttt{cancelTimeout(\emph{label})}& cancels an \emph{active} timeout if there
-                                      is one, has no effect otherwise \\
-\texttt{hasActiveTimeout(\emph{label})}& returns true if there is an
-  active timeout with that label \\
-\end{tabular}
-\caption{\label{tbl:timeoutfns}Functions for fine tuning \texttt{timeout} behaviour}
-\end{table}
-
-There are two variants of \texttt{timeout}: \emph{labeled timeouts}, like the
-one in the previous example which run out after the specified time (unless they
-are cancelled before running out) and then execute their body, and
-\emph{behaviour timeouts}, where the first argument is a dialogue act (see next
-section) instead of a label. These are executed either when the specified time
-is up or the behaviour that was triggered by the dialogue act is finished
-(e.g. the audio generated by a text-to-speech engine ended, or a specified
-motion came to an end), whatever comes first.
-
-The following code patterns may help to use the different possibilities that
-timeouts offer:
-
-{\small%
-\begin{lstlisting}
-// timeout triggered exactly once per session
-if (! hasActiveTimeout("robot_starts") && ! isTimedOut("robot_starts"))
-  timeout("robot_starts", 4000) { ... }
-
-// timeout reoccurring every 1000 milliseconds
-if (! hasActiveTimeout("reptimeout"))
-  timeout("reptimeout", 1000) { ... }
-
-// ensure that something happens even if the expected condition does not
-// become true after 10 seconds
-if (! condition && ! hasActiveTimeout("ensure_cond")) {
-  timeout("ensure_cond", 10000) {
-    if (! condition) {
-      // clean up
-    }
-  }
-}
-\end{lstlisting}}
-
-\subsubsection{Interrupting the rule evaluation cycle}
-
-There are multiple ways to stop rule evaluation locally (i.e. skipping the
-evaluation of the current subtree) or globally (i.e. stopping the whole
-evaluation cycle).
-You can skip the evaluation of a specific rule you are currently in with the
-statement \texttt{break label\_name;}. This will only stop the rule with the
-respective label (no matter how deep the break statement is nested in it), such
-that the next following rule is evaluated next.
-
-If the evaluation is cancelled with the keyword \texttt{cancel}, all of the
-following rules in the current file will be skipped (including any imported
-rules). If the keyword \texttt{cancel\_all} is used, none of the following
-rules, neither local nor higher in the rule tree, will be evaluated. This is
-the \vonda way of deciding to not further evaluate whatever triggered the
-current evaluation cycle and will mostly be used as an 'emergency exit', as the
-dialogue rules should be rejecting any non-matching trigger by themselves.
-
-To leave \texttt{propose} and \texttt{timeout} blocks, you need to use an empty
-\texttt{return}, as they are only reduced representations of normal function
-bodies.
-
-\todo[inline]{There should be a complete description of the rule evaluation
-  cycle, with details such as the initialization of rule class objects, etc.}
-
-\subsubsection{Dialogue Acts}
+\subsection{Dialogue Acts}
 \label{sec:caret}
 
 A central functionality of a dialogue system is receiving and emitting dialogue
@@ -429,90 +510,17 @@ talk. One of the next improvements will be the extension of Dialogue Acts to
 allow for embedded structures.
 
 
-\subsubsection{Type inference and overloaded operators}
-\label{sec:typeinference}
-
-\vonda allows static type assignments and casting, but in many cases these can
-be avoided. If, for example, the type of the expression on the right-hand side
-of a declaration assignment is known or inferrable, it is not necessary to
-explicitely state it.
-
-You can also declare variables final.
-
-\begin{table}[htbp]
-  \begin{small}
-\begin{minipage}{.55\textwidth}
-\begin{lstlisting}
-if (! c.user.personality.nonchalance){ ... }
-\end{lstlisting}
-\end{minipage}\rule{2cm}{0pt}{\LARGE$\Rightarrow$}\hfill\\
-\begin{lstlisting}
-if (!((((c != null) && (c.user != null)) && (c.user.personality != null))
-      && (c.user.personality.nonchalance != null))) {
-  ...
-}
-\end{lstlisting}\end{small}\vspace*{-2ex}
-\caption{Transformation of complex boolean expressions}
-\label{tab:multi-predaccess}
-\end{table}
-\vspace*{10pt}
-
-A time-saving feature of \vonda which also improves readability is the
-automatic completion of boolean expressions in the clauses of \texttt{if},
-\texttt{while} and \texttt{for} statements. As it is obvious in these cases
-that the result of the expression must be of type boolean. \vonda automatically
-fills in a test for existence if it is not. When encountering field accesses,
-it makes sure that every partial access is tested for existence (i.e., not
-\texttt{null}) to avoid a \texttt{NullPointerException} in the runtime
-execution of the generated code.
-
-Be aware that the expansion in the figure only occurs if the multiple field
-access is used as boolean test. In the following example, the first clause in
-the boolean expression should not be omitted, since a
-\texttt{NullPointerException} could still occur because the second clause does
-not trigger an automatic test for existence of the \texttt{status} of
-\texttt{activity}:
-
-\begin{lstlisting}
-if (activity.status && activity.status == "foo"){ ... }
-\end{lstlisting}
-
-Many operators are overloaded, especially boolean operators such as
-\textbf{\texttt{<=}}, which compares numeric values, but can also be used to
-test if an object is of a specific class, for subclass tests between two
-classes, and for subsumption of dialogue acts.
-
-\begin{table}[htbp]
-\centering
-{\footnotesize%
-\begin{minipage}{0.28\textwidth}
-\begin{lstlisting}
-if (sa <= #Question){
-  ...
-}
-\end{lstlisting}
-\end{minipage}\vline\hspace{1em}
-\begin{minipage}{0.6\textwidth}
-\begin{lstlisting}
-if (sa.isSubsumedBy(new DialogueAct("Question")) {
-  ...
-}
-\end{lstlisting}
-\end{minipage}}\vspace*{-2ex}
-\caption{\label{tab:overloaded-comparison}Overloaded comparison operators}
-\end{table}
-
-\subsubsection{External methods and fields}
+\subsection{Declaring External Methods And Fields}
 \label{sec:javatypes}
 
 As mentioned before, you can use every method or field you declare in your
-custom Agent implementation in your \vonda code. Their declaration in the
-Java-rudi interface should look like a normal Java field or method definition
-(cfg. table~\ref{tab:javadef}). It is possible to use generics in these
-definitions, although they are, for complexity reasons, restricted to be one
-single uppercase letter.
+custom \texttt{Agent} subclass implementation in your \vonda code. Their
+declaration in the Java/rudi interface should look like a normal Java field or
+method definition (cfg. figure~\ref{tab:javadef}). It is possible to use
+generics in these definitions, although their names are, for complexity
+reasons, restricted to one single uppercase letter.
 
-\begin{table}[htbp]
+\begin{figure}[htbp]
 \small
 \begin{lstlisting}
 MyType someVariable;          // field of class MyType
@@ -522,15 +530,16 @@ MyType someFun(ClA a, ClB b); // method someFun with signature
 \end{lstlisting}\vspace*{-2ex}
 \caption{\label{tab:javadef}Defintions of existing Java fields and methods for
   \vonda}
-\end{table}
+\end{figure}
 
 There is a variety of standard Java methods called on Java classes that \vonda
-automatically recognizes, like e.g. the \texttt{substring} method for
+automatically recognises, like e.g. the \texttt{substring} method for
 Strings. If you find that you need \vonda to know the signature of a new method
-or a field that is defined in a specific class, you can provide \vonda with
-knowledge about them by adding their definition to the interface as follows:
+or a field that is defined in some other class that is not your \texttt{Agent}
+subclass, you can provide \vonda with knowledge about them by adding their
+definition to the interface as follows:
 
-\begin{table}[htbp]
+\begin{figure}[htbp]
 \centering
 \small
 \begin{lstlisting}
@@ -540,9 +549,9 @@ knowledge about them by adding their definition to the interface as follows:
                                        // used in type inference
 \end{lstlisting}\vspace*{-2ex}
 \caption{\label{tab:methoddef}Definition of a non-static method of Java objects}
-\end{table}
+\end{figure}
 
-It is important to realize that all declarations in the interface are only
+It is important to realise that all declarations in the interface are only
 compile time information for \vonda and will not be transferred to the compiled
 code, whereas declarations in the rule code itself will also appear in the
 compiled code.
@@ -551,14 +560,14 @@ compiled code.
 
 \vonda allows to specify \texttt{Function} arguments, where lambda
 constructions can then be used in the code. Currently, the functions listed in
-table \ref{tab:lambda-functions} are pre-defined in the \texttt{Agent} class.
-If you for example want to filter a set of RDF objects by a subtype relation,
+figure \ref{tab:lambda-functions} are pre-defined in the \texttt{Agent} class.
+If you for example want to filter a set of RDF objects by a sub-type relation,
 you can write:
 {\small\begin{lstlisting}
 des = filter(agent.desires, (d) -> (d <= UrgentDesire));
 \end{lstlisting}}
 
-\begin{table}[htbp]
+\begin{figure}[htbp]
 \small%
 \begin{lstlisting}
 boolean some(Collection<T> coll, Function<Boolean, T> pred);
@@ -570,7 +579,7 @@ int count(Collection<T> coll, Function<Boolean, T> pred);
 T first(Collection<T> coll, Function<Boolean, T> pred);
 \end{lstlisting}\vspace*{-2ex}
 \caption{\label{tab:lambda-functions}Functions that take lambda expressions as an argument}
-\end{table}
+\end{figure}
 
 
 \subsubsection{\texttt{import}}
@@ -616,55 +625,59 @@ instances on one of these classes, you can put this information into the type
 interface of the wrapper class (cfg. chapter \ref{sec:javatypes}).
 
 \section{The Run-Time System}
-%\subsection{Run-Time Library}
-\todo{AW: This is just a different language than the rest of the documentation... reformulate?}
 
 The run-time library contains the basic functionality for handling the rule
 processing, including the proposals and timeouts, and for the on-line
 inspection of the rule evaluation. There is, however, no blueprint for the main
-event loop, since that depends heavily on the host application. The run-time library also
-contains methods for the creation and modification of shallow semantic
-structures, and especially for searching the interaction history for specific
-utterances. Most of this functionality is available through the abstract
-\texttt{Agent} class, which has to be extended to a concrete class for each
-application.
+event loop, since that depends heavily on the host application. The run-time
+library also contains methods for the creation and modification of shallow
+semantic structures (\texttt{DialogueAct}s), and especially for searching the
+interaction history for specific utterances. Most of this functionality is
+available through the abstract \texttt{Agent} class, which needs to be extended
+to a concrete subclass for your application.
 
-There is functionality to talk directly to the HFC database using queries (compare section \ref{sec:hfc_usage}), in
-case the object view is not sufficient or to awkward.
-% The natural language
-%understanding and generation components can be exchanged by implementing existing
-%interfaces, and the statistical component is connected by a message exchange
-%protocol. A simple generation engine based on a graph rewriting module is
-%already integrated, and is used in our current system as a template based
-%generator. The example application also contains a VoiceXML based
-%interpretation module.
+There is also functionality to talk directly to the HFC database using queries
+(see section \ref{sec:hfc_usage}), in case the object view that was
+described in before is not sufficient or too awkward.
 
-The set of your reactive \vonda rules is executed whenever there is a change in the
-information state (IS). These changes are caused by incoming sensor or
-application data, intents from the speech recognition, or expired timers.
-%Rules are labeled if-then-else statements, with complex conditions and shortcut
-%logic, as in Java or C. The compiler analyses the base terms and stores their
-%values during processing for dynamic logging.
-A rule can have direct effects,
-like changes in the IS, or system calls. Furthermore, it can generate so-called
-\emph{proposals}, which are (labeled) blocks of code in a frozen state that
-will not be immediately executed, similar to closures.
+\subsection{Rule Evaluation Cycle}
+\label{sec:ruleevaluation}
+
+Your \vonda rule files form a tree, starting at the top-level file that you
+specify in the configuration file, and the \texttt{import}ed rule files. The
+evaluation of the rule starts in the top-level files and proceeds in pre-order
+through this tree. If you use a \texttt{cancel} or \texttt{cancel\_all}
+statement (cf. section~\ref{sec:cancelrules}), the rule evaluation will be
+either locally or globally stopped.
+
+The set of your reactive \vonda rules is executed whenever there is a change in
+the information state, which is stored in the database. These changes can be
+caused by incoming sensor or application data, intents from the speech
+recognition, or expired \texttt{timeout}s.  A rule can have direct effects,
+like changes in the information state, or system calls. Furthermore, the
+\texttt{proposal}s, which are (labeled) blocks of code in a frozen state that
+will not be immediately executed, but collected, similar to closures.
 
 All rules are repeatedly applied until a fix point is reached: No new proposals
-are generated and there is no IS change in the last iteration. Then, the set of
-proposals is evaluated by a statistical component, which will select the best
-alternative. This component can be exchanged to make it as simple or elaborate
-as necessary, taking into account arbitrary features from the data storage.
+are generated and there is no change of the information state in the last
+iteration. Then, the set of collected proposals is evaluated by a statistical
+component, which will select the best alternative. This component can be
+exchanged to make it as simple or elaborate as necessary, which also allows to
+take into account arbitrary features from the data storage.
 
-\subsection{Functionalities (methods) Provided by the Run-Time System}
-%Alles was in \texttt{Agent} bereitgestellt wird. Die aktuelle Liste der
-%bereitgestellten Funktionen finden sich in \texttt{rudimant} unter
-%\texttt{src/main/resources/Agent.rudi}.
-The following methods are declared in \texttt{src/main/resources/Agent.rudi}; their implementation is provided by Java itself or the \vonda framework.
+\todo[inline]{Describe how the generated Java code works, with details such as
+  the initialisation of rule class objects, etc., which includes lifetime of
+  variables $\ldots$}
+
+\todo[inline]{Add a section about the NLP APIs / modules}
+
+\subsection{Functionality Provided by the Run-Time System}
+The following methods are declared in \texttt{src/main/resources/Agent.rudi};
+their implementation is provided by Java itself or the \vonda framework.
 
 \vspace*{2ex}
 
-\newcommand{\pgr}[1]{\newline\noindent\textbf{#1}}
+\newcommand{\pgr}[1]{\noindent\textbf{#1}}
 
 \pgr{Pre-added Java methods}
 \begin{small}
