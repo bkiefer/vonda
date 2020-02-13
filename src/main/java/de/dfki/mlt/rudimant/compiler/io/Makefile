@@ -19,5 +19,5 @@ all: VondaGrammar.java VondaLexer.java UnicodeEscapes.java
 clean:
 	rm -f *.class
 	rm -f *~
-	rm -f *.java
+	rm -f VondaGrammar.java VondaLexer.java UnicodeEscapes.java
 	rm -f VondaGrammar.output
