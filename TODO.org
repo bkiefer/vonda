@@ -7,6 +7,19 @@
      also zur Verfügung, auch die nicht-statischen! Damit kann man aus
      Java-Klassen .rudi Methoden benutzen!
      Ausprobieren mit endQuiz (im Moment in NaoAgent)
+* Sollten wir für .rudi files "include" statt "import" benutzen
+  - "import" wie in Java nur am Anfang des Files zulassen, dass dann auch
+     nur Java imports macht?
+  - Bringt die baumartige Struktur überhaupt Vorteile?
+    Was könnte man sonst machen?
+* Übrige reduce-reduce Konflikte durch Syntax-Änderungen lösen, z.B.
+  - cast(TypeExpr, expr) statt (typeexpr) expr
+* Sollte man für die "if"s überhaupt Funktionen/Methoden generieren?
+  Evtl. könnte man so das Problem mit der linearisierung von input und output
+  code leichter lösen
+* Kann man die Generierung besser in eine eigene Stage verschieben?
+  die für sich genommen einfacher oder zumindest durchsichtiger ist?
+* Besseres plug-in für NLU/NLG/ASR/TTS über injection?
 * Fragen aus dem Durchforsten von VisitorType
   - ist dokumentiert, dass folgendes ein "clear" ist: //done
     child.name = null
