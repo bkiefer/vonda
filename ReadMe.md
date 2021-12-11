@@ -33,9 +33,10 @@ Prerequisites for installing VOnDA are:
   bindings are provided after installation:
 
   ```
-  wget http://archive.apache.org/dist/thrift/0.13.0/thrift-0.13.0.tar.gz
-  tar xf thrift-0.13.0.tar.gz
-  cd thrift-0.13.0
+  THRIFTVER=0.15.0
+  wget http://archive.apache.org/dist/thrift/$THRIFTVER/thrift-THRIFTVER.tar.gz
+  tar xf thrift-$THRIFTVER.tar.gz
+  cd thrift-$THRIFTVER
   ./configure --with-java
   cd ..
   ```
