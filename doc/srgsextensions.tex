@@ -1,0 +1,75 @@
+\section{Extensions to the SRGS/VoiceXML Formalism} \label{sec:srgs}
+\vonda comes with a simple NLU module that is based on the
+SRGS\footnote{\url{ https://www.w3.org/TR/semantic-interpretation/}}
+grammar format. SRGS grammars are so-called augmented context free
+grammars, where the rules contain terminal and non-terminal symbols
+that define the set of strings that are valid matches of the
+\emph{language} that the grammar defines, but also semantic actions
+that collect the \textrm{output} of the syntactic analysis in form of
+possibly complex objects.  \vonda provides some extensions to the
+default grammar formalism, currently only in the semantics (action
+part) of the rules, providing return values not only based on the names of non-terminal symbols, but also using relative positions of matched strings or tokens
+
+\vspace*{1ex}
+\begin{tabular}{ll}
+\verb|$%n| & refers to the value returned by the rule $n$ positions before this tag\\
+\verb|$$n| & refers to the the matched string $n$ positions before this tag\\
+\end{tabular}
+\vspace*{1ex}
+
+Note that if \verb|$%n| or \verb|$$n| refers to an alternative, the result of the matched alternative is returned.
+
+\texttt{n} always has to be greater than zero, since zero would be at the position
+where the semantic element is that makes the tag reference, which does not make
+sense. For determining \texttt{n}, you have to count \emph{every} grammar token,
+including semantic tokens.
+
+As an example, taken from the test cases of the \texttt{srgsparser}
+module, we parse the sentence "I want a medium pizza with Mushrooms
+please" with the grammar shown below, which will return a JSON object
+of the form:
+
+\vspace*{1ex}
+\verb|{ "order": { "size": "medium", "topping": "mushrooms" } }|
+\vspace*{1ex}
+
+since the \verb|$%2| in the \texttt{size} rule returned the output of the \texttt{\$small $\vert$ \$medium $\vert$ \$large} alternative, and the \verb|$$1| returned the string matched in the \texttt{medium} rule immediately before the tag. The rest is done with the ordinary JSON semantics present in the standard formalism.
+
+{\small\begin{verbatim}
+#ABNF 1.0 UTF-8;
+
+language en-EN;
+root $order;
+mode voice;
+tag-format "semantics/1.0";
+
+$politeness1 = [I want];
+$politeness2 = [please];
+
+$small = small {out = "$$1";};
+$medium = medium {out = "$$1";};
+$large = large {out = "big";};
+
+$size = (($small | $medium | $large) pizza {out = $%2;})
+        | (hot chili) { out="chili"; } ;
+
+$topping = Salami {out = "salami";}
+         | Ham {out = "ham";}
+         | Mushrooms {out = "mushrooms";} ;
+
+public $order =
+  {out = new Object(); out.order = new Object;}
+  $politeness1
+  (
+  [a] $size pizza {out.order.size = rules.size;}
+  | [a] [pizza with] $topping {out.order.topping = rules.topping;}
+  | [a] $size {out.order.size = rules.size;}
+    with $topping {out.order.topping = rules.topping;}
+  )
+  $politeness2 ;
+\end{verbatim}}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "userguide"
+%%% End:

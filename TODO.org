@@ -20,19 +20,9 @@
 * Kann man die Generierung besser in eine eigene Stage verschieben?
   die für sich genommen einfacher oder zumindest durchsichtiger ist?
 * Besseres plug-in für NLU/NLG/ASR/TTS über injection?
-* Fragen aus dem Durchforsten von VisitorType
-  - ist dokumentiert, dass folgendes ein "clear" ist: //done
-    child.name = null
-  - done in 3.1.2, needs more detail! What turns into what.
-* Implementation Patterns and Caveats
-  - lastDAProcessed() before in propose: lastDA().theme :( //done
-  - lastDAProcessed() after emitDA :( //done
-  - in general: emitDA suspends the thread of commands!!! //done
-  - if a question was asked: use waitingForResponse()
-  - Magic Variable expansion in DialogueActs:
-    slotnames *and* arguments with the same name as existing variables are
-    replaced by the value of the variable, just as with {...}
-    --> create an issue to *REMOVE* this //done
+  - rasa / Lucene NLU als default-alternative
+  - cplanner zur Luxus-NLG umbauen
+  - Anschluss von vosk als modul
 * Queries aus .rudi abfeuern --> missing varargs!?
 
 * Collections probleme: Alles polymorph?
@@ -63,3 +53,16 @@
 + functionality: integrate jtfs for subsumption etc.
 + Final refactoring logging
   + Serialize DialogueAct to / from RDF
+  + Magic Variable expansion in DialogueActs:
+    slotnames *and* arguments with the same name as existing variables are
+    replaced by the value of the variable, just as with {...}
+    --> create an issue to *REMOVE* this //done
++ Implementation Patterns and Caveats
+  + lastDAProcessed() before in propose: lastDA().theme :( //done
+  + lastDAProcessed() after emitDA :( //done
+  + in general: emitDA suspends the thread of commands!!! //done
+  + if a question was asked: use waitingForResponse()
++ Fragen aus dem Durchforsten von VisitorType
+  + ist dokumentiert, dass folgendes ein "clear" ist: //done
+    child.name = null
+  + done in 3.1.2, needs more detail! What turns into what.
