@@ -34,12 +34,15 @@ import java.util.Map;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
 
 
 public class CoverageTest {
+  Logger log = LoggerFactory.getLogger(CoverageTest.class);
 
   static boolean headless = false;
 
@@ -55,9 +58,8 @@ public class CoverageTest {
   }
 
   public int startCompiler(File dir) throws IOException, InterruptedException {
-    Process compile = Runtime.getRuntime().exec(
-        new String[]{"sh", "-c", "./javcomp"},
-        new String[]{}, dir );
+	  Process compile = new ProcessBuilder().directory(dir)
+	      .command("sh", "-c", "./javcomp").redirectErrorStream(true).start();
     return compile.waitFor();
   }
 
