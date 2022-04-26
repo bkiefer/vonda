@@ -196,7 +196,7 @@
     <dependency>
       <groupId>org.apache.thrift</groupId>
       <artifactId>libthrift</artifactId>
-      <version>0.14.0</version>
+      <version>0.16.0</version>
     </dependency>
 
     <dependency>
@@ -234,34 +234,28 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.32</version>
+      <version>1.7.36</version>
       <type>jar</type>
     </dependency>
 
     <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <version>2.13.0</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.36</version>
       <type>jar</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j18-impl</artifactId>
-      <version>2.13.0</version>
-      <type>jar</type>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>de.dfki.mlt</groupId>
       <artifactId>graff</artifactId>
-      <version>0.7</version>
+      <version>0.7.2</version>
     </dependency>
 
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>1.29</version>
+      <version>1.30</version>
       <type>jar</type>
     </dependency>
 
