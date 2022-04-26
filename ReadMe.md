@@ -27,13 +27,13 @@ Prerequisites for installing VOnDA are:
   sudo apt install openjdk-8-jdk maven git uncrustify
   ```
 
-- thrift communication library (version 0.12 or higher)
+- thrift communication library (version 0.16 or higher)
   See https://thrift.apache.org/docs/install/debian first
   Check on the thrift website how to install. Make sure the C++ and Java
   bindings are provided after installation:
 
   ```
-  THRIFTVER=0.15.0
+  THRIFTVER=0.16.0
   wget http://archive.apache.org/dist/thrift/$THRIFTVER/thrift-THRIFTVER.tar.gz
   tar xf thrift-$THRIFTVER.tar.gz
   cd thrift-$THRIFTVER

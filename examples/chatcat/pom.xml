@@ -18,7 +18,7 @@
       <dependency>
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
-        <version>1.26</version>
+        <version>1.30</version>
         <type>jar</type>
       </dependency>
       <dependency>
@@ -30,7 +30,7 @@
       <dependency>
         <groupId>de.dfki.mlt</groupId>
         <artifactId>vonda</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>2.2.2</version>
         <type>jar</type>
       </dependency>
       <dependency>
@@ -41,7 +41,7 @@
       <dependency>
         <groupId>de.dfki.mlt</groupId>
         <artifactId>srgs-parser</artifactId>
-        <version>0.95</version>
+        <version>0.99</version>
       </dependency>
     </dependencies>
 
