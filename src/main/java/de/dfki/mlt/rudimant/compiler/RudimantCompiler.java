@@ -20,11 +20,23 @@
 package de.dfki.mlt.rudimant.compiler;
 
 import static de.dfki.mlt.rudimant.common.Constants.*;
-import static de.dfki.mlt.rudimant.compiler.Constants.*;
+import static de.dfki.mlt.rudimant.compiler.Constants.AGENT_DEFS;
+import static de.dfki.mlt.rudimant.compiler.Constants.UNCRUST_CFG_NEW;
+import static de.dfki.mlt.rudimant.compiler.Constants.UNCRUST_CFG_OLD;
 import static de.dfki.mlt.rudimant.compiler.tree.GrammarFile.parseAndTypecheck;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +52,9 @@ import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.hfc.db.server.HandlerFactory;
 import de.dfki.lt.hfc.db.server.HfcDbHandler;
+import de.dfki.mlt.rudimant.common.BasicInfo;
+import de.dfki.mlt.rudimant.common.ErrorInfo;
+import de.dfki.mlt.rudimant.common.ImportInfo;
 import de.dfki.mlt.rudimant.common.Location;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
 
@@ -54,6 +69,7 @@ public class RudimantCompiler {
   private HfcDbHandler handler;
 
   private boolean typeCheck = false;
+  private boolean printErrors = false;
   private boolean visualise = false;
 
   // what should be logged in the rules (true = rudi code vs false = java code)
@@ -119,6 +135,10 @@ public class RudimantCompiler {
         (boolean) configs.get(CFG_VISUALISE)) {
       Visualize.init();
       showTree();
+    }
+    if (configs.containsKey(CFG_PRINT_ERRORS) &&
+        (boolean) configs.get(CFG_PRINT_ERRORS)) {
+      printErrors = true;
     }
   }
 
@@ -289,6 +309,11 @@ public class RudimantCompiler {
       mem.leaveClass();
       // save ruleLocMap to .yml file
       dumpToYaml();
+      // print errors and warnings in Emacs error format (optionally) for plain
+      // emacs use.
+      if (printErrors) {      
+        printErrors(mem.getInfo(), inputRootDir);
+      }
     }
 
   }
@@ -306,7 +331,23 @@ public class RudimantCompiler {
               new FileWriter(new File(infoDir, RULE_LOCATION_FILE)));
   }
 
-
+  /**
+   * print errors and warnings in emacs compilation mode error format 
+   * for plain emacs use.
+   */
+  private void printErrors(ImportInfo b, File dir) {
+    Path fileLoc = dir.toPath().resolve(b.getFilePath());
+    for (BasicInfo c : b.getChildren()) {
+      if (c instanceof ImportInfo) { 
+        printErrors((ImportInfo)c, fileLoc.toFile().getParentFile());
+      }
+    }
+    for (ErrorInfo info : b.getErrors()) {
+      System.out.println(info.getLocation().toString(fileLoc) + " " 
+          + info.getType().toString().toLowerCase() + ": " + info.getMessage());
+    }
+  }
+  
   /** Create output directories, open a writer to the output file and process
    *  the current input
    */

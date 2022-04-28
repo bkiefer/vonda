@@ -28,6 +28,7 @@ public class Constants {
   public static final String CFG_OUTPUT_DIRECTORY = "outputDirectory";
   public static final String CFG_WRAPPER_CLASS = "wrapperClass";
   public static final String CFG_TYPE_ERROR_FATAL = "failOnError";
+  public static final String CFG_PRINT_ERRORS = "printErrors";
   public static final String CFG_PACKAGE = "rootPackage";
   public static final String CFG_NAME_TO_URI = "nameToURI";
   public static final String CFG_NAME_TO_CLASS = "nameToClass";

@@ -19,16 +19,13 @@
 
 package de.dfki.mlt.rudimant.compiler.tree;
 
+import static de.dfki.mlt.rudimant.common.ErrorInfo.ErrorType.*;
 import static de.dfki.mlt.rudimant.compiler.Constants.*;
 import static de.dfki.mlt.rudimant.compiler.Utils.*;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
-
-//import org.antlr.v4.runtime.Token;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.mlt.rudimant.common.RuleInfo;
@@ -40,8 +37,6 @@ import de.dfki.mlt.rudimant.compiler.*;
  * @author Anna Welker, anna.welker@dfki.de
  */
 public class VisitorGeneration implements RudiVisitor {
-
-  public static Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
   Writer _out;
   private Mem mem;
@@ -704,9 +699,11 @@ public class VisitorGeneration implements RudiVisitor {
     case "continue":
       gen(node.command).gen(";\n");
       break;
-    default: logger.error("Wrong return command: {}", node.command); break;
+    default:
+      // this can only happen when VondaGrammar is wrong
+      mem.registerError("Wrong return command: " + node.command, 
+          node.getLocation(), ERROR);
     }
-    // }
   }
 
 

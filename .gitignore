@@ -29,3 +29,4 @@ test.rudi
 **/VondaGrammar.output
 **/persistent.nt
 locallibs
+dependency-reduced-pom.xml

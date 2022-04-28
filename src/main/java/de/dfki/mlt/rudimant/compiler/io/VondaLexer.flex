@@ -30,8 +30,6 @@ import de.dfki.mlt.rudimant.compiler.Mem;
 import de.dfki.mlt.rudimant.compiler.Token;
 import de.dfki.mlt.rudimant.compiler.tree.ExpLiteral;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 %%
 
 %public
@@ -49,8 +47,6 @@ import org.slf4j.LoggerFactory;
 
 
 %{
-  private static final Logger logger = LoggerFactory.getLogger(VondaLexer.class);
-
   private String origin;
 
   private Mem mem;
@@ -147,7 +143,6 @@ import org.slf4j.LoggerFactory;
    * @param msg The string for the error message.
    */
   public void yyerror (VondaGrammar.Location loc, String msg) {
-    logger.error("{}: {}", loc, msg);
     mem.registerError(msg, new Location(loc.begin, loc.end), PARSE_ERROR);
   }
 

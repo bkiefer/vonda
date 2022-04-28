@@ -28,9 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.mlt.rudimant.common.RuleInfo;
 import de.dfki.mlt.rudimant.compiler.*;
@@ -42,8 +39,6 @@ import de.dfki.mlt.rudimant.compiler.*;
  * @author Anna Welker, anna.welker@dfki.de
  */
 public class VisitorType implements RudiVisitor {
-
-  public static final Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
   private Mem mem;
 
@@ -62,16 +57,12 @@ public class VisitorType implements RudiVisitor {
    * @param node the tree node where the error occured
    */
   public void typeError(String errorMessage, RudiTree node) {
-    String newErrorMessage = node.getLocation() + " " + errorMessage;
     mem.registerError(errorMessage, node.getLocation(), ERROR);
 
     if (typeErrorFatal) {
       // throw a real Exception
-      throw new TypeException(newErrorMessage);
-    } else {
-      // just set a warning into the logger
-      logger.error(newErrorMessage);
-    }
+      throw new TypeException(node.getLocation() + " " + errorMessage);
+    } 
   }
 
   /** use this to report a type checking warning
@@ -80,15 +71,7 @@ public class VisitorType implements RudiVisitor {
    * @param node the tree node where the warning occured
    */
   public void typeWarning(String warnMessage, RudiTree node) {
-    String newWarningMessage = node.getLocation() + " " + warnMessage;
     mem.registerError(warnMessage, node.getLocation(), WARNING);
-    // just set a warning into the logger
-    logger.warn(newWarningMessage);
-  }
-
-  public void percolateError(Type type, RudiTree node) {
-    logger.error("Why didn't this type percolate up? "
-        + getFullText(node) + " " + type);
   }
 
   public VisitorType(Mem m, boolean errorsFatal, TokenHandler th) {
@@ -535,9 +518,9 @@ public class VisitorType implements RudiVisitor {
       if (mergeType == null) {
         if (innerIterableType.equals(new Type("Object"))) {
           // Then handle this as an implicit cast (but warn the user that it might crash)
-          logger.trace("{} Implicit casting of list Object to {} "
-              + "in short for loop, be aware this might crash in Java "
-              , node.getLocation(), node.varType.toString());
+          typeWarning("Implicit casting of list Object to " + node.varType.toString()
+            + " in short for loop, be aware this might crash in Java "
+            , node);
         } else {
           typeError("Incompatible types in short for loop: "
               + node.varType + " : " + innerIterableType, node);
