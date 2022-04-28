@@ -25,6 +25,7 @@ import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
 public class RuleLogger {
@@ -82,7 +83,9 @@ public class RuleLogger {
 
   public void loadFromResource() {
     // load the rule infos for logging
-    rootInfo = (BasicInfo) new Yaml().load(
+    LoaderOptions opt = new LoaderOptions();
+    opt.setMaxAliasesForCollections(1000);
+    rootInfo = (BasicInfo) new Yaml(opt).load(
         RuleLogger.class.getResourceAsStream("/generated/" + RULE_LOCATION_FILE));
     if (rootInfo != null) {
       ruleInfos = new ArrayList<>();
