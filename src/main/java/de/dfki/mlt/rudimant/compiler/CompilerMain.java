@@ -54,6 +54,7 @@ public class CompilerMain {
 
   final static Object [][] defaults = {
     { CFG_TYPE_ERROR_FATAL, false, "e" },
+    { CFG_PRINT_ERRORS, true, "q" },
     { CFG_VISUALISE, false , "v" },
     { CFG_WRAPPER_CLASS, "de.dfki.mlt.rudimant.agent.Agent", "w" },
   };
@@ -118,7 +119,7 @@ public class CompilerMain {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
 
-    OptionParser parser = new OptionParser("vedr:w:c:o:");
+    OptionParser parser = new OptionParser("vepdr:w:c:o:");
     parser.accepts("help");
     OptionSet options = null;
 
@@ -149,6 +150,9 @@ public class CompilerMain {
       }
       if (options.has("v")) {
         configs.put(CFG_VISUALISE, true);
+      }
+      if (options.has("q")) {
+        configs.put(CFG_PRINT_ERRORS, false);
       }
       if (options.has("d")) {
         BisonParser.DEBUG_GRAMMAR = true;
@@ -195,7 +199,7 @@ public class CompilerMain {
   private static void usage(String message) {
     System.out.println(message);
     System.out.println("java -jar vonda.jar\n"
-        + "   -v<isualize parses> -e<rror stops>\n"
+        + "   -v<isualize parses> -e<rror stops> -q<uiet (no errors printed)>\n"
         + "   -r ontos.ini -w WrapperClass -o outputDir\n"
         + "   -c config.yaml\n"
         + "   [TopLevel.rudi]\n\n"

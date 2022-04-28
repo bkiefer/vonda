@@ -116,7 +116,7 @@ public class WeirdCasesTest {
     String r = generate(in);
     String expected = "public int x;/**/ String javaVar = \"class variable\";"
             + " x = 5;}";
-    System.out.println(r);
+    //System.out.println(r);
     assertEquals(expected, getForMarked(r, expected));
   }
 
