@@ -1,7 +1,8 @@
 #!/bin/sh
 #set -x
-JARIMAGE=vonda-1.1-SNAPSHOT-compiler.jar
+JARIMAGE=vonda-2-compiler.jar
 here=`pwd`
+silent="-Dorg.slf4j.simpleLogger.defaultLogLevel=warn"
 
 if realpath . > /dev/null 2>&1 ; then
     :
@@ -37,4 +38,4 @@ if test -z "$jardir"; then
     cd $here
 fi
 
-java -jar "$jardir/$JARIMAGE" "$@"
+java $silent -jar "$jardir/$JARIMAGE" "$@"
