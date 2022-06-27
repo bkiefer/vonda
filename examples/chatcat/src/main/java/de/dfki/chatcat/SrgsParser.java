@@ -10,12 +10,12 @@ import org.json.JSONObject;
 import org.jvoicexml.processor.srgs.ChartGrammarChecker;
 import org.jvoicexml.processor.srgs.ChartGrammarChecker.ChartNode;
 import org.jvoicexml.processor.srgs.JVoiceXmlGrammarManager;
+import org.jvoicexml.processor.srgs.SemanticsInterpreter;
 import org.jvoicexml.processor.srgs.grammar.GrammarException;
 import org.jvoicexml.processor.srgs.grammar.Grammar;
 
 import de.dfki.mlt.rudimant.agent.DialogueAct;
 import de.dfki.mlt.rudimant.agent.nlg.Interpreter;
-import de.dfki.mlt.srgsparser.JSInterpreter;
 
 public class SrgsParser extends Interpreter {
   JVoiceXmlGrammarManager manager;
@@ -46,8 +46,7 @@ public class SrgsParser extends Interpreter {
       //TODO: Find out why no validRule is returned
       ChartNode validRule = checker.parse(ruleGrammar, tokens);
       if (validRule != null) {
-        JSInterpreter walker = new JSInterpreter(checker);
-        JSONObject object = walker.evaluate(validRule);
+        JSONObject object = SemanticsInterpreter.interpret(checker, validRule);
         String da = object.getString(DA_SLOT);
         if (da == null) return null;
         String prop = object.getString(PROP_SLOT);
