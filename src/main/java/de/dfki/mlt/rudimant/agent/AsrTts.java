@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
-import de.dfki.mlt.rudimant.agent.nlg.*;
+import de.dfki.mlt.rudimant.agent.nlp.*;
 
 public class AsrTts {
   public static final Logger logger = LoggerFactory.getLogger(AsrTts.class);

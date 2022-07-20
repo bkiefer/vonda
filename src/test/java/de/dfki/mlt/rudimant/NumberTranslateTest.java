@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import de.dfki.mlt.rudimant.agent.nlg.CPlannerNlg;
+import de.dfki.mlt.rudimant.agent.nlp.CPlannerNlg;
 
 /**
  *

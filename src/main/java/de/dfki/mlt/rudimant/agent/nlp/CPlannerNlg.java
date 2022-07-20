@@ -17,7 +17,7 @@
  * IN THE SOFTWARE.
  */
 
-package de.dfki.mlt.rudimant.agent.nlg;
+package de.dfki.mlt.rudimant.agent.nlp;
 
 import java.io.File;
 import java.io.FileNotFoundException;

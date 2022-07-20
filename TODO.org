@@ -1,4 +1,4 @@
-* Erleuchtung bzgl. Wrapperklasse: Agent vs. NaoAgent vs. PalAgent
+* Erleuchtung bzgl. Wrapperklasse: Agent vs. NaoAgent vs. PalAgent !!! JA FÜR 3.0
   1. NaoAgent scheint eigentlich eine klasse wie TimelineUtils zu sein (oder
      könnte so sein)
   2. Sollten PalAgent und NaoAgent nicht die Plätze tauschen, also:
@@ -7,13 +7,13 @@
      also zur Verfügung, auch die nicht-statischen! Damit kann man aus
      Java-Klassen .rudi Methoden benutzen!
      Ausprobieren mit endQuiz (im Moment in NaoAgent)
-* Sollten wir für .rudi files "include" statt "import" benutzen
+* Sollten wir für .rudi files "include" statt "import" benutzen !!! JA FÜR 3.0
   - "import" wie in Java nur am Anfang des Files zulassen, dass dann auch
      nur Java imports macht?
   - Bringt die baumartige Struktur überhaupt Vorteile?
     Was könnte man sonst machen?
 * Übrige reduce-reduce Konflikte durch Syntax-Änderungen lösen, z.B.
-  - cast(TypeExpr, expr) statt (typeexpr) expr
+  - cast(TypeExpr, expr) statt (typeexpr) expr (oder isa statt cast)
 * Sollte man für die "if"s überhaupt Funktionen/Methoden generieren?
   Evtl. könnte man so das Problem mit der linearisierung von input und output
   code leichter lösen

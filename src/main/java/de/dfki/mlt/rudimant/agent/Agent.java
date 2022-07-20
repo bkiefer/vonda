@@ -36,7 +36,7 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import de.dfki.lt.hfc.db.server.StreamingClient;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
-import de.dfki.mlt.rudimant.agent.nlg.Pair;
+import de.dfki.mlt.rudimant.agent.nlp.Pair;
 import de.dfki.mlt.rudimant.common.RuleLogger;
 import de.dfki.mlt.rudimant.common.SimpleServer;
 

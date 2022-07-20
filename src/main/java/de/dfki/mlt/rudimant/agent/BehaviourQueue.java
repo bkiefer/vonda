@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.mlt.rudimant.agent.Agent.Proposal;
-import de.dfki.mlt.rudimant.agent.nlg.Pair;
+import de.dfki.mlt.rudimant.agent.nlp.Pair;
 
 /**
  * This class implements a queue for behaviours that were sent out, but

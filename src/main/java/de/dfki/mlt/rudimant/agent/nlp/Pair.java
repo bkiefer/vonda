@@ -17,9 +17,19 @@
  * IN THE SOFTWARE.
  */
 
-package de.dfki.mlt.rudimant.agent.nlg;
+package de.dfki.mlt.rudimant.agent.nlp;
 
-public interface BaseInfoStateAccess {
+public class Pair<KEYTYPE, VALUETYPE> {
 
-  public Object getInfoVar(String name);
+  public KEYTYPE first;
+  public VALUETYPE second;
+
+  public Pair(KEYTYPE theFirst, VALUETYPE theSecond) {
+    first = theFirst;
+    second = theSecond;
+  }
+
+  public String toString() {
+    return "<" + first + "|" + second + ">";
+  }
 }

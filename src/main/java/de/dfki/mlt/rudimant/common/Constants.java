@@ -20,7 +20,7 @@
 package de.dfki.mlt.rudimant.common;
 
 /** A set of constants only relevant at run-time and compilation */
-public class Constants {
+public interface Constants {
   /** The location of the ontology configuration file, if any */
   public static final String CFG_ONTOLOGY_FILE = "ontologyFile";
 
@@ -40,14 +40,24 @@ public class Constants {
   /** NLG option section */
   public static final String CFG_NLG_KEY = "NLG";
   /** NLG mapper config */
-  public static final String CFG_MAPPER_PROJECT = "mapperProject";
+  public static final String CFG_NLG_MAPPER_PROJECT = "mapperProject";
   /** NLG main config */
-  public static final String CFG_GENERATION_PROJECT = "generationProject";
+  public static final String CFG_NLG_GENERATION_PROJECT = "generationProject";
   /** NLG Flag if numbers should be translated to text by ICU or not */
-  public static final String CFG_TRANSLATE_NUMBERS = "translateNumbers";
+  public static final String CFG_NLG_TRANSLATE_NUMBERS = "translateNumbers";
 
   /** NLU option section */
   public static final String CFG_NLU_KEY = "NLU";
+  /** NLU config key for grammar name, semantics depends on plugin */
+  public static final String CFG_NLU_GRAMMAR = "grammar";
+  /** NLU specify location of project file for cplan based converter of JSON
+   *  input, see Interpreter abstract base class
+   */
+  public static final String CFG_NLU_CONVERTER = "converter";
+  /** NLU convert input to lowercase in preprocess */
+  public static final String CFG_NLU_TOLOWER = "to_lower";
+  /** Remove punctuation symbols from input string, currently fixed set */
+  public static final String CFG_NLU_REMOVE_PUNCTUATION = "remove_punctuation";
 
   public static final String RULE_FILE_EXTENSION = ".rudi";
   public static final String RULE_LOCATION_FILE = "RuleLoc.yml";
