@@ -163,9 +163,9 @@
               <descriptors>
                 <descriptor>src/assembly/fatjar.xml</descriptor>
               </descriptors>
-              <descriptorRefs>
+              <!--<descriptorRefs>
                 <descriptorRef>jar-with-dependencies</descriptorRef>
-              </descriptorRefs>
+              </descriptorRefs>-->
             </configuration>
           </execution>
           <execution>
