@@ -18,8 +18,12 @@ NLG:
     generationProject: src/main/resources/grammars/cplanner/allrules
 NLU:
   eng:
-    class: de.dfki.chatcat.SrgsParser
+    class: de.dfki.mlt.rudimant.agent.nlp.SrgsParser
     grammar: src/main/resources/grammars/srgs/chatcat.xml
+    tokenizer:
+      class: de.dfki.mlt.rudimant.agent.nlp.TrivialTokenizer
+      toLower: false
+      removePunctuation: true
 debugPort: 9777
 
 # for the debugger/GUI

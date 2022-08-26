@@ -1,26 +1,26 @@
 package de.dfki.mlt.rudimant.agent.nlp;
 
-import static de.dfki.mlt.rudimant.common.Constants.*;
+import static de.dfki.mlt.rudimant.common.Constants.CFG_NLU_GRAMMAR;
+import static de.dfki.mlt.rudimant.common.Constants.CFG_NLU_TOKENIZER;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
 import org.json.JSONObject;
-import org.jvoicexml.processor.srgs.ChartGrammarChecker;
-import org.jvoicexml.processor.srgs.ChartGrammarChecker.ChartNode;
-import org.jvoicexml.processor.srgs.JVoiceXmlGrammarManager;
-import org.jvoicexml.processor.srgs.SemanticsInterpreter;
-import org.jvoicexml.processor.srgs.grammar.Grammar;
-import org.jvoicexml.processor.srgs.grammar.GrammarException;
+import org.jvoicexml.processor.AbstractParser;
+import org.jvoicexml.processor.AbstractParser.ChartNode;
+import org.jvoicexml.processor.JVoiceXmlGrammarManager;
+import org.jvoicexml.processor.SemanticsInterpreter;
+import org.jvoicexml.processor.grammar.Grammar;
+import org.jvoicexml.processor.srgs.GrammarException;
 
 import de.dfki.mlt.rudimant.agent.DialogueAct;
 
-// TODO: TURN INTO A VONDA MODULE/PLUGIN
 public class SrgsParser extends Interpreter {
   protected JVoiceXmlGrammarManager manager;
   protected Grammar grammar;
-  protected ChartGrammarChecker checker;
+  protected AbstractParser checker;
   protected Tokenizer tokenizer = null;
 
   @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -32,7 +32,7 @@ public class SrgsParser extends Interpreter {
     try {
       manager = new JVoiceXmlGrammarManager();
       grammar = manager.loadGrammar(new File(configDir, grammarName).toURI());
-      checker = new ChartGrammarChecker(manager);
+      checker = AbstractParser.getParser(manager);
     } catch (IOException | GrammarException ex) {
       logger.error("Could not read grammar file {} because of {}",
           new File(configDir, grammarName), ex.toString());
