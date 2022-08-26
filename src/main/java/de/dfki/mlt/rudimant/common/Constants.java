@@ -54,10 +54,14 @@ public interface Constants {
    *  input, see Interpreter abstract base class
    */
   public static final String CFG_NLU_CONVERTER = "converter";
-  /** NLU convert input to lowercase in preprocess */
-  public static final String CFG_NLU_TOLOWER = "to_lower";
-  /** Remove punctuation symbols from input string, currently fixed set */
-  public static final String CFG_NLU_REMOVE_PUNCTUATION = "remove_punctuation";
+  /** NLU config key for eventually loading a tokenizer */
+  public static final String CFG_NLU_TOKENIZER= "tokenizer";
+
+  /** TrivialTokenizer: convert input to lowercase in preprocess */
+  public static final String CFG_TOK_TOLOWER = "to_lower";
+  /** TrivialTokenizer: Remove punctuation symbols from input string, currently
+   *  fixed set */
+  public static final String CFG_TOK_REMOVE_PUNCTUATION = "remove_punctuation";
 
   public static final String RULE_FILE_EXTENSION = ".rudi";
   public static final String RULE_LOCATION_FILE = "RuleLoc.yml";

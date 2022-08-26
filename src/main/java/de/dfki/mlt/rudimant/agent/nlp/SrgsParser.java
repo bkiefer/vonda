@@ -18,11 +18,12 @@ import de.dfki.mlt.rudimant.agent.DialogueAct;
 
 // TODO: TURN INTO A VONDA MODULE/PLUGIN
 public class SrgsParser extends Interpreter {
-  JVoiceXmlGrammarManager manager;
-  Grammar grammar;
-  ChartGrammarChecker checker;
+  protected JVoiceXmlGrammarManager manager;
+  protected Grammar grammar;
+  protected ChartGrammarChecker checker;
+  protected Tokenizer tokenizer = null;
 
-  @SuppressWarnings("rawtypes")
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   public boolean init(File configDir, String language, Map config) {
     String grammarName = (String) config.get(CFG_NLU_GRAMMAR);
@@ -37,13 +38,18 @@ public class SrgsParser extends Interpreter {
           new File(configDir, grammarName), ex.toString());
       return false;
     }
+    if (config.containsKey(CFG_NLU_TOKENIZER)) {
+      tokenizer = Tokenizer.getTokenizer(configDir, language,
+          (Map<String, Object>)config.get(CFG_NLU_TOKENIZER));
+    } else {
+      tokenizer = new TrivialTokenizer();
+    }
     return super.init(configDir, language, config);
   }
 
   @Override
   public DialogueAct analyse(String text) {
-    text = preprocess(text);
-    String[] tokens = text.split(" +");
+    String[] tokens = tokenizer.tokenize(text);
     ChartNode validRule = null;
     DialogueAct result = null;
     try {

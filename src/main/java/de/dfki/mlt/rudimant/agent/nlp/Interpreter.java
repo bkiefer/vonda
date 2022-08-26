@@ -22,13 +22,11 @@ package de.dfki.mlt.rudimant.agent.nlp;
 import static de.dfki.mlt.rudimant.common.Constants.*;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -52,11 +50,7 @@ public abstract class Interpreter {
 
   protected String language;
 
-  protected boolean toLower = false;
-
-  protected boolean removePunctuation= false;
-
-  protected UtterancePlanner daConverter;
+  protected UtterancePlanner daConverter = null;
 
   /** Factory method to get a language analyser for the given config.
    *
@@ -120,14 +114,6 @@ public abstract class Interpreter {
         return false;
       }
     }
-
-    if (config.containsKey(CFG_NLU_TOLOWER)) {
-      setToLower((boolean)config.get(CFG_NLU_TOLOWER));
-    }
-    if (config.containsKey(CFG_NLU_REMOVE_PUNCTUATION)) {
-      setRemovePunctuation((boolean)config.get(CFG_NLU_REMOVE_PUNCTUATION));
-    }
-
     return true;
   }
 
@@ -194,28 +180,6 @@ public abstract class Interpreter {
     }
     node.addEdge(DagNode.ID_FEAT_ID, new DagNode("raw"));
     return (node == null) ? null : new DialogueAct(node);
-  }
-
-  // TODO: MAYBE THIS SHOULD BE CONFIGURABLE
-  private static Pattern PUNCTUATION = Pattern.compile("[.?!;,]");
-
-  protected String preprocess(String input) {
-    if (toLower) {
-      // TODO: THIS SHOULD USE THE ICU4J FUNCTIONALITY
-      input = input.toLowerCase();
-    }
-    if (removePunctuation) {
-      input = PUNCTUATION.matcher(input).replaceAll("");
-    }
-    return input;
-  }
-
-  public void setToLower(boolean value) {
-    toLower = value;
-  }
-
-  public void setRemovePunctuation(boolean value) {
-    removePunctuation = value;
   }
 
   public abstract DialogueAct analyse(String text);
