@@ -21,7 +21,14 @@ package de.dfki.mlt.rudimant.compiler;
 
 import static de.dfki.mlt.rudimant.common.Constants.RULE_FILE_EXTENSION;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.io.Writer;
 
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.loot.gui.DrawingPanel;
@@ -101,6 +108,9 @@ public class Visualize extends CompilerMain {
   public static void show(RudiTree root, String realName, MainFrame mf) {
     CompactLayout cl = new CompactLayout();
     cl.setTreeHorizontal(true);
+    cl.setTreeLevelDistance(0);
+    cl.setTreeNodeDistance(10);
+    cl.setTreeEdgesStraight(false);
 
     DrawingPanel dp = new DrawingPanel(root, cl, new TreeModelAdapter());
     mf.setContentArea(dp);
@@ -114,6 +124,7 @@ public class Visualize extends CompilerMain {
   }
 
   public static class RudiFileHandler implements ObjectHandler {
+    @Override
     public boolean process(File f, InputStream in, MainFrame mf)
         throws IOException {
       String inputRealName = f.getName().replace(RULE_FILE_EXTENSION, "");
