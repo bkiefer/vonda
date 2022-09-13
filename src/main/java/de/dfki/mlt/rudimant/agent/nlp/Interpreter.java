@@ -83,7 +83,7 @@ public abstract class Interpreter {
   @SuppressWarnings({ "unchecked", "rawtypes" })
   public static Interpreter createInterpreter(File configDir, String currentLang,
       Map<String, Object> langConfig) {
-    String parserClassName = (String)langConfig.get("class");
+    String parserClassName = (String)langConfig.get(CFG_CLASS);
     Interpreter inter = null;
     try {
       Class parserClass = Class.forName(parserClassName);

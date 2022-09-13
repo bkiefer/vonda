@@ -21,6 +21,8 @@ package de.dfki.mlt.rudimant.common;
 
 /** A set of constants only relevant at run-time and compilation */
 public interface Constants {
+  public static final String CFG_CLASS = "class";
+
   /** The location of the ontology configuration file, if any */
   public static final String CFG_ONTOLOGY_FILE = "ontologyFile";
 

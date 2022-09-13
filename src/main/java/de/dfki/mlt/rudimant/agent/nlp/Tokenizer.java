@@ -1,5 +1,7 @@
 package de.dfki.mlt.rudimant.agent.nlp;
 
+import static de.dfki.mlt.rudimant.common.Constants.*;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -46,7 +48,7 @@ public abstract class Tokenizer  {
  @SuppressWarnings({ "unchecked", "rawtypes" })
  public static Tokenizer createTokenizer(File configDir, String currentLang,
      Map<String, Object> langConfig) {
-   String parserClassName = (String)langConfig.get("class");
+   String parserClassName = (String)langConfig.get(CFG_CLASS);
    Tokenizer inter = null;
    try {
      Class parserClass = Class.forName(parserClassName);
