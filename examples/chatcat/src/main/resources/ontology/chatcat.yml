@@ -1,0 +1,31 @@
+minArgs: 3
+maxArgs: 4
+noOfCores: 4
+#minNoArgs=3
+#maxNoArgs=4
+#noAtoms=100000
+#noTuples=500000
+persistenceFile: persistent.nt
+characterEncoding: UTF-8
+eqReduction: true
+addTimestamps: [0]
+shortIsDefault: true
+
+# further options for the future,
+# e.g., character encoding, persistent output file name, etc.
+
+namespaces:
+  # namespaces for XSD, RDF, RDFS, and OWL are already defined
+  dial: http://www.dfki.de/lt/onto/common/dialogue.owl#
+  cat: http://www.semanticweb.org/anna/ontologies/2018/3/chatcat#
+
+tupleFiles:
+  # the axiomatic triples for OWL-Horst w/ EQ reduction
+  - default.eqred.nt
+  # the PAL sub-ontologies
+  - dialogue.nt
+  - chatcat.nt
+
+ruleFiles:
+  # we need special rules for transaction time (mixture of triples/quadruples)
+  - default.eqred.quads.rdl

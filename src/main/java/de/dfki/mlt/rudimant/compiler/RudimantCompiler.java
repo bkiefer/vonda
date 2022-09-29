@@ -97,12 +97,11 @@ public class RudimantCompiler {
 
   private void startClient(File configDir, Map<String, Object> configs)
       throws IOException, WrongFormatException {
-    handler = HandlerFactory.getHandler();
     String ontoFileName = (String) configs.get(CFG_ONTOLOGY_FILE);
     if (ontoFileName == null) {
       throw new IOException("Ontology file is missing.");
     }
-    handler.readConfig(new File(configDir, ontoFileName));
+    handler = HandlerFactory.getHandler(new File(configDir, ontoFileName).getPath());
   }
 
   /** Constructor for top-level file */
@@ -171,7 +170,7 @@ public class RudimantCompiler {
 
   public void shutdown() {
     if (handler != null) {
-      handler.shutdown();
+      handler.shutdownNoExit();
     }
   }
 
@@ -311,7 +310,7 @@ public class RudimantCompiler {
       dumpToYaml();
       // print errors and warnings in Emacs error format (optionally) for plain
       // emacs use.
-      if (printErrors) {      
+      if (printErrors) {
         printErrors(mem.getInfo(), inputRootDir);
       }
     }
@@ -332,22 +331,22 @@ public class RudimantCompiler {
   }
 
   /**
-   * print errors and warnings in emacs compilation mode error format 
+   * print errors and warnings in emacs compilation mode error format
    * for plain emacs use.
    */
   private void printErrors(ImportInfo b, File dir) {
     Path fileLoc = dir.toPath().resolve(b.getFilePath());
     for (BasicInfo c : b.getChildren()) {
-      if (c instanceof ImportInfo) { 
+      if (c instanceof ImportInfo) {
         printErrors((ImportInfo)c, fileLoc.toFile().getParentFile());
       }
     }
     for (ErrorInfo info : b.getErrors()) {
-      System.out.println(info.getLocation().toString(fileLoc) + " " 
+      System.out.println(info.getLocation().toString(fileLoc) + " "
           + info.getType().toString().toLowerCase() + ": " + info.getMessage());
     }
   }
-  
+
   /** Create output directories, open a writer to the output file and process
    *  the current input
    */

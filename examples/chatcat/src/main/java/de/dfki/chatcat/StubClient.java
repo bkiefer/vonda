@@ -45,11 +45,11 @@ public class StubClient implements CommunicationHub {
   }
 
   public static String float2xsd(Float f) {
-    return new XsdFloat(getDefault(f)).toString(true);
+    return new XsdFloat(getDefault(f)).toString();
   }
 
   public static String float2xsd(Double f) {
-    return new XsdDouble(getDefault(f)).toString(true);
+    return new XsdDouble(getDefault(f)).toString();
   }
 
   private Random r = new Random();

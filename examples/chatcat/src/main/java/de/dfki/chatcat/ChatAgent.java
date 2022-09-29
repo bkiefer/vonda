@@ -30,13 +30,11 @@ public abstract class ChatAgent extends Agent implements Constants {
       throw new IOException("Ontology file is missing.");
     }
     if (configs.containsKey(CFG_SERVER_PORT)) {
-      server = new HfcDbServer();
-      server.readConfig(new File(configDir, ontoFileName));
+      server = new HfcDbServer(new File(configDir, ontoFileName).getPath());
       server.runServer((int) configs.get(CFG_SERVER_PORT));
       handler = server.getHandler();
     } else {
-      handler = HandlerFactory.getHandler();
-      handler.readConfig(new File(configDir, ontoFileName));
+      handler = HandlerFactory.getHandler(new File(configDir, ontoFileName).getPath());
     }
     RdfProxy proxy = new RdfProxy(handler);
     handler.registerStreamingClient(proxy);
@@ -56,6 +54,7 @@ public abstract class ChatAgent extends Agent implements Constants {
     this.logAllRules();
   }
 
+  @Override
   public void shutdown() {
     handler.shutdown();
     if (server != null) server.shutdown();

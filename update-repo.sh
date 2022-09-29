@@ -26,6 +26,6 @@ what="$*"
 
 mkdir $LOCAL_REPO 2>/dev/null
 
-mvi de.dfki.lt.hfc hfc 1.2.5-SNAPSHOT
+mvi de.dfki.lt.hfc hfc 1.3.0
 
-mvi de.dfki.lt.hfc hfc-thrift 0.1-SNAPSHOT
+mvi de.dfki.lt.hfc hfc-thrift 1.0

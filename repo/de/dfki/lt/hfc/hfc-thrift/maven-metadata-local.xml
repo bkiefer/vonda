@@ -3,9 +3,11 @@
   <groupId>de.dfki.lt.hfc</groupId>
   <artifactId>hfc-thrift</artifactId>
   <versioning>
+    <release>1.0</release>
     <versions>
       <version>0.1-SNAPSHOT</version>
+      <version>1.0</version>
     </versions>
-    <lastUpdated>20220426085857</lastUpdated>
+    <lastUpdated>20220929165138</lastUpdated>
   </versioning>
 </metadata>

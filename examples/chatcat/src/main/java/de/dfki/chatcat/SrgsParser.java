@@ -1,18 +1,20 @@
 package de.dfki.chatcat;
 
-import static de.dfki.chatcat.Constants.*;
+import static de.dfki.chatcat.Constants.CFG_SRGS_GRAMMAR;
+import static de.dfki.chatcat.Constants.DA_SLOT;
+import static de.dfki.chatcat.Constants.PROP_SLOT;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
 import org.json.JSONObject;
-import org.jvoicexml.processor.srgs.ChartGrammarChecker;
-import org.jvoicexml.processor.srgs.ChartGrammarChecker.ChartNode;
-import org.jvoicexml.processor.srgs.JVoiceXmlGrammarManager;
-import org.jvoicexml.processor.srgs.SemanticsInterpreter;
-import org.jvoicexml.processor.srgs.grammar.GrammarException;
-import org.jvoicexml.processor.srgs.grammar.Grammar;
+import org.jvoicexml.processor.AbstractParser;
+import org.jvoicexml.processor.AbstractParser.ChartNode;
+import org.jvoicexml.processor.JVoiceXmlGrammarManager;
+import org.jvoicexml.processor.SemanticsInterpreter;
+import org.jvoicexml.processor.grammar.Grammar;
+import org.jvoicexml.processor.srgs.GrammarException;
 
 import de.dfki.mlt.rudimant.agent.DialogueAct;
 import de.dfki.mlt.rudimant.agent.nlg.Interpreter;
@@ -20,7 +22,7 @@ import de.dfki.mlt.rudimant.agent.nlg.Interpreter;
 public class SrgsParser extends Interpreter {
   JVoiceXmlGrammarManager manager;
   Grammar ruleGrammar;
-  ChartGrammarChecker checker;
+  AbstractParser checker;
 
   @SuppressWarnings("rawtypes")
   @Override
@@ -30,7 +32,7 @@ public class SrgsParser extends Interpreter {
     try {
       manager = new JVoiceXmlGrammarManager();
       ruleGrammar = manager.loadGrammar(new File(configDir, grammarName).toURI());
-      checker = new ChartGrammarChecker(manager);
+      checker = AbstractParser.getParser(manager);
     } catch (IOException | GrammarException ex){
       logger.error("Could not read grammar file {} because of {}",
           new File(configDir, grammarName), ex.toString());
