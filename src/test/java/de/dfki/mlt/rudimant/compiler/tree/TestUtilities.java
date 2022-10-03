@@ -44,7 +44,7 @@ public class TestUtilities {
     assertNotNull(gf);
     StatGrammarRule dtr = (StatGrammarRule) gf.getDtrs().iterator().next();
     StatIf _if = (StatIf) dtr.getDtrs().iterator().next();
-    StatAbstractBlock blk = (StatAbstractBlock) ((StatIf) _if).statblockIf;
+    StatAbstractBlock blk = (StatAbstractBlock) _if.statblockIf;
     Iterator<? extends RudiTree> it = blk.getDtrs().iterator();
     for (int i = 0; i < n; i++){
       it.next();
@@ -60,8 +60,8 @@ public class TestUtilities {
     if (ontoFileName == null) {
       throw new IOException("Ontology file is missing.");
     }
-    HfcDbHandler handler = HandlerFactory.getHandler();
-    handler.readConfig(new File(configDir, ontoFileName));
+    HfcDbHandler handler = HandlerFactory.getHandler(
+        new File(configDir, ontoFileName).getPath());
     RdfProxy proxy = new RdfProxy(handler);
     handler.registerStreamingClient(proxy);
     return proxy;

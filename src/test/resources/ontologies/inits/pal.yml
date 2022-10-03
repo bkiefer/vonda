@@ -1,0 +1,48 @@
+#minNoArgs=3
+#maxNoArgs=4
+#noAtoms=100000
+#noTuples=500000
+#PersistencyFile=/tmp/tuples.nt
+characterEncoding: UTF-8
+addTimestamps: [0]
+
+# further options for the future,
+# e.g., character encoding, persistent output file name, etc.
+
+namespaces:
+  # namespaces for XSD, RDF, RDFS, and OWL are already defined
+  pal: http://www.dfki.de/lt/onto/pal/pal.owl#
+  time: http://www.dfki.de/lt/onto/common/time.owl#
+  upper: http://www.dfki.de/lt/onto/common/upper.owl#
+  dial: http://www.dfki.de/lt/onto/common/dialogue.owl#
+  dom: http://www.dfki.de/lt/onto/pal/domain.owl#
+  sem: http://www.dfki.de/lt/onto/pal/semantics.owl#
+  edu: http://www.dfki.de/lt/onto/pal/dmedu.owl#
+  task: http://www.dfki.de/lt/onto/pal/task.owl#
+  bloom: http://www.dfki.de/lt/onto/pal/bloom.owl#
+  rifca: http://www.dfki.de/lt/onto/pal/rifca.owl#
+  tml: http://www.dfki.de/lt/onto/pal/timeline.owl#
+  epmem: http://www.dfki.de/lt/onto/pal/episodicmemory.owl#
+
+# instead, you can also load one or more namespace files
+#default.ns
+
+tupleFiles:
+  # the axiomatic triples for OWL-Horst w/ EQ reduction
+  - ../ontologies/default/default.eqred.nt
+  # the PAL sub-ontologies
+  - ../ontologies/common/dialogue/dialogue.nt
+  - ../ontologies/pal/domain/domain.nt
+  - ../ontologies/pal/pal/pal.nt
+  - ../ontologies/pal/semantics/semantics.nt
+  - ../ontologies/common/time/time.nt
+  - ../ontologies/common/upper/upper.nt
+  - ../ontologies/pal/dmedu/dmedu.nt
+  - ../ontologies/pal/task/task.nt
+  - ../ontologies/pal/bloom/bloom.nt
+  - ../ontologies/pal/timeline/timeline.nt
+  - ../ontologies/pal/episodicmemory/episodicmemory.nt
+
+[Rules]
+# we need special rules for transaction time (mixture of triples/quadruples)
+#default.eqred.rdl

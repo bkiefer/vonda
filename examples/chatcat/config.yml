@@ -1,4 +1,4 @@
-ontologyFile:       src/main/resources/ontology/chatcat.ini
+ontologyFile:       src/main/resources/ontology/chatcat.yml
 
 # compile configuration settings
 inputFile:          src/main/rudi/ChatCat.rudi

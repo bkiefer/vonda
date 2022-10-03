@@ -1,6 +1,6 @@
 outputDirectory:    src/main/generated
 wrapperClass:       mini.WrapperClass
-ontologyFile:       ../ontologies/inits/pal.inference.ini
+ontologyFile:       ../ontologies/inits/pal.inference.yml
 failOnError:        false
 targetConstructor:
 rootPackage:        mini
