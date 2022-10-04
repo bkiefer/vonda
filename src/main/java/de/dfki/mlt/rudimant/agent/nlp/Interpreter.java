@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -44,10 +43,6 @@ public abstract class Interpreter {
 
   protected static Logger logger = LoggerFactory.getLogger(Interpreter.class);
 
-  /** This maps from languages to interpreters */
-  private static Map<String, Interpreter> _interpreters
-  = new HashMap<String, Interpreter>();
-
   protected String language;
 
   protected UtterancePlanner daConverter = null;
@@ -62,14 +57,7 @@ public abstract class Interpreter {
    */
   public static Interpreter getInterpreter(File configDir, String currentLang,
       Map<String, Object> langConfig) {
-    Interpreter singleton = _interpreters.get(currentLang);
-    if (singleton == null) {
-      singleton = createInterpreter(configDir, currentLang, langConfig);
-      if (singleton != null) {
-        _interpreters.put(currentLang, singleton);
-      }
-    }
-    return singleton;
+    return createInterpreter(configDir, currentLang, langConfig);
   }
 
   /** Factory method to get a language analyser for the given config.

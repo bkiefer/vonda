@@ -70,6 +70,7 @@ public class LanguageGenerator {
   private UtterancePlanner getPlanner() {
     return new UtterancePlanner() {
       /** Load all things contained in the configuration in the right way */
+      @Override
       protected void load() {
         // initHierachy();
         /** First load the plugins, then the rules */
@@ -78,9 +79,6 @@ public class LanguageGenerator {
       }
     };
   }
-
-  private static Map<String, LanguageGenerator> _generators
-          = new HashMap<String, LanguageGenerator>();
 
   /** Factory method to get a language generator for the given config.
    *
@@ -91,15 +89,9 @@ public class LanguageGenerator {
    *         of failure.
    * @throws FileNotFoundException
    */
-  public static LanguageGenerator getGenerator(File configDir,
-      String currentLang,
+  public static LanguageGenerator getGenerator(File configDir, String currentLang,
       Map<String, Object> langConfig) throws FileNotFoundException {
-    LanguageGenerator singleton = _generators.get(currentLang);
-    if (singleton == null) {
-      singleton = new LanguageGenerator(configDir, currentLang, langConfig);
-      _generators.put(currentLang, singleton);
-    }
-    return singleton;
+    return new LanguageGenerator(configDir, currentLang, langConfig);
   }
 
   /**
@@ -109,7 +101,7 @@ public class LanguageGenerator {
    *          a three-character ISO language code for the number conversion
    *          functionality
    */
-  private LanguageGenerator(File configDir, String lang,
+  LanguageGenerator(File configDir, String lang,
       Map<String, Object> cfgs) {
     configs = new HashMap<>(cfgs);
     try {

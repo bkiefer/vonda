@@ -45,7 +45,6 @@ public class AsrTts {
 
   private Interpreter _interpreter;
 
-
   @SuppressWarnings({ "rawtypes", "unchecked" })
   public void loadGrammar(File configDir, String language, Agent agent, Map configs)
       throws IOException {
@@ -73,6 +72,7 @@ public class AsrTts {
 
   private static final Pattern toEscape = Pattern.compile("[^0-9a-zA-Z_-]");
 
+  @SuppressWarnings("unused")
   private static String stringify(String in) {
     if (in.isEmpty()) return in;
     if ('"' == in.charAt(0) && '"' == in.charAt(in.length() - 1))
