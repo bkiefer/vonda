@@ -50,8 +50,8 @@ import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.lt.hfc.db.server.HandlerFactory;
 import de.dfki.lt.hfc.db.server.HfcDbHandler;
+import de.dfki.lt.hfc.db.server.HfcDbServer;
 import de.dfki.mlt.rudimant.common.BasicInfo;
 import de.dfki.mlt.rudimant.common.ErrorInfo;
 import de.dfki.mlt.rudimant.common.ImportInfo;
@@ -101,7 +101,8 @@ public class RudimantCompiler {
     if (ontoFileName == null) {
       throw new IOException("Ontology file is missing.");
     }
-    handler = HandlerFactory.getHandler(new File(configDir, ontoFileName).getPath());
+    HfcDbServer s = new HfcDbServer(new File(configDir, ontoFileName).getPath());
+    handler = s.getHandler();
   }
 
   /** Constructor for top-level file */

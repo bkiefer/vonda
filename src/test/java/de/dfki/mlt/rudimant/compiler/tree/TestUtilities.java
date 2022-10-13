@@ -19,9 +19,11 @@
 
 package de.dfki.mlt.rudimant.compiler.tree;
 
-import static de.dfki.mlt.rudimant.compiler.GenerationConstants.*;
-import static de.dfki.mlt.rudimant.compiler.Visualize.*;
-import static org.junit.Assert.*;
+import static de.dfki.mlt.rudimant.compiler.GenerationConstants.PROCESS_PREFIX;
+import static de.dfki.mlt.rudimant.compiler.GenerationConstants.PROCESS_SUFFIX;
+import static de.dfki.mlt.rudimant.compiler.Visualize.parseAndTypecheckWithError;
+import static de.dfki.mlt.rudimant.compiler.Visualize.setUp;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,8 +34,8 @@ import java.util.Map;
 
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.lt.hfc.db.server.HandlerFactory;
 import de.dfki.lt.hfc.db.server.HfcDbHandler;
+import de.dfki.lt.hfc.db.server.HfcDbServer;
 
 public class TestUtilities {
   public static final String RESOURCE_DIR = "src/test/resources/";
@@ -60,8 +62,8 @@ public class TestUtilities {
     if (ontoFileName == null) {
       throw new IOException("Ontology file is missing.");
     }
-    HfcDbHandler handler = HandlerFactory.getHandler(
-        new File(configDir, ontoFileName).getPath());
+    HfcDbServer s = new HfcDbServer(new File(configDir, ontoFileName).getPath());
+    HfcDbHandler handler = s.getHandler();
     RdfProxy proxy = new RdfProxy(handler);
     handler.registerStreamingClient(proxy);
     return proxy;

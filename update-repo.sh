@@ -4,6 +4,14 @@ LOCAL_REPO=repo
 scriptdir=`dirname $0`
 cd "$scriptdir"
 
+usage() {
+    echo "Usage $0 [-u]"
+    echo "Move artefacts from the local .m2/repository to the local repo directory"
+    echo "or vice versa"
+    echo "if the -u argument is given, $LOCAL_REPO --> $MAVEN_REPO"
+    echo "otherwise the other way round"
+}
+
 # ARGS: groupId artefact version
 function mvi() {
     if test -z "$what" || echo " $what " | grep -q " $2 "; then
@@ -16,16 +24,21 @@ function mvi() {
     fi
 }
 
-if test "$1" = "-u" ; then
-    shift
-    foo=$LOCAL_REPO
-    LOCAL_REPO="$MAVEN_REPO"
-    MAVEN_REPO="$foo"
+if test -n "$1"; then
+    if test "$1" = "-u" ; then
+        shift
+        foo=$LOCAL_REPO
+        LOCAL_REPO="$MAVEN_REPO"
+        MAVEN_REPO="$foo"
+    else
+        usage
+        exit 0
+    fi
 fi
 what="$*"
 
 mkdir $LOCAL_REPO 2>/dev/null
 
-mvi de.dfki.lt.hfc hfc 1.3.0
+mvi de.dfki.lt.hfc hfc 1.3.1-SNAPSHOT
 
-mvi de.dfki.lt.hfc hfc-thrift 1.0
+mvi de.dfki.lt.hfc hfc-thrift 1.1-SNAPSHOT

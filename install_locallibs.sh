@@ -14,18 +14,21 @@ cd locallibs
 here=`pwd`
 # Clone the given modules into the locallibs directory and put them into your
 # local .m2/repository
-for d in graff openccg dataviz j2emacs cplan srgs2xml; do
-    if test -d $d; then
-        cd $d
+for d in graff_0.7.2 openccg dataviz j2emacs cplan_1.2.3 srgs2xml_1.3.1; do
+    name=${d%%_*}
+    ver=${d##*_}
+    if test -d $name; then
+        cd $name
         git pull
-        mvn install
-        cd "$here"
     else
-        git clone https://github.com/bkiefer/$d.git
-        cd $d
-        mvn install
-        cd "$here"
+        git clone https://github.com/bkiefer/$name.git
+        cd $name
     fi
+    if test \! "$name" = "$ver"; then
+        git checkout "$ver"
+    fi
+    mvn install
+    cd "$here"
 done
 cd ..
 # Install the modules in the repo/ directory into your local .m2/repository

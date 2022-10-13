@@ -7,7 +7,6 @@ import java.util.Map;
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.lt.hfc.db.server.HandlerFactory;
 import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import de.dfki.lt.hfc.db.server.HfcDbServer;
 import de.dfki.mlt.rudimant.agent.Agent;
@@ -29,13 +28,11 @@ public abstract class ChatAgent extends Agent implements Constants {
     if (ontoFileName == null) {
       throw new IOException("Ontology file is missing.");
     }
+    server = new HfcDbServer(new File(configDir, ontoFileName).getPath());
     if (configs.containsKey(CFG_SERVER_PORT)) {
-      server = new HfcDbServer(new File(configDir, ontoFileName).getPath());
       server.runServer((int) configs.get(CFG_SERVER_PORT));
-      handler = server.getHandler();
-    } else {
-      handler = HandlerFactory.getHandler(new File(configDir, ontoFileName).getPath());
     }
+    handler = server.getHandler();
     RdfProxy proxy = new RdfProxy(handler);
     handler.registerStreamingClient(proxy);
     return proxy;

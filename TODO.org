@@ -20,9 +20,14 @@
 * Kann man die Generierung besser in eine eigene Stage verschieben?
   die für sich genommen einfacher oder zumindest durchsichtiger ist?
 * Besseres plug-in für NLU/NLG/ASR/TTS über injection?
-  - rasa / Lucene NLU als default-alternative
+  - Die Funktionalität jetzt ist eigentlich ganz OK und funktioniert
+  - rasa / Lucene / OpenNLP NLU als default-alternative
   - cplanner zur Luxus-NLG umbauen
-  - Anschluss von vosk als modul
+  - Anschluss von vosk und anderen ASRs als modul, TTS?
+* Developer Tools?
+  - Syntax-Highlighting f. VS Code? Anbindung an Rudibugger?
+  - Analyse von Java-Klassen z. automatischen Extraktion von Feld-
+    und Methodensignaturen?
 * Queries aus .rudi abfeuern --> missing varargs!?
 
 * Collections probleme: Alles polymorph?
