@@ -9,6 +9,8 @@ if test -n "$toinstall"; then
     echo "Install ${toinstall} first"
     exit 1
 fi
+# Install the modules in the repo/ directory into your local .m2/repository
+./update-repo.sh -u
 mkdir locallibs
 cd locallibs
 here=`pwd`
@@ -31,5 +33,3 @@ for d in graff_0.7.2 openccg dataviz j2emacs cplan_1.2.3 srgs2xml_1.3.1; do
     cd "$here"
 done
 cd ..
-# Install the modules in the repo/ directory into your local .m2/repository
-#./update-repo.sh -u
