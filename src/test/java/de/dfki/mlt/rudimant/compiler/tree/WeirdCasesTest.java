@@ -8,12 +8,10 @@ package de.dfki.mlt.rudimant.compiler.tree;
 import static de.dfki.mlt.rudimant.compiler.Visualize.generate;
 import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.getForMarked;
 import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.setUpEmpty;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *

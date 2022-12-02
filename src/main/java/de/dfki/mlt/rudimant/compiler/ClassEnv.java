@@ -19,7 +19,8 @@
 
 package de.dfki.mlt.rudimant.compiler;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.dfki.mlt.rudimant.common.RuleInfo;
 

@@ -19,34 +19,31 @@
 
 package de.dfki.mlt.rudimant.compiler;
 
+import static com.google.common.io.Files.asCharSink;
 import static de.dfki.mlt.rudimant.common.Constants.*;
 import static de.dfki.mlt.rudimant.compiler.Constants.AGENT_DEFS;
-import static de.dfki.mlt.rudimant.compiler.Constants.UNCRUST_CFG_NEW;
-import static de.dfki.mlt.rudimant.compiler.Constants.UNCRUST_CFG_OLD;
 import static de.dfki.mlt.rudimant.compiler.tree.GrammarFile.parseAndTypecheck;
+import static java.nio.file.Files.createDirectories;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.nio.file.Files;
+import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+
+import com.google.common.io.CharSink;
+import com.google.common.io.CharSource;
+import com.google.googlejavaformat.java.Formatter;
+import com.google.googlejavaformat.java.FormatterException;
 
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
@@ -54,6 +51,7 @@ import de.dfki.lt.hfc.db.server.HfcDbHandler;
 import de.dfki.lt.hfc.db.server.HfcDbServer;
 import de.dfki.mlt.rudimant.common.BasicInfo;
 import de.dfki.mlt.rudimant.common.ErrorInfo;
+import de.dfki.mlt.rudimant.common.ErrorInfo.ErrorType;
 import de.dfki.mlt.rudimant.common.ImportInfo;
 import de.dfki.mlt.rudimant.common.Location;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
@@ -191,97 +189,6 @@ public class RudimantCompiler {
     return mem;
   }
 
-  private static final File tmpCfg = new File("/tmp/uncrustify.cfg");
-  private static boolean cfgWritten = false;
-
-  private static final Pattern vers_no =
-      Pattern.compile("[^0-9]*([0-9]+)\\.([0-9]+).*");
-  private static String cfgName = UNCRUST_CFG_OLD;
-
-  private static void uncrustify(File outputFile) {
-    if (cfgName == null) return;
-    if (!cfgWritten && ! tmpCfg.exists()) {
-      try {
-        // determine the current version of uncrustify to get the right config
-        String[] cmdArray = { "uncrustify",  "--version" };
-        Process proc = Runtime.getRuntime().exec(cmdArray);
-        InputStream stdout = proc.getInputStream();
-        InputStreamReader isr = new InputStreamReader(stdout);
-        BufferedReader br = new BufferedReader(isr);
-        StringBuffer sb = new StringBuffer();
-        String line = null;
-        while ((line = br.readLine()) != null)
-          sb.append(line);
-        line = sb.toString();
-        @SuppressWarnings("unused")
-        boolean killed = proc.waitFor(5, TimeUnit.SECONDS);
-        int exitCode = proc.exitValue();
-        if (exitCode != 0) {
-          logger.warn("Uncrustify finished with error code {}", exitCode);
-          cfgName = null;
-        } else {
-          Matcher m = vers_no.matcher(line);
-          if (! m.matches()) {
-            logger.warn("Uncrustify version problem: {}", line);
-          } else {
-            if (Integer.parseInt(m.group(1)) > 0 ||
-                Integer.parseInt(m.group(2)) > 65) {
-              cfgName = UNCRUST_CFG_NEW;
-            }
-          }
-        }
-      } catch (IOException ex){
-        logger.error("Failed to run uncrustify");
-        cfgName = null;
-      } catch (InterruptedException e) {
-        logger.warn("uncrustify was interrupted");
-        cfgName = null;
-      }
-      if (cfgName == null) return;
-      InputStream in = null;
-      OutputStream out = null;
-      try {
-        cfgWritten = true;
-        in = RudimantCompiler.class.getResourceAsStream(cfgName);
-        out = new FileOutputStream(tmpCfg);
-        int b;
-        while ((b = in.read()) >= 0) { out.write(b); }
-      } catch (IOException ex){
-        logger.error("Failed to write uncrustify config");
-        cfgName = null;
-      }
-      finally {
-        try {
-          if (out != null) { in.close(); out.flush(); out.close(); }
-        }
-        catch (IOException ex){
-          logger.error("Failed to write uncrustify config");
-          cfgName = null;
-        }
-      }
-      if (cfgName == null) return;
-    }
-    try {
-      String[] cmdArray = {
-          "uncrustify",  "--replace", "--no-backup",
-          "-c", tmpCfg.getAbsolutePath(),
-          outputFile.getAbsolutePath()
-      };
-      Process proc = Runtime.getRuntime().exec(cmdArray);
-      @SuppressWarnings("unused")
-      boolean killed = proc.waitFor(5, TimeUnit.SECONDS);
-      int exitCode = proc.exitValue();
-      if (exitCode != 0) {
-        logger.warn("Uncrustify finished with error code {}", exitCode);
-      }
-    } catch (IOException ex){
-      logger.error("Failed to run uncrustify");
-    } catch (InterruptedException e) {
-      logger.warn("uncrustify was interrupted");
-    }
-  }
-
-
   /** Process the top-level rudi file */
   public void processToplevel(File topLevel) throws IOException {
     inputRootDir = topLevel.getParentFile();
@@ -326,7 +233,7 @@ public class RudimantCompiler {
     options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
     Yaml yaml = new Yaml(options);
     File infoDir = new File(INFO_DIR);
-    if (!infoDir.isDirectory()) Files.createDirectories(infoDir.toPath());
+    if (!infoDir.isDirectory()) createDirectories(infoDir.toPath());
     yaml.dump(mem.getInfo(),
               new FileWriter(new File(infoDir, RULE_LOCATION_FILE)));
   }
@@ -356,7 +263,7 @@ public class RudimantCompiler {
     File outputdir = getSubDirectory(outputRootDir, mem.getTopLevelPackageSpec());
     outputdir = getSubDirectory(outputdir, mem.getPackageSpec());
     if (!outputdir.isDirectory()) {
-      Files.createDirectories(outputdir.toPath());
+      createDirectories(outputdir.toPath());
     }
     File outputFile = new File(outputdir, mem.getClassName() + ".java");
 
@@ -376,11 +283,16 @@ public class RudimantCompiler {
 
     if (visualise)
       Visualize.show(gf, name);
-    Writer output = Files.newBufferedWriter(outputFile.toPath());
-    gf.generate(this, output);
-    output.close();
 
-    uncrustify(outputFile);
+    StringWriter sw = new StringWriter();
+    gf.generate(this, sw);
+    CharSource source = CharSource.wrap(sw.getBuffer());
+    CharSink sink = asCharSink(outputFile, Charset.forName("UTF-8"));
+    try {
+      new Formatter().formatSource(source, sink);
+    } catch (FormatterException ex) {
+      mem.registerError(ex.getMessage(), new Location(name), ErrorType.ERROR);
+    }
   }
 
   /** Process an imported rudi file

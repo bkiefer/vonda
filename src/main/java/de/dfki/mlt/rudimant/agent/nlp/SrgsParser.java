@@ -49,20 +49,22 @@ public class SrgsParser extends Interpreter {
 
   @Override
   public DialogueAct analyse(String text) {
-    String[] tokens = tokenizer.tokenize(text);
-    ChartNode validRule = null;
-    DialogueAct result = null;
-    try {
-      // TODO: give diagnostics if no validRule is returned
-      validRule = checker.parse(grammar, tokens);
-    } catch (GrammarException ex) {
-      logger.error(ex.toString());
+    synchronized (checker) {
+      String[] tokens = tokenizer.tokenize(text);
+      ChartNode validRule = null;
+      DialogueAct result = null;
+      try {
+        // TODO: give diagnostics if no validRule is returned
+        validRule = checker.parse(grammar, tokens);
+      } catch (GrammarException ex) {
+        logger.error(ex.toString());
+      }
+      if (validRule != null) {
+        JSONObject object = SemanticsInterpreter.interpret(checker, validRule);
+        result = convert(object);
+      }
+      logger.error("srgs: {}", (result == null ? "null" : result.toString()));
+      return result;
     }
-    if (validRule != null) {
-      JSONObject object = SemanticsInterpreter.interpret(checker, validRule);
-      result = convert(object);
-    }
-    logger.error("srgs: {}", (result == null ? "null" : result.toString()));
-    return result;
   }
 }

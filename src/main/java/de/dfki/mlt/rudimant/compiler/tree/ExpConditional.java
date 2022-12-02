@@ -21,8 +21,6 @@ package de.dfki.mlt.rudimant.compiler.tree;
 
 import java.util.Arrays;
 
-import de.dfki.mlt.rudimant.compiler.Type;
-
 /**
  * this is a conditional expression, i.e., something like a ? b : c
  *

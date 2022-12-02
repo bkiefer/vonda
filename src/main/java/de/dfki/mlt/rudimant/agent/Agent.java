@@ -19,11 +19,24 @@
 
 package de.dfki.mlt.rudimant.agent;
 
-import static de.dfki.mlt.rudimant.common.Constants.*;
+import static de.dfki.mlt.rudimant.common.Constants.CFG_DEBUG_PORT;
+import static de.dfki.mlt.rudimant.common.Constants.STATE_ALWAYS;
+import static de.dfki.mlt.rudimant.common.Constants.STATE_NEVER;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -119,7 +132,7 @@ public abstract class Agent implements StreamingClient {
   public String generateId() {
     return idPrefix +
         (int) ((System.currentTimeMillis() & 0xFF) +
-            (_generatorCounter++ << 8));
+            (++_generatorCounter << 8));
   }
 
   // TODO: we need sth like this to use the dialogue history; is this the right way?
@@ -372,6 +385,7 @@ public abstract class Agent implements StreamingClient {
   // Timeouts
   // **********************************************************************
   Proposal emptyProposal = new Proposal() {
+    @Override
     public void run() {
     }
   };
@@ -388,7 +402,8 @@ public abstract class Agent implements StreamingClient {
    */
   public void newTimeout(String name, int millis, final Proposal p) {
     timeouts.newTimeout(name, millis,
-        new Proposal(){ public void run(){
+        new Proposal(){ @Override
+        public void run(){
           proposalsToExecute.offerLast(p);
         }});
   }
@@ -673,6 +688,7 @@ public abstract class Agent implements StreamingClient {
     Pair<Proposal, Integer> p = bhq.getTrigger(behaviourId);
     if (p != null && ! timeouts.hasActiveTimeout(behaviourId)) {
       timeouts.newTimeout(behaviourId, p.second, new Proposal() {
+        @Override
         public void run() { executeTrigger(behaviourId); }
       });
     }

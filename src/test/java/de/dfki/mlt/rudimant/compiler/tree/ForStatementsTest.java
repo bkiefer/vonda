@@ -20,7 +20,8 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import static de.dfki.mlt.rudimant.compiler.Visualize.generate;
-import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.getForMarked;
+import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.setUpEmpty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

@@ -16,7 +16,7 @@ cd locallibs
 here=`pwd`
 # Clone the given modules into the locallibs directory and put them into your
 # local .m2/repository
-for d in graff_0.7.2 openccg dataviz j2emacs cplan_1.2.3 srgs2xml_1.3.1; do
+for d in graff_0.7.2 openccg dataviz j2emacs cplan_1.2.3 srgs2xml_1.3.2; do
     name=${d%%_*}
     ver=${d##*_}
     if test -d $name; then

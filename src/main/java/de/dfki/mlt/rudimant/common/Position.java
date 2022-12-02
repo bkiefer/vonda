@@ -26,7 +26,8 @@ public class Position implements Comparable<Position> {
   private int charpos;
   private String origin;
 
-  public Position(){};
+  // Only for unmarshalling
+  Position(){};
 
   public Position(int line, int column, int charpos, String o) {
     this.line = line;

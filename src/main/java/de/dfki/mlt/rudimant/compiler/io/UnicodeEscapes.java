@@ -41,7 +41,8 @@ only an even number of '\' is eligible to start a Unicode escape sequence
 
 package de.dfki.mlt.rudimant.compiler.io;
 
-import java.io.*;
+import java.io.FilterReader;
+import java.io.IOException;
 
 
 /**

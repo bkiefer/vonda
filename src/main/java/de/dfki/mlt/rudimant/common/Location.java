@@ -28,12 +28,17 @@ import java.nio.file.Path;
 public class Location {
   private Position begin, end;
 
+  // Only for unmarshalling
+  Location(){}
+
   public Location(Position b, Position e) {
     begin = b;
     end = e;
   }
 
-  public Location() {}
+  public Location(String name) {
+    begin = end = new Position(0, 0, 0, name);
+  }
 
   public String getOriginClass() {
     return begin.getOrigin();
@@ -51,10 +56,10 @@ public class Location {
     return getOriginClass() + ".rudi:" + (begin.getLine()+1) +
         ((begin.getColumn() != 0) ? ":" + begin.getColumn() + ":" : ":");
   }
-  
+
   public String toString(Path p) {
     return p.normalize().toString() + ":" + (begin.getLine()+1) +
         ((begin.getColumn() != 0) ? ":" + begin.getColumn() + ":" : ":");
   }
-  
+
 }

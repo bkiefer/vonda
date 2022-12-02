@@ -20,7 +20,7 @@
 package de.dfki.mlt.rudimant.compiler;
 
 import static de.dfki.mlt.rudimant.common.Constants.*;
-import static de.dfki.mlt.rudimant.compiler.Constants.*;
+import static de.dfki.mlt.rudimant.compiler.Constants.COMPILER_VERSION;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -90,7 +90,7 @@ public class CompilerMain {
       if (options.valueOf(option) == null) {
         configs.put(key, ! (boolean) def);
       } else {
-        configs.put(key, (String) options.valueOf(option));
+        configs.put(key, options.valueOf(option));
       }
     } else if (! configs.containsKey(key)) {
       configs.put(key, def);
@@ -118,6 +118,7 @@ public class CompilerMain {
   public static void main(String[] args) throws WrongFormatException {
     // BasicConfigurator.resetConfiguration();
     // BasicConfigurator.configure();
+    System.out.println("VOnDA compiler, version " + COMPILER_VERSION);
 
     OptionParser parser = new OptionParser("vepdr:w:c:o:");
     parser.accepts("help");
@@ -179,7 +180,7 @@ public class CompilerMain {
           usage("Input file is missing");
           System.exit(1);
         }
-        configs.put(CFG_INPUT_FILE, (String)argfiles.get(0));
+        configs.put(CFG_INPUT_FILE, argfiles.get(0));
       }
 
       main.setConfig(configs);

@@ -37,6 +37,8 @@ public interface Constants {
   public static final String CFG_VISUALISE = "visualise";
   public static final String CFG_LOGGING = "logging";
 
+  // TODO: MAYBE ADD CONFIG FOR CHARSET USED IN SOURCE AND GENERATED FILES
+
   /** the port for the debugger to connect to the running system */
   public static final String CFG_DEBUG_PORT = "debugPort";
   /** NLG option section */

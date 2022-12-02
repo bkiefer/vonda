@@ -20,7 +20,6 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class StatExpression extends RTStatement {
 

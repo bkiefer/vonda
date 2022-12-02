@@ -19,12 +19,9 @@
 
 package de.dfki.mlt.rudimant.compiler.tree;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import de.dfki.lt.loot.Pair;

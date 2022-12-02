@@ -19,7 +19,7 @@
 
 package de.dfki.mlt.rudimant.compiler;
 
-import static de.dfki.mlt.rudimant.common.Constants.*;
+import static de.dfki.mlt.rudimant.common.Constants.RULE_FILE_EXTENSION;
 
 /** A set of constants only relevant during the compilation phase */
 public interface Constants {
@@ -32,7 +32,6 @@ public interface Constants {
   public static final String CANCEL_LOCAL = "1";
   public static final String CANCEL_GLOBAL = "-1";
 
-  public static final String UNCRUST_CFG_OLD = "/uncrustify.cfg";
-  public static final String UNCRUST_CFG_NEW = "/uncrust0.66.cfg";
+  public static final String COMPILER_VERSION = "3.0";
 }
 
