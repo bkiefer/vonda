@@ -162,9 +162,12 @@ public abstract class Interpreter {
 
   protected DialogueAct convert(JSONObject object) {
     DagNode in = json2dag(object);
+    logger.trace("Incoming NLU JSON: {}", object);
     DagNode node = in;
+    logger.debug("Incoming NLU result: {}", node);
     if (daConverter != null) {
       node = daConverter.process(in);
+      logger.debug("Converted NLU result: {}", node);
     }
     node.addEdge(DagNode.ID_FEAT_ID, new DagNode("raw"));
     return (node == null) ? null : new DialogueAct(node);

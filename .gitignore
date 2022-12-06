@@ -3,6 +3,7 @@
 .classpath
 .project
 .settings
+**/.projectile
 **/src/main/resources/generated/*
 **/src/test/resources/miniproj/src/main/generated/*
 **/*~

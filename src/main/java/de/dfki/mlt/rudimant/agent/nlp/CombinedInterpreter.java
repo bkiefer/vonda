@@ -28,7 +28,10 @@ public class CombinedInterpreter extends Interpreter {
   public boolean init(File configDir, String language, Map config) {
     List<Map> interpreterConfigs = (List<Map>) config.get("instances");
     for (Map conf : interpreterConfigs) {
-      instances.add(createInterpreter(configDir, language, conf));
+      Interpreter i = createInterpreter(configDir, language, conf);
+      if (i != null) {
+        instances.add(i);
+      }
     }
     return true;
   }
