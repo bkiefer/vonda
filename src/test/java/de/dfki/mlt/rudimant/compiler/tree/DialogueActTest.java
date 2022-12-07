@@ -195,6 +195,15 @@ public class DialogueActTest {
   }
 
   @Test
+  public void testGetSlot2() throws IOException {
+    String in = "da = #Inform(Matter, Agent=foo);s = da.Agent;";
+    String s = generate(in);
+    String expected = "DialogueAct da = new DialogueAct(\"Inform\", \"Matter\", \"Agent\", \"foo\");"
+        + "String s = da.getValue(\"Agent\");";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
+  @Test
   public void testSlotVariables1() throws IOException {
     String in = "int foo = 0; da = #Inform(Matter, theme=foo);";
     String s = generate(in);
