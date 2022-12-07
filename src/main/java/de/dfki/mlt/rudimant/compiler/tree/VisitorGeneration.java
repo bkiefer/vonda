@@ -142,7 +142,7 @@ public class VisitorGeneration implements RudiVisitor {
     char c = op.charAt(0);
     return c == '+' || c == '-' ? op.substring(0, 2) : op;
   }
-  
+
   public void genLocation(RudiTree node) {
     gen("// Line " + node.location.getBegin().getLine() + " in rudi\n");
   }
@@ -244,11 +244,11 @@ public class VisitorGeneration implements RudiVisitor {
     // THAT CAN BE CONVERTED AUTOMATICALLY FROM XSD TYPES
     if (node.type.isStrictRdfType()) {
       if (node instanceof ExpIdentifier
-          && ((ExpIdentifier) node).content.startsWith("\"")) {
+          && !mem.variableExists(((ExpIdentifier)node).content)) {
         String orig = mem.getFunctionOrigin("getRdfClass", null, "String");
         if (orig != null)
           gen(lowerCaseFirst(orig)).gen(".");
-        gen("getRdfClass(").gen(node).gen(")");
+        gen("getRdfClass(\"").gen(node).gen("\")");
         return;
       } else {
         if (! "==".equals(operator)) {
@@ -701,7 +701,7 @@ public class VisitorGeneration implements RudiVisitor {
       break;
     default:
       // this can only happen when VondaGrammar is wrong
-      mem.registerError("Wrong return command: " + node.command, 
+      mem.registerError("Wrong return command: " + node.command,
           node.getLocation(), ERROR);
     }
   }
@@ -782,7 +782,7 @@ public class VisitorGeneration implements RudiVisitor {
 
   @Override
   public void visit(ExpFieldAccess node) {
-    RTExpression currentPart = (RTExpression) node.parts.get(0);
+    RTExpression currentPart = node.parts.get(0);
     gen(currentPart);
     Type currentType = currentPart.type;
     for (int i = 1; i < node.parts.size(); i++) {
@@ -800,7 +800,7 @@ public class VisitorGeneration implements RudiVisitor {
         currentType = pa.type;
       } else {
         gen(".").gen(currentPart);
-        currentType = ((RTExpression) currentPart).type;
+        currentType = currentPart.type;
       }
     }
   }
