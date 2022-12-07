@@ -62,7 +62,7 @@ public class VisitorType implements RudiVisitor {
     if (typeErrorFatal) {
       // throw a real Exception
       throw new TypeException(node.getLocation() + " " + errorMessage);
-    } 
+    }
   }
 
   /** use this to report a type checking warning
@@ -80,6 +80,7 @@ public class VisitorType implements RudiVisitor {
     _th = th;
   }
 
+  @Override
   public void visit(RudiTree node) {
     node.visit(this);
   }
@@ -995,9 +996,6 @@ public class VisitorType implements RudiVisitor {
         RdfClass cl = mem.getProxy().fetchClass(node.content);
         if (cl != null) {
           node.type = new Type(cl.toString());
-          if (!mem.variableExists(node.content)) {
-            node.content = "\"" + node.content + "\"";
-          }
         }
       }
     } else {
