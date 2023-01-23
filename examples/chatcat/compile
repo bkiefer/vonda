@@ -1,4 +1,0 @@
-#!/bin/sh
-script_dir=`dirname $0`
-
-../../compile "$@" -c "$script_dir/config.yml"
