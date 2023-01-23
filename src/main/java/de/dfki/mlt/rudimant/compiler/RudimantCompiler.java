@@ -46,9 +46,8 @@ import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
 
 import de.dfki.lt.hfc.WrongFormatException;
+import de.dfki.lt.hfc.db.HfcDbHandler;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.lt.hfc.db.server.HfcDbHandler;
-import de.dfki.lt.hfc.db.server.HfcDbServer;
 import de.dfki.mlt.rudimant.common.BasicInfo;
 import de.dfki.mlt.rudimant.common.ErrorInfo;
 import de.dfki.mlt.rudimant.common.ErrorInfo.ErrorType;
@@ -99,8 +98,7 @@ public class RudimantCompiler {
     if (ontoFileName == null) {
       throw new IOException("Ontology file is missing.");
     }
-    HfcDbServer s = new HfcDbServer(new File(configDir, ontoFileName).getPath());
-    handler = s.getHandler();
+    handler = new HfcDbHandler(new File(configDir, ontoFileName).getPath());
   }
 
   /** Constructor for top-level file */

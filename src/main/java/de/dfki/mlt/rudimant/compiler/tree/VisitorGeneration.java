@@ -843,17 +843,18 @@ public class VisitorGeneration implements RudiVisitor {
 
   @Override
   public void visit(ExpLiteral node) {
+    String content = node.content;
     if (node.type.isString()) {
-      if (node.content.indexOf('"') != 0)
-        node.content = "\"" + node.content + "\"";
+      if (content.indexOf('"') != 0)
+        content = "\"" + content + "\"";
       if (escape) {
         // properly escape if needed
-        gen('\\').gen(node.content.substring(0, node.content.length() - 1))
+        gen('\\').gen(content.substring(0, content.length() - 1))
            .gen("\\\" ");
         return;
       }
     }
-    gen(node.content);
+    gen(content);
   }
 
   @Override

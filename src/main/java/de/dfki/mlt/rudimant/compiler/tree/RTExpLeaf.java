@@ -32,14 +32,17 @@ public abstract class RTExpLeaf extends RTExpression {
 
   String content;
 
+  @Override
   public Iterable<? extends RudiTree> getDtrs() {
     return Collections.emptyList();
   }
 
+  @Override
   public String toString() {
     return content;
   }
 
+  @Override
   public void propagateType(Type upperType, VisitorType v) {
     if (type != null && ! type.isUnspecified()) {
       return;

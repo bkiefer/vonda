@@ -33,9 +33,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import de.dfki.lt.hfc.WrongFormatException;
+import de.dfki.lt.hfc.db.HfcDbHandler;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
-import de.dfki.lt.hfc.db.server.HfcDbHandler;
-import de.dfki.lt.hfc.db.server.HfcDbServer;
 
 public class TestUtilities {
   public static final String RESOURCE_DIR = "src/test/resources/";
@@ -62,8 +61,7 @@ public class TestUtilities {
     if (ontoFileName == null) {
       throw new IOException("Ontology file is missing.");
     }
-    HfcDbServer s = new HfcDbServer(new File(configDir, ontoFileName).getPath());
-    HfcDbHandler handler = s.getHandler();
+    HfcDbHandler handler = new HfcDbHandler(new File(configDir, ontoFileName).getPath());
     RdfProxy proxy = new RdfProxy(handler);
     handler.registerStreamingClient(proxy);
     return proxy;

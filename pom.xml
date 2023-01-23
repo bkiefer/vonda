@@ -44,8 +44,8 @@
 
     <dependency>
       <groupId>de.dfki.lt.hfc</groupId>
-      <artifactId>hfc-thrift</artifactId>
-      <version>1.1-SNAPSHOT</version>
+      <artifactId>hfc</artifactId>
+      <version>1.4.0</version>
       <type>jar</type>
     </dependency>
 
