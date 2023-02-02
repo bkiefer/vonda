@@ -9,7 +9,7 @@ BISON	   = bison
 # --------------------------------------------------
 
 %.java : %.y
-	$(BISON) -Wall -rall --language java $<
+	$(BISON) -Wall -rall --language java --debug $<
 
 all: VondaGrammar.java VondaLexer.java UnicodeEscapes.java
 

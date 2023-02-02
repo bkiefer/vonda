@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
-
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -76,6 +76,8 @@ public class CoverageTest {
     configs.put(CFG_VISUALISE, !headless);
     configs.put(CFG_INPUT_FILE, "AllYouCanDo.rudi");
     assertFalse(RudimantCompiler.process(confDir, configs));
+    // skip compiler test for Windows
+    Assume.assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));
     assertEquals(0, startCompiler(confDir));
   }
 }
