@@ -1,3 +1,13 @@
+* RELEASE PLAN FOR 3.0
+  - replace import by include and allow Java import statements at
+    beginning of file only
+  - get rid of reduce reduce conflicts, see casts
+  - use {name} syntax for property access, otherwise unexpected stuff
+    happens
+  - Improve the documentation
+  - check the option of not generating functions, that would make the
+    problem of "moving injected java code" go away maybe
+
 * Erleuchtung bzgl. Wrapperklasse: Agent vs. NaoAgent vs. PalAgent !!! JA FÜR 3.0
   1. NaoAgent scheint eigentlich eine klasse wie TimelineUtils zu sein (oder
      könnte so sein)

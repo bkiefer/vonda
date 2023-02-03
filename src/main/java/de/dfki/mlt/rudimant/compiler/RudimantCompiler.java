@@ -51,7 +51,7 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudimant.common.BasicInfo;
 import de.dfki.mlt.rudimant.common.ErrorInfo;
 import de.dfki.mlt.rudimant.common.ErrorInfo.ErrorType;
-import de.dfki.mlt.rudimant.common.ImportInfo;
+import de.dfki.mlt.rudimant.common.IncludeInfo;
 import de.dfki.mlt.rudimant.common.Location;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
 
@@ -161,7 +161,7 @@ public class RudimantCompiler {
           RudimantCompiler.class.getResourceAsStream("/" + AGENT_DEFS),
           AGENT_DEFS);
     } catch (IOException ex) {
-      logger.error("Agent definitions file import fails: {}", ex);
+      logger.error("Agent definitions file include fails: {}", ex);
     }
   }
 
@@ -206,7 +206,7 @@ public class RudimantCompiler {
         logger.warn("No method declaration file for {}", wrapperInit);
       }
     } catch (IOException ex) {
-      logger.error("Initializer file import: {}", ex);
+      logger.error("Initializer file include: {}", ex);
     }
     try {
       processForReal(className);
@@ -240,11 +240,11 @@ public class RudimantCompiler {
    * print errors and warnings in emacs compilation mode error format
    * for plain emacs use.
    */
-  private void printErrors(ImportInfo b, File dir) {
+  private void printErrors(IncludeInfo b, File dir) {
     Path fileLoc = dir.toPath().resolve(b.getFilePath());
     for (BasicInfo c : b.getChildren()) {
-      if (c instanceof ImportInfo) {
-        printErrors((ImportInfo)c, fileLoc.toFile().getParentFile());
+      if (c instanceof IncludeInfo) {
+        printErrors((IncludeInfo)c, fileLoc.toFile().getParentFile());
       }
     }
     for (ErrorInfo info : b.getErrors()) {
@@ -293,12 +293,12 @@ public class RudimantCompiler {
     }
   }
 
-  /** Process an imported rudi file
+  /** Process an included rudi file
    * @throws IOException
    */
-  public void processImport(String name, String[] dirSpec, Location loc)
+  public void processInclude(String name, String[] dirSpec, Location loc)
       throws IOException {
-    logger.info("Processing import {}/{}", Arrays.toString(dirSpec), name);
+    logger.info("Processing include {}/{}", Arrays.toString(dirSpec), name);
     mem.enterClass(name, dirSpec, loc);
     try {
       processForReal(name);

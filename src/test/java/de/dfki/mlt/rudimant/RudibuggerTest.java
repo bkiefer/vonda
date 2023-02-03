@@ -31,12 +31,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.introspector.BeanAccess;
 
 import de.dfki.mlt.rudimant.common.*;
 
 /**
- * These tests check if the harvesting of all rules and imports and its
+ * These tests check if the harvesting of all rules and includes and its
  * locations works as it needs to for rudibugger.
  *
  * @author Christophe Biwer (yoshegg) christophe.biwer@dfki.de
@@ -56,56 +55,56 @@ public class RudibuggerTest {
   @Test
   public void testRulesOnly() {
 
-    /* actual rootImport */
-    ImportInfo actualRootImport = (ImportInfo) generateAndGetRulesInfo(
+    /* actual rootInclude */
+    IncludeInfo actualRootInclude = (IncludeInfo) generateAndGetRulesInfo(
             new File(RUDIBUGGER_TEST_RES_DIR + "rulesTest/Rules.rudi"));
 
-    /* excepted ImportInfo */
-    ImportInfo expectedRootImport = new ImportInfo("Rules", null, -1, null);
-    RuleInfo rule_one = new RuleInfo("rule_one", 1, expectedRootImport);
-    RuleInfo rule_two = new RuleInfo("rule_two", 5, expectedRootImport);
+    /* excepted IncludeInfo */
+    IncludeInfo expectedRootInclude = new IncludeInfo("Rules", null, -1, null);
+    RuleInfo rule_one = new RuleInfo("rule_one", 1, expectedRootInclude);
+    RuleInfo rule_two = new RuleInfo("rule_two", 5, expectedRootInclude);
 
     /* test for equality */
-    assertEquals(expectedRootImport, actualRootImport);
+    assertEquals(expectedRootInclude, actualRootInclude);
   }
 
   @Test
-  public void testImportsOnly() {
+  public void testIncludesOnly() {
 
-    /* actual rootImport */
-    ImportInfo actualRootImport = (ImportInfo) generateAndGetRulesInfo(
+    /* actual rootInclude */
+    IncludeInfo actualRootInclude = (IncludeInfo) generateAndGetRulesInfo(
             new File(RUDIBUGGER_TEST_RES_DIR
-            + "importTest/Root.rudi"));
+            + "includeTest/Root.rudi"));
 
-    /* excepted ImportInfo */
-    ImportInfo expectedRootImport = new ImportInfo("Root", null, -1, null);
-    RuleInfo rule_one = new RuleInfo("rule_one", 1, expectedRootImport);
-    ImportInfo import1 = new ImportInfo("Import1", null, 6, expectedRootImport);
-    RuleInfo rule_import = new RuleInfo("rule_import", 1, import1);
-    RuleInfo rule_two = new RuleInfo("rule_two", 8, expectedRootImport);
+    /* excepted IncludeInfo */
+    IncludeInfo expectedRootInclude = new IncludeInfo("Root", null, -1, null);
+    RuleInfo rule_one = new RuleInfo("rule_one", 1, expectedRootInclude);
+    IncludeInfo include1 = new IncludeInfo("Include1", null, 6, expectedRootInclude);
+    RuleInfo rule_include = new RuleInfo("rule_include", 1, include1);
+    RuleInfo rule_two = new RuleInfo("rule_two", 8, expectedRootInclude);
 
     /* test for equality */
-    assertEquals(expectedRootImport, actualRootImport);
+    assertEquals(expectedRootInclude, actualRootInclude);
   }
 
   @Test
   public void testNestedRules() {
 
-    /* actual rootImport */
-    ImportInfo actualRootImport = (ImportInfo) generateAndGetRulesInfo(
+    /* actual rootInclude */
+    IncludeInfo actualRootInclude = (IncludeInfo) generateAndGetRulesInfo(
             new File(RUDIBUGGER_TEST_RES_DIR
             + "nestedRulesTest/NestedRules.rudi"));
 
-    /* excepted ImportInfo */
-    ImportInfo expectedRootImport = new ImportInfo("NestedRules", null, -1, null);
-    RuleInfo rule_one = new RuleInfo("rule_one", 3, expectedRootImport);
+    /* excepted IncludeInfo */
+    IncludeInfo expectedRootInclude = new IncludeInfo("NestedRules", null, -1, null);
+    RuleInfo rule_one = new RuleInfo("rule_one", 3, expectedRootInclude);
     RuleInfo rule_one_a = new RuleInfo("rule_one_a", 6, rule_one);
-    RuleInfo rule_two = new RuleInfo("rule_two", 12, expectedRootImport);
-    RuleInfo rule_three = new RuleInfo("rule_three", 16, expectedRootImport);
+    RuleInfo rule_two = new RuleInfo("rule_two", 12, expectedRootInclude);
+    RuleInfo rule_three = new RuleInfo("rule_three", 16, expectedRootInclude);
 
     /* test for equality */
-    assertEquals(expectedRootImport, actualRootImport);
-    RuleInfo r = (RuleInfo)actualRootImport.getChildren().get(2);
+    assertEquals(expectedRootInclude, actualRootInclude);
+    RuleInfo r = (RuleInfo)actualRootInclude.getChildren().get(2);
     assertEquals("a != \"1\\t\\\"\\n\"", r.getBaseTerm(0));
     assertEquals("b != \"\\n\"", r.getBaseTerm(1));
     assertEquals("d != 7.0", r.getBaseTerm(2));
@@ -114,23 +113,23 @@ public class RudibuggerTest {
   @Test
   public void testEverything() {
 
-    /* actual rootImport */
-    ImportInfo actualRootImport = (ImportInfo) generateAndGetRulesInfo(
+    /* actual rootInclude */
+    IncludeInfo actualRootInclude = (IncludeInfo) generateAndGetRulesInfo(
             new File(RUDIBUGGER_TEST_RES_DIR
             + "everythingTest/Root.rudi"));
 
-    /* excepted ImportInfo */
-    ImportInfo expectedRootImport = new ImportInfo("Root", null, -1, null);
-    RuleInfo rule_one = new RuleInfo("rule_one", 1, expectedRootImport);
+    /* excepted IncludeInfo */
+    IncludeInfo expectedRootInclude = new IncludeInfo("Root", null, -1, null);
+    RuleInfo rule_one = new RuleInfo("rule_one", 1, expectedRootInclude);
     RuleInfo rule_one_a = new RuleInfo("rule_one_a", 4, rule_one);
-    ImportInfo import1 = new ImportInfo("Import1", null, 10, expectedRootImport);
-    RuleInfo rule_import = new RuleInfo("rule_import", 1, import1);
-    RuleInfo rule_import_a = new RuleInfo("rule_import_a", 4, rule_import);
-    RuleInfo rule_two = new RuleInfo("rule_two", 12, expectedRootImport);
+    IncludeInfo include1 = new IncludeInfo("Include1", null, 10, expectedRootInclude);
+    RuleInfo rule_include = new RuleInfo("rule_include", 1, include1);
+    RuleInfo rule_include_a = new RuleInfo("rule_include_a", 4, rule_include);
+    RuleInfo rule_two = new RuleInfo("rule_two", 12, expectedRootInclude);
     RuleInfo rule_two_a = new RuleInfo("rule_two_a", 15, rule_two);
 
     /* test for equality */
-    assertEquals(expectedRootImport, actualRootImport);
+    assertEquals(expectedRootInclude, actualRootInclude);
   }
 
   @Test
@@ -221,7 +220,7 @@ public class RudibuggerTest {
   @Test
   public void testYamlDump() throws IOException {
     String[] path = {"a", "b", "c"};
-    ImportInfo i = new ImportInfo("bla", path, 100, null);
+    IncludeInfo i = new IncludeInfo("bla", path, 100, null);
     ErrorInfo e = new ErrorInfo("err",
         new Location(new Position(1,1,1, "foo"), new Position(2,2,2, "foo")),
         ErrorInfo.ErrorType.PARSE_ERROR);
@@ -237,7 +236,7 @@ public class RudibuggerTest {
     Yaml x = new Yaml();
     //x.setBeanAccess(BeanAccess.FIELD);
     FileReader r = new FileReader(new File("target/test.yaml"));
-    Object z = x.loadAs(r, ImportInfo.class);
+    Object z = x.loadAs(r, IncludeInfo.class);
     assertEquals(i, z);
   }
 }

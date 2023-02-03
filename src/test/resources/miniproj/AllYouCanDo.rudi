@@ -238,8 +238,8 @@ da.setProposition("Acquiring");
 // creation of Java objects works as usual, java.util.* is imported by default
 List<String> li = new ArrayList(2);
 
-// import a set of rules, can be put in a subdirectory
-import sub.Sub;
+// include a set of rules, can be put in a subdirectory
+include sub.Sub;
 
 Quiz p;
 h = filter(p.hasHistory, (c) -> c.turnId == 1);

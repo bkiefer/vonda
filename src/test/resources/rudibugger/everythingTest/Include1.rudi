@@ -1,7 +1,7 @@
-rule_import:
+rule_include:
 if (test = 3) {
   bla = 1;
-  rule_import_a:
+  rule_include_a:
   if (test = 5) {
     blx = 2;
   }

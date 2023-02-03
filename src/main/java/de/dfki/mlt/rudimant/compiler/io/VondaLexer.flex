@@ -229,6 +229,7 @@ SingleCharacter = [^\r\n\'\\]
   "for"                          { return token(VondaGrammar.Lexer.FOR); }
   "if"                           { return token(VondaGrammar.Lexer.IF); }
   "import"                       { return token(VondaGrammar.Lexer.IMPORT); }
+  "include"                      { return token(VondaGrammar.Lexer.INCLUDE); }
   "new"                          { return token(VondaGrammar.Lexer.NEW); }
   "null"                         { return token(VondaGrammar.Lexer.NULL); }
   "private"                      { return token(VondaGrammar.Lexer.PRIVATE); }

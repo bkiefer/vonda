@@ -14,7 +14,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %language "Java"
 
 %type <String> visibility_spec
-%type <LinkedList<RudiTree>> grammar_file
+%type <LinkedList<RudiTree>> grammar_file root
 %type <LinkedList<RTExpression>> nonempty_exp_list nonempty_args_list
 %type <LinkedList<RTExpression>> field_access_rest da_args
 %type <RTExpression> exp assgn_exp lambda_exp ConditionalExpression assignment
@@ -36,6 +36,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %type <StatAbstractBlock> block opt_block
 %type <StatIf> if_statement
 %type <Import> imports
+%type <Include> includes
 %type <StatMethodDeclaration> method_declaration
 %type <List<String>> path
 %type <LinkedList<RTStatement>> statements
@@ -48,7 +49,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 
 %locations
 
-%define package "de.dfki.mlt.rudimant.compiler.io"
+%define api.package "de.dfki.mlt.rudimant.compiler.io"
 
 %define api.parser.public
 
@@ -102,6 +103,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %token FOR
 %token IF
 %token IMPORT
+%token INCLUDE
 %token NEW
 %token NULL
 %token PRIVATE
@@ -136,6 +138,11 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %%
 
 // start rule
+root
+  : imports grammar_file { $$ = $2; $2.addFirst($1); }
+  | grammar_file { $$ = $1;}
+  ;
+
 grammar_file
   : visibility_spec method_declaration grammar_file {
     $$ = $3; $2.setVisibility($1); $3.addFirst($2);
@@ -144,7 +151,7 @@ grammar_file
   | function_call grammar_file { $$ = $2; $2.addFirst($1); }
   | statement_no_def grammar_file { $$ = $2; $2.addFirst($1); }
   // | ANNOTATION grammar_file { $$ = $2; $2.add($1); }
-  | imports grammar_file { $$ = $2; $2.addFirst($1); }
+  | includes grammar_file { $$ = $2; $2.addFirst($1); }
   | visibility_spec var_def grammar_file  {
     $$ = $3; $3.addFirst(setPos(new StatFieldDef($1, $2), @1, @2));
   }
@@ -163,11 +170,13 @@ visibility_spec
   | PRIVATE  { $$ = "private"; }
   ;
 
-imports
-  : IMPORT path ';' {
+imports : IMPORT path ';' { $$ = setPos(new Import($2), @$); } ;
+
+includes
+  : INCLUDE path ';' {
     List<String> path = $2;
     String name = path.remove(path.size() - 1);
-    $$ = setPos(new Import(name, path.toArray(new String[path.size()])), @$);
+    $$ = setPos(new Include(name, path.toArray(new String[path.size()])), @$);
   }
   ;
 

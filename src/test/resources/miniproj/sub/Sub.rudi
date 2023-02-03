@@ -8,5 +8,5 @@ if (s == "goodthing") {
   }
 }
 
-import sub.SubSub;
-import SameLevel;
+include sub.SubSub;
+include SameLevel;

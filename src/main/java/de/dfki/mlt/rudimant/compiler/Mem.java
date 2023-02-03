@@ -60,8 +60,8 @@ public class Mem {
 
   private final RdfProxy _proxy;
 
-  /** Info about all imports and rules (tree) */
-  private ImportInfo rootInfo;
+  /** Info about all includes and rules (tree) */
+  private IncludeInfo rootInfo;
   private BasicInfo currentInfo;
 
   /** the Java class that will be extended by the topmost rudi file to link
@@ -121,7 +121,7 @@ public class Mem {
     return _proxy;
   }
 
-  /** Enter a new (imported) class. Automatically enters a new variable scope
+  /** Enter a new (included) class. Automatically enters a new variable scope
    *  (Environment), too.
    *
    * @param classname of the new class
@@ -138,11 +138,11 @@ public class Mem {
       pkg = newpkg;
     }
     ClassEnv newEnv = new ClassEnv(classname, pkg);
-    currentInfo = new ImportInfo(classname, pkg,
+    currentInfo = new IncludeInfo(classname, pkg,
         (loc == null ? -1 : (loc.getBegin().getLine() + 1)), currentInfo);
     if (currentBlock == null) {
       topLevelClass = newEnv;
-      rootInfo = (ImportInfo)currentInfo;
+      rootInfo = (IncludeInfo)currentInfo;
     }
     ToplevelBlock node = new ToplevelBlock();
     enterEnvironment(node);
@@ -152,7 +152,7 @@ public class Mem {
   }
 
   /** Leave processing of a class. To be called at the very end of processing
-   *  the top-level class or import.
+   *  the top-level class or include.
    */
   public void leaveClass() {
     ToplevelBlock node = currentBlock;
@@ -177,7 +177,7 @@ public class Mem {
     // The condition is: We're in the topmost environment of a file.
     curClass().enterRule((RuleInfo)currentInfo);
     return //curClass().enterRule((RuleInfo)currentInfo)
-        currentInfo.getParent() instanceof ImportInfo
+        currentInfo.getParent() instanceof IncludeInfo
         && currentBlock.getBindings() == currentEnv;
   }
 
@@ -318,7 +318,7 @@ public class Mem {
    * function definitions from this class).
    */
   public Set<ClassEnv> getNeededClasses() {
-    // return all classes above me (import chain), and this class
+    // return all classes above me (include chain), and this class
     Set<ClassEnv> result = new HashSet<>();
     ToplevelBlock tb = currentBlock;
     while(tb != null) {
@@ -328,15 +328,15 @@ public class Mem {
     return result;
   }
 
-  public ImportInfo getInfo() {
+  public IncludeInfo getInfo() {
     return rootInfo;
   }
 
   public void registerError(String errorMessage, Location location, ErrorType type) {
     BasicInfo current = currentInfo;
-    while (! (current instanceof ImportInfo))
+    while (! (current instanceof IncludeInfo))
       current = current.getParent();
-    ImportInfo info = (ImportInfo)current;
+    IncludeInfo info = (IncludeInfo)current;
     info.getErrors().add(new ErrorInfo(errorMessage, location, type));
   }
 }

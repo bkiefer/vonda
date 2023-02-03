@@ -20,29 +20,34 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import java.util.Collections;
-import java.util.List;
 
 /**
- * represents a Java import statement, can only occur at the beginning of a
- * .rudi file; each import statement will transferred verbatim to the generated
- * java source file.
+ * represents an include statement; each include statement will cause the
+ * included.rudi file to be parsed and translated. While parsing the included
+ * file, rudimant will remember the variables from the original file, but the
+ * namespace of the included file will not be visible from the original file
+ * thereafter.
  *
- * @author Bernd Kiefer
+ * @author Anna Welker
  */
-public class Import extends RudiTree {
+public class Include extends RudiTree {
 
-  // IMPORT PATH
-  List<String> path;
+  // INCLUDE PATH.NAME SEMICOLON
+  String[] path;
+  String name;
 
-  public Import(List<String> p) {
-    path = p;
+  public Include(String n, String[] dirSpec) {
+    name = n;
+    path = dirSpec;
   }
 
   public void visit(RudiVisitor v) {
     throw new UnsupportedOperationException("visit is special");
   };
 
-  public String toString() { return "import " + path; }
+  public String toString() { return "include " + path.toString() //+ "." + name
+  ;
+  }
 
   public Iterable<? extends RudiTree> getDtrs() {
     return Collections.emptyList();

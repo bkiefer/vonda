@@ -102,10 +102,10 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     VisitorType ttv = new VisitorType(mem, errorsFatal, _th);
 
     for (RudiTree t : rules) {
-      if (t instanceof Import) {
-        Import node = (Import)t;
+      if (t instanceof Include) {
+        Include node = (Include)t;
         try {
-          rudi.processImport(node.name, node.path, node.location);
+          rudi.processInclude(node.name, node.path, node.location);
         } catch (IOException fex) {
           ttv.typeError(fex.getMessage(), node);
         }
@@ -166,8 +166,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         if (vd.toAssign == null) continue;
         vd.isDefinition = false;
         gv.gen(vd);
-      } else if (r instanceof StatGrammarRule || r instanceof Import) {
-        // rules and imports are called as functions and may return a non-zero
+      } else if (r instanceof StatGrammarRule || r instanceof Include) {
+        // rules and includes are called as functions and may return a non-zero
         // value. If the value is 1
         if (r instanceof StatGrammarRule){
           out.append("res = ");
@@ -177,7 +177,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
           _th.saveCommentsForLater(r.getLocation().getEnd());
           out.append(" if (res != 0)");
         } else {
-          Import imp = (Import)r;
+          Include imp = (Include)r;
           _th.checkComments(r.getLocation().getBegin(), out);
           out.append("res = ");
           // use fully qualified name
@@ -205,7 +205,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         }
         out.append(" return (res - 1);\n");
       } else if (r instanceof RTStatement) {
-        gv.gen((RTStatement)r);
+        gv.gen(r);
       }
     }
     out.append(PROCESS_SUFFIX);
@@ -249,8 +249,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     // import the included classes
     for(RudiTree r : rules) {
       // TODO: MAYBE NOT NECESSARY WHEN USING QUALIFIED NAMES IN PROCESS ??
-      if (r instanceof Import) {
-        Import i = (Import)r;
+      if (r instanceof Include) {
+        Include i = (Include)r;
         if (i.path.length > 0) {
           out.append("import ");
           if (! rootpkg.isEmpty()) out.append(rootpkg).append('.');
@@ -342,6 +342,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     return rules;
   }
 
+  @Override
   public void visit(RudiVisitor v) {
     throw new UnsupportedOperationException("visit is special");
   };
@@ -350,8 +351,10 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
 
   private Environment _localBindings;
 
+  @Override
   public Environment getParentBindings() { return _localBindings.getParent(); }
 
+  @Override
   public Environment enterEnvironment(Environment parent) {
     return _localBindings != null ? _localBindings
         : (_localBindings = Environment.getEnvironment(parent));

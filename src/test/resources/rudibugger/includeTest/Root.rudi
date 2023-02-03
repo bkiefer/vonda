@@ -3,7 +3,7 @@ if (test = 1) {
   bla = 0;
 }
 
-import Import1;
+include Include1;
 
 rule_two:
 if (test = 2) {

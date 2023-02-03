@@ -24,7 +24,7 @@ import java.util.Map;
 
 import de.dfki.mlt.rudimant.common.RuleInfo;
 
-/** A class environment, storing things like top-level rules and imports, which
+/** A class environment, storing things like top-level rules and includes, which
  *  are later on important for generation.
  *
  * @author kiefer

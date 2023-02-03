@@ -24,13 +24,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImportInfo extends BasicInfo {
+public class IncludeInfo extends BasicInfo {
   protected List<ErrorInfo> _errors = new ArrayList<>();
   protected String[] relativePath;
 
-  public ImportInfo() { }
+  public IncludeInfo() { }
 
-  public ImportInfo(String name, String[] pathSpec, int line, BasicInfo parent) {
+  public IncludeInfo(String name, String[] pathSpec, int line, BasicInfo parent) {
     super(name, line, parent);
     setRelativePath(pathSpec);
   }
