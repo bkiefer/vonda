@@ -103,6 +103,9 @@ public class CompilerMain {
     Yaml yaml = new Yaml();
     File confFile = new File(confname);
     confDir = confFile.getParentFile();
+    if (confDir == null) {
+      confDir = new File(".");
+    }
     configs = (Map<String, Object>) yaml.load(new FileReader(confFile));
   }
 

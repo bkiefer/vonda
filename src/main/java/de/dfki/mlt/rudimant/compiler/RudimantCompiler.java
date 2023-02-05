@@ -289,7 +289,10 @@ public class RudimantCompiler {
     try {
       new Formatter().formatSource(source, sink);
     } catch (FormatterException ex) {
-      mem.registerError(ex.getMessage(), new Location(name), ErrorType.ERROR);
+      mem.registerError("Code Formatter: " + ex.getMessage(),
+          new Location(name), ErrorType.ERROR);
+      // Error occured, we have to write unformatted;
+      sink.writeFrom(source.openStream());
     }
   }
 
