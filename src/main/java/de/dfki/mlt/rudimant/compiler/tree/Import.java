@@ -33,17 +33,28 @@ public class Import extends RudiTree {
 
   // IMPORT PATH
   List<String> path;
+  boolean staticImport = false;
 
   public Import(List<String> p) {
     path = p;
   }
 
+  public Import(List<String> p, boolean stat) {
+    path = p;
+    staticImport = stat;
+  }
+
+  @Override
   public void visit(RudiVisitor v) {
     throw new UnsupportedOperationException("visit is special");
   };
 
-  public String toString() { return "import " + path; }
+  @Override
+  public String toString() {
+    return "import" + (staticImport ? " static" : " ") + path;
+  }
 
+  @Override
   public Iterable<? extends RudiTree> getDtrs() {
     return Collections.emptyList();
   }

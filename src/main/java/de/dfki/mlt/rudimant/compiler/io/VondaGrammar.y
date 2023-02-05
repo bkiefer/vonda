@@ -103,6 +103,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %token FOR
 %token IF
 %token IMPORT
+%token STATIC
 %token INCLUDE
 %token NEW
 %token NULL
@@ -139,9 +140,21 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 
 // start rule
 root
-  : imports grammar_file { $$ = $2; $2.addFirst($1); }
+  : imports root { $$ = $2; $2.addFirst($1); }
   | grammar_file { $$ = $1;}
   ;
+
+imports
+  : IMPORT path ';' { $$ = setPos(new Import($2), @$); }
+  | IMPORT path '.' '*' ';' {
+    $2.add("*");
+    $$ = setPos(new Import($2), @$);
+  }
+  | IMPORT STATIC path ';' { $$ = setPos(new Import($3, true), @$); }
+  | IMPORT STATIC path '.' '*' ';' {
+    $3.add("*");
+    $$ = setPos(new Import($3, true), @$);
+  };
 
 grammar_file
   : visibility_spec method_declaration grammar_file {
@@ -169,8 +182,6 @@ visibility_spec
   | PROTECTED { $$ = "protected"; }
   | PRIVATE  { $$ = "private"; }
   ;
-
-imports : IMPORT path ';' { $$ = setPos(new Import($2), @$); } ;
 
 includes
   : INCLUDE path ';' {

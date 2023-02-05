@@ -238,6 +238,25 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     if (! mem.isNotToplevelClass()) {
       out.append("import ").append(mem.getWrapperClass()).append(";\n");
     }
+
+    // handle the imports from the .rudi file
+    for(RudiTree r : rules) {
+      // TODO: MAYBE NOT NECESSARY WHEN USING QUALIFIED NAMES IN PROCESS ??
+      if (r instanceof Import) {
+        Import i = (Import)r;
+        if (i.path.size() > 0) {
+          out.append("import ");
+          if (i.staticImport) {
+            out.append("static ");
+          }
+          out.append(i.path.get(0));
+          for (int j = 1; j < i.path.size(); ++j) {
+            out.append('.').append(i.path.get(j));
+          }
+          out.append(";\n");
+        }
+      }
+    }
     /* done by neededclasses
      * else {
       // import the top level class

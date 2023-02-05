@@ -138,4 +138,11 @@ public class AdditionalTest {
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));
   }
+
+  @Test
+  public void testJavaImport() {
+    String in = "import static a.b.c.*;";
+    String s = generate(in);
+    assertTrue(s.contains(in));
+  }
 }

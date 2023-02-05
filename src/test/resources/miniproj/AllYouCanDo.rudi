@@ -1,10 +1,20 @@
-/*@import java.nio.file.*;@*/
+import java.nio.file.*;
+import static java.nio.file.Files.*;
 // **********************************************************************
 // Tests and Comparisons
 // **********************************************************************
 
 // declare a Java method
 [Object]. boolean equals(Object);
+
+boolean funcWithJava(String h) {
+  boolean ex = false;
+  // inject plain java
+  /* TODO: CURRENTLY DOES NOT WORK CORRECTLY
+    ex = Files.exists(new File(h).toPath());
+    */
+  return ex;
+}
 
 // Define a variable of an RDF type
 Child child;
