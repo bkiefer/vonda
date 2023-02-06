@@ -418,9 +418,9 @@ var_def
   ;
 
 field_def
-  : '[' type_spec ']' '.' type_spec IDENTIFIER ';' {
+  : '#' type_spec type_spec IDENTIFIER ';' {
     $$ = setPos(new StatFieldDef(null,
-           setPos(new StatVarDef(false, $5, $6), @$), $2), @$);
+           setPos(new StatVarDef(false, $3, $4), @$), $2), @$);
   }
   ;
 
@@ -441,8 +441,8 @@ nonempty_exp_list
 
 /* For method declarations, the return type spec is OBLIGATORY */
 method_declaration
-  : '[' type_spec ']' '.' type_spec IDENTIFIER '(' opt_args_list ')' opt_block {
-    $$ = setPos(new StatMethodDeclaration("public", $5, $2, $6, $8, $10), @$);
+  : '#' type_spec type_spec IDENTIFIER '(' opt_args_list ')' opt_block {
+    $$ = setPos(new StatMethodDeclaration("public", $3, $2, $4, $6, $8), @$);
   }
   | type_spec IDENTIFIER '(' opt_args_list ')' opt_block {
     $$ = setPos(new StatMethodDeclaration("public", $1, null, $2, $4, $6), @$);

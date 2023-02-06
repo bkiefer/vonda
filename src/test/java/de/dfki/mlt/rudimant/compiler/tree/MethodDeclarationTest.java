@@ -85,7 +85,7 @@ public class MethodDeclarationTest {
 
   @Test
   public void testCallUpon1(){
-    String methdecl = " [List<T>]. T gett(int a); List<String> l;"
+    String methdecl = "#List<T> T gett(int a); List<String> l;"
     		+ "x = l.gett(0);";
     String s = generate(methdecl);
     String expected = "public List<String> l;public String x;/**/x = l.gett(0);";
@@ -96,7 +96,7 @@ public class MethodDeclarationTest {
 
   @Test(expected=TypeException.class)
   public void testFunctionRedeclaration() throws Throwable {
-    String methdecl = "[String]. long length();";
+    String methdecl = "#String long length();";
     String s = getTypeError(methdecl);
   }
 }

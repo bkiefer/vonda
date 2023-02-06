@@ -43,6 +43,7 @@ public class StatFieldDef extends RTStatement {
     this.varDef = varDef;
   }
 
+  /** This is for the [...] field definitions only: double checked */
   public StatFieldDef(String visibility, StatVarDef varDef, Type calledUpon) {
     // Actually, visibility shouldn't matter as this is only for Mem-info
     this.visibility = visibility != null? visibility : "public";

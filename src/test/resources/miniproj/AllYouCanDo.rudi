@@ -5,7 +5,7 @@ import static java.nio.file.Files.*;
 // **********************************************************************
 
 // declare a Java method
-[Object]. boolean equals(Object);
+#Object boolean equals(Object);
 
 boolean funcWithJava(String h) {
   boolean ex = false;

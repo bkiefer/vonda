@@ -1,11 +1,11 @@
 // standard Java methods that we provide
-[Object]. boolean equals(Object e);
-[String]. boolean startsWith(String s);
-[String]. boolean endsWith(String s);
-[String]. String substring(int begin);
-[String]. String substring(int begin, int end);
-[String]. boolean isEmpty();
-[String]. int length();
+# Object boolean equals(Object e);
+# String boolean startsWith(String s);
+# String boolean endsWith(String s);
+# String String substring(int begin);
+# String String substring(int begin, int end);
+# String boolean isEmpty();
+# String int length();
 
 // Some handy conversions from and to String
 int toInt(String s);
@@ -19,22 +19,22 @@ String toStr(float i);
 String toStr(double i);
 String toStr(boolean i);
 
-[List<T>]. T get(int a);
-[Collection<T>]. void add(Object a);
-[Collection<T>]. boolean contains(Object a);
-[Collection<T>]. int size();
-[Collection<T>]. boolean isEmpty();
-[Map<S, T>]. boolean containsKey(S a);
-[Map<S, T>]. T get(S a);
-[Array<T>]. int length;
+# List<T> T get(int a);
+# Collection<T> void add(Object a);
+# Collection<T> boolean contains(Object a);
+# Collection<T> int size();
+# Collection<T> boolean isEmpty();
+# Map<S, T> boolean containsKey(S a);
+# Map<S, T> T get(S a);
+# Array<T> int length;
 
 // all Agent methods we should know
 
 // Rdf(Proxy) methods
 Rdf toRdf(String uri);
-[Rdf]. String getURI();
-[Rdf]. boolean has(String predicate);
-[Rdf]. long getLastChange(boolean asSubject, boolean asObject);
+# Rdf String getURI();
+# Rdf boolean has(String predicate);
+# Rdf long getLastChange(boolean asSubject, boolean asObject);
 
 RdfClass getRdfClass(String s);
 boolean exists(Object o);
@@ -49,14 +49,14 @@ String getUriName(String uri);
 DialogueAct createEmitDA(DialogueAct da);
 DialogueAct emitDA(int delay, DialogueAct da);
 DialogueAct emitDA(DialogueAct da);
-[DialogueAct]. String getDialogueActType();
-[DialogueAct]. void setDialogueActType(String dat);
-[DialogueAct]. String getProposition();
-[DialogueAct]. void setProposition(String prop);
-[DialogueAct]. boolean hasSlot(String key);
-[DialogueAct]. String getValue(String key);
-[DialogueAct]. void setValue(String key, String val);
-[DialogueAct]. long getTimeStamp();
+# DialogueAct String getDialogueActType();
+# DialogueAct void setDialogueActType(String dat);
+# DialogueAct String getProposition();
+# DialogueAct void setProposition(String prop);
+# DialogueAct boolean hasSlot(String key);
+# DialogueAct String getValue(String key);
+# DialogueAct void setValue(String key, String val);
+# DialogueAct long getTimeStamp();
 
 
 // my last outgoing resp. the last incoming dialogue act
