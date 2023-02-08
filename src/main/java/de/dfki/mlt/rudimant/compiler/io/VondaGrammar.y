@@ -115,6 +115,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %token SWITCH
 %token TIMEOUT
 %token WHILE
+%token ISA
 
 %token ARROW
 %token ANDAND
@@ -615,7 +616,7 @@ MultiplicativeExpression
 
 CastExpression
   : UnaryExpression { $$ = $1; }
-  | '(' type_spec ')' CastExpression { $$ = setPos(new ExpCast($2, $4), @$); }
+  | ISA '(' type_spec ',' CastExpression ')' { $$ = setPos(new ExpCast($3, $5), @$); }
   ;
 
 UnaryExpression

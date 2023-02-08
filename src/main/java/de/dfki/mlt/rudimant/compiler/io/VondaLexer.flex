@@ -241,6 +241,7 @@ SingleCharacter = [^\r\n\'\\]
   "switch"                       { return token(VondaGrammar.Lexer.SWITCH); }
   "timeout"                      { return token(VondaGrammar.Lexer.TIMEOUT); }
   "while"                        { return token(VondaGrammar.Lexer.WHILE); }
+  "isa"                          { return token(VondaGrammar.Lexer.ISA); }
 
   /* boolean literals */
   "true"                         |
