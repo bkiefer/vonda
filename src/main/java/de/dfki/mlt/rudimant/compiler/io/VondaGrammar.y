@@ -24,7 +24,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %type <RTExpression> RelationalExpression AdditiveExpression
 %type <RTExpression> MultiplicativeExpression CastExpression
 %type <RTExpression> LogicalUnaryExpression UnaryExpression PostfixExpression
-%type <RTExpression> PrimaryExpression NotJustName ComplexPrimary new_exp
+%type <RTExpression> PrimaryExpression ComplexPrimary new_exp
 %type <RTExpression> ComplexPrimaryNoParenthesis field_access ArrayAccess
 %type <RTExpression> function_call simple_nofa_exp da_token
 %type <StatVarDef> var_def var_decl
@@ -648,13 +648,9 @@ PostfixExpression
 
 PrimaryExpression
   : NULL { $$ = setPos(new ExpLiteral("null", "null"), @$); }
-  | NotJustName { $$ = $1; }
+  | IDENTIFIER { $$ = setPos(new ExpIdentifier($1), @$); }
+  | field_access { $$ = $1; }
   | ComplexPrimary { $$ = $1; }
-  ;
-
-NotJustName
-  : IDENTIFIER { $$ = setPos(new ExpIdentifier($1), @$); }
-  | '(' '(' type_spec ')' UnaryExpression ')' { $$ = setPos(new ExpCast($3, $5), @$); }
   ;
 
 ComplexPrimary
@@ -665,7 +661,6 @@ ComplexPrimary
 ComplexPrimaryNoParenthesis
   : Literal { $$ = $1; }
   | ArrayAccess { $$ = $1; }
-  | field_access { $$ = $1; }
   | function_call { $$ = $1; }
   | dialogueact_exp { $$ = $1; }
   ;
@@ -685,6 +680,33 @@ ArrayAccess
   | ComplexPrimary '[' exp ']' { $$ = setPos(new ExpArrayAccess($1, $3), @$); }
   ;
 
+field_access
+  : IDENTIFIER field_access_rest  {
+    ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
+    $2.addFirst(var);
+    $$ = setPos(new ExpFieldAccess($2), @$);
+  }
+  | ComplexPrimary field_access_rest {
+    $2.addFirst($1);
+    $$ = setPos(new ExpFieldAccess($2), @$);
+  }
+  ;
+
+field_access_rest
+   : '.' simple_nofa_exp field_access_rest { $$ = $3; $3.addFirst($2); }
+   | '.' simple_nofa_exp {
+     List<RTExpression> l = new LinkedList<RTExpression>();
+     l.add($2);
+     $$ = l;
+   }
+   ;
+
+simple_nofa_exp
+  : IDENTIFIER { $$ = setPos(new ExpIdentifier($1), @$); }
+  | '{' exp '}' { $$ = $2; }
+  | function_call { $$ = $1; }
+  ;
+
 ConditionalExpression
   : ConditionalOrExpression '?' exp ':' exp { $$ = setPos(new ExpConditional($1, $3, $5), @$); }
   | ConditionalOrExpression { $$ = $1; }
@@ -700,27 +722,6 @@ assignment
     ExpAssignment ass = setPos(new ExpAssignment(var, $2), @$);
     $$ = ass;
   }
-  ;
-
-field_access
-  : NotJustName field_access_rest {
-    $$ = setPos(new ExpFieldAccess($2), @$); $2.addFirst($1);
-  }
-  | STRING field_access_rest {
-    $$ = setPos(new ExpFieldAccess($2), @$); $2.addFirst(setPos($1, @$));
-  }
-  | function_call field_access_rest { $$ = setPos(new ExpFieldAccess($2), @$); $2.addFirst($1); }
-  ;
-
-field_access_rest
-  : '.' simple_nofa_exp field_access_rest { $$ = $3; $3.addFirst($2); }
-  | '.' simple_nofa_exp { $$ = new LinkedList<RTExpression>(){{ add($2); }}; }
-  ;
-
-simple_nofa_exp
-  : IDENTIFIER { $$ = setPos(new ExpIdentifier($1), @$); }
-  | function_call { $$ = $1; }
-  | '(' exp ')' { $$ = $2; }
   ;
 
 new_exp

@@ -214,7 +214,7 @@ public class CastTest {
     // Test cast with parameterized types
     String in = "LinkedList<String> b; LinkedList<String> l = (LinkedList<String>) b;";
     String s = generate(in);
-    String expected = "LinkedList<String> b;LinkedList<String> l = ((LinkedList<String>)b);";
+    String expected = "LinkedList<String> b;LinkedList<String> l = (LinkedList<String>)b;";
     assertEquals(expected, getForMarked(s, expected));
   }
 

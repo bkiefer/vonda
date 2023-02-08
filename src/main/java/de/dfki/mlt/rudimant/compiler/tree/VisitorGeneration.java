@@ -440,8 +440,8 @@ public class VisitorGeneration implements RudiVisitor {
 
   @Override
   public void visit(ExpCast node) {
-    // "(${type.toJava()})${expression})"
-    gen("((").gen(node.type.toJava()).gen(")").gen(node.expression).gen(")");
+    // "(${type.toJava()})${expression}"
+    gen("(").gen(node.type.toJava()).gen(")").gen(node.expression);
   }
 
   @Override

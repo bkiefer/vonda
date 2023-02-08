@@ -179,7 +179,7 @@ public class TypesTest {
   public void testCast5() {
     String in = "t = (QuizHistory) a;";
     String r = generate(in);
-    String exp = "t = ((Rdf)a);";
+    String exp = "t = (Rdf)a;";
     assertEquals(exp, getForMarked(r, exp));
     assertTrue(r.contains("Rdf t;"));
   }
