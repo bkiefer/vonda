@@ -117,7 +117,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %token WHILE
 %token ISA
 
-%token ARROW
+%token LAMBDA
 %token ANDAND
 %token OROR
 %token EQEQ
@@ -754,11 +754,11 @@ new_exp
   ;
 
 lambda_exp
-  : '(' opt_args_list ')' ARROW exp {
-    $$ = setPos(new ExpLambda($2, $5), @$);
+  : LAMBDA '(' opt_args_list ')' EQEQ exp {
+    $$ = setPos(new ExpLambda($3, $6), @$);
   }
-  | '(' opt_args_list ')' ARROW block {
-    $$ = setPos(new ExpLambda($2, $5), @$);
+  | LAMBDA '(' opt_args_list ')' EQEQ block {
+    $$ = setPos(new ExpLambda($3, $6), @$);
   }
   ;
 

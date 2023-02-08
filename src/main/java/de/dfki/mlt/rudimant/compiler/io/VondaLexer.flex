@@ -242,6 +242,7 @@ SingleCharacter = [^\r\n\'\\]
   "timeout"                      { return token(VondaGrammar.Lexer.TIMEOUT); }
   "while"                        { return token(VondaGrammar.Lexer.WHILE); }
   "isa"                          { return token(VondaGrammar.Lexer.ISA); }
+  "lambda"                       { return token(VondaGrammar.Lexer.LAMBDA); }
 
   /* boolean literals */
   "true"                         |
@@ -280,7 +281,6 @@ SingleCharacter = [^\r\n\'\\]
   "#" |
   "%"                            { return token((int)yycharat(0)); }
 
-  "->"                           { return token(VondaGrammar.Lexer.ARROW); }
   "=="                           { return token(VondaGrammar.Lexer.EQEQ); }
   "<="                           { return token(VondaGrammar.Lexer.LTEQ); }
   ">="                           { return token(VondaGrammar.Lexer.GTEQ); }
