@@ -7,7 +7,7 @@
   <fileSets>
     <fileSet>
       <directory>${project.build.outputDirectory}</directory>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory>.</outputDirectory>
       <includes>
         <include>**/*</include>
       </includes>
@@ -15,7 +15,7 @@
   </fileSets>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory>.</outputDirectory>
       <useProjectArtifact>true</useProjectArtifact>
       <unpack>true</unpack>
       <scope>runtime</scope>
