@@ -61,14 +61,18 @@ public class SimpleServer implements Runnable {
       serverSocket = new ServerSocket(_portNumber);
       while (! closeRequested) {
         if (_conn != null) _conn.close();
+        logger.info("Waiting for client to connect...");
         _conn = new SimpleConnector(serverSocket.accept(), _consumer);
-        _conn.run();
-        logger.info("Agent debug server started on port {}", _portNumber);
+        logger.info("Client connected on port {}", _portNumber);
+        _conn.listen();
       }
     } catch (IOException ex) {
       logger.error("Server Error: {}", ex.toString());
     }
-    serverSocket = null;
+    if (_conn != null) {
+      _conn.close();
+      _conn = null;
+    }
   }
 
   /** starts the debugging service for the agent (non-blocking) */
@@ -81,8 +85,12 @@ public class SimpleServer implements Runnable {
   }
 
   public void send(String ...strings) {
-    if (_conn != null && _conn.isConnected())
+    if (isConnected())
       _conn.send(strings);
+  }
+
+  public boolean isConnected() {
+    return (_conn != null && _conn.isConnected());
   }
 
   public boolean isRunning() {
@@ -91,17 +99,21 @@ public class SimpleServer implements Runnable {
 
   protected void close()  {
     closeRequested = true;
-    if (serverSocket == null) return;
-    try {
-      logger.info("Closing Server Socket");
-      serverSocket.close();
-      logger.info("Closing Socket");
+    if (_conn != null) {
+      logger.info("Closing simple connector");
+      // this includes closing the socket
       _conn.close();
       _conn = null;
-    } catch (IOException ex) {
-      logger.error("Error closing socket: {}", ex);
-    } finally {
       serverSocket = null;
+    } else if (serverSocket != null) {
+      logger.info("Closing server socket");
+      try {
+        serverSocket.close();
+      } catch (IOException e) {
+        logger.error("Error closing socket: {}", e);
+      } finally {
+        serverSocket = null;
+      }
     }
   }
 
@@ -111,21 +123,15 @@ public class SimpleServer implements Runnable {
         3664, "testServer"
         );
 
-    Thread sideThread = new Thread() {
-      public void run() {
-        simplServ.startServer();
-        try {
-          while (simplServ.isRunning()) {
-            System.out.println("Rödeln...");
-            Thread.sleep(500);
-            simplServ.send("printLog", "1", "true", "true");
-          }
-        } catch (InterruptedException v) {
-          System.out.println(v);
-        }
+    simplServ.startServer();
+    try {
+      while (simplServ.isRunning()) {
+        System.out.println("Rödeln...");
+        Thread.sleep(500);
+        simplServ.send("printLog", "1", "true", "true");
       }
-    };
-
-    sideThread.start();
+    } catch (InterruptedException v) {
+      System.out.println(v);
+    }
   }
 }

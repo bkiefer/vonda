@@ -29,7 +29,7 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SimpleConnector implements Runnable {
+public class SimpleConnector {
 
   private static final char EOM_CHAR = '\t';
   private static final char EOF_CHAR = '\0';
@@ -44,8 +44,6 @@ public class SimpleConnector implements Runnable {
 
   private OutputStreamWriter out;
   private InputStreamReader in;
-
-  private Thread readerThread;
 
   protected final Consumer<String[]> _callable;
 
@@ -65,7 +63,7 @@ public class SimpleConnector implements Runnable {
     out = new OutputStreamWriter(_socket.getOutputStream(), "UTF-8");
   }
 
-  public void run() {
+  public void listen() {
     int c;
     StringBuffer sb = new StringBuffer();
     try {
@@ -83,19 +81,14 @@ public class SimpleConnector implements Runnable {
           return;
         default:
           sb.append((char)c);
-          break;
         }
       }
+      logger.info("Stopping read loop");
+      close();
     } catch (IOException ex) {
-      logger.error("Error reading stream: {}", ex);
-      return;
+      logger.error("Error reading stream: {}", ex.getMessage());
+      close();
     }
-    close();
-    logger.info("Stopping read loop");
-  }
-
-  public boolean isAlive() {
-    return readerThread == null || readerThread.isAlive();
   }
 
   public boolean isConnected() {
@@ -104,8 +97,12 @@ public class SimpleConnector implements Runnable {
 
   public void close() {
     try {
-      if (_socket != null) _socket.close();
+      if (_socket != null) {
+        logger.debug("Closing socket");
+        _socket.close();
+      }
     } catch (IOException ex) {
+      logger.error(ex.getMessage());
     }
     _socket = null;
   }
@@ -129,7 +126,7 @@ public class SimpleConnector implements Runnable {
       out.write(EOM_CHAR);
       out.flush();
     } catch (IOException ex) {
-      logger.error("Closing socket: {}", ex.toString());
+      logger.error("Error writing stream: {}", ex.getMessage());
       close();
       return false;
     }

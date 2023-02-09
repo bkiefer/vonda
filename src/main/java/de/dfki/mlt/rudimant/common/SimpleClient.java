@@ -19,6 +19,8 @@
 
 package de.dfki.mlt.rudimant.common;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -46,6 +48,15 @@ public class SimpleClient implements Runnable {
 
   private boolean closeRequested;
 
+  private final PropertyChangeSupport support;
+  public enum ConnStatus {
+    ONLINE,
+    OFFLINE,
+    TRYING
+  }
+  private ConnStatus connStatus;
+
+
   /**
    * A client that connects to the server on localhost at the given port to send
    * log information to the debugger.
@@ -59,6 +70,17 @@ public class SimpleClient implements Runnable {
     _hostName = hostname;
     _addr = new InetSocketAddress(_hostName, portNumber);
     closeRequested = false;
+    support = new PropertyChangeSupport(this);
+    connStatus = ConnStatus.OFFLINE;
+  }
+
+  private void setConnStatus(ConnStatus connStatus) {
+    this.support.firePropertyChange("connStatus", this.connStatus, connStatus);
+    this.connStatus = connStatus;
+  }
+
+  public ConnStatus getConnStatus() {
+    return this.connStatus;
   }
 
   // msecs
@@ -78,17 +100,21 @@ public class SimpleClient implements Runnable {
           nextTryToConnect = currentTime + reconnectInterval;
           Socket s = new Socket();
           s.connect(_addr);
+          // connecting has succeeded
+          logger.debug("Client has been connected");
           _conn = new SimpleConnector(s, _consumer);
-          _conn.run();
-          // TODO: This message will be printed when the connection has been
-          // closed. Probably because the preceding run() blocks further
-          // execution.
-          logger.debug("Client has been connected.");
+          setConnStatus(ConnStatus.ONLINE);
+          // call the run method of the runnable, i.e. this method does NOT return as long
+          // as _conn is working fine
+          _conn.listen();
+          logger.debug("Connection lost");
+          setConnStatus(ConnStatus.OFFLINE);
         } catch (UnknownHostException e) {
           logger.error("Unknown host {}: {}", _hostName, e.toString());
         } catch (IOException e) {
           if (_conn != null) _conn.close();
           _conn = null;
+          setConnStatus(ConnStatus.TRYING);
           // make sure only every noLogInterval milliseconds this will be logged
           if (currentTime - nextLog > 0) {
             nextLog = currentTime + noLogInterval;
@@ -115,12 +141,8 @@ public class SimpleClient implements Runnable {
   }
 
   public void send(String ... s) {
-    if (isConnected())
+    if (this.connStatus == ConnStatus.ONLINE)
       _conn.send(s);
-  }
-
-  public boolean isConnected() {
-    return (_conn != null && _conn.isConnected());
   }
 
   public void disconnect() {
@@ -139,11 +161,21 @@ public class SimpleClient implements Runnable {
     }
   }
 
+  public void addPropertyChangeListener(PropertyChangeListener listener) {
+    support.addPropertyChangeListener(listener);
+  }
+
+  public void removePropertyChangeListener(PropertyChangeListener listener) {
+    support.removePropertyChangeListener(listener);
+  }
+
   public static void main(String[] args) throws IOException, InterruptedException {
     SimpleClient scl = new SimpleClient(
         "localhost", 3664,
         (s) -> {System.out.println("Client: " + Arrays.toString(s));},
         "testClient");
+    scl.addPropertyChangeListener(e ->
+      System.out.println("CONNECTION STATUS CHANGED: " + e.getNewValue()));
     scl.startClient();
     try {
       int i = 0;
