@@ -766,10 +766,17 @@ public class VisitorType implements RudiVisitor {
         mem.getVariableType(label).isString()) {
       // the literal represents a variable, so we can't determine the type of
       // the access
+      /*
+      // Why returning Set<T> then? This can't be casted to, e.g., String,
+      // while Object can be casted to Set<T>: because we up to now generated
+      // Rdf.getValue(...) in this case, which returns Set<Object>
       List<Type> subs = new ArrayList<>();
       subs.add(new Type("T"));
       Type paType = new Type("Set", subs); paType.setCastRequired();
-      return new ExpPropertyAccess(label, true, paType, false);
+      */
+      // now we'll generate getObject
+      Type paType = new Type("Object");
+      return new ExpPropertyAccess(label, true, paType, true);
     }
     if (currentType.isDialogueAct()) {
       // the return type will be string, this is a call to getSlot

@@ -50,6 +50,9 @@ if (c1 <= Child) System.out.println("foo");
 c1.name = "new name";
 c1.name = null;
 
+String propname = "name";
+String cname = (String)c1.{propname};
+
 // Is s not null and not empty?
 String s = "bar";
 if (s) System.out.println("foo");

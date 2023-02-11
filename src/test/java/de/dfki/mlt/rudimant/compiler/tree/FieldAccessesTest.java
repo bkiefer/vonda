@@ -97,9 +97,17 @@ public class FieldAccessesTest {
 
     @Test
     public void testFieldAccess6() {
-      String in = "Child c; property = \"name\"; l = c.property;";
+      String in = "Child c; property = \"name\"; l = (String)c.{property};";
       String s = generate(in);
-      String expected = "Rdf c;String property = \"name\";Set<Object> l = c.getValue(property); }";
+      String expected = "Rdf c;String property = \"name\";String l = (String)c.getObject(property); }";
+      assertEquals(expected, getForMarked(s, expected));
+    }
+
+    @Test
+    public void testFieldAccess6a() {
+      String in = "Child c; property = \"name\"; l = ((List<String>)c.{property}).get(0);";
+      String s = generate(in);
+      String expected = "Rdf c;String property = \"name\";String l = ((List<String>)c.getObject(property)).get(0); }";
       assertEquals(expected, getForMarked(s, expected));
     }
 
@@ -123,10 +131,10 @@ public class FieldAccessesTest {
 
     @Test
     public void testFieldAccess9() {
-      String in = "Child c; s=\"<dom:forename>\"; a: if(c.s){}";
+      String in = "Child c; s=\"<dom:forename>\"; a: if(c.{s}){}";
       String s = generate(in);
       String expected = "Rdf c;String s = \"<dom:forename>\";// Rule a boolean[] __x1 = new boolean[2];"
-          + " __x1[0] = (__x1[1] = c != null && exists(c.getValue(s)));";
+          + " __x1[0] = (__x1[1] = c != null && c.getObject(s) != null);";
 
       assertEquals(expected, getForMarked(s, expected));
     }
