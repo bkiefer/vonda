@@ -9,8 +9,7 @@ attach temporal information to every data chunk \cite{Krieger:FOIS2012,
   objects}, using either \emph{transaction time} or \emph{valid time}
 attachments, and as a side effect obtain a complete history of all changes.
 HFC is very efficient in terms of processing speed and memory footprint, and
-has recently been extended with stream reasoning facilities. \vonda can use HFC
-\todo{AW: Just asking: How long can we still talk of ''recently extended''?}
+has also provides some stream reasoning facilities. \vonda can use HFC
 either directly as a library or as a remote server, also allowing for more
 than one instance if needed (for this feature see section \ref{sec:2ndHfc}).
 
@@ -60,8 +59,9 @@ do \emph{not} need to be written in uppercase, but neither \texttt{filter} predi
      SELECT DISTINCT * WHERE ?s <rdf:type> ?_
      SELECT * WHERE ?s <rdf:type> ?o ?_
 \end{verbatim}
-To change the object position without projecting it you can use \emph{don't-care} variables:
-\todo{AW: I do have an idea of how to write hfc queries of the simplicity that is sufficient for most DM stuff, and I have no understanding of what this means... Explain?}
+To put a restriction on the object position you can also use
+\emph{don't-care} variables and filters:
+
 \begin{verbatim}
      SELECT ?s WHERE ?s <rdf:type> ?o ?_ FILTER ?o != <foo-class>
 \end{verbatim}
@@ -142,3 +142,8 @@ uris = RdfProxy.getValues(qr);
 The above code, for example, retrieves all hyponyms of a given synset \texttt{syn}.
 
 Currently, it is recommended to place such code in Java methods that you can then use in your \vonda code to indirectly perform the queries. In the future, functionality will be added to support facilitated query construction directly in \vonda code.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "userguide"
+%%% End:

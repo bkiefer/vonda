@@ -6,7 +6,9 @@ grammars, where the rules contain terminal and non-terminal symbols
 that define the set of strings that are valid matches of the
 \emph{language} that the grammar defines, but also semantic actions
 that collect the \textrm{output} of the syntactic analysis in form of
-possibly complex objects.  \vonda provides some extensions to the
+possibly complex objects. Our implementaton of the SRGS
+formalism\footnote{\url{https://github.com/bkiefer/srgs2xml}, for more details see the
+  ReadMe and documentation there} provides some extensions to the
 default grammar formalism, currently only in the semantics (action
 part) of the rules, providing return values not only based on the names of non-terminal symbols, but also using relative positions of matched strings or tokens
 
@@ -35,7 +37,8 @@ of the form:
 
 since the \verb|$%2| in the \texttt{size} rule returned the output of the \texttt{\$small $\vert$ \$medium $\vert$ \$large} alternative, and the \verb|$$1| returned the string matched in the \texttt{medium} rule immediately before the tag. The rest is done with the ordinary JSON semantics present in the standard formalism.
 
-{\small\begin{verbatim}
+{\small%
+\begin{verbatim}
 #ABNF 1.0 UTF-8;
 
 language en-EN;

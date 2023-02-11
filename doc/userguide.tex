@@ -44,7 +44,8 @@
 
 \begin{document}
 
-\title{\vonda\\\Large A Framework for Implementing Reactive Dialogue Agents}
+\title{\vonda\\\Large A Framework for Implementing Reactive Dialogue
+  Agents\\Version 3\todo[inline]{currently 2}}
 
 \author{Bernd Kiefer, Anna Welker}
 \date{\today}
@@ -68,7 +69,6 @@ surprising that \vonda can also serve as a base formalism for agent
 functionality. A comparison of \vonda to other dialogue management systems and
 other related information can also be found in \cite{kieferetal_vonda_2019}.
 
-%\todo[inline]{Mention HFC and ref to appropriate section}
 \vonda consists of three parts: A programming language tailored towards the
 specification of reactive rules and transparent RDF data store usage, a
 compiler that turns source code in this language into Java code, and a run-time
@@ -134,7 +134,8 @@ converts outgoing dialogue acts into natural language utterances and gestures.
 \input{hfc}
 \newpage
 \input{srgsextensions}
-
+\newpage
+\input{nlu_nlg}
 
 % implementation patterns and caveats
 \chapter{Building \vonda Agents}
@@ -143,6 +144,40 @@ converts outgoing dialogue acts into natural language utterances and gestures.
 % and maybe tips and tricks?
 \chapter{\vonda Syntax Overview}
 \input{AllYouCanDo.rudi}
+\chapter{Breaking Changes to \vonda Version 2}
+\todo[inline]{fill}
+\section*{Syntax changes}
+\begin{itemize}
+\item the \texttt{import} keyword was replaced by
+  \texttt{include}. \texttt{import} is now used exclusively like in
+  Java, as class import definitions which are only allowed at the
+  beginning of a rule file
+\item the syntax of the type declaration for external classes has
+  changed from
+  \verb|[ SomeClass ]. myType Function ( argTypeA, argTypeB );| to
+  \verb|# SomeClass myType Function (  argTypeA, argTypeB );|
+\item \texttt{``{}''} expansion syntax in field access In version 2,
+  if one of the identifiers in a field access chain (like
+  \texttt{child.name}) matched an existing variable of type string,
+  the identifier was replaced with the value of the variable. This
+  sometimes produced confusing results and unforeseen errors, and was
+  too hard to grasp for novel users. Therefore, this has been replaced
+  by the more visible approach also used for value expansion in the
+  dialogue act specifications (see section
+  \ref{sec:field_access_expansion}).
+\item developing an unambiguous grammar for the java cast syntax
+  \texttt{((Type)val)} is very hard. The current parser generator
+  (bison) does not provide the functionality to get this right in all
+  cases. Therefore, it has been replaced by an infix operato
+  \texttt{isa}, so \texttt{((Type)val)} becomes \texttt{isa(Type,
+    val)}.
+\item the same holds for Java lambda expressions (\verb|c -> <expression>|). They were also replaced by infix syntax:
+  \texttt{lambda(c)(expression)} resp. \texttt{lambda(c){expression}}
+\end{itemize}
+\section*{Additional built-in functionality}
+\begin{itemize}
+\item Tokenizer for NLU
+\end{itemize}4
 
 \bibliography{vonda}
 \bibliographystyle{plainnat}

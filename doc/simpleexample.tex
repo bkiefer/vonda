@@ -1,7 +1,8 @@
 This chapter will walk you through the creation of a simple interaction
 manager, which you can either create yourself, or just follow by looking at the
-playground system named \texttt{ChatCat}¸ which is placed in the
-\texttt{examples} folder. More complex examples are planned to be added soon.
+playground system named \texttt{ChatCat}¸ which is placed in its own
+github repository at \url{https://github.com/bkiefer/vonda-chatcat}.
+More complex examples are planned to be added soon.
 
 The simplest version of an interaction manager analyses natural language
 coming from the user, and generates natural language and gestures for the robot
@@ -64,12 +65,13 @@ with the range \texttt{xsd:string}.
   \end{minipage}
 \end{figure}
 
-As we do not know the user a priori, we will have the system create an instance
-for him/her at run-time. However, we know our robot in advance, so we create an
-instance of the class Robot and name it \textit{Robert}, and then convert the
-new ontology using Raptor to \texttt{N-Triples} (i.e., with the
-\texttt{ntcreate.sh} script). Now, a HFC configuration file (currently in
-\texttt{.ini} format) must be created, as described in the next section.
+As we do not know the user a priori, we will have the system create an
+instance for him/her at run-time. However, we know our robot in
+advance, so we create an instance of the class Robot and name it
+\textit{Robert}, and then convert the new ontology using Raptor to
+\texttt{N-Triples} (i.e., with the \texttt{ntcreate.sh} script). Now,
+a HFC configuration file (in YAML syntax) must be created, as
+described in the next section.
 
 \textbf{Important:} If you are using Prot\'eg\'e, you should save the file in
 RDF/XML Syntax; the script will not work properly otherwise.
@@ -77,72 +79,83 @@ RDF/XML Syntax; the script will not work properly otherwise.
 \subsection{Creating a HFC Configuration File}
 
 %Explain how multiple ontologies can be put together here; explain PersistencyFile, mention what [Namespaces] is about
-The ontology files loaded into a HFC instance, and which reasoning rules are
-applied, are specified in a configuration file in \texttt{.ini} format. It
-also contains various settings for HFC parameters. Figure~\ref{fig:ini} shows
-the config file used for the \texttt{chatcat} example. In the following, we
-will explain the sections of the config file in detail.
+Which ontology files are loaded into a HFC instance, and which
+reasoning rules are applied is specified in a YAML configuration
+file. It contains also various other settings for the available HFC
+parameters. Figure~\ref{fig:hfcconfig} shows the config file used for
+the \texttt{chatcat} example. In the following, we will explain some
+aspects of the config file in detail.
 
 \begin{figure} [htb]
 \small%
 \begin{verbatim}
-[Settings]
-#minNoArgs=3
-#maxNoArgs=4
+minArgs: 3
+maxArgs: 4
+noOfCores: 4
 #noAtoms=100000
 #noTuples=500000
-# This file store tuples created or changed during run-time
-PersistencyFile=tuples.nt
-Encoding=UTF-8
+persistenceFile: ../../../../persistent.nt
+characterEncoding: UTF-8
+eqReduction: true
+addTimestamps: [0]
+shortIsDefault: true
 
-[Namespaces]
-# namespaces for XSD, RDF, RDFS, and OWL are already defined
-dial = http://www.dfki.de/lt/onto/common/dialogue.owl#
-cat = http://www.semanticweb.org/anna/ontologies/2018/3/chatcat#
+namespaces:
+  # namespaces for XSD, RDF, RDFS, and OWL are already defined
+  dial: http://www.dfki.de/lt/onto/common/dialogue.owl#
+  cat: http://www.semanticweb.org/anna/ontologies/2018/3/chatcat#
 
-# instead, you can also load one or more namespace files
-#default.ns
+tupleFiles:
+  # the axiomatic triples for OWL-Horst w/ EQ reduction, needed if eqReduction
+  # is true
+  - default.eqred.nt
+  # the PAL sub-ontologies
+  - dialogue.nt
+  - chatcat.nt
 
-[Tuples]
-# the axiomatic triples for OWL-Horst w/ EQ reduction
-default.eqred.nt
-
-[Tuples]
-dialogue.nt
-# the name for the base ontology
-chatcat.nt
-
-[Rules]
-# we need special rules for transaction time (mixture of triples/quadruples)
-default.eqred.quads.rdl
+ruleFiles:
+  # we need special rules for transaction time (mixture of triples/quadruples)
+  - default.eqred.quads.rdl
 \end{verbatim}
-\caption{An exemplary HFC \texttt{config.ini} file}
-\label{fig:ini}
+\caption{An exemplary HFC \texttt{config.yml} file}
+\label{fig:hfcconfig}
 \end{figure}
 
+\paragraph{Settings}
 
+Some of the settings are currently required for VOnDA projects to work
+correctly, namely \texttt{minArgs}, \texttt{maxArgs},
+\texttt{eqReduction}, \texttt{addTimestamps}, the tuple file
+\texttt{default.eqred.nt} and the rule file
+\texttt{default.eqred.quads.rdl}. If you create your own HFC config
+file for a VOnDA project, please copy those as shown here.
 
-\paragraph{[Settings]}
+\texttt{noOfCores} determines how many threads HFC will use maximally
+if processing can be parallelized. A reasonable number depends on your
+computer's load that is independent from \vonda, but should not exceed
+half of the physical cores available.
 
 For most applications concerning dialogue management, it is important to
-specify a \emph{PersistencyFile} to save the data between two runs of the
+specify a \texttt{persistenceFile} to save the data between two runs of the
 system. This file can be put in any location, it will be created automatically
 in the specified place. If your application relies on inter-session memory,
 you probably don't want it to reside in some temporary directory. All new
 information that your dialogue system enters into the database will be
 collected here. The persistency file can also be used to find out which tuples
 have been created, i.e, for on-line and post-mortem debugging. If you want to
-wipe the memory of your system, simply delete this file.
+wipe the memory of your system after each session, simply delete this
+file, or do not specify a \texttt{persistenceFile}.
 
-\paragraph{[Namespaces]}
+
+\paragraph{namespaces}
 
 This section contains abbreviations for ontology namespaces. The abbreviation
-\texttt{dial} in figure \ref{fig:ini}, allows to refer to
+\texttt{dial} in figure \ref{fig:hfcconfig}, allows to refer to
 \texttt{<http://www.dfki.de/lt/onto/common/dialogue.owl\#Accept>} using
 \texttt{<dial:Accept>} instead, for example in queries to the database. As
 you can see, we included a shortcut for our chatcat ontology here.
 
-\paragraph{[Tuples]}
+\paragraph{tupleFiles}
 
 Here all ontology files have to be listed that should be loaded into the
 knowledge base on start-up. The persistency file, if you have specified one,
@@ -150,7 +163,7 @@ will be loaded automatically. You should also include the file
 \texttt{dialogue.nt} which, as previously mentioned, contains the
 specifications of the dialogue acts usually used by the \vonda framework.
 
-\paragraph{[Rules]}
+\paragraph{ruleFiles}
 
 This specifies the set of rules that HFC uses for OWL reasoning. Currently, the
 file \texttt{default.eqred.quads.rdl} is required for proper operation of
@@ -185,18 +198,19 @@ text or dialogue acts which you can use to test your first dialogue steps.
 
 %examplary here: srgs for NLU and cplan for generation
 Basically, you can connect any NLU and NLG components to your project that are
-able to create or, respectively, process dialogue acts of the format that
-\vonda provides (cfg. \ref{sec:caret}).
+able to create or, respectively, generate from dialogue acts of the format that
+\vonda currently uses (cfg. \ref{sec:caret}).
 
-For the sake of simplicity, this example uses SRGS to build a primitive NLU and
-cplan\footnote{https://github.com/bkiefer/cplan} to create natural language out of the dialogue acts the agent outputs.
+Our example uses our SRGS implementation to build a primitive NLU and
+cplan\footnote{https://github.com/bkiefer/cplan} to create natural
+language out of the dialogue acts the agent outputs.
 
 \section{First Interaction Rules}
 
 Now that the basics have been arranged, we are set up for writing our first
 dialogue management rules. First we want to react to the user greeting the
 system, what we expect to be happening on startup. In the SRGS file
-(\small\texttt{src/main/resources/grammars/srgs/chatcat.xml}), we defined that
+(\small\texttt{src/main/resources/grammars/srgs/chatcat.abnf}), we defined that
 an utterance of the user like ''Hello'' will be parsed as the dialogue act
 \texttt{InitialGreeting}, with the proposition \texttt{Greet}. We now can
 define a rule reacting to this utterance:
@@ -268,11 +282,21 @@ timeout("robot_starts", 4000) {
   }
 }
 \end{lstlisting}
-\todo[inline]{Explain the timeOfDay code, and that a Java import and an entry in
-  ChatAgent is necessary to obtain compilable code}
 
-These are enough rules to start a conversation, so let's compile and try out
-the new dialogue system.
+The use of \texttt{Date.timeOfDay()} is an example how to use code
+that is better implemented in plain Java. You can use any Java class
+adding an \texttt{import} statement at the beginning of your
+\texttt{.rudi} file, and you maybe also want to add a type declaration
+for the return and argument types of the methods that you are using,
+since currently the compiler can not figure out this information by
+itself (see section \ref{sec:javatypes}).
+
+You are not limited to static methods as in the example, you can also
+create a Java helper object in the topmost \texttt{rudi} file and use
+the object's public methods.
+
+These are just enough rules to start a (very short) conversation, so
+let's compile and try out the new dialogue system.
 
 \section{Specifying how to Compile and Run your Project}
 
@@ -290,7 +314,7 @@ Your \texttt{config.yml} should contain the following parameters for compilation
   \texttt{outputDirectory} & Relative to the current location, where should the compiled classes go?\\
   \texttt{wrapperClass} & The name of your abstract Java Agent, including
                           package prefix\\
-  \texttt{ontologyFile} &The path to your ontology \texttt{.ini}, relative to the current location\\
+  \texttt{ontologyFile} &The path to your ontology \texttt{.yml}, relative to the current location\\
   \texttt{rootPackage} &The topmost package to put the compiled Java classes in\\
   \texttt{failOnError} &If \texttt{true} to exits compilation on any
                          encountered type errors\footnote{Note that although
@@ -307,15 +331,20 @@ e.g., the run-time phase needs NLU and NLG components, there are additional
 options for the run-time phase (This is the example from ChatCat):
 
 \begin{verbatim}
-ontologyFile:       src/main/resources/ontology/chatcat.ini
+ontologyFile:       src/main/resources/ontology/chatcat.yml
 NLG:
   eng:
-    mapperProject:      src/main/resources/grammars/cplanner/allrules-mapper
-    generationProject:  src/main/resources/grammars/cplanner/allrules
+    mapperProject: src/main/resources/grammars/cplanner/allrules-mapper
+    generationProject: src/main/resources/grammars/cplanner/allrules
 NLU:
   eng:
-    class:              de.dfki.chatcat.SrgsParser
-    grammar:            src/main/resources/grammars/srgs/chatcat.xml
+    class: de.dfki.mlt.rudimant.agent.nlp.SrgsParser
+    grammar: src/main/resources/grammars/srgs/chatcat.abnf
+    converter: src/main/resources/grammars/cplanner/srgsconv
+    tokenizer:
+      class: de.dfki.mlt.rudimant.agent.nlp.TrivialTokenizer
+      toLower: false
+      removePunctuation: true
 debugPort: 9777
 \end{verbatim}
 

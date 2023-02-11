@@ -1,4 +1,6 @@
 //\small\begin{lstlisting}
+import java.nio.file.*;
+import static java.nio.file.Files.*;
 /*@
 // A "Java" comment, everything in this comment will be transferred literally
 // to the compiled file, without the comment brackets.
@@ -9,54 +11,77 @@ public static int MAX_INT = 100;
 // Tests and Comparisons
 // **********************************************************************
 
+// declare a Java method
+#Object boolean equals(Object);
+
+boolean funcWithJava(String h) {
+  boolean ex = false;
+  // inject plain java
+  /* TODO: CURRENTLY DOES NOT WORK CORRECTLY
+    ex = Files.exists(new File(h).toPath());
+    */
+  return ex;
+}
+
+// Define a variable of an RDF type
 Child child;
 
 // test for value under path, intermediate tests are generated
-if (child.father.surname) logger.info("foo");
+ if (child.hasFather.surname) System.out.println("foo");
 
 // subsumption of dialogue acts, (equality is also possible)
-if (lastDA() <= #AcceptOffer(Bringing)) logger.info("foo");
+if (lastDA() <= #AcceptOffer(Bringing)) System.out.println("foo");
 
-// Test if two RDF objects are the same object.
-// Mark the difference to the next example! Here, the objects are compared,
-// as in the case of !=, but all other comparison operators compare the classes
 Child c1;
 Agent c2;
-if (c1 == c2) logger.info("foo");
+// Test if two RDF objects are the same object.
+// Mark the difference to the followin example! Here, the objects are compared,
+// (same for !=), but all other comparison operators compare the classes!
+if (c1 == c2) System.out.println("foo");
 
 // Is the class of c1 a subclass, resp. a strict subclass of the class of c2 ?
-if (c1 <= c2) logger.info("foo");
-if (c1 < c2) logger.info("foo");
+if (c1 <= c2) System.out.println("foo");
+if (c1 < c2) System.out.println("foo");
 
 // Is the class of c1 a subclass of the class 'Child'?
-if (c1 <= Child) logger.info("foo");
+if (c1 <= Child) System.out.println("foo");
+
+// Set the child's name, then clear it again
+c1.name = "new name";
+c1.name = null;
 
 // Is s not null and not empty?
 String s = "bar";
-if (s) logger.info("foo");
+if (s) System.out.println("foo");
 
 // Is s.compareTo(t) < 0
 s = "bar"; t = "baz";
-if (s < t) logger.info("foo");
+if (s < t) System.out.println("foo");
 
 // Is i not null and not zero? (Same for all other Number containers)
 Integer i = -1;
-if (i) logger.info("foo");
+if (i) System.out.println("foo");
 
 // Is o not null?
 Object o = new Object();
-if (o) logger.info("foo");
+if (o) System.out.println("foo");
 
 // **********************************************************************
 // Forward declaration of methods
 // **********************************************************************
 
+// This is the forward declaration
 String foo(String a, String b);
 
+// A rule using foo
+a_rule:
 if (foo("a", "b")) {
-  logger.info("yes!");
+  // this java code should appear in the body of the rule
+  /*@ String[] lbls = { "a", "b" }; @*/
+  System.out.println("yes!");
 }
 
+// Function foo defined here
 String foo (String a, String b) { return a + b; }
 
 // **********************************************************************
@@ -89,6 +114,8 @@ test_rule3:
       if (false) {
         cancel_all;
       }
+  } else {
+    System.out.println("what?");
   }
 
 // **********************************************************************
@@ -103,7 +130,7 @@ test_rule4:
     final boolean b = false;
     propose("test") {
       if(c.equals("bye"))
-        logger.info("bye");
+        System.out.println("bye");
     }
   }
 
@@ -128,7 +155,7 @@ Integer anotherint = (Integer) i;
 anotherint = anotherint < 3 ? anotherint : 3;
 
 // There are also while and for loops and switch-case blocks available
-while (true) { continue; }
+while (anotherint > 7000) { continue; }
 for (abc = 1; abc < 10; abc++) { ++abc; }
 
 ArrayList<String> iterlist;
@@ -144,14 +171,14 @@ switch (str) {
 }
 
 // It is possible to perform implicit casts on iterable elements in a for
-// loop; there is, however, no type safety promise!
+// loop; there is, however, no type safety promise from our side!
 ArrayList<Object> iterlist2;
 for (Integer a : iterlist2) {}
 
 // These are some examples for lambda expressions
 List<String> newlist = {"a", "cd", "ab", "b"};
-allas = filter(newlist, (element) -> ((String)element).contains("a"));
-dosort = sort(newlist, (a, b) -> (int)(((String)a).length() - ((String)b).length()));
+allas = filter(newlist, (element) -> element.contains("a"));
+dosort = sort(newlist, (a, b) -> a.length() - b.length());
 
 // Creation of dialogue acts. Elements that are Variables need to be
 // enclosed in {}, all others will be converted to Strings (symbols are default)
@@ -175,6 +202,15 @@ timeout_behaviour(15000, #Inform(Call, when=soon)) {
   callToSomeMethod();
 }
 
+// shortcut notation for adding to and removing from collections
+Set set = { 1, 2, 3 };
+set += 4;
+set -= 1;
+
+// work for numbers the usual way
+i = 9;
+i += 1;
+i -= 1;
 
 // Automatic conversion to string of POD types
 s = "number" + 10;
@@ -188,17 +224,81 @@ DialogueAct da1 = #Confirm(Correct, number={10});
 
 // you can call any function on the top level
 t = "10";
-toInt(t);
+i = toInt(t);
 
 // **********************************************************************
 // Access to Dialogue Acts
 // **********************************************************************
 DialogueAct da = #Inform(Posessing);
 if (! da.theme) {
+  // set the value of any argument
   da.theme = "Ball";
 }
+// does the DialogueAct has any arguments?
+if (da.getValues()) {
+  s = da.getValues().get(0);
+}
+
+dont_like_foot:
+if (da.theme == "Football") {
+  da.theme = "Basketball";
+  final dialogueAct = "Inform";
+  propose("new_liking"){
+    emitDA(#{dialogueAct}(Liking, theme={da.theme}));
+  }
+}
+
 System.out.println(da.theme);
 da.setDialogueActType("Confirm");
 da.setProposition("Acquiring");
 //System.out.println(da);
+
+// creation of Java objects works as usual, java.util.* is imported by default
+List<String> li = new ArrayList(2);
+
+// include a set of rules, can be put in a subdirectory
+include sub.Sub;
+
+Quiz p;
+h = filter(p.hasHistory, (c) -> c.turnId == 1);
+if (h) {
+  x = h.get(0);
+}
+
+Map<String, String> m;
+if (m.containsKey("foo")) {
+  s = m.get("foo");
+}
+
+if (! m.containsKey("bar")) {
+  s = m.put("bar", "foo");
+}
+
+// Check redefinition of local variables in lambda and for
+z = filter(p.hasHistory, (h) -> h <= QuizHistory);
+z1 = filter(p.hasHistory, (h) -> ((QuizHistory)h) <= QuizHistory);
+z2 = filter(p.hasHistory, (QuizHistory h) -> h <= QuizHistory);
+z3 = filter(p.hasHistory, (h) -> h <= QuizHistory);
+
+for (int h = 0; h < 3; ++h) { System.out.println(Integer.toString(h)); }
+
+int func(String h) {
+  h = "foo";
+  return h.length();
+}
+
+{
+  int h = 1;
+  ++h;
+}
+
+// pre- and post-increment and decrement work for all functional properties
+// with numerical range;
+++child.weight;
+d = child.weight++;
+d = --child.weight;
+child.weight--;
+
+// and this is it!
+
 //\end{lstlisting}
