@@ -1,14 +1,35 @@
 * RELEASE PLAN FOR 3.0
+  +-get rid of reduce reduce conflicts
+    Übrige reduce-reduce Konflikte durch Syntax-Änderungen lösen, z.B.
+    cast(TypeExpr, expr) statt (typeexpr) expr (oder isa statt cast)
+    + simplest problem are the field/method defs, they could be later generated
+      from a java parser/introspection
+    +- cast expressions --> `isa` infix operator: check w. Jörg
+    +- lambda expressions --> `lambda` infix operator: check w. Jörg
+    + field access: solved
+      + use "{exp}" syntax for property access, otherwise unexpected stuff
+        happens.
+      + Add it to AllYouCanDo.rudi and tests
+  - Improve the documentation
+    +- check exisiting TODOs
+    - integrate new syntax changes
+      - "{exp}" syntax for field access
+      - cast expressions
+      - lambda expressions
+      - type declarations for external fields/methods
+  - check the option of not generating functions, and deferred
+    generation in general, that would make the problem of "moving
+    injected java code" go away (maybe)
+  - Get rid of wrapper class, and remove special loading of type
+    definitions except for Agent.rudi
+
   + replace import by include
   + allow Java import statements at beginning of file only
     + bison grammar adapted
     + java imports have to be generated (currently ignored) + generation tested
-  - get rid of reduce reduce conflicts, see casts
-  - use {name} syntax for property access, otherwise unexpected stuff
-    happens
-  - Improve the documentation
-  - check the option of not generating functions, that would make the
-    problem of "moving injected java code" go away (maybe)
+    + Für .rudi files "include" statt "import" benutzen !!! JA FÜR 3.0
+      + "import" wie in Java nur am Anfang des Files zulassen, dass dann auch
+         nur Java imports macht?
 
 * Erleuchtung bzgl. Wrapperklasse: Agent vs. NaoAgent vs. PalAgent !!! JA FÜR 3.0
   1. NaoAgent scheint eigentlich eine klasse wie TimelineUtils zu sein (oder
@@ -19,13 +40,7 @@
      also zur Verfügung, auch die nicht-statischen! Damit kann man aus
      Java-Klassen .rudi Methoden benutzen!
      Ausprobieren mit endQuiz (im Moment in NaoAgent)
-* Sollten wir für .rudi files "include" statt "import" benutzen !!! JA FÜR 3.0
-  - "import" wie in Java nur am Anfang des Files zulassen, dass dann auch
-     nur Java imports macht?
-  - Bringt die baumartige Struktur überhaupt Vorteile?
-    Was könnte man sonst machen?
-* Übrige reduce-reduce Konflikte durch Syntax-Änderungen lösen, z.B.
-  - cast(TypeExpr, expr) statt (typeexpr) expr (oder isa statt cast)
+* Bringt die baumartige Struktur überhaupt Vorteile? Alternativen?
 * Sollte man für die "if"s überhaupt Funktionen/Methoden generieren?
   Evtl. könnte man so das Problem mit der linearisierung von input und output
   code leichter lösen
@@ -43,9 +58,12 @@
 * Queries aus .rudi abfeuern --> missing varargs!?
 
 * Collections probleme: Alles polymorph?
-
+  ich weiß nicht mehr, was damit gemeint ist
 * Dialogue Acts
   - hierarchy of Frames from the ontology with access functions
+  - Nesting depth > 1 ?
+  - TDL syntax statt CCG würg?
+
 * processor / abstract processor
   + behaviour sync
     - with optional delays ? (before/after)
