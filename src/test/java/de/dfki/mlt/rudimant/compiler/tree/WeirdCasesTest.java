@@ -13,6 +13,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.dfki.mlt.rudimant.compiler.io.BisonParser;
+
 /**
  *
  * @author anna
@@ -42,11 +44,9 @@ public class WeirdCasesTest {
   }
 
   @Test
-  public void testLambda() {
-
-    String in = "lab: if(true) { Child c;"
-        + " known2 = filter(c.hasHobby, "
-        + "                 (p) -> \"someName\".equals(((Preference)p).name)); }";
+  public void testLambda() throws InterruptedException {
+    String in = "lab: if(true) {Child c; "
+        + "known2 = filter(c.hasHobby, lambda(p) \"someName\".equals((isa(Preference, p)).name));}";
     String r = generate(in);
     String expected = "public int lab(){ boolean[] __x0 = new boolean[2];"
             + " __x0[0] = (__x0[1] = true); logRule(0, __x0); lab: "

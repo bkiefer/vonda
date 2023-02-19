@@ -190,9 +190,9 @@ public class StatementTest {
 
  @Test
  public void AssignConditionTest(){
-   String in = "Child user; Agent agent; Robot I_ROBOT; agent = (agent == user) ? (Agent)I_ROBOT : (Agent)user;";
+   String in = "Child user; Agent agent; Robot I_ROBOT; agent = (agent == user) ? isa(Agent, I_ROBOT) : isa(Agent, user);";
    String r = generate(in);
-   String expected = "Rdf user;Rdf agent;Rdf I_ROBOT;agent = ((agent.equals(user)) ? (Rdf)I_ROBOT : (Rdf)user);";
+   String expected = "Rdf user;Rdf agent;Rdf I_ROBOT;agent = ((agent.equals(user)) ? ((Rdf)I_ROBOT) : ((Rdf)user));";
    assertEquals(expected, getForMarked(r, expected));
  }
 

@@ -177,9 +177,9 @@ public class TypesTest {
 
   @Test
   public void testCast5() {
-    String in = "t = (QuizHistory) a;";
+    String in = "t = isa(QuizHistory, a);";
     String r = generate(in);
-    String exp = "t = (Rdf)a;";
+    String exp = "t = ((Rdf)a);";
     assertEquals(exp, getForMarked(r, exp));
     assertTrue(r.contains("Rdf t;"));
   }
@@ -204,10 +204,21 @@ public class TypesTest {
   @Test
   public void testCast8() {
     String methdecl = "Collection<Child> foo(Quiz m) {"
-        + " map(m.hasHistory, (f) -> (((QuizHistory)f).hasChildId)); }";
+        + " map(m.hasHistory, lambda(f) (isa(QuizHistory, f)).hasChildId); }";
     String s = generate(methdecl);
     String expected = "public Collection<Rdf> foo(Rdf m)"
-        + " { map(m.getValue(\"<dom:hasHistory>\"), (f) -> (((Rdf)f).getRdf(\"<dom:hasChildId>\"))); } }";
+        + " { map(m.getValue(\"<dom:hasHistory>\"), (f) -> ((Rdf)f).getRdf(\"<dom:hasChildId>\")); } }";
+    assertEquals(expected, getForMarked(s, expected));
+  }
+
+  @Test
+  public void testCast8a() {
+    String methdecl = "Collection<Child> foo(Quiz m) {"
+        + " map(m.hasHistory, lambda(f) { return (isa(QuizHistory, f)).hasChildId; }); }";
+    String s = generate(methdecl);
+    String expected = "public Collection<Rdf> foo(Rdf m)"
+        + " { map(m.getValue(\"<dom:hasHistory>\"), (f) -> { return ((Rdf)f).getRdf(\"<dom:hasChildId>\"); } ); }"
+        + "";
     assertEquals(expected, getForMarked(s, expected));
   }
 

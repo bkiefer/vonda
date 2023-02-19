@@ -29,6 +29,7 @@ import java.util.List;
 import org.junit.*;
 
 import de.dfki.mlt.rudimant.compiler.Type;
+import de.dfki.mlt.rudimant.compiler.io.BisonParser;
 
 /**
  *
@@ -47,7 +48,7 @@ public class LambdaTest {
 
   @Test
   public void testLambdaExp() {
-    String in = "Set<Child> cs; b = some(cs, (c) -> ((Child)c).forename.equals(\"John\"));";
+    String in = "Set<Child> cs; b = some(cs, lambda(c) (isa(Child, c)).forename.equals(\"John\"));";
     String r = generate(in);
     String expected = "public Set<Rdf> cs;public boolean b;/**/b = some(cs, (c) -> "
             + "((Rdf)c).getString(\"<dom:forename>\").equals(\"John\"));";
@@ -58,7 +59,7 @@ public class LambdaTest {
   @Test
   public void testComplexLambdaExp() {
     // TODO: why do we test that b = disappears?
-    String in = "Set<Child> cs; b = some(cs, (c) -> { return ((Child)c).forename.equals(\"John\"); });";
+    String in = "Set<Child> cs; b = some(cs, lambda(c) { return (isa(Child, c)).forename.equals(\"John\"); });";
     String r = generate(in);
     String expected = "public Set<Rdf> cs;public boolean b;/**/b = some(cs, (c) -> { return"
             + " ((Rdf)c).getString(\"<dom:forename>\").equals(\"John\"); } );";
@@ -69,7 +70,7 @@ public class LambdaTest {
 
   @Test
   public void test1() {
-    String in = "Quiz p; b = some(p.hasHistory, (c) -> c.turnId == 1);";
+    String in = "Quiz p; b = some(p.hasHistory, lambda(c) c.turnId == 1);";
     String r = generate(in);
     String expected = "public Rdf p;public boolean b;/**/"
         + "b = some(p.getValue(\"<dom:hasHistory>\"), (c) -> ((Rdf)c).getInteger(\"<dom:turnId>\") == 1);";
@@ -78,7 +79,7 @@ public class LambdaTest {
 
   @Test
   public void test2() {
-    String in = "Quiz p; h = p.hasHistory; b = some(h, (c) -> c.turnId == 1);";
+    String in = "Quiz p; h = p.hasHistory; b = some(h, lambda(c) c.turnId == 1);";
     String r = generate(in);
     String expected = "public Rdf p;public Set<Object> h;public boolean b;/**/h = p.getValue(\"<dom:hasHistory>\");"
         + "b = some(h, (c) -> ((Rdf)c).getInteger(\"<dom:turnId>\") == 1);";
@@ -88,7 +89,7 @@ public class LambdaTest {
 
   @Test
   public void test3() {
-    String in = "Quiz p; h = filter(p.hasHistory, (c) -> c.turnId == 1);";
+    String in = "Quiz p; h = filter(p.hasHistory, lambda(c) c.turnId == 1);";
     String r = generate(in);
     String expected = "public Rdf p;public List<Object> h;/**/h = filter(p.getValue(\"<dom:hasHistory>\"),"
         + " (c) -> ((Rdf)c).getInteger(\"<dom:turnId>\") == 1);";
@@ -97,7 +98,7 @@ public class LambdaTest {
 
   @Test
   public void test4() {
-    String in = "Quiz p; h = filter(p.hasHistory, (c) -> c.turnId == 1); x = h.get(1);";
+    String in = "Quiz p; h = filter(p.hasHistory, lambda(c) c.turnId == 1); x = h.get(1);";
     String r = generate(in);
     String expected = "public Rdf p;public List<Object> h;public Rdf x;/**/"
         + "h = filter(p.getValue(\"<dom:hasHistory>\"),"
@@ -108,7 +109,7 @@ public class LambdaTest {
 
   @Test
   public void test5() {
-    String in = "Quiz p; h = filter(p.hasHistory, (c) -> c.turnId == 1); x = h.get(1); y = h.get(2);";
+    String in = "Quiz p; h = filter(p.hasHistory, lambda(c) c.turnId == 1); x = h.get(1); y = h.get(2);";
     String r = generate(in);
     String expected = "public Rdf p;public List<Object> h;public Rdf x;public Rdf y;/**/"
         + "h = filter(p.getValue(\"<dom:hasHistory>\"),"
@@ -120,7 +121,7 @@ public class LambdaTest {
 
   @Test
   public void test5a() {
-    String in = "Quiz p; h = filter(p.hasHistory, (QuizHistory c) -> c.turnId == 1); x = h.get(1); y = h.get(2);";
+    String in = "Quiz p; h = filter(p.hasHistory, lambda(QuizHistory c)c.turnId == 1); x = h.get(1); y = h.get(2);";
     String r = generate(in);
     String expected = "public Rdf p;public List<Object> h;public Rdf x;public Rdf y;/**/"
         + "h = filter(p.getValue(\"<dom:hasHistory>\"),"
@@ -151,7 +152,7 @@ public class LambdaTest {
 
   @Test
   public void test6c() {
-    String in = "List<String> l; h = filter(l, (f) -> !f.isEmpty());x = h.get(1);";
+    String in = "List<String> l; h = filter(l, lambda(f) !f.isEmpty());x = h.get(1);";
     String expected = "public List<String> l;public List<String> h;public String x;/**/"
         + "h = filter(l, (f) -> !(exists(f) && f.isEmpty()));x = h.get(1);";
     String r = generate(in);
@@ -160,7 +161,7 @@ public class LambdaTest {
 
   @Test
   public void test6d() {
-    String in = "List<List<String>> l; h = filter(l, (e) -> some(e, (f) -> !f.isEmpty())); x = h.get(1);";
+    String in = "List<List<String>> l; h = filter(l, lambda(e) some(e, lambda(f) !f.isEmpty())); x = h.get(1);";
     String r = generate(in);
     String expected = "public List<List<String>> l;public List<List<String>> h;public List<String> x;/**/"
         + "h = filter(l, (e) -> some(e, (f) -> !(exists(f) && f.isEmpty())));x = h.get(1);";
@@ -171,11 +172,11 @@ public class LambdaTest {
   // Still: wrong, since the cast ((Rdf)h).getClazz is missing if not given
   // explicitely
   public void test7() {
-    String in = "Quiz p; List<Object> z = filter(p.hasHistory, (h) -> ((Rdf)h) <= QuizHistory);";
+    String in = "Quiz p; List<Object> z = filter(p.hasHistory, lambda(h) (isa(Rdf, h) <= QuizHistory));";
     String r = generate(in);
     String expected = "public Rdf p;public List<Object> z;/**/z ="
       + " filter(p.getValue(\"<dom:hasHistory>\"),"
-      + " (h) -> ((Rdf)h).getClazz().isSubclassOf(getRdfClass(\"QuizHistory\")));}";
+      + " (h) -> (((Rdf)h).getClazz().isSubclassOf(getRdfClass(\"QuizHistory\"))));}";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -183,7 +184,7 @@ public class LambdaTest {
   // Still: wrong, since the cast ((Rdf)h).getClazz is missing if not given
   // explicitely
   public void test7a() {
-    String in = "Quiz p; List<Object> z = filter(p.hasHistory, (h) -> ((Rdf)h) <= QuizHistory);";
+    String in = "Quiz p; List<Object> z = filter(p.hasHistory, lambda(h) isa(Rdf, h) <= QuizHistory);";
     String r = generate(in);
     String expected = "public Rdf p;public List<Object> z;/**/z ="
       + " filter(p.getValue(\"<dom:hasHistory>\"),"
@@ -193,7 +194,7 @@ public class LambdaTest {
 
   @Test
   public void test7b() {
-    String in = "Quiz p; List<Object> z = filter(p.hasHistory, (h) -> h <= QuizHistory);";
+    String in = "Quiz p; List<Object> z = filter(p.hasHistory, lambda(h) h <= QuizHistory);";
     String r = generate(in);
     String expected = "public Rdf p;public List<Object> z;/**/z ="
       + " filter(p.getValue(\"<dom:hasHistory>\"),"
@@ -203,7 +204,7 @@ public class LambdaTest {
 
   @Test
   public void test7c() {
-    String in = "Quiz p; z = filter(p.hasHistory, (h) -> h <= QuizHistory);";
+    String in = "Quiz p; z = filter(p.hasHistory, lambda(h) h <= QuizHistory);";
     String r = generate(in);
     String expected = "public Rdf p;public List<Object> z;/**/z ="
       + " filter(p.getValue(\"<dom:hasHistory>\"),"
@@ -213,7 +214,7 @@ public class LambdaTest {
 
   @Test
   public void test7d() {
-    String in = "Integer h; Quiz p; z = filter(p.hasHistory, (h) -> h <= QuizHistory);";
+    String in = "Integer h; Quiz p; z = filter(p.hasHistory, lambda(h) h <= QuizHistory);";
     String r = generate(in);
     String expected = "public Integer h;public Rdf p;public List<Object> z;/**/z ="
       + " filter(p.getValue(\"<dom:hasHistory>\"),"

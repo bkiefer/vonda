@@ -682,7 +682,7 @@ ArrayAccess
   ;
 
 field_access
-  : IDENTIFIER field_access_rest  {
+  : IDENTIFIER field_access_rest {
     ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
     $2.addFirst(var);
     $$ = setPos(new ExpFieldAccess($2), @$);
@@ -754,11 +754,11 @@ new_exp
   ;
 
 lambda_exp
-  : LAMBDA '(' opt_args_list ')' EQEQ exp {
-    $$ = setPos(new ExpLambda($3, $6), @$);
+  : LAMBDA '(' opt_args_list ')' exp {
+    $$ = setPos(new ExpLambda($3, $5), @$);
   }
-  | LAMBDA '(' opt_args_list ')' EQEQ block {
-    $$ = setPos(new ExpLambda($3, $6), @$);
+  | LAMBDA '(' opt_args_list ')' block {
+    $$ = setPos(new ExpLambda($3, $5), @$);
   }
   ;
 

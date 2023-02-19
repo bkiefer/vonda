@@ -212,15 +212,15 @@ public class CastTest {
   @Test
   public void test14(){
     // Test cast with parameterized types
-    String in = "LinkedList<String> b; LinkedList<String> l = (LinkedList<String>) b;";
+    String in = "LinkedList<String> b; LinkedList<String> l = isa(LinkedList<String>, b);";
     String s = generate(in);
-    String expected = "LinkedList<String> b;LinkedList<String> l = (LinkedList<String>)b;";
+    String expected = "LinkedList<String> b;LinkedList<String> l = ((LinkedList<String>)b);";
     assertEquals(expected, getForMarked(s, expected));
   }
 
   @Test
   public void test15() {
-    String in = "Agent c; String s = ((Child)c).forename;";
+    String in = "Agent c; String s = (isa(Child, c)).forename;";
     String s = generate(in);
     String expected = "Rdf c;String s = ((Rdf)c).getString(\"<dom:forename>\");";
     assertEquals(expected, getForMarked(s, expected));
@@ -277,7 +277,7 @@ public void testMultipleRdfAccess2() {
   @Test
   public void testRdfCast() {
     // Test set field with POD type
-    String in = "if (((Rdf)d) <= Child) return true;";
+    String in = "if (isa(Rdf, d) <= Child) return true;";
     String s = generate(in);
     String expected = "if (((Rdf)d).getClazz().isSubclassOf(getRdfClass(\"Child\"))) return true;";
     assertEquals(expected, getForMarked(s, expected));

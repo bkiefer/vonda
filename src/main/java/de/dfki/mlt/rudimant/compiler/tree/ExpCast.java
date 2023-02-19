@@ -39,6 +39,7 @@ public class ExpCast extends RTExpression {
   public ExpCast(Type t, RTExpression exp){
     type = t;
     expression = exp;
+    _parens = true;
   }
 
   @Override

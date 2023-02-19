@@ -97,15 +97,15 @@ public class FieldAccessesTest {
 
     @Test
     public void testFieldAccess6() {
-      String in = "Child c; property = \"name\"; l = (String)c.{property};";
+      String in = "Child c; property = \"name\"; l = isa(String, c.{property});";
       String s = generate(in);
-      String expected = "Rdf c;String property = \"name\";String l = (String)c.getObject(property); }";
+      String expected = "Rdf c;String property = \"name\";String l = ((String)c.getObject(property)); }";
       assertEquals(expected, getForMarked(s, expected));
     }
 
     @Test
     public void testFieldAccess6a() {
-      String in = "Child c; property = \"name\"; l = ((List<String>)c.{property}).get(0);";
+      String in = "Child c; property = \"name\"; l = (isa(List<String>, c.{property})).get(0);";
       String s = generate(in);
       String expected = "Rdf c;String property = \"name\";String l = ((List<String>)c.getObject(property)).get(0); }";
       assertEquals(expected, getForMarked(s, expected));
