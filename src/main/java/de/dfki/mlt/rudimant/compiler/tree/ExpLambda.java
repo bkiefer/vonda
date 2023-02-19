@@ -24,8 +24,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import de.dfki.mlt.rudimant.common.Location;
 import de.dfki.mlt.rudimant.compiler.Environment;
 import de.dfki.mlt.rudimant.compiler.Type;
+import de.dfki.mlt.rudimant.compiler.io.VondaGrammar;
 
 /**
  * This is an "anonymous" method declaration, and as such has strong resemblance
@@ -65,7 +67,11 @@ public class ExpLambda extends RTExpression implements RTBlockNode {
       sb.append(',').append(parameters.get(i));
     sb.append(")");
     String typeString = type.getRep();
-    RudiTree[] dtrs = { new ExpLiteral(sb.toString(), typeString), body };
+    RudiTree[] dtrs = {
+        VondaGrammar.setPos(new ExpLiteral(sb.toString(), typeString),
+            new VondaGrammar.Location(getLocation().getBegin(),
+                body.getLocation().getBegin())),
+        body };
     return Arrays.asList(dtrs);
   }
 

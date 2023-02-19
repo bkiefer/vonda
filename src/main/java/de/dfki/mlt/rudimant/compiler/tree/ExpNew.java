@@ -19,6 +19,7 @@
 
 package de.dfki.mlt.rudimant.compiler.tree;
 
+import java.util.Collections;
 import java.util.List;
 
 import de.dfki.mlt.rudimant.compiler.Type;
@@ -61,6 +62,6 @@ public class ExpNew extends RTExpression {
 
   @Override
   public Iterable<? extends RudiTree> getDtrs() {
-    return params;
+    return params == null ? Collections.emptyList() : params;
   }
 }

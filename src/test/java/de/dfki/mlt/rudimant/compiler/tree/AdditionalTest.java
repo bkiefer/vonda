@@ -55,7 +55,7 @@ public class AdditionalTest {
   public void testParenthesis() {
     String in = "rule: if (lastPref.pref_score != 0) {}";
     String r = generate(in);
-    String pref = "public int rule(){ boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = lastPref.pref_score != 0); logRule(0, __x0); rule: if (__x0[0]){ } return 0; }";
+    String pref = "// Rule rule {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = lastPref.pref_score != 0); logRule(0, __x0); rule: if (__x0[0]){ } end_rule: ; }";
     assertEquals(pref, getForMarked(r, pref));
   }
 
@@ -83,11 +83,13 @@ public class AdditionalTest {
 
   @Test
   public void testComments() {
-    String stat = "/*@  public String preBlock() { return \"preBlock\";} @*/"
+    String stat = "/*@  public String preBlock() { return \"preBlock\";} */"
         + "demo_rule: if (true) break demo_rule; "
-        + "/*@ public String postBlock() { return \"postBlock\"; }@*/";
+        + "/*@ public String postBlock() { return \"postBlock\"; } */";
     String s = generate(stat);
-    String expected = "public String preBlock() { return \"preBlock\";} public int demo_rule(){ boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); demo_rule: if (__x0[0])break demo_rule; return 0; } public String postBlock() { return \"postBlock\"; } }";
+    String expected = "public String preBlock() { return \"preBlock\";}"
+        + "// Rule demo_rule {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true);"
+        + " logRule(0, __x0); demo_rule: if (__x0[0])break demo_rule; end_demo_rule: ; } public String postBlock() { return \"postBlock\"; }}";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -95,7 +97,7 @@ public class AdditionalTest {
   @Test
   public void testDialogueAct() {
     String in = "int x=27;emitDA(#I(Greet, val={x}));";
-    String exp = "x = 27;emitDA(new DialogueAct(\"I\", \"Greet\", \"val\", Integer.toString(x)));";
+    String exp = "public int x;/**/x = 27;emitDA(new DialogueAct(\"I\", \"Greet\", \"val\", Integer.toString(x)));";
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));
     assertTrue(s.contains("int x;"));
@@ -105,8 +107,8 @@ public class AdditionalTest {
   @Test
   public void testSyntheticBaseTerm() {
     String in = "a = 1; rule: if(a) a=7;";
-    String exp = "a = 1;res = rule(); if (res != 0) return (res - 1); public int rule(){ "
-        + "boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = a != 0); logRule(0, __x0); rule: if (__x0[0])a = 7; return 0; } }";
+    String exp = "a = 1;// Rule rule {"
+        + "boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = a != 0); logRule(0, __x0); rule: if (__x0[0])a = 7; end_rule: ; } }";
 
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));

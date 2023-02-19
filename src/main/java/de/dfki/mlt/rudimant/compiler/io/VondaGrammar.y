@@ -15,6 +15,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 
 %type <String> visibility_spec
 %type <LinkedList<RudiTree>> grammar_file root
+%type <RTStatement> declarations
 %type <LinkedList<RTExpression>> nonempty_exp_list nonempty_args_list
 %type <LinkedList<RTExpression>> field_access_rest da_args
 %type <RTExpression> exp assgn_exp lambda_exp ConditionalExpression assignment
@@ -64,11 +65,11 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 
   public List<RudiTree> getResult() { return _statements; }
 
-  public <T extends RudiTree> T setPos(T rt, Location l) {
+  public static <T extends RudiTree> T setPos(T rt, Location l) {
     return setPos(rt, l, l) ;
   }
 
-  public <T extends RudiTree> T setPos(T rt, Location start, Location end) {
+  public static <T extends RudiTree> T setPos(T rt, Location start, Location end) {
     rt.location = new de.dfki.mlt.rudimant.common.Location(start.begin, end.end);
     return rt;
   }
@@ -157,25 +158,21 @@ imports
     $$ = setPos(new Import($3, true), @$);
   };
 
+declarations
+  : visibility_spec method_declaration { $$ = $2; $2.setVisibility($1); }
+  | method_declaration { $$ = $1; }
+  | visibility_spec var_def  { $$ = setPos(new StatFieldDef($1, $2), @1, @2); }
+  | var_def  { $$ = setPos(new StatFieldDef(null, $1), @1); }
+  | field_def { $$ = $1; }
+  ;
+
 grammar_file
-  : visibility_spec method_declaration grammar_file {
-    $$ = $3; $2.setVisibility($1); $3.addFirst($2);
-  }
-  | method_declaration grammar_file { $$ = $2; $2.addFirst($1); }
+  : declarations grammar_file { $$ = $2; $2.addFirst($1); }
   | function_call grammar_file { $$ = $2; $2.addFirst($1); }
   | statement_no_def grammar_file { $$ = $2; $2.addFirst($1); }
   // | ANNOTATION grammar_file { $$ = $2; $2.add($1); }
   | includes grammar_file { $$ = $2; $2.addFirst($1); }
-  | visibility_spec var_def grammar_file  {
-    $$ = $3; $3.addFirst(setPos(new StatFieldDef($1, $2), @1, @2));
-  }
-  | var_def grammar_file  {
-    $$ = $2; $2.addFirst(setPos(new StatFieldDef(null, $1), @1));
-  }
-  | field_def grammar_file {
-    $$ = $2; $2.addFirst($1);
-  }
-  | %empty { $$ = _statements;}
+  | %empty { $$ = _statements; }
   ;
 
 visibility_spec

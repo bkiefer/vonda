@@ -18,7 +18,14 @@ public class Token {
 
   public Position getEnd() { return end; }
 
+  @Override
   public String toString() {
     return '<' + s + '>' + '[' + start + '|' + end + ']';
+  }
+
+  public String content(){
+    String c = getText();
+    // Deal with java code comments
+    return (c.startsWith("/*@")) ? c.substring(3, c.length() - 3) : c;
   }
 }

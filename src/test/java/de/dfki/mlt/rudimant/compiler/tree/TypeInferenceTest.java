@@ -80,7 +80,7 @@ public class TypeInferenceTest {
     String in = "QuizHistory getCurrentTurn();"
             + " turn = getCurrentTurn(); ";
     String s = generate(in);
-    String expected = "turn = getCurrentTurn();";
+    String expected = "public Rdf turn;/**/turn = getCurrentTurn();";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("public Rdf turn;"));
   }
@@ -91,7 +91,7 @@ public class TypeInferenceTest {
     String in = "QuizHistory getCurrentTurn(); "
             + "Rdf turn = getCurrentTurn();";
     String s = generate(in);
-    String expected = "turn = getCurrentTurn();";
+    String expected = "public Rdf turn;/**/turn = getCurrentTurn();";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("public Rdf turn;"));
   }
@@ -119,7 +119,7 @@ public class TypeInferenceTest {
   public void test6() {
     String in = " boolean b = true; ";
     String s = generate(in);
-    String expected = "b = true;";
+    String expected = "public boolean b;/**/b = true;";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("boolean b;"));
   }
@@ -128,7 +128,7 @@ public class TypeInferenceTest {
   public void test7() {
     String in = "public int b = 7; ";
     String s = generate(in);
-    String expected = "b = 7;";
+    String expected = "public int b;/**/b = 7;";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("int b;"));
   }
@@ -169,7 +169,7 @@ public class TypeInferenceTest {
   public void test10() {
     String in = " double f; void fun() { Person c; c.weight = 1.0; }";
     String s = generate(in);
-    String expected = "public double f;/**/public void fun() { Rdf c;c.setValue(\"<dom:weight>\", 1.0); } }";
+    String expected = "public double f;public void fun() { Rdf c;c.setValue(\"<dom:weight>\", 1.0); }";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("double f;"));
   }
@@ -184,7 +184,7 @@ public class TypeInferenceTest {
   public void test12() {
     String in = " long fun(long i); int l = 1; k = fun(l);";
     String s = generate(in);
-    String expected = "l = 1;k = fun(l);";
+    String expected = "public int l;public long k;/**/l = 1;k = fun(l);";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("public int l;"));
     assertTrue(s.contains("public long k;"));
@@ -215,7 +215,7 @@ public class TypeInferenceTest {
   // the user when it comes to type assumptions (!no casting to (Object /* (unknown) */) here)
     String in = " SomeUnk nownClass = new Someunk(); String v = nownClass.something.get(i);";
     String s = generate(in);
-    String expected = "nownClass = new Someunk();v = nownClass.something.get(i);";
+    String expected = "public SomeUnk nownClass;public String v;/**/nownClass = new Someunk();v = nownClass.something.get(i);";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("public SomeUnk nownClass;"));
     assertTrue(s.contains("public String v;"));

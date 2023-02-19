@@ -776,12 +776,12 @@ public class VisitorType implements RudiVisitor {
       */
       // now we'll generate getObject
       Type paType = new Type("Object");
-      return new ExpPropertyAccess(label, true, paType, true);
+      return node.fixFields(new ExpPropertyAccess(label, true, paType, true));
     }
     if (currentType.isDialogueAct()) {
       // the return type will be string, this is a call to getSlot
-      return new ExpPropertyAccess(label, false, new Type("String"),
-          true);
+      return node.fixFields(
+          new ExpPropertyAccess(label, false, new Type("String"), true));
     }
     RdfClass clz = currentType.getRdfClass();
     String predUri = null;
@@ -791,7 +791,8 @@ public class VisitorType implements RudiVisitor {
     // warning / error if property not found
     if (predUri == null) {
       typeError("No property found for " + label, node);
-      return new ExpPropertyAccess(label, false, getNoType(), false);
+      return node.fixFields(
+          new ExpPropertyAccess(label, false, getNoType(), false));
     }
 
     label = predUri; // replace plain name by URI
@@ -834,8 +835,8 @@ public class VisitorType implements RudiVisitor {
       currentType.setCastRequired();
     }
     // the type of this is set to Object by default (not null)
-    return new ExpPropertyAccess(label, false, currentType,
-        isFunctional);
+    return node.fixFields(new ExpPropertyAccess(label, false, currentType,
+        isFunctional));
   }
 
   /**
@@ -852,7 +853,8 @@ public class VisitorType implements RudiVisitor {
     Type currentType = currentNode.type;
     for (int i = 1; i < node.parts.size(); ++i) {
       currentNode = node.parts.get(i);
-      // if this is a funccall performed on anything, tell the function the type it was called on
+      // if this is a funccall performed on anything, tell the function the type
+      // it was called on
       if(currentNode instanceof ExpFuncCall) {
         ((ExpFuncCall)currentNode).calledUpon = currentType;
       }

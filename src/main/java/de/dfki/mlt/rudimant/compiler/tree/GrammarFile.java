@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -34,8 +35,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.mlt.rudimant.common.Position;
-import de.dfki.mlt.rudimant.compiler.*;
+import de.dfki.mlt.rudimant.compiler.ClassEnv;
+import de.dfki.mlt.rudimant.compiler.Environment;
+import de.dfki.mlt.rudimant.compiler.Mem;
+import de.dfki.mlt.rudimant.compiler.RudimantCompiler;
+import de.dfki.mlt.rudimant.compiler.Token;
+import de.dfki.mlt.rudimant.compiler.TokenHandler;
+import de.dfki.mlt.rudimant.compiler.WriterException;
 import de.dfki.mlt.rudimant.compiler.io.BisonParser;
 
 /**
@@ -49,7 +55,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
   public static final Logger logger = LoggerFactory.getLogger(RudimantCompiler.class);
 
   // imports* (comment grammar_rule | method_declaration | statement )* comment
-  private List<RudiTree> rules;
+  List<RudiTree> rules;
   private TokenHandler _th;
 
   // **********************************************************************
@@ -118,31 +124,32 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
   }
 
 
-  /** Now produce code for all rules and statements in a file */
+  /** Now produce code for all rules and statements in a file
+   *
+   *  Do not use the visit() method directly, use gen()!!!
+   */
   private void writeRuleList(Mem mem, Writer out)
       throws IOException {
-    VisitorGeneration gv = new VisitorGeneration(out, mem, _th);
+    VisitorGeneration gv = new VisitorGeneration(out, mem);
     mem.enterEnvironment(this);
-    List<RTStatement> later = new ArrayList<>();
+
+    // All things that have to land on the toplevel of the class are treated
+    // now
+    //
     // do all VarDefs *DEFINITIONS* on toplevel here, those are class attributes
+    // Method definitions have to move anyway, so this does not hurt more
     for(RudiTree r : rules) {
-      StatFieldDef fd = null;
       if (r instanceof StatFieldDef) {
         // Only generates definition;
-        fd = (StatFieldDef)r;
-      } else if (r instanceof StatVarDef) {
-        if (((StatVarDef)r).isDefinition) {
-          fd = new StatFieldDef("public", (StatVarDef)r);
-          r.fixFields(fd);
-        }
-      }
-      if (fd != null) {
-        if (fd.varDef.toAssign != null && fd.varDef.isDefinition) {
-          gv.visit(fd); // save comment for assignment
-        } else if (fd.varDef.isDefinition) {
-          // TODO: confirm: if this is no definition, we do not want it here, right?
+        gv.gen(r);
+      } else if (r instanceof StatVarDef && ((StatVarDef)r).isDefinition) {
+        StatFieldDef fd = r.fixFields(new StatFieldDef("public", (StatVarDef)r));
+        fd.comments = Collections.emptyList();
           gv.gen(fd);
-        }
+      }
+      // do all method defs in advance, could also be appended, does not matter
+      if (r instanceof StatMethodDeclaration) {
+        gv.gen(r);
       }
     }
 
@@ -150,13 +157,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     out.append(PROCESS_PREFIX);
     // use all methods created from rules in this file
     for(RudiTree r : rules) {
-      if (r instanceof StatMethodDeclaration) {
-        // retain method declarations for later and move all appropriate
-        // comments to a laterComments list
-        later.add((StatMethodDeclaration)r);
-        if (((StatMethodDeclaration)r).block != null)
-          _th.saveCommentsForLater(r.getLocation().getEnd());
-      } else if (r instanceof StatVarDef) {
+      if (r instanceof StatVarDef) {
         StatVarDef vd = (StatVarDef)r;
         if (vd.toAssign == null) continue;
         vd.isDefinition = false;
@@ -166,59 +167,42 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         if (vd.toAssign == null) continue;
         vd.isDefinition = false;
         gv.gen(vd);
-      } else if (r instanceof StatGrammarRule || r instanceof Include) {
-        // rules and includes are called as functions and may return a non-zero
-        // value. If the value is 1
-        if (r instanceof StatGrammarRule){
-          out.append("res = ");
-          out.append(((StatGrammarRule)r).label).append("();");
-          later.add((StatGrammarRule)r);
-          // move all appropriate comments to a laterComments list
-          _th.saveCommentsForLater(r.getLocation().getEnd());
-          out.append(" if (res != 0)");
-        } else {
-          Include imp = (Include)r;
-          _th.checkComments(r.getLocation().getBegin(), out);
-          out.append("res = ");
-          // use fully qualified name
-          String rootpkg = getPackageName(mem.getTopLevelPackageSpec());
-          String pkg = getPackageName(mem.getPackageSpec());
-          out.append("new ");
-          if (! rootpkg.isEmpty()) out.append(rootpkg).append('.');
-          if (! pkg.isEmpty()) out.append(pkg).append('.');
-          out.append(getQualifiedName(imp.path, imp.name)).append("(");
-          Set<ClassEnv> ncs = mem.getNeededClasses();
-          if (ncs != null) {
-            boolean notfirst = false;
-            for (ClassEnv clz : ncs) {
-              String c = clz.getName();
-              if (c.equals(mem.getClassName())) {
-                c = "this";
-              }
-              if (notfirst) out.append(", ");
-              else notfirst = true;
-              out.append(lowerCaseFirst(c));
+      } else if (r instanceof Include) {
+        // includes are called as functions and may return a non-zero
+        // If the value is 1, skip all the subsequent rules
+        Include imp = (Include)r;
+        out.append("res = ");
+        // use fully qualified name
+        String rootpkg = getPackageName(mem.getTopLevelPackageSpec());
+        String pkg = getPackageName(mem.getPackageSpec());
+        out.append("new ");
+        if (! rootpkg.isEmpty()) out.append(rootpkg).append('.');
+        if (! pkg.isEmpty()) out.append(pkg).append('.');
+        out.append(getQualifiedName(imp.path, imp.name)).append("(");
+        Set<ClassEnv> ncs = mem.getNeededClasses();
+        if (ncs != null) {
+          boolean notfirst = false;
+          for (ClassEnv clz : ncs) {
+            String c = clz.getName();
+            if (c.equals(mem.getClassName())) {
+              c = "this";
             }
+            if (notfirst) out.append(", ");
+            else notfirst = true;
+            out.append(lowerCaseFirst(c));
           }
-          out.append(").process();");
-          out.append(" if (res < 0)");
         }
-        out.append(" return (res - 1);\n");
-      } else if (r instanceof RTStatement) {
+        out.append(").process();");
+        out.append(" if (res < 0) return res;");
+      } else if ((r instanceof StatGrammarRule )
+          || (r instanceof RTStatement
+              && !(r instanceof StatMethodDeclaration))) {
         gv.gen(r);
       }
     }
     out.append(PROCESS_SUFFIX);
-
-    // replace the comments list by the laterComments list
-    _th.pourBackSavedComments();
-    // now, add everything that we did not want in the process method
-    for(RTStatement t : later){
-      gv.visit(t);
-    }
     mem.leaveEnvironment(this);
   }
-
 
   private void startGeneration(RudimantCompiler rudi, Writer out)
       throws IOException  {
@@ -229,52 +213,35 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     if (!rootpkg.isEmpty() || !pkg.isEmpty())
       out.append("package " + rootpkg
           + (pkg.isEmpty() ? "" : "." + pkg) + ";\n");
-
+    // standard imports
     out.append("import java.util.*;\n\n" +
         "import de.dfki.mlt.rudimant.agent.DialogueAct;\n" +
         "import de.dfki.lt.hfc.db.rdfProxy.*;\n" +
         "import de.dfki.lt.hfc.types.*;\n");
     // Let's import our supersuper class, if we're the top-level class
+    // TODO: WILL GO IF WE DECIDE TO DROP THE WRAPPER CLASS
     if (! mem.isNotToplevelClass()) {
       out.append("import ").append(mem.getWrapperClass()).append(";\n");
     }
 
-    // handle the imports from the .rudi file
-    for(RudiTree r : rules) {
-      // TODO: MAYBE NOT NECESSARY WHEN USING QUALIFIED NAMES IN PROCESS ??
-      if (r instanceof Import) {
-        Import i = (Import)r;
-        if (i.path.size() > 0) {
-          out.append("import ");
-          if (i.staticImport) {
-            out.append("static ");
-          }
-          out.append(i.path.get(0));
-          for (int j = 1; j < i.path.size(); ++j) {
-            out.append('.').append(i.path.get(j));
-          }
-          out.append(";\n");
-        }
-      }
-    }
-    /* done by neededclasses
-     * else {
-      // import the top level class
-      out.append("import ");
-      if (! rootpkg.isEmpty()) out.append(rootpkg).append('.');
-      out.append(mem.getTopLevelClass()).append(";\n");
-    }
-    */
+    /** add the comment tokens to the right RudiTree items */
+    _th.attachComments(this);
+
     // import the included classes
     for(RudiTree r : rules) {
-      // TODO: MAYBE NOT NECESSARY WHEN USING QUALIFIED NAMES IN PROCESS ??
-      if (r instanceof Include) {
+      // these have to appear first, the syntax allows nothing else
+      if (r instanceof Import) {
+        // print all comments before this point (there's nothing before this!
+        ((Import)r).gen(out);
+      } else if (r instanceof Include) {
+        // TODO: MAYBE NOT NECESSARY WHEN USING QUALIFIED NAMES IN PROCESS ??
         Include i = (Include)r;
         if (i.path.length > 0) {
           out.append("import ");
           if (! rootpkg.isEmpty()) out.append(rootpkg).append('.');
           if (! pkg.isEmpty()) out.append(pkg).append('.');
-          out.append(getQualifiedName(i.path, i.name)).append(";\n");
+          out.append(getQualifiedName(i.path, i.name)).append(";")
+             .append(System.lineSeparator());
         }
       }
     }
@@ -290,20 +257,15 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
          .append(";\n");
     }
 
-    // Now, print all initial comments (preceding the first element) before the
-    // class starts, for, e.g., imports
-    Position firstPos = rules.isEmpty()
-        ? new Position(0,0,Integer.MAX_VALUE,"")
-            : rules.get(0).getLocation().getBegin();
-    _th.initialComments(firstPos, out);
-
     // maybe we need to import the class that imported us to use its variables
     out.append("\n\npublic class ").append(mem.getClassName());
     // check if this should extend the wrapper class
     if (! mem.isNotToplevelClass()) {
+      /** TODO: NO WRAPPER CLASS ANYMORE ? */
       out.append(" extends ").append(mem.getWrapperClass());
+      //.append(AGENT_CLASS).append(' ');
     }
-    out.append("{\n");
+    out.append("{").append(System.lineSeparator());
 
     List<String> fields = new ArrayList<>();
     // ************************************************************
@@ -349,10 +311,14 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     } catch (WriterException wex) {
       throw (IOException)wex.getCause();
     }
+
     // ************************************************************
     // at the very end of the file, there might still be unprinted comments
     // ************************************************************
-    _th.checkComments(new Position(0, 0, Integer.MAX_VALUE, ""), out);
+    for (Token t : this.comments) {
+      out.append(t.content());
+    }
+
     out.append("}\n");
   }
 

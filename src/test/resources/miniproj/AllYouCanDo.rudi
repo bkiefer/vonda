@@ -1,15 +1,12 @@
 //\small\begin{lstlisting}
 import java.nio.file.*;
 import static java.nio.file.Files.*;
+import java.io.File;
 /*@
 // A "Java" comment, everything in this comment will be transferred literally
 // to the compiled file, without the comment brackets.
-public static int MAX_INT = 100;
+public static int MY_MAX_INT = 100;
 @*/
-
-// **********************************************************************
-// Tests and Comparisons
-// **********************************************************************
 
 // declare a Java method
 #Object boolean equals(Object);
@@ -17,17 +14,22 @@ public static int MAX_INT = 100;
 boolean funcWithJava(String h) {
   boolean ex = false;
   // inject plain java
-  /* TODO: CURRENTLY DOES NOT WORK CORRECTLY
-    ex = Files.exists(new File(h).toPath());
-    */
+  /*@
+  // NOW IT WORKS CORRECTLY
+  ex = Files.exists(new File(h).toPath());
+  */
   return ex;
 }
 
 // Define a variable of an RDF type
 Child child;
 
+// **********************************************************************
+// Tests and Comparisons
+// **********************************************************************
+
 // test for value under path, intermediate tests are generated
- if (child.hasFather.surname) System.out.println("foo");
+if (child.hasFather.surname) System.out.println("foo");
 
 // subsumption of dialogue acts, (equality is also possible)
 if (lastDA() <= #AcceptOffer(Bringing)) System.out.println("foo");
@@ -229,10 +231,10 @@ DialogueAct da1 = #Confirm(Correct, number={10});
 t = "10";
 i = toInt(t);
 
+DialogueAct da = #Inform(Posessing);
 // **********************************************************************
 // Access to Dialogue Acts
 // **********************************************************************
-DialogueAct da = #Inform(Posessing);
 if (! da.theme) {
   // set the value of any argument
   da.theme = "Ball";

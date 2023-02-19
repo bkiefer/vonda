@@ -41,8 +41,6 @@ public class VisitorGeneration implements RudiVisitor {
   Writer _out;
   private Mem mem;
 
-  private TokenHandler _th;
-
   // activate bool to get double escaped String literals
   private boolean escape = false;
 
@@ -53,10 +51,13 @@ public class VisitorGeneration implements RudiVisitor {
   private RuleInfo activeInfo = null;
 
 
-  public VisitorGeneration(Writer o, Mem m, TokenHandler th) {
+  public VisitorGeneration(Writer o, Mem m) {
     _out = o;
     mem = m;
-    _th = th;
+  }
+
+  public VisitorGeneration genNL() {
+    return gen(System.lineSeparator());
   }
 
   public VisitorGeneration gen(char c) {
@@ -103,15 +104,13 @@ public class VisitorGeneration implements RudiVisitor {
    * @param v
    */
   public VisitorGeneration gen(RudiTree rt) {
-    try {
-      _th.checkComments(rt.location.getBegin(), _out);
-      gen(rt._parens, "(");
-      rt.visit(this);
-      gen(rt._parens, ")");
-      _th.checkComments(rt.location.getEnd(), _out);
-    } catch (IOException ex) {
-      throw new WriterException(ex);
+    if (! rt.comments.isEmpty()) genNL();
+    for (Token tok: rt.comments) {
+      gen(tok.content());
     }
+    gen(rt._parens, "(");
+    rt.visit(this);
+    gen(rt._parens, ")");
     return this;
   }
 
@@ -504,7 +503,9 @@ public class VisitorGeneration implements RudiVisitor {
     if (node.toplevel) {
       mem.enterEnvironment(node);
       // is a top level rule and will be converted to a method
-      gen("public int " + node.label + "(){\n");
+      /** TODO: NO, CHECK IF CORRECT */
+      //gen("public int " + node.label + "(){\n");
+      gen("// Rule ").gen(node.label).gen("\n{");
     } else {
       // a sub-level rule: ordinary <if>
       gen("// Rule ").gen(node.label).gen("\n");
@@ -532,8 +533,10 @@ public class VisitorGeneration implements RudiVisitor {
     if (ifNode.statblockElse != null) {
       gen("else ").gen(ifNode.statblockElse);
     }
+    gen("end_").gen(node.label).gen(": ;\n");
     if (node.toplevel) {
-      gen("\nreturn 0; \n}\n");
+      //gen("\nreturn 0; \n}\n");
+      gen("\n}\n");
       mem.leaveEnvironment(node);
     }
     mem.leaveRule();

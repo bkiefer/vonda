@@ -48,7 +48,7 @@ public class WeirdCasesTest {
     String in = "lab: if(true) {Child c; "
         + "known2 = filter(c.hasHobby, lambda(p) \"someName\".equals((isa(Preference, p)).name));}";
     String r = generate(in);
-    String expected = "public int lab(){ boolean[] __x0 = new boolean[2];"
+    String expected = "// Rule lab {boolean[] __x0 = new boolean[2];"
             + " __x0[0] = (__x0[1] = true); logRule(0, __x0); lab: "
             + "if (__x0[0]){ Rdf c;"
             //+ "List<Object> known2 = " // TODO: THIS SHOULD BE THERE
@@ -71,7 +71,7 @@ public class WeirdCasesTest {
   public void testDefinedRdfList() {
     String in = "List<Quiz> q(int i); { m = q(i); }";
     String r = generate(in);
-    String expected = "{ List<Rdf> m = q(i); }";
+    String expected = "/**/{ List<Rdf> m = q(i); }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -98,7 +98,7 @@ public class WeirdCasesTest {
     String in = "int x;\n //This is a comment referring to the assignment \n"
             + " x = 5;";
     String r = generate(in);
-    String expected = "public int x;/**///This is a comment referring to the assignment"
+    String expected = "public int x;/**/ //This is a comment referring to the assignment"
             + " x = 5;}";
     assertEquals(expected, getForMarked(r, expected));
   }
@@ -113,7 +113,7 @@ public class WeirdCasesTest {
             + " x = 5;";
     String r = generate(in);
     String expected = "public int x;/**/ String javaVar = \"class variable\";"
-            + " x = 5;}";
+            + "x = 5;}";
     //System.out.println(r);
     assertEquals(expected, getForMarked(r, expected));
   }

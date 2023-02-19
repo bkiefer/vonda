@@ -86,7 +86,7 @@ public class TestUtilities {
 
   public static void setUpNonEmpty() {
     try {
-      setUp(TESTCONF, "label: if(true) {// hello test\n", "}");
+      setUp(TESTCONF, "label: if(true) { // hello test \n ", "}");
     }
     catch (FileNotFoundException fex) {
       throw new RuntimeException(fex);
@@ -96,7 +96,7 @@ public class TestUtilities {
 
   public static void setUpEmpty() {
     try {
-      setUp(TESTCONF, "// hello test\n", "");
+      setUp(TESTCONF, "// hello test\n ", "");
     }
     catch (FileNotFoundException fex) {
       throw new RuntimeException(fex);

@@ -1,27 +1,22 @@
 * RELEASE PLAN FOR 3.0
-  +-get rid of reduce reduce conflicts
-    Übrige reduce-reduce Konflikte durch Syntax-Änderungen lösen, z.B.
-    cast(TypeExpr, expr) statt (typeexpr) expr (oder isa statt cast)
-    + simplest problem are the field/method defs, they could be later generated
-      from a java parser/introspection
-    +- cast expressions --> `isa` infix operator: check w. Jörg
-    +- lambda expressions --> `lambda` infix operator: check w. Jörg
-    + field access: solved
-      + use "{exp}" syntax for property access, otherwise unexpected stuff
-        happens.
-      + Add it to AllYouCanDo.rudi and tests
+  - check the option of not generating functions, and deferred
+    generation in general
+    - check if break/return works as expected and write tests!!!
+    - check the "final comments problem" and describe it
   - Improve the documentation
     +- check exisiting TODOs
     - integrate new syntax changes
+      - include and import
+      - no more wrapper class
       - "{exp}" syntax for field access
       - cast expressions
       - lambda expressions
       - type declarations for external fields/methods
-  - check the option of not generating functions, and deferred
-    generation in general, that would make the problem of "moving
-    injected java code" go away (maybe)
-  - Get rid of wrapper class, and remove special loading of type
-    definitions except for Agent.rudi
+  +- Get rid of wrapper class, and remove special loading of type
+     definitions except for Agent.rudi: seems to work fine!
+     - Drawback: you can not change functionality in Agent
+       (framework), for example Behaviour handling. That is definitely
+       a drawback!
 
   + replace import by include
   + allow Java import statements at beginning of file only
@@ -30,6 +25,33 @@
     + Für .rudi files "include" statt "import" benutzen !!! JA FÜR 3.0
       + "import" wie in Java nur am Anfang des Files zulassen, dass dann auch
          nur Java imports macht?
+  + field access conflicts: solved
+    + use "{exp}" syntax for property access, otherwise unexpected stuff
+      happens.
+    + Add it to AllYouCanDo.rudi and tests
+  + get rid of reduce reduce conflicts
+    + Übrige reduce-reduce Konflikte durch Syntax-Änderungen lösen, z.B.
+      cast(TypeExpr, expr) statt (typeexpr) expr (oder isa statt cast)
+    + simplest problem are the field/method defs, they could be later generated
+      from a java parser/introspection
+    + cast expressions --> `isa` infix operator: isa(type_expr, exp)
+    + ARROW --> `lambda` infix operator: lambda(arg0, ...) exp | body
+  + check the option of not generating functions, and deferred
+    generation in general
+    + some things still move, since they need to be on top level,
+      together with the process() function:
+      + Field defs, to the front, but if they are combined with
+        assignments, these will appear later
+      + Method defs, they are currently deferred to the back
+    + problem of "moving comments and injected java code" remains,
+      but solution might be to pick comments *BETWEEN* two elements,
+      is almost gone, but no guarantee due to moving code, and
+      end-of-file situations, which can not be really fixed (code in
+      or out of scope of process(){...}
+    + check how good the comment handling really works
+  + get rid of reduce reduce conflicts
+    + remove ARROW token, unused
+    + integrate with the rest
 
 * Erleuchtung bzgl. Wrapperklasse: Agent vs. NaoAgent vs. PalAgent !!! JA FÜR 3.0
   1. NaoAgent scheint eigentlich eine klasse wie TimelineUtils zu sein (oder

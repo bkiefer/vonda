@@ -19,7 +19,10 @@
 
 package de.dfki.mlt.rudimant.compiler.tree;
 
+import java.util.List;
+
 import de.dfki.mlt.rudimant.common.Location;
+import de.dfki.mlt.rudimant.compiler.Token;
 
 /**
  * all classes that can be created by the ParseTreeVisitor should implement this
@@ -33,6 +36,11 @@ public abstract class RudiTree {
 
   /** contains the origin file and the line Rudi Tree started on */
   public Location location;
+
+  /** The list of comments this tree item should print before generating own
+   *  code
+   */
+  public List<Token> comments;
 
   /** visitor method, for double dispatch */
   public abstract void visit(RudiVisitor v);

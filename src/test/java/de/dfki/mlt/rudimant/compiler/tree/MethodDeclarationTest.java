@@ -79,7 +79,7 @@ public class MethodDeclarationTest {
   public void testLocalParameters(){
     String methdecl = "int s; void foo(String s) { s = \"a\"; }";
     String s = generate(methdecl);
-    String expected = "public int s;/**/public void foo(String s) { s = \"a\"; }";
+    String expected = "public int s;public void foo(String s) { s = \"a\"; }";
     assertEquals(expected, getForMarked(s, expected));
   }
 

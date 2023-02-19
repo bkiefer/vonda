@@ -19,7 +19,8 @@
 
 package de.dfki.mlt.rudimant.compiler.tree;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * representation of sth like a += b where a is a set and b should be added
@@ -45,7 +46,9 @@ public class StatSetOperation extends RTStatement {
   }
 
   public Iterable<? extends RudiTree> getDtrs() {
-    RudiTree[] dtrs = { left, right };
-    return Arrays.asList(dtrs);
+    List<RudiTree> dtrs = new ArrayList<>(2);
+    if (left != null) dtrs.add(left);
+    if (right != null) dtrs.add(right);
+    return dtrs;
   }
 }

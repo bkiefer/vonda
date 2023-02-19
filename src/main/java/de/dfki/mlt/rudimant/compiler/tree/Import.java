@@ -19,6 +19,8 @@
 
 package de.dfki.mlt.rudimant.compiler.tree;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,5 +59,19 @@ public class Import extends RudiTree {
   @Override
   public Iterable<? extends RudiTree> getDtrs() {
     return Collections.emptyList();
+  }
+
+  public void gen(Writer out) throws IOException {
+    if (path.size() > 0) {
+      out.append("import ");
+      if (staticImport) {
+        out.append("static ");
+      }
+      out.append(path.get(0));
+      for (int j = 1; j < path.size(); ++j) {
+        out.append('.').append(path.get(j));
+      }
+      out.append(";").append(System.lineSeparator());
+    }
   }
 }

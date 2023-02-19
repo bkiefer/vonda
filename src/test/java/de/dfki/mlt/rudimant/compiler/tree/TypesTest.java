@@ -42,7 +42,7 @@ public class TypesTest {
   public void testType1(){
     String in = " DialogueAct reply = myLastDA().copy();";
     String r = generate(in);
-    String expected = "reply = myLastDA().copy();";
+    String expected = "public DialogueAct reply;/**/reply = myLastDA().copy();";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("DialogueAct reply;"));
   }
@@ -51,7 +51,7 @@ public class TypesTest {
   public void testType2(){
     String in = "QuizHistory getCurrentTurn(); Rdf turn = getCurrentTurn(activity);";
     String r = generate(in);
-    String expected = "turn = getCurrentTurn(activity);";
+    String expected = "public Rdf turn;/**/turn = getCurrentTurn(activity);";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("Rdf turn;"));
   }
@@ -61,7 +61,7 @@ public class TypesTest {
     String in = "QuizHistory getCurrentTurn();  propose(\"continue_quiz\") {\n" +
               "      Rdf turn = getCurrentTurn(activity);}";
     String r = generate(in);
-    String expected = "propose(\"continue_quiz\",new Proposal() {"
+    String expected = "/**/propose(\"continue_quiz\",new Proposal() {"
             + "public void run() {"
             + " Rdf turn = getCurrentTurn(activity); } });";
     assertEquals(expected, getForMarked(r, expected));
@@ -71,7 +71,7 @@ public class TypesTest {
   public void testType4(){
     String in = " int correct = q.getWhichCorrect();";
     String r = generate(in);
-    String expected = "correct = q.getWhichCorrect();";
+    String expected = "public int correct;/**/correct = q.getWhichCorrect();";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("int correct;"));
   }
@@ -80,7 +80,7 @@ public class TypesTest {
   public void testType5(){
     String in = "List<String> a = new List<String>();";
     String r = generate(in);
-    String expected = "a = new List<String>();";
+    String expected = "public List<String> a;/**/a = new List<String>();";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("List<String> a;"));
   }
@@ -98,7 +98,7 @@ public class TypesTest {
   public void testType7(){
     String in = "String s = \"something\"; boolean empty = s;";
     String r = generate(in);
-    String expected = "s = \"something\";empty = exists(s);";
+    String expected = "public String s;public boolean empty;/**/s = \"something\";empty = exists(s);";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("String s"));
     assertTrue(r.contains("boolean empty"));
@@ -118,7 +118,7 @@ public class TypesTest {
   public void testListRdftype() {
     String in = "List<Quiz> q = {};";
     String r = generate(in);
-    String expected = "q = new ArrayList<>();";
+    String expected = "public List<Rdf> q;/**/q = new ArrayList<>();";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("List<Rdf> q;"));
   }
@@ -136,7 +136,7 @@ public class TypesTest {
   public void testInitDefinedCollection2() {
     String in = "List<Quiz> q; void f() { q = {}; }";
     String r = generate(in);
-    String expected = "public List<Rdf> q;/**/public void f() { q = new ArrayList<>();";
+    String expected = "public List<Rdf> q;public void f() { q = new ArrayList<>();";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("List<Rdf> q;"));
   }
@@ -156,8 +156,8 @@ public class TypesTest {
     String in = "Child c; void a() { if (!c.hasFather) int i = 0; }";
     String r = generate(in);
     String expected =
-        "public Rdf c;/**/public void a() { if (!(c != null && "
-        + "c.getRdf(\"<dom:hasFather>\") != null)) int i = 0; } }";
+        "public Rdf c;public void a() { if (!(c != null && "
+        + "c.getRdf(\"<dom:hasFather>\") != null)) int i = 0; }";
     assertEquals(expected, getForMarked(r, expected));
     assertTrue(r.contains("Rdf c;"));
   }
@@ -207,7 +207,7 @@ public class TypesTest {
         + " map(m.hasHistory, lambda(f) (isa(QuizHistory, f)).hasChildId); }";
     String s = generate(methdecl);
     String expected = "public Collection<Rdf> foo(Rdf m)"
-        + " { map(m.getValue(\"<dom:hasHistory>\"), (f) -> ((Rdf)f).getRdf(\"<dom:hasChildId>\")); } }";
+        + " { map(m.getValue(\"<dom:hasHistory>\"), (f) -> ((Rdf)f).getRdf(\"<dom:hasChildId>\")); }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
