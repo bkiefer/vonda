@@ -35,7 +35,8 @@
 \draw[arr] (tlrc.north) ++ (1,0) coordinate (tn) -- node[rlabel]{calls} (rm1.south -| tn);
 \draw[arr] (rm1.south) ++ (-1,0) coordinate (rs) -- node[llabel]{imports} (tlrc.north -| rs);
 
-\path (tlrc) ++(0,-.75) node[box, fill=ivory](caai) {Concrete Agent API Implementation};
+\path (tlrc) ++(0,-.75) node[box, fill=ivory](caai)
+  {Agent API Extension (optional)};
 \node[rbox, right= of caai]{MyAgentBase.java};
 \draw[arr] (caai) -- node[rlabel]{extends} (tlrc);
 

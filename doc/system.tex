@@ -26,16 +26,17 @@ Figure~\ref{fig:architecture} shows the architecture of a runnable \vonda projec
   \label{fig:architecture}
 \end{figure}
 
-A \vonda project consists of an ontology, a custom extension of the abstract
-\texttt{Agent} class (the so-called \emph{wrapper class}), a client interface
-to connect the communication channels of the application to the agent, and a
-set of rule files that are arranged in a tree, using \texttt{import}
-statements. The blue core in Figure~\ref{fig:architecture} is the run-time
-system that is part of \vonda, while all light grey elements are the
-application specific parts of the agent. A \texttt{Yaml} project file contains
-all necessary information for compilation: the ontology, the wrapper class, the
-top-level rule file and other parameters, like custom compile commands for
-\vonda's debugger.
+A \vonda project consists of an ontology, a (optional) custom
+extension of the abstract \texttt{Agent} class (the
+\texttt{agentBaseClass}), a client interface to connect the
+communication channels of the application to the agent, and a set of
+rule files that are arranged in a tree, using \texttt{include}
+statements. The blue core in Figure~\ref{fig:architecture} is the
+run-time system that is part of \vonda, while all light grey elements
+are the application specific parts of the agent. A \texttt{Yaml}
+project file contains all necessary information for compilation: the
+ontology, the wrapper class, the top-level rule file and other
+parameters, like custom compile commands for \vonda's debugger.
 
 The \vonda compiler translates rule files with the extension \texttt{.rudi} to
 Java files. During this process, the ontology storing the RDF classes and
@@ -43,21 +44,22 @@ properties is used to automatically infer types, resolve whether field accesses
 are actually accesses to the database, etc (see section
 \ref{sec:typeinference}).
 Every rule file can define variables and functions in \vonda syntax which are
-then available to all imported files.
+then available to all included files.
 
-The current structure assumes that most of the Java functionality that is used
-inside the rule files will be provided by the \texttt{Agent} superclass. There
-are, however, alternative ways to use other Java classes directly (see section
-\ref{sec:javatypes} for further info).  The methods and fields from the custom
-wrapper class can be made available to all rule files by declaring them in the
-interface connecting the \texttt{.rudi} code to the Java framework. This
-interface must have the same name as the wrapper class but end with
-\texttt{.rudi} (in the example of figure ~\ref{fig:architecture}, this would be
+The current structure assumes that most of the Java functionality that
+is used inside the rule files will be provided by the \texttt{Agent}
+superclass. There are, however, alternative ways to use other Java
+classes directly (see section \ref{sec:javatypes} for further
+info). You can either use Java helper classes and/or objects, which is
+the preferred way, or you make the methods and fields from the custom
+\texttt{agentBaseClass} available to all rule files. If the compiler
+does not pick up the type definitions by itself, you can support it by
+declaring fields and methods in the type definition file. In the
+example of figure ~\ref{fig:architecture}, this would be
 \texttt{MyAgent.rudi}).
 
 \section{The \vonda Rule Language}
 \label{sec:language}
-
 \vonda's rule language looks very similar to Java/C++. There are a number of
 specific features which make it much more convenient for the specification of
 dialogue strategies. One of the most important features is the way objects in
@@ -87,21 +89,23 @@ This functionality offers possibilities to e.g. define and process high-level
 variables that you might want to have access to in subsequent rules or to insert
 termination conditions that prevent some rule executions.
 
-\textbf{Warning:} It is important to know that variables declared globally
-in a file will be transformed to fields of the Java class. We found that in
-very rare occasions, this can lead to unexpected behaviour when using them in a
-propose or timeout block as well as changing them in a global statement. As
-proposes and timeouts will not immediately be executed, they need every
-variable used inside them to be effectively final. \vonda leaves the evaluation
-of validness of variables for such blocks to Java. We found that Java might
-mistakenly accept variables that are not effectively final, what might lead to
-completely unexpected behaviour when proposes and timeouts with changed
-variable values are executed.
+\textbf{Warning:} Variables declared globally in a file will be
+transformed to fields of the Java class. We found that in very rare
+occasions, this can lead to unexpected behaviour when using them in a
+propose or timeout block as well as changing them in a global
+statement. As proposes and timeouts will not be exceuted immediately,
+they need every variable used inside them to be effectively
+final. \vonda leaves the evaluation of validness of variables for such
+blocks to Java. We found that Java might mistakenly accept variables
+that are not effectively final, which might lead to completely
+unexpected behaviour when proposes and timeouts with changed variable
+values are executed.
 
-The only important exception, where globally defined variables persist
-throughout the whole runtime of the system are variables defined in the
-top-level rule file. This is on purpose, and can be used to define persistent
-variables also usable in lower-level rule files.
+The only important exception, where globally defined variables and
+methods persist throughout the whole runtime of the system are
+variables defined in the top-level rule file. This is on purpose, and
+can be used to define persistent variables also usable in lower-level
+rule files, or to be accessed from other java code.
 
 \subsection{Rules and rule labels}
 
@@ -242,7 +246,7 @@ respective label (no matter how deep the break statement is nested in it), such
 that the next following rule is evaluated next.
 
 If the evaluation is cancelled with the keyword \texttt{cancel}, all of the
-following rules in the current file will be skipped (including any imported
+following rules in the current file will be skipped (including any included
 rule files). If the keyword \texttt{cancel\_all} is used, none of the following
 rules, neither local nor higher in the rule tree, will be evaluated. This is
 the \vonda way of deciding to not further evaluate whatever triggered the
@@ -365,32 +369,6 @@ section~\ref{sec:typeinference}). Also for reasons of brevity, the type of a
 new variable needs not be given if it can be inferred from the value assigned
 to it.
 
-To be able to \emph{parameterise} the field access to RDF objects, \vonda has a
-special mechanism which can lead to subtle and hard-to-find programming errors,
-if used wrongly. If, for example, a string variable with the name
-\texttt{middleNames} would be available in the scope of the above \vonda source
-code, the resulting code would have looked like in figure~\ref{tbl:varpropacc}
-instead, using the \emph{value} of the variable to determine the field
-name. For the given code, this does not make sense, but it can be useful in
-situations where, e.g., the property to use is determined by the input
-utterance.
-
-\begin{figure}[htbp]
-\small\begin{minipage}{0.99\textwidth}
-\begin{lstlisting}
-// somewhere before in the scope ...
-String middleNames = "<upper:middleNames>";
-...
-middle = c.getValue(middleNames);
-c.getValue(middleNames).add("John");
-c.getValue(middleNames).remove("James");
-c.clearValue(middleNames);
-\end{lstlisting}
-\end{minipage}
-\caption{\label{tbl:varpropacc}RDF property access using the value of a variable as property name}
-\end{figure}
-
-
 Moreover, \vonda determines whether an access is made using functional or
 relational predicates and will handle it accordingly, assuming a collection
 type if necessary. In the rule language, the operators \texttt{+=} and
@@ -398,6 +376,35 @@ type if necessary. In the rule language, the operators \texttt{+=} and
 for adding and deleting objects. \texttt{a += b} will be compiled to
 \texttt{a.add(b)} and \texttt{a -= b} results in \texttt{a.remove(b)}, as shown
 in figure~\ref{tab:property-access}.
+
+\paragraph{Parameterising field access}\label{sec:field_access_expansion}
+
+To be able to \emph{parameterise} the field access to RDF objects,
+\vonda has a special mechanism. Instead of the above
+\texttt{c.middleNames}, you could have done the following:
+
+\begin{lstlisting}
+mid = "middleNames";
+Set middle = c.{mid};
+\end{lstlisting}
+
+if you use \verb|{<exp>}| in a field access, the compiler assumes
+\texttt{exp} to evaluate to a \texttt{String}, and the string
+resulting from evaluating \texttt{exp} at runtime will be used as if
+you would have specified an identifier with the same name. Be aware
+that this only works for access to RDF objects, and that you have to
+take care of all type checking and casting by yourself, since the
+compiler can not figure out in advance which properties you will access.
+
+\subsection{Casting types in \vonda}
+\label{sec:cast}
+
+The syntax for casting expressions explicitely to a specific type is
+slightly different than the Java syntax, for reasons of better
+readability and easier treatment in parsing the code. \vonda uses the
+\texttt{isa} keyword as infix operator, similar to the \texttt{cast()}
+in C++, so a Java-style cast \texttt{((Child)c)} will be
+\texttt{isa(Child, c)} in \vonda syntax
 
 \subsection{Type inference and overloaded operators}
 \label{sec:typeinference}
@@ -513,12 +520,13 @@ allow for embedded structures.
 \subsection{Declaring External Methods And Fields}
 \label{sec:javatypes}
 
-As mentioned before, you can use every method or field you declare in your
-custom \texttt{Agent} subclass implementation in your \vonda code. Their
-declaration in the Java/rudi interface should look like a normal Java field or
-method definition (cfg. figure~\ref{tab:javadef}). It is possible to use
-generics in these definitions, although their names are, for complexity
-reasons, restricted to one single uppercase letter.
+As mentioned before, you can use every method or field you declare in
+some Java class or your custom \texttt{Agent} subclass implementation
+in your \vonda code. Their declaration in the Java/rudi interface
+looks like a normal Java field or method definition
+(cfg. figure~\ref{tab:javadef}). It is possible to use generics in
+these definitions, although their names are, for complexity reasons,
+restricted to one single uppercase letter.
 
 \begin{figure}[htbp]
 \small
@@ -543,10 +551,10 @@ definition to the interface as follows:
 \centering
 \small
 \begin{lstlisting}
-[SomeClass]. myType Function(typeA a); // declaration of SomeClass method
-[SomeClass]. myType someVar;           // declaration of SomeClass field
-[List<T>]. T get(int a);               // use of Generics is possible and
-                                       // used in type inference
+#SomeClass myType Function(typeA a); // declaration of SomeClass method
+#SomeClass myType someVar;           // declaration of SomeClass field
+#List<T> T get(int a);               // use of Generics is possible and
+                                     // used in type inference
 \end{lstlisting}\vspace*{-2ex}
 \caption{\label{tab:methoddef}Definition of a non-static method of Java objects}
 \end{figure}
@@ -564,7 +572,11 @@ figure \ref{tab:lambda-functions} are pre-defined in the \texttt{Agent} class.
 If you for example want to filter a set of RDF objects by a sub-type relation,
 you can write:
 {\small\begin{lstlisting}
-des = filter(agent.desires, (d) -> (d <= UrgentDesire));
+des = filter(agent.desires, lambda(d) (d <= UrgentDesire));
+\end{lstlisting}}
+or
+{\small\begin{lstlisting}
+des = filter(agent.desires, lambda(d) { return (d <= UrgentDesire); });
 \end{lstlisting}}
 
 \begin{figure}[htbp]
@@ -582,25 +594,28 @@ T first(Collection<T> coll, Function<Boolean, T> pred);
 \end{figure}
 
 
-\subsubsection{\texttt{import}}
+\subsubsection{\texttt{include} of other rule files}
 
-With the \texttt{import} statement, e.g. \texttt{import File;}, which needs to
-appear at the root level of rule files, the rules and definitions in
-\texttt{File.rudi} and its imported files are included at the position of the
-\texttt{import}.
+With the \texttt{include} statement, e.g. \texttt{include File;},
+which needs to appear at the root level of rule files, the rules and
+definitions in \texttt{File.rudi} and its included files are added at
+the position of the \texttt{include}. This is not a macro-like
+inclusion, the compiler generates Java classes for every
+\texttt{include}.
 
-This inclusion has two important effects. On the one hand, it triggers the
-compilation of the included file at exactly this point, such that any fields
-and methods known at this time will be available in the imported file. On the
-other hand, all the rules contained in the imported file will be inserted in
-the rule cycle at the specific position of the \texttt{import}, that is, in the
-resulting code the \texttt{process()} method of the imported file will be
-executed.
+This inclusion has two important effects. On the one hand, it triggers
+the compilation of the included file at exactly this point, such that
+any fields and methods known at this time will be available in the
+included file. On the other hand, all the rules contained in the
+included file will be inserted in the run-time rule cycle at the
+specific position of the \texttt{include}, that is, in the resulting
+code the \texttt{process()} method of the generated code for the
+included file will be executed.
 
-\texttt{import} makes it possible to organize the rules and local declarations
-of a project into meaningful sub-units. This supports modularity, as different
-subtrees of the \texttt{import} hierarchy can easily be added, moved, taken
-away or re-used in different projects.
+\texttt{include} makes it possible to organize the rules and local
+declarations of a project into meaningful sub-units. This supports
+modularity, as different subtrees of the \texttt{include} hierarchy can
+easily be added, moved, taken away or re-used in different projects.
 
 \subsubsection{Java-Code verbatim in rule files} \label{sec:rudi-verbatim}
 
@@ -615,14 +630,18 @@ like a multi-line Java comment, meaning the content is not parsed or evaluated
 further. It will be transferred to the compiled code as is into the intended
 position.
 
-In particular, this functionality can be used to import Java classes (i.e.,
-with Java import statements) at the beginning of a rule file. You should
-however be aware that \vonda will not know that these classes have been
-imported, nor their methods and fields. It will however accept creations of
-instances of unknown classes, as well as your casting of results of unknown
-methods. If you want \vonda to have type information about methods called on
-instances on one of these classes, you can put this information into the type
-interface of the wrapper class (cfg. chapter \ref{sec:javatypes}).
+\subsubsection{Java \texttt{import}
+  statements} \label{sec:java-import}
+
+You can use \texttt{import} statements as in Java syntax in rule
+files, but only at the very beginning. You should however be aware
+that \vonda will not know that these classes have been imported, nor
+their methods and fields. It will however accept creations of
+instances of unknown classes, as well as your casting of results of
+unknown methods. If you want \vonda to have type information about
+methods called on instances on one of these classes, you can put this
+information into your \texttt{typeDef} file (see the beginning of this
+section).
 
 \section{The Run-Time System}
 
@@ -644,7 +663,7 @@ described in before is not sufficient or too awkward.
 \label{sec:ruleevaluation}
 
 Your \vonda rule files form a tree, starting at the top-level file that you
-specify in the configuration file, and the \texttt{import}ed rule files. The
+specify in the configuration file, and the \texttt{include}d rule files. The
 evaluation of the rule starts in the top-level files and proceeds in pre-order
 through this tree. If you use a \texttt{cancel} or \texttt{cancel\_all}
 statement (cf. section~\ref{sec:cancelrules}), the rule evaluation will be
@@ -665,9 +684,17 @@ component, which will select the best alternative. This component can be
 exchanged to make it as simple or elaborate as necessary, which also allows to
 take into account arbitrary features from the data storage.
 
-\todo[inline]{Describe how the generated Java code works, with details such as
-  the initialisation of rule class objects, etc., which includes lifetime of
-  variables $\ldots$}
+At the start of your program, an object of the generated top-level
+class will be created which will exist as long as the program is
+executed. For the execution of embedded rules, temporary objects will
+be created, which cease to exist as soon as all relevant rules of the
+subtree have been evaluated. As a consequence, no values created in
+these objects will survive the rule evaluation if they are not stored
+in a persistent location (e.g., a top-level variable or the database).
+
+The embedded rules have access to all the variables and methods
+declared in higher-level rule files, and all the values produced up to
+their call (see also \ref{sec:volatile})
 
 \subsection{Functionality Provided by the Run-Time System}
 The following methods are declared in \texttt{src/main/resources/Agent.rudi};
@@ -680,22 +707,22 @@ their implementation is provided by Java itself or the \vonda framework.
 \pgr{Pre-added Java methods}
 \begin{small}
 \begin{lstlisting}
-[Object]. boolean equals(Object e);
-[String]. boolean startsWith(String s);
-[String]. boolean endsWith(String s);
-[String]. String substring(int i);
-[String]. String substring(int begin, int end);
-[String]. boolean isEmpty();
-[String]. int length();
+#Object boolean equals(Object e);
+#String boolean startsWith(String s);
+#String boolean endsWith(String s);
+#String String substring(int i);
+#String String substring(int begin, int end);
+#String boolean isEmpty();
+#String int length();
 
-[List<T>]. T get(int a);
-[Collection<T>]. void add(Object a);
-[Collection<T>]. boolean contains(Object a);
-[Collection<T>]. int size();
-[Collection<T>]. boolean isEmpty();
-[Map<S, T>]. boolean containsKey(S a);
-[Map<S, T>]. T get(S a);
-[Array<T>]. int length;
+#List<T> T get(int a);
+#Collection<T> void add(Object a);
+#Collection<T> boolean contains(Object a);
+#Collection<T> int size();
+#Collection<T> boolean isEmpty();
+#Map<S, T> boolean containsKey(S a);
+#Map<S, T> T get(S a);
+#Array<T> int length;
 \end{lstlisting}
 \end{small}
 
@@ -752,14 +779,14 @@ void cancelTimeout(String name);
 DialogueAct createEmitDA(DialogueAct da);
 DialogueAct emitDA(int delay, DialogueAct da);
 DialogueAct emitDA(DialogueAct da);
-[DialogueAct]. String getDialogueActType();
-[DialogueAct]. void setDialogueActType(String dat);
-[DialogueAct]. String getProposition();
-[DialogueAct]. void setProposition(String prop);
-[DialogueAct]. boolean hasSlot(String key);
-[DialogueAct]. String getValue(String key);
-[DialogueAct]. void setValue(String key, String val);
-[DialogueAct]. long getTimeStamp();
+#DialogueAct String getDialogueActType();
+#DialogueAct void setDialogueActType(String dat);
+#DialogueAct String getProposition();
+#DialogueAct void setProposition(String prop);
+#DialogueAct boolean hasSlot(String key);
+#DialogueAct String getValue(String key);
+#DialogueAct void setValue(String key, String val);
+#DialogueAct long getTimeStamp();
 
 // Access to dialogue acts of the current session
 // my last outgoing resp. the last incoming dialogue act
@@ -778,7 +805,7 @@ boolean waitingForResponse();
 void lastDAprocessed();
 
 DialogueAct addLastDA(DialogueAct newDA);
-[DialogueAct]. void setProposition(String prop);
+#DialogueAct void setProposition(String prop);
 \end{lstlisting}
 \end{small}
 
@@ -799,9 +826,9 @@ T first(Collection<T> coll, Function<Boolean, T> pred);
 \begin{small}
 \begin{lstlisting}
 Rdf toRdf(String uri);
-[Rdf]. String getURI();
-[Rdf]. boolean has(String predicate);
-[Rdf]. long getLastChange(boolean asSubject, boolean asObject);
+#Rdf String getURI();
+#Rdf boolean has(String predicate);
+#Rdf long getLastChange(boolean asSubject, boolean asObject);
 
 RdfClass getRdfClass(String s);
 boolean exists(Object o);

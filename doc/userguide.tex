@@ -45,7 +45,7 @@
 \begin{document}
 
 \title{\vonda\\\Large A Framework for Implementing Reactive Dialogue
-  Agents\\Version 3\todo[inline]{currently 2}}
+  Agents\\Version 3}
 
 \author{Bernd Kiefer, Anna Welker}
 \date{\today}
@@ -144,9 +144,8 @@ converts outgoing dialogue acts into natural language utterances and gestures.
 % and maybe tips and tricks?
 \chapter{\vonda Syntax Overview}
 \input{AllYouCanDo.rudi}
-\chapter{Breaking Changes to \vonda Version 2}
-\todo[inline]{fill}
-\section*{Syntax changes}
+\chapter{Changes to \vonda Version 2}
+\section*{Syntax changes (breaking changes)}
 \begin{itemize}
 \item the \texttt{import} keyword was replaced by
   \texttt{include}. \texttt{import} is now used exclusively like in
@@ -156,14 +155,15 @@ converts outgoing dialogue acts into natural language utterances and gestures.
   changed from
   \verb|[ SomeClass ]. myType Function ( argTypeA, argTypeB );| to
   \verb|# SomeClass myType Function (  argTypeA, argTypeB );|
-\item \texttt{``{}''} expansion syntax in field access In version 2,
-  if one of the identifiers in a field access chain (like
-  \texttt{child.name}) matched an existing variable of type string,
-  the identifier was replaced with the value of the variable. This
-  sometimes produced confusing results and unforeseen errors, and was
-  too hard to grasp for novel users. Therefore, this has been replaced
-  by the more visible approach also used for value expansion in the
-  dialogue act specifications (see section
+\item \verb|{<exp>}| expansion syntax in field access
+
+  In version 2, if one of the identifiers in a field access chain
+  (like \texttt{child.name}) matched an existing variable of type
+  string, the identifier was replaced with the value of the
+  variable. This sometimes produced confusing results and unforeseen
+  errors, and was too hard to grasp for novel users. Therefore, this
+  has been replaced by the more visible approach also used for value
+  expansion in the dialogue act specifications (see section
   \ref{sec:field_access_expansion}).
 \item developing an unambiguous grammar for the java cast syntax
   \texttt{((Type)val)} is very hard. The current parser generator
@@ -171,13 +171,27 @@ converts outgoing dialogue acts into natural language utterances and gestures.
   cases. Therefore, it has been replaced by an infix operato
   \texttt{isa}, so \texttt{((Type)val)} becomes \texttt{isa(Type,
     val)}.
-\item the same holds for Java lambda expressions (\verb|c -> <expression>|). They were also replaced by infix syntax:
-  \texttt{lambda(c)(expression)} resp. \texttt{lambda(c){expression}}
+\item the same holds for Java lambda1 expressions (\verb|c -> <expression>|). They were also replaced by infix syntax:
+  \texttt{lambda(c) expression} resp. \texttt{lambda(c){ statements;
+    }}
+\end{itemize}
+\section*{Configuration changes (breaking changes)}
+\begin{itemize}
+\item the formerly required extension of the run-time library
+  \texttt{Agent} class is now optional. You can still do this, and
+  specify the fully qualified name in the config file under
+  \texttt{agentBase}, or the compiler will make the top-level rule
+  class a subclass of \texttt{de.dfki.mlt.rudimant.agent.Agent}.
+\item If you want to provide a file for type definitions to help the
+  compiler, you have to specify it explicitely in the config under the
+  key \texttt{typeDef}. In version 2, it was named after the now
+  optional wrapper class, now it can take any name and is also optional
 \end{itemize}
 \section*{Additional built-in functionality}
+\todo[inline]{fill}
 \begin{itemize}
 \item Tokenizer for NLU
-\end{itemize}4
+\end{itemize}
 
 \bibliography{vonda}
 \bibliographystyle{plainnat}

@@ -177,18 +177,27 @@ information, please refer to the documentation of HFC.
 
 \section{Setting up the Basic Java Classes}
 
-First, the project's abstract (Java) ``agent'' class has to be implemented,
-which must be a subclass of \texttt{de.dfki.mlt.rudimant.agent.Agent}, a class
-in the run-time library of \vonda. Furthermore, you will need an implementation
-of \texttt{de.dfki.mlt.rudimant.agent.CommunicationHub}. To see an example of
-what these could contain, take a look in the source folder of \texttt{ChatCat}.
+First, we implement the project's abstract (Java) ``agent'' class as a
+subclass of \texttt{Agent} in package
+\texttt{de.dfki.mlt.rudimant.agent}, which is part of the run-time library
+of \vonda. In this simple case, this is not really necessary, and only
+provided to allow the functionality of the runtime library's \texttt{Agent}
+class to be modified. If you do this, you will need to specify the
+name of your specialised \texttt{Agent} class as
+\texttt{agentBaseClass} in the config file, otherwise, the topmost
+generated file will extend \texttt{de.dfki.mlt.rudimant.agent.Agent}.
 
-The two most important things here are that there is an active connection to a
-database (as an instance of \texttt{RdfProxy}) and that you have an instance of
-the beforementioned \vonda \texttt{Agent} wrapper implementation in your
-client. Of course this code can not compile until you build your first rule
-file, i.e., your \vonda Agent. Then, a \texttt{main} has to create an instance
-of your client and is started using the \texttt{startListening()} method.
+Furthermore, we implment a
+of \texttt{de.dfki.mlt.rudimant.agent.CommunicationHub}. To see an example of
+what that should contain, take a look in the source folder of \texttt{ChatCat}.
+
+The two most important things here are that there is an active
+connection to a database (as an instance of \texttt{RdfProxy}) and
+that you have an instance of the beforementioned \vonda \texttt{Agent}
+(or your extended implementation of it) in your client. Of course this
+code can not compile until you build your first rule file, i.e., your
+\vonda Agent. Then, a \texttt{main} has to create an instance of your
+client and is started using the \texttt{startListening()} method.
 
 We recommend to have a look at the classes of the ChatCat system as a base for
 your own system and extend it. It comes you with a very simple GUI to enter
@@ -201,9 +210,11 @@ Basically, you can connect any NLU and NLG components to your project that are
 able to create or, respectively, generate from dialogue acts of the format that
 \vonda currently uses (cfg. \ref{sec:caret}).
 
-Our example uses our SRGS implementation to build a primitive NLU and
-cplan\footnote{https://github.com/bkiefer/cplan} to create natural
-language out of the dialogue acts the agent outputs.
+Our example uses our SRGS
+implementation\footnote{\url{https://github.com/bkiefer/srgs2xml}} to
+build a primitive NLU and
+cplan\footnote{\url{https://github.com/bkiefer/cplan}} to create
+natural language out of the dialogue acts the agent outputs.
 
 \section{First Interaction Rules}
 
@@ -308,23 +319,30 @@ already in your \texttt{PATH} or to add \vonda's \texttt{bin} directory to it.
 
 Your \texttt{config.yml} should contain the following parameters for compilation:\\
 
-\begin{tabular}{ll}
-  \texttt{inputFile} & Relative to the current location, where is the
-                       top-level rule file?\\
-  \texttt{outputDirectory} & Relative to the current location, where should the compiled classes go?\\
-  \texttt{wrapperClass} & The name of your abstract Java Agent, including
-                          package prefix\\
-  \texttt{ontologyFile} &The path to your ontology \texttt{.yml}, relative to the current location\\
-  \texttt{rootPackage} &The topmost package to put the compiled Java classes in\\
-  \texttt{failOnError} &If \texttt{true} to exits compilation on any
-                         encountered type errors\footnote{Note that although
-                         \vonda's type checking is becoming more and more
-                         elaborate and reliable, it is by no means complete. In
-                         some cases, setting this switch to true might make
-                         your project uncompilable although when compiling it
-                         ignoring the type errors results in a perfectly sound
-                         Java project.}, otherwise continues\\
+\begin{tabular}{lp{.75\textwidth}}
+\texttt{inputFile}& Relative to the current location, where is the
+                     top-level rule file?\\
+\texttt{outputDirectory}& Relative to the current location, where
+                           should the compiled classes go?\\
+\texttt{agentBaseClass}& The name of your abstract Java Agent, including
+                          package prefix (optional)\\
+\texttt{typeDefs}& The name of a file containing type definitions
+                    for Java fields and methods that the compiler
+                    could not find out by itself (optional)\\
+\texttt{ontologyFile}&The path to your ontology \texttt{.yml},
+                        relative to the current location\\
+\texttt{rootPackage}&The topmost package to put the compiled Java
+                       classes in\\
+\texttt{failOnError}&If \texttt{true} to exit compilation on any
+                       encountered type errors, otherwise continues\\
 \end{tabular}\\
+
+Concerning the \texttt{failOnError} setting, keep in mind that
+although \vonda's type checking is becoming more and more elaborate
+and reliable, it is by no means complete. In some cases, setting this
+switch to true might make your project uncompilable although when
+compiling it ignoring the type errors results in a perfectly sound
+Java project.
 
 Since the compile and the runtime phase of \vonda need different information,
 e.g., the run-time phase needs NLU and NLG components, there are additional
