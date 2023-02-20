@@ -72,6 +72,8 @@ public class RudimantCompiler {
   // what should be logged in the rules (true = rudi code vs false = java code)
   private boolean versionToLog = true;
 
+  private String typeDefFileName = null;
+
   private File inputRootDir;
   private File outputRootDir;
 
@@ -105,10 +107,6 @@ public class RudimantCompiler {
   @SuppressWarnings("unchecked")
   public RudimantCompiler(File configDir, Map<String, Object> configs)
       throws IOException, WrongFormatException {
-    if(configs.get(CFG_WRAPPER_CLASS) == null) {
-      System.out.println("No implementation class specified, exiting.");
-      System.exit(1);
-    }
     startClient(configDir, configs);
     RdfProxy proxy = new RdfProxy(handler);
     if (configs.containsKey(CFG_NAME_TO_URI)) {
@@ -121,7 +119,7 @@ public class RudimantCompiler {
         ? ((String) configs.get(CFG_PACKAGE)).split("\\.")
         : new String[0];
     checkOutputDirectory(configDir, configs);
-    mem = new Mem(proxy, (String)configs.get(CFG_WRAPPER_CLASS), rootpkg);
+    mem = new Mem(proxy, (String)configs.get(CFG_AGENT_BASE_CLASS), rootpkg);
 
     if ((configs.containsKey(CFG_TYPE_ERROR_FATAL) &&
         (boolean)configs.get(CFG_TYPE_ERROR_FATAL))) {
@@ -135,6 +133,9 @@ public class RudimantCompiler {
     if (configs.containsKey(CFG_PRINT_ERRORS) &&
         (boolean) configs.get(CFG_PRINT_ERRORS)) {
       printErrors = true;
+    }
+    if (configs.containsKey(CFG_TYPE_DEFS_FILE)) {
+      typeDefFileName = (String) configs.get(CFG_TYPE_DEFS_FILE);
     }
   }
 
@@ -162,6 +163,27 @@ public class RudimantCompiler {
           AGENT_DEFS);
     } catch (IOException ex) {
       logger.error("Agent definitions file include fails: {}", ex);
+    }
+  }
+
+  /** Process the type definitions file, treating all definitions of fields and
+   *  methods
+   *
+   *  TODO: THIS SHOULD BE REPLACED BY ANALYSING THE SOURCE FILES IN THE PROJECT
+   *  AND THE CLASSPATH
+   */
+  public void readTypeDefFile() {
+    if (typeDefFileName != null) {
+      File typeDefFile = new File(inputRootDir, typeDefFileName);
+      try {
+        if (typeDefFile.exists()) {
+          parseAndTypecheck(this, new FileInputStream(typeDefFile), typeDefFile.getName());
+        } else {
+          logger.warn("Type declaration file {} not found", typeDefFile.getAbsolutePath());
+        }
+      } catch (IOException ex) {
+        logger.error("Type declaration file include: {}", ex);
+      }
     }
   }
 
@@ -196,18 +218,7 @@ public class RudimantCompiler {
 
     mem.enterClass(className, new String[0], null);
     readAgentSpecs();
-    String wrapperClass = mem.getWrapperClass();
-    File wrapperInit = new File(inputRootDir,
-        wrapperClass.substring(wrapperClass.lastIndexOf(".") + 1) + RULE_FILE_EXTENSION);
-    try {
-      if (wrapperInit.exists()) {
-        parseAndTypecheck(this, new FileInputStream(wrapperInit), wrapperInit.getName());
-      } else {
-        logger.warn("No method declaration file for {}", wrapperInit);
-      }
-    } catch (IOException ex) {
-      logger.error("Initializer file include: {}", ex);
-    }
+    readTypeDefFile();
     try {
       processForReal(className);
     } finally {

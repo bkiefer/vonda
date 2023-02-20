@@ -5,18 +5,7 @@
     - check the "final comments problem" and describe it
   - Improve the documentation
     +- check exisiting TODOs
-    - integrate new syntax changes
-      - include and import
-      - no more wrapper class
-      - "{exp}" syntax for field access
-      - cast expressions
-      - lambda expressions
-      - type declarations for external fields/methods
-  +- Get rid of wrapper class, and remove special loading of type
-     definitions except for Agent.rudi: seems to work fine!
-     - Drawback: you can not change functionality in Agent
-       (framework), for example Behaviour handling. That is definitely
-       a drawback!
+    - Create examples for attaching external ASR/NLU/NLG and document it
 
   + replace import by include
   + allow Java import statements at beginning of file only
@@ -52,6 +41,23 @@
   + get rid of reduce reduce conflicts
     + remove ARROW token, unused
     + integrate with the rest
+  + Improve the documentation
+    + integrate new syntax changes
+      + include and import
+      + optional wrapper class
+        + modify picture
+      + "{exp}" syntax for field access
+      + cast expressions
+      + lambda expressions
+      + type declarations for external fields/methods
+  + Make wrapper class optional
+    + Drawback if removed completely: you can not change functionality in Agent
+      (framework), for example Behaviour handling. That is definitely
+      a drawback!
+      --> call it agent base class in config, and make it optional, if
+      not given, extends from Agent(framework)
+  + Modify special loading of type definitions: config param to specify name
+    + except for Agent.rudi: seems to work fine!
 
 * Erleuchtung bzgl. Wrapperklasse: Agent vs. NaoAgent vs. PalAgent !!! JA FÜR 3.0
   1. NaoAgent scheint eigentlich eine klasse wie TimelineUtils zu sein (oder

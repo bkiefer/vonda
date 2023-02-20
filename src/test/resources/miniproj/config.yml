@@ -1,8 +1,9 @@
+inputFile:          AllYouCanDo.rudi
 outputDirectory:    src/main/generated
-wrapperClass:       mini.WrapperClass
+agentBase:          mini.WrapperClass
+typeDef:            WrapperClass.rudi
 ontologyFile:       ../ontologies/inits/pal.inference.yml
 failOnError:        false
-targetConstructor:
 rootPackage:        mini
 nameToURI:
   Activity : "<dom:Activity>"

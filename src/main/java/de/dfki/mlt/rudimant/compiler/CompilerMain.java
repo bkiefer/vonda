@@ -56,7 +56,7 @@ public class CompilerMain {
     { CFG_TYPE_ERROR_FATAL, false, "e" },
     { CFG_PRINT_ERRORS, true, "q" },
     { CFG_VISUALISE, false , "v" },
-    { CFG_WRAPPER_CLASS, "de.dfki.mlt.rudimant.agent.Agent", "w" },
+    { CFG_AGENT_BASE_CLASS, "de.dfki.mlt.rudimant.agent.Agent", "w" },
   };
 
   public static Map<String, Object> defaultConfig() {
@@ -150,7 +150,7 @@ public class CompilerMain {
       }
 
       if (options.has("w")) {
-        configs.put(CFG_WRAPPER_CLASS, options.valueOf("w"));
+        configs.put(CFG_AGENT_BASE_CLASS, options.valueOf("w"));
       }
       if (options.has("v")) {
         configs.put(CFG_VISUALISE, true);

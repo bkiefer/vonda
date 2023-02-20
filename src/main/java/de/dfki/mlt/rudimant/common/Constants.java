@@ -21,15 +21,17 @@ package de.dfki.mlt.rudimant.common;
 
 /** A set of constants only relevant at run-time and compilation */
 public interface Constants {
-  public static final String CFG_CLASS = "class";
+
+  // TODO: MAYBE ADD CONFIG FOR CHARSET USED IN SOURCE AND GENERATED FILES
 
   /** The location of the ontology configuration file, if any */
   public static final String CFG_ONTOLOGY_FILE = "ontologyFile";
 
   public static final String CFG_INPUT_FILE = "inputFile";
   public static final String CFG_OUTPUT_DIRECTORY = "outputDirectory";
-  public static final String CFG_WRAPPER_CLASS = "wrapperClass";
+  public static final String CFG_AGENT_BASE_CLASS = "agentBase";
   public static final String CFG_TYPE_ERROR_FATAL = "failOnError";
+  public static final String CFG_TYPE_DEFS_FILE = "typeDef";
   public static final String CFG_PRINT_ERRORS = "printErrors";
   public static final String CFG_PACKAGE = "rootPackage";
   public static final String CFG_NAME_TO_URI = "nameToURI";
@@ -37,10 +39,11 @@ public interface Constants {
   public static final String CFG_VISUALISE = "visualise";
   public static final String CFG_LOGGING = "logging";
 
-  // TODO: MAYBE ADD CONFIG FOR CHARSET USED IN SOURCE AND GENERATED FILES
-
   /** the port for the debugger to connect to the running system */
   public static final String CFG_DEBUG_PORT = "debugPort";
+
+  /** The class of NLG or NLU plugin classes */
+  public static final String CFG_CLASS = "class";
   /** NLG option section */
   public static final String CFG_NLG_KEY = "NLG";
   /** NLG mapper config */
