@@ -651,7 +651,7 @@ ComplexPrimaryNoParenthesis
   ;
 
 Literal
-  : STRING { $$ = setPos($1, @$); }
+  : STRING { $$ = $1; }
   | INT { $$ = setPos($1, @$); }
   | OTHER_LITERAL { $$ = setPos($1, @$); }
   | BOOL_LITERAL { $$ = setPos($1, @$); }
@@ -687,7 +687,7 @@ field_access
     $$ = setPos(new ExpFieldAccess($2), @$); $2.addFirst($1);
   }
   | STRING field_access_rest {
-    $$ = setPos(new ExpFieldAccess($2), @$); $2.addFirst(setPos($1, @$));
+    $$ = setPos(new ExpFieldAccess($2), @$); $2.addFirst(setPos($1, @1));
   }
   | function_call field_access_rest { $$ = setPos(new ExpFieldAccess($2), @$); $2.addFirst($1); }
   ;
@@ -752,7 +752,11 @@ da_token
   // Note: if not explicitly marked, variables are not treated as variabls in DAs
   //  | IDENTIFIER { $$ = setPos(new ExpIdentifier($1), @$); }
   | IDENTIFIER { $$ = setPos(new ExpLiteral($1, "String"), @$); }
-  | STRING { $$ = setPos($1, @$); }
+  | STRING {
+    Location loc = new Location($1.getLocation().getBegin().plusOne(),
+                                $1.getLocation().getEnd().minusOne());
+    $$ = setPos($1, loc);
+  }
   | WILDCARD { $$ = setPos(new ExpLiteral($1, "String"), @$); }
   ;
 

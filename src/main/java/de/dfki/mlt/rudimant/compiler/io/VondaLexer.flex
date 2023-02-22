@@ -347,7 +347,9 @@ SingleCharacter = [^\r\n\'\\]
   \"                             {
   yybegin(YYINITIAL);
   String s = string.toString();
-  yylval = new ExpLiteral(s, "String");
+  ExpLiteral lit = new ExpLiteral(s, "String");
+  lit.location = new Location(sstart, getEndPos());
+  yylval = lit;
   tokens.add(new Token('"' + s + '"', sstart, getEndPos()));
   return VondaGrammar.Lexer.STRING;
                                  }

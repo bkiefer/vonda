@@ -50,7 +50,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
 
   // imports* (comment grammar_rule | method_declaration | statement )* comment
   private List<RudiTree> rules;
-  private TokenHandler _th;
+  public TokenHandler _th;
 
   // **********************************************************************
   // static methods
@@ -79,8 +79,8 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
 
     // do the type checking, which also adds function and variable definitions
     // to Mem
-    gf.startTypeInference(rudi, rudi.typeErrorsFatal());
-    logger.info("Done type checking");
+    //gf.startTypeInference(rudi, rudi.typeErrorsFatal());
+    //xlogger.info("Done type checking");
     return gf;
   }
 
@@ -205,7 +205,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         }
         out.append(" return (res - 1);\n");
       } else if (r instanceof RTStatement) {
-        gv.gen((RTStatement)r);
+        gv.gen(r);
       }
     }
     out.append(PROCESS_SUFFIX);

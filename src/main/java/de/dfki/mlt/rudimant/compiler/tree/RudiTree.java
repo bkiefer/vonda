@@ -20,6 +20,7 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
 import de.dfki.mlt.rudimant.common.Location;
+import de.dfki.mlt.rudimant.common.Position;
 
 /**
  * all classes that can be created by the ParseTreeVisitor should implement this
@@ -46,6 +47,17 @@ public abstract class RudiTree {
     b.location = location;
     return b;
   }
+
+  /**
+   * set positions and fullexp of to those of this object
+   * @param Ruditree b
+   * @return
+   */
+  public <T extends RudiTree> T fixFields(T b, Position start) {
+    b.location = new Location(start, location.getEnd());
+    return b;
+  }
+
 
   public RTStatement ensureStatement() {
     if (this instanceof RTExpression) {

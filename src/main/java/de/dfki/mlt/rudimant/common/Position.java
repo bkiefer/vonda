@@ -68,6 +68,17 @@ public class Position implements Comparable<Position> {
     this.origin = msg;
   }
 
+  public Position plusOne() {
+    this.charpos++;
+    this.column++;
+    return this;
+  }
+
+  public Position minusOne() {
+    this.charpos--;
+    this.column--;
+    return this;
+  }
   @Override
   public boolean equals(Object o) {
     if (! (o instanceof Position)) return false;

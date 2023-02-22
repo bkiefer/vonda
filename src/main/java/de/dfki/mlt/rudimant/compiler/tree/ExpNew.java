@@ -1,5 +1,5 @@
 /*
- * The Creative Commons CC-BY-NC 4.0 License
+ * The Creative Commons CC-BY-NC c4.0 License
  *
  * http://creativecommons.org/licenses/by-nc/4.0/legalcode
  *
@@ -19,6 +19,7 @@
 
 package de.dfki.mlt.rudimant.compiler.tree;
 
+import java.util.Collections;
 import java.util.List;
 
 import de.dfki.mlt.rudimant.compiler.Type;
@@ -61,6 +62,6 @@ public class ExpNew extends RTExpression {
 
   @Override
   public Iterable<? extends RudiTree> getDtrs() {
-    return params;
+    return params == null ? Collections.emptyList() : params;
   }
 }

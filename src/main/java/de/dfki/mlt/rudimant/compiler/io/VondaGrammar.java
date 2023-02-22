@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.4.1.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Skeleton implementation for Bison LALR(1) parsers in Java
 
-   Copyright (C) 2007-2015, 2018 Free Software Foundation, Inc.
+   Copyright (C) 2007-2015, 2018-2021 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -30,10 +30,16 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
+
 package de.dfki.mlt.rudimant.compiler.io;
 
 
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
 /* "%code imports" blocks.  */
 /* "VondaGrammar.y":3  */
 
@@ -46,7 +52,7 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 
 @SuppressWarnings({"serial", "unchecked", "fallthrough", "unused"})
 
-/* "VondaGrammar.java":50  */
+/* "VondaGrammar.java":56  */
 
 /**
  * A Bison parser, automatically generated from <tt>VondaGrammar.y</tt>.
@@ -55,11 +61,12 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
  */
 public class VondaGrammar
 {
-    /** Version number for the Bison executable that generated this parser.  */
-  public static final String bisonVersion = "3.4.1";
+  /** Version number for the Bison executable that generated this parser.  */
+  public static final String bisonVersion = "3.8.2";
 
   /** Name of the skeleton that generated this parser.  */
   public static final String bisonSkeleton = "lalr1.java";
+
 
 
   /**
@@ -68,7 +75,7 @@ public class VondaGrammar
   private boolean yyErrorVerbose = true;
 
   /**
-   * Return whether verbose error messages are enabled.
+   * Whether verbose error messages are enabled.
    */
   public final boolean getErrorVerbose() { return yyErrorVerbose; }
 
@@ -87,7 +94,7 @@ public class VondaGrammar
    * Locations represent a part of the input through the beginning
    * and ending positions.
    */
-  public class Location {
+  public static class Location {
     /**
      * The first, inclusive, position in the range.
      */
@@ -122,131 +129,490 @@ public class VondaGrammar
      * <code>Position</code> should override the <code>equals</code>
      * method.
      */
-    public String toString () {
+    public String toString() {
       if (begin.equals (end))
-        return begin.toString ();
+        return begin.toString();
       else
-        return begin.toString () + "-" + end.toString ();
+        return begin.toString() + "-" + end.toString();
     }
   }
 
-
-
-  
-  private Location yylloc (YYStack rhs, int n)
+  private Location yylloc(YYStack rhs, int n)
   {
-    if (n > 0)
-      return new Location (rhs.locationAt (n-1).begin, rhs.locationAt (0).end);
+    if (0 < n)
+      return new Location(rhs.locationAt(n-1).begin, rhs.locationAt(0).end);
     else
-      return new Location (rhs.locationAt (0).end);
+      return new Location(rhs.locationAt(0).end);
   }
+
+  public enum SymbolKind
+  {
+    S_YYEOF(0),                    /* "end of file"  */
+    S_YYerror(1),                  /* error  */
+    S_YYUNDEF(2),                  /* "invalid token"  */
+    S_BREAK(3),                    /* BREAK  */
+    S_CANCEL(4),                   /* CANCEL  */
+    S_CANCEL_ALL(5),               /* CANCEL_ALL  */
+    S_CASE(6),                     /* CASE  */
+    S_CONTINUE(7),                 /* CONTINUE  */
+    S_DEFAULT(8),                  /* DEFAULT  */
+    S_DO(9),                       /* DO  */
+    S_ELSE(10),                    /* ELSE  */
+    S_FINAL(11),                   /* FINAL  */
+    S_FOR(12),                     /* FOR  */
+    S_IF(13),                      /* IF  */
+    S_IMPORT(14),                  /* IMPORT  */
+    S_NEW(15),                     /* NEW  */
+    S_NULL(16),                    /* NULL  */
+    S_PRIVATE(17),                 /* PRIVATE  */
+    S_PROPOSE(18),                 /* PROPOSE  */
+    S_PROTECTED(19),               /* PROTECTED  */
+    S_PUBLIC(20),                  /* PUBLIC  */
+    S_RETURN(21),                  /* RETURN  */
+    S_SWITCH(22),                  /* SWITCH  */
+    S_TIMEOUT(23),                 /* TIMEOUT  */
+    S_WHILE(24),                   /* WHILE  */
+    S_ARROW(25),                   /* ARROW  */
+    S_ANDAND(26),                  /* ANDAND  */
+    S_OROR(27),                    /* OROR  */
+    S_EQEQ(28),                    /* EQEQ  */
+    S_NOTEQ(29),                   /* NOTEQ  */
+    S_GTEQ(30),                    /* GTEQ  */
+    S_LTEQ(31),                    /* LTEQ  */
+    S_MINUSEQ(32),                 /* MINUSEQ  */
+    S_PLUSEQ(33),                  /* PLUSEQ  */
+    S_MINUSMINUS(34),              /* MINUSMINUS  */
+    S_PLUSPLUS(35),                /* PLUSPLUS  */
+    S_STRING(36),                  /* STRING  */
+    S_WILDCARD(37),                /* WILDCARD  */
+    S_INT(38),                     /* INT  */
+    S_BOOL_LITERAL(39),            /* BOOL_LITERAL  */
+    S_IDENTIFIER(40),              /* IDENTIFIER  */
+    S_OTHER_LITERAL(41),           /* OTHER_LITERAL  */
+    S_42_(42),                     /* ';'  */
+    S_43_(43),                     /* '.'  */
+    S_44_(44),                     /* '{'  */
+    S_45_(45),                     /* '}'  */
+    S_46_(46),                     /* ':'  */
+    S_47_(47),                     /* '('  */
+    S_48_(48),                     /* ')'  */
+    S_49_(49),                     /* ','  */
+    S_50_(50),                     /* '['  */
+    S_51_(51),                     /* ']'  */
+    S_52_(52),                     /* '='  */
+    S_53_(53),                     /* '<'  */
+    S_54_(54),                     /* '>'  */
+    S_55_(55),                     /* '|'  */
+    S_56_(56),                     /* '^'  */
+    S_57_(57),                     /* '&'  */
+    S_58_(58),                     /* '+'  */
+    S_59_(59),                     /* '-'  */
+    S_60_(60),                     /* '*'  */
+    S_61_(61),                     /* '/'  */
+    S_62_(62),                     /* '%'  */
+    S_63_(63),                     /* '!'  */
+    S_64_(64),                     /* '~'  */
+    S_65_(65),                     /* '?'  */
+    S_66_(66),                     /* '#'  */
+    S_YYACCEPT(67),                /* $accept  */
+    S_grammar_file(68),            /* grammar_file  */
+    S_visibility_spec(69),         /* visibility_spec  */
+    S_imports(70),                 /* imports  */
+    S_path(71),                    /* path  */
+    S_statement_no_def(72),        /* statement_no_def  */
+    S_statement(73),               /* statement  */
+    S_blk_statement(74),           /* blk_statement  */
+    S_block(75),                   /* block  */
+    S_statements(76),              /* statements  */
+    S_grammar_rule(77),            /* grammar_rule  */
+    S_return_statement(78),        /* return_statement  */
+    S_if_statement(79),            /* if_statement  */
+    S_while_statement(80),         /* while_statement  */
+    S_for_statement(81),           /* for_statement  */
+    S_var_decl(82),                /* var_decl  */
+    S_propose_statement(83),       /* propose_statement  */
+    S_timeout_statement(84),       /* timeout_statement  */
+    S_switch_statement(85),        /* switch_statement  */
+    S_label_statement(86),         /* label_statement  */
+    S_var_def(87),                 /* var_def  */
+    S_field_def(88),               /* field_def  */
+    S_assgn_exp(89),               /* assgn_exp  */
+    S_nonempty_exp_list(90),       /* nonempty_exp_list  */
+    S_method_declaration(91),      /* method_declaration  */
+    S_opt_block(92),               /* opt_block  */
+    S_opt_args_list(93),           /* opt_args_list  */
+    S_args_list(94),               /* args_list  */
+    S_set_operation(95),           /* set_operation  */
+    S_function_call(96),           /* function_call  */
+    S_nonempty_args_list(97),      /* nonempty_args_list  */
+    S_type_spec(98),               /* type_spec  */
+    S_type_spec_list(99),          /* type_spec_list  */
+    S_ConditionalOrExpression(100), /* ConditionalOrExpression  */
+    S_ConditionalAndExpression(101), /* ConditionalAndExpression  */
+    S_InclusiveOrExpression(102),  /* InclusiveOrExpression  */
+    S_ExclusiveOrExpression(103),  /* ExclusiveOrExpression  */
+    S_AndExpression(104),          /* AndExpression  */
+    S_EqualityExpression(105),     /* EqualityExpression  */
+    S_RelationalExpression(106),   /* RelationalExpression  */
+    S_AdditiveExpression(107),     /* AdditiveExpression  */
+    S_MultiplicativeExpression(108), /* MultiplicativeExpression  */
+    S_CastExpression(109),         /* CastExpression  */
+    S_UnaryExpression(110),        /* UnaryExpression  */
+    S_LogicalUnaryExpression(111), /* LogicalUnaryExpression  */
+    S_PostfixExpression(112),      /* PostfixExpression  */
+    S_PrimaryExpression(113),      /* PrimaryExpression  */
+    S_NotJustName(114),            /* NotJustName  */
+    S_ComplexPrimary(115),         /* ComplexPrimary  */
+    S_ComplexPrimaryNoParenthesis(116), /* ComplexPrimaryNoParenthesis  */
+    S_Literal(117),                /* Literal  */
+    S_ArrayAccess(118),            /* ArrayAccess  */
+    S_ConditionalExpression(119),  /* ConditionalExpression  */
+    S_assignment(120),             /* assignment  */
+    S_field_access(121),           /* field_access  */
+    S_field_access_rest(122),      /* field_access_rest  */
+    S_simple_nofa_exp(123),        /* simple_nofa_exp  */
+    S_new_exp(124),                /* new_exp  */
+    S_lambda_exp(125),             /* lambda_exp  */
+    S_dialogueact_exp(126),        /* dialogueact_exp  */
+    S_da_token(127),               /* da_token  */
+    S_da_args(128),                /* da_args  */
+    S_exp(129);                    /* exp  */
+
+
+    private final int yycode_;
+
+    SymbolKind (int n) {
+      this.yycode_ = n;
+    }
+
+    private static final SymbolKind[] values_ = {
+      SymbolKind.S_YYEOF,
+      SymbolKind.S_YYerror,
+      SymbolKind.S_YYUNDEF,
+      SymbolKind.S_BREAK,
+      SymbolKind.S_CANCEL,
+      SymbolKind.S_CANCEL_ALL,
+      SymbolKind.S_CASE,
+      SymbolKind.S_CONTINUE,
+      SymbolKind.S_DEFAULT,
+      SymbolKind.S_DO,
+      SymbolKind.S_ELSE,
+      SymbolKind.S_FINAL,
+      SymbolKind.S_FOR,
+      SymbolKind.S_IF,
+      SymbolKind.S_IMPORT,
+      SymbolKind.S_NEW,
+      SymbolKind.S_NULL,
+      SymbolKind.S_PRIVATE,
+      SymbolKind.S_PROPOSE,
+      SymbolKind.S_PROTECTED,
+      SymbolKind.S_PUBLIC,
+      SymbolKind.S_RETURN,
+      SymbolKind.S_SWITCH,
+      SymbolKind.S_TIMEOUT,
+      SymbolKind.S_WHILE,
+      SymbolKind.S_ARROW,
+      SymbolKind.S_ANDAND,
+      SymbolKind.S_OROR,
+      SymbolKind.S_EQEQ,
+      SymbolKind.S_NOTEQ,
+      SymbolKind.S_GTEQ,
+      SymbolKind.S_LTEQ,
+      SymbolKind.S_MINUSEQ,
+      SymbolKind.S_PLUSEQ,
+      SymbolKind.S_MINUSMINUS,
+      SymbolKind.S_PLUSPLUS,
+      SymbolKind.S_STRING,
+      SymbolKind.S_WILDCARD,
+      SymbolKind.S_INT,
+      SymbolKind.S_BOOL_LITERAL,
+      SymbolKind.S_IDENTIFIER,
+      SymbolKind.S_OTHER_LITERAL,
+      SymbolKind.S_42_,
+      SymbolKind.S_43_,
+      SymbolKind.S_44_,
+      SymbolKind.S_45_,
+      SymbolKind.S_46_,
+      SymbolKind.S_47_,
+      SymbolKind.S_48_,
+      SymbolKind.S_49_,
+      SymbolKind.S_50_,
+      SymbolKind.S_51_,
+      SymbolKind.S_52_,
+      SymbolKind.S_53_,
+      SymbolKind.S_54_,
+      SymbolKind.S_55_,
+      SymbolKind.S_56_,
+      SymbolKind.S_57_,
+      SymbolKind.S_58_,
+      SymbolKind.S_59_,
+      SymbolKind.S_60_,
+      SymbolKind.S_61_,
+      SymbolKind.S_62_,
+      SymbolKind.S_63_,
+      SymbolKind.S_64_,
+      SymbolKind.S_65_,
+      SymbolKind.S_66_,
+      SymbolKind.S_YYACCEPT,
+      SymbolKind.S_grammar_file,
+      SymbolKind.S_visibility_spec,
+      SymbolKind.S_imports,
+      SymbolKind.S_path,
+      SymbolKind.S_statement_no_def,
+      SymbolKind.S_statement,
+      SymbolKind.S_blk_statement,
+      SymbolKind.S_block,
+      SymbolKind.S_statements,
+      SymbolKind.S_grammar_rule,
+      SymbolKind.S_return_statement,
+      SymbolKind.S_if_statement,
+      SymbolKind.S_while_statement,
+      SymbolKind.S_for_statement,
+      SymbolKind.S_var_decl,
+      SymbolKind.S_propose_statement,
+      SymbolKind.S_timeout_statement,
+      SymbolKind.S_switch_statement,
+      SymbolKind.S_label_statement,
+      SymbolKind.S_var_def,
+      SymbolKind.S_field_def,
+      SymbolKind.S_assgn_exp,
+      SymbolKind.S_nonempty_exp_list,
+      SymbolKind.S_method_declaration,
+      SymbolKind.S_opt_block,
+      SymbolKind.S_opt_args_list,
+      SymbolKind.S_args_list,
+      SymbolKind.S_set_operation,
+      SymbolKind.S_function_call,
+      SymbolKind.S_nonempty_args_list,
+      SymbolKind.S_type_spec,
+      SymbolKind.S_type_spec_list,
+      SymbolKind.S_ConditionalOrExpression,
+      SymbolKind.S_ConditionalAndExpression,
+      SymbolKind.S_InclusiveOrExpression,
+      SymbolKind.S_ExclusiveOrExpression,
+      SymbolKind.S_AndExpression,
+      SymbolKind.S_EqualityExpression,
+      SymbolKind.S_RelationalExpression,
+      SymbolKind.S_AdditiveExpression,
+      SymbolKind.S_MultiplicativeExpression,
+      SymbolKind.S_CastExpression,
+      SymbolKind.S_UnaryExpression,
+      SymbolKind.S_LogicalUnaryExpression,
+      SymbolKind.S_PostfixExpression,
+      SymbolKind.S_PrimaryExpression,
+      SymbolKind.S_NotJustName,
+      SymbolKind.S_ComplexPrimary,
+      SymbolKind.S_ComplexPrimaryNoParenthesis,
+      SymbolKind.S_Literal,
+      SymbolKind.S_ArrayAccess,
+      SymbolKind.S_ConditionalExpression,
+      SymbolKind.S_assignment,
+      SymbolKind.S_field_access,
+      SymbolKind.S_field_access_rest,
+      SymbolKind.S_simple_nofa_exp,
+      SymbolKind.S_new_exp,
+      SymbolKind.S_lambda_exp,
+      SymbolKind.S_dialogueact_exp,
+      SymbolKind.S_da_token,
+      SymbolKind.S_da_args,
+      SymbolKind.S_exp
+    };
+
+    static final SymbolKind get(int code) {
+      return values_[code];
+    }
+
+    public final int getCode() {
+      return this.yycode_;
+    }
+
+    /* Return YYSTR after stripping away unnecessary quotes and
+       backslashes, so that it's suitable for yyerror.  The heuristic is
+       that double-quoting is unnecessary unless the string contains an
+       apostrophe, a comma, or backslash (other than backslash-backslash).
+       YYSTR is taken from yytname.  */
+    private static String yytnamerr_(String yystr)
+    {
+      if (yystr.charAt (0) == '"')
+        {
+          StringBuffer yyr = new StringBuffer();
+          strip_quotes: for (int i = 1; i < yystr.length(); i++)
+            switch (yystr.charAt(i))
+              {
+              case '\'':
+              case ',':
+                break strip_quotes;
+
+              case '\\':
+                if (yystr.charAt(++i) != '\\')
+                  break strip_quotes;
+                /* Fall through.  */
+              default:
+                yyr.append(yystr.charAt(i));
+                break;
+
+              case '"':
+                return yyr.toString();
+              }
+        }
+      return yystr;
+    }
+
+    /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
+       First, the terminals, then, starting at \a YYNTOKENS_, nonterminals.  */
+    private static final String[] yytname_ = yytname_init();
+  private static final String[] yytname_init()
+  {
+    return new String[]
+    {
+  "\"end of file\"", "error", "\"invalid token\"", "BREAK", "CANCEL",
+  "CANCEL_ALL", "CASE", "CONTINUE", "DEFAULT", "DO", "ELSE", "FINAL",
+  "FOR", "IF", "IMPORT", "NEW", "NULL", "PRIVATE", "PROPOSE", "PROTECTED",
+  "PUBLIC", "RETURN", "SWITCH", "TIMEOUT", "WHILE", "ARROW", "ANDAND",
+  "OROR", "EQEQ", "NOTEQ", "GTEQ", "LTEQ", "MINUSEQ", "PLUSEQ",
+  "MINUSMINUS", "PLUSPLUS", "STRING", "WILDCARD", "INT", "BOOL_LITERAL",
+  "IDENTIFIER", "OTHER_LITERAL", "';'", "'.'", "'{'", "'}'", "':'", "'('",
+  "')'", "','", "'['", "']'", "'='", "'<'", "'>'", "'|'", "'^'", "'&'",
+  "'+'", "'-'", "'*'", "'/'", "'%'", "'!'", "'~'", "'?'", "'#'", "$accept",
+  "grammar_file", "visibility_spec", "imports", "path", "statement_no_def",
+  "statement", "blk_statement", "block", "statements", "grammar_rule",
+  "return_statement", "if_statement", "while_statement", "for_statement",
+  "var_decl", "propose_statement", "timeout_statement", "switch_statement",
+  "label_statement", "var_def", "field_def", "assgn_exp",
+  "nonempty_exp_list", "method_declaration", "opt_block", "opt_args_list",
+  "args_list", "set_operation", "function_call", "nonempty_args_list",
+  "type_spec", "type_spec_list", "ConditionalOrExpression",
+  "ConditionalAndExpression", "InclusiveOrExpression",
+  "ExclusiveOrExpression", "AndExpression", "EqualityExpression",
+  "RelationalExpression", "AdditiveExpression", "MultiplicativeExpression",
+  "CastExpression", "UnaryExpression", "LogicalUnaryExpression",
+  "PostfixExpression", "PrimaryExpression", "NotJustName",
+  "ComplexPrimary", "ComplexPrimaryNoParenthesis", "Literal",
+  "ArrayAccess", "ConditionalExpression", "assignment", "field_access",
+  "field_access_rest", "simple_nofa_exp", "new_exp", "lambda_exp",
+  "dialogueact_exp", "da_token", "da_args", "exp", null
+    };
+  }
+
+    /* The user-facing name of this symbol.  */
+    public final String getName() {
+      return yytnamerr_(yytname_[yycode_]);
+    }
+
+  };
+
 
   /**
    * Communication interface between the scanner and the Bison-generated
    * parser <tt>VondaGrammar</tt>.
    */
   public interface Lexer {
-    /** Token returned by the scanner to signal the end of its input.  */
-    public static final int EOF = 0;
-
-/* Tokens.  */
-    /** Token number,to be returned by the scanner.  */
+    /* Token kinds.  */
+    /** Token "end of file", to be returned by the scanner.  */
+    static final int YYEOF = 0;
+    /** Token error, to be returned by the scanner.  */
+    static final int YYerror = 256;
+    /** Token "invalid token", to be returned by the scanner.  */
+    static final int YYUNDEF = 257;
+    /** Token BREAK, to be returned by the scanner.  */
     static final int BREAK = 258;
-    /** Token number,to be returned by the scanner.  */
+    /** Token CANCEL, to be returned by the scanner.  */
     static final int CANCEL = 259;
-    /** Token number,to be returned by the scanner.  */
+    /** Token CANCEL_ALL, to be returned by the scanner.  */
     static final int CANCEL_ALL = 260;
-    /** Token number,to be returned by the scanner.  */
+    /** Token CASE, to be returned by the scanner.  */
     static final int CASE = 261;
-    /** Token number,to be returned by the scanner.  */
+    /** Token CONTINUE, to be returned by the scanner.  */
     static final int CONTINUE = 262;
-    /** Token number,to be returned by the scanner.  */
+    /** Token DEFAULT, to be returned by the scanner.  */
     static final int DEFAULT = 263;
-    /** Token number,to be returned by the scanner.  */
+    /** Token DO, to be returned by the scanner.  */
     static final int DO = 264;
-    /** Token number,to be returned by the scanner.  */
+    /** Token ELSE, to be returned by the scanner.  */
     static final int ELSE = 265;
-    /** Token number,to be returned by the scanner.  */
+    /** Token FINAL, to be returned by the scanner.  */
     static final int FINAL = 266;
-    /** Token number,to be returned by the scanner.  */
+    /** Token FOR, to be returned by the scanner.  */
     static final int FOR = 267;
-    /** Token number,to be returned by the scanner.  */
+    /** Token IF, to be returned by the scanner.  */
     static final int IF = 268;
-    /** Token number,to be returned by the scanner.  */
+    /** Token IMPORT, to be returned by the scanner.  */
     static final int IMPORT = 269;
-    /** Token number,to be returned by the scanner.  */
+    /** Token NEW, to be returned by the scanner.  */
     static final int NEW = 270;
-    /** Token number,to be returned by the scanner.  */
+    /** Token NULL, to be returned by the scanner.  */
     static final int NULL = 271;
-    /** Token number,to be returned by the scanner.  */
+    /** Token PRIVATE, to be returned by the scanner.  */
     static final int PRIVATE = 272;
-    /** Token number,to be returned by the scanner.  */
+    /** Token PROPOSE, to be returned by the scanner.  */
     static final int PROPOSE = 273;
-    /** Token number,to be returned by the scanner.  */
+    /** Token PROTECTED, to be returned by the scanner.  */
     static final int PROTECTED = 274;
-    /** Token number,to be returned by the scanner.  */
+    /** Token PUBLIC, to be returned by the scanner.  */
     static final int PUBLIC = 275;
-    /** Token number,to be returned by the scanner.  */
+    /** Token RETURN, to be returned by the scanner.  */
     static final int RETURN = 276;
-    /** Token number,to be returned by the scanner.  */
+    /** Token SWITCH, to be returned by the scanner.  */
     static final int SWITCH = 277;
-    /** Token number,to be returned by the scanner.  */
+    /** Token TIMEOUT, to be returned by the scanner.  */
     static final int TIMEOUT = 278;
-    /** Token number,to be returned by the scanner.  */
+    /** Token WHILE, to be returned by the scanner.  */
     static final int WHILE = 279;
-    /** Token number,to be returned by the scanner.  */
+    /** Token ARROW, to be returned by the scanner.  */
     static final int ARROW = 280;
-    /** Token number,to be returned by the scanner.  */
+    /** Token ANDAND, to be returned by the scanner.  */
     static final int ANDAND = 281;
-    /** Token number,to be returned by the scanner.  */
+    /** Token OROR, to be returned by the scanner.  */
     static final int OROR = 282;
-    /** Token number,to be returned by the scanner.  */
+    /** Token EQEQ, to be returned by the scanner.  */
     static final int EQEQ = 283;
-    /** Token number,to be returned by the scanner.  */
+    /** Token NOTEQ, to be returned by the scanner.  */
     static final int NOTEQ = 284;
-    /** Token number,to be returned by the scanner.  */
+    /** Token GTEQ, to be returned by the scanner.  */
     static final int GTEQ = 285;
-    /** Token number,to be returned by the scanner.  */
+    /** Token LTEQ, to be returned by the scanner.  */
     static final int LTEQ = 286;
-    /** Token number,to be returned by the scanner.  */
+    /** Token MINUSEQ, to be returned by the scanner.  */
     static final int MINUSEQ = 287;
-    /** Token number,to be returned by the scanner.  */
+    /** Token PLUSEQ, to be returned by the scanner.  */
     static final int PLUSEQ = 288;
-    /** Token number,to be returned by the scanner.  */
+    /** Token MINUSMINUS, to be returned by the scanner.  */
     static final int MINUSMINUS = 289;
-    /** Token number,to be returned by the scanner.  */
+    /** Token PLUSPLUS, to be returned by the scanner.  */
     static final int PLUSPLUS = 290;
-    /** Token number,to be returned by the scanner.  */
+    /** Token STRING, to be returned by the scanner.  */
     static final int STRING = 291;
-    /** Token number,to be returned by the scanner.  */
+    /** Token WILDCARD, to be returned by the scanner.  */
     static final int WILDCARD = 292;
-    /** Token number,to be returned by the scanner.  */
+    /** Token INT, to be returned by the scanner.  */
     static final int INT = 293;
-    /** Token number,to be returned by the scanner.  */
+    /** Token BOOL_LITERAL, to be returned by the scanner.  */
     static final int BOOL_LITERAL = 294;
-    /** Token number,to be returned by the scanner.  */
+    /** Token IDENTIFIER, to be returned by the scanner.  */
     static final int IDENTIFIER = 295;
-    /** Token number,to be returned by the scanner.  */
+    /** Token OTHER_LITERAL, to be returned by the scanner.  */
     static final int OTHER_LITERAL = 296;
 
+    /** Deprecated, use YYEOF instead.  */
+    public static final int EOF = YYEOF;
 
     /**
      * Method to retrieve the beginning position of the last scanned token.
      * @return the position at which the last scanned token starts.
      */
-    Position getStartPos ();
+    Position getStartPos();
 
     /**
      * Method to retrieve the ending position of the last scanned token.
      * @return the first position beyond the last scanned token.
      */
-    Position getEndPos ();
+    Position getEndPos();
 
     /**
      * Method to retrieve the semantic value of the last scanned token.
      * @return the semantic value of the last scanned token.
      */
-    Object getLVal ();
+    Object getLVal();
 
     /**
      * Entry point for the scanner.  Returns the token identifier corresponding
@@ -254,25 +620,27 @@ public class VondaGrammar
      * and beginning/ending positions of the token.
      * @return the token identifier corresponding to the next token.
      */
-    int yylex () throws java.io.IOException;
+    int yylex() throws java.io.IOException;
 
     /**
-     * Entry point for error reporting.  Emits an error
-     * referring to the given location in a user-defined way.
+     * Emit an error referring to the given locationin a user-defined way.
      *
      * @param loc The location of the element to which the
-     *                error message is related
+     *                error message is related.
      * @param msg The string for the error message.
      */
-     void yyerror (Location loc, String msg);
+     void yyerror(Location loc, String msg);
+
+
   }
+
 
   /**
    * The object doing lexical analysis for us.
    */
   private Lexer yylexer;
-  
-  
+
+
 
 
 
@@ -280,20 +648,20 @@ public class VondaGrammar
    * Instantiates the Bison-generated parser.
    * @param yylexer The scanner that will supply tokens to the parser.
    */
-  public VondaGrammar (Lexer yylexer) 
+  public VondaGrammar(Lexer yylexer)
   {
-    
+
     this.yylexer = yylexer;
-    
+
   }
+
 
   private java.io.PrintStream yyDebugStream = System.err;
 
   /**
-   * Return the <tt>PrintStream</tt> on which the debugging output is
-   * printed.
+   * The <tt>PrintStream</tt> on which the debugging output is printed.
    */
-  public final java.io.PrintStream getDebugStream () { return yyDebugStream; }
+  public final java.io.PrintStream getDebugStream() { return yyDebugStream; }
 
   /**
    * Set the <tt>PrintStream</tt> on which the debug output is printed.
@@ -316,14 +684,21 @@ public class VondaGrammar
    */
   public final void setDebugLevel(int level) { yydebug = level; }
 
+
+  private int yynerrs = 0;
+
+  /**
+   * The number of syntax errors so far.
+   */
+  public final int getNumberOfErrors() { return yynerrs; }
+
   /**
    * Print an error message via the lexer.
    * Use a <code>null</code> location.
    * @param msg The error message.
    */
-  public final void yyerror (String msg)
-  {
-    yylexer.yyerror ((Location)null, msg);
+  public final void yyerror(String msg) {
+      yylexer.yyerror((Location)null, msg);
   }
 
   /**
@@ -331,9 +706,8 @@ public class VondaGrammar
    * @param loc The location associated with the message.
    * @param msg The error message.
    */
-  public final void yyerror (Location loc, String msg)
-  {
-    yylexer.yyerror (loc, msg);
+  public final void yyerror(Location loc, String msg) {
+      yylexer.yyerror(loc, msg);
   }
 
   /**
@@ -341,14 +715,18 @@ public class VondaGrammar
    * @param pos The position associated with the message.
    * @param msg The error message.
    */
-  public final void yyerror (Position pos, String msg)
-  {
-    yylexer.yyerror (new Location (pos), msg);
+  public final void yyerror(Position pos, String msg) {
+      yylexer.yyerror(new Location (pos), msg);
   }
 
-  protected final void yycdebug (String s) {
-    if (yydebug > 0)
-      yyDebugStream.println (s);
+  protected final void yycdebugNnl(String s) {
+    if (0 < yydebug)
+      yyDebugStream.print(s);
+  }
+
+  protected final void yycdebug(String s) {
+    if (0 < yydebug)
+      yyDebugStream.println(s);
   }
 
   private final class YYStack {
@@ -359,65 +737,63 @@ public class VondaGrammar
     public int size = 16;
     public int height = -1;
 
-    public final void push (int state, Object value                            , Location loc) {
+    public final void push(int state, Object value, Location loc) {
       height++;
-      if (size == height)
-        {
-          int[] newStateStack = new int[size * 2];
-          System.arraycopy (stateStack, 0, newStateStack, 0, height);
-          stateStack = newStateStack;
-          
-          Location[] newLocStack = new Location[size * 2];
-          System.arraycopy (locStack, 0, newLocStack, 0, height);
-          locStack = newLocStack;
+      if (size == height) {
+        int[] newStateStack = new int[size * 2];
+        System.arraycopy(stateStack, 0, newStateStack, 0, height);
+        stateStack = newStateStack;
+        Location[] newLocStack = new Location[size * 2];
+        System.arraycopy(locStack, 0, newLocStack, 0, height);
+        locStack = newLocStack;
 
-          Object[] newValueStack = new Object[size * 2];
-          System.arraycopy (valueStack, 0, newValueStack, 0, height);
-          valueStack = newValueStack;
+        Object[] newValueStack = new Object[size * 2];
+        System.arraycopy(valueStack, 0, newValueStack, 0, height);
+        valueStack = newValueStack;
 
-          size *= 2;
-        }
+        size *= 2;
+      }
 
       stateStack[height] = state;
       locStack[height] = loc;
       valueStack[height] = value;
     }
 
-    public final void pop () {
-      pop (1);
+    public final void pop() {
+      pop(1);
     }
 
-    public final void pop (int num) {
+    public final void pop(int num) {
       // Avoid memory leaks... garbage collection is a white lie!
-      if (num > 0) {
-        java.util.Arrays.fill (valueStack, height - num + 1, height + 1, null);
-        java.util.Arrays.fill (locStack, height - num + 1, height + 1, null);
+      if (0 < num) {
+        java.util.Arrays.fill(valueStack, height - num + 1, height + 1, null);
+        java.util.Arrays.fill(locStack, height - num + 1, height + 1, null);
       }
       height -= num;
     }
 
-    public final int stateAt (int i) {
+    public final int stateAt(int i) {
       return stateStack[height - i];
     }
 
-    public final Location locationAt (int i) {
+
+    public final Location locationAt(int i) {
       return locStack[height - i];
     }
 
-    public final Object valueAt (int i) {
+    public final Object valueAt(int i) {
       return valueStack[height - i];
     }
 
     // Print the state stack on the debug stream.
-    public void print (java.io.PrintStream out) {
+    public void print(java.io.PrintStream out) {
       out.print ("Stack now");
 
-      for (int i = 0; i <= height; i++)
-        {
-          out.print (' ');
-          out.print (stateStack[i]);
-        }
-      out.println ();
+      for (int i = 0; i <= height; i++) {
+        out.print(' ');
+        out.print(stateStack[i]);
+      }
+      out.println();
     }
   }
 
@@ -457,7 +833,7 @@ public class VondaGrammar
 
 
   /**
-   * Return whether error recovery is being done.  In this state, the parser
+   * Whether error recovery is being done.  In this state, the parser
    * reads token until it reaches a known state, and then restarts normal
    * operation.
    */
@@ -470,598 +846,592 @@ public class VondaGrammar
    * @param yystate   the current state
    * @param yysym     the nonterminal to push on the stack
    */
-  private int yy_lr_goto_state_ (int yystate, int yysym)
-  {
-    int yyr = yypgoto_[yysym - yyntokens_] + yystate;
-    if (0 <= yyr && yyr <= yylast_ && yycheck_[yyr] == yystate)
+  private int yyLRGotoState(int yystate, int yysym) {
+    int yyr = yypgoto_[yysym - YYNTOKENS_] + yystate;
+    if (0 <= yyr && yyr <= YYLAST_ && yycheck_[yyr] == yystate)
       return yytable_[yyr];
     else
-      return yydefgoto_[yysym - yyntokens_];
+      return yydefgoto_[yysym - YYNTOKENS_];
   }
 
-  private int yyaction (int yyn, YYStack yystack, int yylen) 
+  private int yyaction(int yyn, YYStack yystack, int yylen)
   {
-    Object yyval;
-    Location yyloc = yylloc (yystack, yylen);
-
     /* If YYLEN is nonzero, implement the default value of the action:
        '$$ = $1'.  Otherwise, use the top of the stack.
 
        Otherwise, the following line sets YYVAL to garbage.
        This behavior is undocumented and Bison
        users should not rely upon it.  */
-    if (yylen > 0)
-      yyval = yystack.valueAt (yylen - 1);
-    else
-      yyval = yystack.valueAt (0);
+    Object yyval = (0 < yylen) ? yystack.valueAt(yylen - 1) : yystack.valueAt(0);
+    Location yyloc = yylloc(yystack, yylen);
 
-    yy_reduce_print (yyn, yystack);
+    yyReducePrint(yyn, yystack);
 
     switch (yyn)
       {
-          case 2:
+          case 2: /* grammar_file: visibility_spec method_declaration grammar_file  */
   if (yyn == 2)
     /* "VondaGrammar.y":140  */
-    {
+                                                    {
     yyval = ((LinkedList<RudiTree>)(yystack.valueAt (0))); ((StatMethodDeclaration)(yystack.valueAt (1))).setVisibility(((String)(yystack.valueAt (2)))); ((LinkedList<RudiTree>)(yystack.valueAt (0))).addFirst(((StatMethodDeclaration)(yystack.valueAt (1))));
   };
   break;
-    
 
-  case 3:
+
+  case 3: /* grammar_file: method_declaration grammar_file  */
   if (yyn == 3)
     /* "VondaGrammar.y":143  */
-    { yyval = ((LinkedList<RudiTree>)(yystack.valueAt (0))); ((LinkedList<RudiTree>)(yystack.valueAt (0))).addFirst(((StatMethodDeclaration)(yystack.valueAt (1)))); };
+                                    { yyval = ((LinkedList<RudiTree>)(yystack.valueAt (0))); ((LinkedList<RudiTree>)(yystack.valueAt (0))).addFirst(((StatMethodDeclaration)(yystack.valueAt (1)))); };
   break;
-    
 
-  case 4:
+
+  case 4: /* grammar_file: function_call grammar_file  */
   if (yyn == 4)
     /* "VondaGrammar.y":144  */
-    { yyval = ((LinkedList<RudiTree>)(yystack.valueAt (0))); ((LinkedList<RudiTree>)(yystack.valueAt (0))).addFirst(((RTExpression)(yystack.valueAt (1)))); };
+                               { yyval = ((LinkedList<RudiTree>)(yystack.valueAt (0))); ((LinkedList<RudiTree>)(yystack.valueAt (0))).addFirst(((RTExpression)(yystack.valueAt (1)))); };
   break;
-    
 
-  case 5:
+
+  case 5: /* grammar_file: statement_no_def grammar_file  */
   if (yyn == 5)
     /* "VondaGrammar.y":145  */
-    { yyval = ((LinkedList<RudiTree>)(yystack.valueAt (0))); ((LinkedList<RudiTree>)(yystack.valueAt (0))).addFirst(((RTStatement)(yystack.valueAt (1)))); };
+                                  { yyval = ((LinkedList<RudiTree>)(yystack.valueAt (0))); ((LinkedList<RudiTree>)(yystack.valueAt (0))).addFirst(((RTStatement)(yystack.valueAt (1)))); };
   break;
-    
 
-  case 6:
+
+  case 6: /* grammar_file: imports grammar_file  */
   if (yyn == 6)
     /* "VondaGrammar.y":147  */
-    { yyval = ((LinkedList<RudiTree>)(yystack.valueAt (0))); ((LinkedList<RudiTree>)(yystack.valueAt (0))).addFirst(((Import)(yystack.valueAt (1)))); };
+                         { yyval = ((LinkedList<RudiTree>)(yystack.valueAt (0))); ((LinkedList<RudiTree>)(yystack.valueAt (0))).addFirst(((Import)(yystack.valueAt (1)))); };
   break;
-    
 
-  case 7:
+
+  case 7: /* grammar_file: visibility_spec var_def grammar_file  */
   if (yyn == 7)
     /* "VondaGrammar.y":148  */
-    {
+                                          {
     yyval = ((LinkedList<RudiTree>)(yystack.valueAt (0))); ((LinkedList<RudiTree>)(yystack.valueAt (0))).addFirst(setPos(new StatFieldDef(((String)(yystack.valueAt (2))), ((StatVarDef)(yystack.valueAt (1)))), yystack.locationAt (2), yystack.locationAt (1)));
   };
   break;
-    
 
-  case 8:
+
+  case 8: /* grammar_file: var_def grammar_file  */
   if (yyn == 8)
     /* "VondaGrammar.y":151  */
-    {
+                          {
     yyval = ((LinkedList<RudiTree>)(yystack.valueAt (0))); ((LinkedList<RudiTree>)(yystack.valueAt (0))).addFirst(setPos(new StatFieldDef(null, ((StatVarDef)(yystack.valueAt (1)))), yystack.locationAt (1)));
   };
   break;
-    
 
-  case 9:
+
+  case 9: /* grammar_file: field_def grammar_file  */
   if (yyn == 9)
     /* "VondaGrammar.y":154  */
-    {
+                           {
     yyval = ((LinkedList<RudiTree>)(yystack.valueAt (0))); ((LinkedList<RudiTree>)(yystack.valueAt (0))).addFirst(((StatFieldDef)(yystack.valueAt (1))));
   };
   break;
-    
 
-  case 10:
+
+  case 10: /* grammar_file: %empty  */
   if (yyn == 10)
     /* "VondaGrammar.y":157  */
-    { yyval = _statements;};
+           { yyval = _statements;};
   break;
-    
 
-  case 11:
+
+  case 11: /* visibility_spec: PUBLIC  */
   if (yyn == 11)
     /* "VondaGrammar.y":161  */
-    { yyval = "public"; };
+           { yyval = "public"; };
   break;
-    
 
-  case 12:
+
+  case 12: /* visibility_spec: PROTECTED  */
   if (yyn == 12)
     /* "VondaGrammar.y":162  */
-    { yyval = "protected"; };
+              { yyval = "protected"; };
   break;
-    
 
-  case 13:
+
+  case 13: /* visibility_spec: PRIVATE  */
   if (yyn == 13)
     /* "VondaGrammar.y":163  */
-    { yyval = "private"; };
+             { yyval = "private"; };
   break;
-    
 
-  case 14:
+
+  case 14: /* imports: IMPORT path ';'  */
   if (yyn == 14)
     /* "VondaGrammar.y":167  */
-    {
+                    {
     List<String> path = ((List<String>)(yystack.valueAt (1)));
     String name = path.remove(path.size() - 1);
     yyval = setPos(new Import(name, path.toArray(new String[path.size()])), (yyloc));
   };
   break;
-    
 
-  case 15:
+
+  case 15: /* path: IDENTIFIER  */
   if (yyn == 15)
     /* "VondaGrammar.y":175  */
-    { yyval = new ArrayList<String>(){{ add((( String )(yystack.valueAt (0)))); }}; };
+               { yyval = new ArrayList<String>(){{ add((( String )(yystack.valueAt (0)))); }}; };
   break;
-    
 
-  case 16:
+
+  case 16: /* path: path '.' IDENTIFIER  */
   if (yyn == 16)
     /* "VondaGrammar.y":176  */
-    { yyval = ((List<String>)(yystack.valueAt (2))); ((List<String>)(yystack.valueAt (2))).add((( String )(yystack.valueAt (0)))); };
+                        { yyval = ((List<String>)(yystack.valueAt (2))); ((List<String>)(yystack.valueAt (2))).add((( String )(yystack.valueAt (0)))); };
   break;
-    
 
-  case 17:
+
+  case 17: /* statement_no_def: block  */
   if (yyn == 17)
     /* "VondaGrammar.y":180  */
-    { yyval = ((StatAbstractBlock)(yystack.valueAt (0))); };
+          { yyval = ((StatAbstractBlock)(yystack.valueAt (0))); };
   break;
-    
 
-  case 18:
+
+  case 18: /* statement_no_def: assignment ';'  */
   if (yyn == 18)
     /* "VondaGrammar.y":181  */
-    { yyval = setPos(getAssignmentStat(((RTExpression)(yystack.valueAt (1)))), (yyloc)); };
+                   { yyval = setPos(getAssignmentStat(((RTExpression)(yystack.valueAt (1)))), (yyloc)); };
   break;
-    
 
-  case 19:
+
+  case 19: /* statement_no_def: field_access ';'  */
   if (yyn == 19)
     /* "VondaGrammar.y":182  */
-    { yyval = setPos(new StatExpression(((RTExpression)(yystack.valueAt (1)))), (yyloc)); };
+                     { yyval = setPos(new StatExpression(((RTExpression)(yystack.valueAt (1)))), (yyloc)); };
   break;
-    
 
-  case 20:
+
+  case 20: /* statement_no_def: PLUSPLUS IDENTIFIER ';'  */
   if (yyn == 20)
     /* "VondaGrammar.y":183  */
-    {
+                            {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (1)))), yystack.locationAt (1));
     yyval = setPos(new StatExpression(createPlusMinus(var, "++", (yyloc))), (yyloc));
   };
   break;
-    
 
-  case 21:
+
+  case 21: /* statement_no_def: MINUSMINUS IDENTIFIER ';'  */
   if (yyn == 21)
     /* "VondaGrammar.y":187  */
-    {
+                              {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (1)))), yystack.locationAt (1));
     yyval = setPos(new StatExpression(createPlusMinus(var, "--", (yyloc))), (yyloc));
   };
   break;
-    
 
-  case 22:
+
+  case 22: /* statement_no_def: IDENTIFIER PLUSPLUS ';'  */
   if (yyn == 22)
     /* "VondaGrammar.y":191  */
-    {
+                            {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (2)))), yystack.locationAt (2));
     yyval = setPos(new StatExpression(createPlusMinus(var, "+++", (yyloc))), (yyloc));
   };
   break;
-    
 
-  case 23:
+
+  case 23: /* statement_no_def: IDENTIFIER MINUSMINUS ';'  */
   if (yyn == 23)
     /* "VondaGrammar.y":195  */
-    {
+                              {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (2)))), yystack.locationAt (2));
     yyval = setPos(new StatExpression(createPlusMinus(var, "---", (yyloc))), (yyloc));
   };
   break;
-    
 
-  case 24:
+
+  case 24: /* statement_no_def: PLUSPLUS field_access ';'  */
   if (yyn == 24)
     /* "VondaGrammar.y":199  */
-    {
+                              {
     yyval = setPos(new StatExpression(createPlusMinus(((RTExpression)(yystack.valueAt (1))), "++", (yyloc))), (yyloc));
   };
   break;
-    
 
-  case 25:
+
+  case 25: /* statement_no_def: MINUSMINUS field_access ';'  */
   if (yyn == 25)
     /* "VondaGrammar.y":202  */
-    {
+                                {
     yyval = setPos(new StatExpression(createPlusMinus(((RTExpression)(yystack.valueAt (1))), "--", (yyloc))), (yyloc));
   };
   break;
-    
 
-  case 26:
+
+  case 26: /* statement_no_def: field_access PLUSPLUS ';'  */
   if (yyn == 26)
     /* "VondaGrammar.y":205  */
-    {
+                              {
     yyval = setPos(new StatExpression(createPlusMinus(((RTExpression)(yystack.valueAt (2))), "+++", (yyloc))), (yyloc));
   };
   break;
-    
 
-  case 27:
+
+  case 27: /* statement_no_def: field_access MINUSMINUS ';'  */
   if (yyn == 27)
     /* "VondaGrammar.y":208  */
-    {
+                                {
     yyval = setPos(new StatExpression(createPlusMinus(((RTExpression)(yystack.valueAt (2))), "---", (yyloc))), (yyloc));
   };
   break;
-    
 
-  case 28:
+
+  case 28: /* statement_no_def: function_call ';'  */
   if (yyn == 28)
     /* "VondaGrammar.y":211  */
-    { yyval = setPos(new StatExpression(((RTExpression)(yystack.valueAt (1)))), (yyloc)); };
+                      { yyval = setPos(new StatExpression(((RTExpression)(yystack.valueAt (1)))), (yyloc)); };
   break;
-    
 
-  case 29:
+
+  case 29: /* statement_no_def: grammar_rule  */
   if (yyn == 29)
     /* "VondaGrammar.y":212  */
-    { yyval = ((StatGrammarRule)(yystack.valueAt (0))); };
+                 { yyval = ((StatGrammarRule)(yystack.valueAt (0))); };
   break;
-    
 
-  case 30:
+
+  case 30: /* statement_no_def: set_operation  */
   if (yyn == 30)
     /* "VondaGrammar.y":213  */
-    { yyval = ((RTStatement)(yystack.valueAt (0))); };
+                  { yyval = ((RTStatement)(yystack.valueAt (0))); };
   break;
-    
 
-  case 31:
+
+  case 31: /* statement_no_def: return_statement  */
   if (yyn == 31)
     /* "VondaGrammar.y":214  */
-    { yyval = ((RTStatement)(yystack.valueAt (0))); };
+                     { yyval = ((RTStatement)(yystack.valueAt (0))); };
   break;
-    
 
-  case 32:
+
+  case 32: /* statement_no_def: propose_statement  */
   if (yyn == 32)
     /* "VondaGrammar.y":215  */
-    { yyval = ((RTStatement)(yystack.valueAt (0))); };
+                      { yyval = ((RTStatement)(yystack.valueAt (0))); };
   break;
-    
 
-  case 33:
+
+  case 33: /* statement_no_def: timeout_statement  */
   if (yyn == 33)
     /* "VondaGrammar.y":216  */
-    { yyval = ((RTStatement)(yystack.valueAt (0))); };
+                      { yyval = ((RTStatement)(yystack.valueAt (0))); };
   break;
-    
 
-  case 34:
+
+  case 34: /* statement_no_def: if_statement  */
   if (yyn == 34)
     /* "VondaGrammar.y":217  */
-    { yyval = ((StatIf)(yystack.valueAt (0))); };
+                 { yyval = ((StatIf)(yystack.valueAt (0))); };
   break;
-    
 
-  case 35:
+
+  case 35: /* statement_no_def: while_statement  */
   if (yyn == 35)
     /* "VondaGrammar.y":218  */
-    { yyval = ((RTStatement)(yystack.valueAt (0))); };
+                    { yyval = ((RTStatement)(yystack.valueAt (0))); };
   break;
-    
 
-  case 36:
+
+  case 36: /* statement_no_def: for_statement  */
   if (yyn == 36)
     /* "VondaGrammar.y":219  */
-    { yyval = ((RTStatement)(yystack.valueAt (0))); };
+                  { yyval = ((RTStatement)(yystack.valueAt (0))); };
   break;
-    
 
-  case 37:
+
+  case 37: /* statement_no_def: switch_statement  */
   if (yyn == 37)
     /* "VondaGrammar.y":220  */
-    { yyval = ((RTStatement)(yystack.valueAt (0))); };
+                     { yyval = ((RTStatement)(yystack.valueAt (0))); };
   break;
-    
 
-  case 38:
+
+  case 38: /* statement_no_def: label_statement  */
   if (yyn == 38)
     /* "VondaGrammar.y":221  */
-    { yyval = ((RTStatement)(yystack.valueAt (0))); };
+                    { yyval = ((RTStatement)(yystack.valueAt (0))); };
   break;
-    
 
-  case 39:
+
+  case 39: /* statement: statement_no_def  */
   if (yyn == 39)
     /* "VondaGrammar.y":225  */
-    { yyval = ((RTStatement)(yystack.valueAt (0))); };
+                     { yyval = ((RTStatement)(yystack.valueAt (0))); };
   break;
-    
 
-  case 40:
+
+  case 40: /* statement: var_def  */
   if (yyn == 40)
     /* "VondaGrammar.y":226  */
-    { yyval = ((StatVarDef)(yystack.valueAt (0))); };
+            { yyval = ((StatVarDef)(yystack.valueAt (0))); };
   break;
-    
 
-  case 41:
+
+  case 41: /* blk_statement: statement  */
   if (yyn == 41)
     /* "VondaGrammar.y":230  */
-    { yyval = ((RTStatement)(yystack.valueAt (0))); };
+              { yyval = ((RTStatement)(yystack.valueAt (0))); };
   break;
-    
 
-  case 42:
+
+  case 42: /* block: '{' statements '}'  */
   if (yyn == 42)
     /* "VondaGrammar.y":236  */
-    { yyval = setPos(new StatAbstractBlock(((LinkedList<RTStatement>)(yystack.valueAt (1))), true), (yyloc)); };
+                       { yyval = setPos(new StatAbstractBlock(((LinkedList<RTStatement>)(yystack.valueAt (1))), true), (yyloc)); };
   break;
-    
 
-  case 43:
+
+  case 43: /* block: '{' '}'  */
   if (yyn == 43)
     /* "VondaGrammar.y":237  */
-    {
+            {
     yyval = setPos(new StatAbstractBlock(new ArrayList<RTStatement>(), true), (yyloc));
   };
   break;
-    
 
-  case 44:
+
+  case 44: /* statements: blk_statement  */
   if (yyn == 44)
     /* "VondaGrammar.y":241  */
-    { yyval = new LinkedList<RTStatement>(){{ add(((RTStatement)(yystack.valueAt (0)))); }}; };
+                          { yyval = new LinkedList<RTStatement>(){{ add(((RTStatement)(yystack.valueAt (0)))); }}; };
   break;
-    
 
-  case 45:
+
+  case 45: /* statements: blk_statement statements  */
   if (yyn == 45)
     /* "VondaGrammar.y":242  */
-    { yyval = ((LinkedList<RTStatement>)(yystack.valueAt (0))); ((LinkedList<RTStatement>)(yystack.valueAt (0))).addFirst(((RTStatement)(yystack.valueAt (1)))); };
+                             { yyval = ((LinkedList<RTStatement>)(yystack.valueAt (0))); ((LinkedList<RTStatement>)(yystack.valueAt (0))).addFirst(((RTStatement)(yystack.valueAt (1)))); };
   break;
-    
 
-  case 46:
+
+  case 46: /* grammar_rule: IDENTIFIER ':' if_statement  */
   if (yyn == 46)
     /* "VondaGrammar.y":246  */
-    { yyval = setPos(new StatGrammarRule((( String )(yystack.valueAt (2))), ((StatIf)(yystack.valueAt (0)))), (yyloc)); };
+                                { yyval = setPos(new StatGrammarRule((( String )(yystack.valueAt (2))), ((StatIf)(yystack.valueAt (0)))), (yyloc)); };
   break;
-    
 
-  case 47:
+
+  case 47: /* return_statement: RETURN ';'  */
   if (yyn == 47)
     /* "VondaGrammar.y":250  */
-    { yyval = setPos(new StatReturn("return"), (yyloc)); };
+               { yyval = setPos(new StatReturn("return"), (yyloc)); };
   break;
-    
 
-  case 48:
+
+  case 48: /* return_statement: RETURN exp ';'  */
   if (yyn == 48)
     /* "VondaGrammar.y":251  */
-    { yyval = setPos(new StatReturn(((RTExpression)(yystack.valueAt (1)))), (yyloc)); };
+                   { yyval = setPos(new StatReturn(((RTExpression)(yystack.valueAt (1)))), (yyloc)); };
   break;
-    
 
-  case 49:
+
+  case 49: /* return_statement: BREAK ';'  */
   if (yyn == 49)
     /* "VondaGrammar.y":252  */
-    { yyval = setPos(new StatReturn("break"), (yyloc)); };
+              { yyval = setPos(new StatReturn("break"), (yyloc)); };
   break;
-    
 
-  case 50:
+
+  case 50: /* return_statement: BREAK IDENTIFIER ';'  */
   if (yyn == 50)
     /* "VondaGrammar.y":253  */
-    { yyval = setPos(new StatReturn("break", (( String )(yystack.valueAt (1)))), (yyloc)); };
+                         { yyval = setPos(new StatReturn("break", (( String )(yystack.valueAt (1)))), (yyloc)); };
   break;
-    
 
-  case 51:
+
+  case 51: /* return_statement: CANCEL ';'  */
   if (yyn == 51)
     /* "VondaGrammar.y":254  */
-    { yyval = setPos(new StatReturn("cancel"), (yyloc)); };
+               { yyval = setPos(new StatReturn("cancel"), (yyloc)); };
   break;
-    
 
-  case 52:
+
+  case 52: /* return_statement: CANCEL_ALL ';'  */
   if (yyn == 52)
     /* "VondaGrammar.y":255  */
-    { yyval = setPos(new StatReturn("cancel_all"), (yyloc)); };
+                   { yyval = setPos(new StatReturn("cancel_all"), (yyloc)); };
   break;
-    
 
-  case 53:
+
+  case 53: /* return_statement: CONTINUE ';'  */
   if (yyn == 53)
     /* "VondaGrammar.y":256  */
-    { yyval = setPos(new StatReturn("continue"), (yyloc)); };
+                 { yyval = setPos(new StatReturn("continue"), (yyloc)); };
   break;
-    
 
-  case 54:
+
+  case 54: /* if_statement: IF '(' exp ')' statement  */
   if (yyn == 54)
     /* "VondaGrammar.y":260  */
-    { yyval = setPos(new StatIf(((RTExpression)(yystack.valueAt (2))), ((RTStatement)(yystack.valueAt (0))), null), (yyloc)); };
+                             { yyval = setPos(new StatIf(((RTExpression)(yystack.valueAt (2))), ((RTStatement)(yystack.valueAt (0))), null), (yyloc)); };
   break;
-    
 
-  case 55:
+
+  case 55: /* if_statement: IF '(' exp ')' statement ELSE statement  */
   if (yyn == 55)
     /* "VondaGrammar.y":261  */
-    {
+                                            {
     yyval = setPos(new StatIf(((RTExpression)(yystack.valueAt (4))), ((RTStatement)(yystack.valueAt (2))), ((RTStatement)(yystack.valueAt (0)))), (yyloc));
   };
   break;
-    
 
-  case 56:
+
+  case 56: /* while_statement: WHILE '(' exp ')' statement  */
   if (yyn == 56)
     /* "VondaGrammar.y":267  */
-    { yyval = setPos(new StatWhile(((RTExpression)(yystack.valueAt (2))), ((RTStatement)(yystack.valueAt (0))), true), (yyloc)); };
+                                { yyval = setPos(new StatWhile(((RTExpression)(yystack.valueAt (2))), ((RTStatement)(yystack.valueAt (0))), true), (yyloc)); };
   break;
-    
 
-  case 57:
+
+  case 57: /* while_statement: DO statement WHILE '(' exp ')'  */
   if (yyn == 57)
     /* "VondaGrammar.y":268  */
-    {
+                                   {
     yyval = setPos(new StatWhile(((RTExpression)(yystack.valueAt (1))), ((RTStatement)(yystack.valueAt (4))), false), (yyloc));
   };
   break;
-    
 
-  case 58:
+
+  case 58: /* for_statement: FOR '(' var_decl exp ';' exp ')' statement  */
   if (yyn == 58)
     /* "VondaGrammar.y":274  */
-    {
+                                               {
     yyval = setPos(new StatFor1(((StatVarDef)(yystack.valueAt (5))), ((RTExpression)(yystack.valueAt (4))), ((RTExpression)(yystack.valueAt (2))), ((RTStatement)(yystack.valueAt (0)))), (yyloc)); };
   break;
-    
 
-  case 59:
+
+  case 59: /* for_statement: FOR '(' var_decl ';' exp ')' statement  */
   if (yyn == 59)
     /* "VondaGrammar.y":276  */
-    {
+                                               {
     yyval = setPos(new StatFor1(((StatVarDef)(yystack.valueAt (4))), null, ((RTExpression)(yystack.valueAt (2))), ((RTStatement)(yystack.valueAt (0)))), (yyloc)); };
   break;
-    
 
-  case 60:
+
+  case 60: /* for_statement: FOR '(' var_decl exp ';' ')' statement  */
   if (yyn == 60)
     /* "VondaGrammar.y":278  */
-    {
+                                               {
     yyval = setPos(new StatFor1(((StatVarDef)(yystack.valueAt (4))), ((RTExpression)(yystack.valueAt (3))), null, ((RTStatement)(yystack.valueAt (0)))), (yyloc)); };
   break;
-    
 
-  case 61:
+
+  case 61: /* for_statement: FOR '(' var_decl ';' ')' statement  */
   if (yyn == 61)
     /* "VondaGrammar.y":280  */
-    {
+                                               {
     yyval = setPos(new StatFor1(((StatVarDef)(yystack.valueAt (3))), null, null, ((RTStatement)(yystack.valueAt (0)))), (yyloc)); };
   break;
-    
 
-  case 62:
+
+  case 62: /* for_statement: FOR '(' ';' exp ';' exp ')' statement  */
   if (yyn == 62)
     /* "VondaGrammar.y":282  */
-    {
+                                              {
     yyval = setPos(new StatFor1(null, ((RTExpression)(yystack.valueAt (4))), ((RTExpression)(yystack.valueAt (2))), ((RTStatement)(yystack.valueAt (0)))), (yyloc)); };
   break;
-    
 
-  case 63:
+
+  case 63: /* for_statement: FOR '(' IDENTIFIER ':' exp ')' statement  */
   if (yyn == 63)
     /* "VondaGrammar.y":284  */
-    {
+                                             {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (4)))), yystack.locationAt (4));
     yyval = setPos(new StatFor2(var, ((RTExpression)(yystack.valueAt (2))), ((RTStatement)(yystack.valueAt (0)))), (yyloc));
   };
   break;
-    
 
-  case 64:
+
+  case 64: /* for_statement: FOR '(' type_spec IDENTIFIER ':' exp ')' statement  */
   if (yyn == 64)
     /* "VondaGrammar.y":288  */
-    {
+                                                       {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (4)))), yystack.locationAt (4));
     yyval = setPos(new StatFor2(((Type)(yystack.valueAt (5))), var, ((RTExpression)(yystack.valueAt (2))), ((RTStatement)(yystack.valueAt (0)))), (yyloc));
   };
   break;
-    
 
-  case 65:
+
+  case 65: /* var_decl: IDENTIFIER assgn_exp ';'  */
   if (yyn == 65)
     /* "VondaGrammar.y":297  */
-    {
+                             {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (2)))), yystack.locationAt (2));
     ExpAssignment ass = setPos(new ExpAssignment(var, ((RTExpression)(yystack.valueAt (1)))), yystack.locationAt (2), yystack.locationAt (1));
     yyval = setPos(new StatVarDef(false, Type.getNoType(), ass), (yyloc));
   };
   break;
-    
 
-  case 66:
+
+  case 66: /* var_decl: type_spec IDENTIFIER assgn_exp ';'  */
   if (yyn == 66)
     /* "VondaGrammar.y":302  */
-    {
+                                       {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (2)))), yystack.locationAt (2));
     ExpAssignment ass = setPos(new ExpAssignment(var, ((RTExpression)(yystack.valueAt (1)))), yystack.locationAt (2), yystack.locationAt (1));
     yyval = setPos(new StatVarDef(false, ((Type)(yystack.valueAt (3))), ass), (yyloc));
   };
   break;
-    
 
-  case 67:
+
+  case 67: /* var_decl: FINAL IDENTIFIER assgn_exp ';'  */
   if (yyn == 67)
     /* "VondaGrammar.y":307  */
-    {
+                                   {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (2)))), yystack.locationAt (2));
     ExpAssignment ass = setPos(new ExpAssignment(var, ((RTExpression)(yystack.valueAt (1)))), yystack.locationAt (2), yystack.locationAt (1));
     yyval = setPos(new StatVarDef(true, Type.getNoType(), ass), (yyloc));
   };
   break;
-    
 
-  case 68:
+
+  case 68: /* var_decl: FINAL type_spec IDENTIFIER assgn_exp ';'  */
   if (yyn == 68)
     /* "VondaGrammar.y":312  */
-    {
+                                             {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (2)))), yystack.locationAt (2));
     ExpAssignment ass = setPos(new ExpAssignment(var, ((RTExpression)(yystack.valueAt (1)))), yystack.locationAt (2), yystack.locationAt (1));
     yyval = setPos(new StatVarDef(true, ((Type)(yystack.valueAt (3))), ass), (yyloc));
   };
   break;
-    
 
-  case 69:
+
+  case 69: /* propose_statement: PROPOSE '(' exp ')' block  */
   if (yyn == 69)
     /* "VondaGrammar.y":320  */
-    { yyval = setPos(new StatPropose(((RTExpression)(yystack.valueAt (2))), ((StatAbstractBlock)(yystack.valueAt (0)))), (yyloc)); };
+                              { yyval = setPos(new StatPropose(((RTExpression)(yystack.valueAt (2))), ((StatAbstractBlock)(yystack.valueAt (0)))), (yyloc)); };
   break;
-    
 
-  case 70:
+
+  case 70: /* timeout_statement: TIMEOUT '(' exp ',' exp ')' block  */
   if (yyn == 70)
     /* "VondaGrammar.y":324  */
-    {
+                                      {
     yyval = setPos(new StatTimeout(((RTExpression)(yystack.valueAt (4))), ((RTExpression)(yystack.valueAt (2))), ((StatAbstractBlock)(yystack.valueAt (0)))), (yyloc));
   };
   break;
-    
 
-  case 71:
+
+  case 71: /* switch_statement: SWITCH '(' exp ')' block  */
   if (yyn == 71)
     /* "VondaGrammar.y":330  */
-    {
+                             {
     yyval = setPos(new StatSwitch(((RTExpression)(yystack.valueAt (2))), ((StatAbstractBlock)(yystack.valueAt (0)))), (yyloc));
   };
   break;
-    
 
-  case 72:
+
+  case 72: /* label_statement: CASE STRING ':'  */
   if (yyn == 72)
     /* "VondaGrammar.y":337  */
-    {
+                      {
     ExpLiteral val =
       new ExpLiteral("case \"" + (( ExpLiteral )(yystack.valueAt (1))).toString() + "\":", "label");
     RTStatement lbl = val.ensureStatement();
@@ -1069,12 +1439,12 @@ public class VondaGrammar
     yyval = lbl;
   };
   break;
-    
 
-  case 73:
+
+  case 73: /* label_statement: CASE INT ':'  */
   if (yyn == 73)
     /* "VondaGrammar.y":344  */
-    {
+                      {
     ExpLiteral val =
       new ExpLiteral("case " + (( ExpLiteral )(yystack.valueAt (1))).toString() + ":", "label");
     RTStatement lbl = val.ensureStatement();
@@ -1082,12 +1452,12 @@ public class VondaGrammar
     yyval = lbl;
   };
   break;
-    
 
-  case 74:
+
+  case 74: /* label_statement: CASE BOOL_LITERAL ':'  */
   if (yyn == 74)
     /* "VondaGrammar.y":351  */
-    {
+                               {
     ExpLiteral val =
       new ExpLiteral("case " + (( ExpLiteral )(yystack.valueAt (1))).toString() + ":", "label");
     RTStatement lbl = val.ensureStatement();
@@ -1095,12 +1465,12 @@ public class VondaGrammar
     yyval = lbl;
   };
   break;
-    
 
-  case 75:
+
+  case 75: /* label_statement: CASE IDENTIFIER ':'  */
   if (yyn == 75)
     /* "VondaGrammar.y":358  */
-    {
+                        {
     ExpLiteral val =
       new ExpLiteral("case " + (( String )(yystack.valueAt (1))) + ":", "label");
     RTStatement lbl = val.ensureStatement();
@@ -1108,1092 +1478,1059 @@ public class VondaGrammar
     yyval = lbl;
   };
   break;
-    
 
-  case 76:
+
+  case 76: /* label_statement: DEFAULT ':'  */
   if (yyn == 76)
     /* "VondaGrammar.y":365  */
-    {
+                      {
     ExpLiteral val = new ExpLiteral("default:", "label");
     RTStatement lbl = val.ensureStatement();
     setPos(val, (yyloc)); setPos(lbl, (yyloc));
     yyval = lbl;
   };
   break;
-    
 
-  case 77:
+
+  case 77: /* var_def: FINAL IDENTIFIER assgn_exp ';'  */
   if (yyn == 77)
     /* "VondaGrammar.y":374  */
-    {
+                                   {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (2)))), yystack.locationAt (2));
     ExpAssignment ass = setPos(new ExpAssignment(var, ((RTExpression)(yystack.valueAt (1)))), yystack.locationAt (2), yystack.locationAt (1));
     yyval = setPos(new StatVarDef(true, Type.getNoType(), ass), (yyloc));
   };
   break;
-    
 
-  case 78:
+
+  case 78: /* var_def: type_spec IDENTIFIER assgn_exp ';'  */
   if (yyn == 78)
     /* "VondaGrammar.y":379  */
-    {
+                                       {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (2)))), yystack.locationAt (2));
     ExpAssignment ass = setPos(new ExpAssignment(var, ((RTExpression)(yystack.valueAt (1)))), yystack.locationAt (2), yystack.locationAt (1));
     yyval = setPos(new StatVarDef(false, ((Type)(yystack.valueAt (3))), ass), (yyloc));
   };
   break;
-    
 
-  case 79:
+
+  case 79: /* var_def: FINAL type_spec IDENTIFIER assgn_exp ';'  */
   if (yyn == 79)
     /* "VondaGrammar.y":384  */
-    {
+                                             {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (2)))), yystack.locationAt (2));
     ExpAssignment ass = setPos(new ExpAssignment(var, ((RTExpression)(yystack.valueAt (1)))), yystack.locationAt (2), yystack.locationAt (1));
     yyval = setPos(new StatVarDef(true, ((Type)(yystack.valueAt (3))), ass), (yyloc));
     };
   break;
-    
 
-  case 80:
+
+  case 80: /* var_def: FINAL IDENTIFIER ';'  */
   if (yyn == 80)
     /* "VondaGrammar.y":389  */
-    {
+                         {
     yyval = setPos(new StatVarDef(true, Type.getNoType(), (( String )(yystack.valueAt (1)))), (yyloc));
   };
   break;
-    
 
-  case 81:
+
+  case 81: /* var_def: type_spec IDENTIFIER ';'  */
   if (yyn == 81)
     /* "VondaGrammar.y":392  */
-    {
+                             {
     yyval = setPos(new StatVarDef(false, ((Type)(yystack.valueAt (2))), (( String )(yystack.valueAt (1)))), (yyloc));
   };
   break;
-    
 
-  case 82:
+
+  case 82: /* var_def: FINAL type_spec IDENTIFIER ';'  */
   if (yyn == 82)
     /* "VondaGrammar.y":395  */
-    {
+                                   {
     yyval = setPos(new StatVarDef(true, ((Type)(yystack.valueAt (2))), (( String )(yystack.valueAt (1)))), (yyloc));
   };
   break;
-    
 
-  case 83:
+
+  case 83: /* field_def: '[' type_spec ']' '.' type_spec IDENTIFIER ';'  */
   if (yyn == 83)
     /* "VondaGrammar.y":401  */
-    {
+                                                   {
     yyval = setPos(new StatFieldDef(null,
            setPos(new StatVarDef(false, ((Type)(yystack.valueAt (2))), (( String )(yystack.valueAt (1)))), (yyloc)), ((Type)(yystack.valueAt (5)))), (yyloc));
   };
   break;
-    
 
-  case 84:
+
+  case 84: /* assgn_exp: '=' exp  */
   if (yyn == 84)
     /* "VondaGrammar.y":408  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+            { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 85:
+
+  case 85: /* assgn_exp: '=' '{' '}'  */
   if (yyn == 85)
     /* "VondaGrammar.y":409  */
-    {
+                {
     yyval = setPos(new ExpListLiteral(new LinkedList<RTExpression>()), yystack.locationAt (1), yystack.locationAt (0));
   };
   break;
-    
 
-  case 86:
+
+  case 86: /* assgn_exp: '=' '{' nonempty_exp_list '}'  */
   if (yyn == 86)
     /* "VondaGrammar.y":412  */
-    {
+                                  {
     yyval = setPos(new ExpListLiteral(((LinkedList<RTExpression>)(yystack.valueAt (1)))), yystack.locationAt (2), yystack.locationAt (0));
   };
   break;
-    
 
-  case 87:
+
+  case 87: /* nonempty_exp_list: exp  */
   if (yyn == 87)
     /* "VondaGrammar.y":418  */
-    { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (0)))); }}; };
+        { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (0)))); }}; };
   break;
-    
 
-  case 88:
+
+  case 88: /* nonempty_exp_list: exp ',' nonempty_exp_list  */
   if (yyn == 88)
     /* "VondaGrammar.y":419  */
-    { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (0))); ((LinkedList<RTExpression>)(yystack.valueAt (0))).addFirst(((RTExpression)(yystack.valueAt (2)))); };
+                              { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (0))); ((LinkedList<RTExpression>)(yystack.valueAt (0))).addFirst(((RTExpression)(yystack.valueAt (2)))); };
   break;
-    
 
-  case 89:
+
+  case 89: /* method_declaration: '[' type_spec ']' '.' type_spec IDENTIFIER '(' opt_args_list ')' opt_block  */
   if (yyn == 89)
     /* "VondaGrammar.y":424  */
-    {
+                                                                               {
     yyval = setPos(new StatMethodDeclaration("public", ((Type)(yystack.valueAt (5))), ((Type)(yystack.valueAt (8))), (( String )(yystack.valueAt (4))), ((LinkedList)(yystack.valueAt (2))), ((StatAbstractBlock)(yystack.valueAt (0)))), (yyloc));
   };
   break;
-    
 
-  case 90:
+
+  case 90: /* method_declaration: type_spec IDENTIFIER '(' opt_args_list ')' opt_block  */
   if (yyn == 90)
     /* "VondaGrammar.y":427  */
-    {
+                                                         {
     yyval = setPos(new StatMethodDeclaration("public", ((Type)(yystack.valueAt (5))), null, (( String )(yystack.valueAt (4))), ((LinkedList)(yystack.valueAt (2))), ((StatAbstractBlock)(yystack.valueAt (0)))), (yyloc));
   };
   break;
-    
 
-  case 91:
+
+  case 91: /* opt_block: block  */
   if (yyn == 91)
     /* "VondaGrammar.y":433  */
-    { yyval = ((StatAbstractBlock)(yystack.valueAt (0))); };
+          { yyval = ((StatAbstractBlock)(yystack.valueAt (0))); };
   break;
-    
 
-  case 92:
+
+  case 92: /* opt_block: ';'  */
   if (yyn == 92)
     /* "VondaGrammar.y":434  */
-    { yyval = null; };
+        { yyval = null; };
   break;
-    
 
-  case 93:
+
+  case 93: /* opt_args_list: args_list  */
   if (yyn == 93)
     /* "VondaGrammar.y":438  */
-    { yyval = ((LinkedList)(yystack.valueAt (0))); };
+              { yyval = ((LinkedList)(yystack.valueAt (0))); };
   break;
-    
 
-  case 94:
+
+  case 94: /* opt_args_list: %empty  */
   if (yyn == 94)
     /* "VondaGrammar.y":439  */
-    { yyval = new LinkedList(); };
+           { yyval = new LinkedList(); };
   break;
-    
 
-  case 95:
+
+  case 95: /* args_list: IDENTIFIER  */
   if (yyn == 95)
     /* "VondaGrammar.y":443  */
-    { yyval = new LinkedList(){{ add(Type.getNoType()); add((( String )(yystack.valueAt (0)))); }}; };
+               { yyval = new LinkedList(){{ add(Type.getNoType()); add((( String )(yystack.valueAt (0)))); }}; };
   break;
-    
 
-  case 96:
+
+  case 96: /* args_list: type_spec IDENTIFIER  */
   if (yyn == 96)
     /* "VondaGrammar.y":444  */
-    { yyval = new LinkedList(){{ add(((Type)(yystack.valueAt (1)))); add((( String )(yystack.valueAt (0)))); }}; };
+                         { yyval = new LinkedList(){{ add(((Type)(yystack.valueAt (1)))); add((( String )(yystack.valueAt (0)))); }}; };
   break;
-    
 
-  case 97:
+
+  case 97: /* args_list: IDENTIFIER ',' args_list  */
   if (yyn == 97)
     /* "VondaGrammar.y":445  */
-    {
+                             {
     yyval = ((LinkedList)(yystack.valueAt (0)));
     ((LinkedList)(yystack.valueAt (0))).addFirst((( String )(yystack.valueAt (2)))); ((LinkedList)(yystack.valueAt (0))).addFirst(Type.getNoType());
   };
   break;
-    
 
-  case 98:
+
+  case 98: /* args_list: type_spec IDENTIFIER ',' args_list  */
   if (yyn == 98)
     /* "VondaGrammar.y":449  */
-    {
+                                       {
     yyval = ((LinkedList)(yystack.valueAt (0))); ((LinkedList)(yystack.valueAt (0))).addFirst((( String )(yystack.valueAt (2)))); ((LinkedList)(yystack.valueAt (0))).addFirst(((Type)(yystack.valueAt (3))));
   };
   break;
-    
 
-  case 99:
+
+  case 99: /* set_operation: IDENTIFIER PLUSEQ exp ';'  */
   if (yyn == 99)
     /* "VondaGrammar.y":457  */
-    {
+                              {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (3)))), yystack.locationAt (3));
     yyval = setPos(new StatSetOperation(var, true, ((RTExpression)(yystack.valueAt (1)))), (yyloc));
   };
   break;
-    
 
-  case 100:
+
+  case 100: /* set_operation: IDENTIFIER MINUSEQ exp ';'  */
   if (yyn == 100)
     /* "VondaGrammar.y":461  */
-    {
+                               {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (3)))), yystack.locationAt (3));
     yyval = setPos(new StatSetOperation(var, false, ((RTExpression)(yystack.valueAt (1)))), (yyloc));
   };
   break;
-    
 
-  case 101:
+
+  case 101: /* set_operation: ArrayAccess PLUSEQ exp ';'  */
   if (yyn == 101)
     /* "VondaGrammar.y":465  */
-    {
+                               {
     yyval = setPos(new StatSetOperation(((RTExpression)(yystack.valueAt (3))), true, ((RTExpression)(yystack.valueAt (1)))), (yyloc));
   };
   break;
-    
 
-  case 102:
+
+  case 102: /* set_operation: ArrayAccess MINUSEQ exp ';'  */
   if (yyn == 102)
     /* "VondaGrammar.y":468  */
-    {
+                                {
     yyval = setPos(new StatSetOperation(((RTExpression)(yystack.valueAt (3))), false, ((RTExpression)(yystack.valueAt (1)))), (yyloc));
   };
   break;
-    
 
-  case 103:
+
+  case 103: /* set_operation: field_access PLUSEQ exp ';'  */
   if (yyn == 103)
     /* "VondaGrammar.y":471  */
-    {
+                                {
     yyval = setPos(new StatSetOperation(((RTExpression)(yystack.valueAt (3))), true, ((RTExpression)(yystack.valueAt (1)))), (yyloc));
   };
   break;
-    
 
-  case 104:
+
+  case 104: /* set_operation: field_access MINUSEQ exp ';'  */
   if (yyn == 104)
     /* "VondaGrammar.y":474  */
-    {
+                                 {
     yyval = setPos(new StatSetOperation(((RTExpression)(yystack.valueAt (3))), false, ((RTExpression)(yystack.valueAt (1)))), (yyloc));
   };
   break;
-    
 
-  case 105:
+
+  case 105: /* function_call: IDENTIFIER '(' ')'  */
   if (yyn == 105)
     /* "VondaGrammar.y":483  */
-    {
+                       {
     yyval = setPos(new ExpFuncCall((( String )(yystack.valueAt (2))), new LinkedList<RTExpression>(), false), (yyloc));
   };
   break;
-    
 
-  case 106:
+
+  case 106: /* function_call: IDENTIFIER '(' nonempty_args_list ')'  */
   if (yyn == 106)
     /* "VondaGrammar.y":486  */
-    {
+                                           {
     yyval = setPos(new ExpFuncCall((( String )(yystack.valueAt (3))), ((LinkedList<RTExpression>)(yystack.valueAt (1))), false), (yyloc));
   };
   break;
-    
 
-  case 107:
+
+  case 107: /* nonempty_args_list: exp  */
   if (yyn == 107)
     /* "VondaGrammar.y":492  */
-    { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (0)))); }}; };
+        { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (0)))); }}; };
   break;
-    
 
-  case 108:
+
+  case 108: /* nonempty_args_list: lambda_exp  */
   if (yyn == 108)
     /* "VondaGrammar.y":493  */
-    { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (0)))); }}; };
+               { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (0)))); }}; };
   break;
-    
 
-  case 109:
+
+  case 109: /* nonempty_args_list: exp ',' nonempty_args_list  */
   if (yyn == 109)
     /* "VondaGrammar.y":494  */
-    { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (0))); ((LinkedList<RTExpression>)(yystack.valueAt (0))).addFirst(((RTExpression)(yystack.valueAt (2)))); };
+                               { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (0))); ((LinkedList<RTExpression>)(yystack.valueAt (0))).addFirst(((RTExpression)(yystack.valueAt (2)))); };
   break;
-    
 
-  case 110:
+
+  case 110: /* nonempty_args_list: lambda_exp ',' nonempty_args_list  */
   if (yyn == 110)
     /* "VondaGrammar.y":495  */
-    { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (0))); ((LinkedList<RTExpression>)(yystack.valueAt (0))).addFirst(((RTExpression)(yystack.valueAt (2)))); };
+                                      { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (0))); ((LinkedList<RTExpression>)(yystack.valueAt (0))).addFirst(((RTExpression)(yystack.valueAt (2)))); };
   break;
-    
 
-  case 111:
+
+  case 111: /* type_spec: IDENTIFIER '[' ']'  */
   if (yyn == 111)
     /* "VondaGrammar.y":499  */
-    {
+                       {
     yyval = new Type("Array",
                   new ArrayList<Type>(){{ add(new Type((( String )(yystack.valueAt (2))))); }});
   };
   break;
-    
 
-  case 112:
+
+  case 112: /* type_spec: IDENTIFIER  */
   if (yyn == 112)
     /* "VondaGrammar.y":503  */
-    { yyval = new Type((( String )(yystack.valueAt (0)))); };
+               { yyval = new Type((( String )(yystack.valueAt (0)))); };
   break;
-    
 
-  case 113:
+
+  case 113: /* type_spec: IDENTIFIER '<' type_spec_list '>'  */
   if (yyn == 113)
     /* "VondaGrammar.y":504  */
-    { yyval = new Type((( String )(yystack.valueAt (3))), ((LinkedList<Type>)(yystack.valueAt (1)))); };
+                                      { yyval = new Type((( String )(yystack.valueAt (3))), ((LinkedList<Type>)(yystack.valueAt (1)))); };
   break;
-    
 
-  case 114:
+
+  case 114: /* type_spec_list: type_spec  */
   if (yyn == 114)
     /* "VondaGrammar.y":508  */
-    { yyval = new LinkedList<Type>(){{ add(((Type)(yystack.valueAt (0)))); }}; };
+              { yyval = new LinkedList<Type>(){{ add(((Type)(yystack.valueAt (0)))); }}; };
   break;
-    
 
-  case 115:
+
+  case 115: /* type_spec_list: type_spec ',' type_spec_list  */
   if (yyn == 115)
     /* "VondaGrammar.y":509  */
-    { yyval = ((LinkedList<Type>)(yystack.valueAt (0))); ((LinkedList<Type>)(yystack.valueAt (0))).addFirst(((Type)(yystack.valueAt (2)))); };
+                                 { yyval = ((LinkedList<Type>)(yystack.valueAt (0))); ((LinkedList<Type>)(yystack.valueAt (0))).addFirst(((Type)(yystack.valueAt (2)))); };
   break;
-    
 
-  case 116:
+
+  case 116: /* ConditionalOrExpression: ConditionalOrExpression OROR ConditionalAndExpression  */
   if (yyn == 116)
     /* "VondaGrammar.y":513  */
-    {
+                                                          {
     yyval = setPos(new ExpBoolean(((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0))), "||"), (yyloc));
   };
   break;
-    
 
-  case 117:
+
+  case 117: /* ConditionalOrExpression: ConditionalAndExpression  */
   if (yyn == 117)
     /* "VondaGrammar.y":516  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                             { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 118:
+
+  case 118: /* ConditionalAndExpression: ConditionalAndExpression ANDAND InclusiveOrExpression  */
   if (yyn == 118)
     /* "VondaGrammar.y":520  */
-    {
+                                                          {
     yyval = setPos(new ExpBoolean(((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0))), "&&"), (yyloc));
   };
   break;
-    
 
-  case 119:
+
+  case 119: /* ConditionalAndExpression: InclusiveOrExpression  */
   if (yyn == 119)
     /* "VondaGrammar.y":523  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                          { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 120:
+
+  case 120: /* InclusiveOrExpression: ExclusiveOrExpression  */
   if (yyn == 120)
     /* "VondaGrammar.y":527  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                          { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 121:
+
+  case 121: /* InclusiveOrExpression: InclusiveOrExpression '|' ExclusiveOrExpression  */
   if (yyn == 121)
     /* "VondaGrammar.y":528  */
-    {
+                                                    {
     yyval = setPos(new ExpArithmetic(((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0))), "|"), (yyloc));
   };
   break;
-    
 
-  case 122:
+
+  case 122: /* ExclusiveOrExpression: AndExpression  */
   if (yyn == 122)
     /* "VondaGrammar.y":534  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                  { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 123:
+
+  case 123: /* ExclusiveOrExpression: ExclusiveOrExpression '^' AndExpression  */
   if (yyn == 123)
     /* "VondaGrammar.y":535  */
-    {
+                                            {
     yyval = setPos(new ExpArithmetic(((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0))), "^"), (yyloc));
   };
   break;
-    
 
-  case 124:
+
+  case 124: /* AndExpression: EqualityExpression  */
   if (yyn == 124)
     /* "VondaGrammar.y":541  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                       { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 125:
+
+  case 125: /* AndExpression: AndExpression '&' EqualityExpression  */
   if (yyn == 125)
     /* "VondaGrammar.y":542  */
-    {
+                                         {
     yyval = setPos(new ExpArithmetic(((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0))), "&"), (yyloc));
   };
   break;
-    
 
-  case 126:
+
+  case 126: /* EqualityExpression: RelationalExpression  */
   if (yyn == 126)
     /* "VondaGrammar.y":548  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                         { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 127:
+
+  case 127: /* EqualityExpression: EqualityExpression EQEQ RelationalExpression  */
   if (yyn == 127)
     /* "VondaGrammar.y":549  */
-    {
+                                                 {
     yyval = setPos(new ExpBoolean(((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0))), "=="), (yyloc));
   };
   break;
-    
 
-  case 128:
+
+  case 128: /* EqualityExpression: EqualityExpression NOTEQ RelationalExpression  */
   if (yyn == 128)
     /* "VondaGrammar.y":552  */
-    {
+                                                  {
     yyval = setPos(new ExpBoolean(((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0))), "!="), (yyloc));
   };
   break;
-    
 
-  case 129:
+
+  case 129: /* RelationalExpression: AdditiveExpression  */
   if (yyn == 129)
     /* "VondaGrammar.y":558  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                       { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 130:
+
+  case 130: /* RelationalExpression: RelationalExpression '<' AdditiveExpression  */
   if (yyn == 130)
     /* "VondaGrammar.y":559  */
-    {
+                                                {
     yyval = setPos(new ExpBoolean(((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0))), "<"), (yyloc));
   };
   break;
-    
 
-  case 131:
+
+  case 131: /* RelationalExpression: RelationalExpression '>' AdditiveExpression  */
   if (yyn == 131)
     /* "VondaGrammar.y":562  */
-    {
+                                                {
     yyval = setPos(new ExpBoolean(((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0))), ">"), (yyloc));
   };
   break;
-    
 
-  case 132:
+
+  case 132: /* RelationalExpression: RelationalExpression GTEQ AdditiveExpression  */
   if (yyn == 132)
     /* "VondaGrammar.y":565  */
-    {
+                                                 {
     yyval = setPos(new ExpBoolean(((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0))), ">="), (yyloc));
   };
   break;
-    
 
-  case 133:
+
+  case 133: /* RelationalExpression: RelationalExpression LTEQ AdditiveExpression  */
   if (yyn == 133)
     /* "VondaGrammar.y":568  */
-    {
+                                                 {
     yyval = setPos(new ExpBoolean(((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0))), "<="), (yyloc));
   };
   break;
-    
 
-  case 134:
+
+  case 134: /* AdditiveExpression: MultiplicativeExpression  */
   if (yyn == 134)
     /* "VondaGrammar.y":574  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                             { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 135:
+
+  case 135: /* AdditiveExpression: AdditiveExpression '+' MultiplicativeExpression  */
   if (yyn == 135)
     /* "VondaGrammar.y":575  */
-    {
+                                                    {
     yyval = setPos(new ExpArithmetic(((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0))), "+"), (yyloc));
   };
   break;
-    
 
-  case 136:
+
+  case 136: /* AdditiveExpression: AdditiveExpression '-' MultiplicativeExpression  */
   if (yyn == 136)
     /* "VondaGrammar.y":578  */
-    {
+                                                    {
     yyval = setPos(new ExpArithmetic(((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0))), "-"), (yyloc));
   };
   break;
-    
 
-  case 137:
+
+  case 137: /* MultiplicativeExpression: CastExpression  */
   if (yyn == 137)
     /* "VondaGrammar.y":584  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                   { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 138:
+
+  case 138: /* MultiplicativeExpression: MultiplicativeExpression '*' CastExpression  */
   if (yyn == 138)
     /* "VondaGrammar.y":585  */
-    {
+                                                {
     yyval = setPos(new ExpArithmetic(((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0))), "*"), (yyloc));
   };
   break;
-    
 
-  case 139:
+
+  case 139: /* MultiplicativeExpression: MultiplicativeExpression '/' CastExpression  */
   if (yyn == 139)
     /* "VondaGrammar.y":588  */
-    {
+                                                {
     yyval = setPos(new ExpArithmetic(((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0))), "/"), (yyloc));
   };
   break;
-    
 
-  case 140:
+
+  case 140: /* MultiplicativeExpression: MultiplicativeExpression '%' CastExpression  */
   if (yyn == 140)
     /* "VondaGrammar.y":591  */
-    {
+                                                {
     yyval = setPos(new ExpArithmetic(((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0))), "%"), (yyloc));
   };
   break;
-    
 
-  case 141:
+
+  case 141: /* CastExpression: UnaryExpression  */
   if (yyn == 141)
     /* "VondaGrammar.y":597  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                    { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 142:
+
+  case 142: /* CastExpression: '(' type_spec ')' CastExpression  */
   if (yyn == 142)
     /* "VondaGrammar.y":598  */
-    { yyval = setPos(new ExpCast(((Type)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0)))), (yyloc)); };
+                                     { yyval = setPos(new ExpCast(((Type)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0)))), (yyloc)); };
   break;
-    
 
-  case 143:
+
+  case 143: /* UnaryExpression: PLUSPLUS UnaryExpression  */
   if (yyn == 143)
     /* "VondaGrammar.y":602  */
-    {
+                             {
     yyval = createPlusMinus(((RTExpression)(yystack.valueAt (0))), "++", (yyloc));
   };
   break;
-    
 
-  case 144:
+
+  case 144: /* UnaryExpression: MINUSMINUS UnaryExpression  */
   if (yyn == 144)
     /* "VondaGrammar.y":605  */
-    {
+                               {
     yyval = createPlusMinus(((RTExpression)(yystack.valueAt (0))), "--", (yyloc));
   };
   break;
-    
 
-  case 145:
+
+  case 145: /* UnaryExpression: '+' CastExpression  */
   if (yyn == 145)
     /* "VondaGrammar.y":608  */
-    { yyval = setPos(new ExpArithmetic(((RTExpression)(yystack.valueAt (0))), null, "+"), (yyloc)); };
+                       { yyval = setPos(new ExpArithmetic(((RTExpression)(yystack.valueAt (0))), null, "+"), (yyloc)); };
   break;
-    
 
-  case 146:
+
+  case 146: /* UnaryExpression: '-' CastExpression  */
   if (yyn == 146)
     /* "VondaGrammar.y":609  */
-    { yyval = setPos(new ExpArithmetic(((RTExpression)(yystack.valueAt (0))), null, "-"), (yyloc)); };
+                       { yyval = setPos(new ExpArithmetic(((RTExpression)(yystack.valueAt (0))), null, "-"), (yyloc)); };
   break;
-    
 
-  case 147:
+
+  case 147: /* UnaryExpression: LogicalUnaryExpression  */
   if (yyn == 147)
     /* "VondaGrammar.y":610  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                           { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 148:
+
+  case 148: /* LogicalUnaryExpression: PostfixExpression  */
   if (yyn == 148)
     /* "VondaGrammar.y":614  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                      { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 149:
+
+  case 149: /* LogicalUnaryExpression: '!' UnaryExpression  */
   if (yyn == 149)
     /* "VondaGrammar.y":615  */
-    { yyval = setPos(new ExpBoolean(((RTExpression)(yystack.valueAt (0))), null, "!"), (yyloc)); };
+                        { yyval = setPos(new ExpBoolean(((RTExpression)(yystack.valueAt (0))), null, "!"), (yyloc)); };
   break;
-    
 
-  case 150:
+
+  case 150: /* LogicalUnaryExpression: '~' UnaryExpression  */
   if (yyn == 150)
     /* "VondaGrammar.y":616  */
-    { yyval = setPos(new ExpArithmetic(((RTExpression)(yystack.valueAt (0))), null, "~"), (yyloc)); };
+                        { yyval = setPos(new ExpArithmetic(((RTExpression)(yystack.valueAt (0))), null, "~"), (yyloc)); };
   break;
-    
 
-  case 151:
+
+  case 151: /* PostfixExpression: PrimaryExpression  */
   if (yyn == 151)
     /* "VondaGrammar.y":620  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                      { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 152:
+
+  case 152: /* PostfixExpression: PostfixExpression PLUSPLUS  */
   if (yyn == 152)
     /* "VondaGrammar.y":621  */
-    {
+                               {
     yyval = createPlusMinus(((RTExpression)(yystack.valueAt (1))), "+++", (yyloc));
   };
   break;
-    
 
-  case 153:
+
+  case 153: /* PostfixExpression: PostfixExpression MINUSMINUS  */
   if (yyn == 153)
     /* "VondaGrammar.y":624  */
-    {
+                                 {
     yyval = createPlusMinus(((RTExpression)(yystack.valueAt (1))), "---", (yyloc));
   };
   break;
-    
 
-  case 154:
+
+  case 154: /* PrimaryExpression: NULL  */
   if (yyn == 154)
     /* "VondaGrammar.y":630  */
-    { yyval = setPos(new ExpLiteral("null", "null"), (yyloc)); };
+         { yyval = setPos(new ExpLiteral("null", "null"), (yyloc)); };
   break;
-    
 
-  case 155:
+
+  case 155: /* PrimaryExpression: NotJustName  */
   if (yyn == 155)
     /* "VondaGrammar.y":631  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 156:
+
+  case 156: /* PrimaryExpression: ComplexPrimary  */
   if (yyn == 156)
     /* "VondaGrammar.y":632  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                   { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 157:
+
+  case 157: /* NotJustName: IDENTIFIER  */
   if (yyn == 157)
     /* "VondaGrammar.y":636  */
-    { yyval = setPos(new ExpIdentifier((( String )(yystack.valueAt (0)))), (yyloc)); };
+               { yyval = setPos(new ExpIdentifier((( String )(yystack.valueAt (0)))), (yyloc)); };
   break;
-    
 
-  case 158:
+
+  case 158: /* NotJustName: '(' '(' type_spec ')' UnaryExpression ')'  */
   if (yyn == 158)
     /* "VondaGrammar.y":637  */
-    { yyval = setPos(new ExpCast(((Type)(yystack.valueAt (3))), ((RTExpression)(yystack.valueAt (1)))), (yyloc)); };
+                                              { yyval = setPos(new ExpCast(((Type)(yystack.valueAt (3))), ((RTExpression)(yystack.valueAt (1)))), (yyloc)); };
   break;
-    
 
-  case 159:
+
+  case 159: /* ComplexPrimary: '(' exp ')'  */
   if (yyn == 159)
     /* "VondaGrammar.y":641  */
-    { yyval = ((RTExpression)(yystack.valueAt (1))); ((RTExpression)(yystack.valueAt (1))).generateParens(); };
+                { yyval = ((RTExpression)(yystack.valueAt (1))); ((RTExpression)(yystack.valueAt (1))).generateParens(); };
   break;
-    
 
-  case 160:
+
+  case 160: /* ComplexPrimary: ComplexPrimaryNoParenthesis  */
   if (yyn == 160)
     /* "VondaGrammar.y":642  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                                { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 161:
+
+  case 161: /* ComplexPrimaryNoParenthesis: Literal  */
   if (yyn == 161)
     /* "VondaGrammar.y":646  */
-    { yyval = ((ExpLiteral)(yystack.valueAt (0))); };
+            { yyval = ((ExpLiteral)(yystack.valueAt (0))); };
   break;
-    
 
-  case 162:
+
+  case 162: /* ComplexPrimaryNoParenthesis: ArrayAccess  */
   if (yyn == 162)
     /* "VondaGrammar.y":647  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 163:
+
+  case 163: /* ComplexPrimaryNoParenthesis: field_access  */
   if (yyn == 163)
     /* "VondaGrammar.y":648  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                 { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 164:
+
+  case 164: /* ComplexPrimaryNoParenthesis: function_call  */
   if (yyn == 164)
     /* "VondaGrammar.y":649  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                  { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 165:
+
+  case 165: /* ComplexPrimaryNoParenthesis: dialogueact_exp  */
   if (yyn == 165)
     /* "VondaGrammar.y":650  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                    { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 166:
+
+  case 166: /* Literal: STRING  */
   if (yyn == 166)
     /* "VondaGrammar.y":654  */
-    { yyval = setPos((( ExpLiteral )(yystack.valueAt (0))), (yyloc)); };
+           { yyval = (( ExpLiteral )(yystack.valueAt (0))); };
   break;
-    
 
-  case 167:
+
+  case 167: /* Literal: INT  */
   if (yyn == 167)
     /* "VondaGrammar.y":655  */
-    { yyval = setPos((( ExpLiteral )(yystack.valueAt (0))), (yyloc)); };
+        { yyval = setPos((( ExpLiteral )(yystack.valueAt (0))), (yyloc)); };
   break;
-    
 
-  case 168:
+
+  case 168: /* Literal: OTHER_LITERAL  */
   if (yyn == 168)
     /* "VondaGrammar.y":656  */
-    { yyval = setPos((( ExpLiteral )(yystack.valueAt (0))), (yyloc)); };
+                  { yyval = setPos((( ExpLiteral )(yystack.valueAt (0))), (yyloc)); };
   break;
-    
 
-  case 169:
+
+  case 169: /* Literal: BOOL_LITERAL  */
   if (yyn == 169)
     /* "VondaGrammar.y":657  */
-    { yyval = setPos((( ExpLiteral )(yystack.valueAt (0))), (yyloc)); };
+                 { yyval = setPos((( ExpLiteral )(yystack.valueAt (0))), (yyloc)); };
   break;
-    
 
-  case 170:
+
+  case 170: /* ArrayAccess: IDENTIFIER '[' exp ']'  */
   if (yyn == 170)
     /* "VondaGrammar.y":661  */
-    {
+                           {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (3)))), yystack.locationAt (3));
     yyval = setPos(new ExpArrayAccess(var, ((RTExpression)(yystack.valueAt (1)))), (yyloc));
   };
   break;
-    
 
-  case 171:
+
+  case 171: /* ArrayAccess: ComplexPrimary '[' exp ']'  */
   if (yyn == 171)
     /* "VondaGrammar.y":665  */
-    { yyval = setPos(new ExpArrayAccess(((RTExpression)(yystack.valueAt (3))), ((RTExpression)(yystack.valueAt (1)))), (yyloc)); };
+                               { yyval = setPos(new ExpArrayAccess(((RTExpression)(yystack.valueAt (3))), ((RTExpression)(yystack.valueAt (1)))), (yyloc)); };
   break;
-    
 
-  case 172:
+
+  case 172: /* ConditionalExpression: ConditionalOrExpression '?' exp ':' exp  */
   if (yyn == 172)
     /* "VondaGrammar.y":669  */
-    { yyval = setPos(new ExpConditional(((RTExpression)(yystack.valueAt (4))), ((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0)))), (yyloc)); };
+                                            { yyval = setPos(new ExpConditional(((RTExpression)(yystack.valueAt (4))), ((RTExpression)(yystack.valueAt (2))), ((RTExpression)(yystack.valueAt (0)))), (yyloc)); };
   break;
-    
 
-  case 173:
+
+  case 173: /* ConditionalExpression: ConditionalOrExpression  */
   if (yyn == 173)
     /* "VondaGrammar.y":670  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                            { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 174:
+
+  case 174: /* assignment: field_access assgn_exp  */
   if (yyn == 174)
     /* "VondaGrammar.y":676  */
-    { yyval = setPos(new ExpAssignment(((RTExpression)(yystack.valueAt (1))), ((RTExpression)(yystack.valueAt (0)))), (yyloc)); };
+                           { yyval = setPos(new ExpAssignment(((RTExpression)(yystack.valueAt (1))), ((RTExpression)(yystack.valueAt (0)))), (yyloc)); };
   break;
-    
 
-  case 175:
+
+  case 175: /* assignment: ArrayAccess assgn_exp  */
   if (yyn == 175)
     /* "VondaGrammar.y":677  */
-    { yyval = setPos(new ExpAssignment(((RTExpression)(yystack.valueAt (1))), ((RTExpression)(yystack.valueAt (0)))), (yyloc)); };
+                          { yyval = setPos(new ExpAssignment(((RTExpression)(yystack.valueAt (1))), ((RTExpression)(yystack.valueAt (0)))), (yyloc)); };
   break;
-    
 
-  case 176:
+
+  case 176: /* assignment: IDENTIFIER assgn_exp  */
   if (yyn == 176)
     /* "VondaGrammar.y":678  */
-    {
+                         {
     ExpIdentifier var = setPos(new ExpIdentifier((( String )(yystack.valueAt (1)))), yystack.locationAt (1));
     ExpAssignment ass = setPos(new ExpAssignment(var, ((RTExpression)(yystack.valueAt (0)))), (yyloc));
     yyval = ass;
   };
   break;
-    
 
-  case 177:
+
+  case 177: /* field_access: NotJustName field_access_rest  */
   if (yyn == 177)
     /* "VondaGrammar.y":686  */
-    {
+                                  {
     yyval = setPos(new ExpFieldAccess(((LinkedList<RTExpression>)(yystack.valueAt (0)))), (yyloc)); ((LinkedList<RTExpression>)(yystack.valueAt (0))).addFirst(((RTExpression)(yystack.valueAt (1))));
   };
   break;
-    
 
-  case 178:
+
+  case 178: /* field_access: STRING field_access_rest  */
   if (yyn == 178)
     /* "VondaGrammar.y":689  */
-    {
-    yyval = setPos(new ExpFieldAccess(((LinkedList<RTExpression>)(yystack.valueAt (0)))), (yyloc)); ((LinkedList<RTExpression>)(yystack.valueAt (0))).addFirst(setPos((( ExpLiteral )(yystack.valueAt (1))), (yyloc)));
+                             {
+    yyval = setPos(new ExpFieldAccess(((LinkedList<RTExpression>)(yystack.valueAt (0)))), (yyloc)); ((LinkedList<RTExpression>)(yystack.valueAt (0))).addFirst(setPos((( ExpLiteral )(yystack.valueAt (1))), yystack.locationAt (1)));
   };
   break;
-    
 
-  case 179:
+
+  case 179: /* field_access: function_call field_access_rest  */
   if (yyn == 179)
     /* "VondaGrammar.y":692  */
-    { yyval = setPos(new ExpFieldAccess(((LinkedList<RTExpression>)(yystack.valueAt (0)))), (yyloc)); ((LinkedList<RTExpression>)(yystack.valueAt (0))).addFirst(((RTExpression)(yystack.valueAt (1)))); };
+                                    { yyval = setPos(new ExpFieldAccess(((LinkedList<RTExpression>)(yystack.valueAt (0)))), (yyloc)); ((LinkedList<RTExpression>)(yystack.valueAt (0))).addFirst(((RTExpression)(yystack.valueAt (1)))); };
   break;
-    
 
-  case 180:
+
+  case 180: /* field_access_rest: '.' simple_nofa_exp field_access_rest  */
   if (yyn == 180)
     /* "VondaGrammar.y":696  */
-    { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (0))); ((LinkedList<RTExpression>)(yystack.valueAt (0))).addFirst(((RTExpression)(yystack.valueAt (1)))); };
+                                          { yyval = ((LinkedList<RTExpression>)(yystack.valueAt (0))); ((LinkedList<RTExpression>)(yystack.valueAt (0))).addFirst(((RTExpression)(yystack.valueAt (1)))); };
   break;
-    
 
-  case 181:
+
+  case 181: /* field_access_rest: '.' simple_nofa_exp  */
   if (yyn == 181)
     /* "VondaGrammar.y":697  */
-    { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (0)))); }}; };
+                        { yyval = new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (0)))); }}; };
   break;
-    
 
-  case 182:
+
+  case 182: /* simple_nofa_exp: IDENTIFIER  */
   if (yyn == 182)
     /* "VondaGrammar.y":701  */
-    { yyval = setPos(new ExpIdentifier((( String )(yystack.valueAt (0)))), (yyloc)); };
+               { yyval = setPos(new ExpIdentifier((( String )(yystack.valueAt (0)))), (yyloc)); };
   break;
-    
 
-  case 183:
+
+  case 183: /* simple_nofa_exp: function_call  */
   if (yyn == 183)
     /* "VondaGrammar.y":702  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+                  { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 184:
+
+  case 184: /* simple_nofa_exp: '(' exp ')'  */
   if (yyn == 184)
     /* "VondaGrammar.y":703  */
-    { yyval = ((RTExpression)(yystack.valueAt (1))); };
+                { yyval = ((RTExpression)(yystack.valueAt (1))); };
   break;
-    
 
-  case 185:
+
+  case 185: /* new_exp: NEW IDENTIFIER  */
   if (yyn == 185)
     /* "VondaGrammar.y":707  */
-    { yyval = setPos(new ExpNew(new Type((( String )(yystack.valueAt (0))))), (yyloc)); };
+                   { yyval = setPos(new ExpNew(new Type((( String )(yystack.valueAt (0))))), (yyloc)); };
   break;
-    
 
-  case 186:
+
+  case 186: /* new_exp: NEW IDENTIFIER '(' ')'  */
   if (yyn == 186)
     /* "VondaGrammar.y":708  */
-    {
+                           {
     yyval = setPos(new ExpNew(new Type((( String )(yystack.valueAt (2)))), new LinkedList<>()), (yyloc));
   };
   break;
-    
 
-  case 187:
+
+  case 187: /* new_exp: NEW IDENTIFIER '(' nonempty_exp_list ')'  */
   if (yyn == 187)
     /* "VondaGrammar.y":711  */
-    {
+                                             {
     yyval = setPos(new ExpNew(new Type((( String )(yystack.valueAt (3)))), ((LinkedList<RTExpression>)(yystack.valueAt (1)))), (yyloc));
   };
   break;
-    
 
-  case 188:
+
+  case 188: /* new_exp: NEW IDENTIFIER '[' exp ']'  */
   if (yyn == 188)
     /* "VondaGrammar.y":714  */
-    {
+                               {
     List<Type> sub = new ArrayList<Type>() {{ add(new Type((( String )(yystack.valueAt (3))))); }};
     yyval = setPos(new ExpNew(new Type("Array", sub),
                     new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (1)))); }}), (yyloc));
   };
   break;
-    
 
-  case 189:
+
+  case 189: /* new_exp: NEW IDENTIFIER '[' ']' '(' exp ')'  */
   if (yyn == 189)
     /* "VondaGrammar.y":719  */
-    {
+                                      {
     List<Type> sub = new ArrayList<Type>() {{ add(new Type((( String )(yystack.valueAt (5))))); }};
     yyval = setPos(new ExpNew(new Type("Array", sub),
                     new LinkedList<RTExpression>(){{ add(((RTExpression)(yystack.valueAt (1)))); }}), (yyloc));
   };
   break;
-    
 
-  case 190:
+
+  case 190: /* new_exp: NEW IDENTIFIER '<' type_spec_list '>' '(' ')'  */
   if (yyn == 190)
     /* "VondaGrammar.y":724  */
-    {
+                                                  {
     yyval = setPos(new ExpNew(new Type((( String )(yystack.valueAt (5))), ((LinkedList<Type>)(yystack.valueAt (3)))),
                     new LinkedList<>()), (yyloc));
   };
   break;
-    
 
-  case 191:
+
+  case 191: /* new_exp: NEW IDENTIFIER '<' type_spec_list '>' '(' nonempty_exp_list ')'  */
   if (yyn == 191)
     /* "VondaGrammar.y":728  */
-    {
+                                                                    {
     yyval = setPos(new ExpNew(new Type((( String )(yystack.valueAt (6))), ((LinkedList<Type>)(yystack.valueAt (4)))),
                     ((LinkedList<RTExpression>)(yystack.valueAt (1)))), (yyloc));
   };
   break;
-    
 
-  case 192:
+
+  case 192: /* lambda_exp: '(' opt_args_list ')' ARROW exp  */
   if (yyn == 192)
     /* "VondaGrammar.y":735  */
-    {
+                                    {
     yyval = setPos(new ExpLambda(((LinkedList)(yystack.valueAt (3))), ((RTExpression)(yystack.valueAt (0)))), (yyloc));
   };
   break;
-    
 
-  case 193:
+
+  case 193: /* lambda_exp: '(' opt_args_list ')' ARROW block  */
   if (yyn == 193)
     /* "VondaGrammar.y":738  */
-    {
+                                      {
     yyval = setPos(new ExpLambda(((LinkedList)(yystack.valueAt (3))), ((StatAbstractBlock)(yystack.valueAt (0)))), (yyloc));
   };
   break;
-    
 
-  case 194:
+
+  case 194: /* dialogueact_exp: '#' da_token '(' da_token da_args ')'  */
   if (yyn == 194)
     /* "VondaGrammar.y":745  */
-    {
+                                          {
     yyval = setPos(new ExpDialogueAct(((RTExpression)(yystack.valueAt (4))), ((RTExpression)(yystack.valueAt (2))), ((LinkedList<RTExpression>)(yystack.valueAt (1)))), (yyloc));
   };
   break;
-    
 
-  case 195:
+
+  case 195: /* da_token: '{' exp '}'  */
   if (yyn == 195)
     /* "VondaGrammar.y":751  */
-    { yyval = ((RTExpression)(yystack.valueAt (1))); };
+                { yyval = ((RTExpression)(yystack.valueAt (1))); };
   break;
-    
 
-  case 196:
+
+  case 196: /* da_token: IDENTIFIER  */
   if (yyn == 196)
     /* "VondaGrammar.y":754  */
-    { yyval = setPos(new ExpLiteral((( String )(yystack.valueAt (0))), "String"), (yyloc)); };
+               { yyval = setPos(new ExpLiteral((( String )(yystack.valueAt (0))), "String"), (yyloc)); };
   break;
-    
 
-  case 197:
+
+  case 197: /* da_token: STRING  */
   if (yyn == 197)
     /* "VondaGrammar.y":755  */
-    { yyval = setPos((( ExpLiteral )(yystack.valueAt (0))), (yyloc)); };
+           {
+    Location loc = new Location((( ExpLiteral )(yystack.valueAt (0))).getLocation().getBegin().plusOne(),
+                                (( ExpLiteral )(yystack.valueAt (0))).getLocation().getEnd().minusOne());
+    yyval = setPos((( ExpLiteral )(yystack.valueAt (0))), loc);
+  };
   break;
-    
 
-  case 198:
+
+  case 198: /* da_token: WILDCARD  */
   if (yyn == 198)
-    /* "VondaGrammar.y":756  */
-    { yyval = setPos(new ExpLiteral((( String )(yystack.valueAt (0))), "String"), (yyloc)); };
-  break;
-    
-
-  case 199:
-  if (yyn == 199)
     /* "VondaGrammar.y":760  */
-    {
+             { yyval = setPos(new ExpLiteral((( String )(yystack.valueAt (0))), "String"), (yyloc)); };
+  break;
+
+
+  case 199: /* da_args: ',' da_token '=' da_token da_args  */
+  if (yyn == 199)
+    /* "VondaGrammar.y":764  */
+                                       {
     yyval = ((LinkedList<RTExpression>)(yystack.valueAt (0))); ((LinkedList<RTExpression>)(yystack.valueAt (0))).addFirst(((RTExpression)(yystack.valueAt (1)))); ((LinkedList<RTExpression>)(yystack.valueAt (0))).addFirst(((RTExpression)(yystack.valueAt (3))));
   };
   break;
-    
 
-  case 200:
+
+  case 200: /* da_args: %empty  */
   if (yyn == 200)
-    /* "VondaGrammar.y":763  */
-    { yyval = new LinkedList<RTExpression>(); };
-  break;
-    
-
-  case 201:
-  if (yyn == 201)
     /* "VondaGrammar.y":767  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+           { yyval = new LinkedList<RTExpression>(); };
   break;
-    
 
-  case 202:
+
+  case 201: /* exp: ConditionalExpression  */
+  if (yyn == 201)
+    /* "VondaGrammar.y":771  */
+                          { yyval = ((RTExpression)(yystack.valueAt (0))); };
+  break;
+
+
+  case 202: /* exp: assignment  */
   if (yyn == 202)
-    /* "VondaGrammar.y":768  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+    /* "VondaGrammar.y":772  */
+               { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
-  case 203:
+
+  case 203: /* exp: new_exp  */
   if (yyn == 203)
-    /* "VondaGrammar.y":769  */
-    { yyval = ((RTExpression)(yystack.valueAt (0))); };
+    /* "VondaGrammar.y":773  */
+            { yyval = ((RTExpression)(yystack.valueAt (0))); };
   break;
-    
 
 
-/* "VondaGrammar.java":2148  */
+
+/* "VondaGrammar.java":2522  */
 
         default: break;
       }
 
-    yy_symbol_print ("-> $$ =", yyr1_[yyn], yyval, yyloc);
+    yySymbolPrint("-> $$ =", SymbolKind.get(yyr1_[yyn]), yyval, yyloc);
 
-    yystack.pop (yylen);
+    yystack.pop(yylen);
     yylen = 0;
-
     /* Shift the result of the reduction.  */
-    int yystate = yy_lr_goto_state_ (yystack.stateAt (0), yyr1_[yyn]);
-    yystack.push (yystate, yyval, yyloc);
+    int yystate = yyLRGotoState(yystack.stateAt(0), yyr1_[yyn]);
+    yystack.push(yystate, yyval, yyloc);
     return YYNEWSTATE;
-  }
-
-
-  /* Return YYSTR after stripping away unnecessary quotes and
-     backslashes, so that it's suitable for yyerror.  The heuristic is
-     that double-quoting is unnecessary unless the string contains an
-     apostrophe, a comma, or backslash (other than backslash-backslash).
-     YYSTR is taken from yytname.  */
-  private final String yytnamerr_ (String yystr)
-  {
-    if (yystr.charAt (0) == '"')
-      {
-        StringBuffer yyr = new StringBuffer ();
-        strip_quotes: for (int i = 1; i < yystr.length (); i++)
-          switch (yystr.charAt (i))
-            {
-            case '\'':
-            case ',':
-              break strip_quotes;
-
-            case '\\':
-              if (yystr.charAt(++i) != '\\')
-                break strip_quotes;
-              /* Fall through.  */
-            default:
-              yyr.append (yystr.charAt (i));
-              break;
-
-            case '"':
-              return yyr.toString ();
-            }
-      }
-    else if (yystr.equals ("$end"))
-      return "end of input";
-
-    return yystr;
   }
 
 
@@ -2201,14 +2538,15 @@ public class VondaGrammar
   | Print this symbol on YYOUTPUT.  |
   `--------------------------------*/
 
-  private void yy_symbol_print (String s, int yytype,
-                                 Object yyvaluep                                 , Object yylocationp)
-  {
-    if (yydebug > 0)
-    yycdebug (s + (yytype < yyntokens_ ? " token " : " nterm ")
-              + yytname_[yytype] + " ("
-              + yylocationp + ": "
-              + (yyvaluep == null ? "(null)" : yyvaluep.toString ()) + ")");
+  private void yySymbolPrint(String s, SymbolKind yykind,
+                             Object yyvalue, Location yylocation) {
+      if (0 < yydebug) {
+          yycdebug(s
+                   + (yykind.getCode() < YYNTOKENS_ ? " token " : " nterm ")
+                   + yykind.getName() + " ("
+                   + yylocation + ": "
+                   + (yyvalue == null ? "(null)" : yyvalue.toString()) + ")");
+      }
   }
 
 
@@ -2219,16 +2557,17 @@ public class VondaGrammar
    * @return <tt>true</tt> if the parsing succeeds.  Note that this does not
    *          imply that there were no syntax errors.
    */
-   public boolean parse () throws java.io.IOException
+  public boolean parse() throws java.io.IOException
 
   {
     /* @$.  */
     Location yyloc;
 
 
-    /* Lookahead and lookahead in internal form.  */
-    int yychar = yyempty_;
-    int yytoken = 0;
+    /* Lookahead token kind.  */
+    int yychar = YYEMPTY_;
+    /* Lookahead symbol kind.  */
+    SymbolKind yytoken = null;
 
     /* State.  */
     int yyn = 0;
@@ -2237,8 +2576,7 @@ public class VondaGrammar
     YYStack yystack = new YYStack ();
     int label = YYNEWSTATE;
 
-    /* Error handling.  */
-    int yynerrs_ = 0;
+
     /* The location where the error started.  */
     Location yyerrloc = null;
 
@@ -2248,11 +2586,14 @@ public class VondaGrammar
     /* Semantic value of the lookahead.  */
     Object yylval = null;
 
-    yycdebug ("Starting parse\n");
+
+
+    yycdebug ("Starting parse");
     yyerrstatus_ = 0;
+    yynerrs = 0;
 
     /* Initialize the stack.  */
-    yystack.push (yystate, yylval , yylloc);
+    yystack.push (yystate, yylval, yylloc);
 
 
 
@@ -2262,83 +2603,88 @@ public class VondaGrammar
         /* New state.  Unlike in the C/C++ skeletons, the state is already
            pushed when we come here.  */
       case YYNEWSTATE:
-        yycdebug ("Entering state " + yystate + "\n");
-        if (yydebug > 0)
+        yycdebug ("Entering state " + yystate);
+        if (0 < yydebug)
           yystack.print (yyDebugStream);
 
         /* Accept?  */
-        if (yystate == yyfinal_)
+        if (yystate == YYFINAL_)
           return true;
 
         /* Take a decision.  First try without lookahead.  */
         yyn = yypact_[yystate];
-        if (yy_pact_value_is_default_ (yyn))
+        if (yyPactValueIsDefault (yyn))
           {
             label = YYDEFAULT;
             break;
           }
 
         /* Read a lookahead token.  */
-        if (yychar == yyempty_)
+        if (yychar == YYEMPTY_)
           {
 
-
-            yycdebug ("Reading a token: ");
+            yycdebug ("Reading a token");
             yychar = yylexer.yylex ();
-            yylval = yylexer.getLVal ();
-            yylloc = new Location (yylexer.getStartPos (),
-                            yylexer.getEndPos ());
+            yylval = yylexer.getLVal();
+            yylloc = new Location(yylexer.getStartPos(),
+                                          yylexer.getEndPos());
 
           }
 
         /* Convert token to internal form.  */
-        if (yychar <= Lexer.EOF)
+        yytoken = yytranslate_ (yychar);
+        yySymbolPrint("Next token is", yytoken,
+                      yylval, yylloc);
+
+        if (yytoken == SymbolKind.S_YYerror)
           {
-            yychar = yytoken = Lexer.EOF;
-            yycdebug ("Now at end of input.\n");
+            // The scanner already issued an error message, process directly
+            // to error recovery.  But do not keep the error token as
+            // lookahead, it is too special and may lead us to an endless
+            // loop in error recovery. */
+            yychar = Lexer.YYUNDEF;
+            yytoken = SymbolKind.S_YYUNDEF;
+            yyerrloc = yylloc;
+            label = YYERRLAB1;
           }
         else
           {
-            yytoken = yytranslate_ (yychar);
-            yy_symbol_print ("Next token is", yytoken,
-                             yylval, yylloc);
-          }
+            /* If the proper action on seeing token YYTOKEN is to reduce or to
+               detect an error, take that action.  */
+            yyn += yytoken.getCode();
+            if (yyn < 0 || YYLAST_ < yyn || yycheck_[yyn] != yytoken.getCode()) {
+              label = YYDEFAULT;
+            }
 
-        /* If the proper action on seeing token YYTOKEN is to reduce or to
-           detect an error, take that action.  */
-        yyn += yytoken;
-        if (yyn < 0 || yylast_ < yyn || yycheck_[yyn] != yytoken)
-          label = YYDEFAULT;
+            /* <= 0 means reduce or error.  */
+            else if ((yyn = yytable_[yyn]) <= 0)
+              {
+                if (yyTableValueIsError(yyn)) {
+                  label = YYERRLAB;
+                } else {
+                  yyn = -yyn;
+                  label = YYREDUCE;
+                }
+              }
 
-        /* <= 0 means reduce or error.  */
-        else if ((yyn = yytable_[yyn]) <= 0)
-          {
-            if (yy_table_value_is_error_ (yyn))
-              label = YYERRLAB;
             else
               {
-                yyn = -yyn;
-                label = YYREDUCE;
+                /* Shift the lookahead token.  */
+                yySymbolPrint("Shifting", yytoken,
+                              yylval, yylloc);
+
+                /* Discard the token being shifted.  */
+                yychar = YYEMPTY_;
+
+                /* Count tokens shifted since error; after three, turn off error
+                   status.  */
+                if (yyerrstatus_ > 0)
+                  --yyerrstatus_;
+
+                yystate = yyn;
+                yystack.push(yystate, yylval, yylloc);
+                label = YYNEWSTATE;
               }
-          }
-
-        else
-          {
-            /* Shift the lookahead token.  */
-            yy_symbol_print ("Shifting", yytoken,
-                             yylval, yylloc);
-
-            /* Discard the token being shifted.  */
-            yychar = yyempty_;
-
-            /* Count tokens shifted since error; after three, turn off error
-               status.  */
-            if (yyerrstatus_ > 0)
-              --yyerrstatus_;
-
-            yystate = yyn;
-            yystack.push (yystate, yylval, yylloc);
-            label = YYNEWSTATE;
           }
         break;
 
@@ -2358,8 +2704,8 @@ public class VondaGrammar
       `-----------------------------*/
       case YYREDUCE:
         yylen = yyr2_[yyn];
-        label = yyaction (yyn, yystack, yylen);
-        yystate = yystack.stateAt (0);
+        label = yyaction(yyn, yystack, yylen);
+        yystate = yystack.stateAt(0);
         break;
 
       /*------------------------------------.
@@ -2369,26 +2715,26 @@ public class VondaGrammar
         /* If not already recovering from an error, report this error.  */
         if (yyerrstatus_ == 0)
           {
-            ++yynerrs_;
-            if (yychar == yyempty_)
-              yytoken = yyempty_;
-            yyerror (yylloc, yysyntax_error (yystate, yytoken));
+            ++yynerrs;
+            if (yychar == YYEMPTY_)
+              yytoken = null;
+            yyreportSyntaxError(new Context(this, yystack, yytoken, yylloc));
           }
 
         yyerrloc = yylloc;
         if (yyerrstatus_ == 3)
           {
-        /* If just tried and failed to reuse lookahead token after an
-         error, discard it.  */
+            /* If just tried and failed to reuse lookahead token after an
+               error, discard it.  */
 
-        if (yychar <= Lexer.EOF)
-          {
-          /* Return failure if at end of input.  */
-          if (yychar == Lexer.EOF)
-            return false;
-          }
-        else
-            yychar = yyempty_;
+            if (yychar <= Lexer.YYEOF)
+              {
+                /* Return failure if at end of input.  */
+                if (yychar == Lexer.YYEOF)
+                  return false;
+              }
+            else
+              yychar = YYEMPTY_;
           }
 
         /* Else will try to reuse lookahead token after shifting the error
@@ -2400,13 +2746,12 @@ public class VondaGrammar
       | errorlab -- error raised explicitly by YYERROR.  |
       `-------------------------------------------------*/
       case YYERROR:
-
         yyerrloc = yystack.locationAt (yylen - 1);
         /* Do not reclaim the symbols of the rule which action triggered
            this YYERROR.  */
         yystack.pop (yylen);
         yylen = 0;
-        yystate = yystack.stateAt (0);
+        yystate = yystack.stateAt(0);
         label = YYERRLAB1;
         break;
 
@@ -2416,13 +2761,15 @@ public class VondaGrammar
       case YYERRLAB1:
         yyerrstatus_ = 3;       /* Each real token shifted decrements this.  */
 
+        // Pop stack until we find a state that shifts the error token.
         for (;;)
           {
             yyn = yypact_[yystate];
-            if (!yy_pact_value_is_default_ (yyn))
+            if (!yyPactValueIsDefault (yyn))
               {
-                yyn += yyterror_;
-                if (0 <= yyn && yyn <= yylast_ && yycheck_[yyn] == yyterror_)
+                yyn += SymbolKind.S_YYerror.getCode();
+                if (0 <= yyn && yyn <= YYLAST_
+                    && yycheck_[yyn] == SymbolKind.S_YYerror.getCode())
                   {
                     yyn = yytable_[yyn];
                     if (0 < yyn)
@@ -2435,16 +2782,17 @@ public class VondaGrammar
             if (yystack.height == 0)
               return false;
 
+
             yyerrloc = yystack.locationAt (0);
             yystack.pop ();
-            yystate = yystack.stateAt (0);
-            if (yydebug > 0)
+            yystate = yystack.stateAt(0);
+            if (0 < yydebug)
               yystack.print (yyDebugStream);
           }
 
         if (label == YYABORT)
-            /* Leave the switch.  */
-            break;
+          /* Leave the switch.  */
+          break;
 
 
         /* Muck with the stack to setup for yylloc.  */
@@ -2454,8 +2802,8 @@ public class VondaGrammar
         yystack.pop (2);
 
         /* Shift the error token.  */
-        yy_symbol_print ("Shifting", yystos_[yyn],
-                         yylval, yyloc);
+        yySymbolPrint("Shifting", SymbolKind.get(yystos_[yyn]),
+                      yylval, yyloc);
 
         yystate = yyn;
         yystack.push (yyn, yylval, yyloc);
@@ -2475,85 +2823,159 @@ public class VondaGrammar
 
 
 
-  // Generate an error message.
-  private String yysyntax_error (int yystate, int tok)
-  {
-    if (yyErrorVerbose)
-      {
-        /* There are many possibilities here to consider:
-           - If this state is a consistent state with a default action,
-             then the only way this function was invoked is if the
-             default action is an error action.  In that case, don't
-             check for expected tokens because there are none.
-           - The only way there can be no lookahead present (in tok) is
-             if this state is a consistent state with a default action.
-             Thus, detecting the absence of a lookahead is sufficient to
-             determine that there is no unexpected or expected token to
-             report.  In that case, just report a simple "syntax error".
-           - Don't assume there isn't a lookahead just because this
-             state is a consistent state with a default action.  There
-             might have been a previous inconsistent state, consistent
-             state with a non-default action, or user semantic action
-             that manipulated yychar.  (However, yychar is currently out
-             of scope during semantic actions.)
-           - Of course, the expected token list depends on states to
-             have correct lookahead information, and it depends on the
-             parser not to perform extra reductions after fetching a
-             lookahead from the scanner and before detecting a syntax
-             error.  Thus, state merging (from LALR or IELR) and default
-             reductions corrupt the expected token list.  However, the
-             list is correct for canonical LR with one exception: it
-             will still contain any token that will not be accepted due
-             to an error action in a later state.
-        */
-        if (tok != yyempty_)
-          {
-            /* FIXME: This method of building the message is not compatible
-               with internationalization.  */
-            StringBuffer res =
-              new StringBuffer ("syntax error, unexpected ");
-            res.append (yytnamerr_ (yytname_[tok]));
-            int yyn = yypact_[yystate];
-            if (!yy_pact_value_is_default_ (yyn))
-              {
-                /* Start YYX at -YYN if negative to avoid negative
-                   indexes in YYCHECK.  In other words, skip the first
-                   -YYN actions for this state because they are default
-                   actions.  */
-                int yyxbegin = yyn < 0 ? -yyn : 0;
-                /* Stay within bounds of both yycheck and yytname.  */
-                int yychecklim = yylast_ - yyn + 1;
-                int yyxend = yychecklim < yyntokens_ ? yychecklim : yyntokens_;
-                int count = 0;
-                for (int x = yyxbegin; x < yyxend; ++x)
-                  if (yycheck_[x + yyn] == x && x != yyterror_
-                      && !yy_table_value_is_error_ (yytable_[x + yyn]))
-                    ++count;
-                if (count < 5)
-                  {
-                    count = 0;
-                    for (int x = yyxbegin; x < yyxend; ++x)
-                      if (yycheck_[x + yyn] == x && x != yyterror_
-                          && !yy_table_value_is_error_ (yytable_[x + yyn]))
-                        {
-                          res.append (count++ == 0 ? ", expecting " : " or ");
-                          res.append (yytnamerr_ (yytname_[x]));
-                        }
-                  }
-              }
-            return res.toString ();
-          }
-      }
+  /**
+   * Information needed to get the list of expected tokens and to forge
+   * a syntax error diagnostic.
+   */
+  public static final class Context {
+    Context(VondaGrammar parser, YYStack stack, SymbolKind token, Location loc) {
+      yyparser = parser;
+      yystack = stack;
+      yytoken = token;
+      yylocation = loc;
+    }
 
-    return "syntax error";
+    private VondaGrammar yyparser;
+    private YYStack yystack;
+
+
+    /**
+     * The symbol kind of the lookahead token.
+     */
+    public final SymbolKind getToken() {
+      return yytoken;
+    }
+
+    private SymbolKind yytoken;
+
+    /**
+     * The location of the lookahead.
+     */
+    public final Location getLocation() {
+      return yylocation;
+    }
+
+    private Location yylocation;
+    static final int NTOKENS = VondaGrammar.YYNTOKENS_;
+
+    /**
+     * Put in YYARG at most YYARGN of the expected tokens given the
+     * current YYCTX, and return the number of tokens stored in YYARG.  If
+     * YYARG is null, return the number of expected tokens (guaranteed to
+     * be less than YYNTOKENS).
+     */
+    int getExpectedTokens(SymbolKind yyarg[], int yyargn) {
+      return getExpectedTokens (yyarg, 0, yyargn);
+    }
+
+    int getExpectedTokens(SymbolKind yyarg[], int yyoffset, int yyargn) {
+      int yycount = yyoffset;
+      int yyn = yypact_[this.yystack.stateAt(0)];
+      if (!yyPactValueIsDefault(yyn))
+        {
+          /* Start YYX at -YYN if negative to avoid negative
+             indexes in YYCHECK.  In other words, skip the first
+             -YYN actions for this state because they are default
+             actions.  */
+          int yyxbegin = yyn < 0 ? -yyn : 0;
+          /* Stay within bounds of both yycheck and yytname.  */
+          int yychecklim = YYLAST_ - yyn + 1;
+          int yyxend = yychecklim < NTOKENS ? yychecklim : NTOKENS;
+          for (int yyx = yyxbegin; yyx < yyxend; ++yyx)
+            if (yycheck_[yyx + yyn] == yyx && yyx != SymbolKind.S_YYerror.getCode()
+                && !yyTableValueIsError(yytable_[yyx + yyn]))
+              {
+                if (yyarg == null)
+                  yycount += 1;
+                else if (yycount == yyargn)
+                  return 0; // FIXME: this is incorrect.
+                else
+                  yyarg[yycount++] = SymbolKind.get(yyx);
+              }
+        }
+      if (yyarg != null && yycount == yyoffset && yyoffset < yyargn)
+        yyarg[yycount] = null;
+      return yycount - yyoffset;
+    }
+  }
+
+
+
+
+  private int yysyntaxErrorArguments(Context yyctx, SymbolKind[] yyarg, int yyargn) {
+    /* There are many possibilities here to consider:
+       - If this state is a consistent state with a default action,
+         then the only way this function was invoked is if the
+         default action is an error action.  In that case, don't
+         check for expected tokens because there are none.
+       - The only way there can be no lookahead present (in tok) is
+         if this state is a consistent state with a default action.
+         Thus, detecting the absence of a lookahead is sufficient to
+         determine that there is no unexpected or expected token to
+         report.  In that case, just report a simple "syntax error".
+       - Don't assume there isn't a lookahead just because this
+         state is a consistent state with a default action.  There
+         might have been a previous inconsistent state, consistent
+         state with a non-default action, or user semantic action
+         that manipulated yychar.  (However, yychar is currently out
+         of scope during semantic actions.)
+       - Of course, the expected token list depends on states to
+         have correct lookahead information, and it depends on the
+         parser not to perform extra reductions after fetching a
+         lookahead from the scanner and before detecting a syntax
+         error.  Thus, state merging (from LALR or IELR) and default
+         reductions corrupt the expected token list.  However, the
+         list is correct for canonical LR with one exception: it
+         will still contain any token that will not be accepted due
+         to an error action in a later state.
+    */
+    int yycount = 0;
+    if (yyctx.getToken() != null)
+      {
+        if (yyarg != null)
+          yyarg[yycount] = yyctx.getToken();
+        yycount += 1;
+        yycount += yyctx.getExpectedTokens(yyarg, 1, yyargn);
+      }
+    return yycount;
+  }
+
+
+  /**
+   * Build and emit a "syntax error" message in a user-defined way.
+   *
+   * @param ctx  The context of the error.
+   */
+  private void yyreportSyntaxError(Context yyctx) {
+      if (yyErrorVerbose) {
+          final int argmax = 5;
+          SymbolKind[] yyarg = new SymbolKind[argmax];
+          int yycount = yysyntaxErrorArguments(yyctx, yyarg, argmax);
+          String[] yystr = new String[yycount];
+          for (int yyi = 0; yyi < yycount; ++yyi) {
+              yystr[yyi] = yyarg[yyi].getName();
+          }
+          String yyformat;
+          switch (yycount) {
+              default:
+              case 0: yyformat = "syntax error"; break;
+              case 1: yyformat = "syntax error, unexpected {0}"; break;
+              case 2: yyformat = "syntax error, unexpected {0}, expecting {1}"; break;
+              case 3: yyformat = "syntax error, unexpected {0}, expecting {1} or {2}"; break;
+              case 4: yyformat = "syntax error, unexpected {0}, expecting {1} or {2} or {3}"; break;
+              case 5: yyformat = "syntax error, unexpected {0}, expecting {1} or {2} or {3} or {4}"; break;
+          }
+          yyerror(yyctx.yylocation, new MessageFormat(yyformat).format(yystr));
+      } else {
+          yyerror(yyctx.yylocation, "syntax error");
+      }
   }
 
   /**
    * Whether the given <code>yypact_</code> value indicates a defaulted state.
    * @param yyvalue   the value to check
    */
-  private static boolean yy_pact_value_is_default_ (int yyvalue)
-  {
+  private static boolean yyPactValueIsDefault(int yyvalue) {
     return yyvalue == yypact_ninf_;
   }
 
@@ -2562,17 +2984,16 @@ public class VondaGrammar
    * value indicates a syntax error.
    * @param yyvalue the value to check
    */
-  private static boolean yy_table_value_is_error_ (int yyvalue)
-  {
+  private static boolean yyTableValueIsError(int yyvalue) {
     return yyvalue == yytable_ninf_;
   }
 
   private static final short yypact_ninf_ = -367;
   private static final short yytable_ninf_ = -158;
 
-  /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
+/* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-  private static final short yypact_[] = yypact_init();
+  private static final short[] yypact_ = yypact_init();
   private static final short[] yypact_init()
   {
     return new short[]
@@ -2628,7 +3049,7 @@ public class VondaGrammar
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
    Performed when YYTABLE does not specify something else to do.  Zero
    means the default is an error.  */
-  private static final short yydefact_[] = yydefact_init();
+  private static final short[] yydefact_ = yydefact_init();
   private static final short[] yydefact_init()
   {
     return new short[]
@@ -2682,7 +3103,7 @@ public class VondaGrammar
   }
 
 /* YYPGOTO[NTERM-NUM].  */
-  private static final short yypgoto_[] = yypgoto_init();
+  private static final short[] yypgoto_ = yypgoto_init();
   private static final short[] yypgoto_init()
   {
     return new short[]
@@ -2698,12 +3119,12 @@ public class VondaGrammar
   }
 
 /* YYDEFGOTO[NTERM-NUM].  */
-  private static final short yydefgoto_[] = yydefgoto_init();
+  private static final short[] yydefgoto_ = yydefgoto_init();
   private static final short[] yydefgoto_init()
   {
     return new short[]
     {
-      -1,    31,    32,    33,    79,    69,   138,   139,    35,   140,
+       0,    31,    32,    33,    79,    69,   138,   139,    35,   140,
       36,    37,    38,    39,    40,   189,    41,    42,    43,    44,
       71,    46,   136,   329,    47,   417,   321,   322,    48,    92,
      247,    73,   255,    93,    94,    95,    96,    97,    98,    99,
@@ -2716,7 +3137,7 @@ public class VondaGrammar
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
    positive, shift that token.  If negative, reduce the rule whose
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
-  private static final short yytable_[] = yytable_init();
+  private static final short[] yytable_ = yytable_init();
   private static final short[] yytable_init()
   {
     return new short[]
@@ -2875,7 +3296,7 @@ public class VondaGrammar
     };
   }
 
-private static final short yycheck_[] = yycheck_init();
+private static final short[] yycheck_ = yycheck_init();
   private static final short[] yycheck_init()
   {
     return new short[]
@@ -3034,9 +3455,9 @@ private static final short yycheck_[] = yycheck_init();
     };
   }
 
-/* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
-   symbol of state STATE-NUM.  */
-  private static final short yystos_[] = yystos_init();
+/* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
+   state STATE-NUM.  */
+  private static final short[] yystos_ = yystos_init();
   private static final short[] yystos_init()
   {
     return new short[]
@@ -3089,8 +3510,8 @@ private static final short yycheck_[] = yycheck_init();
     };
   }
 
-/* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
-  private static final short yyr1_[] = yyr1_init();
+/* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
+  private static final short[] yyr1_ = yyr1_init();
   private static final short[] yyr1_init()
   {
     return new short[]
@@ -3119,8 +3540,8 @@ private static final short yycheck_[] = yycheck_init();
     };
   }
 
-/* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
-  private static final byte yyr2_[] = yyr2_init();
+/* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
+  private static final byte[] yyr2_ = yyr2_init();
   private static final byte[] yyr2_init()
   {
     return new byte[]
@@ -3149,61 +3570,10 @@ private static final short yycheck_[] = yycheck_init();
     };
   }
 
-  /* YYTOKEN_NUMBER[YYLEX-NUM] -- Internal symbol number corresponding
-      to YYLEX-NUM.  */
-  private static final short yytoken_number_[] = yytoken_number_init();
-  private static final short[] yytoken_number_init()
-  {
-    return new short[]
-    {
-       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-     275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
-     285,   286,   287,   288,   289,   290,   291,   292,   293,   294,
-     295,   296,    59,    46,   123,   125,    58,    40,    41,    44,
-      91,    93,    61,    60,    62,   124,    94,    38,    43,    45,
-      42,    47,    37,    33,   126,    63,    35
-    };
-  }
 
-  /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
-     First, the terminals, then, starting at \a yyntokens_, nonterminals.  */
-  private static final String yytname_[] = yytname_init();
-  private static final String[] yytname_init()
-  {
-    return new String[]
-    {
-  "$end", "error", "$undefined", "BREAK", "CANCEL", "CANCEL_ALL", "CASE",
-  "CONTINUE", "DEFAULT", "DO", "ELSE", "FINAL", "FOR", "IF", "IMPORT",
-  "NEW", "NULL", "PRIVATE", "PROPOSE", "PROTECTED", "PUBLIC", "RETURN",
-  "SWITCH", "TIMEOUT", "WHILE", "ARROW", "ANDAND", "OROR", "EQEQ", "NOTEQ",
-  "GTEQ", "LTEQ", "MINUSEQ", "PLUSEQ", "MINUSMINUS", "PLUSPLUS", "STRING",
-  "WILDCARD", "INT", "BOOL_LITERAL", "IDENTIFIER", "OTHER_LITERAL", "';'",
-  "'.'", "'{'", "'}'", "':'", "'('", "')'", "','", "'['", "']'", "'='",
-  "'<'", "'>'", "'|'", "'^'", "'&'", "'+'", "'-'", "'*'", "'/'", "'%'",
-  "'!'", "'~'", "'?'", "'#'", "$accept", "grammar_file", "visibility_spec",
-  "imports", "path", "statement_no_def", "statement", "blk_statement",
-  "block", "statements", "grammar_rule", "return_statement",
-  "if_statement", "while_statement", "for_statement", "var_decl",
-  "propose_statement", "timeout_statement", "switch_statement",
-  "label_statement", "var_def", "field_def", "assgn_exp",
-  "nonempty_exp_list", "method_declaration", "opt_block", "opt_args_list",
-  "args_list", "set_operation", "function_call", "nonempty_args_list",
-  "type_spec", "type_spec_list", "ConditionalOrExpression",
-  "ConditionalAndExpression", "InclusiveOrExpression",
-  "ExclusiveOrExpression", "AndExpression", "EqualityExpression",
-  "RelationalExpression", "AdditiveExpression", "MultiplicativeExpression",
-  "CastExpression", "UnaryExpression", "LogicalUnaryExpression",
-  "PostfixExpression", "PrimaryExpression", "NotJustName",
-  "ComplexPrimary", "ComplexPrimaryNoParenthesis", "Literal",
-  "ArrayAccess", "ConditionalExpression", "assignment", "field_access",
-  "field_access_rest", "simple_nofa_exp", "new_exp", "lambda_exp",
-  "dialogueact_exp", "da_token", "da_args", "exp", null
-    };
-  }
 
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-  private static final short yyrline_[] = yyrline_init();
+  private static final short[] yyrline_ = yyrline_init();
   private static final short[] yyrline_init()
   {
     return new short[]
@@ -3227,14 +3597,14 @@ private static final short yycheck_[] = yycheck_init();
      642,   646,   647,   648,   649,   650,   654,   655,   656,   657,
      661,   665,   669,   670,   676,   677,   678,   686,   689,   692,
      696,   697,   701,   702,   703,   707,   708,   711,   714,   719,
-     724,   728,   735,   738,   745,   751,   754,   755,   756,   760,
-     763,   767,   768,   769
+     724,   728,   735,   738,   745,   751,   754,   755,   760,   764,
+     767,   771,   772,   773
     };
   }
 
 
   // Report on the debug stream that the rule yyrule is going to be reduced.
-  private void yy_reduce_print (int yyrule, YYStack yystack)
+  private void yyReducePrint (int yyrule, YYStack yystack)
   {
     if (yydebug == 0)
       return;
@@ -3243,19 +3613,30 @@ private static final short yycheck_[] = yycheck_init();
     int yynrhs = yyr2_[yyrule];
     /* Print the symbols being reduced, and their result.  */
     yycdebug ("Reducing stack by rule " + (yyrule - 1)
-              + " (line " + yylno + "), ");
+              + " (line " + yylno + "):");
 
     /* The symbols being reduced.  */
     for (int yyi = 0; yyi < yynrhs; yyi++)
-      yy_symbol_print ("   $" + (yyi + 1) + " =",
-                       yystos_[yystack.stateAt(yynrhs - (yyi + 1))],
-                       yystack.valueAt ((yynrhs) - (yyi + 1)),
-                       yystack.locationAt ((yynrhs) - (yyi + 1)));
+      yySymbolPrint("   $" + (yyi + 1) + " =",
+                    SymbolKind.get(yystos_[yystack.stateAt(yynrhs - (yyi + 1))]),
+                    yystack.valueAt ((yynrhs) - (yyi + 1)),
+                    yystack.locationAt ((yynrhs) - (yyi + 1)));
   }
 
-  /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
+  /* YYTRANSLATE_(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
      as returned by yylex, with out-of-bounds checking.  */
-  private static final byte yytranslate_table_[] = yytranslate_table_init();
+  private static final SymbolKind yytranslate_(int t)
+  {
+    // Last valid token kind.
+    int code_max = 296;
+    if (t <= 0)
+      return SymbolKind.S_YYEOF;
+    else if (t <= code_max)
+      return SymbolKind.get(yytranslate_table_[t]);
+    else
+      return SymbolKind.S_YYUNDEF;
+  }
+  private static final byte[] yytranslate_table_ = yytranslate_table_init();
   private static final byte[] yytranslate_table_init()
   {
     return new byte[]
@@ -3293,26 +3674,12 @@ private static final short yycheck_[] = yycheck_init();
     };
   }
 
-  private static final byte yytranslate_ (int t)
-  {
-    if (t >= 0 && t <= yyuser_token_number_max_)
-      return yytranslate_table_[t];
-    else
-      return yyundef_token_;
-  }
 
-  private static final int yylast_ = 1507;
-  private static final int yynnts_ = 63;
-  private static final int yyempty_ = -2;
-  private static final int yyfinal_ = 150;
-  private static final int yyterror_ = 1;
-  private static final int yyerrcode_ = 256;
-  private static final int yyntokens_ = 67;
+  private static final int YYLAST_ = 1507;
+  private static final int YYEMPTY_ = -2;
+  private static final int YYFINAL_ = 150;
+  private static final int YYNTOKENS_ = 67;
 
-  private static final int yyuser_token_number_max_ = 296;
-  private static final int yyundef_token_ = 2;
-
-/* User implementation code.  */
 /* Unqualified %code blocks.  */
 /* "VondaGrammar.y":59  */
 
@@ -3347,7 +3714,6 @@ private static final short yycheck_[] = yycheck_init();
     return setPos(new ExpArithmetic(variable, null, plusOrMinus), loc);
   }
 
-/* "VondaGrammar.java":3351  */
+/* "VondaGrammar.java":3718  */
 
 }
-

@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -54,6 +55,7 @@ import de.dfki.mlt.rudimant.common.ErrorInfo.ErrorType;
 import de.dfki.mlt.rudimant.common.ImportInfo;
 import de.dfki.mlt.rudimant.common.Location;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
+import de.dfki.mlt.rudimant.compiler.tree.VisitorConvert;
 
 public class RudimantCompiler {
 
@@ -190,7 +192,7 @@ public class RudimantCompiler {
   /** Process the top-level rudi file */
   public void processToplevel(File topLevel) throws IOException {
     inputRootDir = topLevel.getParentFile();
-    if (outputRootDir == null) outputRootDir = inputRootDir;
+    outputRootDir = inputRootDir;
     // get the name from the input file name
     String className = topLevel.getName().replace(RULE_FILE_EXTENSION, "");
 
@@ -209,18 +211,11 @@ public class RudimantCompiler {
       logger.error("Initializer file import: {}", ex);
     }
     try {
-      processForReal(className);
+      processForReal2(className);
     } finally {
       mem.leaveClass();
       // save ruleLocMap to .yml file
-      dumpToYaml();
-      // print errors and warnings in Emacs error format (optionally) for plain
-      // emacs use.
-      if (printErrors) {
-        printErrors(mem.getInfo(), inputRootDir);
-      }
     }
-
   }
 
   /**
@@ -293,6 +288,41 @@ public class RudimantCompiler {
     }
   }
 
+  /** Create output directories, open a writer to the output file and process
+   *  the current input
+   */
+  private void processForReal2(String name)
+      throws IOException {
+    File outputdir = getSubDirectory(outputRootDir, mem.getTopLevelPackageSpec());
+    outputdir = getSubDirectory(outputdir, mem.getPackageSpec());
+    if (!outputdir.isDirectory()) {
+      createDirectories(outputdir.toPath());
+    }
+    File outputFile = new File(outputdir, mem.getClassName() + ".v3.rudi");
+
+    /* Compute the inputfile, which is relative to inputDirectory, the subdirectory
+     * is specified by the subPackage, and the last entry of subPackage, which is
+     * the class name of the file to be processed, is removed.
+     */
+    File inputFile = new File(
+        getSubDirectory(inputRootDir, mem.getPackageSpec()),
+        (name != null ? name : mem.getClassName()) + RULE_FILE_EXTENSION);
+
+    logger.info("parsing " + inputFile.getName() + " to " + outputFile);
+    GrammarFile gf = parseAndTypecheck(this,
+        new FileInputStream(inputFile), name);
+    if (gf == null)
+      throw new UnsupportedOperationException("Parsing failed.");
+
+    Writer sw = new FileWriter(outputFile);
+    // now instead of generating java Code, generate rudi v3 code
+    VisitorConvert vc = new VisitorConvert(sw, gf._th, this);
+    vc.convert(gf);
+    sw.close();
+  }
+
+
+
   /** Process an imported rudi file
    * @throws IOException
    */
@@ -301,7 +331,7 @@ public class RudimantCompiler {
     logger.info("Processing import {}/{}", Arrays.toString(dirSpec), name);
     mem.enterClass(name, dirSpec, loc);
     try {
-      processForReal(name);
+      processForReal2(name);
     } finally {
       mem.leaveClass();
     }
