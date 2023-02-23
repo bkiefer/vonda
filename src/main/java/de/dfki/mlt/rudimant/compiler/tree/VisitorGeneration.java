@@ -502,9 +502,7 @@ public class VisitorGeneration implements RudiVisitor {
   public void visit(StatGrammarRule node) {
     if (node.toplevel) {
       mem.enterEnvironment(node);
-      // is a top level rule and will be converted to a method
-      /** TODO: NO, CHECK IF CORRECT */
-      //gen("public int " + node.label + "(){\n");
+      // is a top level rule, generate a block to shield variables
       gen("// Rule ").gen(node.label).gen("\n{");
     } else {
       // a sub-level rule: ordinary <if>
@@ -533,9 +531,8 @@ public class VisitorGeneration implements RudiVisitor {
     if (ifNode.statblockElse != null) {
       gen("else ").gen(ifNode.statblockElse);
     }
-    gen("end_").gen(node.label).gen(": ;\n");
+    gen("// Rule ").gen(node.label).gen(" end\n");
     if (node.toplevel) {
-      //gen("\nreturn 0; \n}\n");
       gen("\n}\n");
       mem.leaveEnvironment(node);
     }

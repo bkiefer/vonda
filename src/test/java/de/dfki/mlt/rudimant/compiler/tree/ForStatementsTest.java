@@ -48,7 +48,7 @@ public class ForStatementsTest {
     String expected = "/**/// Rule initiate_greet {"
         + "boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); "
         + "logRule(0, __x0); initiate_greet: if (__x0[0]){ for (Object seat_outer : getSeats()) "
-        + "{ Rdf seat = (Rdf)seat_outer; { } } } end_initiate_greet: ; } }";
+        + "{ Rdf seat = (Rdf)seat_outer; { } } } // Rule initiate_greet end } }";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -60,7 +60,7 @@ public class ForStatementsTest {
                     "  if(true){\n" +
                     "    for(k : kids()){}}";
     String s = generate(ifstat);
-    String expected = "/**/// Rule initiate_greet {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); initiate_greet: if (__x0[0]){ for (Object k_outer : kids()) { Rdf k = (Rdf)k_outer; { } } } end_initiate_greet: ; } }";
+    String expected = "/**/// Rule initiate_greet {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); initiate_greet: if (__x0[0]){ for (Object k_outer : kids()) { Rdf k = (Rdf)k_outer; { } } } // Rule initiate_greet end } }";
     assertEquals(expected, getForMarked(s, expected));
   }
 

@@ -55,7 +55,7 @@ public class AdditionalTest {
   public void testParenthesis() {
     String in = "rule: if (lastPref.pref_score != 0) {}";
     String r = generate(in);
-    String pref = "// Rule rule {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = lastPref.pref_score != 0); logRule(0, __x0); rule: if (__x0[0]){ } end_rule: ; }";
+    String pref = "// Rule rule {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = lastPref.pref_score != 0); logRule(0, __x0); rule: if (__x0[0]){ } // Rule rule end }";
     assertEquals(pref, getForMarked(r, pref));
   }
 
@@ -89,7 +89,7 @@ public class AdditionalTest {
     String s = generate(stat);
     String expected = "public String preBlock() { return \"preBlock\";}"
         + "// Rule demo_rule {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true);"
-        + " logRule(0, __x0); demo_rule: if (__x0[0])break demo_rule; end_demo_rule: ; } public String postBlock() { return \"postBlock\"; }}";
+        + " logRule(0, __x0); demo_rule: if (__x0[0])break demo_rule; // Rule demo_rule end } public String postBlock() { return \"postBlock\"; }}";
     assertEquals(expected, getForMarked(s, expected));
   }
 
@@ -108,7 +108,7 @@ public class AdditionalTest {
   public void testSyntheticBaseTerm() {
     String in = "a = 1; rule: if(a) a=7;";
     String exp = "a = 1;// Rule rule {"
-        + "boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = a != 0); logRule(0, __x0); rule: if (__x0[0])a = 7; end_rule: ; } }";
+        + "boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = a != 0); logRule(0, __x0); rule: if (__x0[0])a = 7; // Rule rule end } }";
 
     String s = generate(in);
     assertEquals(exp, getForMarked(s, exp));

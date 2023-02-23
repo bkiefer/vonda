@@ -43,7 +43,7 @@ public class ReturnTest {
   public void testReturn2(){
     String in = "foo: if (true) { return 1; }";
     String r = generate(in);
-    String expected = "// Rule foo {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); foo: if (__x0[0]){ return 1; } end_foo: ; } }";
+    String expected = "// Rule foo {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); foo: if (__x0[0]){ return 1; } // Rule foo end } }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -51,7 +51,7 @@ public class ReturnTest {
   public void testBreak1(){
     String in = "foo: if (true) { break foo; }";
     String r = generate(in);
-    String expected = "// Rule foo {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); foo: if (__x0[0]){ break foo; } end_foo: ; }";
+    String expected = "// Rule foo {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); foo: if (__x0[0]){ break foo; } // Rule foo end }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -63,7 +63,7 @@ public class ReturnTest {
         + "boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = false); logRule(0, __x0); "
         + "bar: if (__x0[0]){ // Rule foo "
         + "boolean[] __x1 = new boolean[2]; __x1[0] = (__x1[1] = true); logRule(1, __x1); "
-        + "foo: if (__x1[0]){ break foo; } end_foo: ; } end_bar: ; }";
+        + "foo: if (__x1[0]){ break foo; } // Rule foo end } // Rule bar end }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -71,7 +71,7 @@ public class ReturnTest {
   public void testBreak3(){
     String in = "foo: if (true) { break foo ; }";
     String r = generate(in);
-    String expected = "// Rule foo {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); foo: if (__x0[0]){ break foo; } end_foo: ; } }";
+    String expected = "// Rule foo {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); foo: if (__x0[0]){ break foo; } // Rule foo end } }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -79,7 +79,7 @@ public class ReturnTest {
   public void testBreak4(){
     String in = "foo: if (true) { bar: if (false) break bar ; }";
     String r = generate(in);
-    String expected = "// Rule foo {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); foo: if (__x0[0]){ // Rule bar boolean[] __x1 = new boolean[2]; __x1[0] = (__x1[1] = false); logRule(1, __x1); bar: if (__x1[0])break bar; end_bar: ; } end_foo: ; }";
+    String expected = "// Rule foo {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); foo: if (__x0[0]){ // Rule bar boolean[] __x1 = new boolean[2]; __x1[0] = (__x1[1] = false); logRule(1, __x1); bar: if (__x1[0])break bar; // Rule bar end } // Rule foo end }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -87,7 +87,7 @@ public class ReturnTest {
   public void testReturn7(){
     String in = "foo: if (true) { return test; }";
     String r = generate(in);
-    String expected = "// Rule foo {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); foo: if (__x0[0]){ return test; } end_foo: ; } }";
+    String expected = "// Rule foo {boolean[] __x0 = new boolean[2]; __x0[0] = (__x0[1] = true); logRule(0, __x0); foo: if (__x0[0]){ return test; } // Rule foo end } }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
@@ -111,7 +111,7 @@ public class ReturnTest {
         + "// Rule second_rule "
         + "boolean[] __x1 = new boolean[2]; __x1[0] = (__x1[1] = false); logRule(1, __x1); "
         + "second_rule: if (__x1[0]){"
-        + " break test_rule; } end_second_rule: ; } end_test_rule: ; }";
+        + " break test_rule; } // Rule second_rule end } // Rule test_rule end }";
     assertEquals(expected, getForMarked(r, expected));
   }
 
