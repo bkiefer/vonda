@@ -1,0 +1,5 @@
+#!/bin/sh
+sdir=`dirname $0`
+cd "$sdir"
+../../../../bin/vondac -c config.yml
+./javcomp

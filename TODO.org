@@ -1,8 +1,13 @@
 * RELEASE PLAN FOR 3.0
-  - check the option of not generating functions, and deferred
+  +- check the option of not generating functions, and deferred
     generation in general
-    - check if break/return works as expected and write tests!!!
+    + check if break/return works as expected and write tests!!!
     - check the "final comments problem" and describe it
+  - DEFNS is not defined by default
+    - This could be done using a config option and defined in the
+      top-level generated file
+    - but then: how does the wrapper class knows of this?
+
   - Improve the documentation
     +- check exisiting TODOs
     - Create examples for attaching external ASR/NLU/NLG and document it

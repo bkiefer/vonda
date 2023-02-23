@@ -1,6 +1,6 @@
 minArgs: 3
 maxArgs: 4
-noOfCores: 4
+noOfCores: 1
 #noOfAtoms: 100000
 #noOfTuples: 500000
 shortIsDefault: true

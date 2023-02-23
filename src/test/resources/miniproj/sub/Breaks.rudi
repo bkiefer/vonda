@@ -1,0 +1,28 @@
+
+void out(String s) {
+  result += s;
+}
+
+test_break:
+if (child.forename == "Frank" || child.forename == "Otto"
+    || child.forename == "Jan"){
+  out("Result 1");
+  test_break_inner:
+  if (child.forename == "Otto")
+    break test_break;
+  else if (child.forename = "Jan") {
+    break test_break_inner;
+  }
+  out("Result 2");
+}
+test_cancel:
+if (child.forename == "John") {
+  out("Result = 3");
+  cancel;
+}
+test_cancel_all:
+if (child.forename == "Bill") {
+  out("Result = 4");
+  cancel_all;
+}
+out("Result 5");
