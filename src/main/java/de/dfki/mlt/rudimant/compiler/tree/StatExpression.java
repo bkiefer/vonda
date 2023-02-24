@@ -40,4 +40,7 @@ public class StatExpression extends RTStatement {
     return new ArrayList<RudiTree>(){{ add(expression); }};
   }
 
+  public String toString() {
+    return expression.toString();
+  }
 }

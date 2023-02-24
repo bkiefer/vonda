@@ -41,14 +41,23 @@ public class Include extends RudiTree {
     path = dirSpec;
   }
 
+  @Override
   public void visit(RudiVisitor v) {
     throw new UnsupportedOperationException("visit is special");
   };
 
-  public String toString() { return "include " + path.toString() //+ "." + name
-  ;
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("include ");
+    for (String p : path) {
+      sb.append(p).append('.');
+    }
+    sb.append(name);
+    return sb.toString();
   }
 
+  @Override
   public Iterable<? extends RudiTree> getDtrs() {
     return Collections.emptyList();
   }

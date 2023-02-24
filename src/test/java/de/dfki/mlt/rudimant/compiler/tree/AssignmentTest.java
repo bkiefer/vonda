@@ -133,7 +133,7 @@ public class AssignmentTest {
   public void testArrayLiteral2() {
     String assignmentExp = "list = { };";
     String out = generate(assignmentExp);
-    String exp = "Object /* (unknown) */[] list = new Object /* (unknown) */[]{};";
+    String exp = "Object /*UNK*/[] list = new Object /*UNK*/[]{};";
 
     assertEquals(exp, getForMarked(out, exp));
   }

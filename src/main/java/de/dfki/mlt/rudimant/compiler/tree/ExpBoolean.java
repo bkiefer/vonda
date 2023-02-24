@@ -35,13 +35,11 @@ public class ExpBoolean extends RTBinaryExp {
   /**
    * if the expression consists of only one part, set right and operator to null
    *
-   * @param fullexp the String representation of the whole expression
    * @param left left part
    * @param right right part
    * @param operator operator in between
    */
-  public ExpBoolean(RTExpression left,
-          RTExpression right, String operator) {
+  public ExpBoolean(RTExpression left, RTExpression right, String operator) {
     this.left = left;
     this.right = right;
     this.operator = operator;
@@ -65,12 +63,5 @@ public class ExpBoolean extends RTBinaryExp {
   @Override
   public void visit(RudiVisitor v) {
     v.visit(this);
-  }
-
-  public String toString() {
-    if (right != null) {
-      return left + " " + operator + " " + right;
-    }
-    return operator + " " + left;
   }
 }

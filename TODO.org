@@ -1,17 +1,16 @@
 * RELEASE PLAN FOR 3.0
-  +- check the option of not generating functions, and deferred
-    generation in general
-    + check if break/return works as expected and write tests!!!
-    - check the "final comments problem" and describe it
-  - DEFNS is not defined by default
-    - This could be done using a config option and defined in the
-      top-level generated file
-    - but then: how does the wrapper class knows of this?
-
   - Improve the documentation
     +- check exisiting TODOs
+    - describe DEFNS and what it does
     - Create examples for attaching external ASR/NLU/NLG and document it
+  +- check the option of not generating functions, and deferred
+    generation in general
+    - check the "final comments problem" and describe it
 
+  + DEFNS is not defined by default!
+    + This MUST be a variable in Agent.java! Default: 'vonda'
+    + This can then be changed using a config option, or by
+      overwriting in toplevel generated file or wrapper class!
   + replace import by include
   + allow Java import statements at beginning of file only
     + bison grammar adapted
@@ -32,6 +31,7 @@
     + ARROW --> `lambda` infix operator: lambda(arg0, ...) exp | body
   + check the option of not generating functions, and deferred
     generation in general
+    + check if break/return works as expected and write tests!!!
     + some things still move, since they need to be on top level,
       together with the process() function:
       + Field defs, to the front, but if they are combined with
@@ -134,3 +134,4 @@
   + ist dokumentiert, dass folgendes ein "clear" ist: //done
     child.name = null
   + done in 3.1.2, needs more detail! What turns into what.
+  + Nicer strings for visualisation! More compact!

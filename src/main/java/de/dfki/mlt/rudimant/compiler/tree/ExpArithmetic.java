@@ -34,7 +34,6 @@ public class ExpArithmetic extends RTBinaryExp {
    * @param left the left part
    * @param right the right part
    * @param operator the operator in between
-   * @param minus set true if there is a minus in front of the arithmetic
    */
   public ExpArithmetic(RTExpression left, RTExpression right, String operator) {
     this.left = left;

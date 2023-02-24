@@ -53,7 +53,16 @@ public class Import extends RudiTree {
 
   @Override
   public String toString() {
-    return "import" + (staticImport ? " static" : " ") + path;
+    StringBuilder sb = new StringBuilder();
+    sb.append("import ");
+    if (staticImport) {
+      sb.append("static ");
+    }
+    for (String p : path) {
+      sb.append(p).append('.');
+    }
+    sb.deleteCharAt(sb.length() - 1);
+    return sb.toString();
   }
 
   @Override

@@ -39,4 +39,13 @@ public abstract class RTBinaryExp extends RTExpression {
         ? new RudiTree[]{ left, right }
         : new RudiTree[]{ left });
   }
+
+  public String toString() {
+    if (right != null) {
+      return left + " " + operator + " " + right;
+    } else if (operator != null) {
+      return operator + " " + left;
+    }
+    return left.toString();
+  }
 }

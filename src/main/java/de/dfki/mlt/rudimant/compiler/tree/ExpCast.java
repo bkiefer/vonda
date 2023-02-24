@@ -52,4 +52,8 @@ public class ExpCast extends RTExpression {
     RudiTree[] dtrs = { expression };
     return Arrays.asList(dtrs);
   }
+
+  public String toString() {
+    return "isa(" + type + ", " + expression + ")";
+  }
 }

@@ -673,7 +673,7 @@ public class Type {
 
   /** returns a correct java type for use in generated code */
   public String toJava() {
-    if (_name == null) return "Object /* (unknown) */";
+    if (_name == null) return "Object /*UNK*/";
     StringBuffer out = new StringBuffer();
     toString(out);
     return out.toString();

@@ -10,3 +10,5 @@ nameToURI:
   Child : "<dom:Child>"
 nameToClass:
   String : java.util.String
+customCompileCommands:
+  vcompile: vondac -v -c config.yml

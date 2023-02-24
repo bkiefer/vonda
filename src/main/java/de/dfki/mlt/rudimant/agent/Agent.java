@@ -73,6 +73,11 @@ public abstract class Agent implements StreamingClient {
 
   protected String _language;
 
+  /** The default namespace prefix used for .rudi Rdf "new" statements
+   *  can be changes by top-level generated or wrapper class
+   */
+  protected String DEFNS = "vonda";
+
   // TODO: that's not nice. The mood is transported in the Intention, and
   // i set this field in the intention manager.
   public double proposedRobotMood = 0;
