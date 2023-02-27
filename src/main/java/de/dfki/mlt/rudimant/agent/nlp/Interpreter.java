@@ -19,11 +19,10 @@
 
 package de.dfki.mlt.rudimant.agent.nlp;
 
-import static de.dfki.mlt.rudimant.common.Constants.*;
+import static de.dfki.mlt.rudimant.common.Constants.CFG_NLU_CONVERTER;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -34,62 +33,19 @@ import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.lt.tr.dialogue.cplan.UtterancePlanner;
-import de.dfki.mlt.rudimant.agent.DialogueAct;
 
 /* *************************************************************
  * A factory and superclass for all interpreters
  * ************************************************************ */
-public abstract class Interpreter {
+public abstract class Interpreter extends NLProcessor {
 
   protected static Logger logger = LoggerFactory.getLogger(Interpreter.class);
 
-  protected String language;
-
   protected UtterancePlanner daConverter = null;
-
-  /** Factory method to get a language analyser for the given config.
-   *
-   * @param configDir   the directory where the config file is (for relative paths)
-   * @param currentLang which language should be treated
-   * @param langConfig  the configuration to create a new analyser
-   * @return a new Interpreter for the given language, or null in case
-   *         of failure.
-   */
-  public static Interpreter getInterpreter(File configDir, String currentLang,
-      Map<String, Object> langConfig) {
-    return createInterpreter(configDir, currentLang, langConfig);
-  }
-
-  /** Factory method to get a language analyser for the given config.
-   *
-   * @param configDir   the directory where the config file is (for relative paths)
-   * @param currentLang which language should be treated
-   * @param langConfig  the configuration to create a new analyser
-   * @return a new Interpreter for the given language, or null in case
-   *         of failure.
-   */
-  @SuppressWarnings({ "unchecked", "rawtypes" })
-  public static Interpreter createInterpreter(File configDir, String currentLang,
-      Map<String, Object> langConfig) {
-    String parserClassName = (String)langConfig.get(CFG_CLASS);
-    Interpreter inter = null;
-    try {
-      Class parserClass = Class.forName(parserClassName);
-      inter = (Interpreter)parserClass.getConstructor().newInstance();
-      if (inter != null && ! inter.init(configDir, currentLang, langConfig))
-        return null;
-    }
-    catch (ClassNotFoundException | InstantiationException |
-        IllegalAccessException | IllegalArgumentException |
-        SecurityException | InvocationTargetException | NoSuchMethodException ex) {
-      logger.error("No valid interpreter class for: {}", parserClassName);
-    }
-    return inter;
-  }
 
   @SuppressWarnings("rawtypes")
   public boolean init(File configDir, String language, Map config) {
-    this.language = language;
+    super.init(configDir, language, config);
     String converterName = (String) config.get(CFG_NLU_CONVERTER);
     if (converterName != null) {
       // load converter

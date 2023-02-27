@@ -17,7 +17,7 @@
  * IN THE SOFTWARE.
  */
 
-package de.dfki.mlt.rudimant.agent;
+package de.dfki.mlt.rudimant.agent.nlp;
 
 import java.util.*;
 

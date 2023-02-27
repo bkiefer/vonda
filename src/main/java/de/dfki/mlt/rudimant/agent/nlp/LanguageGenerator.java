@@ -37,7 +37,7 @@ import static de.dfki.mlt.rudimant.common.Constants.*;
 import java.io.FileReader;
 import org.yaml.snakeyaml.Yaml;
 
-public class LanguageGenerator {
+public class LanguageGenerator extends Generator {
 
 
   /* *************************************************************
@@ -168,11 +168,10 @@ public class LanguageGenerator {
       logger.error("Non-wellformed schema LF: " + genericDialogueAct);
       return new Pair<String, String>("", "ERROR!!!");
     }
-    return getSurfaceFormExtendedLf(rawInput);
+    return generate(rawInput);
   }
 
-  public Pair<String, String>
-  getSurfaceFormExtendedLf(DagNode rawInput) {
+  public Pair<String, String> generate(DagNode rawInput) {
     // obsolete
     // _ruleMapper.schemaLfStringToLfString(genericDialogueAct));
     logger.info("Before mapping: " + rawInput);

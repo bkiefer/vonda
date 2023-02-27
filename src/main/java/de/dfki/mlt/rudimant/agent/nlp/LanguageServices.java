@@ -17,12 +17,13 @@
  * IN THE SOFTWARE.
  */
 
-package de.dfki.mlt.rudimant.agent;
+package de.dfki.mlt.rudimant.agent.nlp;
 
 import static de.dfki.mlt.rudimant.common.Constants.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -30,44 +31,64 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
-import de.dfki.mlt.rudimant.agent.nlp.*;
 
-public class AsrTts {
-  public static final Logger logger = LoggerFactory.getLogger(AsrTts.class);
+/**
+ * A factory to create NLU and NLG components for the Agent
+ */
+public class LanguageServices {
+  public static final Logger logger = LoggerFactory.getLogger(LanguageServices.class);
 
-  /**
-   * Connection to ASR & TTS used in HySociaTea
-   */
   /**
    * The language generation engine
    */
-  private LanguageGenerator _generator;
+  protected Generator _generator;
 
-  private Interpreter _interpreter;
+  protected Interpreter _interpreter;
+
+  /** Factory method to get a language analyser or generator for the given config.
+   *
+   * @param configDir   the directory where the config file is (for relative paths)
+   * @param currentLang which language should be treated
+   * @param langConfig  the configuration to create a new processor
+   * @return a new processor (Interpreter/Generator) for the given language, or
+   *         null in case of failure.
+   */
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  public static <T extends NLProcessor> T
+  createNLProcessor(File configDir, String currentLang,
+      Map<String, Object> langConfig) {
+    String className = (String)langConfig.get(CFG_CLASS);
+    T proc = null;
+    try {
+      Class clazz = Class.forName(className);
+      proc = (T) clazz.getConstructor().newInstance();
+      if (proc != null && ! proc.init(configDir, currentLang, langConfig))
+        return null;
+    }
+    catch (ClassNotFoundException | InstantiationException |
+        IllegalAccessException | IllegalArgumentException |
+        SecurityException | InvocationTargetException | NoSuchMethodException ex) {
+      logger.error("No valid interpreter/generator class for: {}", className);
+    }
+    return proc;
+  }
 
   @SuppressWarnings({ "rawtypes", "unchecked" })
-  public void loadGrammar(File configDir, String language, Agent agent, Map configs)
+  public void loadGrammar(File configDir, String language, Map configs)
       throws IOException {
 
     Map nlgConfig = (Map)configs.get(CFG_NLG_KEY);
     Map nluConfig = (Map)configs.get(CFG_NLU_KEY);
 
     if (nlgConfig  != null && nlgConfig.containsKey(language)) {
-      //language = "english";
-      _generator = LanguageGenerator.getGenerator(configDir, language,
+      _generator = createNLProcessor(configDir, language,
           (Map<String, Object>)nlgConfig.get(language));
-      //_generator.registerAccess("general", new InfoStateAccess(agent));
-      // see below
     }
 
     if (nluConfig != null && nluConfig.containsKey(language)) {
-      _interpreter = Interpreter.getInterpreter(configDir, language,
+      _interpreter = (Interpreter) createNLProcessor(configDir, language,
           (Map)nluConfig.get(language));
     }
-  }
-
-  public void registerInfoStateAccess(String what, BaseInfoStateAccess acc) {
-    _generator.registerAccess(what, acc);
   }
 
   private static final Pattern toEscape = Pattern.compile("[^0-9a-zA-Z_-]");
@@ -86,9 +107,12 @@ public class AsrTts {
   }
 
   public Pair<String, String> generate(DagNode saEvent) {
-    //logger.info("raw:" + saEvent);
-    Pair<String, String> toSay = _generator.getSurfaceFormExtendedLf(saEvent);
-    //logger.info("text: " + toSay);
+    Pair<String, String> toSay = null;
+    if (_generator != null) {
+      //logger.info("raw:" + saEvent);
+      toSay = _generator.generate(saEvent);
+      //logger.info("text: " + toSay);
+    }
     return toSay;
   }
 

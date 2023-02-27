@@ -36,8 +36,8 @@ import de.dfki.lt.hfc.db.QueryResult;
 import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
-import de.dfki.mlt.rudimant.agent.DiaHierarchy;
-import de.dfki.mlt.rudimant.agent.DialogueAct;
+import de.dfki.mlt.rudimant.agent.nlp.DiaHierarchy;
+import de.dfki.mlt.rudimant.agent.nlp.DialogueAct;
 
 /**
  *

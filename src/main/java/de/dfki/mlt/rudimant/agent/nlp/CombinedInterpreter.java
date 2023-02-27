@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import de.dfki.mlt.rudimant.agent.DialogueAct;
-
 /**
  * This class currently implements a sequence of Interpreters to be asked for
  * results. The first that returns a result wins.
@@ -28,7 +26,8 @@ public class CombinedInterpreter extends Interpreter {
   public boolean init(File configDir, String language, Map config) {
     List<Map> interpreterConfigs = (List<Map>) config.get("instances");
     for (Map conf : interpreterConfigs) {
-      Interpreter i = createInterpreter(configDir, language, conf);
+      Interpreter i = (Interpreter) LanguageServices.createNLProcessor(
+          configDir, language, conf);
       if (i != null) {
         instances.add(i);
       }

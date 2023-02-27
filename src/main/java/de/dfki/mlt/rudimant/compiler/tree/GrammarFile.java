@@ -215,7 +215,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
           + (pkg.isEmpty() ? "" : "." + pkg) + ";\n");
     // standard imports
     out.append("import java.util.*;\n\n" +
-        "import de.dfki.mlt.rudimant.agent.DialogueAct;\n" +
+        "import de.dfki.mlt.rudimant.agent.nlp.DialogueAct;\n" +
         "import de.dfki.lt.hfc.db.rdfProxy.*;\n" +
         "import de.dfki.lt.hfc.types.*;\n");
     // Let's import our supersuper class, if we're the top-level class

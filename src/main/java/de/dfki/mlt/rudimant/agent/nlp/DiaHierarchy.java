@@ -17,7 +17,7 @@
  * IN THE SOFTWARE.
  */
 
-package de.dfki.mlt.rudimant.agent;
+package de.dfki.mlt.rudimant.agent.nlp;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfHierarchy;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;

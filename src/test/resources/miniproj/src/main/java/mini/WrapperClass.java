@@ -15,11 +15,11 @@ import de.dfki.lt.hfc.db.rdfProxy.DbClient;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.mlt.rudimant.agent.Agent;
-import de.dfki.mlt.rudimant.agent.AsrTts;
 import de.dfki.mlt.rudimant.agent.Behaviour;
 import de.dfki.mlt.rudimant.agent.CommunicationHub;
-import de.dfki.mlt.rudimant.agent.DialogueAct;
 import de.dfki.mlt.rudimant.agent.Intention;
+import de.dfki.mlt.rudimant.agent.nlp.DialogueAct;
+import de.dfki.mlt.rudimant.agent.nlp.LanguageServices;
 import de.dfki.mlt.rudimant.agent.nlp.Pair;
 
 public abstract class WrapperClass extends Agent {
@@ -125,7 +125,7 @@ public abstract class WrapperClass extends Agent {
 
     super.init(confDir, "eng", proxy, configs);
     //robot = proxy.getRdf("<chatcat:robot1>");
-    this.asr = new AsrTts() {
+    this.langServices = new LanguageServices() {
       @Override
       public Pair<String, String> generate(DagNode saEvent) {
         return new Pair<>(saEvent.toString(), saEvent.toString());

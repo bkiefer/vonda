@@ -15,8 +15,6 @@ import org.jvoicexml.processor.SemanticsInterpreter;
 import org.jvoicexml.processor.grammar.Grammar;
 import org.jvoicexml.processor.srgs.GrammarException;
 
-import de.dfki.mlt.rudimant.agent.DialogueAct;
-
 public class SrgsParser extends Interpreter {
   protected JVoiceXmlGrammarManager manager;
   protected Grammar grammar;

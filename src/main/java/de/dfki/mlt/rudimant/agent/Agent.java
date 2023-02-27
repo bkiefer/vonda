@@ -49,6 +49,9 @@ import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
+import de.dfki.mlt.rudimant.agent.nlp.LanguageServices;
+import de.dfki.mlt.rudimant.agent.nlp.DiaHierarchy;
+import de.dfki.mlt.rudimant.agent.nlp.DialogueAct;
 import de.dfki.mlt.rudimant.agent.nlp.Pair;
 import de.dfki.mlt.rudimant.common.RuleLogger;
 import de.dfki.mlt.rudimant.common.SimpleServer;
@@ -95,7 +98,7 @@ public abstract class Agent implements StreamingClient {
   protected CommunicationHub _hub;
 
   /** A class that cares about ASR events and interpretation */
-  protected AsrTts asr;
+  protected LanguageServices langServices;
 
   /** Is new data in the repository */
   private boolean newData = false;
@@ -220,7 +223,7 @@ public abstract class Agent implements StreamingClient {
    *        information
    */
   protected Behaviour createBehaviour(int delay, DialogueAct da) {
-    Pair<String, String> toSay = asr.generate(da.getDag());
+    Pair<String, String> toSay = langServices.generate(da.getDag());
     return new Behaviour(generateId(), toSay.second, toSay.first, delay);
   }
 
@@ -525,7 +528,7 @@ public abstract class Agent implements StreamingClient {
   }
 
   public DialogueAct analyse(String input) {
-    return asr.interpret(input);
+    return langServices.interpret(input);
   }
 
   /** Return the epoch time for now */
@@ -639,9 +642,9 @@ public abstract class Agent implements StreamingClient {
     _proxy.registerStreamingClient(this);
     _language = language;
     DagNode.init(new DiaHierarchy(_proxy));
-    asr = new AsrTts();
+    langServices = new LanguageServices();
     try {
-      asr.loadGrammar(configDir, language, this, configs);
+      langServices.loadGrammar(configDir, language, configs);
     } catch (IOException ex) {
       logger.error("Error loading grammar: {}", ex);
       System.exit(1);
