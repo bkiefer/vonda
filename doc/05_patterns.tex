@@ -29,16 +29,18 @@ dialogue act, thus responding more than once to one input.
 
 \subsection{A Few Words About \texttt{emitDA} and \texttt{createBehaviour}} \label{sec:emitDA}
 
-There is a feature to the \texttt{emitDA} method which has not been mentioned in section \ref{sec:caret}, but might become important in your specific application.
+There is a feature to the \texttt{emitDA} method which has not been
+mentioned in section \ref{sec:caret}, but might become important for
+synchronisation. Usually, the client communication runs in a permanent
+loop in it's own thread, which then start the rule evaluation.
 
 \texttt{emitDA} actually only is a wrapper method which uses the given
 dialogue act to create a behaviour, which is the actual thing being
 sent to the communication hub. \texttt{createBehaviour} wants to be
 passed a delay parameter, which specifies the amount of time the
-???communication thread???  \todo{AW: Is it the communication thread,
-  or how can we call it?}  should be paused after emitting the given
+client communication thread should be paused after emitting the given
 behaviour. This might be important to your application if you use for
-example TTS and want to delay the next utterance until playing the
+example TTS and want to delay the next utterance after playing the
 current one has been finished.  Normal \texttt{emitDA} sets the delay
 to \texttt{Behaviour.DEFAULT\_DELAY}, which by default is zero, but
 you can also call \texttt{emitDA(delay, dialogueAct)} to directly
@@ -51,7 +53,7 @@ lenght * speed of your TTS voice.
 suggested in \ref{sec:lastDAprocessed}. If you don't and the thread
 the proposal is executed in is delayed long enough, new proposals will
 be generated based on the old dialogue act and your agent might end up
-saying things twice.
+saying things multiple times.
 
 \subsection{Waiting for a User's Answer in a Conversation}
 
@@ -83,6 +85,7 @@ Agent instance or in the top-level rule file are persistent,
 everything else is volatile! If you want to keep values between
 executions, store them in a top-level variable or in the database.
 
+\if0
 \section{Advanced Features}
 
 \subsection{Connecting to a second HFC Server} \label{sec:2ndHfc}
@@ -90,7 +93,6 @@ executions, store them in a top-level variable or in the database.
 In the standard setup, your \vonda project uses one HFC server that on starting your system loads all the information from your ontology and that receives your new database entries and modifications.
 
 However, there might be cases where this approach is not what you want. If your project uses a big database with static information, that you use but do not need to write to, you might prefer to not start the server anew each time you start your system, as this might consume time.
-
 
 In this case, there is another solution: you can start your HFC server remotely and then connect to it in your \vonda agent.
 
@@ -100,36 +102,53 @@ On a linux machine, you can run a server by executing the following lines:
 To connect your \vonda agent to a local server you just need to add the following code, where \texttt{port} is the port you started it on and \texttt{myProxy} is the RdfProxy instance you can post your queries to.
 
 \begin{center}
-	\begin{lstlisting}[language=Java]
-	myClient = RPCFactory.createSyncClient(HfcDbService.Client.class,
-	"localhost", port);
-	_myProxy = new RdfProxy(new ClientAdapter(myClient));
-	\end{lstlisting}
+  \begin{lstlisting}[language=Java]
+    myClient = RPCFactory.createSyncClient(HfcDbService.Client.class,
+    "localhost", port);
+    _myProxy = new RdfProxy(new ClientAdapter(myClient));
+  \end{lstlisting}
 \end{center}
 
 This additional server does of course not have the same status as the innate HFC proxy, as you only connect to it at run-, not at compile-time. You can query it for information as described in \ref{sec:hfc_usage}, but classes from this database will not be recognized in the rudi code and you cannot write to it \todo{or can you? Try?!}.
+\fi
 
 \section{Troubleshooting: Typical Problems}
 
 \begin{itemize}
 
-	\item \textbf{The execution of my \texttt{propose} or \texttt{timeout} block does not have the effect I expected}\\
-	Are you using any variables inside that block whose contents are changed by other parts of your code after the block has been issued?
+\item \textbf{The execution of my \texttt{propose} or \texttt{timeout} block does not have the effect I expected}\\
+  Are you using any variables inside that block whose contents are
+  changed by other parts of your code after the block has been issued?
 
-	\item \textbf{The fields of the dialogue act sent by \texttt{emitDA} in my Proposal do not contain the values they should according to my conditions}\\
-	Check whether you have ''buffered'' those values in final variables before issuing the Proposal and are referring to those. Using \texttt{lastDA} directly in the \texttt{propose} block is dangerous because it might already contain the next dialogue act (or none at all).
+\item \textbf{The fields of the dialogue act sent by \texttt{emitDA} in my Proposal do not contain the values they should according to my conditions}\\
+  Check whether you have ''buffered'' those values in final variables
+  before issuing the Proposal and are referring to those. Using
+  \texttt{lastDA} directly in the \texttt{propose} block is dangerous
+  because it might already contain the next dialogue act (or none at
+  all).
 
-	\item \textbf{I get a NullPointerException in my Proposal}\\
-	Please check whether all the variables you're using in the \texttt{propose} block are final and can't be changed by someone else between the time the Proposal is registered and the time it is executed. Also make sure you're not trying to read the fields of \texttt{lastDA()} after you called \texttt{lastDAprocessed}.
+\item \textbf{I get a NullPointerException in my Proposal}\\
+  Please check whether all the variables you're using in the
+  \texttt{propose} block are final and can't be changed by someone
+  else between the time the Proposal is registered and the time it is
+  executed. Also make sure you're not trying to read the fields of
+  \texttt{lastDA()} after you called \texttt{lastDAprocessed}.
 
-	\item \textbf{My system seems to execute the same Proposal multiple times}\\
-	Make sure that in your \texttt{propose} block, you are calling \texttt{lastDAprocessed} as described in \ref{sec:lastDAprocessed} and also ''resetting'' everything else that triggers the rule to be executed.
+\item \textbf{My system seems to execute the same Proposal multiple times}\\
+  Make sure that in your \texttt{propose} block, you are calling
+  \texttt{lastDAprocessed} as described in \ref{sec:lastDAprocessed}
+  and also ''resetting'' everything else that triggers the rule to be
+  executed.
 
-	\item \textbf{The variable that I use in my rules for storing information does not have the contents it is supposed to}\\
-	Be aware that variables not defined in the top-level rule file are not persistent between rule evaluation cycles, thus you should not store information there which you want to keep (see section \ref{sec:volatile}).
+\item \textbf{The variable that I use in my rules for storing information does not have the contents it is supposed to}\\
+  Be aware that variables not defined in the top-level rule file are
+  not persistent between rule evaluation cycles, thus you should not
+  store information there which you want to keep (see section
+  \ref{sec:volatile}).
 
-	\item \textbf{When compiling, I get the warning \texttt{''base name x can be one of y, z, please resolve manually''}}\\
-	It seems your ontology is redefining an existing class. Refer to section \ref{sec:nsAmbigue} to see how to resolve the problem.
+\item \textbf{When compiling, I get the warning \texttt{''base name x can be one of y, z, please resolve manually''}}\\
+  It seems your ontology is redefining an existing class. Refer to
+  section \ref{sec:nsAmbigue} to see how to resolve the problem.
 
 \end{itemize}
 %%% Local Variables:

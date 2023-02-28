@@ -26,17 +26,26 @@ Figure~\ref{fig:architecture} shows the architecture of a runnable \vonda projec
   \label{fig:architecture}
 \end{figure}
 
-A \vonda project consists of an ontology, a (optional) custom
-extension of the abstract \texttt{Agent} class (the
-\texttt{agentBaseClass}), a client interface to connect the
-communication channels of the application to the agent, and a set of
-rule files that are arranged in a tree, using \texttt{include}
-statements. The blue core in Figure~\ref{fig:architecture} is the
-run-time system that is part of \vonda, while all light grey elements
-are the application specific parts of the agent. A \texttt{Yaml}
-project file contains all necessary information for compilation: the
-ontology, the wrapper class, the top-level rule file and other
-parameters, like custom compile commands for \vonda's debugger.
+A basic \vonda project consists of an ontology, a client interface to
+connect the communication channels of the application to the agent,
+and a set of rule files that are arranged in a tree, using
+\texttt{include} statements. The blue core in
+Figure~\ref{fig:architecture} is the run-time system that is part of
+\vonda, while all light grey elements are the application specific
+parts of the agent. A YAML project file contains all
+necessary information for compilation: the ontology, the top-level
+rule file and other parameters, like custom compile commands for
+\vonda's debugger.
+
+As you can see in the figure, instead of the top-level rule file
+directly extending from the framework's abstract \texttt{Agent} class,
+you can optionally insert a custom extension of this class and let the
+rule agent derive from that. This is meant for special cases when the
+Agent class functionality does not suffice or is not exactly the way
+you need it (e.g., when more complex synchronisation is needed). Then,
+you can use the configuration key \texttt{agentBase} with a fully
+specified class name to extend the top-level generated file from your
+custom agent base class.
 
 The \vonda compiler translates rule files with the extension \texttt{.rudi} to
 Java files. During this process, the ontology storing the RDF classes and
@@ -310,7 +319,7 @@ The connection of \vonda to the ontology loaded into HFC during compile time
 enables the compiler to recognise the correct RDF class to create a new
 instance when creating a new RDF object with \texttt{new}, similar to a Java
 object, and to resolve field/property accesses to all RDF instances. Field
-accesses as shown in line 2 and 3 of figure \ref{tab:property-access} will be
+accesses as shown in line 2 and 3 of figure \ref{fig:property-access} will be
 analysed and transformed into database accesses. Object creation or
 assignments, i.e. changes to existing objects, will be immediately reflected in
 the database.
@@ -340,7 +349,7 @@ c.clearValue("<upper:middleNames>");
 \end{lstlisting}
 \end{minipage}
   \caption{Examples for an RDF property access}
-  \label{tab:property-access}
+  \label{fig:property-access}
 \end{figure}
 
 \vonda will also draw type information from the database. If the name property
@@ -375,7 +384,22 @@ type if necessary. In the rule language, the operators \texttt{+=} and
 \texttt{-=} are overloaded. They can be used with sets and lists as shortcuts
 for adding and deleting objects. \texttt{a += b} will be compiled to
 \texttt{a.add(b)} and \texttt{a -= b} results in \texttt{a.remove(b)}, as shown
-in figure~\ref{tab:property-access}.
+in figure~\ref{fig:property-access}.
+
+\paragraph{Creating RDF instances with
+  \texttt{new}}\label{sec:new_rdf}
+
+In figure~\ref{fig:property-access}, \texttt{c = new Child;} is used
+to create a new RDF instance of class \texttt{Child}. Since every RDF
+instance must be part of a namespace, a default namespace string
+variable \texttt{DEFNS} is defined in the \texttt{Agent} class. Its
+default value is \texttt{"def"}, which corresponds to the long URI
+\texttt{http://www.dfki.de/lt/default.owl\#}. You can change this
+variable to any value in the initialisation code of your agent (it
+should be a valid short namespace name)\footnote{see also the
+  \texttt{init} method of \texttt{ChatAgent} from the example project},
+and all RDF objects created in the generated \vonda code will then be
+created in your custom namespace.
 
 \paragraph{Parameterising field access}\label{sec:field_access_expansion}
 
@@ -384,7 +408,7 @@ To be able to \emph{parameterise} the field access to RDF objects,
 \texttt{c.middleNames}, you could have done the following:
 
 \begin{lstlisting}
-mid = "middleNames";
+mid = "<upper:middleNames>";
 Set middle = c.{mid};
 \end{lstlisting}
 
@@ -594,13 +618,13 @@ T first(Collection<T> coll, Function<Boolean, T> pred);
 \end{figure}
 
 
-\subsubsection{\texttt{include} of other rule files}
+\subsubsection{Using rules of other rule files with \texttt{include}}
 
-With the \texttt{include} statement, e.g. \texttt{include File;},
-which needs to appear at the root level of rule files, the rules and
-definitions in \texttt{File.rudi} and its included files are added at
-the position of the \texttt{include}. This is not a macro-like
-inclusion, the compiler generates Java classes for every
+With the \texttt{include} statement, e.g. \texttt{include RuleFile;},
+which needs to appear at the root level of rule files, the (compiled)
+rules and definitions in \texttt{RuleFile.rudi} and its included files
+are added at the position of the \texttt{include}. This is not a
+macro-like inclusion, the compiler generates Java classes for every
 \texttt{include}.
 
 This inclusion has two important effects. On the one hand, it triggers
@@ -623,12 +647,19 @@ To maintain simplicity, \vonda intentionally only provides limited Java
 functionalities. Whatever is not feasible in \vonda source code should be done
 in methods in the wrapper class or other helper classes.
 
-In cases where this is not possible and you urgently need a functionality of
-Java that \vonda cannot parse or represent correctly, you can use the verbatim
-inclusion feature. Everything between \verb|/*@| and \verb|@*/| will be treated
-like a multi-line Java comment, meaning the content is not parsed or evaluated
-further. It will be transferred to the compiled code as is into the intended
+In cases where this is not possible and you urgently need a
+functionality of Java that \vonda cannot parse or represent correctly,
+you can use the verbatim inclusion feature. Everything between
+\verb|/*@| and \verb|@*/| will be treated like a multi-line Java
+comment, meaning the content is not parsed or evaluated further. It
+will be transferred to the compiled code as is into the intended
 position.
+
+It is strongly discouraged to use this feature extensively, but to use
+helper objects/classes instead whereever possible. Not only will code
+written this way likely become unreadable if there is too much of it,
+it might also not be portable to new \vonda versions, if the way of
+generating the Java code changes.
 
 \subsubsection{Java \texttt{import}
   statements} \label{sec:java-import}

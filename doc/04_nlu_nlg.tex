@@ -1,0 +1,111 @@
+\chapter{Using NLP Modules} \label{sec:external_nlp}
+
+Here¸ we describe the integration of the built-in NLU and NLG modules,
+but also the sketch how th integration of other ASR, NLU or NLG
+components can be done.
+
+\section{Configuration}
+The global configuration file can also contain the configurations for
+sub-modules of your system, which need not be part of the core
+framework.  In the following, we describe how the SRGS parser and
+cplannner are integrated as an example of the plug-in infrastructure
+for NLP modules.
+
+In the configuration file, there are tho sections, \texttt{NLU} and
+\texttt{NLG}, whose values are passed to the \texttt{LanguageServices}
+class, a factory to generate language interpreter and generator
+classes. The \texttt{LanguageServices} class and supporting interfaces
+and abstract classes, together with the configuration, form a flexible
+plug-in framework that also allows to provide your own processing modules.
+
+In these NLU and NLG sections, there are sections for all supported
+languages, which is obligatory for \texttt{LanguageServices}; even if
+your system only supports one language, you still have to provide the
+language key.
+
+The \texttt{LanguageServices} factory uses the language and the
+\texttt{class} attribute (mandatory) in the language section to create
+a \texttt{NLProcessor} object for the given task. The rest of the
+options can be used in the \texttt{init} method of the concrete
+processor to set it up accordingly. As was already said in section
+\ref{sec:config}, non-\vonda options are allowed in the config file
+(no error will result from adding new options at any level) and can be
+used by the application, as needed.
+
+The framework has two basic built-in implementations, based on our
+extended SRGS implementation and the cplanner graph rewriting
+framework, respectively. In addition, as support for the SRGS NLU,
+there is a basic tokenizer implementation, which is configured using
+th \texttt{tokenizer} section inside the NLU section, in the same way
+as the NLU and NLG services.
+
+\section{NLU}
+The current built-in NLU is based on our extension of the SRGS
+formalism, and uses the following configuration keys:
+\texttt{grammar}, \texttt{converter} and \texttt{tokenizer}, which
+contains a whole subsection to get a \texttt{Tokenizer} object from
+the \texttt{NLProcessor} factory, which will be described later
+
+\texttt{grammar} points to the root SRGS grammar file in the file
+system, relative to the config file's position, and \texttt{converter}
+to a cplanner config file that defines a translation the SRGS NLU output
+in a declarative way into the internal form (of dialogue acts). The
+second part is optional, it is also possible to hard-code that, but
+this makes it less flexible, and the current mechanism requires almost
+no coding at all (except in cplanner rules).
+
+All NLU classes have to extend the abstract \texttt{Interpreter}
+class. You have to implement the
+\verb|DialogueAct analyse(String text);| method, and you may want to
+supersede the \texttt{init} method. The class already provides a
+several convenience functions, e.g., for converting JSON into internal
+datastructures, which can then be massaged into the right form using cplanner.
+
+\subsection{Conversion of results using CPlan}
+
+Most NLUs will have fixed formats for the output they generate, which
+might not have the desired form or names for keys, etc. This kind of
+conversions can be hard-coded, which then results in bigger changes
+every time the NLU structures change, or done in a more declarative
+form using cplanner\footnote{For a complete documentation, check out
+  the gui/doc directory of \url{https://github.com/bkiefer/cplan}}.
+
+While converting list-valued structures is more complex, the usual
+moving around and renaming is quite easy, as you can see in the
+ChatCat example, which was described in the beginning.
+
+%\subsection{Using NLU connected remotely} % Post 3.0
+%MQTT example
+
+\section{NLG}
+
+Text generation currently is implemented using the cplanner graph
+rewriting framework (see above), which is a bit of an overkill for
+small projects. At time of creation, it was meant to shape the
+dialogue acts in a way to create valid input structures for an OpenCCG
+generator, which is a technology seldomly used today.
+
+In addition, cplanner provides a quite powerful canned-text
+generation, with variables and, e.g., the possibility to compactly
+describe morphological variants. Whie it is a quite powerful and maybe
+not mastered easily, for larger projects there might be a benefit to
+simple dialogue act to string mapping with a hash map at some point.
+
+To implement your own generator, you have to extend the abstract
+\texttt{Generator} class, which contains the abstract method
+
+\verb|Pair<String, String> generate(DialogueAct da)|
+
+The first element of the pair is the text to print or send to TTS,
+while the second is meant to be a string representation of a robot or
+avatar movement to be executed in parallel to the (spoken) text. You
+will probably also have to override the \texttt{init} method to
+properly set up your component.
+
+%\section{ASR} % Post 3.0
+%\section{TTS} % Post 3.0
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "userguide"
+%%% End:

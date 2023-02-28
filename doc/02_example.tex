@@ -1,8 +1,10 @@
-This chapter will walk you through the creation of a simple interaction
-manager, which you can either create yourself, or just follow by looking at the
-playground system named \texttt{ChatCat}¸ which is placed in its own
-github repository at \url{https://github.com/bkiefer/vonda-chatcat}.
-More complex examples are planned to be added soon.
+This chapter will walk you through the creation of a simple
+interaction manager, which you can either create yourself, or just
+follow by looking at the toy system named \texttt{ChatCat}¸ which has
+its own github repository at
+\url{https://github.com/bkiefer/vonda-chatcat}.  More complex examples
+are planned to be added soon, to demonstrate how to connect VOnDA to
+external NLP components and external (robotic) systems.
 
 The simplest version of an interaction manager analyses natural language
 coming from the user, and generates natural language and gestures for the robot
@@ -109,7 +111,7 @@ tupleFiles:
   # the axiomatic triples for OWL-Horst w/ EQ reduction, needed if eqReduction
   # is true
   - default.eqred.nt
-  # the PAL sub-ontologies
+  # the project sub-ontologies
   - dialogue.nt
   - chatcat.nt
 
@@ -309,7 +311,7 @@ the object's public methods.
 These are just enough rules to start a (very short) conversation, so
 let's compile and try out the new dialogue system.
 
-\section{Specifying how to Compile and Run your Project}
+\section{Specifying how to Compile and Run your Project}\label{sec:config}
 
 Now that we have implemented our first rules, we need to compile them. In the
 \texttt{bin} directory of you \vonda installation is a script \texttt{vondac}
@@ -317,7 +319,25 @@ that will use a configuration file to compile your project. The most convenient
 way to use this script is either to establish a softlink in a directory that is
 already in your \texttt{PATH} or to add \vonda's \texttt{bin} directory to it.
 
-Your \texttt{config.yml} should contain the following parameters for compilation:\\
+While you can pass most necessary parameters on the command line, it
+is recommended to create a configuration file in YAML syntax (e.g.,
+\texttt{config.yml}), which contains these parameter, also because the
+graphical debugger needs several of these to work, too.
+
+First of all, it is important to note that all paths in this YAML
+configuration are resolved relative to the location of the
+configuration file, if they are not absolute directory references
+(which is discouraged for portability).
+
+Second, you can safely add your own options of whatever type (map,
+list, etc.) into the configuration file, provided you put them under a
+top-level key, since \vonda assumes the contents of the file to be a
+map. \vonda ignores all keys it does not make use of itself, so you
+can use this to configure the rest of your system, for example host
+addresses or ports of remote modules, custom resources, etc.
+
+For the \vonda compiler, your \texttt{config.yml} should contain the
+following parameters:\\
 
 \begin{tabular}{lp{.75\textwidth}}
 \texttt{inputFile}& Relative to the current location, where is the

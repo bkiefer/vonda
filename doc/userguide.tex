@@ -124,22 +124,22 @@ elaborate semantic format, and a multimodal generation component, which
 converts outgoing dialogue acts into natural language utterances and gestures.
 
 \chapter{A Hands-On Example}
-\input{simpleexample}
+\input{02_example}
 
 \chapter{Structured Overview}
-\input{system}
+\input{03_overview}
+%\newpage
+\input{03_05_debugger}
 \newpage
-\input{debugger}
+\input{03_06_hfc}
 \newpage
-\input{hfc}
+\input{03_07_srgsext}
 \newpage
-\input{srgsextensions}
-\newpage
-\input{nlu_nlg}
+\input{04_nlu_nlg}
 
 % implementation patterns and caveats
 \chapter{Building \vonda Agents}
-\input{patterns}
+\input{05_patterns}
 \newpage
 % and maybe tips and tricks?
 \chapter{\vonda Syntax Overview}
@@ -152,9 +152,13 @@ converts outgoing dialogue acts into natural language utterances and gestures.
   Java, as class import definitions which are only allowed at the
   beginning of a rule file
 \item the syntax of the type declaration for external classes has
-  changed from
-  \verb|[ SomeClass ]. myType Function ( argTypeA, argTypeB );| to
-  \verb|# SomeClass myType Function (  argTypeA, argTypeB );|
+  changed from {\small
+
+\verb|[SomeClass]. myType myMethod(argTypeA, argTypeB);|
+
+{\normalsize to}
+
+\verb|#SomeClass myType myMethod(argTypeA, argTypeB);|}
 \item \verb|{<exp>}| expansion syntax in field access
 
   In version 2, if one of the identifiers in a field access chain
@@ -171,9 +175,8 @@ converts outgoing dialogue acts into natural language utterances and gestures.
   cases. Therefore, it has been replaced by an infix operato
   \texttt{isa}, so \texttt{((Type)val)} becomes \texttt{isa(Type,
     val)}.
-\item the same holds for Java lambda1 expressions (\verb|c -> <expression>|). They were also replaced by infix syntax:
-  \texttt{lambda(c) expression} resp. \texttt{lambda(c){ statements;
-    }}
+\item the same holds for Java lambda expressions (\verb|c -> <expression>|). They were also replaced by infix syntax:
+  \verb|lambda(c) <expression>| \ \ resp. \verb|lambda(c) { <statements>; }|
 \end{itemize}
 \section*{Configuration changes (breaking changes)}
 \begin{itemize}
@@ -186,11 +189,13 @@ converts outgoing dialogue acts into natural language utterances and gestures.
   compiler, you have to specify it explicitely in the config under the
   key \texttt{typeDef}. In version 2, it was named after the now
   optional wrapper class, now it can take any name and is also optional
+\item NLG and NLU are now treated alike in the plugin factory, which
+  means that NLG needs a \texttt{class:} key also for the default generator
 \end{itemize}
 \section*{Additional built-in functionality}
-\todo[inline]{fill}
 \begin{itemize}
-\item Tokenizer for NLU
+\item The NLP components have been restructured, now also support for
+  tokenizer functionality to support NLU it built in
 \end{itemize}
 
 \bibliography{vonda}

@@ -1,68 +1,17 @@
-* RELEASE PLAN FOR 3.0
-  - Improve the documentation
-    +- check exisiting TODOs
-    - describe DEFNS and what it does
-    - Create examples for attaching external ASR/NLU/NLG and document it
-  +- check the option of not generating functions, and deferred
-    generation in general
-    - check the "final comments problem" and describe it
+- AFTER 3.0, or in dedicated project
+  Create examples for attaching external ASR/NLU/NLG and document it
 
-  + DEFNS is not defined by default!
-    + This MUST be a variable in Agent.java! Default: 'vonda'
-    + This can then be changed using a config option, or by
-      overwriting in toplevel generated file or wrapper class!
-  + replace import by include
-  + allow Java import statements at beginning of file only
-    + bison grammar adapted
-    + java imports have to be generated (currently ignored) + generation tested
-    + Für .rudi files "include" statt "import" benutzen !!! JA FÜR 3.0
-      + "import" wie in Java nur am Anfang des Files zulassen, dass dann auch
-         nur Java imports macht?
-  + field access conflicts: solved
-    + use "{exp}" syntax for property access, otherwise unexpected stuff
-      happens.
-    + Add it to AllYouCanDo.rudi and tests
-  + get rid of reduce reduce conflicts
-    + Übrige reduce-reduce Konflikte durch Syntax-Änderungen lösen, z.B.
-      cast(TypeExpr, expr) statt (typeexpr) expr (oder isa statt cast)
-    + simplest problem are the field/method defs, they could be later generated
-      from a java parser/introspection
-    + cast expressions --> `isa` infix operator: isa(type_expr, exp)
-    + ARROW --> `lambda` infix operator: lambda(arg0, ...) exp | body
-  + check the option of not generating functions, and deferred
-    generation in general
-    + check if break/return works as expected and write tests!!!
-    + some things still move, since they need to be on top level,
-      together with the process() function:
-      + Field defs, to the front, but if they are combined with
-        assignments, these will appear later
-      + Method defs, they are currently deferred to the back
-    + problem of "moving comments and injected java code" remains,
-      but solution might be to pick comments *BETWEEN* two elements,
-      is almost gone, but no guarantee due to moving code, and
-      end-of-file situations, which can not be really fixed (code in
-      or out of scope of process(){...}
-    + check how good the comment handling really works
-  + get rid of reduce reduce conflicts
-    + remove ARROW token, unused
-    + integrate with the rest
-  + Improve the documentation
-    + integrate new syntax changes
-      + include and import
-      + optional wrapper class
-        + modify picture
-      + "{exp}" syntax for field access
-      + cast expressions
-      + lambda expressions
-      + type declarations for external fields/methods
-  + Make wrapper class optional
-    + Drawback if removed completely: you can not change functionality in Agent
-      (framework), for example Behaviour handling. That is definitely
-      a drawback!
-      --> call it agent base class in config, and make it optional, if
-      not given, extends from Agent(framework)
-  + Modify special loading of type definitions: config param to specify name
-    + except for Agent.rudi: seems to work fine!
+* RELEASE PLAN FOR 3.0
+  - Ask Jörg to re-iterate checks on M$
+  - What can be done to check it's really working (alpha first?)
+  - Finish converter
+    - new fat jar target on branch
+    - main conversion script
+    - Type def file (sed!, or Java(no))
+    - config file (sed, or Java, easy and safe)
+      - wrapperClass -> agentBase + typeDef
+      - class key for NLG (would speak in favour of java (embedding
+        level 2)
 
 * Erleuchtung bzgl. Wrapperklasse: Agent vs. NaoAgent vs. PalAgent !!! JA FÜR 3.0
   1. NaoAgent scheint eigentlich eine klasse wie TimelineUtils zu sein (oder
@@ -135,3 +84,68 @@
     child.name = null
   + done in 3.1.2, needs more detail! What turns into what.
   + Nicer strings for visualisation! More compact!
++ Release plan 3.0
+  + check the option of not generating functions, and deferred
+    generation in general
+    + check the "final comments problem" and describe it
+  + DEFNS is not defined by default!
+    + This MUST be a variable in Agent.java! Default: 'vonda'
+    + This can then be changed using a config option, or by
+      overwriting in toplevel generated file or wrapper class!
+  + replace import by include
+  + allow Java import statements at beginning of file only
+    + bison grammar adapted
+    + java imports have to be generated (currently ignored) + generation tested
+    + Für .rudi files "include" statt "import" benutzen !!! JA FÜR 3.0
+      + "import" wie in Java nur am Anfang des Files zulassen, dass dann auch
+         nur Java imports macht?
+  + field access conflicts: solved
+    + use "{exp}" syntax for property access, otherwise unexpected stuff
+      happens.
+    + Add it to AllYouCanDo.rudi and tests
+  + get rid of reduce reduce conflicts
+    + Übrige reduce-reduce Konflikte durch Syntax-Änderungen lösen, z.B.
+      cast(TypeExpr, expr) statt (typeexpr) expr (oder isa statt cast)
+    + simplest problem are the field/method defs, they could be later generated
+      from a java parser/introspection
+    + cast expressions --> `isa` infix operator: isa(type_expr, exp)
+    + ARROW --> `lambda` infix operator: lambda(arg0, ...) exp | body
+  + check the option of not generating functions, and deferred
+    generation in general
+    + check if break/return works as expected and write tests!!!
+    + some things still move, since they need to be on top level,
+      together with the process() function:
+      + Field defs, to the front, but if they are combined with
+        assignments, these will appear later
+      + Method defs, they are currently deferred to the back
+    + problem of "moving comments and injected java code" remains,
+      but solution might be to pick comments *BETWEEN* two elements,
+      is almost gone, but no guarantee due to moving code, and
+      end-of-file situations, which can not be really fixed (code in
+      or out of scope of process(){...}
+    + check how good the comment handling really works
+  + get rid of reduce reduce conflicts
+    + remove ARROW token, unused
+    + integrate with the rest
+  + Improve the documentation
+    + integrate new syntax changes
+      + include and import
+      + optional wrapper class
+        + modify picture
+      + "{exp}" syntax for field access
+      + cast expressions
+      + lambda expressions
+      + type declarations for external fields/methods
+  + Make wrapper class optional
+    + Drawback if removed completely: you can not change functionality in Agent
+      (framework), for example Behaviour handling. That is definitely
+      a drawback!
+      --> call it agent base class in config, and make it optional, if
+      not given, extends from Agent(framework)
+  + Modify special loading of type definitions: config param to specify name
+    + except for Agent.rudi: seems to work fine!
+  + Improve the documentation
+    + check exisiting TODOs
+    + describe the options with and without agentBase class
+    + make clear that Java injection should be the ultimate exception
+    + describe DEFNS and what it does
