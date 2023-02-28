@@ -19,6 +19,8 @@
 
 package de.dfki.mlt.rudimant.agent.nlp;
 
+import static de.dfki.mlt.rudimant.common.Constants.*;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -33,12 +35,8 @@ import de.dfki.lt.tr.dialogue.cplan.LoggingTracer;
 import de.dfki.lt.tr.dialogue.cplan.RuleTracer;
 import de.dfki.lt.tr.dialogue.cplan.UtterancePlanner;
 import de.dfki.lt.tr.dialogue.cplan.functions.FunctionFactory;
-import static de.dfki.mlt.rudimant.common.Constants.*;
-import java.io.FileReader;
-import org.yaml.snakeyaml.Yaml;
 
 public class LanguageGenerator extends Generator {
-
 
   /* *************************************************************
    * NL processing constants
@@ -80,7 +78,7 @@ public class LanguageGenerator extends Generator {
     };
   }
 
-  /** Factory method to get a language generator for the given config.
+  /** initialise a language generator with the given config.
    *
    * @param configDir   the directory where the config file is (for relative paths)
    * @param currentLang which language should be treated
@@ -89,19 +87,7 @@ public class LanguageGenerator extends Generator {
    *         of failure.
    * @throws FileNotFoundException
    */
-  public static LanguageGenerator getGenerator(File configDir, String currentLang,
-      Map<String, Object> langConfig) throws FileNotFoundException {
-    return new LanguageGenerator(configDir, currentLang, langConfig);
-  }
-
-  /**
-   * Implement this as a singleton
-   *
-   * @param lang
-   *          a three-character ISO language code for the number conversion
-   *          functionality
-   */
-  LanguageGenerator(File configDir, String lang,
+  public boolean init(File configDir, String lang,
       Map<String, Object> cfgs) {
     configs = new HashMap<>(cfgs);
     try {
@@ -114,11 +100,13 @@ public class LanguageGenerator extends Generator {
       // FunctionFactory.register(new RecordableRandomFunction(), _ruleMapper);
       File mapperProj = new File(configDir, (String) configs.get(CFG_NLG_MAPPER_PROJECT));
       _ruleMapper.readProjectFile(mapperProj);
+      return true;
     } catch (FileNotFoundException e) {
       logger.error("mapper rules not found: " + e);
     } catch (IOException e) {
       logger.error("mapper rules could not be read: " + e);
     }
+    return false;
   }
 
   public void logMapper() {
@@ -200,22 +188,5 @@ public class LanguageGenerator extends Generator {
       e.printStackTrace();
     }
     return result;
-  }
-
-  /**
-   * takes a configuration and sets all properties to those specified in it
-   *
-   * @param configs
-   */
-  public void initConfig(Map<String, Object> cfgs) {
-    configs = new HashMap<>(cfgs);
-  }
-
-  @SuppressWarnings("unchecked")
-  public void readConfig(String confname)
-      throws FileNotFoundException {
-    Yaml yaml = new Yaml();
-    File confFile = new File(confname);
-    configs = (Map<String, Object>) yaml.load(new FileReader(confFile));
   }
 }

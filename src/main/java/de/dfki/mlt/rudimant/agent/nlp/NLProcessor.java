@@ -7,8 +7,7 @@ public abstract class NLProcessor {
 
   protected String language;
 
-  @SuppressWarnings("rawtypes")
-  public boolean init(File configDir, String language, Map config) {
+  public boolean init(File configDir, String language, Map<String, Object> config) {
     this.language = language;
     return true;
   }
