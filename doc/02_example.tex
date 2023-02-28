@@ -186,7 +186,7 @@ of \vonda. In this simple case, this is not really necessary, and only
 provided to allow the functionality of the runtime library's \texttt{Agent}
 class to be modified. If you do this, you will need to specify the
 name of your specialised \texttt{Agent} class as
-\texttt{agentBaseClass} in the config file, otherwise, the topmost
+\texttt{agentBase} in the config file, otherwise, the topmost
 generated file will extend \texttt{de.dfki.mlt.rudimant.agent.Agent}.
 
 Furthermore, we implment a
@@ -341,18 +341,18 @@ following parameters:\\
 
 \begin{tabular}{lp{.75\textwidth}}
 \texttt{inputFile}& Relative to the current location, where is the
-                     top-level rule file?\\
+                    top-level rule file?\\
 \texttt{outputDirectory}& Relative to the current location, where
-                           should the compiled classes go?\\
-\texttt{agentBaseClass}& The name of your abstract Java Agent, including
-                          package prefix (optional)\\
-\texttt{typeDefs}& The name of a file containing type definitions
+                          should the compiled classes go?\\
+\texttt{agentBase}& The name of your abstract Java Agent class,
+                    including package prefix (optional)\\
+\texttt{typeDef}& The name of a file containing type definitions
                     for Java fields and methods that the compiler
                     could not find out by itself (optional)\\
 \texttt{ontologyFile}&The path to your ontology \texttt{.yml},
-                        relative to the current location\\
+                       relative to the current location\\
 \texttt{rootPackage}&The topmost package to put the compiled Java
-                       classes in\\
+                      classes in\\
 \texttt{failOnError}&If \texttt{true} to exit compilation on any
                        encountered type errors, otherwise continues\\
 \end{tabular}\\
@@ -367,11 +367,12 @@ Java project.
 Since the compile and the runtime phase of \vonda need different information,
 e.g., the run-time phase needs NLU and NLG components, there are additional
 options for the run-time phase (This is the example from ChatCat):
-
+\newpage
 \begin{verbatim}
 ontologyFile:       src/main/resources/ontology/chatcat.yml
 NLG:
   eng:
+    class: de.dfki.mlt.rudimant.agent.nlp.LanguageGenerator
     mapperProject: src/main/resources/grammars/cplanner/allrules-mapper
     generationProject: src/main/resources/grammars/cplanner/allrules
 NLU:

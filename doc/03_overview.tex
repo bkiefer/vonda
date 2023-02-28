@@ -60,12 +60,12 @@ is used inside the rule files will be provided by the \texttt{Agent}
 superclass. There are, however, alternative ways to use other Java
 classes directly (see section \ref{sec:javatypes} for further
 info). You can either use Java helper classes and/or objects, which is
-the preferred way, or you make the methods and fields from the custom
-\texttt{agentBaseClass} available to all rule files. If the compiler
-does not pick up the type definitions by itself, you can support it by
-declaring fields and methods in the type definition file. In the
-example of figure ~\ref{fig:architecture}, this would be
-\texttt{MyAgent.rudi}).
+the preferred way, or you create your own methods and fields in a
+custom \texttt{agentBase} and thus make them available to all rule
+files. If the compiler does not pick up the type definitions by
+itself, you can support it by declaring fields and methods in the type
+definition file. In the example of figure ~\ref{fig:architecture},
+this would be \texttt{MyAgent.rudi}).
 
 \section{The \vonda Rule Language}
 \label{sec:language}
