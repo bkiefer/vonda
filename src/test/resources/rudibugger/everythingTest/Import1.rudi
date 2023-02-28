@@ -1,8 +1,0 @@
-rule_import:
-if (test = 3) {
-  bla = 1;
-  rule_import_a:
-  if (test = 5) {
-    blx = 2;
-  }
-}

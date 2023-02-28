@@ -39,7 +39,7 @@ public class VisitorConvert {
     _th.finalComments(_out, loc.getEnd());
   }
 
-  public boolean convertRec(RudiTree r) {
+  private boolean convertRec(RudiTree r) {
     // spit out all comment and white space tokens before me and delete them
     // from the tokens list
     _th.spitOut(_out, r.getLocation().getBegin().getCharpos());

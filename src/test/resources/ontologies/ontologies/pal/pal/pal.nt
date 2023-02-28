@@ -1,7 +1,0 @@
-<http://www.dfki.de/lt/onto/common/dialogue.owl#Agent> <http://www.w3.org/2002/07/owl#equivalentClass> <http://www.dfki.de/lt/onto/pal/domain.owl#Agent> .
-<http://www.dfki.de/lt/onto/pal/pal.owl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Ontology> .
-<http://www.dfki.de/lt/onto/pal/pal.owl> <http://www.w3.org/2000/01/rdf-schema#comment> "author(s): Hans-Ulrich Krieger"^^<http://www.w3.org/2001/XMLSchema#string> .
-<http://www.dfki.de/lt/onto/pal/pal.owl> <http://www.w3.org/2002/07/owl#imports> <http://www.dfki.de/lt/onto/common/dialogue.owl> .
-<http://www.dfki.de/lt/onto/pal/pal.owl> <http://www.w3.org/2002/07/owl#imports> <http://www.dfki.de/lt/onto/pal/domain.owl> .
-<http://www.dfki.de/lt/onto/pal/pal.owl> <http://www.w3.org/2002/07/owl#imports> <http://www.dfki.de/lt/onto/pal/semantics.owl> .
-<http://www.dfki.de/lt/onto/pal/pal.owl> <http://www.w3.org/2002/07/owl#versionInfo> "v0.9.5"^^<http://www.w3.org/2001/XMLSchema#string> .

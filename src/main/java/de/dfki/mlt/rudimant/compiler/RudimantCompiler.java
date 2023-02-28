@@ -19,7 +19,6 @@
 
 package de.dfki.mlt.rudimant.compiler;
 
-import static com.google.common.io.Files.asCharSink;
 import static de.dfki.mlt.rudimant.common.Constants.*;
 import static de.dfki.mlt.rudimant.compiler.Constants.AGENT_DEFS;
 import static de.dfki.mlt.rudimant.compiler.tree.GrammarFile.parseAndTypecheck;
@@ -29,9 +28,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
-import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
@@ -41,17 +38,11 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import com.google.common.io.CharSink;
-import com.google.common.io.CharSource;
-import com.google.googlejavaformat.java.Formatter;
-import com.google.googlejavaformat.java.FormatterException;
-
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.HfcDbHandler;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.mlt.rudimant.common.BasicInfo;
 import de.dfki.mlt.rudimant.common.ErrorInfo;
-import de.dfki.mlt.rudimant.common.ErrorInfo.ErrorType;
 import de.dfki.mlt.rudimant.common.ImportInfo;
 import de.dfki.mlt.rudimant.common.Location;
 import de.dfki.mlt.rudimant.compiler.tree.GrammarFile;
@@ -128,11 +119,6 @@ public class RudimantCompiler {
     if ((configs.containsKey(CFG_TYPE_ERROR_FATAL) &&
         (boolean)configs.get(CFG_TYPE_ERROR_FATAL))) {
       throwTypeErrors();
-    }
-    if (configs.containsKey(CFG_VISUALISE) &&
-        (boolean) configs.get(CFG_VISUALISE)) {
-      Visualize.init();
-      showTree();
     }
     if (configs.containsKey(CFG_PRINT_ERRORS) &&
         (boolean) configs.get(CFG_PRINT_ERRORS)) {
@@ -273,19 +259,6 @@ public class RudimantCompiler {
         new FileInputStream(inputFile), name);
     if (gf == null)
       throw new UnsupportedOperationException("Parsing failed.");
-
-    if (visualise)
-      Visualize.show(gf, name);
-
-    StringWriter sw = new StringWriter();
-    gf.generate(this, sw);
-    CharSource source = CharSource.wrap(sw.getBuffer());
-    CharSink sink = asCharSink(outputFile, Charset.forName("UTF-8"));
-    try {
-      new Formatter().formatSource(source, sink);
-    } catch (FormatterException ex) {
-      mem.registerError(ex.getMessage(), new Location(name), ErrorType.ERROR);
-    }
   }
 
   /** Create output directories, open a writer to the output file and process
@@ -293,7 +266,9 @@ public class RudimantCompiler {
    */
   private void processForReal2(String name)
       throws IOException {
-    File outputdir = getSubDirectory(outputRootDir, mem.getTopLevelPackageSpec());
+
+    File outputdir = getSubDirectory(outputRootDir, //mem.getTopLevelPackageSpec()
+        new String[] {});
     outputdir = getSubDirectory(outputdir, mem.getPackageSpec());
     if (!outputdir.isDirectory()) {
       createDirectories(outputdir.toPath());

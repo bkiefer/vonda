@@ -1,3 +1,10 @@
+* Finish converter
+  + new fat jar target on branch, and artifact name
+  + main conversion script
+  + Type def file (Java regex)
+  + config file (Java, easy and safe)
+    + wrapperClass -> agentBase + typeDef
+    + class key for NLG (would speak in favour of java (embedding level 2)
 * Erleuchtung bzgl. Wrapperklasse: Agent vs. NaoAgent vs. PalAgent !!! JA FÜR 3.0
   1. NaoAgent scheint eigentlich eine klasse wie TimelineUtils zu sein (oder
      könnte so sein)

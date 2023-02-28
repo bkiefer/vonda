@@ -25,11 +25,17 @@ import static de.dfki.mlt.rudimant.compiler.Constants.COMPILER_VERSION;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.DumperOptions.FlowStyle;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.lt.hfc.WrongFormatException;
@@ -100,12 +106,83 @@ public class CompilerMain {
   @SuppressWarnings("unchecked")
   public static void readConfig(String confname)
       throws FileNotFoundException {
+    LoaderOptions lop = new LoaderOptions();
+    lop.setProcessComments(true);
     Yaml yaml = new Yaml();
+
     File confFile = new File(confname);
     confDir = confFile.getParentFile();
     configs = (Map<String, Object>) yaml.load(new FileReader(confFile));
+    try {
+      convertConfig(confDir, confFile, configs);
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
   }
 
+  public static void convertTypeDefFile(File dir, String name) throws IOException {
+    File f = new File(dir, name + ".rudi");
+    File to = new File(dir, name + "_v3.rudi");
+    List<String> lines = Files.readAllLines(f.toPath(), Charset.forName("UTF-8"));
+    try (FileWriter out = new FileWriter(to)) {
+      for (String l : lines) {
+        out
+        .append(l.replaceFirst("\\[([^]]*)\\]\\.", "#$1"))
+        .append(System.lineSeparator());
+      }
+    } finally {}
+  }
+
+  public static void convertConfig(File confDir, File confFile, Map<String, Object> configs)
+      throws IOException {
+    // turn wrapperClass key into agentBase and typeDef
+    String agentBase = (String)configs.get(CFG_WRAPPER_CLASS);
+    if (agentBase != null) {
+      configs.remove(CFG_WRAPPER_CLASS);
+      configs.put("agentBase", agentBase);
+      int ind = agentBase.lastIndexOf('.');
+      String name = ind >= 0 ? agentBase.substring(ind + 1) : agentBase;
+      configs.put("typeDef", name + ".rudi");
+      String inputFileName = (String)configs.get(CFG_INPUT_FILE);
+      File targDir = confDir;
+      if (inputFileName != null
+          && new File(inputFileName).getParent() != null) {
+        targDir = new File(targDir, new File(inputFileName).getParent());
+      }
+      // convert the type definitions file according to 3.0 syntax
+      convertTypeDefFile(targDir, name);
+    }
+    // for NLG: check that all language subsections get the right "class" key
+    Map<String, Object> nlg = (Map<String, Object>) configs.get(CFG_NLG_KEY);
+    if (nlg != null) {
+      for (String lang : nlg.keySet()) {
+        Map<String, Object> langspec = (Map<String, Object>) nlg.get(lang);
+        if (! langspec.containsKey(CFG_CLASS)) {
+          langspec.put(CFG_CLASS,
+              "de.dfki.mlt.rudimant.agent.nlp.LanguageGenerator");
+        }
+      }
+    }
+
+    // write the result to file with new name: change
+    String name = confFile.getName();
+    int dot = name.lastIndexOf(".");
+    String newName = name.substring(0, dot) + "_v3" + name.substring(dot);
+    File outDir = confDir;
+    if (confFile.getParent() != null) {
+      outDir = new File(outDir, confFile.getParent());
+    }
+    File outFile = new File(outDir, newName);
+
+    DumperOptions dop = new DumperOptions();
+    dop.setDefaultFlowStyle(FlowStyle.BLOCK);
+    dop.setProcessComments(true);
+    dop.setPrettyFlow(true);
+
+    Yaml yaml = new Yaml(dop);
+    yaml.dump(configs, new FileWriter(outFile));
+  }
 
   /**
    *
