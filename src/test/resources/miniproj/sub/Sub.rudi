@@ -1,0 +1,12 @@
+// call function defined on a previous level
+s = foo("good", "thing");
+
+rule:
+if (s == "goodthing") {
+  propose("good") {
+    System.out.println("go");
+  }
+}
+
+import sub.SubSub;
+import SameLevel;

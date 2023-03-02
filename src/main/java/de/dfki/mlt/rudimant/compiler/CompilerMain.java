@@ -170,8 +170,8 @@ public class CompilerMain {
     int dot = name.lastIndexOf(".");
     String newName = name.substring(0, dot) + "_v3" + name.substring(dot);
     File outDir = confDir;
-    if (confFile.getParent() != null) {
-      outDir = new File(outDir, confFile.getParent());
+    if (outDir == null) {
+      outDir = new File(".");
     }
     File outFile = new File(outDir, newName);
 

@@ -1,0 +1,23 @@
+#minNoArgs=3
+#maxNoArgs=4
+#noAtoms=100000
+#noTuples=500000
+#PersistencyFile=/tmp/tuples.nt
+characterEncoding: UTF-8
+addTimestamps: [0]
+
+# further options for the future,
+# e.g., character encoding, persistent output file name, etc.
+
+namespaces:
+  # namespaces for XSD, RDF, RDFS, and OWL are already defined
+
+
+# instead, you can also load one or more namespace files
+#default.ns
+
+tupleFiles:
+
+rules:
+# we need special rules for transaction time (mixture of triples/quadruples)
+#default.eqred.rdl

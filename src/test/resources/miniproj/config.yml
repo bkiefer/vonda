@@ -1,0 +1,8 @@
+outputDirectory:    src/main/generated
+wrapperClass:       mini.WrapperClass
+ontologyFile:       mini.yml
+failOnError:        false
+targetConstructor:
+rootPackage:        mini
+nameToClass:
+  String : java.util.String

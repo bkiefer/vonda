@@ -191,9 +191,9 @@ public class TokenHandler {
     int comm = indexOf(commentTokens, start);
     int cont = indexOf(tokens, start);
     while ((comm != -1 && comm < commentTokens.size()
-          && commentTokens.get(comm).getEnd().compareTo(end) <= 0) ||
+          && commentTokens.get(comm).getEnd().compareTo(end) < 0) ||
            (cont != -1 && cont < tokens.size()
-              && tokens.get(cont).getEnd().compareTo(end) <= 0)) {
+              && tokens.get(cont).getStart().compareTo(end) < 0)) {
       // find which token is next, append it and increase the appropriate index
       if (comm != -1 && comm < commentTokens.size()
           && commentTokens.get(comm).getStart().compareTo(tokens.get(cont).getStart()) <= 0){
