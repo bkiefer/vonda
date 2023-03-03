@@ -1349,9 +1349,10 @@ public class VondaLexer implements VondaGrammar.Lexer {
             { yybegin(YYINITIAL);
   String s = string.toString();
   ExpLiteral lit = new ExpLiteral(s, "String");
-  lit.location = new Location(sstart, getEndPos());
+  Position p = getEndPos();
+  lit.location = new Location(sstart, p);
   yylval = lit;
-  tokens.add(new Token('"' + s + '"', sstart, getEndPos()));
+  tokens.add(new Token('"' + s + '"', sstart, p));
   return VondaGrammar.Lexer.STRING;
             } 
             // fall through

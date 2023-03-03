@@ -44,7 +44,6 @@ public class TokenHandler {
           // statements first
           String t = curr.getText();
           if (t.startsWith("/*@")) {
-            String imp = "";
             Pattern p = Pattern.compile("import [^;]*;");
             Matcher m = p.matcher(t);
             StringBuffer sw = new StringBuffer();

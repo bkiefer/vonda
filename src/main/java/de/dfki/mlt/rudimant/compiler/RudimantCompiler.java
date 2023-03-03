@@ -178,7 +178,7 @@ public class RudimantCompiler {
   /** Process the top-level rudi file */
   public void processToplevel(File topLevel) throws IOException {
     inputRootDir = topLevel.getParentFile();
-    outputRootDir = inputRootDir;
+    outputRootDir = inputRootDir == null ? new File(".") : inputRootDir;
     // get the name from the input file name
     String className = topLevel.getName().replace(RULE_FILE_EXTENSION, "");
 

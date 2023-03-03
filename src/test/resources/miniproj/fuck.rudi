@@ -1,1 +1,3 @@
 emitDA(#Inform("Mist", "geht"="nicht"));
+foo = "fuck";
+//fuck
