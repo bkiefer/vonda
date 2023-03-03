@@ -43,7 +43,6 @@ import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.lt.hfc.db.HfcDbHandler;
 import de.dfki.lt.hfc.db.StreamingClient;
 import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
@@ -79,7 +78,7 @@ public abstract class Agent implements StreamingClient {
   /** The default namespace prefix used for .rudi Rdf "new" statements
    *  can be changes by top-level generated or wrapper class
    */
-  public String DEFNS = "vonda";
+  public String DEFNS = "default:";
 
   // TODO: that's not nice. The mood is transported in the Intention, and
   // i set this field in the intention manager.
@@ -200,12 +199,8 @@ public abstract class Agent implements StreamingClient {
   // public Agent() {}
 
   // **********************************************************************
-  // StreamingClient init() & compute() function to register changes in DB
+  // StreamingClient compute() function to register changes in DB
   // **********************************************************************
-  @Override
-  public void init(HfcDbHandler handler) {
-    // nothing to do
-  }
 
   @Override
   public void compute(Set<String> users) {
@@ -639,7 +634,6 @@ public abstract class Agent implements StreamingClient {
   @SuppressWarnings("rawtypes")
   public void init(File configDir, String language, RdfProxy proxy, Map configs) {
     _proxy = proxy;
-    _proxy.registerStreamingClient(this);
     _language = language;
     DagNode.init(new DiaHierarchy(_proxy));
     langServices = new LanguageServices();

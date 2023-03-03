@@ -63,7 +63,6 @@ public class TestUtilities {
     }
     HfcDbHandler handler = new HfcDbHandler(new File(configDir, ontoFileName).getPath());
     RdfProxy proxy = new RdfProxy(handler);
-    handler.registerStreamingClient(proxy);
     return proxy;
   }
 
