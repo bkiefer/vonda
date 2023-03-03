@@ -24,8 +24,6 @@ import de.dfki.mlt.rudimant.agent.nlp.Pair;
 
 public abstract class WrapperClass extends Agent {
 
-  public static String DEFNS = "all";
-
   public int getSomething() { return 0; }
 
   final static Object [][] defaults = {
@@ -123,7 +121,7 @@ public abstract class WrapperClass extends Agent {
     RdfProxy proxy = new RdfProxy(handler);
     handler.registerStreamingClient(proxy);
 
-    super.init(confDir, "eng", proxy, configs);
+    super.init(confDir, "eng", proxy, configs, "all");
     //robot = proxy.getRdf("<chatcat:robot1>");
     this.langServices = new LanguageServices() {
       @Override

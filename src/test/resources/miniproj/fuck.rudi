@@ -1,0 +1,3 @@
+foo = isa(int, 2 / 3.0);
+
+foo = isa(Agent, x).name;

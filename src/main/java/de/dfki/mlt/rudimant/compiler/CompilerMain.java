@@ -178,11 +178,12 @@ public class CompilerMain {
         }
       }
 
-      if (!configs.containsKey(CFG_INPUT_FILE)) {
-        if (argfiles.isEmpty()) {
+      if (argfiles.isEmpty()) {
+        if (!configs.containsKey(CFG_INPUT_FILE)) {
           usage("Input file is missing");
           System.exit(1);
         }
+      } else {
         configs.put(CFG_INPUT_FILE, argfiles.get(0));
       }
 

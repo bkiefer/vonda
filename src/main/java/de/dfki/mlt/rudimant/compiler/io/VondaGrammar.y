@@ -613,7 +613,7 @@ MultiplicativeExpression
 
 CastExpression
   : UnaryExpression { $$ = $1; }
-  | ISA '(' type_spec ',' CastExpression ')' { $$ = setPos(new ExpCast($3, $5), @$); }
+  | ISA '(' type_spec ',' ConditionalOrExpression ')' { $$ = setPos(new ExpCast($3, $5), @$); }
   ;
 
 UnaryExpression
@@ -683,6 +683,11 @@ field_access
     ExpIdentifier var = setPos(new ExpIdentifier($1), @1);
     $2.addFirst(var);
     $$ = setPos(new ExpFieldAccess($2), @$);
+  }
+  | ISA '(' type_spec ',' ConditionalOrExpression ')' field_access_rest {
+    ExpCast c = setPos(new ExpCast($3, $5), @3, @5);
+    $7.addFirst(c);
+    $$ = setPos(new ExpFieldAccess($7), @$);
   }
   | ComplexPrimary field_access_rest {
     $2.addFirst($1);

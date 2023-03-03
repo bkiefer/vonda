@@ -106,6 +106,14 @@ public class LanguageServices {
     return in;
   }
 
+  public Generator getGenerator() {
+    return _generator;
+  }
+  
+  public Interpreter getInterpreter() {
+    return _interpreter;
+  }
+  
   public Pair<String, String> generate(DagNode saEvent) {
     Pair<String, String> toSay = null;
     if (_generator != null) {

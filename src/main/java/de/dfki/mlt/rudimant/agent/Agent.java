@@ -626,15 +626,21 @@ public abstract class Agent implements StreamingClient {
   public abstract int process();
 
   /**Initialize the agent.
-   * @param configDir the directory of the global configuration file
-   * @param language  the language of the agent
-   * @param proxy     the RdfProxy object to access Rdf objects and classes
-   * @param configs   the global configuration settings
+   * @param configDir   the directory of the global configuration file
+   * @param language    the language of the agent
+   * @param proxy       the RdfProxy object to access Rdf objects and classes
+   * @param configs     the global configuration settings
+   * @param agentPrefix the string prefix used as default namespace for creating
+   *                    new RDF objects (must be a valid short namespace!) 
+   *                    and Behaviours
    */
   @SuppressWarnings("rawtypes")
-  public void init(File configDir, String language, RdfProxy proxy, Map configs) {
+  public void init(File configDir, String language, RdfProxy proxy, Map configs
+      , String agentPrefix) {
     _proxy = proxy;
     _language = language;
+    DEFNS = agentPrefix + ":";
+    idPrefix = agentPrefix;
     DagNode.init(new DiaHierarchy(_proxy));
     langServices = new LanguageServices();
     try {
