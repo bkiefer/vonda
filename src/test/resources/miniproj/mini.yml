@@ -11,12 +11,14 @@ addTimestamps: [0]
 
 namespaces:
   # namespaces for XSD, RDF, RDFS, and OWL are already defined
-
+  upper: http://www.dfki.de/lt/onto/common/upper.owl#
 
 # instead, you can also load one or more namespace files
 #default.ns
 
 tupleFiles:
+  - default.eqred.nt
+  - agent.nt
 
 rules:
 # we need special rules for transaction time (mixture of triples/quadruples)

@@ -1,3 +1,5 @@
+b = new Human;
+foo = (Agent)b;
 emitDA(#Inform("Mist", "geht"="nicht"));
 foo = "fuck";
 //fuck

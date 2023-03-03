@@ -46,7 +46,11 @@ public class VisitorConvert {
     if (r instanceof ExpCast) {
       ExpCast cast = (ExpCast)r;
       out("isa(");
-      out(cast.type.toString());
+      if (cast.type.isRdfType()) {
+        out(cast.getType().get_name());
+      } else {
+        out(cast.type.toString());
+      }
       out(", ");
       convertRec(cast.expression);
       out(")");
