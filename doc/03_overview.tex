@@ -391,15 +391,16 @@ in figure~\ref{fig:property-access}.
 
 In figure~\ref{fig:property-access}, \texttt{c = new Child;} is used
 to create a new RDF instance of class \texttt{Child}. Since every RDF
-instance must be part of a namespace, a default namespace string
-field \texttt{DEFNS} is defined in the \texttt{Agent} class. Its
-default value is \texttt{"def"}, which corresponds to the long URI
-\texttt{http://www.dfki.de/lt/default.owl\#}. You can change this
-variable to any value in the initialisation code of your agent (it
-should be a valid short namespace name)\footnote{see also the
-  \texttt{init} method of \texttt{ChatAgent} from the example project},
-and all RDF objects created in the generated \vonda code will then be
-created in your custom namespace.
+instance must be part of a namespace, a default namespace string field
+\texttt{DEFNS} is defined in the \texttt{Agent} class. Its default
+value is \texttt{"def"}, which corresponds to the long URI
+\texttt{http://www.dfki.de/lt/default.owl\#}. You have to supply this
+name in the initialisation method (\texttt{Agent.init}) of your agent
+(it has to be a valid short namespace name, make sure you have the
+appropriate namespace mapping in place)\footnote{see also the
+  \texttt{init} method of \texttt{ChatAgent} from the example
+  project}, and all RDF objects created in the generated \vonda code
+will then be created in your custom namespace.
 
 \paragraph{Parameterising field access}\label{sec:field_access_expansion}
 

@@ -1,12 +1,8 @@
 - AFTER 3.0, or in dedicated project
-  Create examples for attaching external ASR/NLU/NLG and document it
+  - Create examples for attaching external ASR/NLU/NLG and document it
+  - Create example for external HFC at run-time and StreamingClient connection
 
 * RELEASE PLAN FOR 3.0
-  - StreamingClient problem persists, how to do that transparently
-    - Currently, the "Agent" has to be registered externally!!!!
-    - What with the registration at RdfProxy????
-  - Introduce projectPrefix config key or init() parameter(?)
-    - sets DEFNS and idPrefix
   - Ask Jörg to re-iterate checks on M$
   - What can be done to check it's really working (alpha first?)
     + vonda-chatcat
@@ -156,3 +152,8 @@
     + config file (sed, or Java, easy and safe)
       + wrapperClass -> agentBase + typeDef
       + class key for NLG (would speak in favour of java (embedding level 2)
+  + StreamingClient problem persists, how to do that transparently
+    + Currently, the "Agent" has to be registered externally: NO
+    + RdfProxy registers itself on creation!
+  + Introduce projectPrefix config key or init() parameter(?)
+    + sets DEFNS and idPrefix
