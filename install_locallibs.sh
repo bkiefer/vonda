@@ -10,13 +10,13 @@ if test -n "$toinstall"; then
     exit 1
 fi
 # Install the modules in the repo/ directory into your local .m2/repository
-./update-repo.sh -u
+#./update-repo.sh -u
 mkdir locallibs
 cd locallibs
 here=`pwd`
 # Clone the given modules into the locallibs directory and put them into your
 # local .m2/repository
-for d in graff_0.7.3 openccg dataviz j2emacs cplan_1.2.4 srgs2xml_1.3.3; do
+for d in graff_0.7.3 hfc_1.5.0 openccg dataviz j2emacs cplan_1.2.4 srgs2xml_1.3.3; do
     name=${d%%_*}
     ver=${d##*_}
     if test -d $name; then
