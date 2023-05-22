@@ -3,7 +3,13 @@
 VONDA_VERSIONS="3.0 2 1"
 
 here=`pwd`
-silent="-Dorg.slf4j.simpleLogger.defaultLogLevel=warn"
+silent="-Dorg.slf4j.simpleLogger.defaultLogLevel=warn \
+--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED \
+--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED \
+--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED \
+--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED \
+--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED \
+--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED "
 
 if realpath . > /dev/null 2>&1 ; then
     :

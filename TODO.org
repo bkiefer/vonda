@@ -2,26 +2,16 @@
   - Create examples for attaching external ASR/NLU/NLG and document it
   - Create example for external HFC at run-time and StreamingClient connection
 
+  - persistence in HFC: create directories, if missing?
+
 * RELEASE PLAN FOR 3.0
   - Ask Jörg to re-iterate checks on M$
   - What can be done to check it's really working (alpha first?)
-    + vonda-chatcat
+    + vonda-chatcat: works
     + UnivFAQBot: works, errors fixed
     + VoluProf: works
 
-* Erleuchtung bzgl. Wrapperklasse: Agent vs. NaoAgent vs. PalAgent !!! JA FÜR 3.0
-  1. NaoAgent scheint eigentlich eine klasse wie TimelineUtils zu sein (oder
-     könnte so sein)
-  2. Sollten PalAgent und NaoAgent nicht die Plätze tauschen, also:
-     NaoAgent extends PalAgent, und nicht umgekehrt.
-  3. PalAgent wird nur einmal erzeugt, und alle Variablen und Methoden stehen
-     also zur Verfügung, auch die nicht-statischen! Damit kann man aus
-     Java-Klassen .rudi Methoden benutzen!
-     Ausprobieren mit endQuiz (im Moment in NaoAgent)
 * Bringt die baumartige Struktur überhaupt Vorteile? Alternativen?
-* Sollte man für die "if"s überhaupt Funktionen/Methoden generieren?
-  Evtl. könnte man so das Problem mit der linearisierung von input und output
-  code leichter lösen
 * Kann man die Generierung besser in eine eigene Stage verschieben?
   die für sich genommen einfacher oder zumindest durchsichtiger ist?
 * Besseres plug-in für NLU/NLG/ASR/TTS über injection?
@@ -45,7 +35,6 @@
 * processor / abstract processor
   + behaviour sync
     - with optional delays ? (before/after)
-
 * Application examples
   - PAL system
   - Robo demo
@@ -95,6 +84,11 @@
     + Für .rudi files "include" statt "import" benutzen !!! JA FÜR 3.0
       + "import" wie in Java nur am Anfang des Files zulassen, dass dann auch
          nur Java imports macht?
+  + VOnDA: VORSICHT, WENN MAN VARIABLEN BENUTZT, DIE HEIẞEN WIE PROPERTIES
+    String name = "foo";
+    user.name = bla; // das greift auf user.foo zu!!!
+    STEHT DAS IN DER DOKU?? WENN NICHT, SOFORT REINSCHREIBEN
+    + Syntax ändern afu user.{name} ??
   + field access conflicts: solved
     + use "{exp}" syntax for property access, otherwise unexpected stuff
       happens.
@@ -106,6 +100,9 @@
       from a java parser/introspection
     + cast expressions --> `isa` infix operator: isa(type_expr, exp)
     + ARROW --> `lambda` infix operator: lambda(arg0, ...) exp | body
+  + Sollte man für die "if"s überhaupt Funktionen/Methoden generieren?
+    + Wurde aufgehoben, so kann man das Problem mit der linearisierung
+      von input und output code leichter lösen, see next
   + check the option of not generating functions, and deferred
     generation in general
     + check if break/return works as expected and write tests!!!
@@ -132,6 +129,16 @@
       + cast expressions
       + lambda expressions
       + type declarations for external fields/methods
+  + Erleuchtung bzgl. Wrapperklasse: Agent vs. NaoAgent vs. PalAgent !!!
+    JA FÜR 3.0 REALISIERT
+    1. NaoAgent scheint eigentlich eine klasse wie TimelineUtils zu sein (oder
+       könnte so sein)
+    2. Sollten PalAgent und NaoAgent nicht die Plätze tauschen, also:
+       NaoAgent extends PalAgent, und nicht umgekehrt.
+    3. PalAgent wird nur einmal erzeugt, und alle Variablen und Methoden stehen
+       also zur Verfügung, auch die nicht-statischen! Damit kann man aus
+       Java-Klassen .rudi Methoden benutzen!
+       Ausprobieren mit endQuiz (im Moment in NaoAgent)
   + Make wrapper class optional
     + Drawback if removed completely: you can not change functionality in Agent
       (framework), for example Behaviour handling. That is definitely
