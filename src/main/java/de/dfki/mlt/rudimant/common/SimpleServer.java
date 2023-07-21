@@ -54,6 +54,7 @@ public class SimpleServer implements Runnable {
     closeRequested = false;
   }
 
+  @Override
   public void run() {
     logger.info("Initialize Server");
     //if (! isConnected()) {
@@ -115,6 +116,10 @@ public class SimpleServer implements Runnable {
         serverSocket = null;
       }
     }
+  }
+
+  public void stopServer() {
+    close();
   }
 
   public static void main(String[] args) throws IOException {

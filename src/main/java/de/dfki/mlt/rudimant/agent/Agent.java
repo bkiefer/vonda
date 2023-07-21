@@ -130,6 +130,8 @@ public abstract class Agent implements StreamingClient {
 
   public RdfProxy _proxy;
 
+  private DebuggingService _ds = null;
+
   /** Send something out to the world */
   protected void sendBehaviour(Object obj) {
     // TODO implement it, possibly with a Listener.
@@ -631,7 +633,7 @@ public abstract class Agent implements StreamingClient {
    * @param proxy       the RdfProxy object to access Rdf objects and classes
    * @param configs     the global configuration settings
    * @param agentPrefix the string prefix used as default namespace for creating
-   *                    new RDF objects (must be a valid short namespace!) 
+   *                    new RDF objects (must be a valid short namespace!)
    *                    and Behaviours
    */
   @SuppressWarnings("rawtypes")
@@ -826,6 +828,7 @@ public abstract class Agent implements StreamingClient {
 
   /** Empty all queues that might make the thing going */
   public void shutdown() {
+    stopDebugger();
     // remove all behaviours, proposals and timeouts
     clearBehavioursAndProposals();
     timeouts.clear();
@@ -951,10 +954,17 @@ public abstract class Agent implements StreamingClient {
 
   public void connectToDebugger(String debugHost, int debugPort)
       throws IOException {
-    DebuggingService ds = new DebuggingService(this, debugPort);
-    SimpleServer s = ds.startServer();
+    _ds = new DebuggingService(this, debugPort);
+    SimpleServer s = _ds.startServer();
     RemoteLogger logprinter = new RemoteLogger(s);
     this.ruleLogger.registerPrinter(logprinter);
     logger.debug("DebuggingService has been started on port [" + debugPort + "].");
+  }
+
+  public void stopDebugger() {
+    if (_ds != null) {
+      _ds.stopServer();
+      _ds = null;
+    }
   }
 }

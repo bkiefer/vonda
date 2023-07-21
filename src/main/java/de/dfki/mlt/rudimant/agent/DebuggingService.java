@@ -66,4 +66,8 @@ public class DebuggingService  {
     server.startServer();
     return server;
   }
+
+  public synchronized void stopServer() {
+    server.stopServer();
+  }
 }

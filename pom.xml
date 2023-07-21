@@ -7,14 +7,14 @@
 
   <groupId>de.dfki.mlt</groupId>
   <artifactId>vonda</artifactId>
-  <version>3.0.1</version>
+  <version>3.0.2</version>
   <packaging>jar</packaging>
 
   <properties>
     <encoding>UTF-8</encoding>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
-    <vonda.version>3.0.1</vonda.version>
+    <vonda.version>3.0</vonda.version>
     <slf4j.version>2.0.5</slf4j.version>
     <logback.version>1.4.5</logback.version>
     <google-java-format.version>1.15.0</google-java-format.version>
@@ -114,62 +114,8 @@
     </dependency>
   </dependencies>
 
-  <!-- use .java files provided from repo as default -->
-  <!--
-  <profiles>
-    <profile>
-      <id>platform-unix</id>
-      <activation>
-        <os>
-          <family>unix</family>
-        </os>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>1.1</version>
-            <executions>
-              <execution>
-                <id>makebisonflex</id>
-                <phase>generate-sources</phase>
-                <goals><goal>exec</goal></goals>
-                <configuration>
-                  <workingDirectory>${project.build.sourceDirectory}/de/dfki/mlt/rudimant/compiler/io</workingDirectory>
-                  <executable>make</executable>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-  -->
-
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.5</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>report</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.5.3</version>
@@ -192,9 +138,6 @@
               <descriptors>
                 <descriptor>src/assembly/fatjar.xml</descriptor>
               </descriptors>
-              <!--<descriptorRefs>
-                <descriptorRef>jar-with-dependencies</descriptorRef>
-              </descriptorRefs>-->
             </configuration>
           </execution>
           <execution>
@@ -258,39 +201,11 @@
               </includes>
             </configuration>
           </execution>
-          <!--<execution>
-            <phase>package</phase>
-            <id>compiling</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <classifier>compiling</classifier>
-              <includes>
-                <include>**/compiler/**/*</include>
-                <include>**/common/*</include>
-              </includes>
-            </configuration>
-          </execution>
-
-          put the default-jar in the none phase to skip it from being created -->
           <execution>
             <id>default-jar</id>
             <phase>none</phase>
           </execution>
         </executions>
-        <!-- -->
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.2</version>
-        <configuration>
-          <systemPropertyVariables>
-            <org.slf4j.simpleLogger.defaultLogLevel>warn</org.slf4j.simpleLogger.defaultLogLevel>
-          </systemPropertyVariables>
-        </configuration>
       </plugin>
 
       <plugin>
