@@ -3,8 +3,7 @@ name: Docker Image CI
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+  workflow_dispatch:
 
 jobs:
 
@@ -13,6 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: bkiefer/vonda@master
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag vonda-full:$(date +%s)

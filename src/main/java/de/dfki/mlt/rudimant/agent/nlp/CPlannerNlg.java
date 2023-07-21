@@ -44,7 +44,7 @@ public class CPlannerNlg {
 
   private RuleBasedNumberFormat numberFormatter = null;
 
-  private static String langToTag(String language) {
+  public static String langToTag(String language) {
     switch (language) {
     case "dut":
     case "nl":

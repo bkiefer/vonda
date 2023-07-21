@@ -7,14 +7,14 @@
 
   <groupId>de.dfki.mlt</groupId>
   <artifactId>vonda</artifactId>
-  <version>3.0</version>
+  <version>3.0.1</version>
   <packaging>jar</packaging>
 
   <properties>
     <encoding>UTF-8</encoding>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
-    <vonda.version>3.0</vonda.version>
+    <vonda.version>3.0.1</vonda.version>
     <slf4j.version>2.0.5</slf4j.version>
     <logback.version>1.4.5</logback.version>
     <google-java-format.version>1.15.0</google-java-format.version>

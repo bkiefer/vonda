@@ -43,6 +43,7 @@ public abstract class Interpreter extends NLProcessor {
 
   protected UtterancePlanner daConverter = null;
 
+  @Override
   @SuppressWarnings("rawtypes")
   public boolean init(File configDir, String language, Map config) {
     super.init(configDir, language, config);
@@ -52,6 +53,7 @@ public abstract class Interpreter extends NLProcessor {
       try {
         daConverter = new UtterancePlanner();
         daConverter.readProjectFile(new File(configDir, converterName));
+        daConverter.setLanguage(CPlannerNlg.langToTag(language));
       } catch (IOException ex) {
         logger.error("Could not read converter project {} because of {}",
             new File(configDir, converterName), ex.toString());
