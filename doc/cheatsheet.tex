@@ -1,0 +1,240 @@
+\documentclass[5pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[
+top    = 0.7cm,
+bottom = 1.50cm,
+left   = 0.50cm,
+right  = 0.50cm
+]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{setspace}
+\usepackage{lmodern}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{color}
+\usepackage{xcolor}
+\definecolor{sh_comment}{rgb}{0.12, 0.58, 0.18 } %adjusted, in Eclipse: {0.25, 0.42, 0.30 } = #3F6A4D
+\definecolor{sh_keyword}{rgb}{0.68, 0.08, 0.59}  % #5F1441
+\definecolor{sh_string}{rgb}{0.06, 0.10, 0.98} % #101AF9
+\usepackage{listings}
+\lstset {
+ basewidth=3.7pt,
+ backgroundcolor=\color{yellow!7!white},
+ rulesepcolor=\color{black},
+ showspaces=false,
+ showstringspaces=false,
+ showtabs=false,
+ tabsize=2,
+ basicstyle= \fontfamily{lmss}\selectfont\scriptsize,
+ stringstyle=\color{sh_string},
+ keywordstyle = \color{sh_keyword}\bfseries,
+ commentstyle=\color{sh_comment}\itshape,
+ captionpos=b,
+}
+\usepackage{tcolorbox}
+\newtcolorbox{bodybox}[1]{
+ boxsep=1pt,
+ top=0pt,
+ bottom=0pt,
+ after skip=0pt,
+ left=0pt,
+ right=0pt,
+ beforeafter skip=0.1cm,
+ colback=orange!15!white,
+ colframe=orange!75!black,
+ fonttitle=\bfseries,
+ title=#1
+}
+\newtcolorbox{importantbox}{
+ colback=orange!65!red!40!white,
+ colframe=red!80!black,
+ top=0pt,
+ bottom=0pt,
+ after skip=0pt,
+ left=0pt,
+ right=0pt,
+ beforeafter skip=0.1cm
+}
+\usepackage{lipsum}
+\usepackage{graphicx} % Required for inserting images
+
+\title{Vonda Cheatsheet}
+\author{Manuel John}
+\date{June 2023}
+
+\begin{document}
+\singlespacing
+\setlist{
+ nolistsep,
+ wide=0pt,
+ leftmargin=13.5pt,
+ }
+\section*{\centering VOnDA Cheatsheet}
+    \begin{multicols}{2}
+        \begin{bodybox}{\subsection*{\normalsize A VOnDA File ...}}
+        \normalsize
+        \begin{enumerate}[label=...]
+        \itemsep0.5em
+             \item has the extension \verb|.rudi|.
+             \item  consists of a list of variable and function definitions and possibly nested rule statements.
+             \item  makes variables defined at the top-level rule file persistent (final) throughout the whole program.
+             \item may contain Java like commenting.
+             \item may contain Java verbatim code between \verb|/*@...@*/|
+        \end{enumerate}
+        \end{bodybox}
+        \begin{bodybox}{\subsection*{\normalsize Rules consist of ...}}
+        \begin{enumerate}[label=...]
+        \itemsep0.5em
+            \item an optional label in snake case followed by a colon.
+            \item optionally labeled \verb|if| blocks with optional \verb|else| blocks. They work like in Java stopping the evaluation of (a sub-tree of) the rules in case the condition doesn't hold.
+            \item possibly two special statements that have a unique behaviour: \verb|propose| and \verb|timeout|. Both create a closure;\\
+            \verb|propose| blocks are all collected and the "best" is chosen;\\
+            labeled \verb|timeouts| wait for the specified time and the execute their body.
+        \end{enumerate}
+        \end{bodybox}
+        \begin{bodybox}{\subsection*{\normalsize Stopping Rule Evaluation}}
+            \begin{lstlisting}[language=Java]
+break label_name;
+cancel; // cancels all following (same level) rules.
+cancel_all; // cancels all following rules.
+            \end{lstlisting}
+            \verb|propose| and \verb|timeout| blocks can be exited early by \verb|return;|.
+        \end{bodybox}
+        \begin{bodybox}{\subsection*{\normalsize Overloaded (Boolean) Operators}}
+            \verb|a += b| is syntactic sugar for \verb|a.add(b)| (for lists and sets).\\
+            \verb|a -= b| is syntactic sugar for \verb|a.remove(b)| (for lists and sets).
+        The boolean operators \verb|<=|, \verb|>=| can be used to check if an object is of a specific class, for subclass tests between two classes, and for subsumption of dialogue acts.
+        If the type of a right hand side of an expression is inferrable this shorthand exists:
+        \begin{lstlisting}[language=Java]
+if  (! c.user.personality.nonchalance){...}
+// translates to ...
+if (!((((c != null) && (c.user != null)) && (c.user.personality != null))
+&& (c.user.personality.nonchalance != null))) {...}
+if (sa <= #Question){...}
+// translates to ...
+if (sa.isSubsumedBy(new DialogueAct("Question")){...}
+        \end{lstlisting}
+        \end{bodybox}
+        \begin{bodybox}{\subsection*{\normalsize Functionality from Run-Time System}}
+        Short-hand conversion methods from Java
+        \begin{lstlisting}[language=Java]
+int toInt(String s);
+float toFloat(String s);
+double toDouble(String s);
+boolean toBool(String s);
+String toStr(T i);
+// T in(int, short, byte, float, double, boolean)
+        \end{lstlisting}
+        Other Agent methods
+        \begin{lstlisting}[language=Java]
+// Telling the Agent that something changed
+void newData();
+String getLanguage();
+// Random methods
+int random(int limit); // returns [0,limit)
+float random(); // returns [0,1)
+T random(Collection<T> coll); // select random element
+long now(); // return current time since epoch in millisec.
+Logger logger; // Global logger instance (slf4j)
+// discarding actions and shutdown
+void clearBehavioursAndProposals();
+void shutdown();
+        \end{lstlisting}
+        \end{bodybox}
+        \begin{bodybox}{}
+        Timeouts
+        \begin{lstlisting}[language=Java]
+void newTimeout(String name, int millis);
+boolean isTimedOut(String name);
+void removeTimeout(String name);
+boolean hasActiveTimeout(String name);
+// cancel and remove an active timeout
+// will not be executed
+void cancelTimeout(String name);
+        \end{lstlisting}
+        Functions allowing lambda expressions
+        \begin{lstlisting}[language=Java]
+boolean some(Collection<T> coll, Function<Boolean, T> pred);
+boolean all(Collection<T> coll, Function<Boolean, T> pred);
+List<T> filter(Collection <T> coll, Function<Boolean, T>pred);
+List<T> sort(Collection<T> coll, Function<Integer, T, T> c);
+Collection<T> map(Collection<S> coll, Function<T, S> f);
+int count(Collection<T> coll, Function<Boolean, T> pred);
+T first(Collection<T> coll, Function<Boolean, T> pred);
+        \end{lstlisting}
+        Pre-added Java methods
+        \begin{lstlisting}[language=Java]
+#Object boolean equals(Object e);
+#String boolean startsWith(String s);
+#String boolean endsWith(String s);
+#String String substring(int i);
+#String String substring(int begin ,int end);
+#String boolean isEmpty();
+#String int length();
+#List<T> T get(int a);
+#Collection<T> void add(Object a);
+#Collection<T> boolean contains(Object a);
+#Collection<T> int size();
+#Collection<T> boolean isEmpty();
+#Map<S, T> boolean containsKey(S a);
+#Map<S, T> T get(S a);
+#Array<T> int length;
+        \end{lstlisting}
+        Methods on RDF and RDFClass Objects
+        \begin{lstlisting}[language=Java]
+Rdf toRdf(String uri);
+#Rdf String getURI();
+#Rdf boolean has(String predicate);
+#Rdf long getLastChange(boolean asSubject, boolean asObject);
+RdfClass getRdfClass(String s);
+boolean exists(Object o);
+// return only the name part of an URI (no namespace or angle
+// brackets)
+String getUriName(String uri);
+        \end{lstlisting}
+        Methods dealing with dialogue acts
+        \begin{lstlisting}[language=Java]
+// Methods applied to the object DialogueAct
+#DialogueAct String getDialogueActType();
+#DialogueAct void setDialogueActType(String dat);
+#DialogueAct String getProposition();
+#DialogueAct void setProposition(String prop);
+#DialogueAct boolean hasSlot(String key);
+#DialogueAct String getValue(String key);
+#DialogueAct void setValue(String key, String val);
+#DialogueAct long getTimeStamp();
+#DialogueAct void setProposition(String prop);
+// ...
+        \end{lstlisting}
+        Dialogue act objects are marked with \verb|#|.
+        \begin{lstlisting}[language=Java]
+// ...
+// sending of dialogue acts
+DialogueAct createEmitDA(DialogueAct da);
+DialogueAct emitDA(int delay, DialogueAct da);
+DialogueAct emitDA(DialogueAct da);
+// Access to dialogue acts of the current session
+// my last outgoing resp. the last incoming dialogue
+// act
+DialogueAct myLastDA();
+DialogueAct lastDA();
+// Did I say something like ta in this session
+// (subsumption)? If so, how many utterances 
+// back was it? (otherwise, -1 is returned)
+int saidInSession(DialogueAct da);
+// like saidInSession, only for incoming dialogue acts
+int receivedInSession(DialogueAct da);
+// Check if we asked a question that is still pending
+boolean waitingForResponse();
+// Mark last incoming DA as treated and not pending
+// anymore(stop rules firing)
+void lastDAprocessed();
+DialogueAct addLastDA(DialogueAct newDA);
+        \end{lstlisting}
+        \end{bodybox}
+    \end{multicols}
+
+
+
+
+\end{document}
