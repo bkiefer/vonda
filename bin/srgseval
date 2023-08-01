@@ -1,0 +1,16 @@
+#!/bin/sh
+#set -x
+
+here=`pwd`
+scrdir=`dirname $0`
+silent="-Dorg.slf4j.simpleLogger.defaultLogLevel=info \
+--illegal-access=permit \
+--add-modules=ALL-SYSTEM \
+--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED \
+--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED \
+--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED \
+--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED \
+--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED \
+--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED "
+
+java $silent -cp "$scrdir/../target/vonda-3.0.2.jar:$scrdir/../target/vonda-3.0-compiler.jar" de.dfki.mlt.rudimant.agent.nlp.EvalSrgs "$@"

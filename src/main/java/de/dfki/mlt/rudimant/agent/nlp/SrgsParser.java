@@ -61,7 +61,7 @@ public class SrgsParser extends Interpreter {
         JSONObject object = SemanticsInterpreter.interpret(checker, validRule);
         result = convert(object);
       }
-      logger.error("srgs: {}", (result == null ? "null" : result.toString()));
+      logger.info("srgs: {}", (result == null ? "null" : result.toString()));
       return result;
     }
   }
