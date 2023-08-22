@@ -120,7 +120,7 @@ public abstract class Interpreter extends NLProcessor {
 
   protected DialogueAct convert(JSONObject object) {
     DagNode in = json2dag(object);
-    logger.trace("Incoming NLU JSON: {}", object);
+    logger.debug("Incoming NLU JSON: {}", object);
     DagNode node = in;
     logger.debug("Incoming NLU result: {}", node);
     if (daConverter != null) {

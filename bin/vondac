@@ -3,7 +3,16 @@
 VONDA_VERSIONS="3.0\|2\|1"
 
 here=`pwd`
-silent="-Dorg.slf4j.simpleLogger.defaultLogLevel=warn \
+if test -f "$here/logback.xml"; then
+    silent="$silent -Dlogback.configurationFile=$here/logback.xml "
+else
+    silent="-Dorg.slf4j.simpleLogger.defaultLogLevel=warn "
+fi
+
+java --version | grep -q ' 1[1-6]\.' && \
+    silent="${silent}--illegal-access=permit "
+
+silent="${silent}--add-modules=ALL-SYSTEM \
 --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED \
 --add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED \
 --add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED \
@@ -45,7 +54,7 @@ if test -z "$jardir"; then
     cd $here
 fi
 
-JARIMAGE=`ls $jardir/vonda-*-compiler.jar | grep "$VONDA_VERSIONS" | head -1`
+JARIMAGE=`find $jardir -name vonda-\*-compiler.jar | grep "$VONDA_VERSIONS" | head -1`
 if test -z "$JARIMAGE"; then
     echo "No compiler image found"
     exit 1

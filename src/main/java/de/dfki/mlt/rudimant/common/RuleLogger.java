@@ -52,6 +52,8 @@ public class RuleLogger {
   private final Map<Integer, boolean[]> _lastLogged;
   private boolean _lastLoggedChanged = false;
 
+  public boolean filterUnchangedRules = true;
+
   public boolean logAllRules = false;
 
   /** The value of this variable determines the "verbosity" of rule logging.
@@ -189,7 +191,7 @@ public class RuleLogger {
    */
   public void logRule(int ruleId, boolean[] result) {
     if (ruleInfos != null && shouldLog(ruleId, result[0])
-        && ! lastLogged(ruleId, result)) {
+        && (!filterUnchangedRules || ! lastLogged(ruleId, result))) {
       for (LogPrinter printer : printers)
         printer.printLog(ruleInfos.get(ruleId), result);
     }
