@@ -66,7 +66,11 @@ public class EvalSrgs {
 
   public void loadSrgs(File configDir, Map<String, Object> config) {
     logger.info("Loading grammar from {}", config.get("grammar"));
-    if (!srgs.init(configDir, (String)config.get("language"), config)) {
+    String language = (String)config.get("language");
+    if (language == null) {
+      language = "en_EN";
+    }
+    if (!srgs.init(configDir, language, config)) {
       logger.error("SRGS grammar loading failed");
       throw new RuntimeException();
     }
@@ -170,6 +174,12 @@ public class EvalSrgs {
 
   public static void main(String[] args) throws FileNotFoundException {
     EvalSrgs e = new EvalSrgs();
+    if (args.length == 0) {
+      System.out.println("Usage: eval_nlu configfile.yml");
+      System.out.println("       the configfile.yml needs a \"corpus\" property "
+          + "to specify the test corpus");
+      System.exit(1);
+    }
     e.evaluate(new File(args[0]));
   }
 }

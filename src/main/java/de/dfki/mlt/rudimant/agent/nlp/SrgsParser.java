@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 import org.jvoicexml.processor.AbstractParser;
-import org.jvoicexml.processor.AbstractParser.ChartNode;
+import org.jvoicexml.processor.ChartNode;
 import org.jvoicexml.processor.JVoiceXmlGrammarManager;
 import org.jvoicexml.processor.SemanticsInterpreter;
 import org.jvoicexml.processor.grammar.Grammar;

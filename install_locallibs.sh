@@ -1,6 +1,9 @@
 #!/bin/sh
-prereq="mvn"
-for cmd in $prereq; do
+here=`pwd`
+scriptdir=`dirname $0`
+cd "$scriptdir"
+. ./dependencies.sh
+for cmd in $prereqs; do
     if test -z "`type -all $cmd 2>/dev/null`" ; then
         toinstall="$toinstall $cmd"
     fi
@@ -16,9 +19,9 @@ cd locallibs
 here=`pwd`
 # Clone the given modules into the locallibs directory and put them into your
 # local .m2/repository
-for d in graff_0.7.3 hfc_1.5.0 openccg dataviz j2emacs cplan_1.2.4 srgs2xml_1.3.4; do
-    name=${d%%_*}
-    ver=${d##*_}
+for d in $githubdeps; do
+    name=${d%%~*}
+    ver=${d##*~}
     if test -d $name; then
         cd $name
         git pull
@@ -28,6 +31,9 @@ for d in graff_0.7.3 hfc_1.5.0 openccg dataviz j2emacs cplan_1.2.4 srgs2xml_1.3.
     fi
     if test \! "$name" = "$ver"; then
         git checkout "$ver"
+    fi
+    if test -f install_locallibs.sh; then
+        ./install_locallibs.sh
     fi
     mvn install
     cd "$here"
