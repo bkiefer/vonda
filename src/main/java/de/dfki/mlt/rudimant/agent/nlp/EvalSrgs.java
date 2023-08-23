@@ -96,11 +96,14 @@ public class EvalSrgs {
     Map<String, Object> configs =
         (Map<String, Object>) yaml.load(new FileReader(configFile));
     loadSrgs(configDir, configs);
-    File corpus = new File((String)configs.get("corpus"));
-    if (! corpus.isAbsolute()) {
-      corpus = new File(configDir, (String)configs.get("corpus"));
+    List<String> corpora = (List<String>)configs.get("corpora");
+    for (String corpName : corpora) {
+      File corpus = new File(corpName);
+      if (! corpus.isAbsolute()) {
+        corpus = new File(configDir, corpName);
+      }
+      parseCorpus(configDir, corpus);
     }
-    parseCorpus(configDir, corpus);
   }
 
   void parseCorpus(File rootDir, File corpusFile) throws FileNotFoundException {
@@ -114,8 +117,13 @@ public class EvalSrgs {
     int precision_int = 0;
     int precision_frame = 0;
     int precision_theme = 0;
-    try (PrintWriter hits = new PrintWriter(new File(rootDir, "hits.txt"));
-        PrintWriter misses = new PrintWriter(new File(rootDir, "misses.txt"))) {
+    String corpName = corpusFile.getName();
+    int dot;
+    if ((dot = corpName.indexOf('.')) > 0) {
+      corpName = corpName.substring(0, dot);
+    }
+    try (PrintWriter hits = new PrintWriter(new File(rootDir, corpName + "_hits.txt"));
+        PrintWriter misses = new PrintWriter(new File(rootDir, corpName + "_misses.txt"))) {
       for (Section section : corpus) {
         String[] complex_intent = section.intent.split("_");
         List<String> examples = section.examples;
@@ -136,10 +144,18 @@ public class EvalSrgs {
               intent = complex_intent[0];
             }
             // check if it matches the frame
-            if (result.getProposition().equals(complex_intent[1])) {
-              ++precision_frame;
+            if (result.getProposition() != null && complex_intent.length > 1) {
+              if (result.getProposition().equals(complex_intent[1])) {
+                ++precision_frame;
+              } else {
+                frame = " [" + complex_intent[1] + "]";
+              }
             } else {
-              frame = " [" + complex_intent[1] + "]";
+              if (complex_intent.length == 1) {
+                ++precision_frame;
+              } else {
+                theme = "NO_FRAME";
+              }
             }
             // check if it matches the theme
             if (result.hasSlot("theme") && complex_intent.length > 2) {
@@ -152,7 +168,7 @@ public class EvalSrgs {
               if (complex_intent.length == 2) {
                 ++precision_theme;
               } else {
-                theme = "NIL";
+                theme = "NO_THEME";
               }
             }
             hits.format("%s : %s  %s%s%s\n", input, result, intent, frame, theme);

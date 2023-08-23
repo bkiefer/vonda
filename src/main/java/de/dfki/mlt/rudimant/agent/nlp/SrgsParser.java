@@ -1,17 +1,20 @@
 package de.dfki.mlt.rudimant.agent.nlp;
 
-import static de.dfki.mlt.rudimant.common.Constants.CFG_NLU_GRAMMAR;
-import static de.dfki.mlt.rudimant.common.Constants.CFG_NLU_TOKENIZER;
+import static de.dfki.mlt.rudimant.common.Constants.*;
+import static org.jvoicexml.processor.BestTreeFinder.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONObject;
 import org.jvoicexml.processor.AbstractParser;
 import org.jvoicexml.processor.ChartNode;
+import org.jvoicexml.processor.Configuration;
 import org.jvoicexml.processor.JVoiceXmlGrammarManager;
 import org.jvoicexml.processor.SemanticsInterpreter;
+import org.jvoicexml.processor.Traversable;
 import org.jvoicexml.processor.grammar.Grammar;
 import org.jvoicexml.processor.srgs.GrammarException;
 
@@ -49,7 +52,7 @@ public class SrgsParser extends Interpreter {
   public DialogueAct analyse(String text) {
     synchronized (checker) {
       String[] tokens = tokenizer.tokenize(text);
-      ChartNode validRule = null;
+      Traversable validRule = null;
       DialogueAct result = null;
       try {
         // TODO: give diagnostics if no validRule is returned
@@ -58,6 +61,13 @@ public class SrgsParser extends Interpreter {
         logger.error(ex.toString());
       }
       if (validRule != null) {
+        List<ChartNode> all = checker.returnAllResults().toList();
+        Configuration best = findBestTree(all);
+        if (! best.isDefault()) {
+          logger.debug("Best tree is not first tree");
+          validRule = best;
+        }
+
         JSONObject object = SemanticsInterpreter.interpret(checker, validRule);
         result = convert(object);
       }
