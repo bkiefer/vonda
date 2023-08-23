@@ -7,7 +7,7 @@
 
   <groupId>de.dfki.mlt</groupId>
   <artifactId>vonda</artifactId>
-  <version>3.0.3</version>
+  <version>3.0.4</version>
   <packaging>jar</packaging>
 
   <properties>
@@ -104,7 +104,7 @@
     <dependency>
       <groupId>de.dfki.mlt</groupId>
       <artifactId>srgs-parser</artifactId>
-      <version>1.4.0-SNAPSHOT</version>
+      <version>1.4.0</version>
     </dependency>
 
     <dependency>
