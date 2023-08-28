@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.json.JSONObject;
 import org.jvoicexml.processor.AbstractParser;
@@ -61,7 +62,7 @@ public class SrgsParser extends Interpreter {
         logger.error(ex.toString());
       }
       if (validRule != null) {
-        List<ChartNode> all = checker.returnAllResults().toList();
+        List<ChartNode> all = checker.returnAllResults().collect(Collectors.toList());
         Configuration best = findBestTree(all);
         if (! best.isDefault()) {
           logger.debug("Best tree is not first tree");

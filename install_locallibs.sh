@@ -35,7 +35,7 @@ for d in $githubdeps; do
     if test -f install_locallibs.sh; then
         ./install_locallibs.sh
     fi
-    mvn install
+    mvn -q install
     cd "$here"
 done
 cd ..

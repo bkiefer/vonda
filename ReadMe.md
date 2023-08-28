@@ -1,5 +1,7 @@
 # VOnDA (Versatile Ontology based Dialogue management Architecture)
 
+[![mvn build](https://github.com/bkiefer/vonda/actions/workflows/mvnbuild.yml/badge.svg)](https://github.com/bkiefer/vonda/actions/workflows/mvnbuild.yml)
+
 ## Introduction
 
 VOnDA is a framework for the implementation of reactive dialogue management

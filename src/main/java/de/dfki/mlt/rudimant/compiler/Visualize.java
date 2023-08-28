@@ -79,7 +79,7 @@ public class Visualize extends CompilerMain {
   }
 
   public static String generate(String in, boolean show) {
-    RudimantCompiler rc;
+    RudimantCompiler rc = null;
     try {
       rc = initRc();
       if (show) rc.showTree();
@@ -89,18 +89,26 @@ public class Visualize extends CompilerMain {
       return sw.toString();
     } catch (IOException | WrongFormatException e) {
       throw new RuntimeException(e);
+    } finally {
+      if (rc != null) {
+        rc.shutdown();
+      }
     }
   }
 
   public static String generate(String in) { return generate(in, false); }
 
   public static BasicInfo generateAndGetRulesInfo(File input) {
-    RudimantCompiler rc;
+    RudimantCompiler rc = null;
     try {
       rc = initRc(false);
       rc.processToplevel(input);
     } catch (IOException | WrongFormatException e) {
       throw new RuntimeException(e);
+    } finally {
+      if (rc != null) {
+        rc.shutdown();
+      }
     }
     return rc.getMem().getInfo();
   }
