@@ -37,7 +37,7 @@
     <dependency>
       <groupId>de.dfki.lt.hfc</groupId>
       <artifactId>hfc</artifactId>
-      <version>1.5.0</version>
+      <version>[1.5.0,)</version>
       <type>jar</type>
     </dependency>
 
@@ -50,21 +50,21 @@
     <dependency>
       <groupId>de.dfki.mlt</groupId>
       <artifactId>cplan-ccg</artifactId>
-      <version>1.2.5</version>
+      <version>[1.2.5,)</version>
       <type>jar</type>
     </dependency>
 
     <dependency>
       <groupId>de.dfki.mlt</groupId>
       <artifactId>cplan-core</artifactId>
-      <version>1.2.5</version>
+      <version>[1.2.5,)</version>
       <type>jar</type>
     </dependency>
 
     <dependency>
       <groupId>de.dfki.mlt</groupId>
       <artifactId>dataviz</artifactId>
-      <version>0.1-SNAPSHOT</version>
+      <version>[0.1.0,)</version>
     </dependency>
 
     <dependency>
@@ -104,7 +104,7 @@
     <dependency>
       <groupId>de.dfki.mlt</groupId>
       <artifactId>srgs-parser</artifactId>
-      <version>1.4.1</version>
+      <version>[1.4.1,)</version>
     </dependency>
 
     <dependency>
@@ -257,5 +257,12 @@
       </plugin>
     </plugins>
   </build>
+
+  <repositories>
+    <repository>
+      <id>github</id>
+      <url>https://raw.githubusercontent.com/DFKI-MLT/Maven-Repository/main</url>
+    </repository>
+  </repositories>
 
 </project>
