@@ -1,5 +1,0 @@
-language: java
-before_install:
-  - ./install_locallibs.sh
-jdk:
-  - openjdk11

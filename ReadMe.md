@@ -1,6 +1,6 @@
 # VOnDA (Versatile Ontology based Dialogue management Architecture)
 
-[![mvn build](https://github.com/bkiefer/vonda/actions/workflows/mvnbuild.yml/badge.svg)](https://github.com/bkiefer/vonda/actions/workflows/mvnbuild.yml)
+[![mvn build](https://github.com/bkiefer/vonda/actions/workflows/maven.yml/badge.svg)](https://github.com/bkiefer/vonda/actions/workflows/maven.yml)
 
 ## Introduction
 
@@ -29,13 +29,10 @@ Prerequisites for installing VOnDA are:
   sudo apt install openjdk-11-jdk maven git
   ```
 
-- get VOnDA, install some dependencies from github, compile them, and finally
-  the framework itself
+- get VOnDA and compile the framework
   ```
   git clone https://github.com/bkiefer/vonda.git
   cd vonda
-  # install dependencies
-  ./install_locallibs.sh
   mvn install
   ```
 
