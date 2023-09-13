@@ -30,20 +30,22 @@ right  = 0.50cm
  keywordstyle = \color{sh_keyword}\bfseries,
  commentstyle=\color{sh_comment}\itshape,
  captionpos=b,
+ aboveskip=2pt,
+ belowskip=0pt
 }
 \usepackage{tcolorbox}
 \newtcolorbox{bodybox}[1]{
  boxsep=1pt,
- top=0pt,
- bottom=0pt,
+ top=2pt,
+ bottom=2pt,
  after skip=0pt,
  left=0pt,
  right=0pt,
- beforeafter skip=0.1cm,
+ beforeafter skip=0cm,
  colback=orange!15!white,
  colframe=orange!75!black,
  fonttitle=\bfseries,
- title=#1
+ title={\normalsize\rule[-.3ex]{0pt}{2.2ex}\ #1}
 }
 \newtcolorbox{importantbox}{
  colback=orange!65!red!40!white,
@@ -62,8 +64,10 @@ right  = 0.50cm
 \author{Manuel John}
 \date{June 2023}
 
+\newcommand{\intitle}[1]{\rule{0pt}{2ex}\ #1}
+
 \begin{document}
-\singlespacing
+\singlespacing\pagestyle{empty}
 \setlist{
  nolistsep,
  wide=0pt,
@@ -71,18 +75,19 @@ right  = 0.50cm
  }
 \section*{\centering VOnDA Cheatsheet}
     \begin{multicols}{2}
-        \begin{bodybox}{\subsection*{\normalsize A VOnDA File ...}}
+        \begin{bodybox}{A VOnDA File ...}
         \normalsize
         \begin{enumerate}[label=...]
         \itemsep0.5em
              \item has the extension \verb|.rudi|.
              \item  consists of a list of variable and function definitions and possibly nested rule statements.
              \item  makes variables defined at the top-level rule file persistent (final) throughout the whole program.
-             \item may contain Java like commenting.
-             \item may contain Java verbatim code between \verb|/*@...@*/|
+             \item line and block comment syntax as in Java \verb|//|,
+               \verb|/* ... */|
+             \item insert Java code verbatim using \verb|/*@...@*/|
         \end{enumerate}
         \end{bodybox}
-        \begin{bodybox}{\subsection*{\normalsize Rules consist of ...}}
+        \begin{bodybox}{Rules consist of ...}
         \begin{enumerate}[label=...]
         \itemsep0.5em
             \item an optional label in snake case followed by a colon.
@@ -92,7 +97,7 @@ right  = 0.50cm
             labeled \verb|timeouts| wait for the specified time and the execute their body.
         \end{enumerate}
         \end{bodybox}
-        \begin{bodybox}{\subsection*{\normalsize Stopping Rule Evaluation}}
+        \begin{bodybox}{Stopping Rule Evaluation}
             \begin{lstlisting}[language=Java]
 break label_name;
 cancel; // cancels all following (same level) rules.
@@ -100,7 +105,7 @@ cancel_all; // cancels all following rules.
             \end{lstlisting}
             \verb|propose| and \verb|timeout| blocks can be exited early by \verb|return;|.
         \end{bodybox}
-        \begin{bodybox}{\subsection*{\normalsize Overloaded (Boolean) Operators}}
+        \begin{bodybox}{Overloaded (Boolean) Operators}
             \verb|a += b| is syntactic sugar for \verb|a.add(b)| (for lists and sets).\\
             \verb|a -= b| is syntactic sugar for \verb|a.remove(b)| (for lists and sets).
         The boolean operators \verb|<=|, \verb|>=| can be used to check if an object is of a specific class, for subclass tests between two classes, and for subsumption of dialogue acts.
@@ -115,8 +120,8 @@ if (sa <= #Question){...}
 if (sa.isSubsumedBy(new DialogueAct("Question")){...}
         \end{lstlisting}
         \end{bodybox}
-        \begin{bodybox}{\subsection*{\normalsize Functionality from Run-Time System}}
-        Short-hand conversion methods from Java
+        \begin{bodybox}{Functionality from Run-Time System}
+        \intitle{Short-hand conversion methods from Java}
         \begin{lstlisting}[language=Java]
 int toInt(String s);
 float toFloat(String s);
@@ -125,7 +130,7 @@ boolean toBool(String s);
 String toStr(T i);
 // T in(int, short, byte, float, double, boolean)
         \end{lstlisting}
-        Other Agent methods
+        \intitle{Other Agent methods}
         \begin{lstlisting}[language=Java]
 // Telling the Agent that something changed
 void newData();
@@ -142,17 +147,17 @@ void shutdown();
         \end{lstlisting}
         \end{bodybox}
         \begin{bodybox}{}
-        Timeouts
+        \intitle{Timeouts}
         \begin{lstlisting}[language=Java]
 void newTimeout(String name, int millis);
 boolean isTimedOut(String name);
+// remove run-out timeout, after this, isTimedOut returns false
 void removeTimeout(String name);
 boolean hasActiveTimeout(String name);
-// cancel and remove an active timeout
-// will not be executed
+// cancel active timeout, block will not be executed
 void cancelTimeout(String name);
         \end{lstlisting}
-        Functions allowing lambda expressions
+        \intitle{Functions allowing lambda expressions}
         \begin{lstlisting}[language=Java]
 boolean some(Collection<T> coll, Function<Boolean, T> pred);
 boolean all(Collection<T> coll, Function<Boolean, T> pred);
@@ -162,7 +167,7 @@ Collection<T> map(Collection<S> coll, Function<T, S> f);
 int count(Collection<T> coll, Function<Boolean, T> pred);
 T first(Collection<T> coll, Function<Boolean, T> pred);
         \end{lstlisting}
-        Pre-added Java methods
+        \intitle{Pre-added Java methods}
         \begin{lstlisting}[language=Java]
 #Object boolean equals(Object e);
 #String boolean startsWith(String s);
@@ -180,7 +185,7 @@ T first(Collection<T> coll, Function<Boolean, T> pred);
 #Map<S, T> T get(S a);
 #Array<T> int length;
         \end{lstlisting}
-        Methods on RDF and RDFClass Objects
+        \intitle{Methods on RDF and RDFClass Objects}
         \begin{lstlisting}[language=Java]
 Rdf toRdf(String uri);
 #Rdf String getURI();
@@ -188,11 +193,10 @@ Rdf toRdf(String uri);
 #Rdf long getLastChange(boolean asSubject, boolean asObject);
 RdfClass getRdfClass(String s);
 boolean exists(Object o);
-// return only the name part of an URI (no namespace or angle
-// brackets)
+// return only name part of an URI (no namespace or angle brackets)
 String getUriName(String uri);
         \end{lstlisting}
-        Methods dealing with dialogue acts
+        \intitle{Methods dealing with dialogue acts}
         \begin{lstlisting}[language=Java]
 // Methods applied to the object DialogueAct
 #DialogueAct String getDialogueActType();
@@ -206,21 +210,17 @@ String getUriName(String uri);
 #DialogueAct void setProposition(String prop);
 // ...
         \end{lstlisting}
-        Dialogue act objects are marked with \verb|#|.
+        \intitle{Dialogue act objects start with \texttt{\#}}
         \begin{lstlisting}[language=Java]
 // ...
 // sending of dialogue acts
 DialogueAct createEmitDA(DialogueAct da);
 DialogueAct emitDA(int delay, DialogueAct da);
 DialogueAct emitDA(DialogueAct da);
-// Access to dialogue acts of the current session
-// my last outgoing resp. the last incoming dialogue
-// act
-DialogueAct myLastDA();
-DialogueAct lastDA();
-// Did I say something like ta in this session
-// (subsumption)? If so, how many utterances 
-// back was it? (otherwise, -1 is returned)
+DialogueAct myLastDA(); // last outgoing dialogue act
+DialogueAct lastDA();   // last incoming dialogue act
+// Did I say something like ta in this session (subsumption)?
+// If so, how many utterances back was it? (otherwise, -1 is returned)
 int saidInSession(DialogueAct da);
 // like saidInSession, only for incoming dialogue acts
 int receivedInSession(DialogueAct da);

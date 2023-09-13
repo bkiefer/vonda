@@ -4,13 +4,12 @@
 
   - persistence in HFC: create directories, if missing?
 
-* RELEASE PLAN FOR 3.0
-  - Ask Jörg to re-iterate checks on M$
-  - What can be done to check it's really working (alpha first?)
-    + vonda-chatcat: works
-    + UnivFAQBot: works, errors fixed
-    + VoluProf: works
-
+- RELEASE PLAN 4.0
+  - Analyse von Java-Klassen z. automatischen Extraktion von Feld- und
+    Methodensignaturen? Siehe jsignature, plus maven dependencies:list für den
+    classpath
+  - Sinnvolle Queries aus .rudi, deren Resultate gut verarbeitet werden können
+  - could '>=' be extended to java instanceof?
 * Bringt die baumartige Struktur überhaupt Vorteile? Alternativen?
 * Kann man die Generierung besser in eine eigene Stage verschieben?
   die für sich genommen einfacher oder zumindest durchsichtiger ist?
@@ -21,10 +20,7 @@
   - Anschluss von vosk und anderen ASRs als modul, TTS?
 * Developer Tools?
   - Syntax-Highlighting f. VS Code? Anbindung an Rudibugger?
-  - Analyse von Java-Klassen z. automatischen Extraktion von Feld-
-    und Methodensignaturen?
 * Queries aus .rudi abfeuern --> missing varargs!?
-
 * Collections probleme: Alles polymorph?
   ich weiß nicht mehr, was damit gemeint ist
 * Dialogue Acts
@@ -164,3 +160,13 @@
     + RdfProxy registers itself on creation!
   + Introduce projectPrefix config key or init() parameter(?)
     + sets DEFNS and idPrefix
+  + RELEASE PLAN FOR 3.0
+    + Ask Jörg to re-iterate checks on M$
+    + What can be done to check it's really working (alpha first?)
+      + vonda-chatcat: works
+      + UnivFAQBot: works, errors fixed
+      + VoluProf: works
+  + Cheat Sheets Agent-Funktionen und Syntax
+    + Überladene Operatoren: sind +=/-= und <= etc. die einzigen?
+    + welche Vergleiche sind möglich
+    + geht das auch für x is instance of Y: NEIN!

@@ -86,6 +86,7 @@ public class DialogueAct {
     return _dag;
   }
 
+  @Override
   public String toString() {
     return _dag.toString(true);
   }
@@ -319,7 +320,7 @@ public class DialogueAct {
       if (d.getFeature() != DagNode.PROP_FEAT_ID
           && d.getFeature() != DagNode.TYPE_FEAT_ID
           && d.getFeature() != DagNode.ID_FEAT_ID) {
-        args.put(d.getName(), d.getValue().getTypeName());
+        args.put(d.getName(), getValue(d.getName()));
       }
     }
     return args;
