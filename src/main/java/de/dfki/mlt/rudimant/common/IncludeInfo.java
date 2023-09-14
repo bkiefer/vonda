@@ -48,7 +48,8 @@ public class IncludeInfo extends BasicInfo {
     LoaderOptions opt = new LoaderOptions();
     opt.setMaxAliasesForCollections(1000);
     TagInspector taginspector =
-        tag -> tag.getClassName().equals(IncludeInfo.class.getName());
+        tag -> (tag.getClassName().equals(IncludeInfo.class.getName())
+            || tag.getClassName().equals(RuleInfo.class.getName()));
     opt.setTagInspector(taginspector);
     BasicInfo root = (BasicInfo) new Yaml(new Constructor(IncludeInfo.class, opt))
         .load(stream);
