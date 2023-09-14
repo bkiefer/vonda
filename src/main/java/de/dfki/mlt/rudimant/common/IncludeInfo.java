@@ -20,13 +20,40 @@
 package de.dfki.mlt.rudimant.common;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.inspector.TagInspector;
+
 public class IncludeInfo extends BasicInfo {
   protected List<ErrorInfo> _errors = new ArrayList<>();
   protected String[] relativePath;
+
+  public static void saveInfo(IncludeInfo info, Writer w) {
+    DumperOptions options = new DumperOptions();
+    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+    Yaml yaml = new Yaml(options);
+    yaml.dump(info, w);
+  }
+
+  public static BasicInfo loadInfo(InputStream stream) {
+    // load the rule infos for logging
+    LoaderOptions opt = new LoaderOptions();
+    opt.setMaxAliasesForCollections(1000);
+    TagInspector taginspector =
+        tag -> tag.getClassName().equals(IncludeInfo.class.getName());
+    opt.setTagInspector(taginspector);
+    BasicInfo root = (BasicInfo) new Yaml(new Constructor(IncludeInfo.class, opt))
+        .load(stream);
+    return root;
+  }
 
   public IncludeInfo() { }
 

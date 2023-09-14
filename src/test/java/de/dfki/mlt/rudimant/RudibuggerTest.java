@@ -19,20 +19,32 @@
 
 package de.dfki.mlt.rudimant;
 
-import static de.dfki.mlt.rudimant.compiler.CompilerMain.configs;
-import static de.dfki.mlt.rudimant.compiler.Visualize.generateAndGetRulesInfo;
+import static de.dfki.mlt.rudimant.common.IncludeInfo.*;
+import static de.dfki.mlt.rudimant.compiler.CompilerMain.*;
+import static de.dfki.mlt.rudimant.compiler.Visualize.*;
 import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 
-import de.dfki.mlt.rudimant.common.*;
+import de.dfki.mlt.rudimant.common.BasicInfo;
+import de.dfki.mlt.rudimant.common.DefaultLogger;
+import de.dfki.mlt.rudimant.common.ErrorInfo;
+import de.dfki.mlt.rudimant.common.IncludeInfo;
+import de.dfki.mlt.rudimant.common.Location;
+import de.dfki.mlt.rudimant.common.Position;
+import de.dfki.mlt.rudimant.common.RuleInfo;
+import de.dfki.mlt.rudimant.common.RuleLogger;
 
 /**
  * These tests check if the harvesting of all rules and includes and its
@@ -52,6 +64,7 @@ public class RudibuggerTest {
     configs.put("failOnError", false);
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void testRulesOnly() {
 
@@ -68,6 +81,7 @@ public class RudibuggerTest {
     assertEquals(expectedRootInclude, actualRootInclude);
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void testIncludesOnly() {
 
@@ -87,6 +101,7 @@ public class RudibuggerTest {
     assertEquals(expectedRootInclude, actualRootInclude);
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void testNestedRules() {
 
@@ -110,6 +125,7 @@ public class RudibuggerTest {
     assertEquals("d != 7.0", r.getBaseTerm(2));
   }
 
+  @SuppressWarnings("unused")
   @Test
   public void testEverything() {
 
@@ -217,6 +233,7 @@ public class RudibuggerTest {
     assertEquals("(rule_two) FALSE: [false: b.forename]\n", output);
   }
 
+  @SuppressWarnings("serial")
   @Test
   public void testYamlDump() throws IOException {
     String[] path = {"a", "b", "c"};
@@ -225,18 +242,11 @@ public class RudibuggerTest {
         new Location(new Position(1,1,1, "foo"), new Position(2,2,2, "foo")),
         ErrorInfo.ErrorType.PARSE_ERROR);
     i.setErrors(new ArrayList<ErrorInfo>(){{ add(e); }});
-    DumperOptions options = new DumperOptions();
-    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-    //options.setAllowReadOnlyProperties(true);
-    Yaml y = new Yaml(options);
-    //y.setBeanAccess(BeanAccess.FIELD);
-    FileWriter w = new FileWriter(new File("target/test.yaml"));
-    y.dump(i, w);
 
-    Yaml x = new Yaml();
-    //x.setBeanAccess(BeanAccess.FIELD);
-    FileReader r = new FileReader(new File("target/test.yaml"));
-    Object z = x.loadAs(r, IncludeInfo.class);
+    FileWriter w = new FileWriter(new File("target/test.yaml"));
+    saveInfo(i, w);
+
+    BasicInfo z = loadInfo(new FileInputStream(new File("target/test.yaml")));
     assertEquals(i, z);
   }
 }

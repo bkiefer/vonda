@@ -7,7 +7,7 @@
 
   <groupId>de.dfki.mlt</groupId>
   <artifactId>vonda</artifactId>
-  <version>3.0.5</version>
+  <version>3.0.7</version>
   <packaging>jar</packaging>
 
   <properties>
@@ -65,12 +65,6 @@
       <groupId>de.dfki.mlt</groupId>
       <artifactId>dataviz</artifactId>
       <version>[0.1.0,)</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>1.32</version>
     </dependency>
 
     <dependency>

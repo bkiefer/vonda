@@ -21,6 +21,7 @@ package de.dfki.mlt.rudimant.compiler;
 
 import static com.google.common.io.Files.asCharSink;
 import static de.dfki.mlt.rudimant.common.Constants.*;
+import static de.dfki.mlt.rudimant.common.IncludeInfo.saveInfo;
 import static de.dfki.mlt.rudimant.compiler.Constants.AGENT_DEFS;
 import static de.dfki.mlt.rudimant.compiler.tree.GrammarFile.parseAndTypecheck;
 import static java.nio.file.Files.createDirectories;
@@ -37,8 +38,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.io.CharSink;
 import com.google.common.io.CharSource;
@@ -238,13 +237,10 @@ public class RudimantCompiler {
    * Saves generated rule structure and errors/warnings to a YAML file
    */
   private void dumpToYaml() throws IOException {
-    DumperOptions options = new DumperOptions();
-    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-    Yaml yaml = new Yaml(options);
     File infoDir = new File(INFO_DIR);
     if (!infoDir.isDirectory()) createDirectories(infoDir.toPath());
-    yaml.dump(mem.getInfo(),
-              new FileWriter(new File(infoDir, RULE_LOCATION_FILE)));
+    saveInfo(mem.getInfo(),
+        new FileWriter(new File(infoDir, RULE_LOCATION_FILE)));
   }
 
   /**

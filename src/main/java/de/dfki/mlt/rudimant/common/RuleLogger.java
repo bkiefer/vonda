@@ -20,13 +20,17 @@
 package de.dfki.mlt.rudimant.common;
 
 import static de.dfki.mlt.rudimant.common.Constants.*;
+import static de.dfki.mlt.rudimant.common.IncludeInfo.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.Yaml;
 
 public class RuleLogger {
 
@@ -84,11 +88,8 @@ public class RuleLogger {
   }
 
   public void loadFromResource() {
-    // load the rule infos for logging
-    LoaderOptions opt = new LoaderOptions();
-    opt.setMaxAliasesForCollections(1000);
-    rootInfo = (BasicInfo) new Yaml(opt).load(
-        RuleLogger.class.getResourceAsStream("/generated/" + RULE_LOCATION_FILE));
+    rootInfo = loadInfo(RuleLogger.class.getResourceAsStream(
+        "/generated/" + RULE_LOCATION_FILE));
     if (rootInfo != null) {
       ruleInfos = new ArrayList<>();
       collectRuleInfos(rootInfo);
