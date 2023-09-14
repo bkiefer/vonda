@@ -43,7 +43,7 @@ public class IncludeInfo extends BasicInfo {
     yaml.dump(info, w);
   }
 
-  public static BasicInfo loadInfo(InputStream stream) {
+  public static IncludeInfo loadInfo(InputStream stream) {
     // load the rule infos for logging
     LoaderOptions opt = new LoaderOptions();
     opt.setMaxAliasesForCollections(1000);
@@ -51,7 +51,7 @@ public class IncludeInfo extends BasicInfo {
         tag -> (tag.getClassName().equals(IncludeInfo.class.getName())
             || tag.getClassName().equals(RuleInfo.class.getName()));
     opt.setTagInspector(taginspector);
-    BasicInfo root = (BasicInfo) new Yaml(new Constructor(IncludeInfo.class, opt))
+    IncludeInfo root = (IncludeInfo) new Yaml(new Constructor(IncludeInfo.class, opt))
         .load(stream);
     return root;
   }
