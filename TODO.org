@@ -1,5 +1,7 @@
 - AFTER 3.0, or in dedicated project
-  - Create examples for attaching external ASR/NLU/NLG and document it
+  +- Create examples for attaching external ASR/NLU/NLG and document it
+    + vonda-nlp includes rasa NLU
+    - vonda-minimqtt will include ASR using vosk (and maybe whisper?)
   - Create example for external HFC at run-time and StreamingClient connection
 
   - persistence in HFC: create directories, if missing?
@@ -10,6 +12,8 @@
     classpath
   - Sinnvolle Queries aus .rudi, deren Resultate gut verarbeitet werden können
   - could '>=' be extended to java instanceof?
+  - enum handling currently intransparant, it works if the enum is defined in
+    the top-level Agent class, and there are no warnings, but why?
 * Bringt die baumartige Struktur überhaupt Vorteile? Alternativen?
 * Kann man die Generierung besser in eine eigene Stage verschieben?
   die für sich genommen einfacher oder zumindest durchsichtiger ist?
@@ -36,6 +40,7 @@
   - Robo demo
   - HySociaTea SB demo
   - Herbea
+  - Intuitiv
 
 * Softwarepraktikum
 ** usability questionnaires / templates

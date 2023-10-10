@@ -21,7 +21,12 @@ public class BisonParser {
     if (DEBUG_GRAMMAR) {
       grammar.setDebugLevel(99); grammar.setErrorVerbose(true);
     }
-    if (! grammar.parse()) return null;
+    try {
+      if (! grammar.parse()) return null;
+    } catch (RuntimeException ex) {
+      grammar.yyerror(lexer.getStartPos(), ex.getMessage());
+      return null;
+    }
     return new GrammarFile(grammar.getResult(),
         new TokenHandler(lexer.getTokens(), lexer.getCommentTokens()));
   }
