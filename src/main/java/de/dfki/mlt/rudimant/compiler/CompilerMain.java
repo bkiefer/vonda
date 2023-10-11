@@ -123,7 +123,7 @@ public class CompilerMain {
 
   public static void convertTypeDefFile(File dir, String name) throws IOException {
     File f = new File(dir, name + ".rudi");
-    File to = new File(dir, name + "_v3.rudi");
+    File to = new File(dir, name + ".v3.rudi");
     List<String> lines = Files.readAllLines(f.toPath(), Charset.forName("UTF-8"));
     try (FileWriter out = new FileWriter(to)) {
       for (String l : lines) {
