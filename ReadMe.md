@@ -36,7 +36,9 @@ Prerequisites for installing VOnDA are:
   mvn install
   ```
 
-There is also a visual debugger/GUI for VOnDA: https://github.com/yoshegg/rudibugger
+There is also a [visual debugger/GUI](https://github.com/yoshegg/rudibugger) for VOnDA.
+
+The [vonda-nlp](https://github.com/bkiefer/vonda-nlp) github repository contains an example use of rasa NLP for a more sophisticated NLU. More NL componentes are planned to be added there.
 
 ## Documentation
 
