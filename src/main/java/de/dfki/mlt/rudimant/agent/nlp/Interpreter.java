@@ -43,6 +43,8 @@ public abstract class Interpreter extends NLProcessor {
 
   protected UtterancePlanner daConverter = null;
 
+  protected String name = "NLU";
+
   @Override
   @SuppressWarnings("rawtypes")
   public boolean init(File configDir, String language, Map config) {
@@ -120,12 +122,12 @@ public abstract class Interpreter extends NLProcessor {
 
   protected DialogueAct convert(JSONObject object) {
     DagNode in = json2dag(object);
-    logger.debug("Incoming NLU JSON: {}", object);
+    logger.debug("Incoming {} JSON: {}", name, object);
     DagNode node = in;
-    logger.debug("Incoming NLU result: {}", node);
+    logger.debug("Incoming {} result: {}", name, node);
     if (daConverter != null) {
       node = daConverter.process(in);
-      logger.debug("Converted NLU result: {}", node);
+      logger.debug("Converted {} result: {}", name, node);
     }
     node.addEdge(DagNode.ID_FEAT_ID, new DagNode("raw"));
     return (node == null) ? null : new DialogueAct(node);

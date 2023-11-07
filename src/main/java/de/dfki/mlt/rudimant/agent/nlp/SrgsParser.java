@@ -28,6 +28,7 @@ public class SrgsParser extends Interpreter {
   @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   public boolean init(File configDir, String language, Map config) {
+    name = "SRGS_" + language;
     String grammarName = (String) config.get(CFG_NLU_GRAMMAR);
     if (grammarName == null)
       return false;
@@ -72,7 +73,11 @@ public class SrgsParser extends Interpreter {
         JSONObject object = SemanticsInterpreter.interpret(checker, validRule);
         result = convert(object);
       }
-      logger.info("srgs: {}", (result == null ? "null" : result.toString()));
+      if (result != null) {
+        logger.info("{} result for {}: {}", name, text, result.toString());
+      } else {
+        logger.info("No {} result for {}", name, text);
+      }
       return result;
     }
   }
