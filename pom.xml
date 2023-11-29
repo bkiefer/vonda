@@ -15,7 +15,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <vonda.version>3.0</vonda.version>
-    <logback.version>1.4.11</logback.version>
+    <logback.version>1.4.12</logback.version>
     <google-java-format.version>1.15.0</google-java-format.version>
   </properties>
 
