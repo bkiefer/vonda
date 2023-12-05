@@ -138,7 +138,7 @@ public class TypeInferenceTest {
     String in = " QuizHistory q; if(q.correct) i = 7; ";
     String s = generate(in);
     String expected = "public Rdf q;/**/if (q != null && "
-        + "q.getBoolean(\"<dom:correct>\")) int i = 7;";
+        + "exists(q.getBoolean(\"<dom:correct>\"))) int i = 7;";
     assertEquals(expected, getForMarked(s, expected));
     assertTrue(s.contains("Rdf q;"));
   }

@@ -1,6 +1,5 @@
 //\small\begin{lstlisting}
-import java.nio.file.*;
-import static java.nio.file.Files.*;
+import java.nio.file.Files;
 import java.io.File;
 /*@
 // A "Java" comment, everything in this comment will be transferred literally

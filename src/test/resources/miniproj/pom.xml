@@ -10,7 +10,7 @@
       <dependency>
         <groupId>de.dfki.mlt</groupId>
         <artifactId>vonda</artifactId>
-        <version>3.0-SNAPSHOT</version>
+        <version>[3.0.12,)</version>
         <type>jar</type>
       </dependency>
     </dependencies>

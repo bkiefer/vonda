@@ -322,7 +322,7 @@ public class VisitorGeneration implements RudiVisitor {
     } else if (type.isPODType()) {
       gen(node).gen(" != 0");
     } else if (type.isCollection() || type.isString() || type.isNumberContainer()
-        || type.isDialogueAct()) {
+        || type.isBoolContainer() || type.isDialogueAct()) {
       // We "know" this is an "Agent" method
       String orig = mem.getFunctionOrigin("exists", null, "Object");
       orig = orig == null ? "" : lowerCaseFirst(orig) + ".";

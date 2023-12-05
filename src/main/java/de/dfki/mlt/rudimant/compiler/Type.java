@@ -422,8 +422,11 @@ public class Type {
   }
 
   public boolean isBool() {
-    return "boolean".equals(_name) || "Boolean".equals(_name)
-        || "<xsd:boolean>".equals(_name);
+    return "boolean".equals(_name);
+  }
+
+  public boolean isBoolContainer() {
+    return "Boolean".equals(_name) || "<xsd:boolean>".equals(_name);
   }
 
   public boolean isArray() {
