@@ -111,8 +111,12 @@ public class DialogueAct {
     return _dag.subsumes(moreSpecific._dag) && ! equals(moreSpecific);
   }
 
-  public boolean equals(DialogueAct arg) {
-    return _dag.equals(arg._dag);
+  @Override
+  public boolean equals(Object arg) {
+    if (! (arg instanceof DialogueAct))
+      return false;
+    DialogueAct da2 = (DialogueAct)arg;
+    return _dag.equals(da2._dag);
   }
 
   /** Return true if the given slot (argument) is available */

@@ -23,5 +23,6 @@ package de.dfki.mlt.rudimant.agent;
  *
  * @author pal
  */
+@SuppressWarnings("serial")
 public class StopProcessingException extends RuntimeException {
 }

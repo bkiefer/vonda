@@ -67,9 +67,7 @@ public class RudimantCompiler {
   private boolean typeCheck = false;
   private boolean printErrors = false;
   private boolean visualise = false;
-
-  // what should be logged in the rules (true = rudi code vs false = java code)
-  private boolean versionToLog = true;
+  private boolean persistentVarMode = false;
 
   private String typeDefFileName = null;
 
@@ -132,6 +130,9 @@ public class RudimantCompiler {
     if (configs.containsKey(CFG_PRINT_ERRORS) &&
         (boolean) configs.get(CFG_PRINT_ERRORS)) {
       printErrors = true;
+    }
+    if (configs.containsKey(CFG_PERSISTENT_VARS)) {
+      persistentVarMode = (boolean)configs.get(CFG_PERSISTENT_VARS);
     }
     if (configs.containsKey(CFG_TYPE_DEFS_FILE)) {
       typeDefFileName = (String) configs.get(CFG_TYPE_DEFS_FILE);
@@ -200,9 +201,15 @@ public class RudimantCompiler {
 
   public boolean visualise() { return visualise; }
 
+  public void persistAllVars() { persistentVarMode = true; }
+
+  public boolean persistentVars() { return persistentVarMode; }
+
+  /*
   public boolean logRudi(){
     return versionToLog;
   }
+  */
 
   public Mem getMem() {
     return mem;

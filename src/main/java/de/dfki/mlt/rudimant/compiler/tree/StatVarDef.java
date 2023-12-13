@@ -25,10 +25,11 @@ import java.util.Collections;
 import de.dfki.mlt.rudimant.compiler.Type;
 
 /**
- * type_spec VARIABLE SEMICOLON = only to get the type of this variable into
- * memory
+ * type_spec VARIABLE SEMICOLON: only put the type of this variable into memory
+ * OR
+ * type_spec VAR SEMICOLON ASSIGNMENT: a definition followed by an assignment
  *
- * @author Anna Welker
+ * @author Anna Welker, Bernd Kiefer
  */
 public class StatVarDef extends RTStatement {
 
@@ -59,6 +60,7 @@ public class StatVarDef extends RTStatement {
     v.visit(this);
   }
 
+  @Override
   public String toString() {
     return (varIsFinal ? "final " : "")
         + type + " " + variable

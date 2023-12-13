@@ -1,7 +1,6 @@
 package de.dfki.mlt.rudimant;
 
 import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
-import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileReader;
@@ -13,7 +12,6 @@ import java.util.Deque;
 import java.util.Map;
 import java.util.Set;
 
-//import org.junit.Test;
 import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.lt.hfc.WrongFormatException;
@@ -29,12 +27,15 @@ import de.dfki.mlt.rudimant.agent.CommunicationHub;
  *
  *  It can possibly be used as minimalistic Agent for other tests
  *
+ *  This can not be used as unit test since it blocks other tests for an
+ *  unknown reason.
+ *
  * @author kiefer
  *
  */
 public class ShutdownTest {
 
-  private class TestAgent extends Agent {
+  public static class TestAgent extends Agent {
     private DbClient handler;
 
     String ONTO_FILE_NAME = "../ontologies/inits/pal.inference.yml";
@@ -93,7 +94,7 @@ public class ShutdownTest {
       int ping = 0;
       while (isRunning()) {
         boolean emptyRun = true;
-        System.out.print(++ping + " ");
+        Agent.logger.info(++ping + " ");
         // if a proposal was executed, handle pending events now
         if (!_agent.waitForIntention()) {
 
@@ -115,7 +116,7 @@ public class ShutdownTest {
             Thread.sleep(100);
           } catch (InterruptedException ex) {
             // shut down?
-            System.out.println("Interrupt");
+            Agent.logger.warn("Interrupt");
           }
         }
       }
@@ -151,9 +152,8 @@ public class ShutdownTest {
     StubClient stub = new StubClient();
     stub.init();
     stub.startListening();
-    Thread.sleep(3000);
+    Thread.sleep(800);
     stub.shutdown();
-    assertTrue(true);
   }
 
   public static void main(String[] args) throws WrongFormatException, IOException, InterruptedException {

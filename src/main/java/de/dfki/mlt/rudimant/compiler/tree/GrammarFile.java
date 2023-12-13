@@ -123,12 +123,36 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     }
   }
 
+  /** Create an object that represents a rule file */
+  private void createIncludedRuleObject(Mem mem, Writer out, Include inc)
+      throws IOException {
+    String rootpkg = getPackageName(mem.getTopLevelPackageSpec());
+    String pkg = getPackageName(mem.getPackageSpec());
+    out.append("new ");
+    if (! rootpkg.isEmpty()) out.append(rootpkg).append('.');
+    if (! pkg.isEmpty()) out.append(pkg).append('.');
+    out.append(getQualifiedName(inc.path, inc.name)).append("(");
+    Set<ClassEnv> ncs = mem.getNeededClasses();
+    if (ncs != null) {
+      boolean notfirst = false;
+      for (ClassEnv clz : ncs) {
+        String c = clz.getName();
+        if (c.equals(mem.getClassName())) {
+          c = "this";
+        }
+        if (notfirst) out.append(", ");
+        else notfirst = true;
+        out.append(lowerCaseFirst(c));
+      }
+    }
+    out.append(")");
+  }
 
   /** Now produce code for all rules and statements in a file
    *
    *  Do not use the visit() method directly, use gen()!!!
    */
-  private void writeRuleList(Mem mem, Writer out)
+  private void writeRuleList(Mem mem, Writer out, boolean persistentVars)
       throws IOException {
     VisitorGeneration gv = new VisitorGeneration(out, mem);
     mem.enterEnvironment(this);
@@ -170,29 +194,14 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
       } else if (r instanceof Include) {
         // includes are called as functions and may return a non-zero
         // If the value is 1, skip all the subsequent rules
-        Include imp = (Include)r;
+        Include inc = (Include)r;
         out.append("res = ");
-        // use fully qualified name
-        String rootpkg = getPackageName(mem.getTopLevelPackageSpec());
-        String pkg = getPackageName(mem.getPackageSpec());
-        out.append("new ");
-        if (! rootpkg.isEmpty()) out.append(rootpkg).append('.');
-        if (! pkg.isEmpty()) out.append(pkg).append('.');
-        out.append(getQualifiedName(imp.path, imp.name)).append("(");
-        Set<ClassEnv> ncs = mem.getNeededClasses();
-        if (ncs != null) {
-          boolean notfirst = false;
-          for (ClassEnv clz : ncs) {
-            String c = clz.getName();
-            if (c.equals(mem.getClassName())) {
-              c = "this";
-            }
-            if (notfirst) out.append(", ");
-            else notfirst = true;
-            out.append(lowerCaseFirst(c));
-          }
+        if (persistentVars) {
+          out.append(lowerCaseFirst(inc.name));
+        } else {
+          createIncludedRuleObject(mem, out, (Include)r);
         }
-        out.append(").process();");
+        out.append(".process();");
         out.append(" if (res < 0) return res;");
       } else if ((r instanceof StatGrammarRule )
           || (r instanceof RTStatement
@@ -227,6 +236,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     /** add the comment tokens to the right RudiTree items */
     _th.attachComments(this);
 
+    List<Include> includes = new ArrayList<>();
     // import the included classes
     for(RudiTree r : rules) {
       // these have to appear first, the syntax allows nothing else
@@ -234,8 +244,12 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         // print all comments before this point (there's nothing before this!
         ((Import)r).gen(out);
       } else if (r instanceof Include) {
-        // TODO: MAYBE NOT NECESSARY WHEN USING QUALIFIED NAMES IN PROCESS ??
         Include i = (Include)r;
+        includes.add(i);
+        // TODO: not necessary when using qualified names in creating included
+        // classes/rule files in process
+        /*
+        // no import needed for classes in the same package (path length zero)
         if (i.path.length > 0) {
           out.append("import ");
           if (! rootpkg.isEmpty()) out.append(rootpkg).append('.');
@@ -243,6 +257,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
           out.append(getQualifiedName(i.path, i.name)).append(";")
              .append(System.lineSeparator());
         }
+        */
       }
     }
 
@@ -261,7 +276,9 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     out.append("\n\npublic class ").append(mem.getClassName());
     // check if this should extend the wrapper class
     if (! mem.isNotToplevelClass()) {
-      /** TODO: NO WRAPPER CLASS ANYMORE ? */
+      /* No wrapper class anymore? Decision: it's optional, but possible. If
+       * there is no wrapper class, getWrapperClass will return Agent
+       */
       out.append(" extends ").append(mem.getWrapperClass());
       //.append(AGENT_CLASS).append(' ');
     }
@@ -278,6 +295,21 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
       fields.add(name);
       out.append("private final ");
       out.append(className).append(' ').append(name).append(";\n");
+    }
+
+    // ************************************************************
+    // persistent var mode: create fields for all included rule file objects
+    // ************************************************************
+    // TODO
+    if (rudi.persistentVars()) {
+      for(Include i : includes) {
+        out.append("private final ");
+        if (! rootpkg.isEmpty()) out.append(rootpkg).append('.');
+        if (! pkg.isEmpty()) out.append(pkg).append('.');
+        out.append(getQualifiedName(i.path, i.name)).append(" ")
+           .append(lowerCaseFirst(i.name))
+           .append(";").append(System.lineSeparator());
+      }
     }
 
     // ************************************************************
@@ -300,6 +332,14 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     for (String name : fields) {
       out.append("this.").append(name).append(" = ").append(name).append(";\n");
     }
+    // create objects for all included rule files
+    if (rudi.persistentVars()) {
+      for(Include i : includes) {
+        out.append(lowerCaseFirst(i.name)).append(" = ");
+        createIncludedRuleObject(mem, out, i);
+        out.append(";").append(System.lineSeparator());
+      }
+    }
     out.append("\n}\n");
 
     // ************************************************************
@@ -307,7 +347,7 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     // declared in this file
     // ************************************************************
     try {
-      writeRuleList(mem, out);
+      writeRuleList(mem, out, rudi.persistentVars());
     } catch (WriterException wex) {
       throw (IOException)wex.getCause();
     }

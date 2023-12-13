@@ -56,6 +56,7 @@ public class CompilerMain {
     { CFG_TYPE_ERROR_FATAL, false, "e" },
     { CFG_PRINT_ERRORS, true, "q" },
     { CFG_VISUALISE, false , "v" },
+    { CFG_PERSISTENT_VARS, false , "p" },
     { CFG_AGENT_BASE_CLASS, "de.dfki.mlt.rudimant.agent.Agent", "w" },
   };
 
@@ -157,6 +158,9 @@ public class CompilerMain {
       }
       if (options.has("q")) {
         configs.put(CFG_PRINT_ERRORS, false);
+      }
+      if (options.has("p")) {
+        configs.put(CFG_PERSISTENT_VARS, true);
       }
       if (options.has("d")) {
         BisonParser.DEBUG_GRAMMAR = true;

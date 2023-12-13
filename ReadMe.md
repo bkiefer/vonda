@@ -42,7 +42,11 @@ The [vonda-nlp](https://github.com/bkiefer/vonda-nlp) github repository contains
 
 ## Documentation
 
-Detailed user documentation can be found in the doc folder of the project.
+Detailed user documentation can be found in the doc folder of the project. It
+contains a step-by-step guide how to build your first small conversational
+agent with VOnDA. the [vonda-chatcat](https://github.com/bkiefer/vonda-chatcat)
+project contains the agent described in this guide, if you don't want to create
+it by hand
 
 ## Version information
 

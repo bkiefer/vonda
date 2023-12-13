@@ -14,6 +14,10 @@
 \usepackage{fancyvrb}
 \usepackage[textwidth=2.5cm, textsize=small]{todonotes}
 \usepackage{listings}
+\usepackage[T1]{fontenc}
+% \usepackage{paratype}
+\usepackage{PTMono} % paratype mono
+
 \lstset{% general command to set parameter(s)
   language=Java,
   %keywordstyle=\color{black}\bfseries\underbar, % underlined bold black keywords
@@ -41,6 +45,16 @@
 \definecolor{ivory}{HTML}{F4F9E9}
 \definecolor{lightgray}{HTML}{EEF0EB}
 \definecolor{meddarkblue}{HTML}{557C97}
+
+\lstdefinestyle{yaml}{
+  basicstyle=\color{black}\ttfamily\footnotesize,
+  keywords={true, false},
+  rulecolor=\color{black},
+  string=[s]{'}{'},
+  stringstyle=\color{blue},
+  commentstyle=\color{red},
+  comment=[l]\#,
+}
 
 \begin{document}
 

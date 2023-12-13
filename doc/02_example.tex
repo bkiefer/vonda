@@ -90,7 +90,7 @@ aspects of the config file in detail.
 
 \begin{figure} [htb]
 \small%
-\begin{verbatim}
+\begin{lstlisting}[style=yaml]
 minArgs: 3
 maxArgs: 4
 noOfCores: 4
@@ -104,8 +104,8 @@ shortIsDefault: true
 
 namespaces:
   # namespaces for XSD, RDF, RDFS, and OWL are already defined
-  dial: http://www.dfki.de/lt/onto/common/dialogue.owl#
-  cat: http://www.semanticweb.org/anna/ontologies/2018/3/chatcat#
+  dial: 'http://www.dfki.de/lt/onto/common/dialogue.owl#'
+  cat: 'http://www.semanticweb.org/anna/ontologies/2018/3/chatcat#'
 
 tupleFiles:
   # the axiomatic triples for OWL-Horst w/ EQ reduction, needed if eqReduction
@@ -118,7 +118,7 @@ tupleFiles:
 ruleFiles:
   # we need special rules for transaction time (mixture of triples/quadruples)
   - default.eqred.quads.rdl
-\end{verbatim}
+\end{lstlisting}
 \caption{An exemplary HFC \texttt{config.yml} file}
 \label{fig:hfcconfig}
 \end{figure}
@@ -204,19 +204,6 @@ client and is started using the \texttt{startListening()} method.
 We recommend to have a look at the classes of the ChatCat system as a base for
 your own system and extend it. It comes you with a very simple GUI to enter
 text or dialogue acts which you can use to test your first dialogue steps.
-
-\section{Connecting NLU and Generation Components}
-
-%examplary here: srgs for NLU and cplan for generation
-Basically, you can connect any NLU and NLG components to your project that are
-able to create or, respectively, generate from dialogue acts of the format that
-\vonda currently uses (cfg. \ref{sec:caret}).
-
-Our example uses our SRGS
-implementation\footnote{\url{https://github.com/bkiefer/srgs2xml}} to
-build a primitive NLU and
-cplan\footnote{\url{https://github.com/bkiefer/cplan}} to create
-natural language out of the dialogue acts the agent outputs.
 
 \section{First Interaction Rules}
 
@@ -311,7 +298,7 @@ the object's public methods.
 These are just enough rules to start a (very short) conversation, so
 let's compile and try out the new dialogue system.
 
-\section{Specifying how to Compile and Run your Project}\label{sec:config}
+\section{How to Compile and Run your Project}\label{sec:config}
 
 Now that we have implemented our first rules, we need to compile them. In the
 \texttt{bin} directory of you \vonda installation is a script \texttt{vondac}
@@ -321,19 +308,15 @@ already in your \texttt{PATH} or to add \vonda's \texttt{bin} directory to it.
 
 While you can pass most necessary parameters on the command line, it
 is recommended to create a configuration file in YAML syntax (e.g.,
-\texttt{config.yml}), which contains these parameter, also because the
-graphical debugger needs several of these to work, too.
+\texttt{config.yml}), which contains these parameters, also because the
+graphical debugger these to work, too.
 
-First of all, it is important to note that all paths in this YAML
-configuration are resolved relative to the location of the
-configuration file, if they are not absolute directory references
-(which is discouraged for portability).
-
-Second, you can safely add your own options of whatever type (map,
-list, etc.) into the configuration file, provided you put them under a
-top-level key, since \vonda assumes the contents of the file to be a
-map. \vonda ignores all keys it does not make use of itself, so you
-can use this to configure the rest of your system, for example host
+All paths in this YAML configuration are resolved relative to the location of
+the configuration file if they are not absolute directory references (which is
+discouraged for portability). You can safely add your own options of whatever
+type (map, list, etc.) into the configuration file, provided you put them under
+a top-level key, since \vonda ignores all keys it does not make use of itself,
+so you can use these to configure the rest of your system, for example host
 addresses or ports of remote modules, custom resources, etc.
 
 For the \vonda compiler, your \texttt{config.yml} should contain the
@@ -353,72 +336,40 @@ following parameters:\\
                        relative to the current location\\
 \texttt{rootPackage}&The topmost package to put the compiled Java
                       classes in\\
-\texttt{failOnError}&If \texttt{true} to exit compilation on any
-                       encountered type errors, otherwise continues\\
+\texttt{failOnError}&If \texttt{true}, exit compilation on any
+                       type error, otherwise continue\\
 \end{tabular}\\
 
-Concerning the \texttt{failOnError} setting, keep in mind that
-although \vonda's type checking is becoming more and more elaborate
-and reliable, it is by no means complete. In some cases, setting this
-switch to true might make your project uncompilable although when
-compiling it ignoring the type errors results in a perfectly sound
-Java project.
-
-Since the compile and the runtime phase of \vonda need different information,
-e.g., the run-time phase needs NLU and NLG components, there are additional
-options for the run-time phase (This is the example from ChatCat):
-\newpage
-\begin{verbatim}
-ontologyFile:       src/main/resources/ontology/chatcat.yml
-NLG:
-  eng:
-    class: de.dfki.mlt.rudimant.agent.nlp.LanguageGenerator
-    mapperProject: src/main/resources/grammars/cplanner/allrules-mapper
-    generationProject: src/main/resources/grammars/cplanner/allrules
-NLU:
-  eng:
-    class: de.dfki.mlt.rudimant.agent.nlp.SrgsParser
-    grammar: src/main/resources/grammars/srgs/chatcat.abnf
-    converter: src/main/resources/grammars/cplanner/srgsconv
-    tokenizer:
-      class: de.dfki.mlt.rudimant.agent.nlp.TrivialTokenizer
-      toLower: false
-      removePunctuation: true
-debugPort: 9777
-\end{verbatim}
-
-This configuration can be used to start your compiled system by passing it to
-the init method of \texttt{Agent}, allowing for easier configuration of these
-modules, also in multi-language settings. You can put all information into one
-\texttt{yaml} file, using it for run time and compile time, since irrelevant
-configuration keys will be ignored.
+Concerning \texttt{failOnError}, keep in mind that although \vonda's type
+checking is becoming more and more elaborate and reliable, it is by no means
+complete. In some cases, setting this switch to true might make your project
+uncompilable although when compiling it ignoring the type errors results in a
+perfectly sound Java project.
 
 \subsection{Resolving Name Ambiguities} \label{sec:nsAmbigue}
 
 As you may have noticed looking at chatcat's \texttt{config.yml}, there are
 further parameters used in the compile configuration of our example project:
 
-\begin{verbatim}
+\begin{lstlisting}[style=yaml]
 nameToURI:
-Agent: "<cat:Agent>"
-
+   Agent: "<cat:Agent>"
 nameToClass:
-Date: de.dfki.chatcat.util.Date
-\end{verbatim}
+   Date: de.dfki.chatcat.util.Date
+\end{lstlisting}
 
 When trying to compile without the first two lines, you will find that \vonda
-produces the warning \begin{small}'' \texttt{base name Agent can be one of
-    <http://www.semanticweb.org/anna/ontologies/2018/3/chatcat\#Agent>,
-    <dial:Agent>, please resolve manually.}''
-\end{small}.
+produces the warning \ \begin{small}\texttt{"base name Agent can be one of
+<http://.../chatcat\#Agent>, <dial:Agent>, please resolve manually."}\end{small}.
 
 This is the compiler telling us that when defining the RDF class \texttt{Agent}
 in the database step, we actually redefined an existing class. \vonda warns us
 about this and urges us to resolve this ambiguity. Thus, we could either rename
 our class, or explicitly state which namespace should be accessed whenever the
-class \texttt{Agent} is used. \texttt{nameToURI} can be used to do the latter.
-You can also use this functionality to remap RDF class names: \vonda will
-always map the name on the left to the class URI provided on the right.
+class \texttt{Agent} is used, which can be achieved by defining this mapping
+under \texttt{nameToURI}. You can also use this functionality to remap RDF
+class names: \vonda will always map the name on the left to the class URI
+provided on the right.
 
 The second specification serves to resolve type checks in favour of Java
 instead of RDF classes. The fully specified name is currently not used, but
@@ -430,6 +381,77 @@ might be used in later versions to generate Java \texttt{import} statements.
 % to implement in Java than in \vonda code. Together with the right field and
 % method specifications, this can massively support the type checker. We will
 % look into this more closely in section~\ref{sec:support}.
+
+\section{A Sample Project Configuration} \label{sec:exampleconfig}
+
+This is the configuration file of the
+\texttt{vonda-chatcat}\footnote{\url{https://github.com/bkiefer/vonda-chatcat}}
+example project, which contains runtime and debugger parameters in addition to
+the previously discussed compiler configuration parameters
+
+\begin{lstlisting}[style=yaml]
+# Points to the HFC config file
+ontologyFile:       src/main/resources/ontology/chatcat.yml
+
+# ########## COMPILE CONFIGURATION SETTINGS ##########
+inputFile:          src/main/rudi/ChatCat.rudi
+outputDirectory:    src/main/gen-java
+agentBase:          de.dfki.chatcat.ChatAgent
+typeDef:            ChatAgent.rudi
+failOnError:        false
+rootPackage:        de.dfki.chatcat
+nameToURI:
+  Agent: <cat:Agent>
+nameToClass:
+  Date: de.dfki.chatcat.util.Date
+#printErrors: true      # TODO: DESCRIBE
+#visualise: true        # produces a graphical representation of the parsed rule files
+                        # with type resolution information
+#persistentVars: true   # puts compiler into persistent variables mode: local variables
+                        # in included rule files also keep their values during runtime
+
+# ########## RUN CONFIGURATION SETTINGS ##########
+NLG:
+  eng:
+    class: de.dfki.mlt.rudimant.agent.nlp.LanguageGenerator
+    mapperProject: src/main/resources/grammars/cplanner/allrules-mapper
+    generationProject: src/main/resources/grammars/cplanner/allrules
+    #translateNumbers: true  # translates numbers to text internally, if, e.g., the TTS
+                             # can not do it by itself
+NLU:
+  eng:
+    class: de.dfki.mlt.rudimant.agent.nlp.SrgsParser
+    grammar: src/main/resources/grammars/srgs/chatcat.abnf
+    converter: src/main/resources/grammars/cplanner/srgsconv
+    tokenizer:
+      class: de.dfki.mlt.rudimant.agent.nlp.TrivialTokenizer
+      toLower: false            # turn all output to lower case
+      removePunctuation: true   # remove all punctuation tokens
+
+# ########## DEBUGGER/GUI SETTINGS ##########
+debugPort: 9777                 # the port where the Agent talks to the debugger
+
+customCompileCommands:
+  mvncompile: mvn install
+  mvncleancmp: mvn clean install
+  vcompile: vondac -v -c config.yml
+defaultCompileCommand: Compile
+\end{lstlisting}
+
+The configuration can be used both for compilation and to start your compiled
+system. Although the compile and the runtime phase of \vonda need different
+parameters (except \texttt{ontologyFile}), e.g., the run-time phase needs NLU
+and NLG components, you can put all configuration into one \texttt{yaml} file
+for simplicity, since irrelevant keys will be ignored. For runtime
+initialization, the configuration is passed to the \texttt{init} method of your
+\texttt{Agent}, which simplifies configuration also in multi-language settings.
+
+The example uses our SRGS
+implementation\footnote{\url{https://github.com/bkiefer/srgs2xml}} to build a
+simple NLU and cplan\footnote{\url{https://github.com/bkiefer/cplan}} to create
+natural language from dialogue acts. You can also create your own NLU and NLG
+by implementing the \texttt{Interpreter} and \texttt{Generator} Interfaces and
+adding the appropriate configuration settings.
 
 \if0
 Natural language dialogue systems are becoming more and more popular, be it as

@@ -37,7 +37,7 @@ public interface Constants {
   public static final String CFG_NAME_TO_URI = "nameToURI";
   public static final String CFG_NAME_TO_CLASS = "nameToClass";
   public static final String CFG_VISUALISE = "visualise";
-  public static final String CFG_LOGGING = "logging";
+  public static final String CFG_PERSISTENT_VARS = "persistentVars";
 
   /** the port for the debugger to connect to the running system */
   public static final String CFG_DEBUG_PORT = "debugPort";

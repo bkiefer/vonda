@@ -20,8 +20,10 @@ automatically performs the necessary casts for the ontology accesses.
 Figure~\ref{fig:architecture} shows the architecture of a runnable \vonda project.
 
 \begin{figure}[htbp]
-  \centering
-  \input{vonda-framework}
+  \begin{center}
+    \renewcommand{\sfdefault}{lmss}
+    \input{vonda-framework}
+  \end{center}
   \caption{Schematic of a \vonda interaction manager implementation}
   \label{fig:architecture}
 \end{figure}
@@ -48,12 +50,25 @@ specified class name to extend the top-level generated file from your
 custom agent base class.
 
 The \vonda compiler translates rule files with the extension \texttt{.rudi} to
-Java files. During this process, the ontology storing the RDF classes and
-properties is used to automatically infer types, resolve whether field accesses
-are actually accesses to the database, etc (see section
-\ref{sec:typeinference}).
-Every rule file can define variables and functions in \vonda syntax which are
-then available to all included files.
+Java files, which means that each file is turned into a public class. During
+this process, the ontology storing the RDF classes and properties is used to
+automatically infer types, resolve whether field accesses are actually accesses
+to the database, etc (see section \ref{sec:typeinference}).  Every rule file
+can define variables and functions in \vonda syntax which are then available to
+all included files, since the generated Java classes create objects for each
+included file, and the references are appropriately handled by the compiler.
+
+For the creation of the objects representing the included rule files, there are
+two possibilities: in the default case, the object representing the topmost
+rule file will be created once at the system start and will remain the same
+until the end of the process, which means that all variables defined there will
+also be persistent and keep their values, but all other rule file objects will
+be recreated during each rule cycle, thus resetting their local variables each
+time. By setting the \texttt{persistentVars} configuration flag to
+\texttt{true} (or using the \texttt{-p} command line flag), all rule file
+objects will be only created once, and all local variables will keep their
+values during runtime. This means that the user/programmer is responsible for
+resetting them when a rule cycle starts, if that is required.
 
 The current structure assumes that most of the Java functionality that
 is used inside the rule files will be provided by the \texttt{Agent}
@@ -98,23 +113,24 @@ This functionality offers possibilities to e.g. define and process high-level
 variables that you might want to have access to in subsequent rules or to insert
 termination conditions that prevent some rule executions.
 
-\textbf{Warning:} Variables declared globally in a file will be
-transformed to fields of the Java class. We found that in very rare
-occasions, this can lead to unexpected behaviour when using them in a
-propose or timeout block as well as changing them in a global
-statement. As proposes and timeouts will not be exceuted immediately,
-they need every variable used inside them to be effectively
-final. \vonda leaves the evaluation of validness of variables for such
-blocks to Java. We found that Java might mistakenly accept variables
-that are not effectively final, which might lead to completely
-unexpected behaviour when proposes and timeouts with changed variable
-values are executed.
+\textbf{Warning:} Variables declared globally in a file will be transformed to
+fields of the Java class, as was described above. We found that in very rare
+occasions when running the default mode (only the variables of the top-level
+rule file keep their values), this can lead to unexpected behaviour when using
+them in a propose or timeout block as well as changing them in a global
+statement. As proposes and timeouts will not be exceuted immediately, they need
+every variable used inside them to be effectively final. \vonda leaves the
+evaluation of validness of variables for such blocks to Java. We found that
+Java might mistakenly accept variables that are not effectively final, which
+might lead to completely unexpected behaviour when proposes and timeouts with
+changed variable values are executed.
 
-The only important exception, where globally defined variables and
-methods persist throughout the whole runtime of the system are
-variables defined in the top-level rule file. This is on purpose, and
+The globally defined variables and methods defined in the top-level rule file
+are always persistent throughout the whole runtime. This is on purpose, and
 can be used to define persistent variables also usable in lower-level
-rule files, or to be accessed from other java code.
+rule files, or to be accessed from other java code. If you set the compiler to
+the \texttt{persistentVars} mode, this will be true for all variables defined
+in the rule files.
 
 \subsection{Rules and rule labels}
 
@@ -716,13 +732,17 @@ component, which will select the best alternative. This component can be
 exchanged to make it as simple or elaborate as necessary, which also allows to
 take into account arbitrary features from the data storage.
 
-At the start of your program, an object of the generated top-level
-class will be created which will exist as long as the program is
-executed. For the execution of embedded rules, temporary objects will
-be created, which cease to exist as soon as all relevant rules of the
-subtree have been evaluated. As a consequence, no values created in
-these objects will survive the rule evaluation if they are not stored
-in a persistent location (e.g., a top-level variable or the database).
+At the start of your program, an object of the generated top-level class will
+be created which will exist as long as the program is executed. When the
+compiler was used in the default mode, temporary objects will be created for
+the execution of embedded rules, which cease to exist as soon as all relevant
+rules of the subtree have been evaluated. As a consequence, no values created
+in these objects will survive the rule evaluation if they are not stored in a
+persistent location (e.g., a top-level variable or the database). When the
+\texttt{persistentVars} config flag was set to \texttt{true}, the compiler
+generates also the objects for embedded rules only on startup and keeps them,
+making all local variables permanent, which includes the coder's responsibility
+to reset them for a rule evaluation cycle if necessary.
 
 The embedded rules have access to all the variables and methods
 declared in higher-level rule files, and all the values produced up to

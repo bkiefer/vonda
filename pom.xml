@@ -7,7 +7,7 @@
 
   <groupId>de.dfki.mlt</groupId>
   <artifactId>vonda</artifactId>
-  <version>3.0.12</version>
+  <version>3.1.0</version>
   <packaging>jar</packaging>
 
   <properties>
@@ -37,21 +37,12 @@
       <groupId>de.dfki.lt.hfc</groupId>
       <artifactId>hfc</artifactId>
       <version>[1.5.2,)</version>
-      <type>jar</type>
     </dependency>
 
     <dependency>
       <groupId>de.dfki.mlt</groupId>
       <artifactId>cplan-ccg</artifactId>
       <version>[1.2.7,)</version>
-      <type>jar</type>
-    </dependency>
-
-    <dependency>
-      <groupId>de.dfki.mlt</groupId>
-      <artifactId>cplan-core</artifactId>
-      <version>[1.2.7,)</version>
-      <type>jar</type>
     </dependency>
 
     <dependency>
@@ -71,7 +62,7 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>${logback.version}</version>
-      <scope>runtime</scope>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -125,35 +116,6 @@
           </execution>
         </executions>
       </plugin>
-      <!--<plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.1</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <build>
-                <finalName>vonda-2-compiler</finalName>
-              </build>
-              <artifactSet>
-                <excludes>
-                  <exclude>junit:junit</exclude>
-                  <exclude>de.dfki.mlt:vonda-runtime</exclude>
-                </excludes>
-              </artifactSet>
-              <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>de.dfki.mlt.rudimant.compiler.CompilerMain</mainClass>
-                </transformer>
-              </transformers>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>-->
 
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>

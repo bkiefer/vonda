@@ -4,9 +4,7 @@
  * http://creativecommons.org/licenses/by-nc/4.0/legalcode
  *
  * Creative Commons (CC) by DFKI GmbH
- *  - Bernd Kiefer <kiefer@dfki.de>
- *  - Anna Welker <anna.welker@dfki.de>
- *  - Christophe Biwer <christophe.biwer@dfki.de>
+ *  - Bernd Kiefer <bernd.kiefer@dfki.de>
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -19,11 +17,13 @@
 
 package de.dfki.mlt.rudimant.agent;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.*;
-
-import javax.swing.Timer;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,15 +33,17 @@ import de.dfki.mlt.rudimant.agent.Agent.Proposal;
 public class Timeouts {
   private static final Logger logger = LoggerFactory.getLogger(Timeouts.class);
 
-  private Map<String, MyTimer> pendingTimeouts = new HashMap<>();
+  private final ScheduledThreadPoolExecutor pool;
 
-  private Set<String> occuredTimeouts = new HashSet<>();
+  private final Map<String, ScheduledFuture<?>> pendingTimeouts = new HashMap<>();
+
+  private final Set<String> occuredTimeouts = new HashSet<>();
 
   private boolean timeoutOccured = false;
 
-  private class MyTimer {
-    Timer timer;
-    long started;
+  public Timeouts() {
+    pool = new ScheduledThreadPoolExecutor(50);
+    pool.setRemoveOnCancelPolicy(true);
   }
 
   /** Add a new timeout with the given id and proposal. A timeout will only be
@@ -50,34 +52,32 @@ public class Timeouts {
    *  account the time that already passed since first adding it.
    */
   public synchronized void newTimeout(final String id, int millis, Proposal p) {
-    MyTimer t = pendingTimeouts.get(id);
-    int timeToFire = millis;
+    ScheduledFuture<?> t = pendingTimeouts.get(id);
+    long timeToFire = millis;
     if (t == null) {
-      t = new MyTimer();
-      pendingTimeouts.put(id, t);
-      logger.debug("timeout added: " + id + " " + millis);
+      logger.debug("timeout added: " + id + " " + timeToFire);
     } else {
-      timeToFire = (int) (t.timer.getInitialDelay() + t.started
-              - System.currentTimeMillis());
-      t.timer.stop();
+      timeToFire += t.getDelay(TimeUnit.MILLISECONDS);
+      t.cancel(false);
       logger.debug("timeout updated: " + id + " " + timeToFire);
     }
-    t.timer = new Timer(timeToFire, new ActionListener() {
+    t = pool.schedule(new Runnable() {
       @Override
-      public void actionPerformed(ActionEvent e) {
-        if ("fired".equals(e.getActionCommand())
-                || e.getActionCommand() == null) {
-          pendingTimeouts.get(id).timer.stop();
-          pendingTimeouts.remove(id);
-          occuredTimeouts.add(id);
-          logger.debug("timeout fired: " + id);
-          p.run();
-          timeoutOccured = true;
+      public void run() {
+        if (! pendingTimeouts.containsKey(id)) {
+          logger.warn("Removed timer fired: {}", id);
+          return;
         }
+        // don't think i have to do this here
+        //pendingTimeouts.get(id).timer.cancel(false);
+        pendingTimeouts.remove(id);
+        occuredTimeouts.add(id);
+        logger.debug("timeout fired: " + id);
+        p.run();
+        timeoutOccured = true;
       }
-    });
-    t.started = System.currentTimeMillis();
-    t.timer.start();
+    }, timeToFire, TimeUnit.MILLISECONDS);
+    pendingTimeouts.put(id, t);
   }
 
   /** Did a timeout with this name fire? If so, this will return true until the
@@ -97,9 +97,9 @@ public class Timeouts {
    *  without executing its proposal.
    */
   public synchronized boolean cancelTimeout(String id) {
-    MyTimer t = pendingTimeouts.get(id);
+    ScheduledFuture<?> t = pendingTimeouts.get(id);
     if (t == null) return false;
-    t.timer.stop();
+    t.cancel(false);
     pendingTimeouts.remove(id);
     return true;
   }
@@ -120,8 +120,8 @@ public class Timeouts {
   public synchronized void clear() {
     occuredTimeouts.clear();
     timeoutOccured = false;
-    for(MyTimer t : pendingTimeouts.values()) {
-      t.timer.stop();
+    for(ScheduledFuture<?> t : pendingTimeouts.values()) {
+      t.cancel(false);
     }
     pendingTimeouts.clear();
   }

@@ -18,6 +18,15 @@
       <outputDirectory>.</outputDirectory>
       <useProjectArtifact>true</useProjectArtifact>
       <unpack>true</unpack>
+      <scope>test</scope>
+      <excludes>
+        <exclude>junit</exclude>
+      </excludes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>.</outputDirectory>
+      <useProjectArtifact>true</useProjectArtifact>
+      <unpack>true</unpack>
       <scope>runtime</scope>
     </dependencySet>
   </dependencySets>

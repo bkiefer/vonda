@@ -67,12 +67,12 @@ the dialogue act it uttered was a question or a request.
 
 \subsection{Volatile variables in rule files and how to keep information between evaluation cycles} \label{sec:volatile}
 
-During run-time, only one object of the top-level generated class
-permanently exists. For all \texttt{include}d rule files, only
-temporary objects are created, which live long enough to do all
-relevant rule evaluations. That means that they have access to all
-values of the top-level rule file and other rule files above them that
-have been created up to the point of the rule file inclusion.
+If the compiler was used in the default mode, during run-time only one object
+of the top-level generated class permanently exists. For all \texttt{include}d
+rule files, only temporary objects are created, which live long enough to do
+all relevant rule evaluations. That means that they have access to all values
+of the top-level rule file and other rule files above them that have been
+created up to the point of the rule file inclusion.
 
 This means that whenever the \vonda rules are executed in a new cycle,
 they are executed in a ``clean state'' where all variables you
@@ -84,6 +84,12 @@ Thus: Always keep in mind that only variables defined in the Java
 Agent instance or in the top-level rule file are persistent,
 everything else is volatile! If you want to keep values between
 executions, store them in a top-level variable or in the database.
+
+Alternatively, you can instruct the compiler to generate permanent embedded
+objects for rule execution and thus permanent variables using the
+\texttt{persistentVars} configuration flag. Be aware that if you need a defined
+state at every rule execution, you have to reset the corresponding variables
+yourself.
 
 \if0
 \section{Advanced Features}
