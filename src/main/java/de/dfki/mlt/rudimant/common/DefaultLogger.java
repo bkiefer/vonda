@@ -21,16 +21,32 @@ package de.dfki.mlt.rudimant.common;
 
 public class DefaultLogger implements LogPrinter {
 
+  protected static String RED="-";
+  protected static String GREEN="+";
+  protected static String GRAY="_";
+
   protected void print(String s) {
     System.out.print(s);
   }
 
+  protected void printWithTags(String s, String pref, String suff) {
+    print(pref + s + suff);
+  }
+
+  protected String getPref(boolean value, boolean shortCut) {
+    return shortCut ? GRAY : value ? GREEN : RED;
+  }
+
+  protected String getSuff(boolean value, boolean shortCut) {
+    return getPref(value, shortCut);
+  }
+
   protected void printTerm(String term, boolean value, boolean shortCut) {
-    print("[" + (shortCut ? "unk" : value) + ": " + term + "]");
+    printWithTags(term, getPref(value, shortCut), getSuff(value, shortCut));
   }
 
   protected void printResult(String label, boolean value) {
-    print("(" + label + ") " + Boolean.toString(value).toUpperCase() + ": ");
+    printWithTags(label, getPref(value, false), getSuff(value, false) + ": ");
   }
 
   private boolean printRec(RuleInfo r, boolean[] result, int[] pos, boolean shortCut) {

@@ -19,20 +19,18 @@
 
 package de.dfki.mlt.rudimant.agent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.dfki.mlt.rudimant.common.DefaultLogger;
 
-public class ColorLogger extends DefaultLogger {
+public class ToLoggerLogger extends DefaultLogger {
 
-  private static final String RES="\033[m";
-
-  public ColorLogger() {
-    RED="\033[31m";
-    GREEN="\033[32m";
-    GRAY="\033[37m";
-  }
+  private static final Logger logger = LoggerFactory.getLogger("RuleLog");
 
   @Override
-  protected String getSuff(boolean value, boolean shortCut) {
-    return RES;
+  public void print(String s) {
+    logger.debug("{}", s);
   }
+
 }

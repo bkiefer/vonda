@@ -1,10 +1,10 @@
 #!/bin/sh
 #set -x
 VONDA_VERSIONS="3.0\|2\|1"
-
+script_dir=`dirname $0`
 here=`pwd`
-if test -f "$here/logback.xml"; then
-    silent="$silent -Dlogback.configurationFile=$here/logback.xml "
+if test -f "$script_dir/logback.xml"; then
+    silent="$silent -Dlogback.configurationFile=$script_dir/logback.xml "
 else
     silent="-Dorg.slf4j.simpleLogger.defaultLogLevel=warn "
 fi
