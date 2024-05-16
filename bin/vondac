@@ -49,7 +49,7 @@ if test -z "$jardir"; then
     script_dir=`realpath "$0"`
     script_dir=`dirname "$script_dir"`
     cd $script_dir
-    cd ../target
+    cd ../compiler/target
     jardir=`pwd`
     cd $here
 fi

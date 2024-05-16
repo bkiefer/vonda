@@ -6,190 +6,24 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>de.dfki.mlt</groupId>
-  <artifactId>vonda</artifactId>
-  <version>3.1.2</version>
-  <packaging>jar</packaging>
+  <artifactId>vonda-top</artifactId>
+  <version>3.2.0</version>
+  <packaging>pom</packaging>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
+    <junit.version>4.13.2</junit.version>
     <vonda.version>3.0</vonda.version>
     <logback.version>1.4.14</logback.version>
     <google-java-format.version>1.19.0</google-java-format.version>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>net.sf.jopt-simple</groupId>
-      <artifactId>jopt-simple</artifactId>
-      <version>5.0.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.2</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>de.dfki.lt.hfc</groupId>
-      <artifactId>hfc</artifactId>
-      <version>[1.5.2,)</version>
-    </dependency>
-
-    <dependency>
-      <groupId>de.dfki.mlt</groupId>
-      <artifactId>cplan-ccg</artifactId>
-      <version>[1.2.7,)</version>
-    </dependency>
-
-    <dependency>
-      <groupId>de.dfki.mlt</groupId>
-      <artifactId>dataviz</artifactId>
-      <version>[0.1.2,)</version>
-    </dependency>
-
-    <dependency>
-      <groupId>de.dfki.mlt</groupId>
-      <artifactId>srgs-parser</artifactId>
-      <version>[1.4.4,)</version>
-    </dependency>
-
-    <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>${logback.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.googlejavaformat</groupId>
-      <artifactId>google-java-format</artifactId>
-      <version>${google-java-format.version}</version>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.5.3</version>
-        <executions>
-          <execution>
-            <id>fat-jar</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <finalName>vonda-${vonda.version}-compiler</finalName>
-              <attach>false</attach>
-              <appendAssemblyId>false</appendAssemblyId>
-              <archive>
-                <manifest>
-                  <mainClass>de.dfki.mlt.rudimant.compiler.CompilerMain</mainClass>
-                </manifest>
-              </archive>
-              <descriptors>
-                <descriptor>src/assembly/fatjar.xml</descriptor>
-              </descriptors>
-              <!-- exclude from deployment -->
-              <attach>false</attach>
-            </configuration>
-          </execution>
-          <execution>
-            <id>src-dist-archive</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>src/assembly/src.xml</descriptor>
-              </descriptors>
-              <!-- exclude from deployment -->
-              <attach>false</attach>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.2.0</version>
-        <executions>
-          <execution>
-            <id>runtime</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <includes>
-                <include>**/agent/**/*</include>
-                <include>**/common/*</include>
-              </includes>
-            </configuration>
-          </execution>
-          <execution>
-            <id>default-jar</id>
-            <phase>none</phase>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>2.4.1</version>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>src/main/resources/generated</directory>
-              <includes>
-                <include>**/*</include>
-              </includes>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-            <fileset>
-              <directory>src/test/resources/miniproj/src/main/generated</directory>
-              <includes>
-                <include>**/*</include>
-              </includes>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-            <fileset>
-              <directory>src/test/resources/miniproj/target</directory>
-              <includes>
-                <include>**/*</include>
-              </includes>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.1.2</version>
-        <configuration>
-          <argLine>
-          --add-modules=ALL-SYSTEM
-          --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
-          --add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED
-          --add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED
-          --add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED
-          --add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED
-          --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
-          </argLine>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <modules>
+    <module>library</module>
+    <module>compiler</module>
+  </modules>
 
   <repositories>
     <repository>
