@@ -34,7 +34,11 @@ import org.yaml.snakeyaml.inspector.TagInspector;
 
 public class IncludeInfo extends BasicInfo {
   protected List<ErrorInfo> _errors = new ArrayList<>();
+  /** this is the *whole* relative path down from where the topmost .rudi file
+   *  is located
+   */
   protected String[] relativePath;
+  /** Are there errors somewhere in the subtree? */
   protected boolean failure = false;
 
   public static void saveInfo(IncludeInfo info, Writer w) {
