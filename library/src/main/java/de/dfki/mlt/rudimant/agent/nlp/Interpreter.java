@@ -45,6 +45,8 @@ public abstract class Interpreter extends NLProcessor {
 
   protected String name = "NLU";
 
+  public static DialogueAct NO_RESULT = null;
+
   @Override
   @SuppressWarnings("rawtypes")
   public boolean init(File configDir, String language, Map config) {
@@ -62,7 +64,12 @@ public abstract class Interpreter extends NLProcessor {
         return false;
       }
     }
+    NO_RESULT = new DialogueAct("OutOfDomain(top)");
     return true;
+  }
+
+  protected DialogueAct noResult() {
+    return NO_RESULT;
   }
 
   private DagNode array2dag(JSONArray arr) {

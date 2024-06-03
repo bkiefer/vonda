@@ -35,10 +35,6 @@ public class CombinedInterpreter extends Interpreter {
     return true;
   }
 
-  private static DialogueAct noDA() {
-    return new DialogueAct("OutOfDomain(top)");
-  }
-
   @Override
   public DialogueAct analyse(String text) {
     logger.info(text);
@@ -49,7 +45,7 @@ public class CombinedInterpreter extends Interpreter {
         return da;
       }
     }
-    return noDA();
+    return noResult();
   }
 
 }
