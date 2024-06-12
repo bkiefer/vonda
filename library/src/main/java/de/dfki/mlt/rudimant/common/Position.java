@@ -23,13 +23,13 @@ public class Position implements Comparable<Position> {
 
   private int line;
   private int column;
-  private int charpos;
+  private long charpos;
   private String origin;
 
   // Only for unmarshalling
   Position(){};
 
-  public Position(int line, int column, int charpos, String o) {
+  public Position(int line, int column, long charpos, String o) {
     this.line = line;
     this.column = column;
     this.charpos = charpos;
@@ -52,7 +52,7 @@ public class Position implements Comparable<Position> {
     this.column = column;
   }
 
-  public int getCharpos() {
+  public long getCharpos() {
     return charpos;
   }
 
@@ -87,7 +87,10 @@ public class Position implements Comparable<Position> {
 
   @Override
   public int compareTo(Position o) {
-    if (charpos >= 0) return charpos - o.charpos;
+    if (charpos >= 0) {
+      long diff = charpos - o.charpos;
+      return diff < 0 ? -1 : (diff > 0 ? 1 : 0);
+    }
     int res = line - o.line;
     if (res != 0) return res;
     return column - o.column;

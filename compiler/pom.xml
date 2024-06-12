@@ -11,7 +11,7 @@
   <parent>
     <groupId>de.dfki.mlt</groupId>
     <artifactId>vonda-top</artifactId>
-    <version>3.2.1</version>
+    <version>3.2.2</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -19,7 +19,7 @@
     <dependency>
       <groupId>de.dfki.mlt</groupId>
       <artifactId>vonda</artifactId>
-      <version>3.2.0</version>
+      <version>3.2.2</version>
     </dependency>
 
     <dependency>

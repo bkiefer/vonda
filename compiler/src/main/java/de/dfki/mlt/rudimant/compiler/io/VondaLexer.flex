@@ -251,6 +251,8 @@ SingleCharacter = [^\r\n\'\\]
   /* null literal */
   "null"                         { return token(VondaGrammar.Lexer.NULL); }
 
+  /* ellipsis */
+  "..."                          { return token(VondaGrammar.Lexer.ELLIPSIS); }
 
   /* separators */
   "(" |

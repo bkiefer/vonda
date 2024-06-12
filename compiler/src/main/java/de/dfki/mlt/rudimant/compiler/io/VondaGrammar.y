@@ -118,6 +118,8 @@ import de.dfki.mlt.rudimant.compiler.tree.*;
 %token WHILE
 %token ISA
 
+%token ELLIPSIS
+
 %token LAMBDA
 %token ANDAND
 %token OROR
@@ -460,6 +462,12 @@ opt_args_list
 args_list
   : IDENTIFIER { $$ = new LinkedList(){{ add(Type.getNoType()); add($1); }}; }
   | type_spec IDENTIFIER { $$ = new LinkedList(){{ add($1); add($2); }}; }
+  | type_spec ELLIPSIS IDENTIFIER {
+    // TODO: make optional sequence type from $1, this does not suffice
+    // or adapt the type checking code
+    Type optt = new Type("Array", new ArrayList<Type>(){{ add($1); }});
+    $$ = new LinkedList(){{ add(optt); add($3); }};
+  }
   | IDENTIFIER ',' args_list {
     $$ = $3;
     $3.addFirst($1); $3.addFirst(Type.getNoType());
