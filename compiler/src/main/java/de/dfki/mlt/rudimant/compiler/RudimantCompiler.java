@@ -153,8 +153,7 @@ public class RudimantCompiler {
    */
   public void readAgentSpecs() {
     try {
-      parseAndTypecheck(this,
-          RudimantCompiler.class.getResourceAsStream("/" + AGENT_DEFS),
+      parseAndTypecheck(this, ClassLoader.getSystemResourceAsStream(AGENT_DEFS),
           AGENT_DEFS);
     } catch (IOException ex) {
       logger.error("Agent definitions file include fails: {}", ex);

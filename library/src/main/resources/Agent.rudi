@@ -41,9 +41,20 @@ boolean exists(Object o);
 // return only the name part of an URI (no namespace or angle brackets)
 String getUriName(String uri);
 
-// fire off general queries
+// fire off general queries:
+// TODO should be activated when ellipsis syntax is functional
 //List<List<Object>> queryTable(String query, String ... args);
 //List<Object> query(String query, String ... args);
+List<List<Object>> queryTable(String query);
+List<List<Object>> queryTable(String query, String arg1);
+List<List<Object>> queryTable(String query, String arg1, String arg2);
+List<List<Object>> queryTable(String query, String arg1, String arg2, String arg3);
+List<List<Object>> queryTable(String query, String arg1, String arg2, String arg3, String arg4);
+List<Object> query(String query);
+List<Object> query(String query, String arg1);
+List<Object> query(String query, String arg1, String arg2);
+List<Object> query(String query, String arg1, String arg2, String arg3);
+List<Object> query(String query, String arg1, String arg2, String arg3, String arg4);
 
 // DialogueAct methods
 DialogueAct createEmitDA(DialogueAct da);
