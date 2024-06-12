@@ -1733,9 +1733,9 @@ public class VondaGrammar
   if (yyn == 104)
     /* "VondaGrammar.y":465  */
                                   {
-    // TODO: MAKE OPTIONAL SEQUENCE TYPE FROM $1, does this suffice?
-    Type optt = new Type("Array",
-       new ArrayList<Type>(){{ add(((Type)(yystack.valueAt (2)))); }});
+    // TODO: make optional sequence type from $1, this does not suffice
+    // or adapt the type checking code
+    Type optt = new Type("Array", new ArrayList<Type>(){{ add(((Type)(yystack.valueAt (2)))); }});
     yyval = new LinkedList(){{ add(optt); add((( String )(yystack.valueAt (0)))); }};
   };
   break;

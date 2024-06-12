@@ -118,7 +118,7 @@ public class CompilerMain {
   /**
    * Saves generated rule structure and errors/warnings to a YAML file
    */
-  private static void dumpToYaml(File configDir, IncludeInfo info)
+  public static void dumpToYaml(File configDir, IncludeInfo info)
       throws IOException {
     File infoDir = new File(configDir, INFO_DIR);
     if (!infoDir.isDirectory()) createDirectories(infoDir.toPath());
