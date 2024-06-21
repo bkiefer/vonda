@@ -68,10 +68,10 @@ public interface Constants {
   public static final String CFG_NLU_TOKENIZER= "tokenizer";
 
   /** TrivialTokenizer: convert input to lowercase in preprocess */
-  public static final String CFG_TOK_TOLOWER = "to_lower";
+  public static final String CFG_TOK_TOLOWER = "toLower";
   /** TrivialTokenizer: Remove punctuation symbols from input string, currently
    *  fixed set */
-  public static final String CFG_TOK_REMOVE_PUNCTUATION = "remove_punctuation";
+  public static final String CFG_TOK_REMOVE_PUNCTUATION = "removePunctuation";
 
   public static final String RULE_FILE_EXTENSION = ".rudi";
   public static final String RULE_LOCATION_FILE = "RuleLoc.yml";

@@ -224,7 +224,7 @@ public class CompilerMain {
     System.out.println(message);
     System.out.println("java -jar vonda.jar\n"
         + "   -v<isualize parses> -e<rror stops> -q<uiet (no errors printed)>\n"
-        + "   -r ontos.ini -w WrapperClass -o outputDir\n"
+        + "   -r ontos.yml -w WrapperClass -o outputDir\n"
         + "   -c config.yaml\n"
         + "   [TopLevel.rudi]\n\n"
         + "Values for all flags and the TopLevel file can also be set in the config file.");

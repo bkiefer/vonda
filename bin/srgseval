@@ -1,10 +1,10 @@
 #!/bin/sh
 #set -x
 VONDA_VERSIONS="3.0\|2\|1"
-
+script_dir=`dirname $0`
 here=`pwd`
-if test -f "$here/logback.xml"; then
-    silent="$silent -Dlogback.configurationFile=$here/logback.xml "
+if test -f "$script_dir/logback.xml"; then
+    silent="$silent -Dlogback.configurationFile=$script_dir/logback.xml "
 else
     silent="-Dorg.slf4j.simpleLogger.defaultLogLevel=warn "
 fi
@@ -49,12 +49,12 @@ if test -z "$jardir"; then
     script_dir=`realpath "$0"`
     script_dir=`dirname "$script_dir"`
     cd $script_dir
-    cd ../target
+    cd ../compiler/target
     jardir=`pwd`
     cd $here
 fi
 
-JARIMAGE=`ls $jardir/vonda-*-compiler.jar | grep "$VONDA_VERSIONS" | head -1`
+JARIMAGE=`find $jardir -name vonda-\*-compiler.jar | grep "$VONDA_VERSIONS" | head -1`
 if test -z "$JARIMAGE"; then
     echo "No executable image found"
     exit 1

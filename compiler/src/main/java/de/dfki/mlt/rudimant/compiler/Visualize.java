@@ -53,8 +53,8 @@ public class Visualize {
   public static void show(RudiTree root, String realName, MainFrame mf) {
     CompactLayout cl = new CompactLayout();
     cl.setTreeHorizontal(true);
-    cl.setTreeLevelDistance(0);
-    cl.setTreeNodeDistance(10);
+    cl.setTreeLevelDistance(8);
+    cl.setTreeNodeDistance(3);
     cl.setTreeEdgesStraight(false);
 
     DrawingPanel dp = new DrawingPanel(root, cl, new TreeModelAdapter());
