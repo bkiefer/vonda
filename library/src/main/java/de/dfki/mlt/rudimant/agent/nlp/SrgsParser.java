@@ -1,6 +1,6 @@
 package de.dfki.mlt.rudimant.agent.nlp;
 
-import static de.dfki.mlt.rudimant.common.Constants.*;
+import static de.dfki.mlt.rudimant.common.Configs.*;
 import static org.jvoicexml.processor.BestTreeFinder.*;
 
 import java.io.File;

@@ -1,6 +1,6 @@
 package de.dfki.mlt.rudimant.agent.nlp;
 
-import static de.dfki.mlt.rudimant.common.Constants.*;
+import static de.dfki.mlt.rudimant.common.Configs.*;
 
 import java.io.File;
 import java.util.Map;

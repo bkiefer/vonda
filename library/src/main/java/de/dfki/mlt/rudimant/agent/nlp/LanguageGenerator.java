@@ -19,7 +19,9 @@
 
 package de.dfki.mlt.rudimant.agent.nlp;
 
-import static de.dfki.mlt.rudimant.common.Constants.*;
+import static de.dfki.mlt.rudimant.common.Configs.CFG_NLG_GENERATION_PROJECT;
+import static de.dfki.mlt.rudimant.common.Configs.CFG_NLG_MAPPER_PROJECT;
+import static de.dfki.mlt.rudimant.common.Configs.CFG_NLG_TRANSLATE_NUMBERS;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -87,6 +89,7 @@ public class LanguageGenerator extends Generator {
    *         of failure.
    * @throws FileNotFoundException
    */
+  @Override
   public boolean init(File configDir, String lang,
       Map<String, Object> cfgs) {
     configs = new HashMap<>(cfgs);
@@ -159,6 +162,7 @@ public class LanguageGenerator extends Generator {
     return generate(rawInput);
   }
 
+  @Override
   public Pair<String, String> generate(DagNode rawInput) {
     // obsolete
     // _ruleMapper.schemaLfStringToLfString(genericDialogueAct));

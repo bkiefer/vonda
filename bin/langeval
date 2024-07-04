@@ -1,0 +1,21 @@
+#!/bin/sh
+#set -x
+VONDA_VERSIONS="3.0\|2\|1"
+. `dirname $0`/utils.sh
+
+if test -z "$JARIMAGES"; then
+    if test -z "$jardir"; then
+        cd `getscriptdir`/..
+        jardir=`pwd`
+        cd $here
+    fi
+
+    JARIMAGES=`find $jardir -name vonda-\*.jar | tr '\012' ':'`
+fi
+
+if test -z "$JARIMAGES"; then
+    echo "No executable image found"
+    exit 1
+fi
+MAINCLASS=de.dfki.mlt.rudimant.agent.nlp.EvalLangServices
+java $silent -cp "$JARIMAGES" $MAINCLASS "$@"

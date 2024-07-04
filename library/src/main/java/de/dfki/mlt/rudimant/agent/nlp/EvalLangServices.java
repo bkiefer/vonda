@@ -1,5 +1,7 @@
 package de.dfki.mlt.rudimant.agent.nlp;
 
+import static de.dfki.mlt.rudimant.common.Configs.*;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -15,13 +17,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
-public class EvalSrgs {
-  private static Logger logger = LoggerFactory.getLogger(EvalSrgs.class);
+public class EvalLangServices {
+  private static Logger logger = LoggerFactory.getLogger(EvalLangServices.class);
 
   PrintWriter hits;
   PrintWriter misses;
 
-  SrgsParser srgs = new SrgsParser();
+  LanguageServices ls;
 
   private static class Section {
     private Section(String i, String e) {
@@ -64,20 +66,28 @@ public class EvalSrgs {
     }
   }
 
-  public void loadSrgs(File configDir, Map<String, Object> config) {
+  public void loadServices(Map<String, Object> config) {
     logger.info("Loading grammar from {}", config.get("grammar"));
+    File configDir = (File)config.get(CFG_CONFIG_DIRECTORY);
     String language = (String)config.get("language");
     if (language == null) {
       language = "en_EN";
     }
-    if (!srgs.init(configDir, language, config)) {
-      logger.error("SRGS grammar loading failed");
+    ls = new LanguageServices();
+    try {
+      ls.loadGrammar(configDir, language, config);
+    } catch (Exception ex) {
+      logger.error("grammar loading failed: {}", ex.getMessage());
       throw new RuntimeException();
     }
   }
 
-  private DialogueAct parse(String input) {
-    return srgs.analyse(input);
+  public DialogueAct parse(String input) {
+    return ls.interpret(input);
+  }
+
+  public Pair<String, String> generate(DialogueAct input) {
+    return ls.generate(input.getDag());
   }
 
   private static final Pattern ANNOT_REGEX = Pattern.compile(
@@ -91,11 +101,9 @@ public class EvalSrgs {
 
   @SuppressWarnings("unchecked")
   void evaluate(File configFile) throws FileNotFoundException {
-    File configDir = configFile.getAbsoluteFile().getParentFile();
-    Yaml yaml = new Yaml();
-    Map<String, Object> configs =
-        (Map<String, Object>) yaml.load(new FileReader(configFile));
-    loadSrgs(configDir, configs);
+    Map<String, Object> configs = readConfig(configFile);
+    loadServices(configs);
+    File configDir = (File)configs.get(CFG_CONFIG_DIRECTORY);
     List<String> corpora = (List<String>)configs.get("corpora");
     for (String corpName : corpora) {
       File corpus = new File(corpName);
@@ -189,7 +197,7 @@ public class EvalSrgs {
   }
 
   public static void main(String[] args) throws FileNotFoundException {
-    EvalSrgs e = new EvalSrgs();
+    EvalLangServices e = new EvalLangServices();
     if (args.length == 0) {
       System.out.println("Usage: eval_nlu configfile.yml");
       System.out.println("       the configfile.yml needs a \"corpus\" property "

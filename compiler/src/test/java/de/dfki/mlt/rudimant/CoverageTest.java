@@ -18,9 +18,11 @@
  */
 
 package de.dfki.mlt.rudimant;
-import static de.dfki.mlt.rudimant.common.Constants.*;
+import static de.dfki.mlt.rudimant.common.Configs.CFG_CONFIG_DIRECTORY;
+import static de.dfki.mlt.rudimant.common.Configs.CFG_VISUALISE;
 import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.RESOURCE_DIR;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -31,6 +33,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;

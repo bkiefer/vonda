@@ -19,20 +19,17 @@
 
 package de.dfki.mlt.rudimant.compiler;
 
-import static de.dfki.mlt.rudimant.common.Constants.*;
+import static de.dfki.mlt.rudimant.common.Configs.*;
+import static de.dfki.mlt.rudimant.common.Constants.RULE_LOCATION_FILE;
 import static de.dfki.mlt.rudimant.compiler.Constants.COMPILER_VERSION;
 import static java.nio.file.Files.createDirectories;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.yaml.snakeyaml.Yaml;
 
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.mlt.rudimant.common.IncludeInfo;
@@ -96,23 +93,6 @@ public class CompilerMain {
     } else if (! configs.containsKey(key)) {
       configs.put(key, def);
     }
-  }
-
-  public static Map<String,Object> readConfig(File confFile)
-      throws FileNotFoundException {
-    Yaml yaml = new Yaml();
-    File confDir = confFile.getParentFile();
-    if (confDir == null) {
-      confDir = new File(".");
-    }
-    Map<String,Object> configs = yaml.load(new FileReader(confFile));
-    configs.put(CFG_CONFIG_DIRECTORY, confDir);
-    return configs;
-  }
-
-  public static Map<String,Object> readConfig(String confName)
-      throws FileNotFoundException {
-    return readConfig(new File(confName));
   }
 
   /**

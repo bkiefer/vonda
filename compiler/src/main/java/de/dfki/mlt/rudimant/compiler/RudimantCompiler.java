@@ -20,7 +20,8 @@
 package de.dfki.mlt.rudimant.compiler;
 
 import static com.google.common.io.Files.asCharSink;
-import static de.dfki.mlt.rudimant.common.Constants.*;
+import static de.dfki.mlt.rudimant.common.Configs.*;
+import static de.dfki.mlt.rudimant.common.Constants.RULE_FILE_EXTENSION;
 import static de.dfki.mlt.rudimant.compiler.Constants.AGENT_DEFS;
 import static de.dfki.mlt.rudimant.compiler.tree.GrammarFile.parseAndTypecheck;
 import static java.nio.file.Files.createDirectories;

@@ -19,7 +19,7 @@
 
 package de.dfki.mlt.rudimant.agent.nlp;
 
-import static de.dfki.mlt.rudimant.common.Constants.CFG_NLU_CONVERTER;
+import static de.dfki.mlt.rudimant.common.Configs.CFG_NLU_CONVERTER;
 
 import java.io.File;
 import java.io.IOException;

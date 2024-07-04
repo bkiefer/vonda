@@ -19,7 +19,7 @@
 
 package de.dfki.mlt.rudimant.agent.nlp;
 
-import static de.dfki.mlt.rudimant.common.Constants.*;
+import static de.dfki.mlt.rudimant.common.Configs.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -109,11 +109,11 @@ public class LanguageServices {
   public Generator getGenerator() {
     return _generator;
   }
-  
+
   public Interpreter getInterpreter() {
     return _interpreter;
   }
-  
+
   public Pair<String, String> generate(DagNode saEvent) {
     Pair<String, String> toSay = null;
     if (_generator != null) {

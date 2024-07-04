@@ -1,6 +1,6 @@
 package de.dfki.mlt.rudimant.compiler.tree;
 
-import static de.dfki.mlt.rudimant.common.Constants.CFG_CONFIG_DIRECTORY;
+import static de.dfki.mlt.rudimant.common.Configs.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -27,14 +27,14 @@ public class TestHelper {
   private static File confDir;
   public static Map<String, Object> configs;
 
-  public static void readConfig(String configFile) throws FileNotFoundException {
-    configs = CompilerMain.readConfig(configFile);
+  public static void getConfig(String configFile) throws FileNotFoundException {
+    configs = readConfig(configFile);
     confDir = (File)configs.get(CFG_CONFIG_DIRECTORY);
   }
 
   public static void setUp(String configFile, String h, String f)
       throws FileNotFoundException {
-    readConfig(configFile);
+    getConfig(configFile);
     header = h;
     footer = f;
   }

@@ -19,7 +19,7 @@
 
 package de.dfki.mlt.rudimant.agent;
 
-import static de.dfki.mlt.rudimant.common.Constants.CFG_DEBUG_PORT;
+import static de.dfki.mlt.rudimant.common.Configs.CFG_DEBUG_PORT;
 import static de.dfki.mlt.rudimant.common.Constants.STATE_ALWAYS;
 import static de.dfki.mlt.rudimant.common.Constants.STATE_NEVER;
 
@@ -48,9 +48,9 @@ import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
-import de.dfki.mlt.rudimant.agent.nlp.LanguageServices;
 import de.dfki.mlt.rudimant.agent.nlp.DiaHierarchy;
 import de.dfki.mlt.rudimant.agent.nlp.DialogueAct;
+import de.dfki.mlt.rudimant.agent.nlp.LanguageServices;
 import de.dfki.mlt.rudimant.agent.nlp.Pair;
 import de.dfki.mlt.rudimant.common.RuleLogger;
 import de.dfki.mlt.rudimant.common.SimpleServer;

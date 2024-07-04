@@ -1,10 +1,7 @@
-#!/bin/sh
-#set -x
-VONDA_VERSIONS="3.0\|2\|1"
 script_dir=`dirname $0`
 here=`pwd`
-if test -f "$script_dir/logback.xml"; then
-    silent="$silent -Dlogback.configurationFile=$script_dir/logback.xml "
+if test -f "logback.xml"; then
+    silent="$silent -Dlogback.configurationFile=logback.xml "
 else
     silent="-Dorg.slf4j.simpleLogger.defaultLogLevel=warn "
 fi
@@ -45,18 +42,7 @@ else
     }
 fi
 
-if test -z "$jardir"; then
+getscriptdir() {
     script_dir=`realpath "$0"`
-    script_dir=`dirname "$script_dir"`
-    cd $script_dir
-    cd ../compiler/target
-    jardir=`pwd`
-    cd $here
-fi
-
-JARIMAGE=`find $jardir -name vonda-\*-compiler.jar | grep "$VONDA_VERSIONS" | head -1`
-if test -z "$JARIMAGE"; then
-    echo "No executable image found"
-    exit 1
-fi
-java $silent -cp "$JARIMAGE" de.dfki.mlt.rudimant.agent.nlp.EvalSrgs "$@"
+    dirname "$script_dir"
+}
