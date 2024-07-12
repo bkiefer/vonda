@@ -262,6 +262,7 @@ public class VisitorGeneration implements RudiVisitor {
   static Map<String, String> rdfOpMap = new HashMap<>();
   static Map<String, String> dialOpMap = new HashMap<>();
   static Map<String, String> striOpMap = new HashMap<>();
+  static Map<String, String> objOpMap = new HashMap<>();
   static {
     String[] rdf = { "==", ".equals()",
         "<=", ".isSubclassOf()",
@@ -290,13 +291,23 @@ public class VisitorGeneration implements RudiVisitor {
     for(int i = 0; i < stri.length; i += 2) {
       striOpMap.put(stri[i], stri[i+1]);
     }
+    String[] obj = { "==", "==",
+        "<=", "instanceof",
+        "<", "instanceof",
+        ">=", ".class.isInstance()",
+        ">", ".class.isInstance()"
+    };
+    for(int i = 0; i < obj.length; i += 2) {
+      objOpMap.put(obj[i], obj[i+1]);
+    }
   }
 
   private String massageOperator(String operator, Type resultType) {
     if (resultType.isDialogueAct()) return dialOpMap.get(operator);
     if (resultType.isStrictRdfType()) return rdfOpMap.get(operator);
     if (resultType.isString()) return striOpMap.get(operator);
-    return operator;
+    if (resultType.isPODType()) return operator;
+    return objOpMap.get(operator);
   }
 
   private void massageTest(RTExpression node) {

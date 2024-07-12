@@ -111,6 +111,24 @@ public class ComparisonTest {
   }
 
   @Test
+  public void testGenerationComparisonToInstanceof() {
+    // other operators than == don't make sense here.
+    String in = "Number a; if (a <= Integer) return true;";
+    String r = generate(in);
+    String expected = "Number a;if (a instanceof Integer) return true;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
+  public void testGenerationComparisonIsInstanceof() {
+    // other operators than == don't make sense here.
+    String in = "Number a; if (Integer >= a) return true;";
+    String r = generate(in);
+    String expected = "Number a;if (Integer.class.isInstance(a)) return true;";
+    assertEquals(expected, getForMarked(r, expected));
+  }
+
+  @Test
   public void testGenerationComparisonRdfRdfClass() {
     String in = "Child j; if (Child <= j) return true;";
     String r = generate(in);
