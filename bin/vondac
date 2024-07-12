@@ -1,10 +1,39 @@
 #!/bin/sh
 #set -x
 VONDA_VERSIONS="3.0\|2\|1"
-. `dirname $0`/utils.sh
+
+if realpath . > /dev/null 2>&1 ; then
+    :
+else
+    # does not exist on Mac OSX
+    realpath() {
+        target=$1
+
+        cd `dirname $target`
+        target=`basename $target`
+
+        # Iterate down a (possible) chain of symlinks
+        while [ -L "$target" ]
+        do
+            target=`readlink $target`
+            cd `dirname $target`
+            target=`basename $target`
+        done
+
+        # Compute the canonicalized name by finding the physical path
+        # for the directory we're in and appending the target file.
+        phys_dir=`pwd -P`
+        echo "$phys_dir/$target"
+    }
+fi
+
+scriptdir=`realpath $0`
+scriptdir=`dirname $scriptdir`
+
+. "$scriptdir"/utils.sh
 
 if test -z "$jardir"; then
-    cd `getscriptdir`/../compiler/target
+    cd "$scriptdir"/../compiler/target
     jardir=`pwd`
     cd $here
 fi

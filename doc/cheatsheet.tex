@@ -18,17 +18,17 @@ right  = 0.50cm
 \definecolor{sh_string}{rgb}{0.06, 0.10, 0.98} % #101AF9
 \usepackage{listings}
 \lstset {
- basewidth=3.7pt,
+ basewidth=4.3pt,
  backgroundcolor=\color{yellow!7!white},
  rulesepcolor=\color{black},
  showspaces=false,
  showstringspaces=false,
  showtabs=false,
- tabsize=2,
- basicstyle= \fontfamily{lmss}\selectfont\scriptsize,
+ tabsize=3,
+ basicstyle=\fontseries{cmvtt}\selectfont\ttfamily\footnotesize,
  stringstyle=\color{sh_string},
  keywordstyle = \color{sh_keyword}\bfseries,
- commentstyle=\color{sh_comment}\itshape,
+ commentstyle=\fontfamily{lc}\selectfont\color{sh_comment}\rmfamily\itshape,
  captionpos=b,
  aboveskip=2pt,
  belowskip=0pt
@@ -78,18 +78,19 @@ right  = 0.50cm
         \begin{bodybox}{A VOnDA File ...}
         \normalsize
         \begin{enumerate}[label=...]
-        \itemsep0.5em
+        \itemsep0.15em
              \item has the extension \verb|.rudi|.
              \item  consists of a list of variable and function definitions and possibly nested rule statements.
              \item  makes variables defined at the top-level rule file persistent (final) throughout the whole program.
              \item line and block comment syntax as in Java \verb|//|,
                \verb|/* ... */|
              \item insert Java code verbatim using \verb|/*@...@*/|
+             \item to cast, use \verb|isa(Type, exp)| instead of \verb|((Type) exp)|
         \end{enumerate}
         \end{bodybox}
         \begin{bodybox}{Rules consist of ...}
         \begin{enumerate}[label=...]
-        \itemsep0.5em
+        \itemsep0.15em
             \item an optional label in snake case followed by a colon.
             \item optionally labeled \verb|if| blocks with optional \verb|else| blocks. They work like in Java stopping the evaluation of (a sub-tree of) the rules in case the condition doesn't hold.
             \item possibly two special statements that have a unique behaviour: \verb|propose| and \verb|timeout|. Both create a closure;\\
@@ -110,11 +111,11 @@ cancel_all; // cancels all following rules.
             \verb|a -= b| is syntactic sugar for \verb|a.remove(b)| (for lists and sets).
         The boolean operators \verb|<=|, \verb|>=| can be used to check if an object is of a specific class, for subclass tests between two classes, and for subsumption of dialogue acts.
         If the type of a right hand side of an expression is inferrable this shorthand exists:
-        \begin{lstlisting}[language=Java]
-if  (! c.user.personality.nonchalance){...}
+        \begin{lstlisting}[language=Java, escapechar=@]
+if (! c.user.mood.polarity){...}
 // translates to ...
-if (!((((c != null) && (c.user != null)) && (c.user.personality != null))
-&& (c.user.personality.nonchalance != null))) {...}
+if (!((((c != null) && (c.user != null)) && (c.user.mood != null))
+      && (c.user.mood.polarity != null))) {...}@\vspace*{.6mm}@
 if (sa <= #Question){...}
 // translates to ...
 if (sa.isSubsumedBy(new DialogueAct("Question")){...}
@@ -127,8 +128,7 @@ int toInt(String s);
 float toFloat(String s);
 double toDouble(String s);
 boolean toBool(String s);
-String toStr(T i);
-// T in(int, short, byte, float, double, boolean)
+String toStr(T i); // for T boolean or number type
         \end{lstlisting}
         \intitle{Other Agent methods}
         \begin{lstlisting}[language=Java]
@@ -193,12 +193,11 @@ Rdf toRdf(String uri);
 #Rdf long getLastChange(boolean asSubject, boolean asObject);
 RdfClass getRdfClass(String s);
 boolean exists(Object o);
-// return only name part of an URI (no namespace or angle brackets)
+// return only name part of URI (no namespace or angle brackets)
 String getUriName(String uri);
         \end{lstlisting}
         \intitle{Methods dealing with dialogue acts}
         \begin{lstlisting}[language=Java]
-// Methods applied to the object DialogueAct
 #DialogueAct String getDialogueActType();
 #DialogueAct void setDialogueActType(String dat);
 #DialogueAct String getProposition();
@@ -208,11 +207,9 @@ String getUriName(String uri);
 #DialogueAct void setValue(String key, String val);
 #DialogueAct long getTimeStamp();
 #DialogueAct void setProposition(String prop);
-// ...
         \end{lstlisting}
         \intitle{Dialogue act objects start with \texttt{\#}}
         \begin{lstlisting}[language=Java]
-// ...
 // sending of dialogue acts
 DialogueAct createEmitDA(DialogueAct da);
 DialogueAct emitDA(int delay, DialogueAct da);
@@ -220,14 +217,13 @@ DialogueAct emitDA(DialogueAct da);
 DialogueAct myLastDA(); // last outgoing dialogue act
 DialogueAct lastDA();   // last incoming dialogue act
 // Did I say something like ta in this session (subsumption)?
-// If so, how many utterances back was it? (otherwise, -1 is returned)
+// If so, how many utterances back was it? (-1 if not)
 int saidInSession(DialogueAct da);
 // like saidInSession, only for incoming dialogue acts
 int receivedInSession(DialogueAct da);
 // Check if we asked a question that is still pending
 boolean waitingForResponse();
-// Mark last incoming DA as treated and not pending
-// anymore(stop rules firing)
+// Mark last incoming DA as treated, so next lastDA() checks fail
 void lastDAprocessed();
 DialogueAct addLastDA(DialogueAct newDA);
         \end{lstlisting}
