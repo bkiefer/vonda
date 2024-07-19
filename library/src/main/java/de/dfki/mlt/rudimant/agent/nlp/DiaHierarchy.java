@@ -19,6 +19,7 @@
 
 package de.dfki.mlt.rudimant.agent.nlp;
 
+import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfHierarchy;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
@@ -39,7 +40,9 @@ public class DiaHierarchy implements Hierarchy {
   /** Initialize the hierarchy based on the RDF class hierarchy */
   public DiaHierarchy(RdfProxy proxy) {
     _hier = proxy.getHierarchy();
-    assert(_hier.getVertex(DagNode.TOP_TYPE) == DagNode.TOP_ID);
+    RdfClass top = proxy.fetchClass(DagNode.TOP_TYPE);
+    assert top != null;
+    assert(_hier.getVertex(top.toString()) == DagNode.TOP_ID);
   }
 
   /** Return a code for the given feature name */
