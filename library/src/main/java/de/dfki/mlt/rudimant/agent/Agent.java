@@ -228,7 +228,7 @@ public abstract class Agent implements StreamingClient {
   public DialogueAct addToMyDA(DialogueAct da) {
     myLastDAs.addFirst(da);
     // enter into database
-    DialogueAct.toRdf(da, _proxy);
+    da.toRdf(_proxy);
     // ++myUnprocessedDAs;
     newData();
     return da;
@@ -357,7 +357,7 @@ public abstract class Agent implements StreamingClient {
     }
     lastDAs.addFirst(newDA);
     // enter into database
-    DialogueAct.toRdf(newDA, _proxy);
+    newDA.toRdf(_proxy);
     //++unprocessedDAs;
     newData();
     return newDA;

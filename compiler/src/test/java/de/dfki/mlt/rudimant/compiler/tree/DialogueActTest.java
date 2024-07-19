@@ -100,7 +100,7 @@ public class DialogueActTest {
     Rdf da = _proxy.getClass("<dial:Accept>").getNewInstance("dial:");
     da.setValue("<dial:sender>", "someone");
     Rdf frame = _proxy.getClass("<sem:Answering>").getNewInstance("dial:");
-    frame.setValue("<sem:agent>", "someone else");
+    da.setValue("<sem:agent>", "someone else");
     da.setValue("<dial:frame>", frame);
 
     DialogueAct transformed = DialogueAct.fromRdfProper(da.getURI(), _proxy);
@@ -118,7 +118,7 @@ public class DialogueActTest {
     Rdf da = _proxy.getClass("<dial:Accept>").getNewInstance("dial:");
     da.setValue("<dial:sender>", "someone");
     Rdf frame = _proxy.getClass("<sem:Frame>").getNewInstance("dial:");
-    frame.setValue("<sem:agent>", "someone else");
+    da.setValue("<sem:agent>", "someone else");
     frame.setValue("<sem:label>", "Foo");
     da.setValue("<dial:frame>", frame);
 
@@ -138,10 +138,10 @@ public class DialogueActTest {
     DialogueAct da = new DialogueAct("@raw:ReturnGreeting(Meeting"
         + " ^ <Time>afternoon ^ <addressee>\"<dial:Child_8>\""
         + " ^ <sender>\"" + sender.getURI() + "\")");
-    Rdf rep = DialogueAct.toRdf(da, _proxy);
+    Rdf rep = da.toRdf(_proxy);
     QueryResult res =
         _proxy.selectQuery("select ?p ?q where {} ?p ?q ?_", rep.getURI());
-    assertEquals(3, res.getTable().getRows().size());
+    assertEquals(5, res.getTable().getRows().size());
   }
 
   @Test
@@ -152,7 +152,7 @@ public class DialogueActTest {
     _proxy.getClass("<dial:Confirm>").getNewInstance("dial:");
     DialogueAct da =
         new DialogueAct("Inform", "Answer", "what", "solution", "sender", sender.toString() );
-    DialogueAct.toRdf(da, _proxy);
+    da.toRdf(_proxy);
 
     String query = "select ?s ?t where ?s ?_ <dial:Inform> ?t "
         + "filter LLess ?t {} "
@@ -232,5 +232,21 @@ public class DialogueActTest {
     String s = generate(in);
     String expected = "int foo = 0;DialogueAct da = new DialogueAct(\"Inform\", \"Matter\", Integer.toString(foo), \"bar\");";
     assertEquals(expected, getForMarked(s, expected));
+  }
+
+  @Test
+  public void testProper() {
+    DialogueAct da = new DialogueAct("Confirm(Call, sender=\"<dial:Agent77>\", addressee=\"<dial:Agent007>\", callId=7, callSign=\"Zugführer\")");
+    Rdf rdfDa = da.toRdfProper(_proxy);
+    DialogueAct da2 = DialogueAct.fromRdfProper(rdfDa.getURI(), _proxy);
+    assertEquals(da, da2);
+  }
+
+  @Test
+  public void testSimple() {
+    DialogueAct da = new DialogueAct("Confirm(Call, sender=\"<dial:Agent77>\", addressee=\"<dial:Agent007>\", callId=7, callSign=\"Zugführer\")");
+    Rdf rdfDa = da.toRdf(_proxy);
+    DialogueAct da2 = DialogueAct.fromRdf(rdfDa.getURI(), _proxy);
+    assertEquals(da, da2);
   }
 }

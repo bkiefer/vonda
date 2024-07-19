@@ -199,24 +199,44 @@ public class DialogueAct {
     return uri.substring(uri.indexOf(":") + 1, uri.lastIndexOf(">"));
   }
 
-  /** Add all the feature/value pairs from the given dag structure */
-  private static void extractArguments(StringBuilder sb, Rdf rdf, RdfProxy proxy) {
-    Table propsValues =
-        proxy.selectQuery("select ?p ?o where {} ?p ?o ?_", rdf.getURI()).getTable();
-    // first is prop, second is value
+  /** RDF --> dag: add RDF compatible feature/value pairs to the given dag structure */
+  private static Set<Object> addRdfArguments(StringBuilder sb, Rdf rdf, RdfProxy proxy) {
+    Set<Object> result = null;
+    Table propsValues = proxy.selectQuery(
+        "select ?p ?o where {} ?p ?o ?_", rdf.getURI()).getTable();
     for (List<String> propVal: propsValues.getRows()) {
-
       String prop = propVal.get(0);
       if (! "<dial:frame>".equals(prop) && !"<rdf:type>".equals(prop)) {
-        Set<Object> valSet = rdf.getValue(prop);
-        assert(valSet.size() == 1);
-        Object val = valSet.iterator().next();
-        sb.append(", " + uriToName(prop) + "=\"" + val.toString() +'"');
+        if ("<dial:hasArgs>".equals(prop)) {
+          result = rdf.getValue(prop);
+        } else if (! "<dial:repr>".equals(prop)) {
+          Set<Object> valSet = rdf.getValue(prop);
+          assert(valSet.size() == 1);
+          Object val = valSet.iterator().next();
+          sb.append(" ^ <" + uriToName(prop) + ">\"" + val.toString() +'"');
+        }
       }
     }
+    return result == null ? Collections.emptySet() : result;
+  }
+
+  /** RDF --> dag: Add initial Intent and Frame */
+  private static Rdf addIntentAndFrame(StringBuilder sb, String uri, RdfProxy proxy) {
+    Rdf da = proxy.getRdf(uri);
+    Rdf frame = (Rdf) da.getSingleValue("<dial:frame>");
+    if (! da.getClazz().isSubclassOf(proxy.getClass("<dial:DialogueAct>"))) {
+      logger.error("URI does not point to a DialogueAct: {}", uri);
+    }
+    sb.append("@raw:").append(uriToName(da.getClazz().toString()));
+    String frameName = (String)frame.getSingleValue("<sem:label>");
+    if (frameName == null)
+      frameName = uriToName(frame.getClazz().toString());
+    sb.append("(").append(frameName);
+    return da;
   }
 
   /** Read a DialogueAct from the database, with uri being the root node.
+   *  (RDF --> dag)
    *
    * Although maybe that's the "right way" to do it, it seems overkill. For the
    * moment, we go for the simpler way.
@@ -224,25 +244,59 @@ public class DialogueAct {
    * As for toRdf, this will only work on restricted shallow representations.
    */
   public static DialogueAct fromRdfProper(String uri, RdfProxy proxy) {
-
-    Rdf da = proxy.getRdf(uri);
-    Rdf frame = (Rdf) da.getSingleValue("<dial:frame>");
-    if (! da.getClazz().isSubclassOf(proxy.getClass("<dial:DialogueAct>"))) {
-      logger.error("URI does not point to a DialogueAct: {}", uri);
+    StringBuilder sb = new StringBuilder();
+    Rdf da = addIntentAndFrame(sb, uri, proxy);
+    Set<Object> nonRdfProps = addRdfArguments(sb, da, proxy);
+    for(Object rdfPair: nonRdfProps) {
+      Rdf pair = (Rdf)rdfPair;
+      sb.append(" ^ <")
+      .append(pair.getString("<dial:first>")).append(">\"")
+      .append(pair.getString("<dial:second>")).append('"');
     }
-    StringBuilder rawDA = new StringBuilder();
-    rawDA.append(uriToName(da.getClazz().toString()));
-    String frameName = (String)frame.getSingleValue("<sem:label>");
-    if (frameName == null)
-      frameName = uriToName(frame.getClazz().toString());
-    rawDA.append("(").append(frameName);
-    extractArguments(rawDA, da, proxy);
-    extractArguments(rawDA, frame, proxy);
-    rawDA.append(')');
-    return new DialogueAct(rawDA.toString());
+    //extractArguments(rawDA, frame, proxy);
+    sb.append(')');
+    return new DialogueAct(sb.toString());
   }
 
-  /** Write a DialogueAct to the database.
+  /** dag --> RDF: put Intent and Frame into a new RDF and return it */
+  private Rdf storeIntentAndFrame(RdfProxy proxy) {
+    RdfClass diaClass = proxy.getRdfClass(getDialogueActType());
+    if (diaClass == null) {
+      logger.error("No Subclass of DialougeAct: {}", getDialogueActType());
+      diaClass = proxy.getClass("<dial:DialogueAct>");
+    }
+    Rdf rdfDialAct = diaClass.getNewInstance(DIAL_NS);
+    RdfClass frameClass = proxy.getRdfClass(getProposition());
+    boolean syntheticFrame = frameClass == null;
+    if (syntheticFrame) {
+      logger.warn("No Subclass of Frame: {}", getProposition());
+      frameClass = proxy.getClass("<sem:Frame>");
+    }
+    Rdf frame = frameClass.getNewInstance(DIAL_NS);
+    if (syntheticFrame)
+      frame.setValue("<sem:label>", getProposition());
+    rdfDialAct.setValue("<dial:frame>", frame);
+    return rdfDialAct;
+  }
+
+  /** dag --> RDF: put RDF compatible properties into instance */
+  private Set<String> storeRdfProperies(Rdf rdfDialAct, RdfProxy proxy) {
+    Set<String> result = new HashSet<>();
+    RdfClass diaClass = proxy.getRdfClass(getDialogueActType());
+    for (Map.Entry<String, String> entry : getValues().entrySet()) {
+      String name = entry.getKey();
+      String prop = diaClass.fetchProperty(name);
+      if (prop != null) {
+        String val = entry.getValue();
+        rdfDialAct.setValue(prop, val);
+      } else {
+        result.add(name);
+      }
+    }
+    return result;
+  }
+
+  /** Write a DialogueAct to the database. (dag --> RDF)
    *
    * Although maybe that's the "right way" to do it, it seems overkill. For the
    * moment, we go for the simpler way.
@@ -250,57 +304,45 @@ public class DialogueAct {
    * This implementation is not fully general, it will only write shallow
    * structures without coreferences correctly.
    */
-  public static Rdf toRdfProper(DialogueAct d, RdfProxy proxy) {
-    RdfClass diaClass = proxy.getRdfClass(d.getDialogueActType());
-    if (diaClass == null) {
-      logger.error("No Subclass of DialougeAct: {}", d.getDialogueActType());
-      diaClass = proxy.getClass("<dial:DialogueAct>");
-    }
-    Rdf rdfDialAct = diaClass.getNewInstance(DIAL_NS);
-    RdfClass frameClass = proxy.getRdfClass(d.getProposition());
-    boolean syntheticFrame = frameClass == null;
-    if (syntheticFrame) {
-      logger.error("No Subclass of Framme: {}", d.getProposition());
-      frameClass = proxy.getClass("<sem:Frame>");
-    }
-    Rdf frame = frameClass.getNewInstance(DIAL_NS);
-    if (syntheticFrame)
-      frame.setValue("<sem:label>", d.getProposition());
-    rdfDialAct.setValue("<dial:frame>", frame);
-    for (Map.Entry<String, String> entry : d.getValues().entrySet()) {
-      String name = entry.getKey();
-      String val = entry.getValue();
-      String prop = diaClass.fetchProperty(name);
-      if (prop != null) {
-        rdfDialAct.setValue(prop, val);
-      } else {
-        prop = frameClass.fetchProperty(name);
-        if (prop == null) {
-          prop = "<sem:" + name + ">";
-        }
-        frame.setValue(prop, val);
-      }
+  public Rdf toRdfProper(RdfProxy proxy) {
+    Rdf rdfDialAct = storeIntentAndFrame(proxy);
+    Set<String> props = storeRdfProperies(rdfDialAct, proxy);
+    for (String prop : props) {
+      RdfClass pairClass = proxy.getClass("<dial:Pair>");
+      Rdf pair = pairClass.getNewInstance("dial:");
+      pair.setValue("<dial:first>", prop);
+      pair.setValue("<dial:second>", getValue(prop));
+      rdfDialAct.add("<dial:hasArgs>", pair);
     }
     return rdfDialAct;
   }
 
+  /** RDF --> dag: use the repr feature for non-RDF properties */
   public static DialogueAct fromRdf(String uri, RdfProxy proxy) {
-    Rdf da = proxy.getRdf(uri);
+    StringBuilder sb = new StringBuilder();
+    Rdf da = addIntentAndFrame(sb, uri, proxy);
+    addRdfArguments(sb, da, proxy);
     String rep = (String)da.getSingleValue("<dial:repr>");
-    return new DialogueAct(rep);
+    sb.append(rep).append(')');
+    return new DialogueAct(sb.toString());
   }
 
-  public static Rdf toRdf(DialogueAct d, RdfProxy proxy) {
-    String senderUri = d.getValue("sender");
-    if (senderUri == null) {
-      logger.warn("No sender specified for dialogue act {}", d.toString());
-      return null;
-    }
-    Rdf sender = proxy.getRdf(senderUri);
+  /** dag --> RDF: use repr feature for non-RDF properties */
+  public Rdf toRdf(RdfProxy proxy) {
     RdfClass dialClass = proxy.getClass("<dial:DialogueAct>");
-    Rdf dial = dialClass.getNewInstance(DIAL_NS);
-    dial.setValue("<dial:repr>", d.toString());
-    dial.setValue("<dial:sender>", sender);
+    Rdf dial = storeIntentAndFrame(proxy);
+    Set<String> props = storeRdfProperies(dial, proxy);
+    StringBuilder sb = new StringBuilder();
+    for (String name : props) {
+      String val = this.getValue(name);
+      String prop = dialClass.fetchProperty(name);
+      if (prop != null) {
+        dial.setValue(prop, val);
+      } else {
+        sb.append(" ^ <").append(name).append(">\"").append(val).append('"');
+      }
+    }
+    dial.setValue("<dial:repr>", sb.toString());
     return dial;
   }
 
