@@ -18,6 +18,7 @@
  */
 
 package de.dfki.mlt.rudimant.compiler.tree;
+import static de.dfki.mlt.rudimant.agent.nlp.DialogueAct.*;
 
 import static de.dfki.mlt.rudimant.compiler.tree.TestHelper.*;
 import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
@@ -97,11 +98,11 @@ public class DialogueActTest {
 
   @Test
   public void testFromRdf() {
-    Rdf da = _proxy.getClass("<dial:Accept>").getNewInstance("dial:");
+    Rdf da = _proxy.getClass("<dial:Accept>").getNewInstance(DIAL_NS);
     da.setValue("<dial:sender>", "someone");
-    Rdf frame = _proxy.getClass("<sem:Answering>").getNewInstance("dial:");
+    Rdf frame = _proxy.getClass("<sem:Answering>").getNewInstance(DIAL_NS);
     da.setValue("<sem:agent>", "someone else");
-    da.setValue("<dial:frame>", frame);
+    da.setValue(FRAME_PROPERTY, frame);
 
     DialogueAct transformed = DialogueAct.fromRdfProper(da.getURI(), _proxy);
 
@@ -115,11 +116,11 @@ public class DialogueActTest {
 
   @Test
   public void testFromRdf2() {
-    Rdf da = _proxy.getClass("<dial:Accept>").getNewInstance("dial:");
+    Rdf da = _proxy.getClass("<dial:Accept>").getNewInstance(DIAL_NS);
     da.setValue("<dial:sender>", "someone");
-    Rdf frame = _proxy.getClass("<sem:Frame>").getNewInstance("dial:");
+    Rdf frame = _proxy.getClass(FRAME_RDFCLASS).getNewInstance(DIAL_NS);
     da.setValue("<sem:agent>", "someone else");
-    frame.setValue("<sem:label>", "Foo");
+    frame.setValue("<rdfs:label>", "Foo");
     da.setValue("<dial:frame>", frame);
 
     DialogueAct transformed = DialogueAct.fromRdfProper(da.getURI(), _proxy);
@@ -134,7 +135,7 @@ public class DialogueActTest {
 
   @Test
   public void testToRdf2() {
-    Rdf sender = _proxy.getClass("<dom:Child>").getNewInstance("dial:");
+    Rdf sender = _proxy.getClass("<dom:Child>").getNewInstance(DIAL_NS);
     DialogueAct da = new DialogueAct("@raw:ReturnGreeting(Meeting"
         + " ^ <Time>afternoon ^ <addressee>\"<dial:Child_8>\""
         + " ^ <sender>\"" + sender.getURI() + "\")");
@@ -148,8 +149,8 @@ public class DialogueActTest {
   public void testToRdf1() {
     // use information about entry time to make sure we do not only find an old entry
     long now = System.currentTimeMillis();
-    Rdf sender = _proxy.getClass("<dom:Child>").getNewInstance("dial:");
-    _proxy.getClass("<dial:Confirm>").getNewInstance("dial:");
+    Rdf sender = _proxy.getClass("<dom:Child>").getNewInstance(DIAL_NS);
+    _proxy.getClass("<dial:Confirm>").getNewInstance(DIAL_NS);
     DialogueAct da =
         new DialogueAct("Inform", "Answer", "what", "solution", "sender", sender.toString() );
     da.toRdf(_proxy);

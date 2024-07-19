@@ -79,6 +79,7 @@ sometimes called &apos;speaker&apos;; not used at the moment !!</rdfs:comment>
     <owl:ObjectProperty rdf:about="http://www.dfki.de/lt/onto/common/dialogue.owl#frame">
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
         <rdfs:domain rdf:resource="http://www.dfki.de/lt/onto/common/dialogue.owl#DialogueAct"/>
+        <rdfs:range rdf:resource="http://www.dfki.de/lt/onto/common/dialogue.owl#Frame"/>
         <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">the frame which encodes the (shallow) semantics/the semantic content of 
     the dialogue act; in principle, this property should be part of a 
     domain-specific ontology which interfaces dialogue acts and FrameNet 
@@ -640,6 +641,14 @@ called &apos;side-participants&apos;, &apos;bystanders&apos;, and &apos;overhear
 
     <owl:Class rdf:about="http://www.dfki.de/lt/onto/common/dialogue.owl#FeedbackGivingFunction">
         <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/dialogue.owl#AlloFeedback"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.dfki.de/lt/onto/common/dialogue.owl#Frame -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/common/dialogue.owl#Frame">
+        <rdfs:comment>Should be identified with sem:Frame, if available</rdfs:comment>
     </owl:Class>
     
 

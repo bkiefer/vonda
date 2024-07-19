@@ -131,8 +131,10 @@
 <http://www.dfki.de/lt/onto/common/dialogue.owl#follows> <http://www.w3.org/2000/01/rdf-schema#comment> "follows links the current dialogue act with its _immediate_ predecessors (a transitive property)"^^<http://www.w3.org/2001/XMLSchema#string> .
 <http://www.dfki.de/lt/onto/common/dialogue.owl#follows> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/dialogue.owl#DialogueAct> .
 <http://www.dfki.de/lt/onto/common/dialogue.owl#follows> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.dfki.de/lt/onto/common/dialogue.owl#DialogueAct> .
+<http://www.dfki.de/lt/onto/common/dialogue.owl#Frame> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <http://www.dfki.de/lt/onto/common/dialogue.owl#frame> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#FunctionalProperty> .
 <http://www.dfki.de/lt/onto/common/dialogue.owl#frame> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://www.dfki.de/lt/onto/common/dialogue.owl#Frame> <http://www.w3.org/2000/01/rdf-schema#comment> "Should be identified with sem:Frame, if available" .
 <http://www.dfki.de/lt/onto/common/dialogue.owl#frame> <http://www.w3.org/2000/01/rdf-schema#comment> "the frame which encodes the (shallow) semantics/the semantic content of \n    the dialogue act; in principle, this property should be part of a \n    domain-specific ontology which interfaces dialogue acts and FrameNet \n    frames through the property frame, by defining a domain (viz., \n    dial:DialogueAct) and a range (viz., sem:Frame) restriction"^^<http://www.w3.org/2001/XMLSchema#string> .
 <http://www.dfki.de/lt/onto/common/dialogue.owl#frame> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.dfki.de/lt/onto/common/dialogue.owl#DialogueAct> .
 <http://www.dfki.de/lt/onto/common/dialogue.owl#fromTime> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
