@@ -766,6 +766,14 @@ act annotation&apos;)</rdfs:comment>
     
 
 
+    <!-- http://www.dfki.de/lt/onto/common/dialogue.owl#OutOfDomain -->
+
+    <owl:Class rdf:about="http://www.dfki.de/lt/onto/common/dialogue.owl#OutOfDomain">
+        <rdfs:subClassOf rdf:resource="http://www.dfki.de/lt/onto/common/dialogue.owl#DialogueAct"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.dfki.de/lt/onto/common/dialogue.owl#Pair -->
 
     <owl:Class rdf:about="http://www.dfki.de/lt/onto/common/dialogue.owl#Pair"/>

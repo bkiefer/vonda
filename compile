@@ -1,6 +1,0 @@
-#!/bin/sh
-#set -x
-here=`pwd`
-#echo "Compiling in directory: $here"
-script_dir=`dirname $0`
-"$script_dir"/bin/vondac "$@"
