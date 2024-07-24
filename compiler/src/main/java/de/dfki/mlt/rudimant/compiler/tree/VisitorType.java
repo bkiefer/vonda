@@ -426,7 +426,7 @@ public class VisitorType implements RudiVisitor {
       // set castRequired to true in all parTypes that are XSD/RDF, since we
       // have to pass Object for them
       Type parType = parTypes.next();
-      if (parType.isXsdType() || parType.isStrictRdfType())
+      if (parType.isXsdType() || parType.isRdfType())
         parType.setCastRequired();
       // an arg always overwrites any defined var
       mem.addVariableDeclaration(arg, parType);
@@ -859,7 +859,7 @@ public class VisitorType implements RudiVisitor {
         ((ExpFuncCall)currentNode).calledUpon = currentType;
       }
       currentNode.visit(this);
-      if (currentType.isRdfType()) {
+      if (currentType.isRdfType() || currentType.isDialogueAct()) {
         if (currentNode instanceof ExpIdentifier) {
           // only a literal, delegate this because it's complicated
           currentNode = treatRdfPropertyAccess(node, currentType,

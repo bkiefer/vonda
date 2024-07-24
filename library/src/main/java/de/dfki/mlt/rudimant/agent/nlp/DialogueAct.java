@@ -41,7 +41,7 @@ public class DialogueAct {
 
   public static final String FRAME_PROPERTY = "<dial:frame>";
   public static final String SENDER_PROPERTY = "<dial:sender>";
-  public static final String ADRESSEE_PROPERTY = "<dial:addressee>";
+  public static final String ADDRESSEE_PROPERTY = "<dial:addressee>";
   public static final String FROMTIME_PROPERTY = "<dial:fromTime>";
   public static final String TOTIME_PROPERTY = "<dial:toTime>";
 

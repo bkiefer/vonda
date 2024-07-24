@@ -19,8 +19,6 @@
 
 package de.dfki.mlt.rudimant.compiler;
 
-import static de.dfki.mlt.rudimant.compiler.Constants.DIALOGUE_ACT_TYPE;
-
 import java.util.*;
 
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
@@ -32,11 +30,7 @@ import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
  */
 public class Type {
   private static RdfProxy PROXY;
-  private static RdfClass DIALACT_CLASS;
   private static final Map<String, String> JAVA_CLASSES = new HashMap<>();
-
-  static final Map<String, Long> assignCodes = new HashMap<>();
-  static final Map<Long, String> assigncode2type = new HashMap<>();
 
   static final Map<String, Long> typeCodes = new HashMap<>();
   static final Map<Long, String> code2type = new HashMap<>();
@@ -82,61 +76,68 @@ public class Type {
    */
 
   static final long JAVA_TYPE = 0x10;
+  // the bit that is set exclusively for container types
+  static final long CONTAINER_BIT = 0b1000l;
+  // does *not* include container types!
+  static final long POD_MASK = 0b111111110000l;
 
   /** This represents the "assignable" hierarchy, with the exception of
    *  interchangeability of POD with container type, which must be checked
    *  manually
-   */
+   *
+  static final Map<String, Long> assignCodes = new HashMap<>();
+  static final Map<Long, String> assigncode2type = new HashMap<>();
   static {
-    assignCodes.put("double",           0b1111110100l);
-    assignCodes.put("Double",           0b1111110000l);
-    assignCodes.put("float",            0b1111100100l);
-    assignCodes.put("Float",            0b1111100000l);
-    assignCodes.put("long",             0b1111000100l);
-    assignCodes.put("Long",             0b1111000000l);
-    assignCodes.put("int",              0b1110000100l);
-    assignCodes.put("Integer",          0b1110000000l);
-    assignCodes.put("short",            0b1100000100l);
-    assignCodes.put("Short",            0b1100000000l);
-    assignCodes.put("byte",             0b1000000100l);
-    assignCodes.put("Byte",             0b1000000000l);
-    assignCodes.put("char",             0b1100001100l);
-    assignCodes.put("Character",        0b1100001000l);
-    assignCodes.put("boolean",         0b10000000100l);
-    assignCodes.put("Boolean",         0b10000000000l);
+    assignCodes.put("double",           0b11111101000l);
+    assignCodes.put("Double",           0b11111100000l);
+    assignCodes.put("float",            0b11111001000l);
+    assignCodes.put("Float",            0b11111000000l);
+    assignCodes.put("long",             0b11110001000l);
+    assignCodes.put("Long",             0b11110000000l);
+    assignCodes.put("int",              0b11100001000l);
+    assignCodes.put("Integer",          0b11100000000l);
+    assignCodes.put("short",            0b11000001000l);
+    assignCodes.put("Short",            0b11000000000l);
+    assignCodes.put("byte",             0b10000001000l);
+    assignCodes.put("Byte",             0b10000000000l);
+    assignCodes.put("char",             0b11000011000l);
+    assignCodes.put("Character",        0b11000010000l);
+    assignCodes.put("boolean",         0b100000001000l);
+    assignCodes.put("Boolean",         0b100000000000l);
     for (Map.Entry<String, Long> entry : assignCodes.entrySet()) {
       assigncode2type.put(entry.getValue(), entry.getKey());
     }
-  }
+  }*/
 
-  // private static final long CONTAINER_MASK = ~ 0b100l;
+  // private static final long CONTAINER_MASK = ~ CONTAINER_BIT;
 
   // This represents a correct hierarchy for type unification for expressions.
   // the type unification will return the result type of the expression.
   // This hierarchy does not work for assignments or function calls (parameter
   // substitution).
   static {
-    typeCodes.put("Object",                  0b111l);
-    typeCodes.put("String",                    0b1l);
-    typeCodes.put("Rdf",                      0b10l);
-    typeCodes.put("double",           0b1000000000l);
-    typeCodes.put("Double",           0b1000000100l);
-    typeCodes.put("float",            0b1100000000l);
-    typeCodes.put("Float",            0b1100000100l);
-    typeCodes.put("long",             0b1110000000l);
-    typeCodes.put("Long",             0b1110000100l);
-    typeCodes.put("int",              0b1111000000l);
-    typeCodes.put("Integer",          0b1111000100l);
-    typeCodes.put("short",            0b1111100000l);
-    typeCodes.put("Short",            0b1111100100l);
-    typeCodes.put("byte",             0b1111110000l);
-    typeCodes.put("Byte",             0b1111110100l);
-    typeCodes.put("char",             0b1111001000l);
-    typeCodes.put("Character",        0b1111001100l);
-    typeCodes.put("boolean",         0b10000000000l);
-    typeCodes.put("Boolean",         0b10000000100l);
-    typeCodes.put("null",           0b100000000000l);
-    typeCodes.put("void",          0b1000000000000l);
+    typeCodes.put("Object",                  0b1111l);
+    typeCodes.put("String",                     0b1l);
+    typeCodes.put("Rdf",                       0b10l);
+    typeCodes.put("DialogueAct",              0b100l);
+    typeCodes.put("double",           0b10000000000l);
+    typeCodes.put("Double",           0b10000001000l);
+    typeCodes.put("float",            0b11000000000l);
+    typeCodes.put("Float",            0b11000001000l);
+    typeCodes.put("long",             0b11100000000l);
+    typeCodes.put("Long",             0b11100001000l);
+    typeCodes.put("int",              0b11110000000l);
+    typeCodes.put("Integer",          0b11110001000l);
+    typeCodes.put("short",            0b11111000000l);
+    typeCodes.put("Short",            0b11111001000l);
+    typeCodes.put("byte",             0b11111100000l);
+    typeCodes.put("Byte",             0b11111101000l);
+    typeCodes.put("char",             0b11110010000l);
+    typeCodes.put("Character",        0b11110011000l);
+    typeCodes.put("boolean",         0b100000000000l);
+    typeCodes.put("Boolean",         0b100000001000l);
+    typeCodes.put("null",           0b1000000000000l);
+    typeCodes.put("void",          0b10000000000000l);
     for (Map.Entry<String, Long> entry : typeCodes.entrySet()) {
       code2type.put(entry.getValue(), entry.getKey());
     }
@@ -144,7 +145,6 @@ public class Type {
 
   public static void setProxy(RdfProxy proxy) {
     PROXY = proxy;
-    DIALACT_CLASS = proxy.getClass(DIALOGUE_ACT_TYPE);
   }
 
   public static void setJavaClasses(Map<String, String> resolved) {
@@ -179,7 +179,7 @@ public class Type {
   public boolean castRequired() { return _castRequired; }
 
   public void setCastRequired() {
-    if (isStrictRdfType() || isXsdType())_castRequired = true;
+    if (isRdfType() || isXsdType())_castRequired = true;
     setCastRequiredInner();
   }
 
@@ -334,14 +334,14 @@ public class Type {
     String ret = xsd2java.get(_name);
     Long code = typeCodes.get(ret);
     if (code == null) return _name;
-    ret = code2type.get(code & ~ 0b100);
+    ret = code2type.get(code & ~ CONTAINER_BIT);
     return (ret != null) ? ret : _name;
   }
 
   private String getContainerName() {
     if (isPODType()) {
       Long code = typeCodes.get(_name);
-      code = code | 0b100;
+      code = code | CONTAINER_BIT;
       return code2type.get(code);
     }
     return _name;
@@ -357,39 +357,37 @@ public class Type {
   public boolean isPODType() {
     if (isNull()) return true;
     Long code = getCode();
-    return code != null && (code & 0b11111111000l) != 0
-        && (code & 0b100) == 0; // containers may be null!
+    return code != null && (code & POD_MASK) != 0
+        && (code & CONTAINER_BIT) == 0; // containers may be null!
   }
 
   /** Return true if this is a number class, POD or container */
   public boolean isNumber() {
     // if we're ignorant, it is Object, and null is not a number
     Long code = getCode();
-    return code != null && (code & 0b11111111000l) != 0; // it's a number
+    return code != null && (code & POD_MASK) != 0; // it's a number
   }
 
   /** Return true if this is a Java wrapper class */
   public boolean isContainer() {
     // if we're ignorant, it is Object, and null is not a number
     Long code = getCode();
-    return code != null && (code & 0b100l) != 0; // It's a container type
+    return code != null && (code & CONTAINER_BIT) != 0; // It's a container type
   }
 
   /** Return true if this is a Java wrapper class for some number */
   public boolean isNumberContainer() {
     // if we're ignorant, it is Object, and null is not a number
     Long code = getCode();
-    return isContainer() && (code & 0b11111111000l) != 0; // it's a number
+    return isContainer() && (code & POD_MASK) != 0; // it's a number
   }
 
   public boolean isNull() { return "null".equals(_name); }
 
   public boolean isRdfType() { return _class != null || "Rdf".equals(_name); }
 
-  public boolean isStrictRdfType() { return !isDialogueAct() && isRdfType(); }
-
   public boolean isJavaConvertible() {
-    return isContainer() || isStrictRdfType() || isString() ||
+    return isContainer() || isRdfType() || isString() ||
         "Date".equals(toJava());
   }
 
@@ -414,7 +412,7 @@ public class Type {
   }
 
   public boolean isDialogueAct() {
-    return _class != null && DIALACT_CLASS.equals(_class);
+    return "DialogueAct".equals(_name);
   }
 
   public boolean isString() {
@@ -466,7 +464,7 @@ public class Type {
       // if it's sth like int, return Integer.toString
       Long code = typeCodes.get(_name);
       if (code == null) typeName = _name;
-      typeName = code2type.get(code | 0b100);
+      typeName = code2type.get(code | CONTAINER_BIT);
       typeName += ".toString";
     } else {
       // it's a Java type
@@ -617,7 +615,7 @@ public class Type {
     // non-collection type
     Type result = unifyBasicTypes(right);
     if (result == null) return result;
-    result._castRequired = (isStrictRdfType() || isXsdType())
+    result._castRequired = (isRdfType() || isXsdType())
         && (_castRequired || right._castRequired);
     return result;
   }
@@ -725,7 +723,7 @@ public class Type {
   private String toDebugString(StringBuffer sb) {
     if (_class != null)
       sb.append(_class.toString() + "[" + toJava() + (_castRequired ? "]*" : "]"));
-    else if (isStrictRdfType())
+    else if (isRdfType())
       sb.append(_name + "[" + toJava() + (_castRequired ? "]*" : "]"));
     else if (isDialogueAct())
       sb.append("DialogueAct");
@@ -743,7 +741,7 @@ public class Type {
     } else {
       if (isDialogueAct())
         sb.append("DialogueAct");
-      else if (isStrictRdfType())
+      else if (isRdfType())
         sb.append("Rdf");
       else if (isXsdType())
         sb.append(xsdToJavaPodWrapper());
@@ -767,7 +765,7 @@ public class Type {
         // through casting, we need to put Object here
         else if (pType._castRequired)
           sb.append("Object");
-        else if (pType.isStrictRdfType())
+        else if (pType.isRdfType())
           sb.append(pType.toJava());
         else
           pType.toString(sb);
@@ -809,6 +807,7 @@ public class Type {
     return true;
   }
 
+  @Override
   public int hashCode() {
     int result = (_name == null) ? 777 : _name.hashCode();
     if (_class != null) {
@@ -891,6 +890,7 @@ public class Type {
       return true;
     }
 
+    @Override
     public String toString() { return map.toString(); }
   }
 

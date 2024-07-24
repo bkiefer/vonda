@@ -221,7 +221,7 @@ public class VisitorGeneration implements RudiVisitor {
     if (right.isString() && ! left.isString()) {
       Type h = right; right = left; left = h;
     }
-    if (left.isString() && right.isRdfType())
+    if (left.isString() && (right.isRdfType() || right.isDialogueAct()))
       return right;
     return left;
   }
@@ -234,14 +234,14 @@ public class VisitorGeneration implements RudiVisitor {
         gen("new DialogueAct(").gen(node).gen(")");
         return;
       }
-      if (resultType.isStrictRdfType() && ! "==".equals(operator)) {
+      if (resultType.isRdfType() && ! "==".equals(operator)) {
         gen(node).gen(".getClazz()");
         return;
       }
     }
     // TODO: MAYBE THIS MUST BE GENERALIZED TO OTHER JAVA TYPES THAN STRING
     // THAT CAN BE CONVERTED AUTOMATICALLY FROM XSD TYPES
-    if (node.type.isStrictRdfType()) {
+    if (node.type.isRdfType()) {
       if (node instanceof ExpIdentifier
           && !mem.variableExists(((ExpIdentifier)node).content)) {
         String orig = mem.getFunctionOrigin("getRdfClass", null, "String");
@@ -304,7 +304,7 @@ public class VisitorGeneration implements RudiVisitor {
 
   private String massageOperator(String operator, Type resultType) {
     if (resultType.isDialogueAct()) return dialOpMap.get(operator);
-    if (resultType.isStrictRdfType()) return rdfOpMap.get(operator);
+    if (resultType.isRdfType()) return rdfOpMap.get(operator);
     if (resultType.isString()) return striOpMap.get(operator);
     if (resultType.isPODType()) return operator;
     return objOpMap.get(operator);
