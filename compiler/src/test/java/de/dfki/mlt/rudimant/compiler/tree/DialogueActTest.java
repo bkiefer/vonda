@@ -27,6 +27,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Proxy;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -34,6 +35,7 @@ import org.junit.Test;
 import de.dfki.lt.hfc.WrongFormatException;
 import de.dfki.lt.hfc.db.QueryResult;
 import de.dfki.lt.hfc.db.rdfProxy.Rdf;
+import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 import de.dfki.mlt.rudimant.agent.nlp.DiaHierarchy;
@@ -52,6 +54,12 @@ public class DialogueActTest {
     // need this to set up dialogue act hierarchy
     try {
       _proxy = startClient(new File(RESOURCE_DIR), configs);
+      RdfClass ag = _proxy.getClass("<dial:Agent>");
+      if (_proxy.getRdf("<dial:Agent77>") == null) {
+        ag.newRdf("<dial:Agent77>");
+        ag.newRdf("<dial:Agent007>");
+        _proxy.getClass("<dom:Child>").newRdf("<dial:Child_8>");
+      }
     } catch (IOException | WrongFormatException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

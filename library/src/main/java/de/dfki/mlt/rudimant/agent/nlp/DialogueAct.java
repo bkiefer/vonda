@@ -28,6 +28,7 @@ import de.dfki.lt.hfc.db.Table;
 import de.dfki.lt.hfc.db.rdfProxy.Rdf;
 import de.dfki.lt.hfc.db.rdfProxy.RdfClass;
 import de.dfki.lt.hfc.db.rdfProxy.RdfProxy;
+import de.dfki.lt.hfc.types.XsdAnySimpleType;
 import de.dfki.lt.tr.dialogue.cplan.DagEdge;
 import de.dfki.lt.tr.dialogue.cplan.DagNode;
 
@@ -304,7 +305,14 @@ public class DialogueAct {
       String prop = diaClass.fetchProperty(name);
       if (prop != null) {
         String val = entry.getValue();
-        rdfDialAct.setValue(prop, val);
+        char c = val.charAt(0);
+        Object theval = val;
+        if (c == '<') {
+          theval = proxy.getRdf(val);
+        } else if (c == '"') {
+          theval = XsdAnySimpleType.getXsdObject(val);
+        }
+        rdfDialAct.setValue(prop, theval);
       } else {
         result.add(name);
       }
