@@ -26,16 +26,24 @@ public class EvalLangServices {
   LanguageServices ls;
 
   private static class Section {
+    String intent;
+    List<String> examples;
+
     private Section(String i, String e) {
       intent = i;
       examples = getExamples(e);
     }
 
-    String intent;
+    private static final Pattern ANNOT_REGEX = Pattern.compile(
+        "\\[([^]]*)\\]\\([^)]*\\)");
 
-    List<String> examples;
+    private static String removeAnnotations(String input) {
+      Matcher m = ANNOT_REGEX.matcher(input);
+      String result = m.replaceAll("$1");
+      return result.replaceAll("\"", "");
+    }
 
-    private List<String> getExamples(String examplesString) {
+    private static List<String> getExamples(String examplesString) {
       String[] exlist = examplesString.split("\n");
       List<String> result = new ArrayList<>();
       for (String line : exlist) {
@@ -90,15 +98,6 @@ public class EvalLangServices {
     return ls.generate(input.getDag());
   }
 
-  private static final Pattern ANNOT_REGEX = Pattern.compile(
-      "\\[([^]]*)\\]\\([^)]*\\)");
-
-  private static String removeAnnotations(String input) {
-    Matcher m = ANNOT_REGEX.matcher(input);
-    String result = m.replaceAll("$1");
-    return result.replaceAll("\"", "");
-  }
-
   @SuppressWarnings("unchecked")
   void evaluate(File configFile) throws FileNotFoundException {
     Map<String, Object> configs = readConfig(configFile);
@@ -140,7 +139,7 @@ public class EvalLangServices {
           // remove role annotations
           // send it through the SRGS parser
           DialogueAct result = parse(input);
-          if (result != null) {
+          if (result != null && ! Interpreter.NO_RESULT.equals(result)) {
             String intent = "";
             String theme = "";
             String frame = "";

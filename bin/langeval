@@ -2,6 +2,14 @@
 #set -x
 VONDA_VERSIONS="3.0\|2\|1"
 
+while getopts j: c
+do
+    case $c in
+        j)  JARIMAGES="$OPTARG";;
+    esac
+done
+shift `expr $OPTIND - 1`
+
 if realpath . > /dev/null 2>&1 ; then
     :
 else
