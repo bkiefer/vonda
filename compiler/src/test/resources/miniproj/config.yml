@@ -2,7 +2,7 @@ inputFile:          AllYouCanDo.rudi
 outputDirectory:    src/main/generated
 agentBase:          mini.WrapperClass
 typeDef:            WrapperClass.rudi
-ontologyFile:       ../ontologies/inits/pal.inference.yml
+ontologyFile:       ../ontologies/pal.inference.yml
 failOnError:        false
 rootPackage:        mini
 nameToURI:

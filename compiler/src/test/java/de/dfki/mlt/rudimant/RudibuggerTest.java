@@ -60,7 +60,7 @@ public class RudibuggerTest {
   public static void setUpRudimant() throws FileNotFoundException {
     setUpEmpty();
     configs.put("outputDirectory", "../../../target/generatedTestFiles");
-    configs.put("ontologyFile", "ontologies/inits/pal.inference.yml");
+    configs.put("ontologyFile", "ontologies/pal.inference.yml");
     configs.put("failOnError", false);
   }
 

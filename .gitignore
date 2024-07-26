@@ -31,6 +31,5 @@ test.rudi
 **/persistent.nt
 locallibs
 dependency-reduced-pom.xml
-ontologies
 wech
 compile_prereqs.sh

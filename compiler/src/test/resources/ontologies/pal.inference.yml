@@ -1,0 +1,33 @@
+minArgs: 3
+maxArgs: 4
+noOfCores: 1
+#noOfAtoms: 100000
+#noOfTuples: 500000
+shortIsDefault: true
+#persistenceFile=/tmp/tuples.nt
+eqReduction: true
+characterEncoding: UTF-8
+addTimestamps: [ 0 ]
+
+# further options for the future,
+# e.g., character encoding, persistent output file name, etc.
+
+namespaces:
+  # namespaces for XSD, RDF, RDFS, and OWL are already defined
+  dial: http://www.dfki.de/lt/onto/common/dialogue.owl#
+  pal: http://www.dfki.de/lt/onto/pal/pal.owl#
+  dom: http://www.dfki.de/lt/onto/pal/domain.owl#
+  sem: http://www.dfki.de/lt/onto/pal/semantics.owl#
+
+tupleFiles:
+  # the axiomatic triples for OWL-Horst w/ EQ reduction
+  - ../../../../../resources/ontologies/default/default.eqred.nt
+  # the PAL sub-ontologies
+  - ../../../../../resources/ontologies/dialogue/dialogue.nt
+  - pal/domain/domain.nt
+  - pal/pal/pal.nt
+  - pal/semantics/semantics.nt
+
+ruleFiles:
+  # we need special rules for transaction time (mixture of triples/quadruples)
+  - ../../../../../resources/ontologies/rules/default.eqred.quads.rdl
