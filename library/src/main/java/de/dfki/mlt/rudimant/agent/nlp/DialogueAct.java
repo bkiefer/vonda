@@ -57,6 +57,7 @@ public class DialogueAct {
   public long timeStamp;
 
   private DagNode _dag;
+  private Rdf _dagRdf;
 
   public DialogueAct() {
     timeStamp = System.currentTimeMillis();
@@ -160,6 +161,7 @@ public class DialogueAct {
 
   /** Set the argument for key slot */
   public String setValue(String slot, String value) {
+    _dagRdf = null;
     DagEdge edge = _dag.getEdge(DagNode.getFeatureId(slot));
     DagNode newVal = new DagNode(DagNode.PROP_FEAT_ID, new DagNode(value));
     if (edge == null) {
@@ -183,6 +185,7 @@ public class DialogueAct {
 
   /** Return the dialogue act */
   public void setDialogueActType(String daType) {
+    _dagRdf = null;
     DagEdge e = _dag.getEdge(DagNode.TYPE_FEAT_ID);
     if (e == null) {
       _dag.addEdge(DagNode.TYPE_FEAT_ID, new DagNode(daType));
@@ -194,6 +197,7 @@ public class DialogueAct {
   /** Return the proposition */
   public String getProposition() {
     DagNode prop = _dag.getValue(DagNode.PROP_FEAT_ID);
+    _dagRdf = null;
     return (prop == null) ? null : prop.getTypeName();
   }
 
@@ -272,14 +276,16 @@ public class DialogueAct {
     }
     //extractArguments(rawDA, frame, proxy);
     sb.append(')');
-    return new DialogueAct(sb.toString());
+    DialogueAct dialAct = new DialogueAct(sb.toString());
+    dialAct._dagRdf = da;
+    return dialAct;
   }
 
   /** dag --> RDF: put Intent and Frame into a new RDF and return it */
   private Rdf storeIntentAndFrame(RdfProxy proxy) {
     RdfClass diaClass = proxy.getRdfClass(getDialogueActType());
     if (diaClass == null) {
-      logger.error("No Subclass of DialougeAct: {}", getDialogueActType());
+      logger.error("No Subclass of DialogueAct: {}", getDialogueActType());
       diaClass = proxy.getClass(DIALACT_RDFCLASS);
     }
     Rdf rdfDialAct = diaClass.getNewInstance(DIAL_NS);
@@ -300,6 +306,10 @@ public class DialogueAct {
   private Set<String> storeRdfProperies(Rdf rdfDialAct, RdfProxy proxy) {
     Set<String> result = new HashSet<>();
     RdfClass diaClass = proxy.getRdfClass(getDialogueActType());
+    if (diaClass == null) {
+      logger.error("No Subclass of DialogueAct: {}", getDialogueActType());
+      diaClass = proxy.getClass(DIALACT_RDFCLASS);
+    }
     for (Map.Entry<String, String> entry : getValues().entrySet()) {
       String name = entry.getKey();
       String prop = diaClass.fetchProperty(name);
@@ -329,6 +339,7 @@ public class DialogueAct {
    * structures without coreferences correctly.
    */
   public Rdf toRdfProper(RdfProxy proxy) {
+    if (_dagRdf != null) return _dagRdf;
     Rdf rdfDialAct = storeIntentAndFrame(proxy);
     Set<String> props = storeRdfProperies(rdfDialAct, proxy);
     for (String prop : props) {
@@ -338,6 +349,7 @@ public class DialogueAct {
       pair.setValue(SECOND_PROPERTY, getValue(prop));
       rdfDialAct.add(ARGS_PROPERTY, pair);
     }
+    _dagRdf = rdfDialAct;
     return rdfDialAct;
   }
 
@@ -348,11 +360,14 @@ public class DialogueAct {
     addRdfArguments(sb, da, proxy);
     String rep = (String)da.getSingleValue(NONRDFPROPS_PROPERTY);
     sb.append(rep).append(')');
-    return new DialogueAct(sb.toString());
+    DialogueAct dialAct = new DialogueAct(sb.toString());
+    dialAct._dagRdf = da;
+    return dialAct;
   }
 
   /** dag --> RDF: use repr feature for non-RDF properties */
   public Rdf toRdf(RdfProxy proxy) {
+    if (_dagRdf != null) return _dagRdf;
     RdfClass dialClass = proxy.getClass(DIALACT_RDFCLASS);
     Rdf dial = storeIntentAndFrame(proxy);
     Set<String> props = storeRdfProperies(dial, proxy);
@@ -367,6 +382,7 @@ public class DialogueAct {
       }
     }
     dial.setValue(NONRDFPROPS_PROPERTY, sb.toString());
+    _dagRdf = dial;
     return dial;
   }
 
