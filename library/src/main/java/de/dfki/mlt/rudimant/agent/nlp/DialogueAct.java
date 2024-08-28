@@ -320,7 +320,7 @@ public class DialogueAct {
         if (c == '<') {
           theval = proxy.getRdf(val);
         } else if (c == '"') {
-          theval = XsdAnySimpleType.getXsdObject(val);
+          theval = XsdAnySimpleType.getXsdObject(val).toJava();
         }
         rdfDialAct.setValue(prop, theval);
       } else {
