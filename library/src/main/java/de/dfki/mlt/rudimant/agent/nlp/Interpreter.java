@@ -69,7 +69,7 @@ public abstract class Interpreter extends NLProcessor {
   }
 
   protected DialogueAct noResult() {
-    return NO_RESULT;
+    return NO_RESULT.copy();
   }
 
   private DagNode array2dag(JSONArray arr) {

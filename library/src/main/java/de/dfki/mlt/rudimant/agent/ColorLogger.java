@@ -19,18 +19,30 @@
 
 package de.dfki.mlt.rudimant.agent;
 
+import java.io.OutputStream;
+
 import de.dfki.mlt.rudimant.common.DefaultLogger;
 
 public class ColorLogger extends DefaultLogger {
 
   private static final String RES="\033[m";
 
-  public ColorLogger() {
+  private static void setColors() {
     RED="\033[31m";
     GREEN="\033[32m";
     GRAY="\033[37m";
   }
+  
+  public ColorLogger() {
+    setColors();
+  }
 
+  
+  public ColorLogger(OutputStream out) {
+    super(out);
+    setColors();
+  }
+  
   @Override
   protected String getSuff(boolean value, boolean shortCut) {
     return RES;

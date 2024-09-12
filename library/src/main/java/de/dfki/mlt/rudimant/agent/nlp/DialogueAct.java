@@ -289,7 +289,10 @@ public class DialogueAct {
       diaClass = proxy.getClass(DIALACT_RDFCLASS);
     }
     Rdf rdfDialAct = diaClass.getNewInstance(DIAL_NS);
-    RdfClass frameClass = proxy.getRdfClass(getProposition());
+    RdfClass frameClass = null;
+    if (getProposition() != null) {
+      frameClass = proxy.getRdfClass(getProposition());
+    }
     boolean syntheticFrame = frameClass == null;
     if (syntheticFrame) {
       logger.warn("No Subclass of Frame: {}", getProposition());

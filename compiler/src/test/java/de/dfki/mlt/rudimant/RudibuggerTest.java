@@ -20,7 +20,6 @@
 package de.dfki.mlt.rudimant;
 
 import static de.dfki.mlt.rudimant.common.IncludeInfo.*;
-import static de.dfki.mlt.rudimant.compiler.CompilerMain.*;
 import static de.dfki.mlt.rudimant.compiler.tree.TestHelper.*;
 import static de.dfki.mlt.rudimant.compiler.tree.TestUtilities.*;
 import static org.junit.Assert.*;
@@ -31,7 +30,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 
 import org.junit.BeforeClass;
@@ -154,15 +152,11 @@ public class RudibuggerTest {
         + "nestedRulesTest/NestedRules.rudi"));
     RuleLogger rl = new RuleLogger();
     rl.setRootInfo(i);
-    rl.registerPrinter(new DefaultLogger());
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    PrintStream pri = new PrintStream(out);
-    PrintStream old = System.out;
-    System.setOut(pri);
+    rl.registerPrinter(new DefaultLogger(out));
     rl.logAllRules();
     boolean[] res = { false, true, false, false } ;
     rl.logRule(0, res);
-    System.setOut(old);
     String output = out.toString();
     assertEquals("-rule_one-: ((+a != b+||_b != c_)&&-a == c-)\n", output);
   }
@@ -173,15 +167,11 @@ public class RudibuggerTest {
         + "nestedRulesTest/NestedRules.rudi"));
     RuleLogger rl = new RuleLogger();
     rl.setRootInfo(i);
-    rl.registerPrinter(new DefaultLogger());
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    PrintStream pri = new PrintStream(out);
-    PrintStream old = System.out;
-    System.setOut(pri);
+    rl.registerPrinter(new DefaultLogger(out));
     rl.logAllRules();
     boolean[] res = { false, true, true } ;
     rl.logRule(1, res);
-    System.setOut(old);
     String output = out.toString();
     assertEquals("-rule_one_a-: (+b == b+&&+! (a + b) < (b + c)+)\n", output);
   }
@@ -192,15 +182,11 @@ public class RudibuggerTest {
         + "nestedRulesTest/NestedRules.rudi"));
     RuleLogger rl = new RuleLogger();
     rl.setRootInfo(i);
-    rl.registerPrinter(new DefaultLogger());
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    PrintStream pri = new PrintStream(out);
-    PrintStream old = System.out;
-    System.setOut(pri);
+    rl.registerPrinter(new DefaultLogger(out));
     rl.logAllRules();
     boolean[] res = { false, true } ;
     rl.logRule(2, res);
-    System.setOut(old);
     String output = out.toString();
     assertEquals("-rule_two-: !+user+\n", output);
   }
@@ -211,24 +197,17 @@ public class RudibuggerTest {
         + "convertedBoolTest/ConvertedBooleans.rudi"));
     RuleLogger rl = new RuleLogger();
     rl.setRootInfo(i);
-    rl.registerPrinter(new DefaultLogger());
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    PrintStream pri = new PrintStream(out);
-    PrintStream old = System.out;
-    System.setOut(pri);
+    rl.registerPrinter(new DefaultLogger(out));
     rl.logAllRules();
     boolean[] res = { true, true } ;
     rl.logRule(0, res);
-    System.setOut(old);
     String output = out.toString();
+    out.reset();
     assertEquals("+rule_one+: +a+\n", output);
-    out = new ByteArrayOutputStream();
-    pri = new PrintStream(out);
-    System.setOut(pri);
     rl.logAllRules();
     boolean[] res2 = { false, false } ;
     rl.logRule(1, res2);
-    System.setOut(old);
     output = out.toString();
     assertEquals("-rule_two-: -b.forename-\n", output);
   }

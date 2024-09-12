@@ -19,14 +19,32 @@
 
 package de.dfki.mlt.rudimant.common;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 public class DefaultLogger implements LogPrinter {
 
+  PrintStream _out;
+  
   protected static String RED="-";
   protected static String GREEN="+";
   protected static String GRAY="_";
 
+  public DefaultLogger(OutputStream out) {
+    if (out instanceof PrintStream) {
+      _out = (PrintStream)out;
+    } else {
+      _out = new PrintStream(out);
+    }
+  }
+  
+  public DefaultLogger() {
+    this(System.out);
+  }
+  
   protected void print(String s) {
-    System.out.print(s);
+    _out.print(s);
+    _out.flush();
   }
 
   protected void printWithTags(String s, String pref, String suff) {
