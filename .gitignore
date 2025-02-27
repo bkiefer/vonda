@@ -33,3 +33,4 @@ locallibs
 dependency-reduced-pom.xml
 wech
 compile_prereqs.sh
+compile_dependants.sh

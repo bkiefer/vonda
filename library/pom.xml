@@ -11,7 +11,7 @@
   <parent>
     <groupId>de.dfki.mlt</groupId>
     <artifactId>vonda-top</artifactId>
-    <version>3.5.0</version>
+    <version>3.5.1</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -31,7 +31,7 @@
     <dependency>
       <groupId>de.dfki.mlt</groupId>
       <artifactId>srgs-parser</artifactId>
-      <version>[1.4.7,)</version>
+      <version>[1.4.8,)</version>
     </dependency>
   </dependencies>
 
