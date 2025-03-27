@@ -63,7 +63,7 @@ public class CoverageTest {
   public int startCompiler(File dir) throws IOException, InterruptedException {
     Process compile = new ProcessBuilder().command("sh", "-c", "./javcomp")
         .directory(dir)
-        .redirectOutput(new File("target/comp.log")).redirectErrorStream(true)
+        //.redirectOutput(new File("target/comp.log")).redirectErrorStream(true)
         .start();
     return compile.waitFor();
   }
