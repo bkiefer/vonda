@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+set -x
 
 scriptdir=`dirname $0`
 cd "$scriptdir"
