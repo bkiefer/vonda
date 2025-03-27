@@ -21,13 +21,13 @@ namespaces:
 
 tupleFiles:
   # the axiomatic triples for OWL-Horst w/ EQ reduction
-  - ../../../../../resources/ontologies/default/default.eqred.nt
+  - vonda/default/default.eqred.nt
   # the PAL sub-ontologies
-  - ../../../../../resources/ontologies/dialogue/dialogue.nt
+  - vonda/dialogue/dialogue.nt
   - pal/domain/domain.nt
   - pal/pal/pal.nt
   - pal/semantics/semantics.nt
 
 ruleFiles:
   # we need special rules for transaction time (mixture of triples/quadruples)
-  - ../../../../../resources/ontologies/rules/default.eqred.quads.rdl
+  - vonda/rules/default.eqred.quads.rdl

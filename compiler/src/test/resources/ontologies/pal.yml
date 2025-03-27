@@ -22,9 +22,9 @@ namespaces:
 
 tupleFiles:
   # the axiomatic triples for OWL-Horst w/ EQ reduction
-  - ../../../../../src/main/resources/ontologies/default/default.eqred.nt
+  - vonda/default/default.eqred.nt
   # the PAL sub-ontologies
-  - ../../../../../src/main/resources/ontologies/dialogue/dialogue.nt
+  - vonda/dialogue/dialogue.nt
   - pal/domain/domain.nt
   - pal/pal/pal.nt
   - pal/semantics/semantics.nt

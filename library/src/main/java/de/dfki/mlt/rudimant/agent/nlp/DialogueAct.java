@@ -142,15 +142,26 @@ public class DialogueAct {
     return _dag.getEdge(DagNode.getFeatureId(slot)) != null;
   }
 
-  /** Return the argument for key slot */
-  public String getValue(String slot) {
-    DagEdge e = _dag.getEdge(DagNode.getFeatureId(slot));
+  public static DagNode getValue(DagNode dag, String slot) {
+    DagEdge e = dag.getEdge(DagNode.getFeatureId(slot));
     if (e == null) {
       return null;
     }
     DagNode node = e.getValue();
+    return node;
+  }
+  
+  /** Return the dag node for key slot */
+  public DagNode getDag(String slot) {
+    return getValue(_dag, slot);
+  }
+  
+  /** Return the argument for key slot */
+  public String getValue(String slot) {
+    DagNode node = getDag(slot);
+    if (node == null) return null;
     if (node.getType() == DagNode.TOP_ID) {
-      e = node.getEdge(DagNode.PROP_FEAT_ID);
+      DagEdge e = node.getEdge(DagNode.PROP_FEAT_ID);
       if (e == null) {
         return DagNode.TOP_TYPE;
       }
