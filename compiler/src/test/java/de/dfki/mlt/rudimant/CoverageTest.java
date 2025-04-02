@@ -27,9 +27,11 @@ import static org.junit.Assert.assertFalse;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -63,8 +65,18 @@ public class CoverageTest {
   public int startCompiler(File dir) throws IOException, InterruptedException {
     Process compile = new ProcessBuilder().command("sh", "-c", "./javcomp")
         .directory(dir)
-        .redirectOutput(new File("target/comp.log")).redirectErrorStream(true)
+        .redirectErrorStream(true)
         .start();
+    BufferedReader reader = 
+        new BufferedReader(new InputStreamReader(compile.getInputStream()));
+    StringBuilder builder = new StringBuilder();
+    String line = null;
+    while ( (line = reader.readLine()) != null) {
+      builder.append(line);
+      builder.append(System.getProperty("line.separator"));
+    }
+    String result = builder.toString();
+    log.debug("Compile output {}", result);
     return compile.waitFor();
   }
 
