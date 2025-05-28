@@ -35,7 +35,7 @@ public class SrgsParser extends Interpreter {
     try {
       manager = new JVoiceXmlGrammarManager();
       grammar = manager.loadGrammar(new File(configDir, grammarName).toURI());
-      checker = AbstractParser.getParser(manager);
+      checker = AbstractParser.getParser();
     } catch (IOException | GrammarException ex) {
       logger.error("Could not read grammar file {} because of {}",
           new File(configDir, grammarName), ex.toString());
@@ -54,7 +54,7 @@ public class SrgsParser extends Interpreter {
   public DialogueAct analyse(String text) {
     synchronized (checker) {
       String[] tokens = tokenizer.tokenize(text);
-      Traversable validRule = null;
+      Traversable<ChartNode> validRule = null;
       DialogueAct result = null;
       try {
         // TODO: give diagnostics if no validRule is returned
