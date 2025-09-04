@@ -1,3 +1,3 @@
 [submodule "compiler/src/test/resources/ontologies/vonda"]
 	path = compiler/src/test/resources/ontologies/vonda
-	url = git@github.com:bkiefer/vonda-ontologies.git
+	url = https://github.com/bkiefer/vonda-ontologies.git
