@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -67,17 +68,28 @@ public class CoverageTest {
         .directory(dir)
         .redirectErrorStream(true)
         .start();
-    BufferedReader reader = 
+    BufferedReader reader =
         new BufferedReader(new InputStreamReader(compile.getInputStream()));
-    StringBuilder builder = new StringBuilder();
-    String line = null;
-    while ( (line = reader.readLine()) != null) {
-      builder.append(line);
-      builder.append(System.getProperty("line.separator"));
+    String result = "";
+    try (PrintWriter pw = new PrintWriter(new File(dir, "compile.log"))) {
+      StringBuilder builder = new StringBuilder();
+      String line = null;
+      String nl = System.getProperty("line.separator");
+      while ( (line = reader.readLine()) != null) {
+        pw.append(line).append(nl);
+        builder.append(line).append(nl);
+      }
+      result = builder.toString();
+    } catch (Exception ex) {
+      log.error("Error writing compiler log: {}", ex);
     }
-    String result = builder.toString();
+
     log.debug("Compile output {}", result);
-    return compile.waitFor();
+    int exitcode = compile.waitFor();
+    if (exitcode != 0) {
+      log.error("Compile error: {}", result);
+    }
+    return exitcode;
   }
 
   @Test

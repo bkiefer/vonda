@@ -1,18 +1,19 @@
 #!/bin/bash
-#set -x
+set -x
 
 scriptdir=`dirname $0`
 cd "$scriptdir"
 here=`pwd`
-cd "../../../../.."
+cd "../../../../../library"
 vondadir=`pwd`
-depclp=`mvn dependency:build-classpath`
+mvn dependency:build-classpath -Dmdep.outputFile=${here}/cp.txt
 cd "$here"
 # Done from java, only for test purposes
 #$vondadir/compile -c config.yml AllYouCanDo.rudi
 rm -rf target
 mkdir -p target/classes
-export CLASSPATH="${depclp}:${vondadir}/library/target/classes:target/classes"
+export CLASSPATH="$(cat cp.txt):${vondadir}/target/classes:target/classes"
+rm cp.txt
 #echo $CLASSPATH
 javac -d target/classes \
       src/main/java/mini/WrapperClass.java \
@@ -20,4 +21,4 @@ javac -d target/classes \
       src/main/generated/mini/sub/Sub.java \
       src/main/generated/mini/sub/Breaks.java \
       src/main/generated/mini/sub/SameLevel.java \
-      src/main/generated/mini/sub/sub/SubSub.java \
+      src/main/generated/mini/sub/sub/SubSub.java

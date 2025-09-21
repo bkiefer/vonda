@@ -32,9 +32,8 @@ Prerequisites for installing VOnDA are:
 - get VOnDA and compile the framework
   ```
   git clone https://github.com/bkiefer/vonda.git
-  git submodule update --init --recursive
-  git submodule update --recursive --remote
   cd vonda
+  ./update_submodules.sh
   mvn install
   ```
 
