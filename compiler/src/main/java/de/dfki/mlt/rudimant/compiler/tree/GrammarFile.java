@@ -108,7 +108,11 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     VisitorType ttv = new VisitorType(mem, errorsFatal, _th);
 
     for (RudiTree t : rules) {
-      if (t instanceof Include) {
+      if (t instanceof Import) {
+        // TODO: (AUTORES) add to mem's local import paths for external function and 
+        // variable resolution during type checking
+        //mem.addExternalImport((Import)t)
+      } else if (t instanceof Include) {
         Include node = (Include)t;
         try {
           rudi.processInclude(node.name, node.path, node.location);

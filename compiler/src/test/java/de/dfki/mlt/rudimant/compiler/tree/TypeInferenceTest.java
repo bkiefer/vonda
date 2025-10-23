@@ -240,6 +240,7 @@ public class TypeInferenceTest {
     String expected = "public Rdf c;public Rdf a;/**/a = (Rdf) random(c.getValue(\"<dom:hasHobby>\"));";
     assertEquals(expected, getForMarked(s, expected));
   }
+  
   @Test
   public void test18() {
     String in = "SomeClass c; #SomeClass int somevar; s = c.somevar;";
@@ -247,4 +248,46 @@ public class TypeInferenceTest {
     String expected = "public SomeClass c;public int s;/**/s = c.somevar;";
     assertEquals(expected, getForMarked(s, expected));
   }
+    
+  @Test
+  public void testExternalClassPathFunctionResolution() {
+    // TODO: (AUTORES) First, what's here with resolution of the class, then
+    // resolution of function
+    String in = "import java.util.Arrays; import java.util.List; t = new String[1]; s = Arrays.asList(t);";
+    String s = generate(in);
+    String expected = "public String[] t;public List s;";//or List<String>??
+    assertEquals(expected, getForMarked(s, expected));
+  }
+    
+  @Test
+  public void testExternalClassPathFieldResolution() {
+    // TODO: (AUTORES) First, what's here with resolution of the class (java.lang), then
+    // resolution of function
+    String in = "out = System.out; out.print(false);";
+    String s = generate(in);
+    String expected = "public SomeClass c;public int s;/**/s = c.somevar;";
+    //assertEquals(expected, getForMarked(s, expected));
+  }
+  
+  @Test
+  public void testProjectCodeFunctionResolution() {
+    // TODO: (AUTORES) First, what's here with resolution of the class, then
+    // resolution of function: has to be adapted to use code of project
+    String in = "import java.util.Arrays; t = new String[1]; s = Arrays.asList(t);";
+    String s = generate(in);
+    String expected = "public SomeClass c;public int s;/**/s = c.somevar;";
+    //assertEquals(expected, getForMarked(s, expected));
+  }
+    
+  @Test
+  public void testProjectCodeFieldResolution() {
+    // TODO: (AUTORES) First, what's here with resolution of the class (java.lang), then
+    // resolution of function: has to be adapted to use code of project
+    String in = "out = System.out; out.print(false);";
+    String s = generate(in);
+    String expected = "public SomeClass c;public int s;/**/s = c.somevar;";
+    //assertEquals(expected, getForMarked(s, expected));
+  }
+  
+  
 }

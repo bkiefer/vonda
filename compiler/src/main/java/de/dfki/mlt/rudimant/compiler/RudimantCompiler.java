@@ -164,7 +164,7 @@ public class RudimantCompiler {
   /** Process the type definitions file, treating all definitions of fields and
    *  methods
    *
-   *  TODO: THIS SHOULD BE REPLACED BY ANALYSING THE SOURCE FILES IN THE PROJECT
+   *  TODO: (AUTORES) THIS SHOULD BE REPLACED BY ANALYSING THE SOURCE FILES IN THE PROJECT
    *  AND THE CLASSPATH
    */
   public void readTypeDefFile() {
