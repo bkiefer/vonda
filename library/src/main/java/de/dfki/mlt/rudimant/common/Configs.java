@@ -56,9 +56,11 @@ public class Configs {
 
   /** TrivialTokenizer: convert input to lowercase in preprocess */
   public static final String CFG_TOK_TOLOWER = "toLower";
-  /** TrivialTokenizer: Remove punctuation symbols from input string, currently
-   *  fixed set */
+  /** TrivialTokenizer: Remove punctuation symbols from input string, default
+   is '[.?!;,]' */
   public static final String CFG_TOK_REMOVE_PUNCTUATION = "removePunctuation";
+  /** TrivialTokenizer: Regular expression specifying punctuation */
+  public static final String CFG_TOK_PUNCTUATION_REGEX = "punctuationRegex";
 
   public static Map<String,Object> readConfig(File confFile)
       throws FileNotFoundException {

@@ -108,7 +108,6 @@ public class Mem {
     return curClass().packageSpec();
   }
 
-  // TODO the next two are candidates for refactoring, check call graph!
   public String getToplevelInstance() {
     return lowerCaseFirst(getTopLevelClass());
   }

@@ -145,9 +145,6 @@ public class LanguageGenerator extends Generator {
    * Put the data from the user model into the generic dialogue act received
    * from the state machine
    *
-   * TODO: this will be an improved version of the old
-   * LanuageGenerator.getSurfaceFormExtendedLf
-   *
    * @param genericDialogueAct
    * @return (optionally) a motion action and a surface string to be uttered by
    *         the TTS

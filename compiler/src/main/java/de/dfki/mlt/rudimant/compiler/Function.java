@@ -46,12 +46,6 @@ public class Function {
     return _origin;
   }
 
-  // TODO: AGAIN: IS THIS ENOUGH? NOT SUBCLASS?
-  //public boolean isReturnType(Type type) {
-  //  return _returnType.equals(type)
-  //      || _returnType.unifyTypes(type) != null;
-  //}
-
   public boolean signatureMatches(Type fType) {
     return _type.signatureMatches(fType);
   }

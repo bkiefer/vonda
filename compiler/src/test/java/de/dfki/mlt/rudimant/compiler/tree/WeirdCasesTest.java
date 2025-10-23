@@ -51,7 +51,6 @@ public class WeirdCasesTest {
     String expected = "// Rule lab {boolean[] __x0 = new boolean[2];"
             + " __x0[0] = (__x0[1] = true); logRule(0, __x0); lab: "
             + "if (__x0[0]){ Rdf c;"
-            //+ "List<Object> known2 = " // TODO: THIS SHOULD BE THERE
             + "List<Object> known2 = "
             + "filter(c.getValue(\"<dom:hasHobby>\"), "
             + "(p) -> \"someName\".equals(((Rdf)p).getString(\"<dom:name>\")));";
@@ -59,8 +58,8 @@ public class WeirdCasesTest {
   }
 
   @Test
-  public void testPlusPlus() {
-    // TODO: POSSIBLY REMOVE, SEE ARITHMETICTEST
+  public void testPlusPlusFunc() {
+     // not in ArithmeticTest because of empty setup
     String in = "int f(int i) {++i; return i++;}";
     String r = generate(in);
     String expected = "public int f(int i) { ++i; return i++;";

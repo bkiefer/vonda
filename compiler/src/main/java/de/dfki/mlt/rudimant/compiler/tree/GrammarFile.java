@@ -228,7 +228,6 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
         "import de.dfki.lt.hfc.db.rdfProxy.*;\n" +
         "import de.dfki.lt.hfc.types.*;\n");
     // Let's import our supersuper class, if we're the top-level class
-    // TODO: WILL GO IF WE DECIDE TO DROP THE WRAPPER CLASS
     if (! mem.isNotToplevelClass()) {
       out.append("import ").append(mem.getWrapperClass()).append(";\n");
     }
@@ -300,7 +299,6 @@ public class GrammarFile extends RudiTree implements RTBlockNode {
     // ************************************************************
     // persistent var mode: create fields for all included rule file objects
     // ************************************************************
-    // TODO
     if (rudi.persistentVars()) {
       for(Include i : includes) {
         out.append("private final ");

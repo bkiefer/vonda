@@ -91,7 +91,6 @@ public class Visualize {
       new RudiFileHandler().process(inputFile, new FileInputStream(inputFile),
           root);
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }*/

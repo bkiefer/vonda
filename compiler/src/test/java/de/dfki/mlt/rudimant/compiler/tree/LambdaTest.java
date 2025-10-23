@@ -58,7 +58,6 @@ public class LambdaTest {
 
   @Test
   public void testComplexLambdaExp() {
-    // TODO: why do we test that b = disappears?
     String in = "Set<Child> cs; b = some(cs, lambda(c) { return (isa(Child, c)).forename.equals(\"John\"); });";
     String r = generate(in);
     String expected = "public Set<Rdf> cs;public boolean b;/**/b = some(cs, (c) -> { return"

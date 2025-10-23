@@ -183,8 +183,7 @@ public class CastTest {
 
   @Test(expected=TypeException.class)
   public void test11() throws Throwable {
-    // TODO: find out whether i is int or boolean at the end, and put that into the
-    // documentation: NO, this is a REDEFINITION
+    // This is a REDEFINITION and therefore illegal
     String in = "int i; boolean i; i = 2; ";
     String s = getTypeError(in);
     String expected = "int i;boolean i; i = 2;";
@@ -226,34 +225,20 @@ public class CastTest {
     assertEquals(expected, getForMarked(s, expected));
   }
 
-  // TODO: CONSTRUCT A TEST EXAMPLE WITH AT LEAST THREE RDF ACCESSES
   @Test
   public void testMultipleRdfAccess() {
-    String in = "QuizHistory c ; b = c.hasChildId.hasFather.forename;";
+    String in = "QuizHistory c ; if (c.hasChildId.hasFather.forename) b = c.hasChildId.hasFather.forename;";
     String s = generate(in);
-    String expected = "Rdf c;String b = c"
-            + ".getRdf(\"<dom:hasChildId>\")"
-            + ".getRdf(\"<dom:hasFather>\")"
-            + ".getString(\"<dom:forename>\");";
+    String expected = "Rdf c;if (c != null "
+        + "&& c.getRdf(\"<dom:hasChildId>\") != null "
+        + "&& c.getRdf(\"<dom:hasChildId>\").getRdf(\"<dom:hasFather>\") != null "
+        + "&& exists(c.getRdf(\"<dom:hasChildId>\").getRdf(\"<dom:hasFather>\").getString(\"<dom:forename>\"))) "
+        + "String b = c"
+        + ".getRdf(\"<dom:hasChildId>\")"
+        + ".getRdf(\"<dom:hasFather>\")"
+        + ".getString(\"<dom:forename>\");";
     assertEquals(expected, getForMarked(s, expected));
   }
-
-  /* TODO: find a long Rdf sequence in current ontology to do this test
-  @Test
-public void testMultipleRdfAccess2() {
-  // Test set field with POD type
-  String in = "Clazz c; if (c.a.a.a.b) return true;";
-  String s = generate(in);
-  String expected = "Rdf c;if (((((c != null "
-      + "&& ((Rdf)c.getSingleValue(\"<dom:a>\")) != null) "
-      + "&& ((Rdf)((Rdf)c.getSingleValue(\"<dom:a>\")).getSingleValue(\"<dom:a>\")) != null) "
-      + "&& ((Rdf)((Rdf)((Rdf)c.getSingleValue(\"<dom:a>\")).getSingleValue(\"<dom:a>\")).getSingleValue(\"<dom:a>\")) != null) "
-      + "&& exists(((Integer)((Rdf)((Rdf)((Rdf)c.getSingleValue(\"<dom:a>\"))"
-      + ".getSingleValue(\"<dom:a>\")).getSingleValue(\"<dom:a>\"))"
-      + ".getSingleValue(\"<dom:b>\"))))) return true;";
-  assertEquals(expected, getForMarked(s, expected));
-}
-*/
 
   /* TODO: FIX THE TEST/CODE ITSELF, NOT SURE IF THE INPUT IS LEGAL AT ALL.
   @Test

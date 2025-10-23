@@ -61,7 +61,6 @@ public class DialogueActTest {
         _proxy.getClass("<dom:Child>").newRdf("<dial:Child_8>");
       }
     } catch (IOException | WrongFormatException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     DagNode.init(new DiaHierarchy(_proxy));

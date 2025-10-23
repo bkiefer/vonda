@@ -1,15 +1,16 @@
 package de.dfki.mlt.rudimant.agent.nlp;
 
 import static de.dfki.mlt.rudimant.common.Configs.*;
+import static com.ibm.icu.text.CaseMap.toLower;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 public class TrivialTokenizer extends Tokenizer {
 
-  // TODO: MAYBE THIS SHOULD BE CONFIGURABLE
-  private static Pattern PUNCTUATION = Pattern.compile("[.?!;,]");
+  private Pattern punctuationRegex;
 
   protected boolean toLower = false;
 
@@ -31,16 +32,20 @@ public class TrivialTokenizer extends Tokenizer {
     if (config.containsKey(CFG_TOK_REMOVE_PUNCTUATION)) {
       removePunctuation = (boolean) config.get(CFG_TOK_REMOVE_PUNCTUATION);
     }
+    String punctRegex = "[.?!;,]";
+    if (config.containsKey(CFG_TOK_PUNCTUATION_REGEX)) {
+      punctRegex = (String)config.get(CFG_TOK_PUNCTUATION_REGEX);
+    }
+    punctuationRegex = Pattern.compile(punctRegex);
     return true;
   }
 
   public String preprocess(String input) {
     if (toLower) {
-      // TODO: THIS SHOULD USE THE ICU4J FUNCTIONALITY
-      input = input.toLowerCase();
+      input = toLower().apply(Locale.getDefault(), input);
     }
     if (removePunctuation) {
-      input = PUNCTUATION.matcher(input).replaceAll("");
+      input = punctuationRegex.matcher(input).replaceAll("");
     }
     return input;
   }

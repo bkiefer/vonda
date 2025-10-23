@@ -85,7 +85,6 @@ public class VisitorType implements RudiVisitor {
     node.visit(this);
   }
 
-  @SuppressWarnings("serial")
   /** This is a code conversion function which turns the value of an expression
    *  into a String
    * @param ex the expression to be converted

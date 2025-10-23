@@ -39,8 +39,6 @@ public class BooleanTest {
   /// boolean operators:
 NOT: '!';
 EQUAL: '==';
-AND1: '&'; TODO deprecated?
-OR1: '|'; TODO deprecated?
 AND2: '&&';
 OR2: '||';
 NOT_EQUAL: '!=';
@@ -48,7 +46,6 @@ SMALLER_EQUAL: '<=';
 SMALLER: '<';
 GREATER_EQUAL: '>=';
 GREATER: '>';
-
    */
 
   @BeforeClass

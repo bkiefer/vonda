@@ -141,9 +141,9 @@ public class FieldAccessesTest {
 
     @Test
     public void testFieldAccess10() {
-      // TODO: Make it clear in the doc that we only support *direct*
-      // existence support for RDF access chains, so that is all we offer, for
-      // arbitrary long chains:
+      // We only support explicit existence support testing for RDF access 
+      // chains, so that is all we offer, for arbitrary long chains, i.e.,
+      // this also works if there's no c.forename
       String in = "Child c; if(c.forename && c.forename == \"foo\"){}";
       String s = generate(in);
       //System.out.println(s);
@@ -164,9 +164,9 @@ public class FieldAccessesTest {
 
     @Test
     public void testFieldAccess12() {
-      // TODO: Make it clear in the doc that we only support *direct*
-      // existence support for RDF access chains, so that is all we offer, for
-      // arbitrary long chains:
+      // We only support explicit existence support testing for RDF access 
+      // chains, so that is all we offer, for arbitrary long chains, i.e.,
+      // this throws NEX if there is no c.hasFather
       String in = "Child c; s = c.hasFather.forename;";
       String s = generate(in);
       //System.out.println(s);

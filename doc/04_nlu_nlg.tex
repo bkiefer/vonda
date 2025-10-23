@@ -44,7 +44,7 @@ The current built-in NLU is based on our extension of the SRGS
 formalism, and uses the following configuration keys:
 \texttt{grammar}, \texttt{converter} and \texttt{tokenizer}, which
 contains a whole subsection to get a \texttt{Tokenizer} object from
-the \texttt{NLProcessor} factory, which will be described later
+the \texttt{NLProcessor} factory, which will be described later.
 
 \texttt{grammar} points to the root SRGS grammar file in the file
 system, relative to the config file's position, and \texttt{converter}
@@ -60,6 +60,20 @@ class. You have to implement the
 supersede the \texttt{init} method. The class already provides a
 several convenience functions, e.g., for converting JSON into internal
 datastructures, which can then be massaged into the right form using cplanner.
+
+\subsection{Configuration keys for \texttt{TrivialTokenizer}}
+The \texttt{TrivialTokenizer} splits the input string using white space as
+separators. This is currently the only tokenizer that is available by default
+and has the following configuration parameters:
+\begin{itemize}
+\item \texttt{toLower} (\texttt{boolean}): Convert the string to lower case
+  before handing it on
+\item \texttt{removePunctuation} (\texttt{boolean}): Remove punctuation
+  strings. What is considered to be punctuation is specified in
+  \texttt{punctuationRegex}
+\item \texttt{punctuationRegex} (\texttt{String}): Must be a valid Java regular
+  expression. All matches are removed from the input string.
+\end{itemize}
 
 \subsection{Conversion of results using CPlan}
 

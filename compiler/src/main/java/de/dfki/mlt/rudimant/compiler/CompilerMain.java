@@ -53,6 +53,7 @@ public class CompilerMain {
     { CFG_PRINT_ERRORS, true, "q" },
     { CFG_VISUALISE, false , "v" },
     { CFG_PERSISTENT_VARS, false , "p" },
+    // This makes agentBase optional: if not set, it's Agent
     { CFG_AGENT_BASE_CLASS, "de.dfki.mlt.rudimant.agent.Agent", "w" },
     { CFG_CONFIG_DIRECTORY, new File("."), null },
   };
