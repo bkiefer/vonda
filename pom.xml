@@ -7,7 +7,7 @@
 
   <groupId>de.dfki.mlt</groupId>
   <artifactId>vonda-top</artifactId>
-  <version>3.5.4</version>
+  <version>3.5.5</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -16,8 +16,8 @@
     <maven.compiler.target>11</maven.compiler.target>
     <junit.version>4.13.2</junit.version>
     <vonda.version>3.0</vonda.version>
-    <logback.version>1.5.17</logback.version>
-    <google-java-format.version>1.22.0</google-java-format.version>
+    <logback.version>1.5.26</logback.version>
+    <google-java-format.version>1.33.0</google-java-format.version>
   </properties>
 
   <modules>
