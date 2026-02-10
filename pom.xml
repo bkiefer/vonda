@@ -16,8 +16,6 @@
     <maven.compiler.target>17</maven.compiler.target>
     <junit.version>4.13.2</junit.version>
     <vonda.version>3.0</vonda.version>
-    <logback.version>1.5.26</logback.version>
-    <google-java-format.version>1.33.0</google-java-format.version>
   </properties>
 
   <modules>
