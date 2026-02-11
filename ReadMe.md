@@ -24,9 +24,9 @@ various approaches, from state-based to probabilistic reasoning.
 The following installation instructions are tested on Ubuntu 22.04
 
 Prerequisites for installing VOnDA are:
-- OpenJDK 11, maven build tool, and git
+- OpenJDK 21, maven build tool, and git
   ```
-  sudo apt install openjdk-11-jdk maven git
+  sudo apt install openjdk-21-jdk maven git
   ```
 
 - get VOnDA and compile the framework
