@@ -12,7 +12,7 @@
     classpath
   - Sinnvolle Queries aus .rudi, deren Resultate gut verarbeitet werden können
   - could '>=' be extended to java instanceof?
-  - enum handling currently intransparant, it works if the enum is defined in
+  - enum handling currently intransparent, it works if the enum is defined in
     the top-level Agent class, and there are no warnings, but why?
 * Bringt die baumartige Struktur überhaupt Vorteile? Alternativen?
 * Kann man die Generierung besser in eine eigene Stage verschieben?
@@ -26,11 +26,15 @@
   - Syntax-Highlighting f. VS Code? Anbindung an Rudibugger?
 * Queries aus .rudi abfeuern --> missing varargs!?
 * Collections probleme: Alles polymorph?
-  ich weiß nicht mehr, was damit gemeint ist
+  - ich weiß nicht mehr, was damit gemeint ist, vllt. keine Generics?
+  - a_map["foo"] = "bar"   // wäre schön, ist aber wahrscheinlich kompliziert
+    alternativ a_map.foo = "bar" ?
 * Dialogue Acts
   - hierarchy of Frames from the ontology with access functions
-  - Nesting depth > 1 ?
+  - Nesting depth > 1 ? Listen nativ?
   - TDL syntax statt CCG würg?
+  - cplanner 2.0 alternativ mit Standard-Featurestructures statt CCG shit
+  - Besserer Transfer von/nach RDF!
 
 * processor / abstract processor
   + behaviour sync

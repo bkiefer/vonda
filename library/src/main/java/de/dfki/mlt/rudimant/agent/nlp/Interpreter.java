@@ -24,6 +24,7 @@ import static de.dfki.mlt.rudimant.common.Configs.CFG_NLU_CONVERTER;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -72,21 +73,25 @@ public abstract class Interpreter extends NLProcessor {
     return NO_RESULT.copy();
   }
 
-  private DagNode array2dag(JSONArray arr) {
-    short firstid = DagNode.getFeatureId("first");
-    short restid = DagNode.getFeatureId("rest");
+  public static short firstid = -1, restid = -1;
+
+  private DagNode array2dag(Iterable<Object> arr) {
+    if (firstid < 0) {
+      firstid = DagNode.getFeatureId("first");
+      restid = DagNode.getFeatureId("rest");
+    }
     DagNode value = new DagNode();
     value.setNominal();
     DagNode curr = value;
-    if (arr.length() > 0) {
-      Object last = arr.get(arr.length() - 1);
-      for (Object elt : arr) {
-        curr.addEdge(firstid, objDispatch(elt));
-        if (elt != last) {
-          DagNode rest = new DagNode().setNominal();
-          curr.addEdge(restid, rest);
-          curr = rest;
-        }
+    Iterator<Object> it = arr.iterator();
+    while (it.hasNext()) {
+      Object elt = it.next();
+      //for (Object elt : arr) {
+      curr.addEdge(firstid, objDispatch(elt));
+      if (it.hasNext()) {
+        DagNode rest = new DagNode().setNominal();
+        curr.addEdge(restid, rest);
+        curr = rest;
       }
     }
     return value;
@@ -103,17 +108,28 @@ public abstract class Interpreter extends NLProcessor {
     } else if (o instanceof JSONObject) {
       value = json2dag((JSONObject) o);
     } else if (o instanceof JSONArray) {
-      value = array2dag((JSONArray)o);
+      value = array2dag((JSONArray) o);
+    } else if (o instanceof Map) {
+      value = map2dag((Map) o);
+    } else if (o instanceof Iterable) {
+      value = array2dag((Iterable) o);
     } else if (o instanceof String) {
       value = atom2dag((String)o);
-    } else if (o instanceof Integer) {
-      value = atom2dag(Integer.toString((Integer)o));
-    } else if (o instanceof Double) {
-      value = atom2dag(Double.toString((Double)o));
-    } else if (o instanceof BigDecimal) {
-      value = atom2dag(((BigDecimal)o).toPlainString());
+    } else if (o instanceof Number) {
+      value = atom2dag(String.valueOf(o));
     }
     return value;
+  }
+
+  public DagNode map2dag(Map<String, Object> obj) {
+    DagNode res = new DagNode();
+    res.setNominal();
+    for (String key : obj.keySet()) {
+      short feat = DagNode.getFeatureId(key);
+      DagNode value = objDispatch(obj.get(key));
+      res.addEdge(feat, value);
+    }
+    return res;
   }
 
   public DagNode json2dag(JSONObject obj) {
