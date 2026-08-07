@@ -1,7 +1,8 @@
 package de.dfki.mlt.rudimant.agent.nlp;
 
-import static de.dfki.mlt.rudimant.common.Configs.*;
-import static org.jvoicexml.processor.BestTreeFinder.*;
+import static de.dfki.mlt.rudimant.common.Configs.CFG_NLU_GRAMMAR;
+import static de.dfki.mlt.rudimant.common.Configs.CFG_NLU_TOKENIZER;
+import static de.dfki.mlt.srgsparser.processor.BestTreeFinder.findBestTree;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,18 +11,19 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.json.JSONObject;
-import org.jvoicexml.processor.AbstractParser;
-import org.jvoicexml.processor.ChartNode;
-import org.jvoicexml.processor.Configuration;
-import org.jvoicexml.processor.JVoiceXmlGrammarManager;
-import org.jvoicexml.processor.SemanticsInterpreter;
-import org.jvoicexml.processor.Traversable;
-import org.jvoicexml.processor.grammar.Grammar;
-import org.jvoicexml.processor.srgs.GrammarException;
+
+import de.dfki.mlt.srgsparser.processor.AbstractParser;
+import de.dfki.mlt.srgsparser.processor.ChartNode;
+import de.dfki.mlt.srgsparser.processor.Configuration;
+import de.dfki.mlt.srgsparser.processor.GrammarManager;
+import de.dfki.mlt.srgsparser.processor.SemanticsInterpreter;
+import de.dfki.mlt.srgsparser.processor.Traversable;
+import de.dfki.mlt.srgsparser.processor.grammar.AbstractGrammar;
+import de.dfki.mlt.srgsparser.processor.srgs.SyntaxException;
 
 public class SrgsParser extends Interpreter {
-  protected JVoiceXmlGrammarManager manager;
-  protected Grammar grammar;
+  protected GrammarManager manager;
+  protected AbstractGrammar grammar;
   protected AbstractParser checker;
   protected Tokenizer tokenizer = null;
 
@@ -33,10 +35,10 @@ public class SrgsParser extends Interpreter {
     if (grammarName == null)
       return false;
     try {
-      manager = new JVoiceXmlGrammarManager();
+      manager = new GrammarManager();
       grammar = manager.loadGrammar(new File(configDir, grammarName).toURI());
       checker = AbstractParser.getParser();
-    } catch (IOException | GrammarException ex) {
+    } catch (IOException | SyntaxException ex) {
       logger.error("Could not read grammar file {} because of {}",
           new File(configDir, grammarName), ex.toString());
       return false;
@@ -59,7 +61,7 @@ public class SrgsParser extends Interpreter {
       try {
         // TODO: give diagnostics if no validRule is returned
         validRule = checker.parse(grammar, tokens);
-      } catch (GrammarException ex) {
+      } catch (SyntaxException ex) {
         logger.error(ex.toString());
       }
       if (validRule != null) {
